@@ -15,12 +15,15 @@ import {
   checkPlotType,
 } from '../helpers/Chart.const'
 
-import { ChartStyled } from '../Chart.style'
+import { ChartLoaderBlock, ChartStyled, ChartWrapper, Plug } from '../Chart.style'
 import DoubleChartTooltip, { DOUBLE_AMOUNT_DATE_TOOLTIP } from '../Tooltips/DoubleChartTooltip'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { AREA_CHART_TYPE, CANDLESTICK_CHART_TYPE, HISTOGRAM_CHART_TYPE } from '../helpers/Chart.const'
 
 import { DoubleChartPropsType } from '../helpers/Chart.types'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import { SPINNER_LOADER_MEDIUM } from 'app/App.components/Loader/loader.const'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 export const DoubleChart = ({
   settings,
@@ -29,6 +32,9 @@ export const DoubleChart = ({
   tooltipName = DOUBLE_AMOUNT_DATE_TOOLTIP,
   tooltipAssetFirst,
   tooltipAssetSecond,
+  isLoading = false,
+  loaderSize = SPINNER_LOADER_MEDIUM,
+  numberOfItemsToDisplay = 10,
 }: DoubleChartPropsType) => {
   const {
     preferences: { themeSelected },
@@ -274,6 +280,29 @@ export const DoubleChart = ({
     firstChartSeriesMarkers,
     secondChartSeriesMarkers,
   ])
+
+  if (isLoading) {
+    return (
+      <ChartWrapper>
+        <ChartLoaderBlock>
+          <SpinnerCircleLoaderStyled className={loaderSize} />
+        </ChartLoaderBlock>
+      </ChartWrapper>
+    )
+  }
+
+  if (firstChart.data.plots.length < numberOfItemsToDisplay && secondChart.data.plots.length < numberOfItemsToDisplay) {
+    return (
+      <Plug className="chartPlug">
+        <div>
+          <Icon id="stars" className="icon-stars" />
+          <Icon id="cow" className="icon-cow" />
+        </div>
+
+        <p>There is not enough data to display the chart</p>
+      </Plug>
+    )
+  }
 
   return (
     <ChartStyled ref={mainChartWrapperRef}>

@@ -108,6 +108,7 @@ export const defaultLoadingState: LoadingState = {
 export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
   maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
   minimumStakedMvkBalance: 0,
+  dappTotalValueLocked: null,
   xtzBakers: null,
   contractAddresses: DAPP_DEFAULT_CONTRACT_ADDRESSES,
   // TODO: set default address to null, when contracts are updated

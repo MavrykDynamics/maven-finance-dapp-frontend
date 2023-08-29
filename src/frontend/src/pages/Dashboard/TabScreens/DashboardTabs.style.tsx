@@ -137,6 +137,7 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
 
   .chart-wrapper {
+    margin-top: 30px;
     padding-left: 20px;
     position: relative;
   }
@@ -144,7 +145,7 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
   .chart-title {
     position: absolute;
     left: 40px;
-    top: 50px;
+    top: 20px;
 
     font-weight: 600;
     font-size: 18px;
@@ -181,6 +182,7 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
 export const StakingHistoryChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
   padding: 38px 0 15px 20px;
   height: 148px;
+  margin: 0;
 
   display: flex;
   flex-direction: column;
@@ -226,6 +228,7 @@ export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
   .feeds-grid {
     margin-top: 15px;
     margin-bottom: 5px;
+    row-gap: 7px; /*for shadows on hover */
     max-width: 680px;
     display: flex;
     flex-direction: column;

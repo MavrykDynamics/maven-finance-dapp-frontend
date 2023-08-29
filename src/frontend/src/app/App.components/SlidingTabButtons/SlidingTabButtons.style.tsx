@@ -1,6 +1,11 @@
 import styled from 'styled-components/macro'
 import { BUTTON_RADIUS } from '../../../styles/constants'
-import { PRIMARY_SLIDING_TAB_BUTTONS, SECONDARY_SLIDING_TAB_BUTTONS } from './SlidingTabButtons.conts'
+import {
+  MEDIUM_SLIDING_TAB_BUTTONS,
+  PRIMARY_SLIDING_TAB_BUTTONS,
+  SECONDARY_SLIDING_TAB_BUTTONS,
+  SMALL_SLIDING_TAB_BUTTONS,
+} from './SlidingTabButtons.conts'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
@@ -20,25 +25,36 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
 
   &.${PRIMARY_SLIDING_TAB_BUTTONS} {
     padding: 1px;
-    height: 40px;
 
     background-color: ${({ theme }) => theme.backgroundColor};
     border: 1px solid ${({ theme }) => theme.strokeColor};
     border-radius: 20px;
 
-    &.vault {
+    &.${SMALL_SLIDING_TAB_BUTTONS} {
+      height: 30px;
+    }
+
+    &.${MEDIUM_SLIDING_TAB_BUTTONS} {
       height: 40px;
-      width: 310px;
+
+      &.vault {
+        width: 310px;
+      }
     }
   }
 
   &.${SECONDARY_SLIDING_TAB_BUTTONS} {
-    column-gap: 20px;
-    width: fit-content;
+    // TODO: if need add sizes for secondary kind
+    &.${SMALL_SLIDING_TAB_BUTTONS} {
+    }
+
+    &.${MEDIUM_SLIDING_TAB_BUTTONS} {
+      column-gap: 20px;
+      width: fit-content;
+    }
   }
 `
-// TODO: to create new button type in NewButton cmp
-export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
+export const SlidingTabBtn = styled.button<{ theme: MavrykTheme }>`
   border: none;
   cursor: pointer;
   white-space: nowrap;
@@ -52,16 +68,22 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   &.${PRIMARY_SLIDING_TAB_BUTTONS} {
-    padding: 0 22px;
-
     height: 100%;
     width: -webkit-fill-available;
-
-    font-size: 14px;
     text-align: center;
 
     border-radius: ${BUTTON_RADIUS};
     color: ${({ theme }) => theme.regularText};
+
+    &.${SMALL_SLIDING_TAB_BUTTONS} {
+      font-size: 12px;
+      padding: 0 14px;
+    }
+
+    &.${MEDIUM_SLIDING_TAB_BUTTONS} {
+      font-size: 14px;
+      padding: 0 22px;
+    }
 
     &.selected {
       color: ${({ theme }) => theme.backgroundColor};
@@ -71,10 +93,18 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
 
   &.${SECONDARY_SLIDING_TAB_BUTTONS} {
     position: relative;
-    padding-bottom: 6px;
 
-    font-size: 16px;
     color: ${({ theme }) => theme.menuButtonText};
+
+    &.${SMALL_SLIDING_TAB_BUTTONS} {
+      font-size: 14px;
+      padding-bottom: 4px;
+    }
+
+    &.${MEDIUM_SLIDING_TAB_BUTTONS} {
+      padding-bottom: 6px;
+      font-size: 16px;
+    }
 
     &.selected {
       color: ${({ theme }) => theme.selectedColor};

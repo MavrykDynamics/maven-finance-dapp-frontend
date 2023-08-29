@@ -28,6 +28,7 @@ import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 import { setItemInStorage } from 'utils/storage'
 import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schemes'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
+import { unknownToError } from 'errors/error'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -35,6 +36,7 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: handle initial loading with null values
 const DappConfigProvider = ({ children }: Props) => {
   const handleSubError = (error: ApolloError) => {
     console.error(`DappConfigProvider query error: `, error)
@@ -164,7 +166,13 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // preferences actions
   const toggleTheme = (theme: ThemeType) => {
-    setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
+    try {
+      setItemInStorage('theme', theme)
+      setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
+    } catch (e) {
+      const err = unknownToError(e)
+      bug(err)
+    }
   }
 
   const toggleRPCNodePopup = (isOpened: boolean) => {
@@ -215,10 +223,18 @@ const DappConfigProvider = ({ children }: Props) => {
     }))
   }
 
+  const setDappTotalValueLocked = (newTvlValie: number) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      dappTotalValueLocked: newTvlValie,
+    }))
+  }
+
   const contextProviderValue = useMemo(() => {
     return {
       isLoading: initialConfigLoading || contractAddressesLoading,
       setAction,
+      setDappTotalValueLocked,
       // preferences
       toggleTheme,
       toggleRPCNodePopup,

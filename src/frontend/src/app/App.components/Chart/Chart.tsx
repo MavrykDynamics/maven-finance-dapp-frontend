@@ -68,6 +68,7 @@ export const Chart = ({
   data,
   colors,
   settings,
+  // TODO handle items view in another way (like when and which screen to show)
   numberOfItemsToDisplay = 15,
   tooltipName,
   tooltipAsset,
@@ -85,6 +86,16 @@ export const Chart = ({
 
         <p>Coming soon</p>
       </Plug>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <ChartWrapper>
+        <ChartLoaderBlock>
+          <SpinnerCircleLoaderStyled className={loaderSize} />
+        </ChartLoaderBlock>
+      </ChartWrapper>
     )
   }
 
@@ -138,13 +149,5 @@ export const Chart = ({
     return null
   }
 
-  return isLoading ? (
-    <ChartWrapper>
-      <ChartLoaderBlock>
-        <SpinnerCircleLoaderStyled className={loaderSize} />
-      </ChartLoaderBlock>
-    </ChartWrapper>
-  ) : (
-    renderChart()
-  )
+  return renderChart()
 }

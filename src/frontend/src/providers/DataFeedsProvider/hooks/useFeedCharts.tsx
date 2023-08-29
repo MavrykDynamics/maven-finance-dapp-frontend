@@ -1,51 +1,89 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { ApolloError } from '@apollo/client'
 
+// queries
 import { FEED_HISTORY_QUERY } from '../queries/feeds.query'
-import { normalizeDataFeedsHistory, normalizeDataFeedsVolatility } from '../helpers/feedsNormalizer'
+
+// hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { useDataFeedsContext } from '../dataFeeds.provider'
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
-// TODO: after dev-demo store all data in ctx to show feed chart user was on immidiately
-export const useFeedCharts = (feedAddress: string) => {
-  // const { feedsCharts, setFeedChart } = useDataFeedsContext()
+// providers
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-  const [feedChartData, setFeedChartData] = useState<{
-    dataFeedsHistory: null | Array<AreaChartPlotType>
-    dataFeedsVolatility: null | Array<AreaChartPlotType>
-  }>({
-    dataFeedsHistory: null,
-    dataFeedsVolatility: null,
-  })
+// consts
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { ONE_HOUR } from 'consts/charts.const'
+
+// types
+import { ChartPeriodType } from 'types/charts.type'
+
+// utils
+import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
+
+export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE_HOUR) => {
+  const { updateFeedsHistoryAndVolatility, dataFeedsHistory, dataFeedsVolatility, resetFeedsHistoryAndVolatility } =
+    useDataFeedsContext()
+  const { bug } = useToasterContext()
+
+  const [currentPeriod, setCurrentPeriod] = useState(() => getTimestampBasedOnPeriod(period))
+  const aborterRef = useRef(new AbortController())
+
+  const refetchQueryVariables = useCallback(() => {
+    return {
+      periodTimestamp: getTimestampBasedOnPeriod(period),
+    }
+  }, [period])
+
+  const handleSubError = (error: ApolloError, subName: string) => {
+    console.error(`${subName} query error: `, error)
+    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
+  }
 
   useEffect(() => {
+    setCurrentPeriod(getTimestampBasedOnPeriod(period))
+
     return () => {
-      setFeedChartData({
-        dataFeedsHistory: null,
-        dataFeedsVolatility: null,
-      })
+      // cancel queries
+      aborterRef.current.abort()
+      aborterRef.current = new AbortController()
     }
+  }, [period])
+
+  useEffect(() => {
+    resetFeedsHistoryAndVolatility()
   }, [feedAddress])
 
-  useQueryWithRefetch(FEED_HISTORY_QUERY, {
-    variables: {
-      feedAddress,
-    },
-    fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
-      const feedsHistory = data.aggregator[0].history_data
+  useQueryWithRefetch(
+    FEED_HISTORY_QUERY,
+    {
+      variables: {
+        feedAddress,
+        periodTimestamp: currentPeriod,
+      },
+      fetchPolicy: 'network-only',
+      context: {
+        fetchOptions: {
+          signal: aborterRef.current.signal,
+        },
+      },
+      onCompleted: (data) => {
+        if (!data) return
+        const feedsHistory = data.aggregator[0].history_data
 
-      setFeedChartData({
-        dataFeedsHistory: normalizeDataFeedsHistory(feedsHistory),
-        dataFeedsVolatility: normalizeDataFeedsVolatility(feedsHistory),
-      })
+        updateFeedsHistoryAndVolatility(feedsHistory, period)
+      },
+      onError: (error) => handleSubError(error, 'Feeds history query error'),
     },
-    onError: (e) => console.error('loading feed chart error:', { feedAddress, e }),
-  })
+    {
+      refetchQueryVariables,
+    },
+  )
 
   return {
-    isLoading: feedChartData.dataFeedsVolatility === null || feedChartData.dataFeedsHistory === null,
-    dataFeedsHistory: feedChartData.dataFeedsHistory,
-    dataFeedsVolatility: feedChartData.dataFeedsVolatility,
+    isLoading: dataFeedsHistory[period] === null || dataFeedsVolatility[period] === null,
+    dataFeedsHistory: dataFeedsHistory[period],
+    dataFeedsVolatility: dataFeedsVolatility[period],
   }
 }

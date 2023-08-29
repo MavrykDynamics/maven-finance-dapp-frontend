@@ -29,7 +29,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     padding: 3px 5px;
     border-radius: 3px;
     line-height: 15px;
-    background: ${({ theme }) => theme.messagesBackground};
+    background: ${({ theme }) => theme.tooltipTextBg};
     color: ${({ theme }) => theme.placeholders};
     opacity: 0;
     transition: 0.3s all;

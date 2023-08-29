@@ -2,18 +2,27 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // const
-import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITES_DATA_SINGLE_SUB,
+  SATELLITE_DATA_SUB,
+  SATELLITE_ORACLE_STATUSES,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
 import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
-
-// context
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // helpers
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // view
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
@@ -26,11 +35,8 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
   const { userAddress } = useUserContext()
@@ -41,8 +47,20 @@ const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards
     satelliteGovActionsAmount,
     finRequestsAmount,
     setSatelliteAddressToSubsctibe,
+    changeSatellitesSubscriptionsList,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   useEffect(() => {
     if (userAddress) {

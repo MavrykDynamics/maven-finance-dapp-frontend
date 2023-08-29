@@ -1,25 +1,37 @@
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
+// consts
+import {
+  DEFAULT_DATA_FEEDS_CTX,
+  DEFAULT_DATA_FEEDS_HISTORY,
+  DFEFAULT_DATA_FEEDS_VOLATILITY,
+} from './helpers/feeds.consts'
+
 // types
-import { DataFeedsContext, DataFeedsContextState } from './dataFeeds.provider.types'
+import { ChartPeriodType } from 'types/charts.type'
+import { DataFeedsContext, NullableDataFeedsContextStateType } from './dataFeeds.provider.types'
 import {
   fullFeedsQuerySchema,
   FullFeedsQueryType,
   smallFeedsQuerySchema,
   SmallFeedsQueryType,
-} from './helpers/feeds.schemes'
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+} from './helpers/feeds.schemas'
 
 // helpers
-import { normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
+import { getDataFeedsProviderReturnValue } from './helpers/feeds.utils'
+import { normalizeDataFeedsHistory, normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
 import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 
-// constext
+// contexts
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
+// types
+import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
+
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
+
 const propomotedAddresses = [
   'KT1AgXce6SwfMNQ6wcKGALHi46FuN77bHioV',
   'KT1C1sYNxacr8LPZimA512gAfWajdGah75nq',
@@ -33,22 +45,12 @@ type Props = {
 export const DataFeedsProvider = ({ children }: Props) => {
   const { updateTokensPrices } = useTokensContext()
 
-  // TODO: calc it based on nullable values
-  const initialLoadingStatus = useRef(true)
-
-  const [feedsCtxState, setFeedsCtxState] = useState<DataFeedsContextState>({
-    feedsAddresses: [],
-    feedsMapper: {},
-    feedsCategories: [],
-    feedsCharts: {},
-  })
+  const [feedsCtxState, setFeedsCtxState] = useState<NullableDataFeedsContextStateType>(DEFAULT_DATA_FEEDS_CTX)
 
   // load initial feeds data
   const { refetch: refetchDataFeeds } = useQuery(FEEDS_QUERY, {
     onCompleted: (data) => {
       try {
-        initialLoadingStatus.current = false
-
         const parsedFeeds = fullFeedsQuerySchema.parse(data.aggregator)
 
         updateFullDataFeeds(parsedFeeds)
@@ -62,13 +64,12 @@ export const DataFeedsProvider = ({ children }: Props) => {
 
   // update feeds price and track whether need to load new feed
   useQueryWithRefetch(FEEDS_UPDATE_QUERY, {
-    skip: initialLoadingStatus.current,
     onCompleted: (data) => {
       try {
         const parsedSmallFeeds = smallFeedsQuerySchema.parse(data.aggregator)
 
         // if we received not same amount of feeds than we have in ctx refetch full feeds query (rare case)
-        if (parsedSmallFeeds.length !== feedsCtxState.feedsAddresses.length) {
+        if (feedsCtxState.feedsAddresses && parsedSmallFeeds.length !== feedsCtxState.feedsAddresses.length) {
           refetchDataFeeds()
           return
         }
@@ -86,17 +87,17 @@ export const DataFeedsProvider = ({ children }: Props) => {
   const updateFullDataFeeds = (data: FullFeedsQueryType) => {
     const { feedsCategories, feedsAddresses, feedsMapper } = normalizeFeeds(data, propomotedAddresses)
 
-    setFeedsCtxState({
-      ...feedsCtxState,
-      feedsCategories: Array.from(new Set([...feedsCtxState.feedsCategories, ...feedsCategories])),
-      feedsAddresses: Array.from(new Set([...feedsCtxState.feedsAddresses, ...feedsAddresses])),
+    setFeedsCtxState((prevState) => ({
+      ...prevState,
+      feedsCategories: Array.from(new Set([...(prevState.feedsCategories ?? []), ...feedsCategories])),
+      feedsAddresses: Array.from(new Set([...(feedsCtxState.feedsAddresses ?? []), ...feedsAddresses])),
       feedsMapper: { ...feedsCtxState.feedsMapper, ...feedsMapper },
-    })
+    }))
   }
 
   // normalize and update for small feeds query
   const updateSmallDataFeeds = (data: SmallFeedsQueryType) => {
-    const updatedFeeds = normalizeFeedsPrices(feedsCtxState.feedsMapper, data)
+    const updatedFeeds = normalizeFeedsPrices(feedsCtxState.feedsMapper ?? {}, data)
 
     setFeedsCtxState({
       ...feedsCtxState,
@@ -104,21 +105,39 @@ export const DataFeedsProvider = ({ children }: Props) => {
     })
   }
 
-  const setFeedChart = (newChartData: Array<AreaChartPlotType>, feedAddress: string, period: string) => {
-    setFeedsCtxState((prev) => ({
-      ...prev,
-      feedsCharts: {
-        ...prev.feedsCharts,
-        [feedAddress]: { data: newChartData, period },
-      },
+  // normalize feeds history and volatility
+  const updateFeedsHistoryAndVolatility = (
+    data: FeedHistoryQeuryQuery['aggregator'][number]['history_data'],
+    period: ChartPeriodType,
+  ) => {
+    const { dataFeedsHistory, dataFeedsVolatility } = normalizeDataFeedsHistory(data)
+
+    setFeedsCtxState((prevState) => ({
+      ...prevState,
+      dataFeedsHistory: { ...prevState.dataFeedsHistory, [period]: dataFeedsHistory },
+      dataFeedsVolatility: { ...prevState.dataFeedsVolatility, [period]: dataFeedsVolatility },
     }))
   }
 
-  const providerValue = useMemo(() => {
-    return { ...feedsCtxState, isLoading: initialLoadingStatus.current, setFeedChart }
-  }, [feedsCtxState])
+  const resetFeedsHistoryAndVolatility = () => {
+    setFeedsCtxState((prevState) => ({
+      ...prevState,
+      dataFeedsHistory: DEFAULT_DATA_FEEDS_HISTORY,
+      dataFeedsVolatility: DFEFAULT_DATA_FEEDS_VOLATILITY,
+    }))
+  }
 
-  return <dataFeedsContext.Provider value={providerValue}>{children}</dataFeedsContext.Provider>
+  const contextProviderValue = useMemo(
+    () =>
+      getDataFeedsProviderReturnValue({
+        feedsCtxState,
+        updateFeedsHistoryAndVolatility,
+        resetFeedsHistoryAndVolatility,
+      }),
+    [feedsCtxState],
+  )
+
+  return <dataFeedsContext.Provider value={contextProviderValue}>{children}</dataFeedsContext.Provider>
 }
 
 export const useDataFeedsContext = () => {

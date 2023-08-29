@@ -203,7 +203,7 @@ export const getVaultCollateralBalance = (
  * collateral ratio – is the relation of the borrowed amount to collaterals amount:
  * if vault has borrowAmount 0, collateral ratio 0 if we don't have collaterals, or 250, if we have some
  */
-export const getVaultCollateralRatio = (collateralAmount: number, totalOutstanding: number) => {
+export const getVaultCollateralRatio = (collateralAmount: number, totalOutstanding: number, useMinMax = true) => {
   // means we haven't borrowed anything
   if (collateralAmount === 0) return 0
 
@@ -211,7 +211,7 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
   if (totalOutstanding === 0) return 250
 
   const collateralRatio = (collateralAmount / totalOutstanding) * 100
-  return getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1)))
+  return useMinMax ? getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
 }
 
 // TODO: add descr to liquidation utils while testing liquidation functionality and popup
@@ -249,106 +249,24 @@ export const calculateCollateralShare = (collateralAmount: number, totalAmount: 
   return getNumberInBounds(0, 100, Number(((collateralAmount / totalAmount) * 100).toFixed(2)))
 }
 
-// Vaults dashboard calcs
-
-/**
- * Used on dashboard overview vautls tab
- * @param vaultIds array of vaults addresses
- * @param vaultsMapper dictionary <vaultAddress, vault data>
- * @param tokensMetadata dictionary <tokenAddress, token metadata>
- * @param tokensPrices dictionary <tokenSymbol, token rate>
- * @returns global TVL for vault, general collateral ratio, average collateral ratio, and list of collareral tokens that consist from balance, represent color and its address
- */
-export const reduceVaultsAssets = (
-  vaultIds: string[],
-  vaultsMapper: Record<string, VaultType>,
-  tokensMetadata: TokensContext['tokensMetadata'],
-  tokensPrices: TokensContext['tokensPrices'],
-) => {
-  let vaultWithBalances = 0
-  let totalBorrowedAmounts = 0
-  let totalCollateralBalances = 0
-  let colorIdx = 0
-
-  const { assets, globalVaultTVL } = vaultIds.reduce<{
-    globalVaultTVL: number
-    collateralRatio: number
-    avgCollateralRatio: number
-    assets: Record<string, VaultAssetData>
-  }>(
-    (acc, vaultId) => {
-      const { assets } = acc
-      const { collateralData, borrowedAmount, borrowedTokenAddress } = vaultsMapper[vaultId]
-
-      const token = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
-      if (!token || !token.rate) return acc
-      const { decimals: borrowedTokenDecimals, rate: borrowedTokenRate } = token
-
-      const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
-
-      totalBorrowedAmounts +=
-        convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals }) * borrowedTokenRate
-      totalCollateralBalances += collateralBalance
-
-      if (borrowedAmount && collateralBalance) {
-        vaultWithBalances++
-      }
-
-      collateralData.forEach(({ amount, tokenAddress }) => {
-        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
-        if (!token || !token.rate) return
-        const { decimals: collateralDecimals, rate: collateralRate } = token
-
-        const convertedAmount = convertNumberForClient({ number: amount, grade: collateralDecimals })
-
-        acc.globalVaultTVL += convertedAmount * collateralRate
-
-        if (assets[tokenAddress]) {
-          assets[tokenAddress].balance += amount
-        } else {
-          assets[tokenAddress] = {
-            balance: amount,
-            chartColor: getAssetColor(colorIdx),
-            tokenAddress,
-          }
-          colorIdx++
-        }
-      })
-
-      return acc
-    },
-    {
-      assets: {},
-      globalVaultTVL: 0,
-      collateralRatio: 0,
-      avgCollateralRatio: 0,
-    },
-  )
-
-  const collateralRatio = (totalCollateralBalances / totalBorrowedAmounts) * 100
-
-  return {
-    assetsBalances: Object.values(assets),
-    globalVaultTVL,
-    collateralRatio,
-    avgCollateralRatio: collateralRatio / vaultWithBalances,
-  }
-}
-
 export const getVaultsProviderReturnValue = ({
   vaultsCtxState,
   activeSubs,
   changeVaultsSubscriptionsList,
+  setVaultsDashboardData,
   userAddress,
 }: {
   vaultsCtxState: NullableVaultsCtxState
   activeSubs: VaultsSubsRecordType
   changeVaultsSubscriptionsList: VaultsContext['changeVaultsSubscriptionsList']
+  setVaultsDashboardData: VaultsContext['setVaultsDashboardData']
   userAddress: string | null
 }) => {
-  const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds } = vaultsCtxState
+  const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds, vaultsDashboardData } = vaultsCtxState
   const commonToReturn = {
     changeVaultsSubscriptionsList,
+    setVaultsDashboardData,
+    vaultsDashboardData,
   }
 
   /**
@@ -367,8 +285,8 @@ export const getVaultsProviderReturnValue = ({
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
     return {
-      ...commonToReturn,
       ...EMPTY_VAULTS_CONTEXT,
+      ...commonToReturn,
       isLoading: true,
     }
   }

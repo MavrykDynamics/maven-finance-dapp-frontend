@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 
 // types
+import { ChartPeriodType } from 'types/charts.type'
 import { State } from 'reducers'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 
@@ -26,6 +27,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 
 // styles
 import {
@@ -37,6 +39,7 @@ import {
   FeedDetailsChartWrapper,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 
 // consts
 import {
@@ -51,16 +54,17 @@ import {
   calculateSlicePositions,
   getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
+import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
 import { Page } from 'styles'
+import { ONE_HOUR } from 'consts/charts.const'
 
 // helpers
+import { getChartXAxisTicks } from 'utils/charts.utils'
 import { parseDate } from 'utils/time'
-
-// actions
-import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
+import { SMALL_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
 
 const tabsList = [
   {
@@ -88,7 +92,8 @@ const DataFeedDetails = () => {
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
-  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId)
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+  const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId, chartPeriod)
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -111,6 +116,11 @@ const DataFeedDetails = () => {
   const [isTrustedAnswer, setTrustedAnswer] = useState(true)
 
   const [activeTab, setActiveTab] = useState(tabsList[0].id)
+
+  // handlers
+  const handlePeriodChange = useCallback((period: ChartPeriodType) => {
+    setChartPeriod(period)
+  }, [])
 
   useEffect(() => {
     if (!feed) return
@@ -331,6 +341,13 @@ const DataFeedDetails = () => {
               </div>
 
               <FeedDetailsChartWrapper>
+                <ChartsSwitherWithPosition
+                  currentPeriod={chartPeriod}
+                  setCurrentPeriod={handlePeriodChange}
+                  size={SMALL_SLIDING_TAB_BUTTONS}
+                  space={15}
+                  align={ALIGN_RIGHT}
+                />
                 {isFeedsChartsLoading ? (
                   <DataLoaderWrapper margin="0">
                     <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
@@ -338,6 +355,8 @@ const DataFeedDetails = () => {
                   </DataLoaderWrapper>
                 ) : (
                   <Chart
+                    isLoading={isFeedsChartsLoading}
+                    numberOfItemsToDisplay={chartPlots.length < 10 ? chartPlots.length : 10}
                     data={{ type: AREA_CHART_TYPE, plots: chartPlots }}
                     colors={{
                       lineColor: colors[themeSelected].primaryChartColor,
@@ -345,6 +364,7 @@ const DataFeedDetails = () => {
                       areaBottomColor: colors[themeSelected].primaryChartBottomColor,
                     }}
                     tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
+                    settings={{ tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod) }}
                   />
                 )}
               </FeedDetailsChartWrapper>

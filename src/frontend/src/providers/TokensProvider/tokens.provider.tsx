@@ -10,7 +10,7 @@ import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.
 
 // types
 import { TokensContext, TokensContextState } from './tokens.provider.types'
-import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 import { TokensGqlSchemaType, tokensGqlSchema } from './helpers/tokens.schemes'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
@@ -19,8 +19,8 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: handle itial loading with null init values
 export const TokensProvider = ({ children }: Props) => {
-  // TODO: replace with null init values
   const initialLoadingStatus = useRef(true)
 
   const [tokensCtxState, setTokensCtxState] = useState<TokensContextState>({

@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { normalizeTokenPrices } from './helpers/tokens.normalizer'
 
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 
 export const tokenMetadataSchema = z.object({
   icon: z.string().optional(),
