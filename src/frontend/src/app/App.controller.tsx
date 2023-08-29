@@ -7,6 +7,10 @@ import { useCookies } from 'react-cookie'
 
 import { configureStore } from './App.store'
 
+// consts
+import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
+import { ecadLabGhostnetRpcNode } from 'consts/rpcNodes.const'
+
 // types
 import { State } from '../reducers'
 
@@ -23,7 +27,6 @@ import { Footer } from './App.components/Footer/Footer'
 // actions
 import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
 import { setItemInStorage } from 'utils/storage'
-import { RPC_NODE, ecadLabSUrl } from 'providers/DappConfigProvider/helpers/dappConfig.const'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const { store } = configureStore({})
@@ -62,7 +65,7 @@ export const App = () => {
   // when user closes the tab - reset RPC node to the dafult one
   useEffect(() => {
     const handleBeforeUnload = () => {
-      setItemInStorage(RPC_NODE, ecadLabSUrl)
+      setItemInStorage(RPC_NODE, ecadLabGhostnetRpcNode)
     }
 
     window.addEventListener('beforeunload', handleBeforeUnload)

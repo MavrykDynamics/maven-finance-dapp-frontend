@@ -1,6 +1,8 @@
 import { getItemFromStorage } from 'utils/storage'
 import { DappConfigContextStateType } from '../dappConfig.provider.types'
 import { PreferencesState, LoadingState } from '../dappConfig.provider.types'
+import { ThemeType, themeSchema } from 'consts/theme.const'
+import { ecadLabGhostnetRpcNode, marigoldGhostnetRpcNode } from 'consts/rpcNodes.const'
 
 // global loading default state
 
@@ -79,21 +81,17 @@ export const DAPP_DEFAULT_CONTRACT_ADDRESSES = {
   vaultFactoryAddress: null,
 }
 
-// preferences default variables
-export const mariGoldUrl = 'https://ghostnet.tezos.marigold.dev/'
-export const ecadLabSUrl = 'https://ghostnet.ecadinfra.com'
-
 export const RPC_NODE = 'selectedRpcNode'
 
 export const preferencesDefaultState: PreferencesState = {
-  themeSelected: getItemFromStorage('theme') || 'space',
+  themeSelected: getItemFromStorage<ThemeType>('theme', themeSchema) || 'space',
   changeNodePopupOpen: false,
   sidebarOpened: false,
   RPC_NODES: [
-    { title: 'ECADLABS', url: ecadLabSUrl, nodeLogoUrl: 'ECAD_logo.png', isUser: false },
-    { title: 'MARIGOLD', url: mariGoldUrl, nodeLogoUrl: 'marigold_logo.png', isUser: false },
+    { title: 'ECADLABS', url: ecadLabGhostnetRpcNode, nodeLogoUrl: 'ECAD_logo.png', isUser: false },
+    { title: 'MARIGOLD', url: marigoldGhostnetRpcNode, nodeLogoUrl: 'marigold_logo.png', isUser: false },
   ],
-  REACT_APP_RPC_PROVIDER: ecadLabSUrl,
+  REACT_APP_RPC_PROVIDER: ecadLabGhostnetRpcNode,
 }
 
 export const defaultLoadingState: LoadingState = {

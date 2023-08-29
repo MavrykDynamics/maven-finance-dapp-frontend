@@ -2,15 +2,16 @@ import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
 import { hangInSpace } from 'styles/animations'
 import { Z_INDEX_DEFAULT } from 'styles/constants'
+import { ThemeType } from 'consts/theme.const'
 
-export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme }>`
+export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme; themeSelected: ThemeType }>`
   font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   margin: auto;
   width: 100vw;
   position: relative;
   height: 100vh;
   padding-top: 80px;
-  background: url('/images/error-bg.svg');
+  background: ${({ themeSelected }) => `url(/images/${themeSelected}/error-bg.svg)`};
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
