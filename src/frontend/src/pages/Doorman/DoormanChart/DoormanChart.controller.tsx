@@ -120,6 +120,7 @@ export function DoormanChart() {
               currentPeriod={chartPeriod}
               setCurrentPeriod={handlePeriodChange}
               size={SMALL_SLIDING_TAB_BUTTONS}
+              space={15}
             />
             <div className="double-chart-legend chart-legend">
               <div className="row mvk">
@@ -222,6 +223,7 @@ export function DoormanChart() {
               currentPeriod={chartPeriod}
               setCurrentPeriod={handlePeriodChange}
               size={SMALL_SLIDING_TAB_BUTTONS}
+              space={15}
             />
             <Chart
               isLoading={isChartsDataLoading}
