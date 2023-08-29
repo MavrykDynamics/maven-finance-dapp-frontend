@@ -1,12 +1,10 @@
 import { useCallback, useState } from 'react'
 import { SingleValueData, Time } from 'lightweight-charts'
 
-// styles
-import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
-
 // components
 import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
+import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
 import { Chart } from '../../../app/App.components/Chart/Chart'
 import {
   SlidingTabButtons,
@@ -14,7 +12,6 @@ import {
 } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // hooks
-
 import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -23,6 +20,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { CommaNumber, formatNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ONE_HOUR } from 'consts/charts.const'
 import colors from 'styles/colors'
+import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
@@ -113,16 +111,17 @@ export function DoormanChart() {
     <Wrapper>
       <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
-      <DoormanChartCard>
+      <DoormanChartCard isExitFeeChart={activeTabId === tabsList[1].id}>
         {activeTabId === tabsList[0].id ? (
           <>
             <ChartsSwitherWithPosition
               currentPeriod={chartPeriod}
               setCurrentPeriod={handlePeriodChange}
               size={SMALL_SLIDING_TAB_BUTTONS}
+              align={ALIGN_RIGHT}
               space={15}
             />
-            <div className="double-chart-legend chart-legend">
+            <div className="double-chart-legend">
               <div className="row mvk">
                 <div className="circle" /> MVK
               </div>
@@ -159,7 +158,7 @@ export function DoormanChart() {
               tooltipAssetFirst={'MVK'}
               tooltipAssetSecond={'sMVK'}
               settings={{
-                height: 380,
+                height: 370,
                 tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
               }}
             />
@@ -223,6 +222,7 @@ export function DoormanChart() {
               currentPeriod={chartPeriod}
               setCurrentPeriod={handlePeriodChange}
               size={SMALL_SLIDING_TAB_BUTTONS}
+              align={ALIGN_RIGHT}
               space={15}
             />
             <Chart
@@ -232,7 +232,7 @@ export function DoormanChart() {
                 plots: smvkHistoryData,
               }}
               settings={{
-                height: 380,
+                height: 370,
                 tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
               }}
               tooltipAsset={'sMVK'}

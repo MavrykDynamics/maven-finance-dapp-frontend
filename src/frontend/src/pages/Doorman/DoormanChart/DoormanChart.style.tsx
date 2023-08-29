@@ -15,7 +15,7 @@ export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
 
   position: absolute;
   right: 20px;
-  top: 15px;
+  top: 20px;
 
   .row {
     display: flex;
@@ -40,8 +40,8 @@ export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
-  padding: 40px 15px 0px 15px;
+export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme; isExitFeeChart: boolean }>`
+  padding: ${({ isExitFeeChart }) => (isExitFeeChart ? '40px 15px 5px 15px' : '50px 15px 5px 15px')};
   margin-top: 20px;
   height: 100%;
   display: flex;
@@ -67,7 +67,7 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
 
   .chart-legend {
     background-color: ${({ theme }) => theme.cards};
-    opacity: 0.9;
+    opacity: 0.8;
     z-index: 15;
     padding: 3px;
     border-radius: 5px;
@@ -75,7 +75,7 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
 
   .mli-label {
     position: absolute;
-    bottom: 55px;
+    bottom: 40px;
     right: 25px;
   }
 
@@ -87,7 +87,7 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
 
   .double-chart-legend {
     position: absolute;
-    top: 55px;
+    top: 15px;
     left: 25px;
     display: flex;
     flex-direction: column;
