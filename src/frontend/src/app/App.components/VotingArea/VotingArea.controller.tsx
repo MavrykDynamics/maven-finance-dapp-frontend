@@ -123,6 +123,7 @@ export const VotingProposalsArea = ({
   if (!selectedProposal.locked) return null
 
   if (!isVoteActive) {
+    // if we have voting round votes
     if (
       selectedProposal.upvoteMvkTotal > 0 ||
       selectedProposal.abstainMvkTotal > 0 ||
@@ -137,6 +138,7 @@ export const VotingProposalsArea = ({
       )
     }
 
+    // if only proposal round votes
     if (selectedProposal.passVoteMvkTotal > 0) {
       return (
         <VotingAreaStyled>
