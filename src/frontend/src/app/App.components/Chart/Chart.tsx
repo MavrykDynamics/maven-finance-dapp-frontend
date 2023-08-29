@@ -68,6 +68,7 @@ export const Chart = ({
   data,
   colors,
   settings,
+  // TODO handle items view in another way (like when and which screen to show)
   numberOfItemsToDisplay = 15,
   tooltipName,
   tooltipAsset,

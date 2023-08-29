@@ -11,7 +11,7 @@ import {
 import { TokensMetadataQuery } from 'utils/__generated__/graphql'
 import { DEFAULT_MIN_COLLATERAL_AMOUNT, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
-import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 import { TokensGqlSchemaType } from './tokens.schemes'
 
 /**
