@@ -319,6 +319,11 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
     border-color: ${({ theme }) => theme.inputFocusColor}7F;
   }
 
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   &.${INPUT_STATUS_ERROR} {
     border: 1px solid ${({ theme }) => theme.downColor};
     input {

@@ -23,7 +23,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 // types
 import { State } from 'reducers'
 import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSubmission.types'
-import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { GovPhases, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
 
 // consts
 import {
@@ -109,6 +109,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const [isFormDisabled, setIsFormDisabled] = useState(true)
 
   useEffect(() => {
+    if (governancePhase !== GovPhases.PROPOSAL) return
     const abortController = new AbortController()
 
     ;(async () => {

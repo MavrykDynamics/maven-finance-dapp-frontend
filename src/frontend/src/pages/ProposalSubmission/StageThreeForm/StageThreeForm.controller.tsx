@@ -25,8 +25,6 @@ import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.c
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -41,13 +39,12 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
-import { Info } from 'app/App.components/Info/Info.view'
 
 // providers
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 
 // NOTE: isLoading is handled in <ProposalSubmission.controller>
 export const StageThreeForm = ({
@@ -61,7 +58,6 @@ export const StageThreeForm = ({
   const { proposalPayments, locked, title } = currentProposal
 
   const { tokensMetadata } = useTokensContext()
-  const { isNewlyRegisteredSatellite } = useUserContext()
   const {
     maxLengths: {
       governance: { proposalMetadataTitleMaxLength },
@@ -199,7 +195,9 @@ export const StageThreeForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_3_DESCRIPTION}</div>
-      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
+
+      <ProposalSubmissionBanner />
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
