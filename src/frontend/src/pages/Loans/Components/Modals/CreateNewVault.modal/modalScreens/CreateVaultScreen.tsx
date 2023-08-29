@@ -33,7 +33,7 @@ export const CreateVaultScreen = () => {
   // handlers
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    updateInputVaultState({ name: value })
+    updateInputVaultState({ name: value, validationStatus: INPUT_STATUS_SUCCESS })
   }
 
   const handleVaultNameOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {

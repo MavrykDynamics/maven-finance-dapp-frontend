@@ -28,6 +28,7 @@ import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 import { setItemInStorage } from 'utils/storage'
 import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schemes'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
+import { unknownToError } from 'errors/error'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -165,7 +166,13 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // preferences actions
   const toggleTheme = (theme: ThemeType) => {
-    setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
+    try {
+      setItemInStorage('theme', theme)
+      setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
+    } catch (e) {
+      const err = unknownToError(e)
+      bug(err)
+    }
   }
 
   const toggleRPCNodePopup = (isOpened: boolean) => {

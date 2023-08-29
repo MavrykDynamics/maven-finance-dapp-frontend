@@ -46,7 +46,7 @@ export const CouncilAction = (props: Props) => {
               className="icon-send"
               target="_blank"
               href={`https://${
-                process.env.NODE_ENV === 'development' ? process.env.REACT_APP_NETWORK + '.' : ''
+                process.env.REACT_APP_BUILD_ENV === 'development' ? process.env.REACT_APP_NETWORK + '.' : ''
               }tzkt.io/${councilId}/operations/`}
               rel="noreferrer"
             >

@@ -228,6 +228,7 @@ export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
   .feeds-grid {
     margin-top: 15px;
     margin-bottom: 5px;
+    row-gap: 7px; /*for shadows on hover */
     max-width: 680px;
     display: flex;
     flex-direction: column;
