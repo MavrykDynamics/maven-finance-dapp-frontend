@@ -36,7 +36,7 @@ export const ProposalSubmissionBanner = () => {
     config: { currentRoundEndLevel, governancePhase },
   } = useSelector((state: State) => state.governance)
 
-  const [needMoveRound, setNeedMoveRound] = useState(false)
+  const [needRefreshCycle, setNeedRefreshCycle] = useState(false)
 
   useEffect(() => {
     if (governancePhase !== GovPhases.PROPOSAL) return
@@ -50,7 +50,7 @@ export const ProposalSubmissionBanner = () => {
           getTimestampByLevelSchema,
         )
 
-        setNeedMoveRound(dayjs(votingEndTimestamp).diff() <= 0)
+        setNeedRefreshCycle(dayjs(votingEndTimestamp).diff() <= 0)
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
@@ -63,7 +63,7 @@ export const ProposalSubmissionBanner = () => {
     return () => abortController.abort()
   }, [currentRoundEndLevel])
 
-  if (needMoveRound) {
+  if (needRefreshCycle) {
     return (
       <ProposalSubmissionBannerStyled>
         <Info text={MOVE_CYCLE_BANNER_TEXT} type={INFO_DEFAULT} />
