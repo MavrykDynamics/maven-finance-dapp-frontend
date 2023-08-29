@@ -231,8 +231,8 @@ export const UsersListCardsWrapper = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const FeedDetailsChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
-  padding: 30px 12px 14px 20px;
-  height: 415px;
+  padding: 52px 12px 0px 20px;
+  height: 420px;
   position: relative;
 
   display: flex;

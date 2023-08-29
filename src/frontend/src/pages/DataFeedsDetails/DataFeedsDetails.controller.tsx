@@ -63,6 +63,8 @@ import { ONE_HOUR } from 'consts/charts.const'
 // helpers
 import { getChartXAxisTicks } from 'utils/charts.utils'
 import { parseDate } from 'utils/time'
+import { SMALL_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
 
 const tabsList = [
   {
@@ -339,7 +341,13 @@ const DataFeedDetails = () => {
               </div>
 
               <FeedDetailsChartWrapper>
-                <ChartsSwitherWithPosition currentPeriod={chartPeriod} setCurrentPeriod={handlePeriodChange} />
+                <ChartsSwitherWithPosition
+                  currentPeriod={chartPeriod}
+                  setCurrentPeriod={handlePeriodChange}
+                  size={SMALL_SLIDING_TAB_BUTTONS}
+                  space={15}
+                  align={ALIGN_RIGHT}
+                />
                 {isFeedsChartsLoading ? (
                   <DataLoaderWrapper margin="0">
                     <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
