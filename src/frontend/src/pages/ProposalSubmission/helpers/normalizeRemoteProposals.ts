@@ -65,14 +65,14 @@ export const mergeRemoteProposalsWithClient = ({
       const proposalFromClient = proposalState[proposalId]
       const proposalValidationFromClient = proposalsValidation[proposalId]
 
-      const isCurrentProposalUpdated = lastProposalIdFromOperation === proposalFromClient.id
-
       // if proposal exists on remote, but client don't have it, add it to client
       if (proposalFromRemote && !proposalFromClient) {
         acc.mergedProposals[proposalId] = proposalFromRemote
         acc.mergedProposalsValidation[proposalId] = proposalValidationFromRemote
         return acc
       }
+
+      const isCurrentProposalUpdated = lastProposalIdFromOperation === proposalFromClient?.id
 
       // if proposal exists on client and on remote merge their fields, to prevent clearing user enetered data
       acc.mergedProposals[proposalId] = {
