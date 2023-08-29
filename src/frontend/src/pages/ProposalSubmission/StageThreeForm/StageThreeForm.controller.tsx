@@ -5,7 +5,6 @@ import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provi
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '../ProposalSubmission.types'
@@ -23,7 +22,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
-import { Info } from 'app/App.components/Info/Info.view'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 import Button from 'app/App.components/Button/NewButton'
 
 // const
@@ -31,8 +30,6 @@ import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.c
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -60,7 +57,6 @@ export const StageThreeForm = ({
   const { proposalPayments, locked, title } = currentProposal
 
   const { tokensMetadata } = useTokensContext()
-  const { isNewlyRegisteredSatellite } = useUserContext()
   const {
     maxLengths: {
       governance: { proposalMetadataTitleMaxLength },
@@ -200,7 +196,9 @@ export const StageThreeForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_3_DESCRIPTION}</div>
-      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
+
+      <ProposalSubmissionBanner />
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>

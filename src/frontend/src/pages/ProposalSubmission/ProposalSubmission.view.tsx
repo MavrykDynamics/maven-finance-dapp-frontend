@@ -42,6 +42,7 @@ import {
 } from 'app/App.components/Button/Button.constants'
 import {
   DROP_PROPOSAL_ACTION,
+  GovPhases,
   LOCK_PROPOSAL_ACTION,
   SUBMIT_PROPOSAL_ACTION,
   UPDATE_PROPOSAL_DATA_ACTION,
@@ -103,6 +104,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const [lastProposalIdFromOperation, setLastProposalIdFromOperation] = useState<null | number>(null)
 
   useEffect(() => {
+    if (governancePhase !== GovPhases.PROPOSAL) return
     const abortController = new AbortController()
 
     ;(async () => {

@@ -356,7 +356,7 @@ const DataFeedDetails = () => {
                 ) : (
                   <Chart
                     isLoading={isFeedsChartsLoading}
-                    numberOfItemsToDisplay={chartPlots.length < 10 ? chartPlots.length : 10}
+                    numberOfItemsToDisplay={2}
                     data={{ type: AREA_CHART_TYPE, plots: chartPlots }}
                     colors={{
                       lineColor: colors[themeSelected].primaryChartColor,

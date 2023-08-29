@@ -3,7 +3,6 @@ import React, { useState, useMemo, useEffect } from 'react'
 // context
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 import { ProposalBytesType, StageTwoFormProps } from '../ProposalSubmission.types'
@@ -14,6 +13,7 @@ import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 import { Input } from '../../../app/App.components/Input/NewInput'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Button from 'app/App.components/Button/NewButton'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 import { Info } from 'app/App.components/Info/Info.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
@@ -29,7 +29,6 @@ import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.
 import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { PROPOSAL_BYTE } from '../helpers/proposalSubmission.const'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
 // styles
 import { SubmitProposalBytes, SubmitProposalBytesPair, SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -48,7 +47,6 @@ export const StageTwoForm = ({
       governance: { proposalMetadataTitleMaxLength, proposalDescriptionMaxLength },
     },
   } = useDappConfigContext()
-  const { isNewlyRegisteredSatellite } = useUserContext()
   const {
     config: { governancePhase, fee, successReward },
   } = useProposalsContext()
@@ -262,7 +260,7 @@ export const StageTwoForm = ({
     <>
       <div className="stage-descr">{STAGE_2_DESCRIPTION}</div>
 
-      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
+      <ProposalSubmissionBanner />
 
       <SubmitProposalGeneralData>
         <div className="submitted-data">

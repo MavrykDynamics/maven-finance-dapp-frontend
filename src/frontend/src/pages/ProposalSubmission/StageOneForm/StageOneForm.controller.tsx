@@ -1,7 +1,6 @@
 import React from 'react'
 
 // context
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
@@ -10,7 +9,7 @@ import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { ProposalSubmittionStageOneBody } from '../ProposalSubmission.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
-import { Info } from 'app/App.components/Info/Info.view'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
@@ -23,8 +22,6 @@ import { containSpaces } from 'app/App.utils/input'
 
 // consts
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export const StageOneForm = ({
@@ -40,7 +37,6 @@ export const StageOneForm = ({
       governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
     },
   } = useDappConfigContext()
-  const { isNewlyRegisteredSatellite } = useUserContext()
   const {
     config: { governancePhase, fee, successReward },
   } = useProposalsContext()
@@ -112,7 +108,8 @@ export const StageOneForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_1_DESCRIPTION}</div>
-      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
+
+      <ProposalSubmissionBanner />
 
       <ProposalSubmittionStageOneBody isProposalSubmitted={isProposalSubmitted}>
         {isProposalSubmitted ? (
@@ -172,9 +169,7 @@ export const StageOneForm = ({
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
             <div className="label">5 - Proposal source code</div>
-            <a href={currentProposal.sourceCode}>
-              {currentProposal.sourceCode}
-            </a>
+            <a href={currentProposal.sourceCode}>{currentProposal.sourceCode}</a>
           </div>
         ) : (
           <Input
@@ -206,9 +201,7 @@ export const StageOneForm = ({
                     alt="invoice for the proposal"
                   />
                 </div>{' '}
-                <a href={currentProposal.invoice}>
-                  {currentProposal.invoice}
-                </a>
+                <a href={currentProposal.invoice}>{currentProposal.invoice}</a>
               </div>
             ) : (
               <div className="value">No link for an invoice given</div>

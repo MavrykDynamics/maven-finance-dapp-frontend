@@ -17,7 +17,7 @@ import Button from '../Button/NewButton'
 import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { Info } from '../Info/Info.view'
 import { INFO_DEFAULT } from '../Info/info.constants'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { NEWLY_REGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type VotingType = VotingProps & {
@@ -162,7 +162,7 @@ export const VotingProposalsArea = ({
           <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
           {isNewlyRegisteredSatellite && (
             <div className="banner-area">
-              <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
+              <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
             </div>
           )}
           {userAddress ? (
