@@ -94,15 +94,16 @@ export function normalizeDataFeedsHistory(historyData: FeedHistoryQeuryQuery['ag
     dataFeedsVolatility: AreaChartPlotType[]
   }>(
     (acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
-      if (!arr?.[idx - 1]) return acc
-
-      if (arr.length >= 2) {
+      const prevItem = arr[idx - 1]
+      // for volatility we should have current item and prev to get their difference in %
+      if (prevItem) {
+        const { data: prevData } = prevItem
         // volatility
         acc.dataFeedsVolatility.push({
           time: new Date(timestamp).getTime() as UTCTimestamp,
           value: percentageDifference(
             symbolsAfterDecimalPoint(convertNumberForClient({ number: data, grade: decimals })),
-            symbolsAfterDecimalPoint(convertNumberForClient({ number: arr[idx - 1]?.data ?? 0, grade: decimals })),
+            symbolsAfterDecimalPoint(convertNumberForClient({ number: prevData, grade: decimals })),
           ),
         } as AreaChartPlotType)
       }
