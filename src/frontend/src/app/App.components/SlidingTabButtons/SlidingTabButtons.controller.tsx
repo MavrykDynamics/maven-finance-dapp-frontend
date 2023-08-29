@@ -1,8 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import classNames from 'classnames'
 
-import { ButtonStyled, SlidingTabButtonsStyled } from './SlidingTabButtons.style'
-import { PRIMARY_SLIDING_TAB_BUTTONS, SlidingTabButtonsKindsType } from './SlidingTabButtons.conts'
+import { SlidingTabBtn, SlidingTabButtonsStyled } from './SlidingTabButtons.style'
+import {
+  MEDIUM_SLIDING_TAB_BUTTONS,
+  PRIMARY_SLIDING_TAB_BUTTONS,
+  SlidingTabButtonsKindsType,
+  SlidingTabButtonsSizesType,
+} from './SlidingTabButtons.conts'
 
 export interface SlidingTabButtonType {
   text: string
@@ -18,6 +23,7 @@ type SlidingTabButtonsProps = {
   kind?: SlidingTabButtonsKindsType
   disabled?: boolean
   className?: string
+  size?: SlidingTabButtonsSizesType
 }
 
 export const SlidingTabButtons = ({
@@ -26,6 +32,7 @@ export const SlidingTabButtons = ({
   kind = PRIMARY_SLIDING_TAB_BUTTONS,
   className,
   disabled = false,
+  size = MEDIUM_SLIDING_TAB_BUTTONS,
 }: SlidingTabButtonsProps) => {
   // if we found active item by default set it, othervise set first item active, if it's not disabled
   const [activeTab, setActiveTab] = useState<number | undefined>(
@@ -51,15 +58,15 @@ export const SlidingTabButtons = ({
   )
 
   return (
-    <SlidingTabButtonsStyled className={classNames(className, kind, { disabled: disabled })}>
+    <SlidingTabButtonsStyled className={classNames(className, kind, size, { disabled: disabled })}>
       {tabItems.map((tabItem) => (
-        <ButtonStyled
+        <SlidingTabBtn
           key={tabItem.id}
           onClick={() => clickHandler(tabItem.id)}
-          className={classNames(kind, { selected: activeTab === tabItem.id }, { disabled: tabItem.disabled })}
+          className={classNames(kind, size, { selected: activeTab === tabItem.id }, { disabled: tabItem.disabled })}
         >
           {tabItem.text}
-        </ButtonStyled>
+        </SlidingTabBtn>
       ))}
     </SlidingTabButtonsStyled>
   )
