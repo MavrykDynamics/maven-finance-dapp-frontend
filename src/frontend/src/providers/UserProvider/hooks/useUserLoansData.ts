@@ -22,7 +22,12 @@ const useUserLoansData = () => {
   const [indexerData, setIndexerData] = useState<GetUserLoansDataQuery | null>(null)
 
   useEffect(() => {
-    if (!indexerData || !indexerData.mavryk_user[0]) return
+    if (!indexerData) return
+
+    if (!indexerData.mavryk_user[0]) {
+      setUserLoansData(DEFAULT_USER_LOANS_DATA)
+      return
+    }
 
     const { userLendings, userBorrowings, userVaultsData, totalUserLended, totalUserBorrowed } = normalizeUserLoansData(
       indexerData,
