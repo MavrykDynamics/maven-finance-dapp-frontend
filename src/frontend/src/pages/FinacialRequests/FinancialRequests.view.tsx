@@ -69,6 +69,7 @@ export const FinancialRequestsView = ({
   const { bug } = useToasterContext()
   const {
     contractAddresses: { governanceFinancialAddress },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { userAddress, isSatellite: isUserSatellite } = useUserContext()
 
@@ -172,6 +173,7 @@ export const FinancialRequestsView = ({
           }
           className={'fr-voting'}
           disableButtonByVote={userVote}
+          disableVotingButtons={isActionActive}
         />
 
         <hr />
