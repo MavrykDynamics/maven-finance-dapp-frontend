@@ -56,9 +56,9 @@ export const ErrorPage = ({
           <ErrorTopbar themeSelected={themeSelected} handleRedirect={handleRedirect} />
           <ErrorPageInner>
             <ErrorTopHeader>Error</ErrorTopHeader>
-            <Vector1 src="/images/satellite-error.svg" />
+            <Vector1 src={`/images/${themeSelected}/satellite-error.svg`} />
             <ErrorLogoImage src="/images/404.svg" alt="404-logo" />
-            <Vector2 src="/images/space-cow.svg" />
+            <Vector2 src={`/images/${themeSelected}/space-cow.svg`} />
             <ErrorMidHeader>{headerText}</ErrorMidHeader>
             <ErrorParagraph>{descText}</ErrorParagraph>
             {type === ERROR_TYPE_ROUTER && (

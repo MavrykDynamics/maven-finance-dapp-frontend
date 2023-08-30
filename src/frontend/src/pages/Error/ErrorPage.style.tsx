@@ -49,8 +49,7 @@ export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`
-  /* TODO change color after Ann add new color */
-  color: ${({ theme }) => theme.regularText};
+  color: ${({ theme }) => theme.mainHeadingText};
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
