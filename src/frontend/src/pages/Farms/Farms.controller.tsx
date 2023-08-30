@@ -1,7 +1,7 @@
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import qs from 'qs'
-import { useCallback, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -47,6 +47,15 @@ import {
 } from './Farms.const'
 import FarmsPopupsProvider from './FarmsPopups/FarmsPopups.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
+import {
+  DEFAULT_FARMS_ACTIVE_SUBS,
+  FARMS_DATA_SUB,
+  FARMS_FINISHED_DATA_SUB,
+  FARMS_FINISHED_STAKED_DATA_SUB,
+  FARMS_LIVE_DATA_SUB,
+  FARMS_LIVE_STAKED_DATA_SUB,
+} from 'providers/FarmsProvider/helpers/farms.const'
 
 const EmptyContainer = () => (
   <EmptyList>
@@ -68,17 +77,9 @@ export const Farms = () => {
   const history = useHistory()
   const { search, pathname } = useLocation()
   const { tokensMetadata } = useTokensContext()
+  const { changeFarmsSubscriptionList, isLoading: isFarmsLoading } = useFarmsContext()
   const { farms, isLoaded } = useSelector((state: State) => state.farm)
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      if (!isLoaded || isDepsChanged) {
-        await dispatch(getFarmStorage(tokensMetadata))
-      }
-    } catch (error) {}
-  }, [])
-
-  const [farmsList, setFarmsList] = useState(farms)
   const [farmsFilers, setFarmsFilters] = useState<FarmsFiltersStateType>({
     isStaked: NO_STAKED,
     isLive: LIVE_TAB_ID,
@@ -87,6 +88,33 @@ export const Farms = () => {
     openedFarmsCards: [],
     farmsViewVariant: VERTICAL_FARM_VIEW,
   })
+
+  useEffect(() => {
+    const { isLive, isStaked } = farmsFilers
+    const subType = isStaked
+      ? isLive
+        ? FARMS_LIVE_STAKED_DATA_SUB
+        : FARMS_FINISHED_STAKED_DATA_SUB
+      : isLive
+      ? FARMS_LIVE_DATA_SUB
+      : FARMS_FINISHED_DATA_SUB
+
+    changeFarmsSubscriptionList({ [FARMS_DATA_SUB]: subType })
+
+    return () => {
+      changeFarmsSubscriptionList(DEFAULT_FARMS_ACTIVE_SUBS)
+    }
+  }, [farmsFilers])
+
+  // const { isLoading } = useDataLoader(async (isDepsChanged) => {
+  //   try {
+  //     if (!isLoaded || isDepsChanged) {
+  //       await dispatch(getFarmStorage(tokensMetadata))
+  //     }
+  //   } catch (error) {}
+  // }, [])
+
+  const [farmsList, setFarmsList] = useState(farms)
 
   // pagination
   const listName = farmsFilers.farmsViewVariant === VERTICAL_FARM_VIEW ? FARMS_VERTICAL_CARDS : FARMS_HORIZONTAL_CARDS
@@ -205,7 +233,7 @@ export const Farms = () => {
             }}
             className={farmsFilers.farmsViewVariant}
           />
-          {isLoading ? (
+          {isFarmsLoading ? (
             <DataLoaderWrapper className="tabLoader">
               <ClockLoader width={150} height={150} />
               <div className="text">Loading farms</div>
