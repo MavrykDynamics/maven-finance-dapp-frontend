@@ -31,6 +31,20 @@ export const QUERY_TOKENS_METADATA = gql(`
       mvk_tokens {
         address
       }
+
+      # check whether token is farm LP token
+      farms_lp_tokens {
+        name
+        metadata
+        token0 {
+          token_address
+          metadata
+        }
+        token1 {
+          token_address
+          metadata
+        }
+      }
     }
   }
 `)

@@ -9,7 +9,7 @@ import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
 
 // types
-import { TokensContext, TokensContextState } from './tokens.provider.types'
+import { TokensContext, TokensContextStateType } from './tokens.provider.types'
 import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 import { TokensGqlSchemaType, tokensGqlSchema } from './helpers/tokens.schemes'
 
@@ -23,10 +23,11 @@ type Props = {
 export const TokensProvider = ({ children }: Props) => {
   const initialLoadingStatus = useRef(true)
 
-  const [tokensCtxState, setTokensCtxState] = useState<TokensContextState>({
+  const [tokensCtxState, setTokensCtxState] = useState<TokensContextStateType>({
     collateralTokens: [],
     mTokens: [],
     tokensMetadata: {},
+    farmLpTokens: [],
     tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_ADDRESS]: 1 },
   })
 
@@ -64,13 +65,16 @@ export const TokensProvider = ({ children }: Props) => {
   const updateTokensMetadata = (tokensGql: TokensGqlSchemaType) => {
     const tokensMetadata = normalizeTokensMetadata(tokensGql)
 
-    setTokensCtxState({
+    setTokensCtxState((prev) => ({
       ...tokensCtxState,
-      tokensMetadata: { ...tokensCtxState.tokensMetadata, ...tokensMetadata.tokensMetadata },
-      collateralTokens: [...tokensCtxState.collateralTokens, ...tokensMetadata.collateralTokens],
-      mTokens: [...tokensCtxState.mTokens, ...tokensMetadata.mTokens],
-    })
+      tokensMetadata: { ...prev.tokensMetadata, ...tokensMetadata.tokensMetadata },
+      farmLpTokens: tokensMetadata.farmLpTokens,
+      collateralTokens: tokensMetadata.collateralTokens,
+      mTokens: tokensMetadata.mTokens,
+    }))
   }
+
+  console.log({ tokensCtxState })
 
   const providerValue = useMemo(() => {
     return {

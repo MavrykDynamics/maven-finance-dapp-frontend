@@ -1,30 +1,11 @@
-import { z } from 'zod'
-
 import { normalizeTokenPrices } from './helpers/tokens.normalizer'
 
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 
-export const tokenMetadataSchema = z.object({
-  icon: z.string().optional(),
-  symbol: z.string(),
-  decimals: z.string(),
-})
-
-export type TokenIndexerMetadataType = z.infer<typeof tokenMetadataSchema>
-
-export const mTokenMetadataSchema = z.object({
-  assets: z.array(
-    z.object({
-      decimals: z.string(),
-    }),
-  ),
-})
-
 export type TokenAddressType = string
 
-// regular token
-
+// Full token metadata type
 export type TokenMetadataType = {
   id: number
   address: TokenAddressType
@@ -33,22 +14,35 @@ export type TokenMetadataType = {
   decimals: number
   icon: string
   type: TokenType
-} & PropertiesFromDifferentTokenTypes
-
-export type TokenLoansDataType = {
-  indexerName: string
-  minDepositAmount: number
-  isPausedCollateral: boolean
-  isScaled: boolean
-  isStaked: boolean
-}
-
-type PropertiesFromDifferentTokenTypes = DeepPartial<{
-  // loan & collateral tokens properties
-  loanData: TokenLoansDataType
+} & DeepPartial<{
+  // Loan tokens fields (market tokens, collateral tokens)
+  loanData: {
+    indexerName: string
+    minDepositAmount: number
+    isPausedCollateral: boolean
+    isScaled: boolean
+    isStaked: boolean
+  }
+  // Farms LP tokens fields
+  farmLpData: {
+    token1: {
+      address: TokenAddressType
+      name: string
+      symbol: string
+      decimals: number
+      icon: string
+    }
+    token0: {
+      address: TokenAddressType
+      name: string
+      symbol: string
+      decimals: number
+      icon: string
+    }
+  }
 }>
 
-// loan token (market)
+// loan token metadata
 export interface LoansTokenMetadataType extends TokenMetadataType {
   loanData: {
     indexerName: string
@@ -56,7 +50,7 @@ export interface LoansTokenMetadataType extends TokenMetadataType {
   }
 }
 
-// collareral token
+// collareral token metadata
 export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
   loanData: {
     indexerName: string
@@ -76,15 +70,16 @@ export type UserMTokenType = {
 type TokensPricesType = ReturnType<typeof normalizeTokenPrices>
 
 // Context types
-export type TokensContext = {
-  // data
-  collateralTokens: Array<TokenAddressType>
-  mTokens: Array<TokenAddressType>
-  tokensMetadata: Record<TokenAddressType, TokenMetadataType>
-  tokensPrices: TokensPricesType
+export type TokensContext = TokensContextStateType & {
   isLoading: boolean
-  // methods
+
   updateTokensPrices: (feeds: FullFeedsQueryType | SmallFeedsQueryType) => void
 }
 
-export type TokensContextState = Pick<TokensContext, 'tokensPrices' | 'collateralTokens' | 'tokensMetadata' | 'mTokens'>
+export type TokensContextStateType = {
+  collateralTokens: Array<TokenAddressType>
+  mTokens: Array<TokenAddressType>
+  farmLpTokens: Array<TokenAddressType>
+  tokensMetadata: Record<TokenAddressType, TokenMetadataType>
+  tokensPrices: TokensPricesType
+}
