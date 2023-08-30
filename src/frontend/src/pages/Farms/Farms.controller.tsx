@@ -1,5 +1,5 @@
 import { useHistory, useLocation } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import qs from 'qs'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
@@ -34,7 +34,6 @@ import {
 
 // types
 import { State } from '../../reducers'
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
@@ -51,18 +50,11 @@ import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
 import {
   DEFAULT_FARMS_ACTIVE_SUBS,
   FARMS_DATA_SUB,
-  FARMS_FINISHED_DATA_SUB,
+  FARMS_FINISHED_NOT_STAKED_DATA_SUB,
   FARMS_FINISHED_STAKED_DATA_SUB,
-  FARMS_LIVE_DATA_SUB,
+  FARMS_LIVE_NOT_STAKED_DATA_SUB,
   FARMS_LIVE_STAKED_DATA_SUB,
 } from 'providers/FarmsProvider/helpers/farms.const'
-
-const EmptyContainer = () => (
-  <EmptyList>
-    <img src="/images/not-found.svg" alt=" No results to show" />
-    <figcaption>No results to show</figcaption>
-  </EmptyList>
-)
 
 export type HandleClickArgsType = { filterType: 'search' | 'sort' | 'isStaked' | 'isLive' | 'openCard' } & Partial<{
   newStakedValue: isStakedFarmType
@@ -73,12 +65,11 @@ export type HandleClickArgsType = { filterType: 'search' | 'sort' | 'isStaked' |
 }>
 
 export const Farms = () => {
-  const dispatch = useDispatch()
   const history = useHistory()
   const { search, pathname } = useLocation()
   const { tokensMetadata } = useTokensContext()
   const { changeFarmsSubscriptionList, isLoading: isFarmsLoading } = useFarmsContext()
-  const { farms, isLoaded } = useSelector((state: State) => state.farm)
+  const { farms } = useSelector((state: State) => state.farm)
 
   const [farmsFilers, setFarmsFilters] = useState<FarmsFiltersStateType>({
     isStaked: NO_STAKED,
@@ -91,28 +82,21 @@ export const Farms = () => {
 
   useEffect(() => {
     const { isLive, isStaked } = farmsFilers
-    const subType = isStaked
-      ? isLive
-        ? FARMS_LIVE_STAKED_DATA_SUB
-        : FARMS_FINISHED_STAKED_DATA_SUB
-      : isLive
-      ? FARMS_LIVE_DATA_SUB
-      : FARMS_FINISHED_DATA_SUB
 
-    changeFarmsSubscriptionList({ [FARMS_DATA_SUB]: subType })
+    if (isStaked) {
+      changeFarmsSubscriptionList({
+        [FARMS_DATA_SUB]: isLive ? FARMS_LIVE_STAKED_DATA_SUB : FARMS_FINISHED_STAKED_DATA_SUB,
+      })
+    } else {
+      changeFarmsSubscriptionList({
+        [FARMS_DATA_SUB]: isLive ? FARMS_LIVE_NOT_STAKED_DATA_SUB : FARMS_FINISHED_NOT_STAKED_DATA_SUB,
+      })
+    }
 
     return () => {
       changeFarmsSubscriptionList(DEFAULT_FARMS_ACTIVE_SUBS)
     }
   }, [farmsFilers])
-
-  // const { isLoading } = useDataLoader(async (isDepsChanged) => {
-  //   try {
-  //     if (!isLoaded || isDepsChanged) {
-  //       await dispatch(getFarmStorage(tokensMetadata))
-  //     }
-  //   } catch (error) {}
-  // }, [])
 
   const [farmsList, setFarmsList] = useState(farms)
 
@@ -221,9 +205,9 @@ export const Farms = () => {
   )
 
   return (
-    <Page>
-      <PageHeader page={'farms'} />
-      <FarmsPopupsProvider>
+    <FarmsPopupsProvider>
+      <Page>
+        <PageHeader page={'farms'} />
         <FarmsStyled>
           <FarmTopBar
             handleFilterClick={handleFilterClick}
@@ -261,10 +245,13 @@ export const Farms = () => {
               <Pagination itemsCount={farmsList.length} listName={listName} side={PAGINATION_SIDE_CENTER} />
             </>
           ) : (
-            <EmptyContainer />
+            <EmptyList>
+              <img src="/images/not-found.svg" alt=" No results to show" />
+              <figcaption>No results to show</figcaption>
+            </EmptyList>
           )}
         </FarmsStyled>
-      </FarmsPopupsProvider>
-    </Page>
+      </Page>
+    </FarmsPopupsProvider>
   )
 }

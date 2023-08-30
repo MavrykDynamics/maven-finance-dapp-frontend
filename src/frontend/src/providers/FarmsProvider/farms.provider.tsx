@@ -7,7 +7,16 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // consts
 import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { DEFAULT_FARMS_ACTIVE_SUBS, DEFAULT_FARMS_CTX, FARMS_DATA_SUB } from './helpers/farms.const'
+import {
+  DEFAULT_FARMS_ACTIVE_SUBS,
+  DEFAULT_FARMS_CTX,
+  FARMS_ALL_DATA_SUB,
+  FARMS_DATA_SUB,
+  FARMS_FINISHED_NOT_STAKED_DATA_SUB,
+  FARMS_FINISHED_STAKED_DATA_SUB,
+  FARMS_LIVE_NOT_STAKED_DATA_SUB,
+  FARMS_LIVE_STAKED_DATA_SUB,
+} from './helpers/farms.const'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { getFarms } from './queries/farms.query'
 
@@ -17,6 +26,7 @@ import { getFarmsReturnValue } from './helpers/farms.utils'
 // types
 import { FarmsProviderSubsType, NullableFarmCtxStateType, FarmsCtxType } from './farms.provider.types'
 import { FarmsQueryQuery } from 'utils/__generated__/graphql'
+import { normalizeFarms } from './helpers/farms.normalizer'
 
 export const farmsContext = React.createContext<FarmsCtxType>(undefined!)
 
@@ -35,6 +45,8 @@ const FarmsProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
+  console.log({ activeSubs })
+
   useQueryWithRefetch(getFarms(activeSubs[FARMS_DATA_SUB]), {
     skip: activeSubs[FARMS_DATA_SUB] === null,
     onError: (error) => handleSubError(error, 'getFinancialRequestsStorageSubscription ERROR'),
@@ -44,7 +56,39 @@ const FarmsProvider = ({ children }: Props) => {
     },
   })
 
-  const updateFarms = (indexerData: FarmsQueryQuery) => {}
+  const updateFarms = (indexerData: FarmsQueryQuery) => {
+    const normalizedFarms = normalizeFarms(indexerData.farm, activeSubs[FARMS_DATA_SUB])
+
+    const isAllFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_DATA_SUB
+    const isLiveFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_LIVE_NOT_STAKED_DATA_SUB
+    const isLiveStakedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_LIVE_STAKED_DATA_SUB
+    const isFinishedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_FINISHED_NOT_STAKED_DATA_SUB
+    const isFinishedStakedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_FINISHED_STAKED_DATA_SUB
+
+    setFarmsCtxState((prev) => ({
+      ...prev,
+      farmsMapper: { ...prev.farmsMapper, ...normalizedFarms.farmsMapper },
+      allFarms: isAllFarmsSubActive
+        ? normalizedFarms.allFarms
+        : [...(prev.allFarms ?? []), ...normalizedFarms.allFarms],
+      liveNotStakedFarms:
+        isAllFarmsSubActive || isLiveFarmsSubActive
+          ? normalizedFarms.liveNotStakedFarms
+          : [...(prev.liveNotStakedFarms ?? []), ...normalizedFarms.liveNotStakedFarms],
+      liveStakedFarms:
+        isAllFarmsSubActive || isLiveStakedFarmsSubActive
+          ? normalizedFarms.liveStakedFarms
+          : [...(prev.liveStakedFarms ?? []), ...normalizedFarms.liveStakedFarms],
+      finishedNotStakedFarms:
+        isAllFarmsSubActive || isFinishedFarmsSubActive
+          ? normalizedFarms.finishedNotStakedFarms
+          : [...(prev.finishedNotStakedFarms ?? []), ...normalizedFarms.finishedNotStakedFarms],
+      finishedStakedFarms:
+        isAllFarmsSubActive || isFinishedStakedFarmsSubActive
+          ? normalizedFarms.finishedStakedFarms
+          : [...(prev.finishedStakedFarms ?? []), ...normalizedFarms.finishedStakedFarms],
+    }))
+  }
 
   const changeFarmsSubscriptionList = (newSkips: Partial<FarmsProviderSubsType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
@@ -59,6 +103,8 @@ const FarmsProvider = ({ children }: Props) => {
       }),
     [activeSubs, farmsCtxState],
   )
+
+  console.log({ contextProviderValue })
 
   return <farmsContext.Provider value={contextProviderValue}>{children}</farmsContext.Provider>
 }

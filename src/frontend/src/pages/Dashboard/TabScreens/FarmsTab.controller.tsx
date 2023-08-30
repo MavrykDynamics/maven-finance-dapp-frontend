@@ -24,7 +24,7 @@ export const FarmsTab = () => {
   const { farms } = useSelector((state: State) => state.farm)
   // On dashboard farms tab show only live farms
 
-  const liveFarms = useMemo(() => farms.filter(({ isLive }) => isLive), [farms])
+  const liveNotStakedFarms = useMemo(() => farms.filter(({ isLive }) => isLive), [farms])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_farmsTab_bg.png">
@@ -41,7 +41,7 @@ export const FarmsTab = () => {
             <ClockLoader width={150} height={150} />
             <div className="text">Loading farms</div>
           </DataLoaderWrapper>
-        ) : liveFarms.length ? (
+        ) : liveNotStakedFarms.length ? (
           farms.map((farmCardData) => {
             const apy = calculateAPY(farmCardData.currentRewardPerBlock, farmCardData.lpBalance)
             return (
