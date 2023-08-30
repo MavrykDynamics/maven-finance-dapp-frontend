@@ -49,7 +49,6 @@ export default function TimeRemaining() {
 
   const { bug } = useToasterContext()
   const [timerDeadline, setTimerDeadline] = useState(0)
-  const [timerActive, setTimerActive] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [estimatedValues] = useState({ fee: 0, cost: 0 })
 
@@ -122,10 +121,8 @@ export default function TimeRemaining() {
           getTimestampByLevelSchema,
         )
         const convertedToTimestamp = new Date(duration).getTime()
-        const isTimestampValid = convertedToTimestamp > Date.now()
 
-        setTimerActive(isTimestampValid)
-        if (isTimestampValid) setTimerDeadline(convertedToTimestamp)
+        setTimerDeadline(convertedToTimestamp)
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
@@ -138,9 +135,11 @@ export default function TimeRemaining() {
     return () => abortController.abort()
   }, [currentRoundEndLevel])
 
+  const isTimerActive = timerDeadline > Date.now()
+
   return (
-    <TimeLeftAreaWrap showBorder={timerActive}>
-      {timerActive ? (
+    <TimeLeftAreaWrap showBorder={isTimerActive}>
+      {isTimerActive ? (
         <>
           <Timer
             timestamp={timerDeadline}
