@@ -4,6 +4,9 @@ import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 // consts
 import { CHART_TEST_DATA } from '../tabs.const'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
+import { SMALL_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
+import { ONE_HOUR } from 'consts/charts.const'
 import { BUTTON_NAVIGATION, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
   isValidPersonalDashboardSecondaryTabId,
@@ -13,13 +16,13 @@ import {
   PORTFOLIO_TAB_ID,
 } from '../DashboardPersonal.utils'
 
+// types
+import { ChartPeriodType } from 'types/charts.type'
+
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { Chart } from 'app/App.components/Chart/Chart'
-import {
-  SlidingTabButtons,
-  SlidingTabButtonType,
-} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { LoansTxTab } from './LoansTxTab'
 import { LendBorrowPosition } from './LendBorrowPosition'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -37,14 +40,6 @@ type PortfolioTabProps = {
   mostSuppliedUserToken?: { amount: number; name: string }
 }
 
-const TOGGLE_VALUES: SlidingTabButtonType[] = [
-  { id: 1, text: '24H', active: true },
-  { id: 3, text: '1W', active: false },
-  { id: 4, text: '1M', active: false },
-  { id: 5, text: '1Y', active: false },
-  { id: 6, text: 'All', active: false },
-]
-
 const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount }: PortfolioTabProps) => {
   const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
 
@@ -58,7 +53,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
     isLoading: isUserLoansLoading,
   } = useUserLoansData()
 
-  const [toggleItems, setToggleItems] = useState<SlidingTabButtonType[]>(TOGGLE_VALUES)
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
 
   const portfolioActiveTab = useMemo(
     () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),
@@ -70,20 +65,14 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
       {/* TODO: make this chart dynamic need data in indexer for it */}
       <PortfolioChartStyled>
         <H2Title>MVK Earning History</H2Title>
-        <div className="chart-periods">
-          <SlidingTabButtons
-            tabItems={toggleItems}
-            disabled
-            onClick={(tabId) =>
-              setToggleItems(
-                toggleItems.map((item) => ({
-                  ...item,
-                  active: item.id === tabId,
-                })),
-              )
-            }
-          />
-        </div>
+        <ChartsSwitherWithPosition
+          currentPeriod={chartPeriod}
+          setCurrentPeriod={setChartPeriod}
+          size={SMALL_SLIDING_TAB_BUTTONS}
+          align={ALIGN_RIGHT}
+          space={15}
+          disabled
+        />
         {/* <div className="last-seria">
           <div className="mvk">
             <CommaNumber endingText="MVK" value={lastSeria} />

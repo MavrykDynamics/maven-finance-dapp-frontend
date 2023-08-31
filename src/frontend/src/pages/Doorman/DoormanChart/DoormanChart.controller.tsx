@@ -101,9 +101,7 @@ export function DoormanChart() {
   const [activeTabId, setActiveTabId] = useState(tabsList[0].id)
 
   const handleChangeTabs = (tabId?: number) => setActiveTabId(tabsList.find(({ id }) => tabId === id)?.id ?? 1)
-  const handlePeriodChange = useCallback((period: ChartPeriodType) => {
-    setChartPeriod(period)
-  }, [])
+
   const exitFeeMarkerTime = findExitFeeClosestTimePlot(MLI_FEE_CHART_DATA, currentExitFee)
   const numberOfItemsToDisplay = smvkHistoryData.length < 10 && !noChartData ? smvkHistoryData.length : 10
 
@@ -116,7 +114,7 @@ export function DoormanChart() {
           <>
             <ChartsSwitherWithPosition
               currentPeriod={chartPeriod}
-              setCurrentPeriod={handlePeriodChange}
+              setCurrentPeriod={setChartPeriod}
               size={SMALL_SLIDING_TAB_BUTTONS}
               align={ALIGN_RIGHT}
               space={15}
@@ -220,7 +218,7 @@ export function DoormanChart() {
           <>
             <ChartsSwitherWithPosition
               currentPeriod={chartPeriod}
-              setCurrentPeriod={handlePeriodChange}
+              setCurrentPeriod={setChartPeriod}
               size={SMALL_SLIDING_TAB_BUTTONS}
               align={ALIGN_RIGHT}
               space={15}

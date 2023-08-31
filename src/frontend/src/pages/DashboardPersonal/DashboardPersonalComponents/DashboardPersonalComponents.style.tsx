@@ -55,24 +55,7 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
   width: 810px;
   padding-bottom: 10px;
   position: relative;
-
-  .chart-periods {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    width: 250px;
-
-    button {
-      width: 20%;
-      font-size: 14px;
-      padding-left: 10px;
-      padding-right: 10px;
-
-      &.selected {
-        background: ${({ theme }) => theme.forTabs};
-      }
-    }
-  }
+  padding: 20px 0 0 20px;
 
   .last-seria {
     position: absolute;
