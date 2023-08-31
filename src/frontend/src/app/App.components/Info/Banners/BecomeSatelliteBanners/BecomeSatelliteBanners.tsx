@@ -9,6 +9,7 @@ import { INFO_ERROR } from '../../info.constants'
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { NotStakingBannerStyled } from './BecomeSatelliteBanners.style'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 export const BecomeSatelliteBanners = ({
   mvkBalance,
@@ -37,7 +38,12 @@ export const BecomeSatelliteBanners = ({
       <NotStakingBannerStyled>
         {userAddress ? (
           <Info
-            text={`To become a satellite you need to stake ${requiredSmvkAmount} MVK, please buy ${mvkAmountToHitRequired} more MVK and stake it`}
+            text={
+              <>
+                You are currently don’t have enought MVK to start staking, please buy &nbsp;
+                <CommaNumber value={mvkAmountToHitRequired} endingText="MVK" className="value" />
+              </>
+            }
             type={INFO_ERROR}
           >
             <div className="link-btn">
@@ -57,7 +63,13 @@ export const BecomeSatelliteBanners = ({
       <NotStakingBannerStyled>
         {userAddress ? (
           <Info
-            text={`To become a satellite you need to stake ${requiredSmvkAmount} MVK, please stake ${smvkAmountToHitRequired} more MVK`}
+            text={
+              <>
+                To become a satellite you need to stake &nbsp;
+                <CommaNumber value={requiredSmvkAmount} endingText="MVK" className="value" /> , left to stake: &nbsp;
+                <CommaNumber value={smvkAmountToHitRequired} endingText="MVK" className="value" />
+              </>
+            }
             type={INFO_ERROR}
           >
             <div className="link-btn">

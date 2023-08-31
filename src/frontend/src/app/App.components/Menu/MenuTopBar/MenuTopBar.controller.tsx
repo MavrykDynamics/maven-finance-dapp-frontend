@@ -7,7 +7,6 @@ import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
 import { toggleWertLoader } from 'app/App.components/Loader/Loader.action'
 import { State } from 'reducers'
 
-import { LIGHT_THEME } from 'consts/theme.const'
 import { getWertOptions } from 'app/App.components/ConnectWallet/Wert/WertIO.const'
 import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
 
@@ -79,7 +78,7 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
   const [showMobileTopBar, setShowMobileTopBar] = useState(false)
   const [showWertIoPopup, setShowWertIoPopup] = useState(false)
 
-  const logoImg = themeSelected === LIGHT_THEME ? '/logo-light.svg' : '/logo-dark.svg'
+  const logoImg = `/images/${themeSelected}/logo.svg`
   const logoMobile = '/logo-mobile.svg'
 
   const toggleSidebarOpen = () => burgerClickHandler()

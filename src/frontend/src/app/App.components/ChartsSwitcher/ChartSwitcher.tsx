@@ -17,10 +17,11 @@ type ChartSwitcherProps = {
   currentPeriod?: ChartPeriodType
   setCurrentPeriod: (period: ChartPeriodType) => void
   size?: SlidingTabButtonsSizesType
+  disabled?: boolean
 }
 
 // TODO try to play with state to avoid blinks between diff screen switched
-export const ChartSwitcher = memo(({ setCurrentPeriod, currentPeriod, size }: ChartSwitcherProps) => {
+export const ChartSwitcher = memo(({ setCurrentPeriod, currentPeriod, size, disabled }: ChartSwitcherProps) => {
   const tabItems: SlidingTabButtonType[] = useMemo(
     () =>
       chartsPeriodArr.map((period, idx) => {
@@ -41,12 +42,13 @@ export const ChartSwitcher = memo(({ setCurrentPeriod, currentPeriod, size }: Ch
     [setCurrentPeriod],
   )
 
-  return <SlidingTabButtons tabItems={tabItems} onClick={handleTabSwitch} size={size} />
+  return <SlidingTabButtons tabItems={tabItems} disabled={disabled} onClick={handleTabSwitch} size={size} />
 })
 
 type ChartSwitherWithPositionProps = ChartSwitcherProps & {
   align?: ChartSwitcherAlignmentType
   space?: number
+  disabled?: boolean
 }
 
 export const ChartsSwitherWithPosition = ({

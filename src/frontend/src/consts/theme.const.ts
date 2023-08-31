@@ -1,5 +1,8 @@
+import { z } from 'zod'
+
 export const LIGHT_THEME = 'light'
 export const SPACE_THEME = 'space'
 export const DARK_THEME = 'dark'
 
-export type ThemeType = typeof LIGHT_THEME | typeof SPACE_THEME | typeof DARK_THEME
+export const themeSchema = z.enum([LIGHT_THEME, SPACE_THEME, DARK_THEME])
+export type ThemeType = z.infer<typeof themeSchema>
