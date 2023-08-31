@@ -32,7 +32,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
-import { SatelliteRecordType, SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
@@ -76,9 +76,29 @@ type SatelliteListItemProps = {
   children?: JSX.Element
 }
 
-const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
+const SatelliteLastProposalVote = ({
+  lastVotedProposal,
+}: {
+  lastVotedProposal: SatelliteRecordType['lastVotedProposal']
+}) => {
+  if (!lastVotedProposal)
+    return (
+      <SatelliteCardRow>
+        <div>Has not voted this cycle</div>
+      </SatelliteCardRow>
+    )
+
+  const { vote, proposalId, proposalTitle } = lastVotedProposal
   const voteText = SATELLITE_VOTES_MAPPER[vote]
-  return <span className={`voting-${voteText.toLowerCase()}`}>{voteText.toUpperCase()}</span>
+
+  return (
+    <SatelliteCardRow>
+      <div>
+        Voted <span className={`voting-${voteText.toLowerCase()}`}>{voteText.toUpperCase()}</span> on current Proposal{' '}
+        {proposalId} – {proposalTitle}
+      </div>
+    </SatelliteCardRow>
+  )
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
@@ -350,16 +370,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         </SatelliteCardButtons>
       </SatelliteCardInner>
 
-      {children ? (
-        children
-      ) : satellite.lastVotedProposal ? (
-        <SatelliteCardRow>
-          <div>
-            Voted {renderVotingHistoryItem(satellite.lastVotedProposal.vote)} on current Proposal{' '}
-            {satellite.lastVotedProposal.proposalId} - {satellite.lastVotedProposal.proposalTitle}
-          </div>
-        </SatelliteCardRow>
-      ) : null}
+      {children ? children : <SatelliteLastProposalVote lastVotedProposal={satellite.lastVotedProposal} />}
     </SatelliteCard>
   )
 }
