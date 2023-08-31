@@ -1,26 +1,45 @@
-export const SECTOR_STYLES = { transition: 'stroke 0s', cursor: 'pointer' }
+// PINK TONES
+export const D_PINK_PRIMARY = '#FF8486'
+export const D_PINK_SECONDARY = '#FFA3A4'
+export const D_PINK_TERTIARY = '#FFC2C3'
+export const D_PINK_LIGHT = '#FFE0E1'
 
-export const TREASURYS_COLORS = [
-  '#FF8486',
-  '#0D61FF',
-  '#38237C',
-  '#7F66FF',
-  '#FFA3A4',
-  '#4A89FF',
-  '#503EAA',
-  '#8D86EB',
-  '#FFC2C3',
-  '#86B0FF',
-  '#8DD8C7',
-  '#BEABFF',
-  '#615193',
-  '#78FCDD',
-  '#FFE0E1',
-  '#C3D8FF',
-  '#CDFFF4',
-  '#DACDFF',
-  '#BBBBBB',
+// BLUE TONES
+export const D_BLUE_PRIMARY = '#0D61FF'
+export const D_BLUE_SECONDARY = '#4A89FF'
+export const D_BLUE_TERTIARY = '#86B0FF'
+export const D_BLUE_LIGHT = '#C3D8FF'
+
+// GREEN TONES
+export const D_GREEN_PRIMARY = '#55D8BA'
+export const D_GREEN_SECONDARY = '#78FCDD'
+export const D_GREEN_TERTIARY = '#8DD8C7'
+export const D_GREEN_LIGHT = '#CDFFF4'
+
+// DARK PURPLE TONES
+export const D_DARK_PURPLE_PRIMARY = '#38237C'
+export const D_DARK_PURPLE_SECONDARY = '#503EAA'
+export const D_DARK_PURPLE_TERTIARY = '#BEABFF'
+export const D_DARK_PURPLE_LIGHT = '#DACDFF'
+
+// PURPLE TONES
+export const D_PURPLE_PRIMARY = '#7F66FF'
+export const D_PURPLE_SECONDARY = '#8D86EB'
+export const D_PURPLE_TERTIARY = '#615193'
+export const D_PURPLE_LIGHT = '#BBB'
+
+export const DIAGRAM_COLORS = [
+  [D_PINK_PRIMARY, D_PINK_SECONDARY, D_PINK_TERTIARY, D_PINK_LIGHT],
+  [D_BLUE_PRIMARY, D_BLUE_SECONDARY, D_BLUE_TERTIARY, D_BLUE_LIGHT],
+  [D_GREEN_PRIMARY, D_GREEN_SECONDARY, D_GREEN_TERTIARY, D_GREEN_LIGHT],
+  [D_DARK_PURPLE_PRIMARY, D_DARK_PURPLE_SECONDARY, D_DARK_PURPLE_TERTIARY, D_DARK_PURPLE_LIGHT],
+  [D_PURPLE_PRIMARY, D_PURPLE_SECONDARY, D_PURPLE_TERTIARY, D_PURPLE_LIGHT],
 ]
+
+export const DIAGRAM_COLORS_INNER_ARR_LENGTH = 5
+
+// other
+export const SECTOR_STYLES = { transition: 'stroke 0s', cursor: 'pointer' }
 
 export const DEFAULT_STROKE_WIDTH = 19
 
