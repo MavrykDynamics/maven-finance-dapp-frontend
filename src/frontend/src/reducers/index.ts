@@ -6,7 +6,6 @@ import { wallet, WalletState } from './wallet'
 import { governance, GovernanceState } from './governance'
 import { emergencyGovernance, EmergencyGovernanceState } from './emergencyGovernance'
 import { council, CouncilState } from './council'
-import { farm, FarmState } from './farm'
 import { contractAddresses, ContractAddressesState } from './contractAddresses'
 
 export const reducers = combineReducers({
@@ -18,8 +17,6 @@ export const reducers = combineReducers({
   governance,
   council,
   emergencyGovernance,
-
-  farm,
 })
 
 export interface State {
@@ -29,6 +26,5 @@ export interface State {
   governance: GovernanceState
   emergencyGovernance: EmergencyGovernanceState
   council: CouncilState
-  farm: FarmState
   contractAddresses: ContractAddressesState
 }

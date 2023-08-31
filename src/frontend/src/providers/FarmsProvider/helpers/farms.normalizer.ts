@@ -46,10 +46,7 @@ export const normalizeFarm = (indexerFarm: FarmsQueryQuery['farm'][number]) => {
   }
 }
 
-export const normalizeFarms = (
-  indexerFarms: FarmsQueryQuery['farm'],
-  queryType: FarmsProviderSubsType[typeof FARMS_DATA_SUB],
-) => {
+export const normalizeFarms = (indexerFarms: FarmsQueryQuery['farm']) => {
   return indexerFarms.reduce<FarmCtxStateType>(
     (acc, farm) => {
       const normalizedFarm = normalizeFarm(farm)
@@ -60,19 +57,23 @@ export const normalizeFarms = (
       acc.farmsMapper[address] = normalizedFarm
       acc.allFarms.push(address)
 
-      if (queryType === FARMS_LIVE_NOT_STAKED_DATA_SUB && open === true && !isFarmStaked) {
+      if (open === true) {
+        acc.allLiveFarms.push(address)
+      }
+
+      if (open === true && !isFarmStaked) {
         acc.liveNotStakedFarms.push(address)
       }
 
-      if (queryType === FARMS_LIVE_STAKED_DATA_SUB && open === true && isFarmStaked) {
+      if (open === true && isFarmStaked) {
         acc.liveStakedFarms.push(address)
       }
 
-      if (queryType === FARMS_FINISHED_NOT_STAKED_DATA_SUB && open === false && !isFarmStaked) {
+      if (open === false && !isFarmStaked) {
         acc.finishedNotStakedFarms.push(address)
       }
 
-      if (queryType === FARMS_FINISHED_STAKED_DATA_SUB && open === false && isFarmStaked) {
+      if (open === false && isFarmStaked) {
         acc.finishedStakedFarms.push(address)
       }
 
@@ -81,6 +82,7 @@ export const normalizeFarms = (
     {
       farmsMapper: {},
       allFarms: [],
+      allLiveFarms: [],
       liveNotStakedFarms: [],
       liveStakedFarms: [],
       finishedNotStakedFarms: [],

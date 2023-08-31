@@ -9,6 +9,7 @@ export const DEFAULT_FARMS_ACTIVE_SUBS: FarmsProviderSubsType = {
 
 // farm subs type
 export const FARMS_ALL_DATA_SUB = 'FARMS_ALL_DATA_SUB'
+export const FARMS_ALL_LIVE_DATA_SUB = 'FARMS_ALL_LIVE_DATA_SUB'
 export const FARMS_LIVE_NOT_STAKED_DATA_SUB = 'FARMS_LIVE_NOT_STAKED_DATA_SUB'
 export const FARMS_LIVE_STAKED_DATA_SUB = 'FARMS__STAKED_LIVE_DATA_SUB'
 export const FARMS_FINISHED_NOT_STAKED_DATA_SUB = 'FARMS_FINISHED_NOT_STAKED_DATA_SUB'
@@ -20,6 +21,7 @@ export const DEFAULT_FARMS_CTX: NullableFarmCtxStateType = {
   liveNotStakedFarms: null,
   finishedNotStakedFarms: null,
   liveStakedFarms: null,
+  allLiveFarms: null,
   finishedStakedFarms: null,
   allFarms: null,
 }
@@ -29,6 +31,7 @@ export const EMPTY_FARMS_CTX: FarmCtxStateType = {
   liveNotStakedFarms: [],
   finishedNotStakedFarms: [],
   liveStakedFarms: [],
+  allLiveFarms: [],
   finishedStakedFarms: [],
   allFarms: [],
 }

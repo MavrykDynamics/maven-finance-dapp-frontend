@@ -1,30 +1,44 @@
 import qs from 'qs'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
+// consts
+import {
+  FARMS_DATA_SUB,
+  FARMS_ALL_LIVE_DATA_SUB,
+  DEFAULT_FARMS_ACTIVE_SUBS,
+} from 'providers/FarmsProvider/helpers/farms.const'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
+
+// utils
 import { calculateAPY } from 'pages/Farms/Farms.helpers'
 
+// view
 import { Button } from 'app/App.components/Button/Button.controller'
 import CoinsIcons from 'app/App.components/Icon/CoinsIcons.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { EmptyContainer, FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
-export const FarmsTab = () => {
-  // TODO: use from context, when context will be here
-  const isFarmsLoading = false
-  const { farms } = useSelector((state: State) => state.farm)
-  // On dashboard farms tab show only live farms
+// hooks
+import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
 
-  const liveNotStakedFarms = useMemo(() => farms.filter(({ isLive }) => isLive), [farms])
+export const FarmsTab = () => {
+  const { isLoading: isFarmsLoading, changeFarmsSubscriptionList, farmsMapper, allLiveFarms } = useFarmsContext()
+
+  useEffect(() => {
+    changeFarmsSubscriptionList({
+      [FARMS_DATA_SUB]: FARMS_ALL_LIVE_DATA_SUB,
+    })
+
+    return () => {
+      changeFarmsSubscriptionList(DEFAULT_FARMS_ACTIVE_SUBS)
+    }
+  }, [])
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_farmsTab_bg.png">
@@ -41,25 +55,27 @@ export const FarmsTab = () => {
             <ClockLoader width={150} height={150} />
             <div className="text">Loading farms</div>
           </DataLoaderWrapper>
-        ) : liveNotStakedFarms.length ? (
-          farms.map((farmCardData) => {
-            const apy = calculateAPY(farmCardData.currentRewardPerBlock, farmCardData.lpBalance)
+        ) : allLiveFarms.length ? (
+          allLiveFarms.map((farmAddress) => {
+            const farm = farmsMapper[farmAddress]
+            const apy = calculateAPY(farm.currentRewardPerBlock, farm.liquidityTokenBalance)
+
             return (
               <Link
-                to={`/yield-farms?${qs.stringify({ openedFarmsCards: [farmCardData.address] })}`}
-                key={farmCardData.address + farmCardData.name}
+                to={`/yield-farms?${qs.stringify({ openedFarmsCards: [farm.address] })}`}
+                key={farm.address + farm.name}
               >
                 <div className="card">
                   <div className="top">
                     <div className="name">
-                      <div className="large">{farmCardData.name}</div>
-                      <TzAddress tzAddress={farmCardData.address} hasIcon type={SECONDARY_TZ_ADDRESS_COLOR} />
+                      <div className="large">{farm.name}</div>
+                      <TzAddress tzAddress={farm.address} hasIcon type={SECONDARY_TZ_ADDRESS_COLOR} />
                     </div>
 
-                    <CoinsIcons
+                    {/* <CoinsIcons
                       firstAssetLogoSrc={farmCardData.lpToken1.thumbnailUri}
                       secondAssetLogoSrc={farmCardData.lpToken2.thumbnailUri}
-                    />
+                    /> */}
                   </div>
 
                   <div className="row-info">
@@ -75,7 +91,7 @@ export const FarmsTab = () => {
                   <div className="row-info">
                     <div className="name">Ends in: </div>
                     <div className="value">
-                      <Timer deadline={farmCardData.endsIn} />
+                      <Timer deadline={farm.lastUpdateTime} />
                     </div>
                   </div>
                 </div>

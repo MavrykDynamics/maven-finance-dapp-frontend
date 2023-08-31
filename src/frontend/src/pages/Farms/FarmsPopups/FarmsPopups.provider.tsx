@@ -7,7 +7,7 @@ import {
   FarmWithdrawPopupDataType,
   RoiCalculatorPopupDataType,
 } from '../Farms.const'
-import RoiCalculator from '../RoiCalculator/RoiCalculator.controller'
+// import RoiCalculator from '../RoiCalculator/RoiCalculator.controller'
 import { FarmDepositModal } from './FarmDepositModal.controller'
 import { FarmWithdrawModal } from './FarmWithdrawModal.controller'
 
@@ -27,8 +27,8 @@ export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopups
 
     this.state = {
       ...DEFAULT_FARMS_POPUPS_STATE,
-      openRoiCalculatorPopup: this.openRoiCalculatorPopup,
-      closeRoiCalculatorPopup: this.closeRoiCalculatorPopup,
+      // openRoiCalculatorPopup: this.openRoiCalculatorPopup,
+      // closeRoiCalculatorPopup: this.closeRoiCalculatorPopup,
 
       openDepositFarmPopup: this.openDepositFarmPopup,
       closeDepositFarmPopup: this.closeDepositFarmPopup,
@@ -38,25 +38,25 @@ export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopups
     }
   }
 
-  openRoiCalculatorPopup = (popupData: RoiCalculatorPopupDataType) => {
-    this.setState({
-      ...this.state,
-      roiPopup: {
-        showModal: true,
-        data: popupData,
-      },
-    })
-  }
+  // openRoiCalculatorPopup = (popupData: RoiCalculatorPopupDataType) => {
+  //   this.setState({
+  //     ...this.state,
+  //     roiPopup: {
+  //       showModal: true,
+  //       data: popupData,
+  //     },
+  //   })
+  // }
 
-  closeRoiCalculatorPopup = () => {
-    this.setState({
-      ...this.state,
-      roiPopup: {
-        ...this.state.roiPopup,
-        showModal: false,
-      },
-    })
-  }
+  // closeRoiCalculatorPopup = () => {
+  //   this.setState({
+  //     ...this.state,
+  //     roiPopup: {
+  //       ...this.state.roiPopup,
+  //       showModal: false,
+  //     },
+  //   })
+  // }
 
   openDepositFarmPopup = (popupData: FarmDepositPopupDataType) => {
     this.setState({
@@ -104,12 +104,14 @@ export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopups
    * @returns {object} A JSX element wrapping all popups and child components within the context provider.
    */
   render() {
-    const { roiPopup, depositPopup, withdrawPopup } = this.state
-    const { closeDepositFarmPopup, closeRoiCalculatorPopup, closeWithdrawFarmPopup } = this.state
+    // const { roiPopup, depositPopup, withdrawPopup } = this.state
+    const { depositPopup, withdrawPopup } = this.state
+    // const { closeDepositFarmPopup, closeRoiCalculatorPopup, closeWithdrawFarmPopup } = this.state
+    const { closeDepositFarmPopup, closeWithdrawFarmPopup } = this.state
 
     return (
       <farmsPopupsContext.Provider value={this.state}>
-        <RoiCalculator closeHandler={closeRoiCalculatorPopup} data={roiPopup.data} show={roiPopup.showModal} />
+        {/* <RoiCalculator closeHandler={closeRoiCalculatorPopup} data={roiPopup.data} show={roiPopup.showModal} /> */}
         <FarmDepositModal closeHandler={closeDepositFarmPopup} data={depositPopup.data} show={depositPopup.showModal} />
         <FarmWithdrawModal
           closeHandler={closeWithdrawFarmPopup}

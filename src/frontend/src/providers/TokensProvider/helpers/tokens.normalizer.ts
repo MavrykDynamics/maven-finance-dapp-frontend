@@ -160,6 +160,11 @@ const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMeta
           icon: liquidityPairToken1Parsed.icon ?? '/images/coin-silver.svg',
         },
       }
+    } else {
+      tokenMetadata.farmLpData = {
+        token0: null,
+        token1: null,
+      }
     }
 
     return tokenMetadata
@@ -186,10 +191,14 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         if (tokenFromGql.farms_lp_tokens.length) {
           const farmLpTokenMetadata = handleFarmLpToken(tokenFromGql)
 
+          console.log({ tokenFromGql, farmLpTokenMetadata })
+
           if (farmLpTokenMetadata) {
             acc.tokensMetadata[farmLpTokenMetadata.address] = farmLpTokenMetadata
             acc.farmLpTokens.push(farmLpTokenMetadata.address)
           }
+
+          console.log({ tokensAcc: acc })
         }
 
         const {

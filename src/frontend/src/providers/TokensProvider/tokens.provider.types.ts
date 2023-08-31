@@ -31,14 +31,14 @@ export type TokenMetadataType = {
       symbol: string
       decimals: number
       icon: string
-    }
+    } | null
     token0: {
       address: TokenAddressType
       name: string
       symbol: string
       decimals: number
       icon: string
-    }
+    } | null
   }
 }>
 
@@ -58,6 +58,25 @@ export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType
     isPausedCollateral: boolean
     isScaled: boolean
     isStaked: boolean
+  }
+}
+
+export interface FarmsTokenMetadataType extends TokenMetadataType {
+  farmLpData: {
+    token1: {
+      address: TokenAddressType
+      name: string
+      symbol: string
+      decimals: number
+      icon: string
+    } | null
+    token0: {
+      address: TokenAddressType
+      name: string
+      symbol: string
+      decimals: number
+      icon: string
+    } | null
   }
 }
 

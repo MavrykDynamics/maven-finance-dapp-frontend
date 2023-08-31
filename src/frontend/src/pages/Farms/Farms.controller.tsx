@@ -1,5 +1,4 @@
 import { useHistory, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import qs from 'qs'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
@@ -9,20 +8,12 @@ import { FarmTopBar } from './FarmTopBar/FarmTopBar.controller'
 import { FarmCard } from './FarmCard/FarmCard.controller'
 
 // helpers
-import {
-  getSummDepositedAmount,
-  filterByLiveFinished,
-  filterBySearch,
-  filterByStaked,
-  sortFarms,
-  getNewOpenedCardsAddresses,
-} from './Farms.helpers'
+import { getSummDepositedAmount, filterBySearch, sortFarms, getNewOpenedCardsAddresses } from './Farms.helpers'
 
 // styles
 import { FarmsStyled } from './Farms.style'
 import { Page } from 'styles'
 import { EmptyContainer as EmptyList } from 'app/App.style'
-import { getFarmStorage } from './Farms.actions'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import {
   calculateSlicePositions,
@@ -33,7 +24,6 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 
 // types
-import { State } from '../../reducers'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
@@ -45,7 +35,6 @@ import {
   FarmsFiltersStateType,
 } from './Farms.const'
 import FarmsPopupsProvider from './FarmsPopups/FarmsPopups.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
 import {
   DEFAULT_FARMS_ACTIVE_SUBS,
@@ -67,9 +56,16 @@ export type HandleClickArgsType = { filterType: 'search' | 'sort' | 'isStaked' |
 export const Farms = () => {
   const history = useHistory()
   const { search, pathname } = useLocation()
-  const { tokensMetadata } = useTokensContext()
-  const { changeFarmsSubscriptionList, isLoading: isFarmsLoading } = useFarmsContext()
-  const { farms } = useSelector((state: State) => state.farm)
+  const {
+    changeFarmsSubscriptionList,
+    isLoading: isFarmsLoading,
+    farmsMapper,
+    liveStakedFarms,
+    finishedNotStakedFarms,
+    allFarms,
+    finishedStakedFarms,
+    liveNotStakedFarms,
+  } = useFarmsContext()
 
   const [farmsFilers, setFarmsFilters] = useState<FarmsFiltersStateType>({
     isStaked: NO_STAKED,
@@ -98,15 +94,40 @@ export const Farms = () => {
     }
   }, [farmsFilers])
 
-  const [farmsList, setFarmsList] = useState(farms)
+  const farmsToUse = useMemo(() => {
+    const { isLive, searchValue, sortBy, isStaked } = qs.parse(search, {
+      ignoreQueryPrefix: true,
+    }) as Partial<FarmsFiltersStateType>
+
+    const isLiveFarmsSelected = isLive !== undefined
+    const isStakedFarmsSelected = isStaked !== undefined
+
+    const farmsIds = isStakedFarmsSelected
+      ? isLiveFarmsSelected
+        ? liveStakedFarms
+        : finishedStakedFarms
+      : isLiveFarmsSelected
+      ? liveNotStakedFarms
+      : finishedNotStakedFarms
+
+    if (searchValue !== undefined) {
+      return filterBySearch(farmsIds, farmsMapper, searchValue)
+    }
+
+    if (sortBy !== undefined) {
+      return sortFarms(farmsIds, farmsMapper, sortBy)
+    }
+
+    return farmsIds
+  }, [farmsMapper, finishedNotStakedFarms, finishedStakedFarms, liveNotStakedFarms, liveStakedFarms, search])
 
   // pagination
   const listName = farmsFilers.farmsViewVariant === VERTICAL_FARM_VIEW ? FARMS_VERTICAL_CARDS : FARMS_HORIZONTAL_CARDS
   const paginatedFarms = useMemo(() => {
     const currentPage = getPageNumber(search, listName)
     const [from, to] = calculateSlicePositions(currentPage, listName)
-    return farmsList.slice(from, to)
-  }, [farmsList, listName, search])
+    return farmsToUse.slice(from, to)
+  }, [farmsToUse, listName, search])
 
   /**
    * effect to track qp change and update filters state and filter/sort farms cards
@@ -120,23 +141,6 @@ export const Farms = () => {
       isStaked,
     } = qs.parse(search, { ignoreQueryPrefix: true }) as Partial<FarmsFiltersStateType>
 
-    let filteredFarms = [...farms]
-    if (Number(isStaked) !== undefined) {
-      filteredFarms = filterByStaked(filteredFarms, Number(isStaked))
-    }
-
-    if (Number(isLive) !== undefined) {
-      filteredFarms = filterByLiveFinished(filteredFarms, Number(isLive))
-    }
-
-    if (searchValue !== undefined) {
-      filteredFarms = filterBySearch(filteredFarms, searchValue)
-    }
-
-    if (sortBy !== undefined) {
-      filteredFarms = sortFarms(filteredFarms, sortBy)
-    }
-
     setFarmsFilters({
       ...farmsFilers,
       ...(isStaked !== undefined ? { isStaked: Number(isStaked) as isStakedFarmType } : {}),
@@ -145,9 +149,7 @@ export const Farms = () => {
       ...(sortBy !== undefined ? { sortBy } : {}),
       openedFarmsCards,
     })
-
-    setFarmsList(filteredFarms)
-  }, [search, farms])
+  }, [search])
 
   /**
    * @handleFilterClick fn to handle click on filter as we are storing filters in the qp
@@ -222,17 +224,17 @@ export const Farms = () => {
               <ClockLoader width={150} height={150} />
               <div className="text">Loading farms</div>
             </DataLoaderWrapper>
-          ) : farmsList.length ? (
+          ) : allFarms.length ? (
             <>
               <section className={`farm-list ${farmsFilers.farmsViewVariant}`}>
-                {paginatedFarms.map((farm, index: number) => {
-                  const depositAmount = getSummDepositedAmount(farm.farmAccounts)
+                {paginatedFarms.map((farmAddress, index: number) => {
+                  const farm = farmsMapper[farmAddress]
+                  const depositAmount = getSummDepositedAmount(farm.farmDepositors)
                   return (
                     <FarmCard
                       farm={farm}
                       key={farm.address + index}
-                      variant={farmsFilers.farmsViewVariant}
-                      currentRewardPerBlock={farm.currentRewardPerBlock}
+                      isVertical={farmsFilers.farmsViewVariant === 'vertical'}
                       depositAmount={depositAmount}
                       expandCallback={() =>
                         handleFilterClick({ filterType: 'openCard', newOpenCardAddress: farm.address })
@@ -242,7 +244,7 @@ export const Farms = () => {
                   )
                 })}
               </section>
-              <Pagination itemsCount={farmsList.length} listName={listName} side={PAGINATION_SIDE_CENTER} />
+              <Pagination itemsCount={farmsToUse.length} listName={listName} side={PAGINATION_SIDE_CENTER} />
             </>
           ) : (
             <EmptyList>

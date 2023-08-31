@@ -39,12 +39,12 @@ export type FarmWithdrawPopupDataType = { selectedFarmAddress: string } | null
 export type FarmDepositPopupDataType = { selectedFarmAddress: string } | null
 
 export type FarmsPopupsContextStateType = {
-  roiPopup: ModalStateType<RoiCalculatorPopupDataType>
+  // roiPopup: ModalStateType<RoiCalculatorPopupDataType>
   depositPopup: ModalStateType<FarmDepositPopupDataType>
   withdrawPopup: ModalStateType<FarmWithdrawPopupDataType>
 
-  openRoiCalculatorPopup: InstanceType<typeof FarmsPopupsProvider>['openRoiCalculatorPopup']
-  closeRoiCalculatorPopup: InstanceType<typeof FarmsPopupsProvider>['closeRoiCalculatorPopup']
+  // openRoiCalculatorPopup: InstanceType<typeof FarmsPopupsProvider>['openRoiCalculatorPopup']
+  // closeRoiCalculatorPopup: InstanceType<typeof FarmsPopupsProvider>['closeRoiCalculatorPopup']
   openDepositFarmPopup: InstanceType<typeof FarmsPopupsProvider>['openDepositFarmPopup']
   closeDepositFarmPopup: InstanceType<typeof FarmsPopupsProvider>['closeDepositFarmPopup']
   openWithdrawFarmPopup: InstanceType<typeof FarmsPopupsProvider>['openWithdrawFarmPopup']
@@ -57,7 +57,7 @@ const DEFAULT_FARMS_POPUP_STATE = {
 }
 
 export const DEFAULT_FARMS_POPUPS_STATE = {
-  roiPopup: DEFAULT_FARMS_POPUP_STATE,
+  // roiPopup: DEFAULT_FARMS_POPUP_STATE,
   depositPopup: DEFAULT_FARMS_POPUP_STATE,
   withdrawPopup: DEFAULT_FARMS_POPUP_STATE,
 }

@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { Card } from 'styles'
+import { Card, CardHover } from 'styles'
 import { MavrykTheme } from '../../../styles/interfaces'
 
 export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
@@ -338,4 +338,215 @@ export const FarmStakeStyled = styled(Card)`
     flex-direction: column;
     padding-top: 24px;
   }
+`
+
+export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavrykTheme }>`
+  position: relative;
+
+  .name {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: ${({ theme }) => theme.regularText};
+  }
+
+  .value {
+    display: flex;
+    align-items: center;
+
+    column-gap: 6px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    color: ${({ theme }) => theme.primaryText};
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &.isCardOpened {
+    border-color: ${({ theme }) => theme.linksAndButtons};
+    box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
+  }
+`
+
+export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: MavrykTheme }>``
+
+export const VerticalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: MavrykTheme }>`
+  padding: 40px 20px 0 20px;
+
+  .farm-card-header {
+    width: 100%;
+    height: 58px;
+
+    .logo {
+      width: 58px;
+      height: 58px;
+    }
+
+    .info {
+      width: calc(100% - 58px - 15px);
+    }
+  }
+
+  .farm-stats {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 20px;
+    padding: 0 20px;
+    row-gap: 5px;
+
+    .row {
+      width: 100%;
+      height: 20px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .value {
+      svg {
+        height: 20px;
+        width: 20px;
+      }
+    }
+  }
+
+  .farm-actions {
+    width: 100%;
+
+    margin: 15px 0 0 0;
+    row-gap: 10px;
+
+    display: flex;
+    flex-direction: column;
+
+    .farmActionWrapper {
+      width: 100%;
+    }
+
+    .start-farming {
+      height: 100%;
+      row-gap: 20px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      h3 {
+        color: ${({ theme }) => theme.regularText};
+        font-size: 22px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .vertical-expand {
+    position: relative;
+
+    margin-top: 15px;
+    padding: 13px 0;
+
+    > header {
+      height: fit-content;
+      min-height: unset;
+      grid-template-columns: 1fr;
+    }
+
+    > article::before {
+      display: none;
+    }
+
+    &:hover {
+      box-shadow: unset;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: calc(100% + 40px);
+      height: 1px;
+      background-color: ${({ theme }) => theme.divider};
+      top: 0%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    border: none;
+
+    .expand-data {
+      padding-top: 10px;
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
+
+      a {
+        display: flex;
+        align-items: center;
+        column-gap: 6px;
+        font-size: 14px;
+
+        svg {
+          height: 16px;
+          width: 16px;
+          fill: ${({ theme }) => theme.linksAndButtons};
+        }
+      }
+    }
+  }
+`
+
+export const FarmCardHeaderStyled = styled.div`
+  display: flex;
+  justify-content: space-between;
+  column-gap: 15px;
+  padding: 0 20px;
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    row-gap: 3px;
+    align-items: flex-end;
+
+    .name {
+      width: 100%;
+      font-size: 22px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      text-align: right;
+    }
+
+    .creator {
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+`
+
+export const FarmCardHarvestStyled = styled(Card)`
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 1fr;
+
+  column-gap: 4px;
+  padding: 20px;
+  margin: 15px 0 0 0;
+
+  border: 1px solid ${({ theme }) => theme.divider};
+
+  .info {
+    display: flex;
+    flex-direction: column;
+  }
+`
+
+export const FarmCardActionsStyled = styled(Card)`
+  padding: 20px;
 `

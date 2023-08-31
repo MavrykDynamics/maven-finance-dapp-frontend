@@ -11,6 +11,7 @@ import {
   DEFAULT_FARMS_ACTIVE_SUBS,
   DEFAULT_FARMS_CTX,
   FARMS_ALL_DATA_SUB,
+  FARMS_ALL_LIVE_DATA_SUB,
   FARMS_DATA_SUB,
   FARMS_FINISHED_NOT_STAKED_DATA_SUB,
   FARMS_FINISHED_STAKED_DATA_SUB,
@@ -45,11 +46,9 @@ const FarmsProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  console.log({ activeSubs })
-
   useQueryWithRefetch(getFarms(activeSubs[FARMS_DATA_SUB]), {
     skip: activeSubs[FARMS_DATA_SUB] === null,
-    onError: (error) => handleSubError(error, 'getFinancialRequestsStorageSubscription ERROR'),
+    onError: (error) => handleSubError(error, 'getFarms ERROR'),
     onCompleted: (data) => {
       if (!data) return
       updateFarms(data)
@@ -57,9 +56,10 @@ const FarmsProvider = ({ children }: Props) => {
   })
 
   const updateFarms = (indexerData: FarmsQueryQuery) => {
-    const normalizedFarms = normalizeFarms(indexerData.farm, activeSubs[FARMS_DATA_SUB])
+    const normalizedFarms = normalizeFarms(indexerData.farm)
 
     const isAllFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_DATA_SUB
+    const isAllLiveFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_LIVE_DATA_SUB
     const isLiveFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_LIVE_NOT_STAKED_DATA_SUB
     const isLiveStakedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_LIVE_STAKED_DATA_SUB
     const isFinishedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_FINISHED_NOT_STAKED_DATA_SUB
@@ -71,12 +71,16 @@ const FarmsProvider = ({ children }: Props) => {
       allFarms: isAllFarmsSubActive
         ? normalizedFarms.allFarms
         : [...(prev.allFarms ?? []), ...normalizedFarms.allFarms],
+      allLiveFarms:
+        isAllFarmsSubActive || isAllLiveFarmsSubActive
+          ? normalizedFarms.allLiveFarms
+          : [...(prev.allLiveFarms ?? []), ...normalizedFarms.allLiveFarms],
       liveNotStakedFarms:
-        isAllFarmsSubActive || isLiveFarmsSubActive
+        isAllFarmsSubActive || isLiveFarmsSubActive || isAllLiveFarmsSubActive
           ? normalizedFarms.liveNotStakedFarms
           : [...(prev.liveNotStakedFarms ?? []), ...normalizedFarms.liveNotStakedFarms],
       liveStakedFarms:
-        isAllFarmsSubActive || isLiveStakedFarmsSubActive
+        isAllFarmsSubActive || isLiveStakedFarmsSubActive || isAllLiveFarmsSubActive
           ? normalizedFarms.liveStakedFarms
           : [...(prev.liveStakedFarms ?? []), ...normalizedFarms.liveStakedFarms],
       finishedNotStakedFarms:

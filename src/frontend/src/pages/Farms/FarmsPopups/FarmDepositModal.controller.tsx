@@ -35,91 +35,92 @@ export const FarmDepositModal = ({
   show: boolean
   data: FarmDepositPopupDataType
 }) => {
-  const { selectedFarmAddress = '' } = data ?? {}
+  return null
+  // const { selectedFarmAddress = '' } = data ?? {}
 
-  const { tokensMetadata } = useTokensContext()
-  const dispatch = useDispatch()
-  useLockBodyScroll(show)
+  // const { tokensMetadata } = useTokensContext()
+  // const dispatch = useDispatch()
+  // useLockBodyScroll(show)
 
-  const { farms } = useSelector((state: State) => state.farm)
-  const {
-    lpTokenUserBalance = 0,
-    lpToken1: { symbol: lpTokenOneSymbol = '' } = {},
-    lpToken2: { symbol: lpTokenTwoSymbol = '' } = {},
-  } = farms.find(({ address }) => selectedFarmAddress === address) ?? {}
+  // const { farms } = useSelector((state: State) => state.farm)
+  // const {
+  //   lpTokenUserBalance = 0,
+  //   lpToken1: { symbol: lpTokenOneSymbol = '' } = {},
+  //   lpToken2: { symbol: lpTokenTwoSymbol = '' } = {},
+  // } = farms.find(({ address }) => selectedFarmAddress === address) ?? {}
 
-  const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
-    amount: '0',
-    validation: '',
-  })
+  // const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
+  //   amount: '0',
+  //   validation: '',
+  // })
 
-  const tokensNames = `${lpTokenOneSymbol}/${lpTokenTwoSymbol}`
+  // const tokensNames = `${lpTokenOneSymbol}/${lpTokenTwoSymbol}`
 
-  const handleBlur = () => {
-    if (inputData.amount === '') {
-      setInputData({ ...inputData, amount: '0' })
-    }
-  }
+  // const handleBlur = () => {
+  //   if (inputData.amount === '') {
+  //     setInputData({ ...inputData, amount: '0' })
+  //   }
+  // }
 
-  const handleFocus = () => {
-    if (inputData.amount === '0') {
-      setInputData({ ...inputData, amount: '' })
-    }
-  }
+  // const handleFocus = () => {
+  //   if (inputData.amount === '0') {
+  //     setInputData({ ...inputData, amount: '' })
+  //   }
+  // }
 
-  const handleChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-    const validationStatus =
-      +value && +value <= lpTokenUserBalance && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+  // const handleChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+  //   const validationStatus =
+  //     +value && +value <= lpTokenUserBalance && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
-    setInputData({ ...inputData, amount: value, validation: validationStatus })
-  }
+  //   setInputData({ ...inputData, amount: value, validation: validationStatus })
+  // }
 
-  const handleClick = () => {
-    if (selectedFarmAddress && inputData.validation === INPUT_STATUS_SUCCESS) {
-      dispatch(deposit(selectedFarmAddress, Number(inputData.amount), tokensMetadata))
-    }
-  }
+  // const handleClick = () => {
+  //   if (selectedFarmAddress && inputData.validation === INPUT_STATUS_SUCCESS) {
+  //     dispatch(deposit(selectedFarmAddress, Number(inputData.amount), tokensMetadata))
+  //   }
+  // }
 
-  return (
-    <PopupContainer onClick={closeHandler} show={show}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
-        <button onClick={closeHandler} className="close-modal" />
-        <FarmLpActionsPopupsContent>
-          <div className="popup-header">
-            <CoinsIcons />
-            <div>Stake {tokensNames} LP Tokens</div>
-          </div>
+  // return (
+  //   <PopupContainer onClick={closeHandler} show={show}>
+  //     <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+  //       <button onClick={closeHandler} className="close-modal" />
+  //       <FarmLpActionsPopupsContent>
+  //         <div className="popup-header">
+  //           <CoinsIcons />
+  //           <div>Stake {tokensNames} LP Tokens</div>
+  //         </div>
 
-          <Input
-            className={`pinned-dropdown mb-45`}
-            inputProps={{
-              value: inputData.amount,
-              type: 'number',
-              onBlur: handleBlur,
-              onFocus: handleFocus,
-              onChange: handleChange,
-            }}
-            settings={{
-              balance: lpTokenUserBalance,
-              balanceAsset: tokensNames,
-              useMaxHandler: () => setInputData({ ...inputData, amount: String(lpTokenUserBalance) }),
-              inputStatus: inputData.validation,
-              inputSize: INPUT_LARGE,
-            }}
-          >
-            <InputPinnedTokenInfo>{tokensNames}</InputPinnedTokenInfo>
-          </Input>
+  //         <Input
+  //           className={`pinned-dropdown mb-45`}
+  //           inputProps={{
+  //             value: inputData.amount,
+  //             type: 'number',
+  //             onBlur: handleBlur,
+  //             onFocus: handleFocus,
+  //             onChange: handleChange,
+  //           }}
+  //           settings={{
+  //             balance: lpTokenUserBalance,
+  //             balanceAsset: tokensNames,
+  //             useMaxHandler: () => setInputData({ ...inputData, amount: String(lpTokenUserBalance) }),
+  //             inputStatus: inputData.validation,
+  //             inputSize: INPUT_LARGE,
+  //           }}
+  //         >
+  //           <InputPinnedTokenInfo>{tokensNames}</InputPinnedTokenInfo>
+  //         </Input>
 
-          <NewButton
-            disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
-            kind={BUTTON_PRIMARY}
-            onClick={handleClick}
-          >
-            <Icon id="in" />
-            Stake LP
-          </NewButton>
-        </FarmLpActionsPopupsContent>
-      </PopupContainerWrapper>
-    </PopupContainer>
-  )
+  //         <NewButton
+  //           disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
+  //           kind={BUTTON_PRIMARY}
+  //           onClick={handleClick}
+  //         >
+  //           <Icon id="in" />
+  //           Stake LP
+  //         </NewButton>
+  //       </FarmLpActionsPopupsContent>
+  //     </PopupContainerWrapper>
+  //   </PopupContainer>
+  // )
 }

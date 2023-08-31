@@ -5,6 +5,7 @@ import { FarmsProviderSubsType } from '../farms.provider.types'
 
 import {
   FARMS_ALL_DATA_SUB,
+  FARMS_ALL_LIVE_DATA_SUB,
   FARMS_DATA_SUB,
   FARMS_FINISHED_NOT_STAKED_DATA_SUB,
   FARMS_FINISHED_STAKED_DATA_SUB,
@@ -16,6 +17,9 @@ const getFamrsFilter = (queryType: FarmsProviderSubsType[typeof FARMS_DATA_SUB])
   switch (queryType) {
     case FARMS_ALL_DATA_SUB:
       return ``
+
+    case FARMS_ALL_LIVE_DATA_SUB:
+      return `, where: {open: {_eq: true}}`
 
     case FARMS_LIVE_NOT_STAKED_DATA_SUB:
       return `, where: {open: {_eq: true}, lp_token_balance: {_eq: "0"}}`
@@ -32,12 +36,12 @@ const getFamrsFilter = (queryType: FarmsProviderSubsType[typeof FARMS_DATA_SUB])
   }
 }
 
+// TODO: farm ends in time
+
 export const getFarms = (
   queryType: FarmsProviderSubsType[typeof FARMS_DATA_SUB],
 ): DocumentNode | TypedDocumentNode<FarmsQueryQuery, OperationVariables> => {
   const farmsFilter = getFamrsFilter(queryType)
-
-  console.log({ queryType })
 
   return apolloGql(`
 		query farmsQuery {

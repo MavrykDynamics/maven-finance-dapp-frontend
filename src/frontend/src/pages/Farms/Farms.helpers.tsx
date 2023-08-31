@@ -6,6 +6,7 @@ import { getContractBigmapKeys, network } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
 import { Farm_Account } from 'utils/__generated__/graphql'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import { FarmRecordType, FarmsCtxType } from 'providers/FarmsProvider/farms.provider.types'
 
 type EndsInType = {
   endsIn: any
@@ -99,8 +100,8 @@ export const calculateAPR = (currentRewardPerBlock: number, blocksAmount: number
   return lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
 }
 
-export const getSummDepositedAmount = (farmAccounts: Farm_Account[]): number => {
-  return farmAccounts.reduce((acc, cur) => acc + cur.deposited_amount, 0)
+export const getSummDepositedAmount = (farmAccounts: FarmRecordType['farmDepositors']): number => {
+  return farmAccounts.reduce((acc, cur) => acc + cur.depositedAmount, 0)
 }
 
 // getting end time for farm cards
@@ -186,21 +187,18 @@ export const getUserBalanceByAddressOld = async (tokenAddress?: string) => {
 }
 
 // filters helpers
-export const filterByLiveFinished = (
-  farmsToFilter: Array<Normalizedfarm>,
-  newLiveFinishedValue: number,
-): Array<Normalizedfarm> => {
-  return farmsToFilter.filter(({ isLive }) => (newLiveFinishedValue === 1 ? isLive === true : isLive === false))
-}
-
-export const filterBySearch = (farmsToFilter: Array<Normalizedfarm>, newSearchText: string): Array<Normalizedfarm> => {
-  return farmsToFilter.filter(({ lpTokenAddress, name }) => {
+export const filterBySearch = (
+  farmsToFilter: Array<string>,
+  farmsMapper: FarmsCtxType['farmsMapper'],
+  newSearchText: string,
+) =>
+  farmsToFilter.filter((farmAddress) => {
+    const { liquidityTokenAddress, name } = farmsMapper[farmAddress]
     return (
-      lpTokenAddress.toLowerCase().includes(newSearchText.toLowerCase()) ||
+      liquidityTokenAddress.toLowerCase().includes(newSearchText.toLowerCase()) ||
       name.toLowerCase().includes(newSearchText.toLowerCase())
     )
   })
-}
 
 export const getNewOpenedCardsAddresses = (openedCards: Array<string>, newOpenedCardAddress: string): Array<string> => {
   return openedCards.find((openCardAddress) => openCardAddress === newOpenedCardAddress)
@@ -208,45 +206,41 @@ export const getNewOpenedCardsAddresses = (openedCards: Array<string>, newOpened
     : openedCards.concat(newOpenedCardAddress)
 }
 
-export const filterByStaked = (farmsToFilter: Array<Normalizedfarm>, newStakedValue: number): Array<Normalizedfarm> => {
-  return newStakedValue === STAKED
-    ? farmsToFilter.filter(
-        (item) => item.farmAccounts?.length && item.farmAccounts.some((account) => account?.deposited_amount > 0),
-      )
-    : farmsToFilter
-}
-
-export const sortFarms = (farmsToSort: Array<Normalizedfarm>, sortBy: string): Array<Normalizedfarm> => {
+export const sortFarms = (farmsToSort: Array<string>, farmsMapper: FarmsCtxType['farmsMapper'], sortBy: string) => {
   const dataToSort = [...farmsToSort]
-  dataToSort.sort((a, b) => {
+  dataToSort.sort((farmA_address, farmB_address) => {
+    const farmA = farmsMapper[farmA_address]
+    const farmB = farmsMapper[farmB_address]
     let res = 0
     switch (sortBy) {
       case 'active':
-        res = Number(a.open) - Number(b.open)
+        res = Number(farmA.open) - Number(farmB.open)
         break
       case 'highestAPY':
         res =
-          calculateAPY(a.currentRewardPerBlock, a.lpBalance) < calculateAPY(b.currentRewardPerBlock, b.lpBalance)
+          calculateAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) <
+          calculateAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
             ? 1
             : -1
         break
       case 'lowestAPY':
         res =
-          calculateAPY(a.currentRewardPerBlock, a.lpBalance) > calculateAPY(b.currentRewardPerBlock, b.lpBalance)
+          calculateAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) >
+          calculateAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
             ? 1
             : -1
         break
       case 'highestLiquidity':
-        res = a.lpBalance < b.lpBalance ? 1 : -1
+        res = farmA.liquidityTokenBalance < farmB.liquidityTokenBalance ? 1 : -1
         break
       case 'lowestLiquidity':
-        res = a.lpBalance > b.lpBalance ? 1 : -1
+        res = farmA.liquidityTokenBalance > farmB.liquidityTokenBalance ? 1 : -1
         break
       case 'yourLargestStake':
-        res = getSummDepositedAmount(a.farmAccounts) < getSummDepositedAmount(b.farmAccounts) ? 1 : -1
+        res = getSummDepositedAmount(farmA.farmDepositors) < getSummDepositedAmount(farmB.farmDepositors) ? 1 : -1
         break
       case 'rewardsPerBlock':
-        res = a.currentRewardPerBlock < b.currentRewardPerBlock ? 1 : -1
+        res = farmA.currentRewardPerBlock < farmB.currentRewardPerBlock ? 1 : -1
         break
       default:
         res = 1
