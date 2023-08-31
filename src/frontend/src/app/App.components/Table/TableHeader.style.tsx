@@ -93,7 +93,7 @@ const LOANS_DASHBOARD_TABLE_HEADER_CELL_STYLES = css`
 `
 
 export const TableHeaderCell = styled.th<{ theme: MavrykTheme; contentPosition?: 'left' | 'center' | 'right' }>`
-  color: ${({ theme }) => theme.mainHeadingText};
+  color: ${({ theme }) => theme.subHeadingText};
 
   ${({ contentPosition }) => {
     switch (contentPosition) {

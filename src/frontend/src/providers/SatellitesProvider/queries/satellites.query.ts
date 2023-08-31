@@ -111,11 +111,17 @@ export function getSatelliteDataQuery(
         }
 
         # last voted proposal
-        lastVotedProposal: governance_proposals_votes(order_by: {timestamp: desc}, where: {round: {_eq: "1"}}) {
+        lastVotedProposal: governance_proposals_votes(order_by: {timestamp: desc}, limit: 1) {
           vote
           governance_proposal {
             id
             title
+            
+            cycle
+            current_round_proposal
+            governance {
+              cycle_id
+            }
           }
         }
 

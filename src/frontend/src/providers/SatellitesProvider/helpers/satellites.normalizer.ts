@@ -158,13 +158,15 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataQueryQuery['sa
       oracleEfficiency: getSatelliteOracleEfficiency(satelliteUser),
 
       // votes & voting metrix
-      lastVotedProposal: lastVotedProposal
-        ? {
-            vote: lastVotedProposal.vote,
-            proposalTitle: lastVotedProposal.governance_proposal.title,
-            proposalId: lastVotedProposal.governance_proposal.id,
-          }
-        : null,
+      lastVotedProposal:
+        lastVotedProposal &&
+        lastVotedProposal.governance_proposal.cycle === lastVotedProposal.governance_proposal.governance.cycle_id
+          ? {
+              vote: satelliteVoteSchema.parse(lastVotedProposal.vote),
+              proposalTitle: lastVotedProposal.governance_proposal.title,
+              proposalId: lastVotedProposal.governance_proposal.id,
+            }
+          : null,
       proposalsVotesAmount: satelliteUser.govProposalsVotesAmount.aggregate?.count ?? 0,
       financialRequestsVotesAmount: satelliteUser.finRequestsVotesAmount.aggregate?.count ?? 0,
       satelliteActionVotesAmount: satelliteUser.satelliteGovActionsVotesAmount.aggregate?.count ?? 0,
