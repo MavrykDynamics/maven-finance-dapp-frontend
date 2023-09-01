@@ -6,7 +6,7 @@ export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
 
 export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
   const { mavryk_user: sMVKAmounts, treasury } = data
-  const treasuryAssetsColors: Record<string, string> = sMVKAmounts?.length ? { smvk: getDiagramSectionColor() } : {}
+  const treasuryAssetsColors: Record<string, string> = sMVKAmounts?.length ? { smvk: getDiagramSectionColor(0) } : {}
 
   // Parse sMVK amount for each treasury, to make this structure usable
   const sMVKBalancesMapper = sMVKAmounts?.reduce<Record<string, TreasuryBalanceType>>(
@@ -34,7 +34,7 @@ export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
       .reduce<Array<TreasuryBalanceType>>((acc, { balance, token: { metadata, token_address } }) => {
         // get color of the asset
         if (!treasuryAssetsColors[token_address]) {
-          treasuryAssetsColors[token_address] = getDiagramSectionColor()
+          treasuryAssetsColors[token_address] = getDiagramSectionColor(Object.keys(treasuryAssetsColors).length - idx)
         }
 
         // Filter zero balance assets in treasury and bad tokens that don't have info or not in whitelist for this treasury

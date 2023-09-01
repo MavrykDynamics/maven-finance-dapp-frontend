@@ -1,3 +1,5 @@
+import { createDiagramColorsSingleArray } from './pieChart.utils'
+
 // PINK TONES
 export const D_PINK_PRIMARY = '#FF8486'
 export const D_PINK_SECONDARY = '#FFA3A4'
@@ -28,7 +30,7 @@ export const D_PURPLE_SECONDARY = '#8D86EB'
 export const D_PURPLE_TERTIARY = '#615193'
 export const D_PURPLE_LIGHT = '#BBB'
 
-export const DIAGRAM_COLORS = [
+export const DIAGRAM_COLORS_MATRIX = [
   [D_PINK_PRIMARY, D_PINK_SECONDARY, D_PINK_TERTIARY, D_PINK_LIGHT],
   [D_BLUE_PRIMARY, D_BLUE_SECONDARY, D_BLUE_TERTIARY, D_BLUE_LIGHT],
   [D_GREEN_PRIMARY, D_GREEN_SECONDARY, D_GREEN_TERTIARY, D_GREEN_LIGHT],
@@ -36,7 +38,7 @@ export const DIAGRAM_COLORS = [
   [D_PURPLE_PRIMARY, D_PURPLE_SECONDARY, D_PURPLE_TERTIARY, D_PURPLE_LIGHT],
 ]
 
-export const DIAGRAM_COLORS_INNER_ARR_LENGTH = 5
+export const DIAGRAM_COLORS_ARR = createDiagramColorsSingleArray(DIAGRAM_COLORS_MATRIX)
 
 // other
 export const SECTOR_STYLES = { transition: 'stroke 0s', cursor: 'pointer' }

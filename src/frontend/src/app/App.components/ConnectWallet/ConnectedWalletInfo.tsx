@@ -385,7 +385,6 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
           <Button onClick={signOut} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
             <Icon id="exit" /> Sign out
           </Button>
-          <div>dsaasd</div>
         </div>
       </MobileWalletDetailsHiddenPart>
     </MobileWalletDetailsStyled>
