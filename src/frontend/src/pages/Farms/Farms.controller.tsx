@@ -44,6 +44,7 @@ import {
   FARMS_LIVE_NOT_STAKED_DATA_SUB,
   FARMS_LIVE_STAKED_DATA_SUB,
 } from 'providers/FarmsProvider/helpers/farms.const'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 export type HandleClickArgsType = { filterType: 'search' | 'sort' | 'isStaked' | 'isLive' | 'openCard' } & Partial<{
   newStakedValue: isStakedFarmType
@@ -66,6 +67,8 @@ export const Farms = () => {
     finishedStakedFarms,
     liveNotStakedFarms,
   } = useFarmsContext()
+
+  const { isLoading: isUserRewardsLoading } = useUserRewards()
 
   const [farmsFilers, setFarmsFilters] = useState<FarmsFiltersStateType>({
     isStaked: NO_STAKED,
@@ -219,7 +222,7 @@ export const Farms = () => {
             }}
             className={farmsFilers.farmsViewVariant}
           />
-          {isFarmsLoading ? (
+          {isFarmsLoading || isUserRewardsLoading ? (
             <DataLoaderWrapper className="tabLoader">
               <ClockLoader width={150} height={150} />
               <div className="text">Loading farms</div>

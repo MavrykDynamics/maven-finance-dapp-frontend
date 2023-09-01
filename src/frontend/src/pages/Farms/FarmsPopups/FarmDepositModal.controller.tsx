@@ -18,7 +18,7 @@ import CoinsIcons from '../../../app/App.components/Icon/CoinsIcons.view'
 import { FarmDepositPopupDataType } from 'pages/Farms/Farms.const'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { State } from 'reducers'
-import { deposit } from '../Farms.actions'
+// import { deposit } from '../Farms.actions'
 
 // styles
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'

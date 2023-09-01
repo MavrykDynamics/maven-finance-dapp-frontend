@@ -6,8 +6,16 @@ import {
   FARMS_DATA_SUB,
   FARMS_ALL_DATA_SUB,
   FARMS_ALL_LIVE_DATA_SUB,
+  DEPOSIT_TO_FARM_ACTION,
+  HARVEST_FARM_REWARDS_ACTION,
+  WITHDRAW_FROM_FARM_ACTION,
 } from './helpers/farms.const'
 import { normalizeFarm } from './helpers/farms.normalizer'
+
+export type FarmActionsType =
+  | typeof HARVEST_FARM_REWARDS_ACTION
+  | typeof DEPOSIT_TO_FARM_ACTION
+  | typeof WITHDRAW_FROM_FARM_ACTION
 
 export type FarmsProviderSubsType = {
   [FARMS_DATA_SUB]:

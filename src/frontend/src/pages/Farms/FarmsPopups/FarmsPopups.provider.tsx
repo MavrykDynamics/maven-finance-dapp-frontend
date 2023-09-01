@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { createContext } from 'react'
 import {
   DEFAULT_FARMS_POPUPS_STATE,
   FarmDepositPopupDataType,
   FarmsPopupsContextStateType,
   FarmWithdrawPopupDataType,
-  RoiCalculatorPopupDataType,
+  // RoiCalculatorPopupDataType,
 } from '../Farms.const'
 // import RoiCalculator from '../RoiCalculator/RoiCalculator.controller'
 import { FarmDepositModal } from './FarmDepositModal.controller'
@@ -21,7 +21,7 @@ export const farmsPopupsContext = createContext<FarmsPopupsContextStateType>(und
  * @class
  * @augments {React.Component}
  */
-export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopupsContextStateType> {
+class FarmsPopupsProvider extends React.Component<{}, FarmsPopupsContextStateType> {
   constructor(props: {}) {
     super(props)
 
@@ -123,3 +123,15 @@ export default class FarmsPopupsProvider extends React.Component<{}, FarmsPopups
     )
   }
 }
+
+export const useFarmsPopupsContext = () => {
+  const context = useContext(farmsPopupsContext)
+
+  if (!context) {
+    throw new Error('useFarmsPopupsContext should be used within FarmsPopupsProvider')
+  }
+
+  return context
+}
+
+export default FarmsPopupsProvider

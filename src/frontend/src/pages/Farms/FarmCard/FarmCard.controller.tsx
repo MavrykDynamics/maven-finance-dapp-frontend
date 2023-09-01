@@ -1,5 +1,4 @@
-import { useContext } from 'react'
-import { useDispatch } from 'react-redux'
+import { useCallback, useContext, useMemo } from 'react'
 
 // view
 import { VerticalFarmCard } from './VerticalFarmCard'
@@ -8,18 +7,20 @@ import { HorizontalFarmCard } from './HorizonralFarmCard'
 // utils
 import { calculateAPY } from '../Farms.helpers'
 import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
-import { harvest } from '../Farms.actions'
 
 // consts
 import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { harvestRewards } from 'providers/FarmsProvider/actions/farms.actions'
+import { HARVEST_FARM_REWARDS_ACTION } from 'providers/FarmsProvider/helpers/farms.const'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // const StakedBlock = ({
 //   myFarmStakedBalance,
@@ -213,40 +214,42 @@ type FarmCardProps = {
 }
 
 export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: FarmCardProps) => {
-  const dispatch = useDispatch()
   const { tokensMetadata } = useTokensContext()
   const { userAddress } = useUserContext()
-  const { availableFarmRewards } = useUserRewards()
+  const { bug } = useToasterContext()
+
   // const { openDepositFarmPopup, openRoiCalculatorPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
   const { openDepositFarmPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
 
   const valueAPY = calculateAPY(farm.currentRewardPerBlock, farm.liquidityTokenBalance)
-  const userReward = availableFarmRewards[farm.address]
+
+  // harvest rewards action ---------------------------
+  const harvestRewardsAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    return await harvestRewards(farm.address)
+  }, [farm.address, userAddress])
+
+  const harvestRewardsContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: HARVEST_FARM_REWARDS_ACTION,
+      actionFn: harvestRewardsAction,
+    }),
+    [harvestRewardsAction],
+  )
+
+  const { action: handleHarvestRewards } = useContractAction(harvestRewardsContractActionProps)
 
   const farmToken = tokensMetadata[farm.liquidityTokenAddress]
-
-  console.log({ farmToken })
-
   if (!checkWhetherTokenIsFarmToken(farmToken)) return null
-
-  const harvestRewards = () => {
-    dispatch(harvest(farm.address, tokensMetadata))
-  }
 
   // const openROI = () =>
   //   openRoiCalculatorPopup({
   //     selectedFarmAddress: farm.address,
   //   })
-
-  const openDeposit = () =>
-    openDepositFarmPopup({
-      selectedFarmAddress: farm.address,
-    })
-
-  const openWithdraw = () =>
-    openWithdrawFarmPopup({
-      selectedFarmAddress: farm.address,
-    })
 
   // return variant === 'vertical' ? (
   //   <VerticalFarmComponent
@@ -282,7 +285,7 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
         farm={farm}
         farmToken={farmToken}
         isCardOpened={isOpenedCard}
-        harvestRewards={harvestRewards}
+        harvestRewards={handleHarvestRewards}
         expandCallback={expandCallback}
       />
     )
@@ -293,7 +296,7 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
       farm={farm}
       farmToken={farmToken}
       isCardOpened={isOpenedCard}
-      harvestRewards={harvestRewards}
+      harvestRewards={handleHarvestRewards}
       expandCallback={expandCallback}
     />
   )

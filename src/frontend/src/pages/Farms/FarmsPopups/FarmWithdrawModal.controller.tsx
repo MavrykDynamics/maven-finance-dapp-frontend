@@ -11,7 +11,7 @@ import CoinsIcons from '../../../app/App.components/Icon/CoinsIcons.view'
 // actions
 import { FarmDepositPopupDataType } from 'pages/Farms/Farms.const'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { withdraw } from '../Farms.actions'
+// import { withdraw } from '../Farms.actions'
 import {
   InputStatusType,
   INPUT_LARGE,

@@ -85,183 +85,183 @@ export const getFarmStorage =
     }
   }
 
-export const harvest =
-  (farmAddress: string, tokens: TokensContext['tokensMetadata']) =>
-  async (dispatch: AppDispatch, getState: GetState) => {
-    const state: State = getState()
+// export const harvest =
+//   (farmAddress: string, tokens: TokensContext['tokensMetadata']) =>
+//   async (dispatch: AppDispatch, getState: GetState) => {
+//     const state: State = getState()
 
-    // check whether we can send transaction
-    if (!state.wallet.accountPkh) {
-      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
+//     // check whether we can send transaction
+//     if (!state.wallet.accountPkh) {
+//       await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+//       return
+//     }
 
-    try {
-      // prepare and send transaction
-      const tezos = await DAPP_INSTANCE.tezos()
-      const contract = await tezos.wallet.at(farmAddress)
-      const transaction = await contract?.methods.claim(farmAddress).send()
+//     try {
+//       // prepare and send transaction
+//       const tezos = await DAPP_INSTANCE.tezos()
+//       const contract = await tezos.wallet.at(farmAddress)
+//       const transaction = await contract?.methods.claim(farmAddress).send()
 
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
-      dispatch(showToaster(TOASTER_INFO, 'Harvesting...', ACTION_START_MESSAGE_TEXT))
+//       dispatch(toggleActionFullScreenLoader(true))
+//       dispatch(toggleActionCompletion(true))
+//       dispatch(showToaster(TOASTER_INFO, 'Harvesting...', ACTION_START_MESSAGE_TEXT))
 
-      // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
+//       // turn off fs actions loader and start data updating after 5s after operation started
+//       setTimeout(async () => {
+//         await dispatch(toggleActionFullScreenLoader(false))
+//         await dispatch(
+//           showToaster(
+//             TOASTER_LOADING,
+//             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+//             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+//           ),
+//         )
 
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
+//         // @ts-ignore don't have proper type to acees data, type has only methods
+//         const currentOperationLevel = transaction?.lastHead?.header?.level
 
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getFarmStorage(tokens))
+//         // refetch data we need
+//         await checkIndexerLevelAndRunDataUpdateCallback({
+//           callback: async () => {
+//             await dispatch(getFarmStorage(tokens))
 
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Harvesting done', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error)
-        await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
-    }
-  }
+//             await dispatch(hideToaster())
+//             await dispatch(showToaster(TOASTER_SUCCESS, 'Harvesting done', ACTION_COMPLETION_MESSAGE_TEXT))
+//             await dispatch(toggleActionCompletion(false))
+//           },
+//           currentOperationLevel,
+//         })
+//       }, 5000)
+//     } catch (error) {
+//       if (error instanceof Error) {
+//         console.error(error)
+//         await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+//       }
+//       dispatch(toggleActionFullScreenLoader(false))
+//       dispatch(toggleActionCompletion(false))
+//     }
+//   }
 
-export const deposit =
-  (farmAddress: string, amount: number, tokens: TokensContext['tokensMetadata']) =>
-  async (dispatch: AppDispatch, getState: GetState) => {
-    const state: State = getState()
+// export const deposit =
+//   (farmAddress: string, amount: number, tokens: TokensContext['tokensMetadata']) =>
+//   async (dispatch: AppDispatch, getState: GetState) => {
+//     const state: State = getState()
 
-    // check whether we can send transaction
-    if (!state.wallet.accountPkh) {
-      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
+//     // check whether we can send transaction
+//     if (!state.wallet.accountPkh) {
+//       await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+//       return
+//     }
 
-    if (!(amount > 0)) {
-      dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
-      return
-    }
+//     if (!(amount > 0)) {
+//       dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
+//       return
+//     }
 
-    try {
-      // prepare and send transaction
-      const tezos = await DAPP_INSTANCE.tezos()
-      const contract = await tezos.wallet.at(farmAddress)
-      const transaction = await contract?.methods.deposit(convertNumberForContractCall({ number: amount })).send()
+//     try {
+//       // prepare and send transaction
+//       const tezos = await DAPP_INSTANCE.tezos()
+//       const contract = await tezos.wallet.at(farmAddress)
+//       const transaction = await contract?.methods.deposit(convertNumberForContractCall({ number: amount })).send()
 
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
-      dispatch(showToaster(TOASTER_INFO, 'Depositing...', ACTION_START_MESSAGE_TEXT))
+//       dispatch(toggleActionFullScreenLoader(true))
+//       dispatch(toggleActionCompletion(true))
+//       dispatch(showToaster(TOASTER_INFO, 'Depositing...', ACTION_START_MESSAGE_TEXT))
 
-      // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
+//       // turn off fs actions loader and start data updating after 5s after operation started
+//       setTimeout(async () => {
+//         await dispatch(toggleActionFullScreenLoader(false))
+//         await dispatch(
+//           showToaster(
+//             TOASTER_LOADING,
+//             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+//             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+//           ),
+//         )
 
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
+//         // @ts-ignore don't have proper type to acees data, type has only methods
+//         const currentOperationLevel = transaction?.lastHead?.header?.level
 
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getFarmStorage(tokens))
+//         // refetch data we need
+//         await checkIndexerLevelAndRunDataUpdateCallback({
+//           callback: async () => {
+//             await dispatch(getFarmStorage(tokens))
 
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Depositing done', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error)
-        await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
-    }
-  }
+//             await dispatch(hideToaster())
+//             await dispatch(showToaster(TOASTER_SUCCESS, 'Depositing done', ACTION_COMPLETION_MESSAGE_TEXT))
+//             await dispatch(toggleActionCompletion(false))
+//           },
+//           currentOperationLevel,
+//         })
+//       }, 5000)
+//     } catch (error) {
+//       if (error instanceof Error) {
+//         console.error(error)
+//         await dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+//       }
+//       dispatch(toggleActionFullScreenLoader(false))
+//       dispatch(toggleActionCompletion(false))
+//     }
+//   }
 
-export const withdraw =
-  (farmAddress: string, amount: number, tokens: TokensContext['tokensMetadata']) =>
-  async (dispatch: AppDispatch, getState: GetState) => {
-    const state: State = getState()
+// export const withdraw =
+//   (farmAddress: string, amount: number, tokens: TokensContext['tokensMetadata']) =>
+//   async (dispatch: AppDispatch, getState: GetState) => {
+//     const state: State = getState()
 
-    // check whether we can send transaction
-    if (!state.wallet.accountPkh) {
-      await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
+//     // check whether we can send transaction
+//     if (!state.wallet.accountPkh) {
+//       await dispatch(showToaster(TOASTER_ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+//       return
+//     }
 
-    if (!(amount > 0)) {
-      dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
-      return
-    }
+//     if (!(amount > 0)) {
+//       dispatch(showToaster(TOASTER_ERROR, 'Incorrect amount', 'Please enter an amount superior to zero'))
+//       return
+//     }
 
-    try {
-      // prepare and send transaction
-      const tezos = await DAPP_INSTANCE.tezos()
-      const contract = await tezos.wallet.at(farmAddress)
-      const transaction = await contract?.methods.withdraw(convertNumberForContractCall({ number: amount })).send()
+//     try {
+//       // prepare and send transaction
+//       const tezos = await DAPP_INSTANCE.tezos()
+//       const contract = await tezos.wallet.at(farmAddress)
+//       const transaction = await contract?.methods.withdraw(convertNumberForContractCall({ number: amount })).send()
 
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
-      dispatch(showToaster(TOASTER_INFO, 'Withdrawing...', ACTION_START_MESSAGE_TEXT))
+//       dispatch(toggleActionFullScreenLoader(true))
+//       dispatch(toggleActionCompletion(true))
+//       dispatch(showToaster(TOASTER_INFO, 'Withdrawing...', ACTION_START_MESSAGE_TEXT))
 
-      // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
+//       // turn off fs actions loader and start data updating after 5s after operation started
+//       setTimeout(async () => {
+//         await dispatch(toggleActionFullScreenLoader(false))
+//         await dispatch(
+//           showToaster(
+//             TOASTER_LOADING,
+//             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
+//             TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
+//           ),
+//         )
 
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
+//         // @ts-ignore don't have proper type to acees data, type has only methods
+//         const currentOperationLevel = transaction?.lastHead?.header?.level
 
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getFarmStorage(tokens))
+//         // refetch data we need
+//         await checkIndexerLevelAndRunDataUpdateCallback({
+//           callback: async () => {
+//             await dispatch(getFarmStorage(tokens))
 
-            await dispatch(hideToaster())
-            await dispatch(showToaster(TOASTER_SUCCESS, 'Withdrawing done', ACTION_COMPLETION_MESSAGE_TEXT))
-            await dispatch(toggleActionCompletion(false))
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error)
-        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
-    }
-  }
+//             await dispatch(hideToaster())
+//             await dispatch(showToaster(TOASTER_SUCCESS, 'Withdrawing done', ACTION_COMPLETION_MESSAGE_TEXT))
+//             await dispatch(toggleActionCompletion(false))
+//           },
+//           currentOperationLevel,
+//         })
+//       }, 5000)
+//     } catch (error) {
+//       if (error instanceof Error) {
+//         console.error(error)
+//         dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
+//       }
+//       dispatch(toggleActionFullScreenLoader(false))
+//       dispatch(toggleActionCompletion(false))
+//     }
+//   }

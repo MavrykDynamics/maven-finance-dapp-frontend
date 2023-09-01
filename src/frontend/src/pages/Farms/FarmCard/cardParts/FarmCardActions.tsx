@@ -12,6 +12,7 @@ import { Card } from 'styles'
 
 // types
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { useFarmsPopupsContext } from 'pages/Farms/FarmsPopups/FarmsPopups.provider'
 
 const FarmCardActionsStyled = styled(Card)`
   padding: 20px;
@@ -38,27 +39,37 @@ const FarmCardActionsStyled = styled(Card)`
 `
 
 export const FarmCardActions = ({
-  triggerDepositModal,
-  triggerWithdrawModal,
   isFarmLive,
   isMFarm,
   isVertical = false,
   farmToken,
   userAddress,
+  farmAddress,
   userDepositedAmount,
 }: {
-  triggerDepositModal: () => void
-  triggerWithdrawModal: () => void
   isFarmLive: boolean
   isMFarm: boolean
   isVertical?: boolean
   farmToken: FarmsTokenMetadataType
   userAddress: string | null
+  farmAddress: string
   userDepositedAmount: number
 }) => {
+  const { openDepositFarmPopup, openWithdrawFarmPopup } = useFarmsPopupsContext()
+
   const tokenName = isMFarm
     ? farmToken.symbol
     : `${farmToken.farmLpData.token0?.symbol}-${farmToken.farmLpData.token1?.symbol}`
+
+  const openDepositModal = () =>
+    openDepositFarmPopup({
+      selectedFarmAddress: farmAddress,
+    })
+
+  const openWithdrawModal = () =>
+    openWithdrawFarmPopup({
+      selectedFarmAddress: farmAddress,
+    })
 
   return (
     <FarmCardActionsStyled className="farm-actions">
@@ -72,13 +83,13 @@ export const FarmCardActions = ({
           {isVertical ? (
             <>
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={triggerDepositModal} disabled={isFarmLive}>
+                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={openDepositModal} disabled={isFarmLive}>
                   <Icon id="in" /> Stake LP
                 </Button>
               </div>
 
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={triggerWithdrawModal} disabled={isFarmLive}>
+                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openWithdrawModal} disabled={isFarmLive}>
                   <Icon id="out" /> UnStake LP
                 </Button>
               </div>
@@ -86,13 +97,13 @@ export const FarmCardActions = ({
           ) : (
             <>
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={triggerWithdrawModal} disabled={isFarmLive}>
+                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openWithdrawModal} disabled={isFarmLive}>
                   <Icon id="out" /> UnStake LP
                 </Button>
               </div>
 
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={triggerDepositModal} disabled={isFarmLive}>
+                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={openDepositModal} disabled={isFarmLive}>
                   <Icon id="in" /> Stake LP
                 </Button>
               </div>

@@ -1,22 +1,25 @@
+import classNames from 'classnames'
+
 // view
 import { HorizontalFarmCardStyled } from './FarmCard.style'
 import { FarmCardHarvest } from './cardParts/FarmCardHarvest'
 import { FarmCardHeader } from './cardParts/FarmCardHeader'
+import Icon from 'app/App.components/Icon/Icon.view'
 import { FarmCardActions } from './cardParts/FarmCardActions'
+import Button from 'app/App.components/Button/NewButton'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
+// consts
+import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+
 // types
 import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Button from 'app/App.components/Button/NewButton'
-import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
-import Icon from 'app/App.components/Icon/Icon.view'
-import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
-import classNames from 'classnames'
 
 type HorizontalFarmCardPropsType = {
   farm: FarmRecordType
@@ -88,11 +91,10 @@ export const HorizontalFarmCard = ({
           <FarmCardHarvest userReward={userReward} harvestRewards={harvestRewards} />
 
           <FarmCardActions
-            triggerDepositModal={() => {}}
-            triggerWithdrawModal={() => {}}
             isFarmLive={farm.open}
             isMFarm={farm.isMFarm}
             farmToken={farmToken}
+            farmAddress={farm.address}
             userAddress={userAddress}
             userDepositedAmount={0}
           />

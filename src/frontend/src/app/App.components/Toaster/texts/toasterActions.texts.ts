@@ -81,6 +81,11 @@ import {
   VOTE_FOR_ACTION,
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import {
+  DEPOSIT_TO_FARM_ACTION,
+  HARVEST_FARM_REWARDS_ACTION,
+  WITHDRAW_FROM_FARM_ACTION,
+} from 'providers/FarmsProvider/helpers/farms.const'
 
 // types
 type ToastMessageContent = {
@@ -614,6 +619,37 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
     end: {
       title: 'Fixing Mistaken Transfer triggered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // farms actions ------------------------------------
+  [HARVEST_FARM_REWARDS_ACTION]: {
+    start: {
+      title: 'Harvesting...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Harvesting done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DEPOSIT_TO_FARM_ACTION]: {
+    start: {
+      title: 'Depositing...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Depositing done  ',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [WITHDRAW_FROM_FARM_ACTION]: {
+    start: {
+      title: 'Withdrawing...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Withdrawing done',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

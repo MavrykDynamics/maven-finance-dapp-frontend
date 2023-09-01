@@ -83,11 +83,10 @@ export const VerticalFarmCard = ({
       <FarmCardHarvest userReward={userReward} harvestRewards={harvestRewards} />
 
       <FarmCardActions
-        triggerDepositModal={() => {}}
-        triggerWithdrawModal={() => {}}
         isFarmLive={farm.open}
         isMFarm={farm.isMFarm}
         farmToken={farmToken}
+        farmAddress={farm.address}
         userAddress={userAddress}
         userDepositedAmount={0}
         isVertical
