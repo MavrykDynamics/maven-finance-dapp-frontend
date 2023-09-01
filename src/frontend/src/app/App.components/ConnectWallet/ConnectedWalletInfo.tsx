@@ -378,12 +378,11 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
-            <Icon id="exchange" /> Change Wallet
-          </Button>
-
           <Button onClick={signOut} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
             <Icon id="exit" /> Sign out
+          </Button>
+          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
+            <Icon id="exchange" /> Change Wallet
           </Button>
         </div>
       </MobileWalletDetailsHiddenPart>
