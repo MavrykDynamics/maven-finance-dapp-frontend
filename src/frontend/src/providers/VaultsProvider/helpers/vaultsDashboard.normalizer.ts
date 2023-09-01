@@ -1,5 +1,4 @@
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getAssetColor } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 import { getVaultCollateralRatio } from './vaults.utils'
 
@@ -7,6 +6,7 @@ import { getVaultCollateralRatio } from './vaults.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { DashboardVaultsTabDataQuery } from 'utils/__generated__/graphql'
 import { VaultsDashboardDataType } from '../vaults.provider.types'
+import { getDiagramSectionColor } from 'app/App.components/PieChart/pieChart.utils'
 
 export const normalizeVaultsDashboardData = ({
   indexerData,
@@ -43,7 +43,7 @@ export const normalizeVaultsDashboardData = ({
         acc.reducedVaultsCollaterals.push({
           balance: Number(balances_aggregate.aggregate?.sum?.balance),
           tokenAddress: token_address,
-          chartColor: getAssetColor(collateralIdx),
+          chartColor: getDiagramSectionColor(collateralIdx),
         })
       }
 
