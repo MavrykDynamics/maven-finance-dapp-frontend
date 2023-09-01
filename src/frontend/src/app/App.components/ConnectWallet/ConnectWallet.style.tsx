@@ -3,6 +3,10 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const ConnectWalletBtnWrap = styled.div`
   min-width: 220px;
+
+  &.isWide {
+    width: 100%;
+  }
 `
 
 // WALLET INFO STYLING

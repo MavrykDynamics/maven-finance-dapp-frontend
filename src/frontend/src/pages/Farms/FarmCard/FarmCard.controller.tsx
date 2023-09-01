@@ -2,66 +2,24 @@ import { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 
 // view
-import Expand from '../../../app/App.components/Expand/Expand.view'
-import ConnectWalletBtn from '../../../app/App.components/ConnectWallet/ConnectWalletBtn'
-import { CommaNumber } from '../../../app/App.components/CommaNumber/CommaNumber.controller'
-import { harvest } from '../Farms.actions'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import CoinsIcons from '../../../app/App.components/Icon/CoinsIcons.view'
-
-// helpers
-import { calculateAPY } from '../Farms.helpers'
-
-// styles
-import {
-  FarmCardActionsStyled,
-  FarmCardHarvestStyled,
-  FarmCardHeaderStyled,
-  FarmCardStyled,
-  FarmHarvestStyled,
-  FarmStakeStyled,
-} from './FarmCard.style'
-import { FarmStorage } from 'utils/TypesAndInterfaces/Farm'
-import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
-import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
 import { VerticalFarmCard } from './VerticalFarmCard'
 import { HorizontalFarmCard } from './HorizonralFarmCard'
-import { FarmsTokenMetadataType, TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+
+// utils
+import { calculateAPY } from '../Farms.helpers'
 import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-import { FarmCardCoinIcons } from './cardParts/FarmCardCoinIcons'
-import Button from 'app/App.components/Button/NewButton'
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { harvest } from '../Farms.actions'
 
-// const QuestionLinkBlock = () => (
-//   <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
-//     <Icon id="question" />
-//   </a>
-// )
+// consts
+import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
 
-// const LogoHeaderContent = ({
-//   firstToken,
-//   secondToken,
-//   name,
-//   subtitle,
-// }: {
-//   name: string
-//   firstToken: FarmStorage[number]['lpToken1']
-//   secondToken: FarmStorage[number]['lpToken2']
-//   subtitle?: string
-// }) => (
-//   <div className="farm-card-header">
-//     <CoinsIcons firstAssetLogoSrc={firstToken.thumbnailUri} secondAssetLogoSrc={secondToken.thumbnailUri} />
-//     <div className="farm-card-section">
-//       <h3>{name}</h3>
-//       {subtitle && <div className="subtitle">{subtitle}</div>}
-//     </div>
-//   </div>
-// )
+// hooks
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+// types
+import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
 
 // const StakedBlock = ({
 //   myFarmStakedBalance,
@@ -77,26 +35,6 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.component
 //     <var>
 //       <CommaNumber value={Number(myFarmStakedBalance)} />
 //     </var>
-//   </div>
-// )
-
-// const LinksBlock = ({
-//   farmAddress,
-//   token1Symbol,
-//   token2Symbol,
-// }: {
-//   farmAddress: string
-//   token1Symbol: string
-//   token2Symbol: string
-// }) => (
-//   <div className="links-block">
-//     {/* TODO: get link for this */}
-//     <a target="_blank" rel="noreferrer" href="https://mavryk.finance/">
-//       Get {`${token1Symbol} - ${token2Symbol}`} <Icon id="send" />
-//     </a>
-//     <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farmAddress}`}>
-//       View Contract <Icon id="send" />
-//     </a>
 //   </div>
 // )
 
@@ -350,100 +288,15 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
     )
   }
 
-  return <HorizontalFarmCard />
-}
-
-// ----------- COMMON COMPONENTS -----------
-export const FarmCardHarvest = ({
-  userReward = 0,
-  harvestRewards,
-}: {
-  userReward?: number
-  harvestRewards: () => void
-}) => (
-  <FarmCardHarvestStyled className="farm-harvest">
-    <div className="info">
-      <div className="name">Unclaimed sMVK</div>
-      <CommaNumber className="value" value={userReward} />
-    </div>
-    <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={harvestRewards} disabled={userReward === 0}>
-      Harvest
-    </Button>
-  </FarmCardHarvestStyled>
-)
-
-export const FarmCardActions = ({
-  triggerDepositModal,
-  triggerWithdrawModal,
-  isFarmLive,
-  isMFarm,
-  farmToken,
-  userAddress,
-  userDepositedAmount,
-}: {
-  triggerDepositModal: () => void
-  triggerWithdrawModal: () => void
-  isFarmLive: boolean
-  isMFarm: boolean
-  farmToken: FarmsTokenMetadataType
-  userAddress: string | null
-  userDepositedAmount: number
-}) => {
-  const tokenName = isMFarm
-    ? farmToken.symbol
-    : `${farmToken.farmLpData.token0?.symbol}-${farmToken.farmLpData.token1?.symbol}`
   return (
-    <FarmCardActionsStyled className="farm-actions">
-      {userAddress ? (
-        <>
-          <div className="info">
-            <div className="name">{tokenName} LP staked</div>
-            <CommaNumber className="value" value={userDepositedAmount} />
-          </div>
-
-          <div className="farmActionWrapper">
-            <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={triggerDepositModal} disabled={isFarmLive}>
-              <Icon id="in" /> Stake LP
-            </Button>
-          </div>
-
-          <div className="farmActionWrapper">
-            <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={triggerWithdrawModal} disabled={isFarmLive}>
-              <Icon id="out" /> Unstake LP
-            </Button>
-          </div>
-        </>
-      ) : (
-        <div className="start-farming">
-          <h3>Start Farming</h3>
-          <ConnectWalletBtn />
-        </div>
-      )}
-    </FarmCardActionsStyled>
+    <HorizontalFarmCard
+      farm={farm}
+      farmToken={farmToken}
+      isCardOpened={isOpenedCard}
+      harvestRewards={harvestRewards}
+      expandCallback={expandCallback}
+    />
   )
 }
 
-export const FarmCardHeader = ({
-  farmToken,
-  farmName,
-  isMFarm,
-  farmCreator,
-}: {
-  farmToken: FarmsTokenMetadataType
-  isMFarm: boolean
-  farmName: string
-  farmCreator: string
-}) => (
-  <FarmCardHeaderStyled className="farm-card-header">
-    <div className="logo">
-      <FarmCardCoinIcons farmToken={farmToken} isMFarm={isMFarm} />
-    </div>
-
-    <div className="info">
-      <div className="name" title={farmName}>
-        {farmName}
-      </div>
-      <TzAddress tzAddress={farmCreator} type={PRIMARY_TZ_ADDRESS_COLOR} className="creator" hasIcon={false} />
-    </div>
-  </FarmCardHeaderStyled>
-)
+// ----------- COMMON COMPONENTS -----------

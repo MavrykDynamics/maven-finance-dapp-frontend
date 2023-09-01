@@ -1,20 +1,25 @@
+import classNames from 'classnames'
+
 // types
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
 
 // view
-import { FarmCardActions, FarmCardHarvest, FarmCardHeader } from './FarmCard.controller'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import Button from 'app/App.components/Button/NewButton'
+import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import { VerticalFarmCardStyled } from './FarmCard.style'
+import { FarmCardHarvest } from './cardParts/FarmCardHarvest'
+import { FarmCardHeader } from './cardParts/FarmCardHeader'
+import { FarmCardActions } from './cardParts/FarmCardActions'
+
+// consts
+import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Button from 'app/App.components/Button/NewButton'
-import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
-import Expand from 'app/App.components/Expand/Expand.view'
-import classNames from 'classnames'
 
 type VerticalFarmCardPropsType = {
   farm: FarmRecordType
@@ -85,10 +90,11 @@ export const VerticalFarmCard = ({
         farmToken={farmToken}
         userAddress={userAddress}
         userDepositedAmount={0}
+        isVertical
       />
 
-      <Expand className="vertical-expand" onClickCallback={expandCallback} isExpandedByDefault={isCardOpened}>
-        <div className="expand-data">
+      <ExpandSimple className="vertical-expand" onClick={expandCallback} isExpanded={isCardOpened}>
+        <div className="links">
           {/* TODO: get link for this */}
           <a target="_blank" rel="noreferrer" href="https://mavryk.finance/">
             Get {tokenName} <Icon id="send" />
@@ -97,7 +103,7 @@ export const VerticalFarmCard = ({
             View Contract <Icon id="send" />
           </a>
         </div>
-      </Expand>
+      </ExpandSimple>
     </VerticalFarmCardStyled>
   )
 }
