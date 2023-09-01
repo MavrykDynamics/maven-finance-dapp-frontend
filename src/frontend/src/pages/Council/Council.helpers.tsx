@@ -89,7 +89,7 @@ export function normalizeCouncilMembers(storage: CouncilMemberGraphQL[]) {
   })
 }
 
-export const memberIsFirstOfList = (list: CouncilMembers, address?: string) => {
+export const memberIsFirstOfList = (list: CouncilMembers, address?: string | null) => {
   const indexOfMember = list.findIndex((item) => item.userId === address)
 
   if (indexOfMember === -1) {

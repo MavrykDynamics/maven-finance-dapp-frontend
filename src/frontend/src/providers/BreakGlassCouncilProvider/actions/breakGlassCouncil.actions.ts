@@ -95,7 +95,6 @@ export const updateCouncilMember = async (
 ) => {
   try {
     // prepare and send transaction
-    callback()
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(breakGlassAddress)
     const updateCouncilMemberMetaData = contract?.methods.updateCouncilMemberInfo(
@@ -106,7 +105,9 @@ export const updateCouncilMember = async (
 
     // await dispatch(getBreakGlassCouncilMembers())
 
-    return await getEstimationResult(updateCouncilMemberMetaData)
+    return await getEstimationResult(updateCouncilMemberMetaData, {
+      callback,
+    })
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

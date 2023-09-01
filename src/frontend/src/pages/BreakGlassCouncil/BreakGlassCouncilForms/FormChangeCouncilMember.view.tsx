@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useState, useMemo, useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
@@ -18,11 +18,22 @@ import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provid
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { changeCouncilMember } from '../BreakGlassCouncil.actions'
+import { changeCouncilMember } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
 
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// consts
+import { CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const INIT_FORM = {
   newCouncilMemberAddress: '',
@@ -32,9 +43,13 @@ const INIT_FORM = {
 }
 
 export function FormChangeCouncilMemberView(maxLength: CouncilMaxLength) {
-  const dispatch = useDispatch()
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+    contractAddresses: { breakGlassAddress },
+  } = useDappConfigContext()
+  const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
 
   const dropDownItems = useMemo(
     () =>
@@ -63,22 +78,56 @@ export function FormChangeCouncilMemberView(maxLength: CouncilMaxLength) {
 
   const { newCouncilMemberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
 
+  // -------------------------------------------------------------------------------------------
+
+  const changeCouncilMemberAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!breakGlassAddress) {
+      bug('Wrong breakGlass address')
+      return null
+    }
+
+    const oldCouncilMemberAddress = chosenDdItem?.tzAddress
+    if (!oldCouncilMemberAddress) return null
+
+    return await changeCouncilMember(
+      breakGlassAddress,
+      oldCouncilMemberAddress,
+      newCouncilMemberAddress,
+      newMemberName,
+      newMemberWebsite,
+      newMemberImage,
+    )
+  }, [
+    userAddress,
+    breakGlassAddress,
+    chosenDdItem?.tzAddress,
+    newCouncilMemberAddress,
+    newMemberName,
+    newMemberWebsite,
+    newMemberImage,
+    bug,
+  ])
+
+  const changeBgCouncilContractContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
+      actionFn: changeCouncilMemberAction,
+    }),
+    [changeCouncilMemberAction],
+  )
+
+  const { action: handleChangeCouncilMember } = useContractAction(changeBgCouncilContractContractActionProps)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      const oldCouncilMemberAddress = chosenDdItem?.tzAddress
-      if (!oldCouncilMemberAddress) return
-
-      await dispatch(
-        changeCouncilMember(
-          oldCouncilMemberAddress,
-          newCouncilMemberAddress,
-          newMemberName,
-          newMemberWebsite,
-          newMemberImage,
-        ),
-      )
+      await handleChangeCouncilMember()
 
       setForm(INIT_FORM)
       setFormInputStatus({

@@ -1,6 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 import qs from 'qs'
@@ -46,7 +44,18 @@ import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provid
 import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // actions
-import { propagateBreakGlass } from '../BreakGlassCouncil/BreakGlassCouncil.actions'
+import { propagateBreakGlass } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// consts
+import { PROPAGATE_BREAK_GLASS_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
 
 export const councilEmptyContainer = (
   <EmptyContainer>
@@ -122,17 +131,21 @@ export function CouncilView({
   handleSignAction,
   handleDropAction,
 }: Props) {
-  const dispatch = useDispatch()
   const history = useHistory()
   const { search, pathname } = useLocation()
+
+  const {
+    globalLoadingState: { isActionActive },
+    contractAddresses: { breakGlassAddress },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const queryParameters = {
     pathname: pathnameOfPage,
     pastActions: '/past-actions',
     pendingActions: '/pending-actions',
   }
-
-  const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const dropDownItems = useMemo(
     () =>
@@ -149,7 +162,7 @@ export function CouncilView({
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
   const [activeActionTab, setActiveActionTab] = useState(councilTabsList[0].text)
-  const sortedCouncilMembers = memberIsFirstOfList(members, accountPkh)
+  const sortedCouncilMembers = memberIsFirstOfList(members, userAddress)
 
   const { page, action } = qs.parse(search, { ignoreQueryPrefix: true })
   const { tabId } = useParams<{ tabId: string }>()
@@ -158,7 +171,7 @@ export function CouncilView({
   const isPendingActionsTab = tabId === 'pending-actions'
   const isMyPendingActionsTab = activeActionTab === councilTabsList[0].text
 
-  const isCouncilMember = Boolean(members.find((item) => item.userId === accountPkh)?.id)
+  const isCouncilMember = Boolean(members.find((item) => item.userId === userAddress)?.id)
   const displayPendingSignature = Boolean(!tabId && isCouncilMember && notMyPendingActions.length)
 
   const handleOpenleModal = () => {
@@ -217,9 +230,30 @@ export function CouncilView({
     return myPastActions?.slice(from, to)
   }, [currentPage, myPastActions])
 
-  const handleClickPropagateBreakGlass = () => {
-    dispatch(propagateBreakGlass())
-  }
+  // propagate bg action -----------------------------------------------------------------------
+  const propagateBreakGlassAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!breakGlassAddress) {
+      bug('Wrong breakGlass address')
+      return null
+    }
+
+    return await propagateBreakGlass(breakGlassAddress)
+  }, [userAddress, breakGlassAddress, bug])
+
+  const propagateBreakGlassContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: PROPAGATE_BREAK_GLASS_ACTION,
+      actionFn: propagateBreakGlassAction,
+    }),
+    [propagateBreakGlassAction],
+  )
+
+  const { action: handleClickPropagateBreakGlass } = useContractAction(propagateBreakGlassContractActionProps)
 
   useEffect(() => {
     // choose action after reload page
@@ -229,10 +263,10 @@ export function CouncilView({
 
   useEffect(() => {
     // redirect to review page when member changes
-    if (!accountPkh) {
+    if (!userAddress) {
       history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
     }
-  }, [history, queryParameters.pathname, queryParameters.pastActions, accountPkh, isCouncilMember])
+  }, [history, queryParameters.pathname, queryParameters.pastActions, userAddress, isCouncilMember])
 
   useEffect(() => {
     // check authorization when clicking on a review or a header in the menu

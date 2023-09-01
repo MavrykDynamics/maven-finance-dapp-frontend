@@ -83,15 +83,15 @@ import {
 
 // breal glass council consts
 import {
-  ADD_COUNCIL_MEMBER_ACTION,
-  CHANGE_COUNCIL_MEMBER_ACTION,
+  ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
+  CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   DROP_BREAK_GLASS_ACTION,
   PROPAGATE_BREAK_GLASS_ACTION,
-  REMOVE_COUNCIL_MEMBER_ACTION,
+  REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   SET_ALL_CONTRACTS_ADMIN_ACTION,
   SET_SINGLE_CONTRACT_ADMIN_ACTION,
-  SIGN_ACTION,
-  UPDATE_COUNCIL_MEMBER_ACTION,
+  SIGN_BREAK_GLASS_ACTION,
+  UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
 } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
 
 // types
@@ -654,7 +654,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [SIGN_ACTION]: {
+  [SIGN_BREAK_GLASS_ACTION]: {
     start: {
       title: 'Sign...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -664,7 +664,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [ADD_COUNCIL_MEMBER_ACTION]: {
+  [ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION]: {
     start: {
       title: 'Add Council Member...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -674,7 +674,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [UPDATE_COUNCIL_MEMBER_ACTION]: {
+  [UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION]: {
     start: {
       title: 'Update Council Member...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -684,7 +684,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [CHANGE_COUNCIL_MEMBER_ACTION]: {
+  [CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION]: {
     start: {
       title: 'Change Council Member...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -694,7 +694,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [REMOVE_COUNCIL_MEMBER_ACTION]: {
+  [REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION]: {
     start: {
       title: 'Remove Council Member...',
       message: ACTION_START_MESSAGE_TEXT,

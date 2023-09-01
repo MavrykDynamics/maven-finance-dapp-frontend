@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
@@ -21,7 +21,18 @@ import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provid
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { updateCouncilMember } from '../BreakGlassCouncil.actions'
+import { updateCouncilMember } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// consts
+import { UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
 
 const INIT_FORM = {
   newMemberWebsite: '',
@@ -35,13 +46,16 @@ type Props = {
 }
 
 export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
-  const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+    contractAddresses: { breakGlassAddress },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const [form, setForm] = useState(INIT_FORM)
-  const myInfo = breakGlassCouncilMembers.find((item) => item.userId === accountPkh)
+  const myInfo = breakGlassCouncilMembers.find((item) => item.userId === userAddress)
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     newMemberWebsite: '',
@@ -51,11 +65,36 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
 
   const { newMemberWebsite, newMemberName, newMemberImage } = form
 
+  // update bg council action
+  const updateCouncilMemberAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!breakGlassAddress) {
+      bug('Wrong breakGlass address')
+      return null
+    }
+
+    return await updateCouncilMember(breakGlassAddress, newMemberName, newMemberWebsite, newMemberImage, callback)
+  }, [userAddress, breakGlassAddress, newMemberName, newMemberWebsite, newMemberImage, callback, bug])
+
+  const updateBgCouncilContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
+      actionFn: updateCouncilMemberAction,
+    }),
+    [updateCouncilMemberAction],
+  )
+
+  const { action: handleUpdateCouncilMember } = useContractAction(updateBgCouncilContractActionProps)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      await dispatch(updateCouncilMember(newMemberName, newMemberWebsite, newMemberImage, callback))
+      await handleUpdateCouncilMember()
 
       setForm(INIT_FORM)
       setFormInputStatus({
@@ -135,7 +174,7 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
         <div className="form-fields in-two-columns">
           <div className="input-size-secondary margin-bottom-20">
             <label>Council Member Address</label>
-            <div className="address">{getShortTzAddress({ tzAddress: accountPkh ?? '' })}</div>
+            <div className="address">{getShortTzAddress({ tzAddress: userAddress ?? '' })}</div>
           </div>
 
           <div className="input-size-tertiary">

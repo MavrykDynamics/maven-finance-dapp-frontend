@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useState, useMemo, useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // components
@@ -15,12 +15,27 @@ import { FormStyled } from './BreakGlassCouncilForm.style'
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
 // actions
-import { removeCouncilMember } from '../BreakGlassCouncil.actions'
+import { removeCouncilMember } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// consts
+import { REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
 
 export function FormRemoveCouncilMemberView() {
-  const dispatch = useDispatch()
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+    contractAddresses: { breakGlassAddress },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const dropDownItems = useMemo(
     () =>
@@ -40,13 +55,40 @@ export function FormRemoveCouncilMemberView() {
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  // ----------------------------------------------------------------------------
+  // remove bg council action
+  const removeCouncilMemberAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!breakGlassAddress) {
+      bug('Wrong breakGlass address')
+      return null
+    }
 
     const memberAddress = chosenDdItem?.tzAddress
 
-    if (!memberAddress) return
-    dispatch(removeCouncilMember(memberAddress))
+    if (!memberAddress) return null
+
+    return await removeCouncilMember(breakGlassAddress, memberAddress)
+  }, [userAddress, breakGlassAddress, chosenDdItem?.tzAddress, bug])
+
+  const removeBgCouncilContractContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
+      actionFn: removeCouncilMemberAction,
+    }),
+    [removeCouncilMemberAction],
+  )
+
+  const { action: handleRemoveCouncilMember } = useContractAction(removeBgCouncilContractContractActionProps)
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    await handleRemoveCouncilMember()
 
     setChosenDdItem(undefined)
   }

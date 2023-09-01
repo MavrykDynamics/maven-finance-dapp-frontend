@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useCallback, useMemo, useState } from 'react'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
@@ -14,16 +13,30 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { signAction } from '../BreakGlassCouncil.actions'
-import { State } from 'reducers'
+import { signAction } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// hooks
+import { SIGN_BREAK_GLASS_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+
+// consts
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const INIT_FORM = {
   breakGlassActionID: '',
 }
 
 export function FormSignActionView() {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+    contractAddresses: { breakGlassAddress },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -32,11 +45,39 @@ export function FormSignActionView() {
 
   const { breakGlassActionID } = form
 
+  // sign bg council action
+  const signerActionFn = useCallback(
+    async (id: number) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+
+      if (!breakGlassAddress) {
+        bug('Wrong breakGlass address')
+        return null
+      }
+
+      return await signAction(breakGlassAddress, id)
+    },
+    [userAddress, breakGlassAddress, bug],
+  )
+
+  const signContractActionProps: HookContractActionArgs<number> = useMemo(
+    () => ({
+      actionType: SIGN_BREAK_GLASS_ACTION,
+      actionFn: signerActionFn,
+    }),
+    [signerActionFn],
+  )
+
+  const { actionWithArgs: signActionHandler } = useContractAction(signContractActionProps)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      await dispatch(signAction(Number(breakGlassActionID)))
+      await signActionHandler(+breakGlassActionID)
 
       setForm(INIT_FORM)
       setFormInputStatus({
