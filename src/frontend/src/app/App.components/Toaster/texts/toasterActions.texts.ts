@@ -80,6 +80,21 @@ import {
   UPDATE_AGGREGATOR_STATUS_ACTION,
   VOTE_FOR_ACTION,
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+
+// breal glass council consts
+import {
+  ADD_COUNCIL_MEMBER_ACTION,
+  CHANGE_COUNCIL_MEMBER_ACTION,
+  DROP_BREAK_GLASS_ACTION,
+  PROPAGATE_BREAK_GLASS_ACTION,
+  REMOVE_COUNCIL_MEMBER_ACTION,
+  SET_ALL_CONTRACTS_ADMIN_ACTION,
+  SET_SINGLE_CONTRACT_ADMIN_ACTION,
+  SIGN_ACTION,
+  UPDATE_COUNCIL_MEMBER_ACTION,
+} from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+
+// types
 import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // types
@@ -614,6 +629,98 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
     end: {
       title: 'Fixing Mistaken Transfer triggered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // break glass council actions -------------------------------------------------
+  [SET_ALL_CONTRACTS_ADMIN_ACTION]: {
+    start: {
+      title: 'Set All Contracts Admin...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Set All Contracts Admin is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [SET_SINGLE_CONTRACT_ADMIN_ACTION]: {
+    start: {
+      title: 'Set Single Contract Admin...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Set Single Contract Admin is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [SIGN_ACTION]: {
+    start: {
+      title: 'Sign...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Sign is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [ADD_COUNCIL_MEMBER_ACTION]: {
+    start: {
+      title: 'Add Council Member...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Add Council Member is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_COUNCIL_MEMBER_ACTION]: {
+    start: {
+      title: 'Update Council Member...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Update Council Member is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [CHANGE_COUNCIL_MEMBER_ACTION]: {
+    start: {
+      title: 'Change Council Member...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Change Council Member is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REMOVE_COUNCIL_MEMBER_ACTION]: {
+    start: {
+      title: 'Remove Council Member...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Remove Council Member is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [PROPAGATE_BREAK_GLASS_ACTION]: {
+    start: {
+      title: 'Propagate Break Glass...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Propagate Break Glass is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DROP_BREAK_GLASS_ACTION]: {
+    start: {
+      title: 'Drop Action...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Drop Action is done.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

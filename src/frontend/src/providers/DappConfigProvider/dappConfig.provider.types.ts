@@ -13,6 +13,7 @@ import { FinancialRequestsActionsTypes } from 'providers/FinancialRequestsProvid
 import { WalletOperationError } from 'errors/error'
 import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { SatellitesGovType } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.types'
+import { BreakGlassCouncilActions } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.types'
 
 export type ActionTypes =
   | StakeActionType
@@ -23,6 +24,7 @@ export type ActionTypes =
   | ProposalActionsTypes
   | FinancialRequestsActionsTypes
   | SatellitesGovType
+  | BreakGlassCouncilActions
 
 export type DappConfigContext = {
   // data
