@@ -1,8 +1,11 @@
+import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // prviders
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // components
 import { Page } from 'styles'
@@ -13,7 +16,7 @@ import { FormUpdateCouncilMemberView } from './BreakGlassCouncilForms/FormUpdate
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-// helpers
+// utils
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
 // actions
@@ -21,10 +24,20 @@ import {
   getBreakGlassCouncilMembers,
   getBreakGlassCouncilPendingActions,
   getBreakGlassCouncilPastActions,
-  dropBreakGlass,
-  signAction,
 } from './BreakGlassCouncil.actions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import { dropBreakGlass, signAction } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// consts
+import {
+  DROP_BREAK_GLASS_ACTION,
+  SIGN_BREAK_GLASS_ACTION,
+} from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+
+// types
+import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // types
 
@@ -39,12 +52,15 @@ export function BreakGlassCouncil() {
 
   const {
     maxLengths: { council: councilMaxLengths },
+    contractAddresses: { breakGlassAddress },
   } = useDappConfigContext()
 
   const {
     userAddress,
     userAvatars: { breakGlassAvatar },
   } = useUserContext()
+
+  const { bug } = useToasterContext()
 
   const {
     breakGlassCouncilMembers,
@@ -56,7 +72,6 @@ export function BreakGlassCouncil() {
       myPastActions,
       actionsMapper,
     },
-    isStorageLoaded,
     isBreakGlassCouncilMembersLoaded,
     isBreakGlassCouncilPendingActionsLoaded,
     isBreakGlassCouncilPastActionsLoaded,
@@ -65,13 +80,52 @@ export function BreakGlassCouncil() {
     config: { emergencyGovActive },
   } = useSelector((state: State) => state.emergencyGovernance)
 
-  const handleSignAction = (id: number) => {
-    dispatch(signAction(id))
-  }
+  // two actions have same parameters, so to avoid code duplication we use this helper
+  const actionWithIdCaller = useCallback(
+    (
+      action: (
+        breakGlassAddress: string,
+        breakGlassActionID: number,
+      ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>,
+    ) => {
+      return async (id: number) => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
 
-  const handleDropAction = (id: number) => {
-    dispatch(dropBreakGlass(id))
-  }
+        if (!breakGlassAddress) {
+          bug('Wrong breakGlass address')
+          return null
+        }
+
+        return await action(breakGlassAddress, id)
+      }
+    },
+    [breakGlassAddress, bug, userAddress],
+  )
+
+  // Sign action
+  const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
+    () => ({
+      actionType: SIGN_BREAK_GLASS_ACTION,
+      actionFn: actionWithIdCaller(signAction),
+    }),
+    [actionWithIdCaller],
+  )
+
+  const { actionWithArgs: handleSignAction } = useContractAction(signActionContractActionProps)
+
+  // Drop action
+  const dropBreakGlassContractActionProps: HookContractActionArgs<number> = useMemo(
+    () => ({
+      actionType: DROP_BREAK_GLASS_ACTION,
+      actionFn: actionWithIdCaller(dropBreakGlass),
+    }),
+    [actionWithIdCaller],
+  )
+
+  const { actionWithArgs: handleDropAction } = useContractAction(dropBreakGlassContractActionProps)
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {
     try {

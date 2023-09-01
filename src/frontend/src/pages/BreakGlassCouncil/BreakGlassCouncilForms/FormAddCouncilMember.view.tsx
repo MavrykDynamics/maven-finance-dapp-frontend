@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // components
@@ -19,8 +19,13 @@ import { validateFormAddress, validateFormField } from 'utils/validatorFunctions
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { addCouncilMember } from '../BreakGlassCouncil.actions'
+import { addCouncilMember } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
 import { State } from 'reducers'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const INIT_FORM = {
   memberAddress: '',
@@ -30,8 +35,12 @@ const INIT_FORM = {
 }
 
 export function FormAddCouncilMemberView(maxLength: CouncilMaxLength) {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+    contractAddresses: { breakGlassAddress },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -43,11 +52,39 @@ export function FormAddCouncilMemberView(maxLength: CouncilMaxLength) {
 
   const { memberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
 
+  // ------------------------------------------------------------------------------
+
+  // add bg council member action
+
+  const addBgCouncilAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!breakGlassAddress) {
+      bug('Wrong breakGlass address')
+      return null
+    }
+
+    return await addCouncilMember(breakGlassAddress, memberAddress, newMemberName, newMemberWebsite, newMemberImage)
+  }, [breakGlassAddress, bug, memberAddress, newMemberImage, newMemberName, newMemberWebsite, userAddress])
+
+  const signActionContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
+      actionFn: addBgCouncilAction,
+    }),
+    [addBgCouncilAction],
+  )
+
+  const { action: handleAddCouncilMember } = useContractAction(signActionContractActionProps)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      await dispatch(addCouncilMember(memberAddress, newMemberName, newMemberWebsite, newMemberImage))
+      await handleAddCouncilMember()
 
       setForm(INIT_FORM)
       setFormInputStatus({

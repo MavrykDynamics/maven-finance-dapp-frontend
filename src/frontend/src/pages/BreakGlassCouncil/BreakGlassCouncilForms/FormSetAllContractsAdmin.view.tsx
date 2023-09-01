@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useCallback, useMemo, useState } from 'react'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
@@ -14,19 +13,33 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { setAllContractsAdmin } from '../BreakGlassCouncil.actions'
+import { setAllContractsAdmin } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
 
-// helpers
+// utils
 import { validateFormAddress } from 'utils/validatorFunctions'
-import { State } from 'reducers'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// consts
+import { SET_ALL_CONTRACTS_ADMIN_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
 
 const INIT_FORM = {
   newAdminAddress: '',
 }
 
 export function FormSetAllContractsAdminView() {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+    contractAddresses: { breakGlassAddress },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
@@ -35,11 +48,35 @@ export function FormSetAllContractsAdminView() {
 
   const { newAdminAddress } = form
 
+  const setAllContractsAdminAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!breakGlassAddress) {
+      bug('Wrong breakGlass address')
+      return null
+    }
+
+    return await setAllContractsAdmin(breakGlassAddress, newAdminAddress)
+  }, [userAddress, breakGlassAddress, newAdminAddress, bug])
+
+  const setAllContractsAdminContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: SET_ALL_CONTRACTS_ADMIN_ACTION,
+      actionFn: setAllContractsAdminAction,
+    }),
+    [setAllContractsAdminAction],
+  )
+
+  const { action: handleSetAllContractAdmin } = useContractAction(setAllContractsAdminContractActionProps)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      await dispatch(setAllContractsAdmin(newAdminAddress))
+      await handleSetAllContractAdmin()
 
       setForm(INIT_FORM)
       setFormInputStatus({
