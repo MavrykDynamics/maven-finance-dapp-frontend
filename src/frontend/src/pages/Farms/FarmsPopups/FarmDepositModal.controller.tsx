@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // view
 import Icon from 'app/App.components/Icon/Icon.view'
-import NewButton from 'app/App.components/Button/NewButton'
+import Button from 'app/App.components/Button/NewButton'
 import { Input } from '../../../app/App.components/Input/NewInput'
 import {
   InputStatusType,
@@ -14,17 +13,26 @@ import {
 } from '../../../app/App.components/Input/Input.constants'
 import CoinsIcons from '../../../app/App.components/Icon/CoinsIcons.view'
 
-// actions
+// consts
 import { FarmDepositPopupDataType } from 'pages/Farms/Farms.const'
+import { DEPOSIT_TO_FARM_ACTION } from 'providers/FarmsProvider/helpers/farms.const'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { State } from 'reducers'
-// import { deposit } from '../Farms.actions'
 
-// styles
+// utils
+import { checkWhetherTokenIsFarmToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { depositToFarm } from 'providers/FarmsProvider/actions/farms.actions'
+
+// hooks
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// view
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { FarmLpActionsPopupsContent } from '../Farms.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 export const FarmDepositModal = ({
   closeHandler,
@@ -35,92 +43,110 @@ export const FarmDepositModal = ({
   show: boolean
   data: FarmDepositPopupDataType
 }) => {
-  return null
-  // const { selectedFarmAddress = '' } = data ?? {}
+  const { tokensMetadata } = useTokensContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const { farmsMapper } = useFarmsContext()
 
-  // const { tokensMetadata } = useTokensContext()
-  // const dispatch = useDispatch()
-  // useLockBodyScroll(show)
+  useLockBodyScroll(show)
 
-  // const { farms } = useSelector((state: State) => state.farm)
-  // const {
-  //   lpTokenUserBalance = 0,
-  //   lpToken1: { symbol: lpTokenOneSymbol = '' } = {},
-  //   lpToken2: { symbol: lpTokenTwoSymbol = '' } = {},
-  // } = farms.find(({ address }) => selectedFarmAddress === address) ?? {}
+  const { selectedFarmAddress } = data
 
-  // const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
-  //   amount: '0',
-  //   validation: '',
-  // })
+  const selectedFarm = farmsMapper[selectedFarmAddress]
+  const selectedFarmToken = getTokenDataByAddress({ tokenAddress: selectedFarm?.liquidityTokenAddress, tokensMetadata })
 
-  // const tokensNames = `${lpTokenOneSymbol}/${lpTokenTwoSymbol}`
+  const [inputData, setInputData] = useState<{ amount: string; validation: InputStatusType }>({
+    amount: '0',
+    validation: '',
+  })
 
-  // const handleBlur = () => {
-  //   if (inputData.amount === '') {
-  //     setInputData({ ...inputData, amount: '0' })
-  //   }
-  // }
+  // TODO: handle user balance
+  const userTokenBalance = 0
 
-  // const handleFocus = () => {
-  //   if (inputData.amount === '0') {
-  //     setInputData({ ...inputData, amount: '' })
-  //   }
-  // }
+  // input handlers
+  const handleBlur = useCallback(
+    () => (inputData.amount === '' ? setInputData({ ...inputData, amount: '0' }) : null),
+    [inputData],
+  )
+  const handleFocus = useCallback(
+    () => (inputData.amount === '' ? setInputData({ ...inputData, amount: '' }) : null),
+    [inputData],
+  )
+  const handleChange = useCallback(
+    ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+      const validationStatus = +value <= userTokenBalance && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
-  // const handleChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-  //   const validationStatus =
-  //     +value && +value <= lpTokenUserBalance && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      setInputData({ ...inputData, amount: value, validation: validationStatus })
+    },
+    [inputData, userTokenBalance],
+  )
 
-  //   setInputData({ ...inputData, amount: value, validation: validationStatus })
-  // }
+  // harvest rewards action ---------------------------
+  const depositToFarmAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
 
-  // const handleClick = () => {
-  //   if (selectedFarmAddress && inputData.validation === INPUT_STATUS_SUCCESS) {
-  //     dispatch(deposit(selectedFarmAddress, Number(inputData.amount), tokensMetadata))
-  //   }
-  // }
+    return await depositToFarm(selectedFarm.address, Number(inputData.amount))
+  }, [selectedFarm.address, userAddress, inputData.amount])
 
-  // return (
-  //   <PopupContainer onClick={closeHandler} show={show}>
-  //     <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
-  //       <button onClick={closeHandler} className="close-modal" />
-  //       <FarmLpActionsPopupsContent>
-  //         <div className="popup-header">
-  //           <CoinsIcons />
-  //           <div>Stake {tokensNames} LP Tokens</div>
-  //         </div>
+  const depositToFarmContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DEPOSIT_TO_FARM_ACTION,
+      actionFn: depositToFarmAction,
+    }),
+    [depositToFarmAction],
+  )
 
-  //         <Input
-  //           className={`pinned-dropdown mb-45`}
-  //           inputProps={{
-  //             value: inputData.amount,
-  //             type: 'number',
-  //             onBlur: handleBlur,
-  //             onFocus: handleFocus,
-  //             onChange: handleChange,
-  //           }}
-  //           settings={{
-  //             balance: lpTokenUserBalance,
-  //             balanceAsset: tokensNames,
-  //             useMaxHandler: () => setInputData({ ...inputData, amount: String(lpTokenUserBalance) }),
-  //             inputStatus: inputData.validation,
-  //             inputSize: INPUT_LARGE,
-  //           }}
-  //         >
-  //           <InputPinnedTokenInfo>{tokensNames}</InputPinnedTokenInfo>
-  //         </Input>
+  const { action: handleDepositToFarm } = useContractAction(depositToFarmContractActionProps)
 
-  //         <NewButton
-  //           disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
-  //           kind={BUTTON_PRIMARY}
-  //           onClick={handleClick}
-  //         >
-  //           <Icon id="in" />
-  //           Stake LP
-  //         </NewButton>
-  //       </FarmLpActionsPopupsContent>
-  //     </PopupContainerWrapper>
-  //   </PopupContainer>
-  // )
+  if (!selectedFarm || !selectedFarmToken || !checkWhetherTokenIsFarmToken(selectedFarmToken)) return null
+
+  const tokenName = selectedFarm.isMFarm
+    ? selectedFarmToken.symbol
+    : `${selectedFarmToken.farmLpData.token0?.symbol}-${selectedFarmToken.farmLpData.token1?.symbol}`
+
+  return (
+    <PopupContainer onClick={closeHandler} show={show}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+        <button onClick={closeHandler} className="close-modal" />
+        <FarmLpActionsPopupsContent>
+          <div className="popup-header">
+            <CoinsIcons />
+            <div>Stake {tokenName} LP Tokens</div>
+          </div>
+
+          <Input
+            className={`pinned-dropdown mb-45`}
+            inputProps={{
+              value: inputData.amount,
+              type: 'number',
+              onBlur: handleBlur,
+              onFocus: handleFocus,
+              onChange: handleChange,
+            }}
+            settings={{
+              balance: userTokenBalance,
+              balanceAsset: tokenName,
+              useMaxHandler: () => setInputData({ ...inputData, amount: String(userTokenBalance) }),
+              inputStatus: inputData.validation,
+              inputSize: INPUT_LARGE,
+            }}
+          >
+            <InputPinnedTokenInfo>{tokenName}</InputPinnedTokenInfo>
+          </Input>
+
+          <Button
+            disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
+            kind={BUTTON_PRIMARY}
+            onClick={handleDepositToFarm}
+          >
+            <Icon id="in" />
+            Stake LP
+          </Button>
+        </FarmLpActionsPopupsContent>
+      </PopupContainerWrapper>
+    </PopupContainer>
+  )
 }

@@ -83,13 +83,13 @@ export const FarmCardActions = ({
           {isVertical ? (
             <>
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={openDepositModal} disabled={isFarmLive}>
+                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={openDepositModal} disabled={!isFarmLive}>
                   <Icon id="in" /> Stake LP
                 </Button>
               </div>
 
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openWithdrawModal} disabled={isFarmLive}>
+                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openWithdrawModal} disabled={!isFarmLive}>
                   <Icon id="out" /> UnStake LP
                 </Button>
               </div>
@@ -97,13 +97,13 @@ export const FarmCardActions = ({
           ) : (
             <>
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openWithdrawModal} disabled={isFarmLive}>
+                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openWithdrawModal} disabled={!isFarmLive}>
                   <Icon id="out" /> UnStake LP
                 </Button>
               </div>
 
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={openDepositModal} disabled={isFarmLive}>
+                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={openDepositModal} disabled={!isFarmLive}>
                   <Icon id="in" /> Stake LP
                 </Button>
               </div>
