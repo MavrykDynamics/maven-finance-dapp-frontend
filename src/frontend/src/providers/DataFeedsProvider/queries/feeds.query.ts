@@ -47,6 +47,34 @@ export const FEEDS_QUERY = gql(`
   }
 `)
 
+export const FEEDS_DEV_QUERY = gql(`
+  query dataFeeds_dev {
+    aggregator : dev_aggregator(where: { admin: { _neq: "" } }, order_by: { creation_timestamp: desc }) {
+      address
+      name
+      admin
+      decimals
+      network
+      metadata
+      
+      creation_timestamp
+      last_completed_data
+      last_completed_data_last_updated_at
+      last_completed_data_pct_oracle_resp
+
+      update_data_paused
+      
+
+      # feed oracles amount
+      oracles_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  }
+`)
+
 // load data that updates, and track whether new feed was added
 export const FEEDS_UPDATE_QUERY = gql(`
   query dataFeedsPrices {

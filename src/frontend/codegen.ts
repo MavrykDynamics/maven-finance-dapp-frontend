@@ -1,7 +1,7 @@
 import { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
-  schema: 'https://api.mavryk.finance/v1/graphql',
+  schema: 'https://api-v2.mavryk.finance/v1/graphql',
   documents: ['src/**/*.{ts,tsx}'],
   generates: {
     'src/utils/__generated__/': {

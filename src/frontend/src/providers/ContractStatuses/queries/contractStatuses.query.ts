@@ -159,10 +159,10 @@ export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
     treasury(where: {admin: {_neq: ""}}) {
       name
       mint_mvk_and_transfer_paused
-      stake_mvk_paused
+      stake_tokens_paused
       transfer_paused
       address
-      unstake_mvk_paused
+      unstake_tokens_paused
       admin
       last_updated_at
     }

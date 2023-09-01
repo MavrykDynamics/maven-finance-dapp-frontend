@@ -22,8 +22,8 @@ query GetGovernanceSatelliteConfig {
   governance_satellite {
     address
     admin
-    gov_sat_approval_percentage
-    gov_sat_duration_in_days
+    approval_percentage
+    sat_action_duration_in_days
     governance {
       address
     }

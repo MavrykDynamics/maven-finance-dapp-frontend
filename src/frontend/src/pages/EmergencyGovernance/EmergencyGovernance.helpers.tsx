@@ -23,7 +23,7 @@ export function normalizeEmergencyGovernance(storage: EmergencyGovernanceGraphQl
           title: record.title,
           description: record.description,
           startLevel: record.start_level,
-          dropped: record.dropped,
+          dropped: false, //record.dropped,
           executed: record.executed,
           proposerId: record.proposer.address,
           emergencyGovernanceId: record.emergency_governance_id,

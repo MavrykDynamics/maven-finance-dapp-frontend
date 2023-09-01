@@ -21,14 +21,14 @@ import {
 // helpers
 import { getDataFeedsProviderReturnValue } from './helpers/feeds.utils'
 import { normalizeDataFeedsHistory, normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
-import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
+import { FEEDS_DEV_QUERY, FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 
 // contexts
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
+import { DataFeedsQuery, DataFeeds_DevQuery, FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
 
 export const dataFeedsContext = React.createContext<DataFeedsContext>(undefined!)
 
@@ -48,19 +48,22 @@ export const DataFeedsProvider = ({ children }: Props) => {
   const [feedsCtxState, setFeedsCtxState] = useState<NullableDataFeedsContextStateType>(DEFAULT_DATA_FEEDS_CTX)
 
   // load initial feeds data
-  const { refetch: refetchDataFeeds } = useQuery(FEEDS_QUERY, {
-    onCompleted: (data) => {
-      try {
-        const parsedFeeds = fullFeedsQuerySchema.parse(data.aggregator)
+  const { refetch: refetchDataFeeds } = useQuery<DataFeedsQuery | DataFeeds_DevQuery>(
+    process.env.REACT_APP_IS_DEMO === 'true' ? FEEDS_DEV_QUERY : FEEDS_QUERY,
+    {
+      onCompleted: (data) => {
+        try {
+          const parsedFeeds = fullFeedsQuerySchema.parse(data.aggregator)
 
-        updateFullDataFeeds(parsedFeeds)
-        updateTokensPrices(parsedFeeds)
-      } catch (e) {
-        console.log('zod full feeds query parsing error:', { e })
-      }
+          updateFullDataFeeds(parsedFeeds)
+          updateTokensPrices(parsedFeeds)
+        } catch (e) {
+          console.log('zod full feeds query parsing error:', { e })
+        }
+      },
+      onError: (error) => console.log({ error }),
     },
-    onError: (error) => console.log({ error }),
-  })
+  )
 
   // update feeds price and track whether need to load new feed
   useQueryWithRefetch(FEEDS_UPDATE_QUERY, {
