@@ -15,9 +15,7 @@ export const getProposalsQuery = ({
     subType === PROPOSALS_PAST_DATA
       ? `, where: {_or: [{executed: {_eq: false}}, {current_round_proposal: {_eq: false}}, {status: {_eq: 1}}]}`
       : subType === PROPOSALS_CURRENT_DATA
-      ? isProposalRound
-        ? `, where: {current_round_proposal: {_eq: true}, status: {_eq: 0}}`
-        : `, where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]}`
+      ? `, where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]}`
       : ``
   return apolloGql(`
 	query proposalsDataQuery($timelockProposalId: bigint) {

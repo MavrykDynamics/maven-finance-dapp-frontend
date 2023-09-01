@@ -435,7 +435,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                 <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
                 <TableHeaderCell>Purpose</TableHeaderCell>
                 <TableHeaderCell>Amount</TableHeaderCell>
-                <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
+                <TableHeaderCell className="right-border">Payment Type</TableHeaderCell>
               </TableRow>
             </TableHeader>
             <TableBody>
