@@ -21,7 +21,7 @@ import {
 // helpers
 import { getDataFeedsProviderReturnValue } from './helpers/feeds.utils'
 import { normalizeDataFeedsHistory, normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
-import { FEEDS_DEV_QUERY, FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
+import { FEEDS_DEV_QUERY, FEEDS_QUERY, FEEDS_UPDATE_QUERY, testFeedsQuery } from './queries/feeds.query'
 
 // contexts
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -49,7 +49,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
 
   // load initial feeds data
   const { refetch: refetchDataFeeds } = useQuery<DataFeedsQuery | DataFeeds_DevQuery>(
-    process.env.REACT_APP_IS_DEMO === 'true' ? FEEDS_DEV_QUERY : FEEDS_QUERY,
+    FEEDS_QUERY, // process.env.REACT_APP_IS_DEMO === 'true' ? FEEDS_DEV_QUERY : FEEDS_QUERY,
     {
       onCompleted: (data) => {
         try {
