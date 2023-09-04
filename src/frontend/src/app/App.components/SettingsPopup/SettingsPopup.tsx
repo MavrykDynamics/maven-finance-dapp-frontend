@@ -1,5 +1,4 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useClickAway, useLockBodyScroll } from 'react-use'
 
 // providers
@@ -186,7 +185,6 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
 }
 
 const Themes = () => {
-  const dispatch = useDispatch()
   const {
     toggleTheme,
     preferences: { themeSelected },
