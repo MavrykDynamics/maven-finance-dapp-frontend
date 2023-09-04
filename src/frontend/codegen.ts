@@ -77,7 +77,7 @@ const INDEXER_ENV_PREFIXES = {
 }
 
 const config: CodegenConfig = {
-  schema: 'https://api-v2.mavryk.finance/v1/graphql',
+  schema: process.env.REACT_APP_GRAPHQL_API,
   documents: ['src/**/*.{ts,tsx}'],
   generates: {
     'src/utils/__generated__/': {
