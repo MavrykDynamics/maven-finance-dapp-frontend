@@ -1,9 +1,10 @@
 import { z } from 'zod'
 
-export const envVariables = z.object({
+const envVariablesSchema = z.object({
   REACT_APP_ENV: z.literal('dev').or(z.literal('prod')),
 
   REACT_APP_TZKT_API: z.literal('https://api.ghostnet.tzkt.io').or(z.literal('https://api.tzkt.io')),
+  REACT_APP_TZKT_SERVICE_API: z.literal('https://services.tzkt.io'),
   REACT_APP_WERT_API: z.literal('https://sandbox.wert.io'),
 
   REACT_APP_GRAPHQL_API: z.literal('https://api-v2.mavryk.finance/v1/graphql'),
@@ -17,4 +18,6 @@ export const envVariables = z.object({
   NODE_VERSION: z.string(),
 })
 
-envVariables.parse(process.env)
+envVariablesSchema.parse(process.env)
+
+export type ProcessEnvType = z.infer<typeof envVariablesSchema>

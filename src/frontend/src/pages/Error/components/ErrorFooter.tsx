@@ -1,5 +1,4 @@
-import React from 'react'
-import { ErrorFooterMiddle, ErrorFooterRight, ErrorFooterWrapper } from '../ErrorPage.style'
+import { ErrorFooterWrapper, ErrorFooterMiddle, ErrorFooterRight } from '../ErrorPage.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { mavrykLinks } from 'app/App.components/Footer/footer.const'
 import { ThemeType } from 'consts/theme.const'
