@@ -87,7 +87,7 @@ export const light = {
   strokeForForms: '#1F1F1F',
   // secondary colors
   infoColor: '#3F8BEF',
-  upColor: '#3FA65A',
+  upColor: '#27AE60',
   downColor: '#FF4343',
   neutralColor: '#6F50B5',
   neutralSecondaryColor: '#6A6A9B',

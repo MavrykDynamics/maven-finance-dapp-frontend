@@ -1,23 +1,15 @@
-import { findColorBasedOnStatus } from 'providers/SatellitesProvider/helpers/satellites.utils'
-import { SatelliteOracleStatusType } from 'providers/SatellitesProvider/satellites.provider.types'
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
-export const SatelliteOracleStatusComponent = styled.div<{
-  statusType: SatelliteOracleStatusType
-  theme: MavrykTheme
-}>`
-  padding: 8px 12px;
-  text-transform: uppercase;
-  border: 1px solid ${({ statusType, theme }) => findColorBasedOnStatus(statusType, theme)};
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 12px;
-  text-align: center;
-  max-width: 130px;
-  color: ${({ statusType, theme }) => findColorBasedOnStatus(statusType, theme)};
+export const SatelliteOracleStatusComponent = styled.div`
+  & > div {
+    padding: 8px 12px;
+    text-transform: uppercase;
+    line-height: 12px;
+    width: auto;
+    max-width: 130px;
+  }
 `
 
 export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
