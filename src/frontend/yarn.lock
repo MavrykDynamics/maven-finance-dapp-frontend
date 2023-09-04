@@ -12514,11 +12514,12 @@ react-avatar-editor@^13.0.0:
     "@babel/runtime" "^7.12.5"
     prop-types "^15.7.2"
 
-react-collapsed@^3.3.0:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/react-collapsed/-/react-collapsed-3.8.0.tgz#3ff405fea0238ffd028678602665a1e1339aaab1"
-  integrity sha512-ixCBxnEMqu+m2SHardAUN7DF9f4FQ2uF09DFMa4txyIs+W3UBhX6Y03a1dNF/N6JOLw968JhcmvqXEo/qVR7tw==
+react-collapsed@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-collapsed/-/react-collapsed-3.3.0.tgz#d20c727ed1769b213edb96420ffe12b8195b2f41"
+  integrity sha512-2oXo9xsleo3ZwmNP7GymWbkZp2SwDZImLduy1LKgQMsqZTDldyzP2GnfvYb9vyGFDYHRYFhnWlwDmG2yWkt8eQ==
   dependencies:
+    raf "^3.4.1"
     tiny-warning "^1.0.3"
 
 react-cookie@^4.1.1:
