@@ -7,7 +7,7 @@ export const GET_DAPP_TVL = gql(`
 			mvk_balance
 		}
 
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			vaultsLvl: collateral_tokens {
 				token {
 					token_address

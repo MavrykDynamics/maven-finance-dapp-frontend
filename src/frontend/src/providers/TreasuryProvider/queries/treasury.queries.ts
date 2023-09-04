@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 
 export const GET_TREASURY_STORAGE_QUERY = gql(`
 query GetTreasuryStorageData {
-    treasury(where: {admin: {_neq: ""}}) {
+    treasury: treasury(where: {admin: {_neq: ""}}) {
       address
       admin
       creation_timestamp

@@ -45,8 +45,8 @@ export const normalizeSatelliteGovernanceConfig = (config: GetGovernanceSatellit
     {
       address,
       admin,
-      gov_sat_approval_percentage,
-      gov_sat_duration_in_days,
+      approval_percentage,
+      sat_action_duration_in_days,
       governance_satellite_counter,
       governance,
       max_actions_per_satellite = 10, // default 10 for max actions per satellite
@@ -56,8 +56,8 @@ export const normalizeSatelliteGovernanceConfig = (config: GetGovernanceSatellit
   return {
     address,
     admin,
-    approvalPercentage: gov_sat_approval_percentage,
-    durationInDays: gov_sat_duration_in_days,
+    approvalPercentage: approval_percentage,
+    durationInDays: sat_action_duration_in_days,
     counter: governance_satellite_counter,
     governanceId: governance.address,
     maxActionsCount: max_actions_per_satellite,

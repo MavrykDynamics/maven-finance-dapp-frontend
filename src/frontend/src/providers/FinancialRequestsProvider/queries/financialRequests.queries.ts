@@ -42,9 +42,6 @@ export function getFinancialRequestsStorageSubscription({
         governance_financial {
           address
         }
-        treasury {
-          address
-        }
         pass_vote_smvk_total
         nay_vote_smvk_total
         yay_vote_smvk_total

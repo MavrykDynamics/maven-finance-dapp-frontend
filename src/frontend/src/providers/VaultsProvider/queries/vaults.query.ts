@@ -41,7 +41,7 @@ export function getUserVaultsQuery({
 
   return apolloGql(`
 		query getUserVaultsQuery($userAddress: String) {
-			lending_controller(where: {mock_time: {_eq: false}}) {
+			lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 				max_vault_liquidation_pct
 				decimals
 				liquidation_fee_pct
@@ -108,7 +108,7 @@ export function getUserVaultsQuery({
 // get all vaults
 export const GET_ALL_VAULTS_QUERY = gql(`
 	query getAllVaultsQuery {
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			max_vault_liquidation_pct
 			decimals
 			liquidation_fee_pct

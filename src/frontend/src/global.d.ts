@@ -15,3 +15,9 @@ declare type DeepPartial<T> = T extends object
 declare type TupleKeyValueAny<TupleType extends string, TValue> = {
   [key in TupleType]: TValue
 }
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv extends z.infer<typeof envVariables> {}
+  }
+}

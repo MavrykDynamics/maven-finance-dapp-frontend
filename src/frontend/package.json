@@ -1,20 +1,25 @@
 {
+  "resolutions": {
+    "@types/react": "~17.0.21"
+  },
   "name": "mavryk-finance-dapp-frontend",
   "version": "1.0.0",
   "scripts": {
     "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
     "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
     "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "test": "react-scripts test",
+    "graphql-compile-env": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local",
+    "graphql-compile-env-watch": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local",
+    "graphql-compile": "graphql-codegen",
+    "graphql-watch": "graphql-codegen -w",
+    "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
+    "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
+    "postinstall": "cd ../../ && npx husky install",
     "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'",
-    "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
-    "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
-    "graphql-compile": "graphql-codegen",
-    "graphql-watch": "graphql-codegen -w",
-    "postinstall": "cd ../../ && npx husky install"
+    "test": "react-scripts test",
+    "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
@@ -63,13 +68,11 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.11",
     "@cypress/instrument-cra": "^1.4.0",
-    "@graphql-codegen/cli": "2.11.6",
-    "@graphql-codegen/client-preset": "^3.0.1",
-    "@graphql-codegen/typescript": "2.7.3",
-    "@types/coingecko-api": "^1.0.10",
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "^4.1.0",
     "@types/node": "^16.10.1",
     "@types/qs": "^6.9.7",
-    "@types/react": "^17.0.24",
+    "@types/react": "^17.0.2",
     "@types/react-collapse": "^5.0.1",
     "@types/react-dom": "^17.0.9",
     "@types/react-redux": "^7.1.18",

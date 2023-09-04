@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 
 export const QUERY_TOKENS_METADATA = gql(`
   query tokensMetadata {
-    token {
+    token: token {
       token_id
       metadata
       token_address

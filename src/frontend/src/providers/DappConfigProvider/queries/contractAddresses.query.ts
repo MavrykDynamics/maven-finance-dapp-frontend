@@ -2,61 +2,61 @@ import { gql } from 'utils/__generated__'
 
 export const GET_DAPP_CONTRACT_ADDRESSES = gql(`
 	query getContractAddressesQuery {
-		delegation {
+		delegation: delegation {
 			address
 		}
-		doorman {
+		doorman: doorman {
 			address
 		}
-		mvk_token {
+		mvk_token: mvk_token {
 			address
 		}
-		farm {
+		farm: farm {
 			address
 		}
-		farm_factory {
+		farm_factory: farm_factory {
 			address
 		}
-		council {
+		council: council {
 			address
 		}
 		break_glass {
 			address
 		}
-		emergency_governance {
+		emergency_governance: emergency_governance {
 			address
 		}
-		governance {
+		governance: governance {
 			address
 		}
-		governance_proxy {
+		governance_proxy: governance_proxy {
 			address
 		}
-		treasury {
+		treasury: treasury {
 			address
 		}
-		treasury_factory {
+		treasury_factory: treasury_factory {
 			address
 		}
-		vesting {
+		vesting: vesting {
 			address
 		}
-		governance_satellite {
+		governance_satellite: governance_satellite {
 			address
 		}
-		aggregator_factory {
+		aggregator_factory: aggregator_factory {
 			address
 		}
-		aggregator {
+		aggregator: aggregator {
 			address
 		}
-		governance_financial {
+		governance_financial: governance_financial {
 			address
 		}
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			address
 		}
-		vault_factory {
+		vault_factory: vault_factory {
 			address
 		}
 	}
