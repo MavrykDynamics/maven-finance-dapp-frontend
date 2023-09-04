@@ -1,9 +1,15 @@
 import React, { createContext, useContext, useMemo, useState } from 'react'
 import { ApolloClient, InMemoryCache, from, ApolloProvider as OriginalApolloProvider } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
+
+// types
 import { ApolloContext } from './apollo.provider.types'
-import { backuphttpLink, backupwsLink, httpLink, retryLink, splitLink, wsLink } from './apollo.config'
+
+// consts
+import { httpLink, retryLink, splitLink, wsLink } from './apollo.config'
 import { FatalError } from 'errors/error'
+
+// hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // context
@@ -51,27 +57,16 @@ export const ApolloProvider = ({ children }: Props) => {
     [errorLink],
   )
 
-  const backupApolloClient = useMemo(
-    () =>
-      new ApolloClient({
-        link: from([errorLink, retryLink, splitLink(backupwsLink, backuphttpLink)]),
-        cache: new InMemoryCache(),
-      }),
-    [errorLink],
-  )
-
-  const internalApolloClient = useMemo(() => (hasNetworkError ? backupApolloClient : apolloClient), [hasNetworkError])
-
   const context = useMemo(
     () => ({
-      apolloClient: internalApolloClient,
+      apolloClient,
     }),
-    [internalApolloClient],
+    [apolloClient],
   )
 
   return (
     <apolloContext.Provider value={context}>
-      <OriginalApolloProvider client={internalApolloClient}>{children}</OriginalApolloProvider>
+      <OriginalApolloProvider client={apolloClient}>{children}</OriginalApolloProvider>
     </apolloContext.Provider>
   )
 }

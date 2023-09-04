@@ -149,8 +149,8 @@ export const fetchTzktUserBalances = async ({
 }) => {
   try {
     const [{ data: tokensData }, { data: accountData }] = await Promise.all([
-      api(`https://api.ghostnet.tzkt.io/v1/tokens/balances?account.eq=${userAddress}`),
-      api(`https://api.ghostnet.tzkt.io/v1/accounts/${userAddress}`),
+      api(`${process.env.REACT_APP_TZKT_API}/v1/tokens/balances?account.eq=${userAddress}`),
+      api(`${process.env.REACT_APP_TZKT_API}/v1/accounts/${userAddress}`),
     ])
 
     const isUserEmptyOnTzkt = emptyUserTzktAccountSchema.safeParse(accountData)
@@ -189,7 +189,7 @@ export const fetchTzktUserBalances = async ({
 export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
   try {
     const tzktSocket = new signalR.HubConnectionBuilder()
-      .withUrl('https://api.ghostnet.tzkt.io/v1/ws', {
+      .withUrl(`${process.env.REACT_APP_TZKT_API}/v1/ws`, {
         transport: signalR.HttpTransportType.WebSockets,
       })
       .build()

@@ -10,19 +10,9 @@ export const httpLink = new HttpLink({
   uri: process.env.REACT_APP_GRAPHQL_API ?? '',
 })
 
-export const backuphttpLink = new HttpLink({
-  uri: process.env.REACT_APP_BACKUP_GRAPHQL_API ?? '',
-})
-
 export const wsLink = new GraphQLWsLink(
   createClient({
     url: process.env.REACT_APP_GRAPHQL_WSS_API ?? '',
-  }),
-)
-
-export const backupwsLink = new GraphQLWsLink(
-  createClient({
-    url: process.env.REACT_APP_BACKUP_GRAPHQL_WSS_API ?? '',
   }),
 )
 

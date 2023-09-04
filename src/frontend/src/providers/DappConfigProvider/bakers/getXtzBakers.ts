@@ -46,12 +46,12 @@ export const getXTZBakers = async (): Promise<{
 
     const [{ data: daoBakerData }, { data: mavrykDynamicsBakerData }] = await Promise.all([
       api<BakeryDelegateDataType>(
-        `https://api.tzkt.io/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
+        `${process.env.REACT_APP_TZKT_API}/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
         {},
         bakeryDelegateDataSchema,
       ),
       api<BakeryDelegateDataType>(
-        `https://api.tzkt.io/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
+        `${process.env.REACT_APP_TZKT_API}/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
         {},
         bakeryDelegateDataSchema,
       ),
