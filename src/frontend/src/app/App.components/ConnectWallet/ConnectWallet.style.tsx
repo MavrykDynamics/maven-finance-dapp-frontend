@@ -130,14 +130,14 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
         font-weight: 600;
         font-size: 18px;
         line-height: 27px;
-        color: ${({ theme }) => theme.regularText};
+        color: ${({ theme }) => theme.primaryText};
       }
 
       .converted-amount {
         font-weight: 600;
         font-size: 14px;
         line-height: 21px;
-        color: ${({ theme }) => theme.primaryText};
+        color: ${({ theme }) => theme.regularText};
       }
 
       .action {
@@ -167,7 +167,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
   .action-btn-wrapper {
     display: grid;
     justify-content: space-between;
-    grid-template-columns: 185px 140px;
+    grid-template-columns: 140px 185px;
   }
 `
 
@@ -294,7 +294,7 @@ export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ t
     max-width: 400px;
     margin: 0 auto;
     justify-content: space-between;
-    grid-template-columns: minmax(120px, 185px) minmax(90px, 140px);
+    grid-template-columns: minmax(90px, 140px) minmax(120px, 185px);
 
     @media (max-width: 375px) {
       padding: 0 10px;
