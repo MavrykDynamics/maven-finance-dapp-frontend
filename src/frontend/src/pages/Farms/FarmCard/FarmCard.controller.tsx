@@ -223,7 +223,11 @@ const VerticalFarmComponent = ({
         />
       </div>
 
-      <Expand className="vertical-expand" onClickCallback={expandBlockCallback} isExpandedByDefault={isOpenedCard}>
+      <Expand
+        className="vertical-expand prevent-hover"
+        onClickCallback={expandBlockCallback}
+        isExpandedByDefault={isOpenedCard}
+      >
         <LinksBlock
           farmAddress={farm.address}
           token1Symbol={farm.lpToken1.symbol}
