@@ -45,13 +45,13 @@ export const CheckboxStyled = styled.div`
 
     &:checked {
       & + label {
-        background-color: ${({ theme }) => theme.strokeColor};
+        background-color: ${({ theme }) => theme.strokeForForms};
         svg {
           opacity: 1;
         }
 
         &:hover {
-          background-color: ${({ theme }) => theme.strokeColor};
+          background-color: ${({ theme }) => theme.strokeForForms};
         }
       }
     }
