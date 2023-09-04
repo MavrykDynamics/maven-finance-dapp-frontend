@@ -11,6 +11,7 @@ const INDEXER_TABLES = {
 
   // DAPP CONFIG
   mvk_faucet: true,
+  dipdup_index: true,
 
   // FEEDS
   aggregator: true,
@@ -43,6 +44,7 @@ const INDEXER_TABLES = {
   governance_proposal: true,
   governance_proposal_aggregate: true,
   governance_financial: true,
+  governance_financial_request: true,
   governance_financial_request_aggregate: true,
   emergency_governance: true,
   governance_proxy: true,

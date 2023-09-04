@@ -21,7 +21,7 @@ export function getFinancialRequestsStorageSubscription({
 
   return gql(`
    query getFinRequestsStorage($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z") {
-     governance_financial_request(order_by: {requested_datetime: desc}, where: {${filteredQuery}}) {
+    governance_financial_request: governance_financial_request(order_by: {requested_datetime: desc}, where: {${filteredQuery}}) {
         executed
         expiration_datetime
         execution_datetime
@@ -40,6 +40,9 @@ export function getFinancialRequestsStorageSubscription({
           token_address
         }
         governance_financial {
+          address
+        }
+        treasury {
           address
         }
         pass_vote_smvk_total

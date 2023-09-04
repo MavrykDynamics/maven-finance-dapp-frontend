@@ -57,7 +57,7 @@ export const ApolloProvider = ({ children }: Props) => {
     [errorLink],
   )
 
-  const context = useMemo(
+  const contextValue = useMemo(
     () => ({
       apolloClient,
     }),
@@ -65,7 +65,7 @@ export const ApolloProvider = ({ children }: Props) => {
   )
 
   return (
-    <apolloContext.Provider value={context}>
+    <apolloContext.Provider value={contextValue}>
       <OriginalApolloProvider client={apolloClient}>{children}</OriginalApolloProvider>
     </apolloContext.Provider>
   )

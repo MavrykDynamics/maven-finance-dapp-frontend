@@ -20,7 +20,6 @@ export function getSatelliteDataQuery(
   const filters = [filteredByUserTable, activeSatellitesFilter].filter(Boolean).join(',')
 
   return apolloGql`query satelliteDataQuery($userAddress: String!) {
-
     satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}) {
 			nodes {
 				user {

@@ -79,7 +79,7 @@ export const normalizeFinancialRequests = (storage: {
         requestedTime: item.requested_datetime,
         governanceContract: item.governance_financial.governance.address,
         governanceFinId: item.governance_financial.address,
-        treasuryContract: '', //item.treasury.address,
+        treasuryContract: item.treasury.address,
         tokensAmount: item.token_amount,
         votingTillTime: item.executed ? item.execution_datetime : item.expiration_datetime,
         executed: item.executed,

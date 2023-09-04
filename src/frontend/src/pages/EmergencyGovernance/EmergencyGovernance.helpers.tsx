@@ -23,6 +23,7 @@ export function normalizeEmergencyGovernance(storage: EmergencyGovernanceGraphQl
           title: record.title,
           description: record.description,
           startLevel: record.start_level,
+          // TODO: fix while eGov implementation
           dropped: false, //record.dropped,
           executed: record.executed,
           proposerId: record.proposer.address,

@@ -20,7 +20,7 @@ export const GET_DAPP_CONTRACT_ADDRESSES = gql(`
 		council: council {
 			address
 		}
-		break_glass {
+		break_glass: break_glass {
 			address
 		}
 		emergency_governance: emergency_governance {
