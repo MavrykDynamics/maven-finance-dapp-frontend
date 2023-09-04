@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 // view
 import { VerticalFarmCard } from './VerticalFarmCard'
@@ -7,9 +7,6 @@ import { HorizontalFarmCard } from './HorizonralFarmCard'
 // utils
 import { calculateAPY } from '../Farms.helpers'
 import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
-
-// consts
-import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -217,9 +214,6 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
   const { tokensMetadata } = useTokensContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
-
-  // const { openDepositFarmPopup, openRoiCalculatorPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
-  const { openDepositFarmPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
 
   const valueAPY = calculateAPY(farm.currentRewardPerBlock, farm.liquidityTokenBalance)
 

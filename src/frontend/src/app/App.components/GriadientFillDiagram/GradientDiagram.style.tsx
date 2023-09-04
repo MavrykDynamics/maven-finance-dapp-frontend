@@ -9,6 +9,7 @@ export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: 
   width: 100%;
   height: 4px;
   background: ${({ theme }) => theme.gradientDiagramBackgroundColor};
+  border-radius: 100px;
 
   &::before {
     content: '';

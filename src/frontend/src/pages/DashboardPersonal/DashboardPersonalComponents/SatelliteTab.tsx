@@ -16,7 +16,10 @@ import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 // helpers
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import {
+  getSatelliteParticipations,
+  getStatusColorBasedOnOracleType,
+} from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -28,7 +31,6 @@ import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DashboardPersonalSatellitesBottomLinks, SatelliteStatusBlock } from './DashboardPersonalComponents.style'
-import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -37,6 +39,8 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 
 const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
   const { userAddress } = useUserContext()
@@ -172,8 +176,11 @@ const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards
                 <div className="grid-item ">
                   <div className="name">Oracle Status</div>
                   <div className="value">
-                    <SatelliteOracleStatusComponent statusType={oracleStatus}>
-                      {SATELLITE_ORACLE_STATUSES[oracleStatus]}
+                    <SatelliteOracleStatusComponent>
+                      <StatusFlag
+                        status={getStatusColorBasedOnOracleType(oracleStatus)}
+                        text={SATELLITE_ORACLE_STATUSES[oracleStatus]}
+                      />
                     </SatelliteOracleStatusComponent>
                   </div>
                 </div>

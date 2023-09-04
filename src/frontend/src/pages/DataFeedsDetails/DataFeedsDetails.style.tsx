@@ -23,12 +23,14 @@ export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
     height: 225px;
 
     h3 {
-      font-weight: 500;
-      font-size: 14px;
-      color: ${({ theme }) => theme.regularText};
       display: flex;
       align-items: center;
+      line-height: 21px;
       padding: 2px 0 3px 0;
+
+      & > div {
+        display: inherit;
+      }
     }
 
     h4 {
