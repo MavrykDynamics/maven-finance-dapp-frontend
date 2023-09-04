@@ -87,7 +87,7 @@ export const light = {
   strokeForForms: '#1F1F1F',
   // secondary colors
   infoColor: '#3F8BEF',
-  upColor: '#3FA65A',
+  upColor: '#27AE60',
   downColor: '#FF4343',
   neutralColor: '#6F50B5',
   neutralSecondaryColor: '#6A6A9B',
@@ -107,7 +107,7 @@ export const light = {
   pageHeaderColor: '#FFFFFF',
   scrollBlockColor: '#8D86EB',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
-  rpcNodeSelecledColor: '#86D4C9',
+  rpcNodeSelecledColor: '#8D86EB',
   roiCalculatorBackground: 'linear-gradient(180deg, rgba(80, 62, 170, 0.20) 0%, rgba(80, 62, 170, 0.00) 100%)',
   dashboardTvlBackground: 'linear-gradient(180deg, #FFFFFF 3.55%, #FFFFFF 83.47%, #FFFFFF 103.84%)',
   // chart colors

@@ -20,8 +20,12 @@ import {
   SatellitesContextState,
   SatellitesSubsRecordType,
 } from '../satellites.provider.types'
-import { MavrykTheme } from 'styles/interfaces'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import {
+  STATUS_FLAG_DOWN,
+  STATUS_FLAG_UP,
+  STATUS_FLAG_WARNING,
+} from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 /**
  *
@@ -80,12 +84,12 @@ export const getSatelliteParticipations = ({
   }
 }
 
-export const findColorBasedOnStatus = (statusType: SatelliteOracleStatusType, theme: MavrykTheme) => {
+export const getStatusColorBasedOnOracleType = (statusType: SatelliteOracleStatusType) => {
   return statusType === RESPONDED_ORACLE_STATUS
-    ? theme.upColor
+    ? STATUS_FLAG_UP
     : statusType === NO_RESPONSE_ORACLE_STATUS || statusType === NOT_AN_ORACLE_ORACLE_STATUS
-    ? theme.downColor
-    : theme.warningColor
+    ? STATUS_FLAG_DOWN
+    : STATUS_FLAG_WARNING
 }
 
 export function getTotalDelegatedMVK(

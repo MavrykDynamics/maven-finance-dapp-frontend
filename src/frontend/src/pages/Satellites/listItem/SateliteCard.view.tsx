@@ -20,7 +20,10 @@ import {
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 // helpers
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import {
+  getSatelliteParticipations,
+  getStatusColorBasedOnOracleType,
+} from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // view
@@ -305,8 +308,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup className="oracle-status">
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
-                <SatelliteOracleStatusComponent statusType={oracleStatus}>
-                  {SATELLITE_ORACLE_STATUSES[oracleStatus]}
+                <SatelliteOracleStatusComponent>
+                  <StatusFlag
+                    status={getStatusColorBasedOnOracleType(oracleStatus)}
+                    text={SATELLITE_ORACLE_STATUSES[oracleStatus]}
+                  />
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>
