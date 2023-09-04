@@ -87,7 +87,7 @@ export const OraclesTab = () => {
                 if (!feed) return null
 
                 return (
-                  <Link key={feed.address} to={`/satellites/feed-details/${feed.address}`}>
+                  <Link key={feed.address} className="full-opacity" to={`/satellites/feed-details/${feed.address}`}>
                     <PopularFeed className="row">
                       <StatBlock className="icon-first">
                         <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />

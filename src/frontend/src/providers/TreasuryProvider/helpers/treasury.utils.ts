@@ -1,4 +1,3 @@
-import { TREASURYS_COLORS } from 'app/App.components/PieChart/pieChart.const'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -11,9 +10,6 @@ import {
 } from '../treasury.provider.types'
 import { EMPTY_TREASURY_CTX, TREASURY_STORAGE_DATA_SUB } from './treasury.consts'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-
-export const getAssetColor = (assetIdx: number) =>
-  assetIdx < TREASURYS_COLORS.length ? TREASURYS_COLORS[assetIdx] : Math.random().toString(36).slice(5, 7)
 
 /**
  * @param treasuryAddresses array of treasuries addresses

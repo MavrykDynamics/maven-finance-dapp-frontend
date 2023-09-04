@@ -1,12 +1,12 @@
 import type { TreasuryBalanceType, TreasuryData, TreauryGQLData } from './treasury.types'
 import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
-import { getAssetColor } from './treasury.utils'
+import { getDiagramSectionColor } from 'app/App.components/PieChart/pieChart.utils'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
 
 export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
   const { mavryk_user: sMVKAmounts, treasury } = data
-  const treasuryAssetsColors: Record<string, string> = sMVKAmounts?.length ? { smvk: getAssetColor(0) } : {}
+  const treasuryAssetsColors: Record<string, string> = sMVKAmounts?.length ? { smvk: getDiagramSectionColor(0) } : {}
 
   // Parse sMVK amount for each treasury, to make this structure usable
   const sMVKBalancesMapper = sMVKAmounts?.reduce<Record<string, TreasuryBalanceType>>(
@@ -23,7 +23,7 @@ export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
     {},
   )
   // Map every treasury to combine treasury name, and divide balance by constant
-  return treasury.reduce<Record<string, TreasuryData>>((acc, treasuryData) => {
+  return treasury.reduce<Record<string, TreasuryData>>((acc, treasuryData, idx) => {
     const sMVKAmount = sMVKBalancesMapper[treasuryData.address] ?? null
     // XTZ is present by default for each treasury, and it can't be defined on back-end
     const treasuryWhitelistTokens = [XTZ_TOKEN_ADDRESS].concat(
@@ -34,7 +34,7 @@ export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
       .reduce<Array<TreasuryBalanceType>>((acc, { balance, token: { metadata, token_address } }) => {
         // get color of the asset
         if (!treasuryAssetsColors[token_address]) {
-          treasuryAssetsColors[token_address] = getAssetColor(Object.keys(treasuryAssetsColors).length)
+          treasuryAssetsColors[token_address] = getDiagramSectionColor(Object.keys(treasuryAssetsColors).length - idx)
         }
 
         // Filter zero balance assets in treasury and bad tokens that don't have info or not in whitelist for this treasury

@@ -34,7 +34,7 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
     : 0
 
   return (
-    <Link to={`/satellites/satellite-details/${address}`}>
+    <Link to={`/satellites/satellite-details/${address}`} className="full-opacity">
       <FeedsOraclesCardStyled>
         <FeedsListItem>
           <h5>Oracle</h5>
