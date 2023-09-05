@@ -25,9 +25,6 @@ export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: 
     left: 0;
     clip-path: ${({ gradientWidth }) =>
       `polygon(0 0, ${gradientWidth + 1}% 0, ${gradientWidth + 1}% calc(100% + 0.6px), 0 calc(100% + 0.6px))`};
-
-    /* clip-path: ${({ gradientWidth }) =>
-      `polygon(0 0, ${gradientWidth + 1}% 0, ${gradientWidth + 1}% 100%, 0 100%)`}; */
   }
 
   &.loansModals {
