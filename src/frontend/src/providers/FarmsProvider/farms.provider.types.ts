@@ -1,6 +1,4 @@
 import {
-  FARMS_LIVE_NOT_STAKED_DATA_SUB,
-  FARMS_FINISHED_NOT_STAKED_DATA_SUB,
   FARMS_LIVE_STAKED_DATA_SUB,
   FARMS_FINISHED_STAKED_DATA_SUB,
   FARMS_DATA_SUB,
@@ -9,6 +7,7 @@ import {
   DEPOSIT_TO_FARM_ACTION,
   HARVEST_FARM_REWARDS_ACTION,
   WITHDRAW_FROM_FARM_ACTION,
+  FARMS_ALL_FINISHED_DATA_SUB,
 } from './helpers/farms.const'
 import { normalizeFarm } from './helpers/farms.normalizer'
 
@@ -21,9 +20,8 @@ export type FarmsProviderSubsType = {
   [FARMS_DATA_SUB]:
     | typeof FARMS_ALL_DATA_SUB
     | typeof FARMS_ALL_LIVE_DATA_SUB
-    | typeof FARMS_LIVE_NOT_STAKED_DATA_SUB
     | typeof FARMS_LIVE_STAKED_DATA_SUB
-    | typeof FARMS_FINISHED_NOT_STAKED_DATA_SUB
+    | typeof FARMS_ALL_FINISHED_DATA_SUB
     | typeof FARMS_FINISHED_STAKED_DATA_SUB
     | null
 }
@@ -34,9 +32,8 @@ export type FarmCtxStateType = {
   farmsMapper: Record<string, FarmRecordType>
   allFarms: Array<string>
   allLiveFarms: Array<string>
-  liveNotStakedFarms: Array<string>
-  finishedNotStakedFarms: Array<string>
   liveStakedFarms: Array<string>
+  allFinishedFarms: Array<string>
   finishedStakedFarms: Array<string>
 }
 

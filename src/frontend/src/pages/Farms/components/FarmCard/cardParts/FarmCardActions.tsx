@@ -12,7 +12,7 @@ import { Card } from 'styles'
 
 // types
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { useFarmsPopupsContext } from 'pages/Farms/FarmsPopups/FarmsPopups.provider'
+import { useFarmsPopupsContext } from 'providers/FarmsProvider/farmsPopups.provider'
 
 const FarmCardActionsStyled = styled(Card)`
   padding: 20px;

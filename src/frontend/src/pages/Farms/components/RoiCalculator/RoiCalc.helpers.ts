@@ -1,5 +1,5 @@
 import { FarmStorage } from 'utils/TypesAndInterfaces/Farm'
-import { calculateAPR } from '../Farms.helpers'
+import { calculateAPR } from '../../Farms.helpers'
 import { InputStatusesType, InputValuesType } from './RoiCalc.types'
 
 export const STAKED_ITEMS = [

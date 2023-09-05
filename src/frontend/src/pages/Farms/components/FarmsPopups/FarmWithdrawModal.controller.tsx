@@ -4,23 +4,23 @@ import { useLockBodyScroll } from 'react-use'
 // view
 import Icon from 'app/App.components/Icon/Icon.view'
 import Button from 'app/App.components/Button/NewButton'
-import { Input } from '../../../app/App.components/Input/NewInput'
+import { Input } from '../../../../app/App.components/Input/NewInput'
 import {
   InputStatusType,
   INPUT_LARGE,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-} from '../../../app/App.components/Input/Input.constants'
-import CoinsIcons from '../../../app/App.components/Icon/CoinsIcons.view'
+} from '../../../../app/App.components/Input/Input.constants'
+import CoinsIcons from '../../../../app/App.components/Icon/CoinsIcons.view'
 
 // consts
 import { FarmDepositPopupDataType } from 'pages/Farms/Farms.const'
-import { DEPOSIT_TO_FARM_ACTION } from 'providers/FarmsProvider/helpers/farms.const'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { WITHDRAW_FROM_FARM_ACTION } from 'providers/FarmsProvider/helpers/farms.const'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // utils
 import { checkWhetherTokenIsFarmToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { depositToFarm } from 'providers/FarmsProvider/actions/farms.actions'
+import { withdrawFromFarm } from 'providers/FarmsProvider/actions/farms.actions'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -31,10 +31,10 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 
 // view
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { FarmLpActionsPopupsContent } from '../Farms.style'
+import { FarmLpActionsPopupsContent } from 'app/App.components/popup/bases/FarmsPopup.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 
-export const FarmDepositModal = ({
+export const FarmWithdrawModal = ({
   closeHandler,
   show,
   data,
@@ -63,6 +63,10 @@ export const FarmDepositModal = ({
   // TODO: handle user balance
   const userTokenBalance = 0
 
+  const depositedAmountByUser = useMemo(() => {
+    return Number(selectedFarm?.farmDepositors?.find(({ address }) => userAddress === address)?.depositedAmount)
+  }, [selectedFarm?.farmDepositors, userAddress])
+
   // input handlers
   const handleBlur = useCallback(
     () => (inputData.amount === '' ? setInputData({ ...inputData, amount: '0' }) : null),
@@ -74,32 +78,33 @@ export const FarmDepositModal = ({
   )
   const handleChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-      const validationStatus = +value <= userTokenBalance && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      const validationStatus =
+        +value <= depositedAmountByUser && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
       setInputData({ ...inputData, amount: value, validation: validationStatus })
     },
-    [inputData, userTokenBalance],
+    [inputData, depositedAmountByUser],
   )
 
   // harvest rewards action ---------------------------
-  const depositToFarmAction = useCallback(async () => {
+  const withdrawFromFarmAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
     }
 
-    return await depositToFarm(selectedFarm.address, Number(inputData.amount))
-  }, [selectedFarm.address, userAddress, inputData.amount])
+    return await withdrawFromFarm(selectedFarmAddress, Number(inputData.amount))
+  }, [selectedFarmAddress, userAddress, inputData.amount])
 
-  const depositToFarmContractActionProps: HookContractActionArgs = useMemo(
+  const withdrawFromFarmContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: DEPOSIT_TO_FARM_ACTION,
-      actionFn: depositToFarmAction,
+      actionType: WITHDRAW_FROM_FARM_ACTION,
+      actionFn: withdrawFromFarmAction,
     }),
-    [depositToFarmAction],
+    [withdrawFromFarmAction],
   )
 
-  const { action: handleDepositToFarm } = useContractAction(depositToFarmContractActionProps)
+  const { action: handleWithdrawFromFarm } = useContractAction(withdrawFromFarmContractActionProps)
 
   if (!selectedFarm || !selectedFarmToken || !checkWhetherTokenIsFarmToken(selectedFarmToken)) return null
 
@@ -114,7 +119,7 @@ export const FarmDepositModal = ({
         <FarmLpActionsPopupsContent>
           <div className="popup-header">
             <CoinsIcons />
-            <div>Stake {tokenName} LP Tokens</div>
+            <div>Unstake {tokenName} LP Tokens</div>
           </div>
 
           <Input
@@ -137,14 +142,17 @@ export const FarmDepositModal = ({
             <InputPinnedTokenInfo>{tokenName}</InputPinnedTokenInfo>
           </Input>
 
-          <Button
-            disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
-            kind={BUTTON_PRIMARY}
-            onClick={handleDepositToFarm}
-          >
-            <Icon id="in" />
-            Stake LP
-          </Button>
+          <div className="action-btn">
+            <Button
+              disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
+              kind={BUTTON_PRIMARY}
+              form={BUTTON_WIDE}
+              onClick={handleWithdrawFromFarm}
+            >
+              <Icon id="out" />
+              Unstake LP
+            </Button>
+          </div>
         </FarmLpActionsPopupsContent>
       </PopupContainerWrapper>
     </PopupContainer>

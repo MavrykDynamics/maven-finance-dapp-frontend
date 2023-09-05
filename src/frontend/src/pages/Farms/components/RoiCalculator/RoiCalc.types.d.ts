@@ -1,5 +1,5 @@
-import { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { SlidingTabButtonType } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
+import { SlidingTabButtonType } from '../../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { BOTTOM_INPUT, TOP_INPUT } from './RoiCalc.helpers'
 
 export type SelectedTabsStateType = {

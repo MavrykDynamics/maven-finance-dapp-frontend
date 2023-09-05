@@ -9,10 +9,11 @@ export const DEFAULT_FARMS_ACTIVE_SUBS: FarmsProviderSubsType = {
 
 // farm subs type
 export const FARMS_ALL_DATA_SUB = 'FARMS_ALL_DATA_SUB'
+
 export const FARMS_ALL_LIVE_DATA_SUB = 'FARMS_ALL_LIVE_DATA_SUB'
-export const FARMS_LIVE_NOT_STAKED_DATA_SUB = 'FARMS_LIVE_NOT_STAKED_DATA_SUB'
 export const FARMS_LIVE_STAKED_DATA_SUB = 'FARMS__STAKED_LIVE_DATA_SUB'
-export const FARMS_FINISHED_NOT_STAKED_DATA_SUB = 'FARMS_FINISHED_NOT_STAKED_DATA_SUB'
+
+export const FARMS_ALL_FINISHED_DATA_SUB = 'FARMS_ALL_FINISHED_DATA_SUB'
 export const FARMS_FINISHED_STAKED_DATA_SUB = 'FARMS__FINISHED_LIVE_DATA_SUB'
 
 // farms action
@@ -23,8 +24,7 @@ export const WITHDRAW_FROM_FARM_ACTION = 'WITHDRAW_FROM_FARM_ACTION'
 // farms context
 export const DEFAULT_FARMS_CTX: NullableFarmCtxStateType = {
   farmsMapper: null,
-  liveNotStakedFarms: null,
-  finishedNotStakedFarms: null,
+  allFinishedFarms: null,
   liveStakedFarms: null,
   allLiveFarms: null,
   finishedStakedFarms: null,
@@ -33,8 +33,7 @@ export const DEFAULT_FARMS_CTX: NullableFarmCtxStateType = {
 
 export const EMPTY_FARMS_CTX: FarmCtxStateType = {
   farmsMapper: {},
-  liveNotStakedFarms: [],
-  finishedNotStakedFarms: [],
+  allFinishedFarms: [],
   liveStakedFarms: [],
   allLiveFarms: [],
   finishedStakedFarms: [],

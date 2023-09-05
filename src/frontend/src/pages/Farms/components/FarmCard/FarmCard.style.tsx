@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { CardHover } from 'styles'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavrykTheme } from '../../../../styles/interfaces'
 
 export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavrykTheme }>`
   padding: 0;

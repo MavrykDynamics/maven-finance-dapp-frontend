@@ -5,7 +5,7 @@ import { VerticalFarmCard } from './VerticalFarmCard'
 import { HorizontalFarmCard } from './HorizonralFarmCard'
 
 // utils
-import { calculateAPY } from '../Farms.helpers'
+import { calculateAPY } from '../../Farms.helpers'
 import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // hooks

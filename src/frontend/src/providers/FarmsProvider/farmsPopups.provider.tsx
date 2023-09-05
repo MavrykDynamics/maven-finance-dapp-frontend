@@ -1,15 +1,18 @@
-import React, { useContext } from 'react'
-import { createContext } from 'react'
+import React, { useContext, createContext } from 'react'
+
+// consts
 import {
   DEFAULT_FARMS_POPUPS_STATE,
   FarmDepositPopupDataType,
   FarmsPopupsContextStateType,
   FarmWithdrawPopupDataType,
   // RoiCalculatorPopupDataType,
-} from '../Farms.const'
+} from '../../pages/Farms/Farms.const'
+
+// view
 // import RoiCalculator from '../RoiCalculator/RoiCalculator.controller'
-import { FarmDepositModal } from './FarmDepositModal.controller'
-import { FarmWithdrawModal } from './FarmWithdrawModal.controller'
+import { FarmDepositModal } from '../../pages/Farms/components/FarmsPopups/FarmDepositModal.controller'
+import { FarmWithdrawModal } from '../../pages/Farms/components/FarmsPopups/FarmWithdrawModal.controller'
 
 export const farmsPopupsContext = createContext<FarmsPopupsContextStateType>(undefined!)
 

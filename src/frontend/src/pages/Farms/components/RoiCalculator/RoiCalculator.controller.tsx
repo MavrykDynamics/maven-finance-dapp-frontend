@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 //view
-import CoinsIcons from '../../../app/App.components/Icon/CoinsIcons.view'
-import { Input } from '../../../app/App.components/Input/Input.controller'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import Checkbox from '../../../app/App.components/Checkbox/Checkbox.view'
-import Expand from '../../../app/App.components/Expand/Expand.view'
+import CoinsIcons from '../../../../app/App.components/Icon/CoinsIcons.view'
+import { Input } from '../../../../app/App.components/Input/Input.controller'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { SlidingTabButtons } from '../../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import Checkbox from '../../../../app/App.components/Checkbox/Checkbox.view'
+import Expand from '../../../../app/App.components/Expand/Expand.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // style
@@ -19,7 +19,7 @@ import { RoiCalculatorStyled, RoiExpandStyled } from './RoiCalculator.style'
 import { InputStatusesType, InputValuesType, SelectedTabsStateType } from './RoiCalc.types'
 
 // consts, helpers
-import { calculateAPR, calculateAPY, getUserBalanceByAddressOld } from '../Farms.helpers'
+import { calculateAPR, calculateAPY, getUserBalanceByAddressOld } from '../../Farms.helpers'
 import {
   BOTTOM_INPUT,
   COMPOUNDING_ITEMS,
@@ -31,7 +31,7 @@ import {
   STAKED_ITEMS,
   TOP_INPUT,
 } from './RoiCalc.helpers'
-import { RoiCalculatorPopupDataType } from '../Farms.const'
+import { RoiCalculatorPopupDataType } from '../../Farms.const'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { useLockBodyScroll } from 'react-use'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'

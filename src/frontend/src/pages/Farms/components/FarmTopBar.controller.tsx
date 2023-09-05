@@ -1,38 +1,40 @@
 import { useMemo, useState } from 'react'
+import classNames from 'classnames'
 
-// types, consts
+// types
+import { HandleClickArgsType } from '../Farms.controller'
+
+// consts
 import {
   itemsForFarmsSortDD,
   LIVE_TAB_ID,
   FINISHED_TAB_ID,
   FarmsFiltersStateType,
-  FarmsViewVariantType,
   NO_STAKED,
   STAKED,
 } from '../Farms.const'
+import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 
-// components
+// view
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import Toggle from '../../../app/App.components/Toggle/Toggle.view'
 import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { Input } from '../../../app/App.components/Input/Input.controller'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import { HandleClickArgsType } from '../Farms.controller'
-
-// style
 import { DropdownContainer } from '../../../app/App.components/DropDown/DropDown.style'
-import { FarmTopBarStyled } from './FarmTopBar.style'
+import { FarmTopBarStyled } from '../Farms.style'
+import Button from 'app/App.components/Button/NewButton'
 
-export type FarmTopBarViewProps = {
-  handleSetFarmsViewVariant: (arg0: FarmsViewVariantType) => void
-  className: string
-  farmsFilters: FarmsFiltersStateType
+type FarmTopBarViewProps = {
+  isVerticalView: boolean
+  handleSetFarmsViewVariant: (isVertical: boolean) => void
   handleFilterClick: (args: HandleClickArgsType) => void
+  farmsFilters: FarmsFiltersStateType
 }
 
 export const FarmTopBar = ({
+  isVerticalView,
   handleSetFarmsViewVariant,
-  className,
   farmsFilters: { isLive, isStaked, searchValue, sortBy },
   handleFilterClick,
 }: FarmTopBarViewProps) => {
@@ -55,7 +57,7 @@ export const FarmTopBar = ({
   )
 
   return (
-    <FarmTopBarStyled className={className}>
+    <FarmTopBarStyled>
       <Toggle
         checked={isStaked === STAKED}
         onChange={() =>
@@ -95,13 +97,23 @@ export const FarmTopBar = ({
           clickItem={handleOnClickDropdownItem}
         />
       </DropdownContainer>
+
       <div className="change-view">
-        <button className="btn-horizontal" onClick={() => handleSetFarmsViewVariant('horizontal')}>
-          <Icon id="hamburger" />
-        </button>
-        <button className="btn-vertical" onClick={() => handleSetFarmsViewVariant('vertical')}>
-          <Icon id="hamburger" />
-        </button>
+        <div className={classNames('btn-horizontal', { selected: !isVerticalView })}>
+          <Button
+            kind={BUTTON_SIMPLE_SMALL}
+            onClick={() => handleSetFarmsViewVariant(false)}
+            selected={!isVerticalView}
+          >
+            <Icon id="hamburger" />
+          </Button>
+        </div>
+
+        <div className={classNames('btn-vertical', { selected: isVerticalView })}>
+          <Button kind={BUTTON_SIMPLE_SMALL} onClick={() => handleSetFarmsViewVariant(true)} selected={isVerticalView}>
+            <Icon id="hamburger" />
+          </Button>
+        </div>
       </div>
     </FarmTopBarStyled>
   )

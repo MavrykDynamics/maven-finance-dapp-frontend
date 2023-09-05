@@ -1,12 +1,6 @@
 import { FarmsQueryQuery } from 'utils/__generated__/graphql'
-import { FarmCtxStateType, FarmsProviderSubsType } from '../farms.provider.types'
-import {
-  FARMS_DATA_SUB,
-  FARMS_FINISHED_NOT_STAKED_DATA_SUB,
-  FARMS_FINISHED_STAKED_DATA_SUB,
-  FARMS_LIVE_NOT_STAKED_DATA_SUB,
-  FARMS_LIVE_STAKED_DATA_SUB,
-} from './farms.const'
+import { FarmCtxStateType } from '../farms.provider.types'
+
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 
@@ -61,16 +55,12 @@ export const normalizeFarms = (indexerFarms: FarmsQueryQuery['farm']) => {
         acc.allLiveFarms.push(address)
       }
 
-      if (open === true && !isFarmStaked) {
-        acc.liveNotStakedFarms.push(address)
-      }
-
       if (open === true && isFarmStaked) {
         acc.liveStakedFarms.push(address)
       }
 
-      if (open === false && !isFarmStaked) {
-        acc.finishedNotStakedFarms.push(address)
+      if (open === false) {
+        acc.allFinishedFarms.push(address)
       }
 
       if (open === false && isFarmStaked) {
@@ -83,9 +73,8 @@ export const normalizeFarms = (indexerFarms: FarmsQueryQuery['farm']) => {
       farmsMapper: {},
       allFarms: [],
       allLiveFarms: [],
-      liveNotStakedFarms: [],
       liveStakedFarms: [],
-      finishedNotStakedFarms: [],
+      allFinishedFarms: [],
       finishedStakedFarms: [],
     },
   )
