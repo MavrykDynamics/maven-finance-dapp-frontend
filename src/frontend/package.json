@@ -1,7 +1,4 @@
 {
-  "resolutions": {
-    "@types/react": "~17.0.21"
-  },
   "name": "mavryk-finance-dapp-frontend",
   "version": "1.0.0",
   "scripts": {
@@ -23,7 +20,6 @@
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
     "@apollo/client": "^3.7.12",
-    "@graphql-codegen/cli": "^4.0.1",
     "@microsoft/signalr": "^7.0.7",
     "@taquito/beacon-wallet": "^15.0.1",
     "@taquito/signer": "^15.0.1",
@@ -32,10 +28,8 @@
     "@temple-wallet/dapp": "^6.0.1",
     "@types/react-avatar-editor": "^13.0.0",
     "@wert-io/widget-initializer": "^2.0.0",
-    "axios": "^1.2.1",
     "bignumber.js": "^9.1.0",
     "classnames": "^2.3.2",
-    "coingecko-api": "^1.0.10",
     "dayjs": "^1.11.5",
     "embla-carousel-react": "^6.2.0",
     "graphql": "16.5.0",
@@ -46,7 +40,7 @@
     "qs": "^6.11.0",
     "react": "^17.0.2",
     "react-avatar-editor": "^13.0.0",
-    "react-collapsed": "3.3.0",
+    "react-collapsed": "^3.3.0",
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.0",
@@ -67,11 +61,11 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.11",
     "@cypress/instrument-cra": "^1.4.0",
-    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
     "@types/node": "^16.10.1",
     "@types/qs": "^6.9.7",
-    "@types/react": "^17.0.2",
+    "@types/react": "^17.0.24",
     "@types/react-collapse": "^5.0.1",
     "@types/react-dom": "^17.0.9",
     "@types/react-redux": "^7.1.18",
