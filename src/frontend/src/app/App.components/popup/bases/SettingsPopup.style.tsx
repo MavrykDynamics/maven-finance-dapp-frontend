@@ -39,6 +39,11 @@ export const SettingsPopupBase = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     column-gap: 7px;
     margin-top: 10px;
+
+    & button {
+      border-width: 2px;
+      text-transform: capitalize;
+    }
   }
 `
 
