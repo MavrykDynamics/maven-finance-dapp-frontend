@@ -42,6 +42,8 @@ export const FarmCardActions = ({
   isFarmLive,
   isMFarm,
   isVertical = false,
+  isFarmHasWithdrawDisabled,
+  isFarmHasDepositDisabled,
   farmToken,
   userAddress,
   farmAddress,
@@ -49,6 +51,8 @@ export const FarmCardActions = ({
 }: {
   isFarmLive: boolean
   isMFarm: boolean
+  isFarmHasDepositDisabled: boolean
+  isFarmHasWithdrawDisabled: boolean
   isVertical?: boolean
   farmToken: FarmsTokenMetadataType
   userAddress: string | null
@@ -83,13 +87,23 @@ export const FarmCardActions = ({
           {isVertical ? (
             <>
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={openDepositModal} disabled={!isFarmLive}>
+                <Button
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={openDepositModal}
+                  disabled={!isFarmLive || isFarmHasDepositDisabled}
+                >
                   <Icon id="in" /> Stake LP
                 </Button>
               </div>
 
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openWithdrawModal} disabled={!isFarmLive}>
+                <Button
+                  kind={BUTTON_SECONDARY}
+                  form={BUTTON_WIDE}
+                  onClick={openWithdrawModal}
+                  disabled={!isFarmLive || isFarmHasWithdrawDisabled}
+                >
                   <Icon id="out" /> UnStake LP
                 </Button>
               </div>
@@ -97,13 +111,23 @@ export const FarmCardActions = ({
           ) : (
             <>
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={openWithdrawModal} disabled={!isFarmLive}>
+                <Button
+                  kind={BUTTON_SECONDARY}
+                  form={BUTTON_WIDE}
+                  onClick={openWithdrawModal}
+                  disabled={!isFarmLive || isFarmHasWithdrawDisabled}
+                >
                   <Icon id="out" /> UnStake LP
                 </Button>
               </div>
 
               <div className="farmActionWrapper">
-                <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={openDepositModal} disabled={!isFarmLive}>
+                <Button
+                  kind={BUTTON_PRIMARY}
+                  form={BUTTON_WIDE}
+                  onClick={openDepositModal}
+                  disabled={!isFarmLive || isFarmHasDepositDisabled}
+                >
                   <Icon id="in" /> Stake LP
                 </Button>
               </div>

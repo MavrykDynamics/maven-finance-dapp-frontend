@@ -5,7 +5,7 @@ import { VerticalFarmCard } from './VerticalFarmCard'
 import { HorizontalFarmCard } from './HorizonralFarmCard'
 
 // utils
-import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsFarmToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -17,7 +17,6 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { harvestRewards } from 'providers/FarmsProvider/actions/farms.actions'
 import { HARVEST_FARM_REWARDS_ACTION } from 'providers/FarmsProvider/helpers/farms.const'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { calculateAPY } from 'providers/FarmsProvider/helpers/farms.utils'
 
 // const StakedBlock = ({
 //   myFarmStakedBalance,
@@ -214,8 +213,6 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
 
-  const valueAPY = calculateAPY(farm.currentRewardPerBlock, farm.liquidityTokenBalance)
-
   // harvest rewards action ---------------------------
   const harvestRewardsAction = useCallback(async () => {
     if (!userAddress) {
@@ -236,41 +233,8 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
 
   const { action: handleHarvestRewards } = useContractAction(harvestRewardsContractActionProps)
 
-  const farmToken = tokensMetadata[farm.liquidityTokenAddress]
-  if (!checkWhetherTokenIsFarmToken(farmToken)) return null
-
-  // const openROI = () =>
-  //   openRoiCalculatorPopup({
-  //     selectedFarmAddress: farm.address,
-  //   })
-
-  // return variant === 'vertical' ? (
-  //   <VerticalFarmComponent
-  //     userAddress={userAddress}
-  //     farm={farm}
-  //     isOpenedCard={isOpenedCard}
-  //     userReward={userReward}
-  //     apyValue={valueAPY}
-  //     expandBlockCallback={expandCallback}
-  //     // triggerCalculatorModal={openROI}
-  //     triggerDepositModal={openDeposit}
-  //     triggerWithdrawModal={openWithdraw}
-  //     harvestRewards={harvestRewards}
-  //   />
-  // ) : (
-  //   <HorisontalFarmComponent
-  //     userAddress={userAddress}
-  //     farm={farm}
-  //     isOpenedCard={isOpenedCard}
-  //     userReward={userReward}
-  //     apyValue={valueAPY}
-  //     expandBlockCallback={expandCallback}
-  //     // triggerCalculatorModal={openROI}
-  //     triggerDepositModal={openDeposit}
-  //     triggerWithdrawModal={openWithdraw}
-  //     harvestRewards={harvestRewards}
-  //   />
-  // )
+  const farmToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: farm?.liquidityTokenAddress })
+  if (!farmToken || !checkWhetherTokenIsFarmToken(farmToken)) return null
 
   if (isVertical) {
     return (
@@ -294,5 +258,3 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
     />
   )
 }
-
-// ----------- COMMON COMPONENTS -----------

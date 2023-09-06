@@ -12,6 +12,8 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // utils
+import { calculateFarmAPY } from 'providers/FarmsProvider/helpers/farms.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -25,9 +27,11 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // hooks
 import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
-import { calculateAPY } from 'providers/FarmsProvider/helpers/farms.utils'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { checkWhetherTokenIsFarmToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 export const FarmsTab = () => {
+  const { tokensMetadata } = useTokensContext()
   const { isLoading: isFarmsLoading, changeFarmsSubscriptionList, farmsMapper, allLiveFarms } = useFarmsContext()
 
   useEffect(() => {
@@ -58,13 +62,17 @@ export const FarmsTab = () => {
         ) : allLiveFarms.length ? (
           allLiveFarms.map((farmAddress) => {
             const farm = farmsMapper[farmAddress]
-            const apy = calculateAPY(farm.currentRewardPerBlock, farm.liquidityTokenBalance)
+            const farmToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: farm?.liquidityTokenAddress })
+            if (!farmToken || !checkWhetherTokenIsFarmToken(farmToken)) return null
+
+            const totalLiquidityAmount = convertNumberForClient({
+              number: farm.liquidityTokenBalance,
+              grade: farmToken.decimals,
+            })
+            const farmApy = calculateFarmAPY(farm.currentRewardPerBlock, totalLiquidityAmount)
 
             return (
-              <Link
-                to={`/yield-farms?${qs.stringify({ openedFarmsCards: [farm.address] })}`}
-                key={farm.address + farm.name}
-              >
+              <Link to={`/yield-farms?${qs.stringify({ openedFarmsCards: [farm.address] })}`} key={farm.address}>
                 <div className="card">
                   <div className="top">
                     <div className="name">
@@ -80,7 +88,7 @@ export const FarmsTab = () => {
 
                   <div className="row-info">
                     <div className="name">APY: </div>
-                    <div className="value">{apy}</div>
+                    <div className="value">{farmApy}</div>
                   </div>
 
                   <div className="row-info">
@@ -91,7 +99,7 @@ export const FarmsTab = () => {
                   <div className="row-info">
                     <div className="name">Ends in: </div>
                     <div className="value">
-                      <Timer deadline={farm.lastUpdateTime} />
+                      <Timer deadline={farm.endsInTime} />
                     </div>
                   </div>
                 </div>

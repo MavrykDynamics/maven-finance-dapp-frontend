@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import { FarmsQueryQuery } from 'utils/__generated__/graphql'
 import { FarmCtxStateType } from '../farms.provider.types'
 
@@ -10,9 +12,7 @@ export const normalizeFarm = (indexerFarm: FarmsQueryQuery['farm'][number]) => {
     address: indexerFarm.address,
     name: indexerFarm.name,
     open: indexerFarm.open,
-    lastUpdateTime: indexerFarm.last_updated_at,
     createdTime: indexerFarm.creation_timestamp,
-    infinite: indexerFarm.infinite,
 
     // farm liquidity token
     liquidityTokenBalance: indexerFarm.lp_token_balance,
@@ -35,8 +35,11 @@ export const normalizeFarm = (indexerFarm: FarmsQueryQuery['farm'][number]) => {
       rewardsToClaim: farmDepositor.unclaimed_rewards,
     })),
     isMFarm: indexerFarm.is_m_farm,
+
     // TODO: add address here, no data in indexer for now
-    creatorAddress: '',
+    creatorAddress: 'tz1Y2tUUooW6QT6pQCeqz9ep9wCkX5bnKeTs',
+    // TODO: add ends in time here, no data in indexer for now
+    endsInTime: dayjs().add(10, 'day').toISOString(),
   }
 }
 

@@ -17,6 +17,10 @@ import { FarmCardActions } from './cardParts/FarmCardActions'
 // consts
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
+// utils
+import { calculateFarmAPY } from 'providers/FarmsProvider/helpers/farms.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
@@ -45,6 +49,9 @@ export const VerticalFarmCard = ({
     ? farmToken.symbol
     : `${farmToken.farmLpData.token0?.symbol}-${farmToken.farmLpData.token1?.symbol}`
 
+  const totalLiquidityAmount = convertNumberForClient({ number: farm.liquidityTokenBalance, grade: farmToken.decimals })
+  const farmApy = calculateFarmAPY(farm.currentRewardPerBlock, totalLiquidityAmount)
+
   return (
     <VerticalFarmCardStyled className={classNames({ isCardOpened })}>
       <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
@@ -54,7 +61,7 @@ export const VerticalFarmCard = ({
       <FarmCardHeader
         isMFarm={farm.isMFarm}
         farmName={farm.name}
-        farmCreator="tz1byTGaUKjJqkwSXPnM3dpf9N39pYwRfnTm"
+        farmCreator={farm.creatorAddress}
         farmToken={farmToken}
       />
 
@@ -62,8 +69,9 @@ export const VerticalFarmCard = ({
         <div className="row">
           <div className="name">APY</div>
           <div className="value">
-            <CommaNumber value={12.5} endingText="%" />
-            <Button kind={BUTTON_SIMPLE}>
+            <CommaNumber value={farmApy} endingText="%" />
+            {/* TODO: add open ROI calc handler */}
+            <Button kind={BUTTON_SIMPLE} disabled>
               <Icon id="calculator" />
             </Button>
           </div>
@@ -76,17 +84,24 @@ export const VerticalFarmCard = ({
 
         <div className="row">
           <div className="name">Total Liquidity</div>
-          <CommaNumber value={1243829.5} beginningText="$" className="value" />
+          {/* TODO: use beginningText="$" when we will have rate for lpTokens, currently Total Liquidity is in lpTokens amount */}
+          <CommaNumber value={totalLiquidityAmount} className="value" />
         </div>
       </div>
 
-      <FarmCardHarvest userReward={userReward} harvestRewards={harvestRewards} />
+      <FarmCardHarvest
+        userReward={userReward}
+        isFarmHasClaimDisabled={farm.claimPaused}
+        harvestRewards={harvestRewards}
+      />
 
       <FarmCardActions
         isFarmLive={farm.open}
         isMFarm={farm.isMFarm}
         farmToken={farmToken}
         farmAddress={farm.address}
+        isFarmHasDepositDisabled={farm.depositPaused}
+        isFarmHasWithdrawDisabled={farm.withdrawPaused}
         userAddress={userAddress}
         userDepositedAmount={0}
         isVertical

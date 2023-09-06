@@ -36,6 +36,7 @@ import {
 
 // hooks
 import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // utils
@@ -55,7 +56,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { FarmCard } from './components/FarmCard/FarmCard.controller'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const Farms = () => {
   const history = useHistory()
@@ -212,20 +212,22 @@ export const Farms = () => {
           ) : allFarms.length ? (
             <>
               <section className={classNames({ isVerticalView })}>
-                {paginatedFarms.map((farmAddress, index: number) => {
+                {paginatedFarms.map((farmAddress) => {
                   const farm = farmsMapper[farmAddress]
 
                   if (!farm) return null
 
+                  const isFarmOpened = Boolean(farmsFilers.openedFarmsCards.find((address) => farm.address === address))
+                  const openFarmCallback = () =>
+                    handleFilterClick({ filterType: 'openCard', newOpenCardAddress: farm.address })
+
                   return (
                     <FarmCard
                       farm={farm}
-                      key={farm.address + index}
+                      key={farm.address}
                       isVertical={isVerticalView}
-                      expandCallback={() =>
-                        handleFilterClick({ filterType: 'openCard', newOpenCardAddress: farm.address })
-                      }
-                      isOpenedCard={Boolean(farmsFilers.openedFarmsCards.find((address) => farm.address === address))}
+                      expandCallback={openFarmCallback}
+                      isOpenedCard={isFarmOpened}
                     />
                   )
                 })}

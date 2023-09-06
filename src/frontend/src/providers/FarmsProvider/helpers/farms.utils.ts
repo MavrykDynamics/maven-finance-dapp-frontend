@@ -60,17 +60,16 @@ export const getFarmsReturnValue = ({
   }
 }
 
+/**
+ * for calculateAPY & calculateAPR -> when we will have rates of lpTokens, try to use lpTokenBalance & currentRewardPerBlock in USD
+ */
 const BLOCKS_PER_YEAR = 1051200
 
-// TODO: this functions calc apy and apr in LPTokens, but we need in USD, check with Sam
-export const calculateAPY = (currentRewardPerBlock: number, lpTokenBalance: number): number => {
-  return lpTokenBalance > 0 ? ((currentRewardPerBlock * BLOCKS_PER_YEAR) / lpTokenBalance) * 100 : 0
-}
+export const calculateFarmAPY = (currentRewardPerBlock: number, lpTokenBalance: number) =>
+  lpTokenBalance > 0 ? ((currentRewardPerBlock * BLOCKS_PER_YEAR) / lpTokenBalance) * 100 : 0
 
-// TODO: this functions calc apy and apr in LPTokens, but we need in USD, check with Sam
-export const calculateAPR = (currentRewardPerBlock: number, blocksAmount: number, lpTokenBalance: number): number => {
-  return lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
-}
+export const calculateFarmAPR = (currentRewardPerBlock: number, blocksAmount: number, lpTokenBalance: number) =>
+  lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
 
 // get amount of tokens user've deposited to farm
 export const getFarmUserDepositedAmount = (

@@ -1,5 +1,5 @@
 import { FarmsCtxType } from '../farms.provider.types'
-import { calculateAPY, getFarmUserDepositedAmount } from './farms.utils'
+import { calculateFarmAPY, getFarmUserDepositedAmount } from './farms.utils'
 
 // filter farms by including search input value as substring in lp token address or in name
 export const filterBySearch = (
@@ -46,15 +46,15 @@ export const sortFarms = ({
         break
       case 'highestAPY':
         res =
-          calculateAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) <
-          calculateAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
+          calculateFarmAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) <
+          calculateFarmAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
             ? 1
             : -1
         break
       case 'lowestAPY':
         res =
-          calculateAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) >
-          calculateAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
+          calculateFarmAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) >
+          calculateFarmAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
             ? 1
             : -1
         break

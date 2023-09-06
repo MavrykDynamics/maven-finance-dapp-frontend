@@ -27,9 +27,11 @@ const FarmCardHarvestStyled = styled(Card)`
 
 export const FarmCardHarvest = ({
   userReward = 0,
+  isFarmHasClaimDisabled,
   harvestRewards,
 }: {
   userReward?: number
+  isFarmHasClaimDisabled: boolean
   harvestRewards: () => void
 }) => (
   <FarmCardHarvestStyled className="farm-harvest">
@@ -37,7 +39,12 @@ export const FarmCardHarvest = ({
       <div className="name">Unclaimed sMVK</div>
       <CommaNumber className="value" value={userReward} />
     </div>
-    <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={harvestRewards} disabled={userReward === 0}>
+    <Button
+      kind={BUTTON_PRIMARY}
+      form={BUTTON_WIDE}
+      onClick={harvestRewards}
+      disabled={userReward === 0 || isFarmHasClaimDisabled}
+    >
       Harvest
     </Button>
   </FarmCardHarvestStyled>

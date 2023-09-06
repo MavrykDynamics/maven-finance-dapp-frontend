@@ -1,6 +1,6 @@
 import { FarmStorage } from 'utils/TypesAndInterfaces/Farm'
 import { InputStatusesType, InputValuesType } from './RoiCalc.types'
-import { calculateAPR } from 'providers/FarmsProvider/helpers/farms.utils'
+import { calculateFarmAPR } from 'providers/FarmsProvider/helpers/farms.utils'
 
 export const STAKED_ITEMS = [
   { text: '1D', id: 1, active: true, actualValue: 1 },
@@ -67,7 +67,7 @@ export const calcRoi = ({
   // amount of block for staked period
   const blocksAmount = 2 * 60 * 24 * stakedDays
   // get profit% of farm via apr
-  const apr = calculateAPR(farm.currentRewardPerBlock, blocksAmount, farm.lpBalance)
+  const apr = calculateFarmAPR(farm.currentRewardPerBlock, blocksAmount, farm.lpBalance)
   // get revenue if invest inputted amount
   const revenue = (startUSDAmount / 100) * apr - startUSDAmount
   // get annual ROI%

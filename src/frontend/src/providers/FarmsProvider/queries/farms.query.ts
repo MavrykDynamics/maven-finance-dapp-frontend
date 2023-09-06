@@ -26,7 +26,6 @@ const getFamrsFilter = (queryType: FarmsProviderSubsType[typeof FARMS_DATA_SUB])
   return ``
 }
 
-// TODO: farm ends in time
 export const getFarms = (
   queryType: FarmsProviderSubsType[typeof FARMS_DATA_SUB],
 ): DocumentNode | TypedDocumentNode<FarmsQueryQuery, OperationVariables> => {
@@ -38,9 +37,7 @@ export const getFarms = (
 				address
 				name
 				open
-				last_updated_at
 				creation_timestamp
-				infinite
 
 				lp_token_balance
 				lp_token {
