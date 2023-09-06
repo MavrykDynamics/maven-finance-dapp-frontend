@@ -13,6 +13,7 @@ export type FinancialRequestRecord = {
   governanceFinId: string
   treasuryContract: string
   votingTillTime?: string | null
+  droppedTime?: string | null
   tokensAmount: number
   status: number
   executed: boolean
