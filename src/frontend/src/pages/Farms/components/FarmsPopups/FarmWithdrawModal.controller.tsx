@@ -13,8 +13,10 @@ import {
 } from '../../../../app/App.components/Input/Input.constants'
 import CoinsIcons from '../../../../app/App.components/Icon/CoinsIcons.view'
 
+// types
+import { FarmDepositPopupDataType } from 'providers/FarmsProvider/farms.provider.types'
+
 // consts
-import { FarmDepositPopupDataType } from 'pages/Farms/Farms.const'
 import { WITHDRAW_FROM_FARM_ACTION } from 'providers/FarmsProvider/helpers/farms.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -93,7 +95,12 @@ export const FarmWithdrawModal = ({
       return null
     }
 
-    return await withdrawFromFarm(selectedFarmAddress, Number(inputData.amount))
+    if (!(selectedFarmToken && checkWhetherTokenIsFarmToken(selectedFarmToken))) {
+      bug('Wrong farm token address', 'Please try to select another farm')
+      return null
+    }
+
+    return await withdrawFromFarm(selectedFarmAddress, Number(inputData.amount), selectedFarmToken)
   }, [selectedFarmAddress, userAddress, inputData.amount])
 
   const withdrawFromFarmContractActionProps: HookContractActionArgs = useMemo(

@@ -2,33 +2,36 @@ import { useMemo, useState } from 'react'
 import classNames from 'classnames'
 
 // types
-import { HandleClickArgsType } from '../Farms.controller'
+import { FarmsFiltersStateType, FarmsFilterEventType } from 'providers/FarmsProvider/helpers/farms.types'
 
 // consts
-import {
-  itemsForFarmsSortDD,
-  LIVE_TAB_ID,
-  FINISHED_TAB_ID,
-  FarmsFiltersStateType,
-  NO_STAKED,
-  STAKED,
-} from '../Farms.const'
+import { FINISHED_TAB_ID, LIVE_TAB_ID, NO_STAKED, STAKED } from 'providers/FarmsProvider/helpers/farms.const'
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 
 // view
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import Toggle from '../../../app/App.components/Toggle/Toggle.view'
-import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-import { Input } from '../../../app/App.components/Input/Input.controller'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import Toggle from '../../../../app/App.components/Toggle/Toggle.view'
+import { SlidingTabButtons } from '../../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { Input } from '../../../../app/App.components/Input/Input.controller'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import { DropdownContainer } from '../../../app/App.components/DropDown/DropDown.style'
-import { FarmTopBarStyled } from '../Farms.style'
+import { DropdownContainer } from '../../../../app/App.components/DropDown/DropDown.style'
+import { FarmTopBarStyled } from '../../Farms.style'
 import Button from 'app/App.components/Button/NewButton'
+
+const farmsSortDD = [
+  { content: 'Active', id: 'active' },
+  { content: 'Highest APY', id: 'highestAPY' },
+  { content: 'Lowest APY', id: 'lowestAPY' },
+  { content: 'Highest Liquidity (LPBalance)', id: 'highestLiquidity' },
+  { content: 'Lowest Liquidity (LPBalance)', id: 'lowestLiquidity' },
+  { content: 'Your Largest Stake', id: 'yourLargestStake' },
+  { content: 'Rewards Per Block', id: 'rewardsPerBlock' },
+]
 
 type FarmTopBarViewProps = {
   isVerticalView: boolean
   handleSetFarmsViewVariant: (isVertical: boolean) => void
-  handleFilterClick: (args: HandleClickArgsType) => void
+  handleFilterClick: (args: FarmsFilterEventType) => void
   farmsFilters: FarmsFiltersStateType
 }
 
@@ -38,10 +41,10 @@ export const FarmTopBar = ({
   farmsFilters: { isLive, isStaked, searchValue, sortBy },
   handleFilterClick,
 }: FarmTopBarViewProps) => {
-  const [chosenDdItem, setChosenDdItem] = useState(itemsForFarmsSortDD.find((item) => item.id === sortBy))
+  const [chosenDdItem, setChosenDdItem] = useState(farmsSortDD.find((item) => item.id === sortBy))
 
   const handleOnClickDropdownItem = (itemId: DDItemId) => {
-    const chosenItem = itemsForFarmsSortDD.find((item) => item.id === itemId)
+    const chosenItem = farmsSortDD.find((item) => item.id === itemId)
     if (chosenItem) {
       setChosenDdItem(chosenItem)
       handleFilterClick({ filterType: 'sort', newSortBy: chosenItem.id })
@@ -93,7 +96,7 @@ export const FarmTopBar = ({
         <DropDown
           placeholder="Choose order"
           activeItem={chosenDdItem}
-          items={itemsForFarmsSortDD}
+          items={farmsSortDD}
           clickItem={handleOnClickDropdownItem}
         />
       </DropdownContainer>

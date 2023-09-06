@@ -1,5 +1,10 @@
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { FarmCtxStateType, FarmsProviderSubsType, NullableFarmCtxStateType } from '../farms.provider.types'
+import {
+  FarmCtxStateType,
+  FarmRecordType,
+  FarmsProviderSubsType,
+  NullableFarmCtxStateType,
+} from '../farms.provider.types'
 import {
   EMPTY_FARMS_CTX,
   FARMS_DATA_SUB,
@@ -9,6 +14,7 @@ import {
   FARMS_LIVE_STAKED_DATA_SUB,
 } from './farms.const'
 
+// get provider value
 export const getFarmsReturnValue = ({
   farmsCtxState,
   changeFarmsSubscriptionList,
@@ -52,4 +58,25 @@ export const getFarmsReturnValue = ({
     ...nonNullableProviderValue,
     isLoading: false,
   }
+}
+
+const BLOCKS_PER_YEAR = 1051200
+
+// TODO: this functions calc apy and apr in LPTokens, but we need in USD, check with Sam
+export const calculateAPY = (currentRewardPerBlock: number, lpTokenBalance: number): number => {
+  return lpTokenBalance > 0 ? ((currentRewardPerBlock * BLOCKS_PER_YEAR) / lpTokenBalance) * 100 : 0
+}
+
+// TODO: this functions calc apy and apr in LPTokens, but we need in USD, check with Sam
+export const calculateAPR = (currentRewardPerBlock: number, blocksAmount: number, lpTokenBalance: number): number => {
+  return lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
+}
+
+// get amount of tokens user've deposited to farm
+export const getFarmUserDepositedAmount = (
+  farmAccounts: FarmRecordType['farmDepositors'],
+  userAddress: string | null,
+): number => {
+  if (!userAddress) return 0
+  return farmAccounts.find(({ address }) => userAddress === address, 0)?.depositedAmount ?? 0
 }

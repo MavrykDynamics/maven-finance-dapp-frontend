@@ -6,6 +6,14 @@ import classNames from 'classnames'
 // provider
 import FarmsPopupsProvider from '../../providers/FarmsProvider/farmsPopups.provider'
 
+// types
+import {
+  isStakedFarmType,
+  isLiveFarmType,
+  FarmsFiltersStateType,
+  FarmsFilterEventType,
+} from 'providers/FarmsProvider/helpers/farms.types'
+
 // consts
 import {
   DEFAULT_FARMS_ACTIVE_SUBS,
@@ -14,8 +22,10 @@ import {
   FARMS_ALL_FINISHED_DATA_SUB,
   FARMS_ALL_LIVE_DATA_SUB,
   FARMS_LIVE_STAKED_DATA_SUB,
+  LIVE_TAB_ID,
+  NO_STAKED,
+  STAKED,
 } from 'providers/FarmsProvider/helpers/farms.const'
-import { NO_STAKED, LIVE_TAB_ID, isStakedFarmType, isLiveFarmType, FarmsFiltersStateType, STAKED } from './Farms.const'
 import {
   calculateSlicePositions,
   FARMS_HORIZONTAL_CARDS,
@@ -29,30 +39,28 @@ import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // utils
-import { getSummDepositedAmount, filterBySearch, sortFarms, getNewOpenedCardsAddresses } from './Farms.helpers'
+import {
+  sortFarms,
+  filterBySearch,
+  getNewOpenedCardsAddresses,
+} from 'providers/FarmsProvider/helpers/farmsFilter.utils'
 
 // view
 import { EmptyContainer } from 'app/App.style'
 import { FarmsStyled } from './Farms.style'
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { FarmTopBar } from './components/FarmTopBar.controller'
+import { FarmTopBar } from './components/FarmsTopBar/FarmTopBar.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { FarmCard } from './components/FarmCard/FarmCard.controller'
-
-export type HandleClickArgsType = { filterType: 'search' | 'sort' | 'isStaked' | 'isLive' | 'openCard' } & Partial<{
-  newStakedValue: isStakedFarmType
-  newLiveFinished: isLiveFarmType
-  newSearchText: string
-  newSortBy: string
-  newOpenCardAddress: string
-}>
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const Farms = () => {
   const history = useHistory()
   const { search, pathname } = useLocation()
+  const { userAddress } = useUserContext()
   const {
     changeFarmsSubscriptionList,
     isLoading: isFarmsLoading,
@@ -132,7 +140,7 @@ export const Farms = () => {
     }
 
     if (sortBy !== undefined) {
-      return sortFarms(farmsIds, farmsMapper, sortBy)
+      return sortFarms({ farmsIds, farmsMapper, sortBy, userAddress })
     }
 
     return farmsIds
@@ -156,7 +164,7 @@ export const Farms = () => {
       newSearchText,
       newSortBy,
       newOpenCardAddress,
-    }: HandleClickArgsType) => {
+    }: FarmsFilterEventType) => {
       // initial filters & sorts to update
       const newFiltersForQP: Partial<FarmsFiltersStateType> = {
         isLive: farmsFilers.isLive,
@@ -214,7 +222,6 @@ export const Farms = () => {
                       farm={farm}
                       key={farm.address + index}
                       isVertical={isVerticalView}
-                      depositAmount={getSummDepositedAmount(farm.farmDepositors)}
                       expandCallback={() =>
                         handleFilterClick({ filterType: 'openCard', newOpenCardAddress: farm.address })
                       }

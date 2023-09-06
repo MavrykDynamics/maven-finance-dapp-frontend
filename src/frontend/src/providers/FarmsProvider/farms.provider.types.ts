@@ -1,3 +1,6 @@
+import { ModalStateType } from 'providers/LoansProvider/helpers/LoansModals.types'
+import FarmsPopupsProvider from './farmsPopups.provider'
+
 import {
   FARMS_LIVE_STAKED_DATA_SUB,
   FARMS_FINISHED_STAKED_DATA_SUB,
@@ -11,11 +14,16 @@ import {
 } from './helpers/farms.const'
 import { normalizeFarm } from './helpers/farms.normalizer'
 
+// farms general
+export type FarmRecordType = ReturnType<typeof normalizeFarm>
+
+// farms actions
 export type FarmActionsType =
   | typeof HARVEST_FARM_REWARDS_ACTION
   | typeof DEPOSIT_TO_FARM_ACTION
   | typeof WITHDRAW_FROM_FARM_ACTION
 
+// farms subs
 export type FarmsProviderSubsType = {
   [FARMS_DATA_SUB]:
     | typeof FARMS_ALL_DATA_SUB
@@ -26,8 +34,7 @@ export type FarmsProviderSubsType = {
     | null
 }
 
-export type FarmRecordType = ReturnType<typeof normalizeFarm>
-
+// farms context
 export type FarmCtxStateType = {
   farmsMapper: Record<string, FarmRecordType>
   allFarms: Array<string>
@@ -43,4 +50,22 @@ export type FarmsCtxType = FarmCtxStateType & {
   isLoading: boolean
 
   changeFarmsSubscriptionList: (newSkips: Partial<FarmsProviderSubsType>) => void
+}
+
+// farms popups context
+export type RoiCalculatorPopupDataType = { selectedFarmAddress: string }
+export type FarmWithdrawPopupDataType = { selectedFarmAddress: string }
+export type FarmDepositPopupDataType = { selectedFarmAddress: string }
+
+export type FarmsPopupsContextStateType = {
+  // roiPopup: ModalStateType<RoiCalculatorPopupDataType>
+  depositPopup: ModalStateType<FarmDepositPopupDataType>
+  withdrawPopup: ModalStateType<FarmWithdrawPopupDataType>
+
+  // openRoiCalculatorPopup: InstanceType<typeof FarmsPopupsProvider>['openRoiCalculatorPopup']
+  // closeRoiCalculatorPopup: InstanceType<typeof FarmsPopupsProvider>['closeRoiCalculatorPopup']
+  openDepositFarmPopup: InstanceType<typeof FarmsPopupsProvider>['openDepositFarmPopup']
+  closeDepositFarmPopup: InstanceType<typeof FarmsPopupsProvider>['closeDepositFarmPopup']
+  openWithdrawFarmPopup: InstanceType<typeof FarmsPopupsProvider>['openWithdrawFarmPopup']
+  closeWithdrawFarmPopup: InstanceType<typeof FarmsPopupsProvider>['closeWithdrawFarmPopup']
 }

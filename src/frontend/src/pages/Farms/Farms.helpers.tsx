@@ -1,12 +1,9 @@
 // types
-import { FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
+import { FarmContractType, FarmGraphQL } from '../../utils/TypesAndInterfaces/Farm'
 
 // helpers
 import { getContractBigmapKeys, network } from 'utils/blockchainApi'
-import { STAKED } from './Farms.const'
-import { Farm_Account } from 'utils/__generated__/graphql'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import { FarmRecordType, FarmsCtxType } from 'providers/FarmsProvider/farms.provider.types'
 
 type EndsInType = {
   endsIn: any
@@ -89,21 +86,6 @@ export const normalizeFarmStorage = (
   })
 }
 
-// helper functions
-export const BLOCKS_PER_YEAR = 1051200 // 2 blocks per minute
-// TODO: this functions calc apy and apr in LPTOkens, but we need in USD, check with Sam
-export const calculateAPY = (currentRewardPerBlock: number, lpTokenBalance: number): number => {
-  return lpTokenBalance > 0 ? ((currentRewardPerBlock * BLOCKS_PER_YEAR) / lpTokenBalance) * 100 : 0
-}
-
-export const calculateAPR = (currentRewardPerBlock: number, blocksAmount: number, lpTokenBalance: number): number => {
-  return lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
-}
-
-export const getSummDepositedAmount = (farmAccounts: FarmRecordType['farmDepositors']): number => {
-  return farmAccounts.reduce((acc, cur) => acc + cur.depositedAmount, 0)
-}
-
 // getting end time for farm cards
 export const getEndsInTimestampForFarmCards = async (farmList: FarmGraphQL[]) => {
   try {
@@ -184,70 +166,4 @@ export const getUserBalanceByAddressOld = async (tokenAddress?: string) => {
   if (!tokenAddress) return 0
 
   return await (await fetch(`https://api.${network}.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()
-}
-
-// filters helpers
-export const filterBySearch = (
-  farmsToFilter: Array<string>,
-  farmsMapper: FarmsCtxType['farmsMapper'],
-  newSearchText: string,
-) =>
-  farmsToFilter.filter((farmAddress) => {
-    const { liquidityTokenAddress, name } = farmsMapper[farmAddress]
-    return (
-      liquidityTokenAddress.toLowerCase().includes(newSearchText.toLowerCase()) ||
-      name.toLowerCase().includes(newSearchText.toLowerCase())
-    )
-  })
-
-export const getNewOpenedCardsAddresses = (openedCards: Array<string>, newOpenedCardAddress: string): Array<string> => {
-  return openedCards.find((openCardAddress) => openCardAddress === newOpenedCardAddress)
-    ? openedCards.filter((openCardAddress) => openCardAddress !== newOpenedCardAddress)
-    : openedCards.concat(newOpenedCardAddress)
-}
-
-export const sortFarms = (farmsToSort: Array<string>, farmsMapper: FarmsCtxType['farmsMapper'], sortBy: string) => {
-  const dataToSort = [...farmsToSort]
-  dataToSort.sort((farmA_address, farmB_address) => {
-    const farmA = farmsMapper[farmA_address]
-    const farmB = farmsMapper[farmB_address]
-    let res = 0
-    switch (sortBy) {
-      case 'active':
-        res = Number(farmA.open) - Number(farmB.open)
-        break
-      case 'highestAPY':
-        res =
-          calculateAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) <
-          calculateAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
-            ? 1
-            : -1
-        break
-      case 'lowestAPY':
-        res =
-          calculateAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) >
-          calculateAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
-            ? 1
-            : -1
-        break
-      case 'highestLiquidity':
-        res = farmA.liquidityTokenBalance < farmB.liquidityTokenBalance ? 1 : -1
-        break
-      case 'lowestLiquidity':
-        res = farmA.liquidityTokenBalance > farmB.liquidityTokenBalance ? 1 : -1
-        break
-      case 'yourLargestStake':
-        res = getSummDepositedAmount(farmA.farmDepositors) < getSummDepositedAmount(farmB.farmDepositors) ? 1 : -1
-        break
-      case 'rewardsPerBlock':
-        res = farmA.currentRewardPerBlock < farmB.currentRewardPerBlock ? 1 : -1
-        break
-      default:
-        res = 1
-        break
-    }
-    return res
-  })
-
-  return dataToSort
 }

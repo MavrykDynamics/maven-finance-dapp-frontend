@@ -1,13 +1,29 @@
 import { FarmCtxStateType, FarmsProviderSubsType, NullableFarmCtxStateType } from '../farms.provider.types'
 
-// farms subs
-export const FARMS_DATA_SUB = 'FARMS_DATA_SUB'
+// farms view consts
+export const STAKED = 1
+export const NO_STAKED = 0
+export const LIVE_TAB_ID = 1
+export const FINISHED_TAB_ID = 2
 
-export const DEFAULT_FARMS_ACTIVE_SUBS: FarmsProviderSubsType = {
-  [FARMS_DATA_SUB]: null,
+// farms popups context
+export const DEFAULT_FARMS_POPUPS_STATE = {
+  // roiPopup: DEFAULT_FARMS_POPUP_STATE,
+  depositPopup: {
+    showModal: false,
+    data: {
+      selectedFarmAddress: '',
+    },
+  },
+  withdrawPopup: {
+    showModal: false,
+    data: {
+      selectedFarmAddress: '',
+    },
+  },
 }
 
-// farm subs type
+// farms subs
 export const FARMS_ALL_DATA_SUB = 'FARMS_ALL_DATA_SUB'
 
 export const FARMS_ALL_LIVE_DATA_SUB = 'FARMS_ALL_LIVE_DATA_SUB'
@@ -15,6 +31,12 @@ export const FARMS_LIVE_STAKED_DATA_SUB = 'FARMS__STAKED_LIVE_DATA_SUB'
 
 export const FARMS_ALL_FINISHED_DATA_SUB = 'FARMS_ALL_FINISHED_DATA_SUB'
 export const FARMS_FINISHED_STAKED_DATA_SUB = 'FARMS__FINISHED_LIVE_DATA_SUB'
+
+export const FARMS_DATA_SUB = 'FARMS_DATA_SUB'
+
+export const DEFAULT_FARMS_ACTIVE_SUBS: FarmsProviderSubsType = {
+  [FARMS_DATA_SUB]: null,
+}
 
 // farms action
 export const HARVEST_FARM_REWARDS_ACTION = 'HARVEST_FARM_REWARDS_ACTION'

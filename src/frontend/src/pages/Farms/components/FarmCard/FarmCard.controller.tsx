@@ -5,7 +5,6 @@ import { VerticalFarmCard } from './VerticalFarmCard'
 import { HorizontalFarmCard } from './HorizonralFarmCard'
 
 // utils
-import { calculateAPY } from '../../Farms.helpers'
 import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // hooks
@@ -18,6 +17,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { harvestRewards } from 'providers/FarmsProvider/actions/farms.actions'
 import { HARVEST_FARM_REWARDS_ACTION } from 'providers/FarmsProvider/helpers/farms.const'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { calculateAPY } from 'providers/FarmsProvider/helpers/farms.utils'
 
 // const StakedBlock = ({
 //   myFarmStakedBalance,
@@ -205,7 +205,6 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 type FarmCardProps = {
   farm: FarmRecordType
   isVertical: boolean
-  depositAmount: number
   isOpenedCard: boolean
   expandCallback: () => void
 }

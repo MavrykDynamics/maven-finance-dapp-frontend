@@ -1,13 +1,15 @@
 import React, { useContext, createContext } from 'react'
 
 // consts
+import { DEFAULT_FARMS_POPUPS_STATE } from './helpers/farms.const'
+
+// types
 import {
-  DEFAULT_FARMS_POPUPS_STATE,
   FarmDepositPopupDataType,
   FarmsPopupsContextStateType,
   FarmWithdrawPopupDataType,
   // RoiCalculatorPopupDataType,
-} from '../../pages/Farms/Farms.const'
+} from 'providers/FarmsProvider/farms.provider.types'
 
 // view
 // import RoiCalculator from '../RoiCalculator/RoiCalculator.controller'

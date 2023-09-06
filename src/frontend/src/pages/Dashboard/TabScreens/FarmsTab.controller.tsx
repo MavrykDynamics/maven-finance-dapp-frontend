@@ -12,7 +12,6 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // utils
-import { calculateAPY } from 'pages/Farms/Farms.helpers'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -26,6 +25,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // hooks
 import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
+import { calculateAPY } from 'providers/FarmsProvider/helpers/farms.utils'
 
 export const FarmsTab = () => {
   const { isLoading: isFarmsLoading, changeFarmsSubscriptionList, farmsMapper, allLiveFarms } = useFarmsContext()

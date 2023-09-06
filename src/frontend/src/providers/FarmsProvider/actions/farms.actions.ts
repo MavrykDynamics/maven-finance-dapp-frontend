@@ -8,6 +8,7 @@ import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
 export const harvestRewards = async (farmAddress: string): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
@@ -26,10 +27,11 @@ export const harvestRewards = async (farmAddress: string): Promise<ActionErrorRe
 export const depositToFarm = async (
   farmAddress: string,
   amount: number,
+  token: FarmsTokenMetadataType,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
-    // TODO: decimals?
-    const depositAmount = convertNumberForContractCall({ number: amount })
+    const { decimals } = token
+    const depositAmount = convertNumberForContractCall({ number: amount, grade: decimals })
 
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -46,10 +48,11 @@ export const depositToFarm = async (
 export const withdrawFromFarm = async (
   farmAddress: string,
   amount: number,
+  token: FarmsTokenMetadataType,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
-    // TODO: decimals?
-    const withdrawAmount = convertNumberForContractCall({ number: amount })
+    const { decimals } = token
+    const withdrawAmount = convertNumberForContractCall({ number: amount, grade: decimals })
 
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
