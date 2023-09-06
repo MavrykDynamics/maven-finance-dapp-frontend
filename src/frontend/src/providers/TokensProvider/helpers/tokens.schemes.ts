@@ -30,6 +30,7 @@ export const tokenGqlSchema = z.object({
     .tuple([
       z.object({
         address: z.string(),
+        metadata: z.any(),
       }),
     ])
     .or(z.tuple([])),
