@@ -143,10 +143,18 @@ export const repayPartOfVaultAction = async (
         )
 
       case 'tez':
-        const repayPartMetaData = contract?.methods.repay(vaultId, convertedAssetAmount)
-        return await getEstimationResult(repayPartMetaData, {
+        return await getEstimationBatchResult(
+          tezos,
+          [
+            {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+              mutez: true,
+              amount: convertedAssetAmount,
+            },
+          ],
           callback,
-        })
+        )
     }
   } catch (error) {
     const e = unknownToError(error)
@@ -245,6 +253,8 @@ export const repayFullAndCloseVaultAction = async (
       {
         kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
         ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+        mutez: true,
+        amount: convertedAssetAmount,
       },
       {
         kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
