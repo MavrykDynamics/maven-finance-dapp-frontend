@@ -46,6 +46,7 @@ type Props = {
   satelliteId: string
   initiatorId: string
   actionExpirationDate: string | null
+  actionDroppedDate: string | null
   actionStartDate: string | null
   statusFlag: StatusFlagKind
   id: number
@@ -66,6 +67,7 @@ export const SatelliteGovernanceCard = ({
   satelliteId,
   initiatorId,
   actionExpirationDate,
+  actionDroppedDate,
   actionStartDate,
   statusFlag,
   purpose,
@@ -218,8 +220,14 @@ export const SatelliteGovernanceCard = ({
         <SatelliteGovernanceCardVotingBlock>
           <h3>Vote Statistics</h3>
           <b className="voting-ends">
-            Voting {!isEndingVotingTime ? 'ended' : 'ending'} on{' '}
-            {parseDate({ time: actionExpirationDate, timeFormat: 'MMM DD, HH:mm' })} CEST
+            {actionDroppedDate ? (
+              <>Action was dropped on {parseDate({ time: actionDroppedDate, timeFormat: 'MMM DD, HH:mm' })} CEST</>
+            ) : (
+              <>
+                Voting {!isEndingVotingTime ? 'ended' : 'ending'} on{' '}
+                {parseDate({ time: actionExpirationDate, timeFormat: 'MMM DD, HH:mm' })} CEST
+              </>
+            )}
           </b>
 
           <VotingArea
