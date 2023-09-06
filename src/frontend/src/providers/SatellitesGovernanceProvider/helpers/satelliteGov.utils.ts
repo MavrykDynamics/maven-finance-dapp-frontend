@@ -56,28 +56,20 @@ export const getSatelliteGovernanceProviderReturnValue = ({
    * Sety Loading to true when:
    * 1. Config sub is active && config data is null
    * 2. Past actions sub is active && past ids array is null
-   * 3. Past actions sub is active && past ids array is empty
-   * 4. Ongoing actions sub is active && ongoing ids array is null
-   * 5. Ongoing actions sub is active && ongoing ids array is empty
-   * 6. All actions sub is active && all ids array is null
-   * 7. All actions sub is active && all ids array is empty
-   * 8. Current user actions sub is active && current user ids array is null
-   * 9. Current user actions sub is active && current user ids array is empty
-   * 10. Config sub is "false" && config data is null
-   * 11. No actions active sub && actions mapper is null
+   * 3. Ongoing actions sub is active && ongoing ids array is null
+   * 4. All actions sub is active && all ids array is null
+   * 5. Current user actions sub is active && current user ids array is null
+   * 6. Config sub is "false" && config data is null
+   * 7. No actions active sub && actions mapper is null
    */
   const isLoading =
     (activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && config === null) || // 1
     (isPastActionsSub && pastSatelliteGovIds === null) || // 2
-    (isPastActionsSub && !pastSatelliteGovIds?.length) || // 3
-    (isOngoingActionsSub && ongoingSatelliteGovIds === null) || //4
-    (isOngoingActionsSub && !ongoingSatelliteGovIds?.length) || // 5
-    (isAllActionsSub && allSatelliteGovIds === null) || // 6
-    (isAllActionsSub && !allSatelliteGovIds?.length) || // 7
-    (isCurrentUserActionsSub && mySatelliteGovIds === null) || // 8
-    (isCurrentUserActionsSub && !mySatelliteGovIds?.length) || // 9
-    (!activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && config === null) || // 10
-    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null && isSatelliteGovActionsDataEmpty) // 11
+    (isOngoingActionsSub && ongoingSatelliteGovIds === null) || // 3
+    (isAllActionsSub && allSatelliteGovIds === null) || // 4
+    (isCurrentUserActionsSub && mySatelliteGovIds === null) || // 5
+    (!activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && config === null) || // 6
+    (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null && isSatelliteGovActionsDataEmpty) // 7
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

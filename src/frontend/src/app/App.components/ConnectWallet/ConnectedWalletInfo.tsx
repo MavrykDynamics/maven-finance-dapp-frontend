@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from '../TzAddress/TzAddress.constants'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS  } from 'utils/constants'
+import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 
 import Icon from '../Icon/Icon.view'
 import { TzAddress } from '../TzAddress/TzAddress.view'
@@ -191,12 +191,11 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
-            <Icon id="exchange" /> Change Wallet
-          </Button>
-
           <Button onClick={signOut} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
             <Icon id="exit" /> Sign out
+          </Button>
+          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
+            <Icon id="exchange" /> Change Wallet
           </Button>
         </div>
       </WalletDetailsHiddenPart>
@@ -379,12 +378,11 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         </div>
 
         <div className="action-btn-wrapper">
-          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
-            <Icon id="exchange" /> Change Wallet
-          </Button>
-
           <Button onClick={signOut} form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
             <Icon id="exit" /> Sign out
+          </Button>
+          <Button onClick={changeUser} form={BUTTON_WIDE} ignoreLoading kind={BUTTON_PRIMARY}>
+            <Icon id="exchange" /> Change Wallet
           </Button>
         </div>
       </MobileWalletDetailsHiddenPart>

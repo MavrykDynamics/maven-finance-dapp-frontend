@@ -33,7 +33,10 @@ export const useUserRewards = () => {
     },
     onCompleted: (data) => {
       // newly registered user, means no opearions performed
-      if (!data.mavryk_user[0]) return
+      if (!data.mavryk_user[0]) {
+        setUserRewards(DEFAULT_USER_REWARDS)
+        return
+      }
 
       const rewardsIndexerData = data.mavryk_user[0]
       const userProposalRewards = data.governance_proposal

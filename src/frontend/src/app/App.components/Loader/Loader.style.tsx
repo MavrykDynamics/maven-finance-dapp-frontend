@@ -17,8 +17,16 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdro
   font-size: 18px;
 
   color: ${({ theme }) => theme.linksAndButtons};
-  background-color: ${({ theme }) => theme.backgroundColor};
-  opacity: ${({ backdropAlpha }) => backdropAlpha ?? 0.5};
+
+  /* backdrop styles */
+  &::after {
+    content: '';
+    background-color: ${({ theme }) => theme.backgroundColor};
+    opacity: ${({ backdropAlpha }) => backdropAlpha ?? 0.5};
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+  }
 
   transition: 250ms opacity ease-out, 250ms visibility ease-out;
 

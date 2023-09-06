@@ -299,7 +299,7 @@ export const FarmCardStyled = styled(Card)<{ theme: MavrykTheme }>`
     .prevent-hover {
       &:hover {
         border-color: transparent;
-        box-shadow: unset;
+        box-shadow: none;
       }
     }
   }

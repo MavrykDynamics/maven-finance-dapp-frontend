@@ -15,7 +15,7 @@ import { useFeedCharts } from 'providers/DataFeedsProvider/hooks/useFeedCharts'
 
 // view
 import DataFeedsPagination from './pagination/DataFeedsPagination.controler'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { H2Title, H3TitlePrimary, H3TitleSecondary } from 'styles/generalStyledComponents/Titles.style'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { OracleCard } from './listItem/OracleCard.view'
@@ -180,7 +180,7 @@ const DataFeedDetails = () => {
                       <Icon id={isTrustedAnswer ? 'trustShield' : 'notTrustedShield'} />
                       <CommaNumber beginningText="$" value={feed.amount} showDecimal decimalsToShow={6} />
                     </DataFeedValueText>
-                    <h3>
+                    <H3TitleSecondary>
                       {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
                       <CustomTooltip
                         text={`The current price is ${
@@ -190,20 +190,20 @@ const DataFeedDetails = () => {
                         className="info-icon"
                         defaultStrokeColor={colors[themeSelected].regularText}
                       />
-                    </h3>
+                    </H3TitleSecondary>
                   </div>
                 </div>
                 <div className="bottom">
                   <DataFeedInfoBlock>
-                    <h3>
+                    <H3TitlePrimary>
                       Trigger parameters
                       <CustomTooltip
                         text={`If the price of the asset is volatile and changes more than the set deviation trigger, a new trusted price will be pushed on chain from the oracle. Aside from the deviation trigger, price updates occur on average every 15 minutes.`}
                         iconId={'info'}
                         defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                        className="info-icon"
+                        className="info-icon opacity-1"
                       />
-                    </h3>
+                    </H3TitlePrimary>
 
                     <h4>Deviation Trigger</h4>
 
@@ -213,14 +213,14 @@ const DataFeedDetails = () => {
                   </DataFeedInfoBlock>
 
                   <DataFeedInfoBlock justifyContent={'space-between'}>
-                    <h3>
+                    <H3TitleSecondary>
                       Heartbeat
                       <CustomTooltip
                         text={'Countdown until the next set data feed update.'}
                         iconId={'info'}
                         defaultStrokeColor={colors[themeSelected].regularText}
                       />
-                    </h3>
+                    </H3TitleSecondary>
 
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.last_completed_data_last_updated_at ? (
@@ -243,15 +243,15 @@ const DataFeedDetails = () => {
                   </DataFeedInfoBlock>
 
                   <DataFeedInfoBlock>
-                    <h3>
+                    <H3TitlePrimary>
                       Oracle responses
                       <CustomTooltip
-                        className="info-icon"
+                        className="info-icon opacity-1"
                         text={`The aggregator requires a minimum amount of responses from oracles for the answer to be trusted`}
                         iconId={'info'}
                         defaultStrokeColor={colors[themeSelected].mainHeadingText}
                       />
-                    </h3>
+                    </H3TitlePrimary>
                     <h4>Minimum of {feed.pct_oracle_threshold}%</h4>
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
                       {feed.oraclesResponces}%
@@ -259,15 +259,15 @@ const DataFeedDetails = () => {
                   </DataFeedInfoBlock>
 
                   <DataFeedInfoBlock>
-                    <h3>
+                    <H3TitlePrimary>
                       Last update
                       <CustomTooltip
                         text={`Last time the aggregator was updated with a trusted answer and written on-chain`}
                         iconId={'info'}
-                        className="info-icon"
+                        className="info-icon opacity-1"
                         defaultStrokeColor={colors[themeSelected].mainHeadingText}
                       />
-                    </h3>
+                    </H3TitlePrimary>
                     <DataFeedValueText
                       fontSize={14}
                       fontWeidth={500}
@@ -285,27 +285,29 @@ const DataFeedDetails = () => {
               <ContractDetails>
                 <div className="block-name">Oracle Contract Details</div>
                 <div className="info-wrapper">
-                  <h3>
+                  <H3TitlePrimary>
                     Contract address
                     <CustomTooltip
                       text={`Address of this specific data feed`}
                       iconId={'info'}
                       defaultStrokeColor={colors[themeSelected].mainHeadingText}
+                      className="opacity-1"
                     />
-                  </h3>
+                  </H3TitlePrimary>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     <TzAddress tzAddress={feed.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
                   </DataFeedValueText>
                 </div>
                 <div className="info-wrapper">
-                  <h3>
+                  <H3TitlePrimary>
                     Oracle Factory
                     <CustomTooltip
                       text={`Address of the oracle (aggregator) factory which is responsible for creating the aggregator feeds which oracles can sign price feeds for`}
                       iconId={'info'}
                       defaultStrokeColor={colors[themeSelected].mainHeadingText}
+                      className="opacity-1"
                     />
-                  </h3>
+                  </H3TitlePrimary>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     {feedsFactoryAddress ? (
                       <TzAddress tzAddress={feedsFactoryAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />

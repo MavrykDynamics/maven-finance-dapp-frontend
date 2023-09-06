@@ -41,6 +41,7 @@ import {
   suspendSatellite,
   unsuspendSatellite,
   updateAggregatorStatus,
+  unbanSatellite,
 } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
 
 export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: string, purpose: string) => {
@@ -146,7 +147,7 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
   const unbanSatelliteContratActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: UNBAN_SATELLITE_ACTION,
-      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, banSatellite),
+      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, unbanSatellite),
     }),
     [invokeActionWithSatellitAddressAndPurpose],
   )

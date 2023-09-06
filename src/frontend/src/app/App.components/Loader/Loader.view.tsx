@@ -12,7 +12,7 @@ export const ClockLoader = (props: { width?: number; height?: number; fillColor?
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-  
+
   const { width = 75, height = 75, fillColor = colors[themeSelected].mainHeadingText } = props
 
   return (

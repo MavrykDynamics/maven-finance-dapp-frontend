@@ -1,4 +1,5 @@
 import qs from 'qs'
+import { useState } from 'react'
 import { useHistory, useLocation } from 'react-router'
 
 // hooks
@@ -32,6 +33,8 @@ export const useUserHistoryData = () => {
   const { page = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
   const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
 
+  const [iseNewUser, setIsNewUser] = useState(false)
+
   useQueryWithRefetch(USER_ACTIONS_HISTORY_DATA_QUERY, {
     skip: !userAddress || Boolean(actionsHistory.paginatedList[currentPage]),
     variables: {
@@ -41,7 +44,10 @@ export const useUserHistoryData = () => {
     },
     onCompleted: (data) => {
       // newly registered user, means no opearions performed
-      if (!data.mavryk_user[0]) return
+      if (!data.mavryk_user[0]) {
+        setIsNewUser(true)
+        return
+      }
 
       const itemsAmount = data.mavryk_user[0].historyItemsAmount.aggregate?.count ?? 0
       const maxPage = Math.ceil(itemsAmount / userActionsHistoryItemsPerPage)
@@ -69,7 +75,7 @@ export const useUserHistoryData = () => {
   })
 
   return {
-    isLoading: !actionsHistory.paginatedList[currentPage],
+    isLoading: iseNewUser ? false : !actionsHistory.paginatedList[currentPage],
     totalItemsAmount: actionsHistory.itemsAmount,
     userActionsHistory: actionsHistory.paginatedList[currentPage],
   }

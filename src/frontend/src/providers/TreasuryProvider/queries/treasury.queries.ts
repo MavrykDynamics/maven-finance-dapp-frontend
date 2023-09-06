@@ -7,9 +7,8 @@ query GetTreasuryStorageData {
       admin
       creation_timestamp
       name
-      balances {
+      balances(where: {whitelisted: {_eq: true}}) {
         balance
-        whitelisted
         token {
           token_address
         }

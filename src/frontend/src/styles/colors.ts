@@ -5,6 +5,7 @@ const cyanColor = '#86d4c9'
 export const dark = {
   // primary colors
   selectedColor: '#8D86EB',
+  selectedColorSecondary: '#8D86EB',
   linksAndButtons: '#88D1C3',
   backgroundColor: '#121212',
   cards: '#1E1E1E',
@@ -15,11 +16,11 @@ export const dark = {
   menuButtonSelected: '#8D86EB',
   placeholders: '#C0DBFF',
   regularText: '#BBBBBB',
-  strokeColor: '#8D86EB',
-  divider: '#282F3A',
+  strokeColor: '#505050',
+  divider: '#505050',
   messagesBackground: '#1E1E1E',
   tooltipTextBg: '#2E2E2E',
-  strokeCards: '#282F3A',
+  strokeCards: '#505050',
   footerColor: '#121212',
   strokeForForms: '#8D86EB',
   // secondary colors
@@ -68,6 +69,7 @@ export const dark = {
 export const light = {
   // primary colors
   selectedColor: '#03C9A3',
+  selectedColorSecondary: '#8D86EB',
   linksAndButtons: '#8D86EB',
   backgroundColor: '#F7F9FD',
   cards: '#FFFFFF',
@@ -78,16 +80,16 @@ export const light = {
   menuButtonSelected: '#86D4C9',
   placeholders: '#8D86EB',
   regularText: '#5B616E',
-  strokeColor: '#8D86EB',
-  divider: '#0000001A',
+  strokeColor: '#00000033',
+  divider: '#00000033',
   messagesBackground: '#E1E6FF',
   tooltipTextBg: '#E1E6FF',
-  strokeCards: '#0000001A',
+  strokeCards: '#00000033',
   footerColor: '#FFFFFF',
   strokeForForms: '#1F1F1F',
   // secondary colors
   infoColor: '#3F8BEF',
-  upColor: '#3FA65A',
+  upColor: '#27AE60',
   downColor: '#FF4343',
   neutralColor: '#6F50B5',
   neutralSecondaryColor: '#6A6A9B',
@@ -107,7 +109,7 @@ export const light = {
   pageHeaderColor: '#FFFFFF',
   scrollBlockColor: '#8D86EB',
   cardHoverColor: 'rgba(134, 212, 201, 0.5)',
-  rpcNodeSelecledColor: '#86D4C9',
+  rpcNodeSelecledColor: '#8D86EB',
   roiCalculatorBackground: 'linear-gradient(180deg, rgba(80, 62, 170, 0.20) 0%, rgba(80, 62, 170, 0.00) 100%)',
   dashboardTvlBackground: 'linear-gradient(180deg, #FFFFFF 3.55%, #FFFFFF 83.47%, #FFFFFF 103.84%)',
   // chart colors
@@ -131,6 +133,7 @@ export const light = {
 export const space = {
   // primary colors
   selectedColor: '#8D86EB',
+  selectedColorSecondary: '#503EAA',
   linksAndButtons: '#86D4C9',
   backgroundColor: '#080628',
   cards: '#160E3F',
