@@ -7,17 +7,11 @@ query GetTreasuryStorageData {
       admin
       creation_timestamp
       name
-      balances {
+      balances(where: {whitelisted: {_eq: true}}) {
         balance
-        treasury_id
         token {
-          metadata
           token_address
-          token_standard
         }
-      }
-      whitelist_token_contracts {
-        contract_address
       }
     }
   }

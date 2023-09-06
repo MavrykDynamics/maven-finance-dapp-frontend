@@ -3,9 +3,11 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: string; gradientWidth: number }>`
   display: flex;
+  box-sizing: border-box;
   align-items: center;
   justify-content: space-between;
   position: relative;
+  z-index: 4;
   width: 100%;
   height: 4px;
   background: ${({ theme }) => theme.gradientDiagramBackgroundColor};
@@ -16,14 +18,13 @@ export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: 
     width: 100%;
     background: ${({ gradient }) => gradient};
     height: 100%;
+    border-radius: 100px;
     z-index: 5;
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 0;
-    transform: translateY(-50%);
-
     clip-path: ${({ gradientWidth }) =>
-      `polygon(${gradientWidth}% 0, ${gradientWidth}% 50%, ${gradientWidth}% 100%, 0 100%, 0 0)`};
+      `polygon(0 0, ${gradientWidth + 1}% 0, ${gradientWidth + 1}% calc(100% + 0.6px), 0 calc(100% + 0.6px))`};
   }
 
   &.loansModals {

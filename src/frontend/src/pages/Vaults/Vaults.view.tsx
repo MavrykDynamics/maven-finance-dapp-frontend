@@ -171,7 +171,12 @@ export const VaultsView = () => {
 
   return (
     <VaultsStyled>
-      <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
+      <SlidingTabButtons
+        kind={SECONDARY_SLIDING_TAB_BUTTONS}
+        tabItems={tabsList}
+        onClick={handleChangeTabs}
+        className="mt-30 mb-30"
+      />
 
       <VaultsSearchFilter
         vaultsMapper={vaultsMapper}

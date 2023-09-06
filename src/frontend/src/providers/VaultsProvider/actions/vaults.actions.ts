@@ -78,68 +78,84 @@ export const repayPartOfVaultAction = async (
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(lendingControllerAddress)
 
-    if (type === 'fa12') {
-      const assetContract = await tezos.wallet.at(address)
-      const batchArr = [
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
-        },
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...assetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
-        },
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
-        },
-      ]
+    switch (type) {
+      case 'fa12':
+        const fa12AssetContract = await tezos.wallet.at(address)
 
-      return await getEstimationBatchResult(tezos, batchArr, callback)
-    } else if (type === 'fa2') {
-      const assetContract = await tezos.wallet.at(address)
-      const batchArr = [
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...assetContract.methods
-            .update_operators([
-              {
-                add_operator: {
-                  owner: userAddress,
-                  operator: lendingControllerAddress,
-                  token_id: 0, // Should be a number, usually 0
-                },
-              },
-            ])
-            .toTransferParams(),
-        },
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
-        },
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...assetContract.methods
-            .update_operators([
-              {
-                remove_operator: {
-                  owner: userAddress,
-                  operator: lendingControllerAddress,
-                  token_id: 0, // Should be a number, usually 0
-                },
-              },
-            ])
-            .toTransferParams(),
-        },
-      ]
+        return await getEstimationBatchResult(
+          tezos,
+          [
+            {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...fa12AssetContract.methods.approve(vaultAddress, 0).toTransferParams(),
+            },
+            {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...fa12AssetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
+            },
+            {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+            },
+          ],
+          callback,
+        )
+      case 'fa2':
+        const fa2AssetContract = await tezos.wallet.at(address)
 
-      return await getEstimationBatchResult(tezos, batchArr, callback)
+        return await getEstimationBatchResult(
+          tezos,
+          [
+            {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...fa2AssetContract.methods
+                .update_operators([
+                  {
+                    add_operator: {
+                      owner: userAddress,
+                      operator: lendingControllerAddress,
+                      token_id: 0, // Should be a number, usually 0
+                    },
+                  },
+                ])
+                .toTransferParams(),
+            },
+            {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+            },
+            {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...fa2AssetContract.methods
+                .update_operators([
+                  {
+                    remove_operator: {
+                      owner: userAddress,
+                      operator: lendingControllerAddress,
+                      token_id: 0, // Should be a number, usually 0
+                    },
+                  },
+                ])
+                .toTransferParams(),
+            },
+          ],
+          callback,
+        )
+
+      case 'tez':
+        return await getEstimationBatchResult(
+          tezos,
+          [
+            {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+              mutez: true,
+              amount: convertedAssetAmount,
+            },
+          ],
+          callback,
+        )
     }
-
-    const repayPartMetaData = contract?.methods.repay(vaultId, convertedAssetAmount)
-    return await getEstimationResult(repayPartMetaData, {
-      callback,
-    })
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
@@ -237,6 +253,8 @@ export const repayFullAndCloseVaultAction = async (
       {
         kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
         ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+        mutez: true,
+        amount: convertedAssetAmount,
       },
       {
         kind: OpKind.TRANSACTION as OpKind.TRANSACTION,

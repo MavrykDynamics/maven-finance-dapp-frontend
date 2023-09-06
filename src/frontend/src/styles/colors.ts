@@ -5,6 +5,7 @@ const cyanColor = '#86d4c9'
 export const dark = {
   // primary colors
   selectedColor: '#8D86EB',
+  selectedColorSecondary: '#8D86EB',
   linksAndButtons: '#88D1C3',
   backgroundColor: '#121212',
   cards: '#1E1E1E',
@@ -68,6 +69,7 @@ export const dark = {
 export const light = {
   // primary colors
   selectedColor: '#03C9A3',
+  selectedColorSecondary: '#8D86EB',
   linksAndButtons: '#8D86EB',
   backgroundColor: '#F7F9FD',
   cards: '#FFFFFF',
@@ -131,6 +133,7 @@ export const light = {
 export const space = {
   // primary colors
   selectedColor: '#8D86EB',
+  selectedColorSecondary: '#503EAA',
   linksAndButtons: '#86D4C9',
   backgroundColor: '#080628',
   cards: '#160E3F',
