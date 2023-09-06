@@ -9,15 +9,10 @@ query GetTreasuryStorageData {
       name
       balances {
         balance
-        treasury_id
+        whitelisted
         token {
-          metadata
           token_address
-          token_standard
         }
-      }
-      whitelist_token_contracts {
-        contract_address
       }
     }
   }

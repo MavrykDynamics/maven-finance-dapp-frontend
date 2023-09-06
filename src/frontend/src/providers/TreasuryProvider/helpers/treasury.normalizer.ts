@@ -1,5 +1,5 @@
 import type { TreasuryBalanceType, TreasuryData, TreauryGQLData } from './treasury.types'
-import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { getAssetColor } from './treasury.utils'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
@@ -25,27 +25,16 @@ export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
   // Map every treasury to combine treasury name, and divide balance by constant
   return treasury.reduce<Record<string, TreasuryData>>((acc, treasuryData) => {
     const sMVKAmount = sMVKBalancesMapper[treasuryData.address] ?? null
-    // XTZ is present by default for each treasury, and it can't be defined on back-end
-    const treasuryWhitelistTokens = [XTZ_TOKEN_ADDRESS].concat(
-      treasuryData.whitelist_token_contracts.map(({ contract_address }) => contract_address),
-    )
 
     const treasuryNormalizedTokens = treasuryData.balances
-      .reduce<Array<TreasuryBalanceType>>((acc, { balance, token: { metadata, token_address } }) => {
+      .reduce<Array<TreasuryBalanceType>>((acc, { balance, whitelisted, token: { token_address } }) => {
         // get color of the asset
         if (!treasuryAssetsColors[token_address]) {
           treasuryAssetsColors[token_address] = getAssetColor(Object.keys(treasuryAssetsColors).length)
         }
 
         // Filter zero balance assets in treasury and bad tokens that don't have info or not in whitelist for this treasury
-        if (
-          !token_address ||
-          !metadata ||
-          balance <= 0 ||
-          balance.toString().includes('e') ||
-          !treasuryWhitelistTokens.includes(token_address)
-        )
-          return acc
+        if (!token_address || !whitelisted || balance <= 0 || balance.toString().includes('e')) return acc
 
         acc.push({
           contract: treasuryData.address,
