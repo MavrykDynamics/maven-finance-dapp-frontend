@@ -155,11 +155,17 @@ export const FinancialRequestsView = ({
         </div>
 
         <div className="voting_ending">
-          Voting {rightItemStatus !== ProposalStatus.ONGOING ? 'ended' : 'ending'} on{' '}
-          {parseDate({
-            time: rightSideContent.votingTillTime,
-            timeFormat: 'MMM DD, HH:mm:ss',
-          })}
+          {rightSideContent.droppedTime ? (
+            <>
+              Request was dropped on {parseDate({ time: rightSideContent.droppedTime, timeFormat: 'MMM DD, HH:mm' })}{' '}
+              CEST
+            </>
+          ) : (
+            <>
+              Voting {rightItemStatus === ProposalStatus.ONGOING ? 'ending' : 'ended'} on{' '}
+              {parseDate({ time: rightSideContent.votingTillTime, timeFormat: 'MMM DD, HH:mm' })} CEST
+            </>
+          )}
         </div>
 
         <VotingArea

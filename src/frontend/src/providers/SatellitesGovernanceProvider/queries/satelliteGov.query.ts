@@ -66,6 +66,7 @@ export const getGovernanceActionsQuery = (
       executed
       expiration_datetime
       execution_datetime
+      dropped_datetime
       governance_purpose
       governance_satellite {
         address
