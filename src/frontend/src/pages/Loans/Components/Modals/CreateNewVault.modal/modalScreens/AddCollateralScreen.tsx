@@ -183,6 +183,7 @@ export const AddCollateralScreen = () => {
         byDecimalPlaces: collateralDecimals,
       },
     })
+
     updateSelectedCollaterals({
       ...selectedCollaterals,
       [collateralAddress]: {
