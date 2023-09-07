@@ -31,7 +31,7 @@ import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsM_Token, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // providers
@@ -194,13 +194,17 @@ export const Loans = () => {
                 totalBorrowed,
                 suppliers,
                 totalLended,
+                totalRewards,
                 borrowAPR,
                 lendingAPY,
               } = market
 
-              const { interestEarned } = userMTokens[loanMTokenAddress] ?? {
-                interestEarned: 0,
-              }
+              const mToken = getTokenDataByAddress({ tokenAddress: loanMTokenAddress, tokensPrices, tokensMetadata })
+
+              const interestEarned =
+                mToken && checkWhetherTokenIsM_Token(mToken)
+                  ? convertNumberForClient({ number: totalRewards, grade: mToken.mToken.interestRateDecimals })
+                  : 0
 
               const { symbol, decimals, icon, rate, address } = loanToken
 

@@ -24,7 +24,6 @@ export const mTokenMetadataSchema = z.object({
 export type TokenAddressType = string
 
 // regular token
-
 export type TokenMetadataType = {
   id: number
   address: TokenAddressType
@@ -46,6 +45,9 @@ export type TokenLoansDataType = {
 type PropertiesFromDifferentTokenTypes = DeepPartial<{
   // loan & collateral tokens properties
   loanData: TokenLoansDataType
+  mToken: {
+    interestRateDecimals: number
+  }
 }>
 
 // loan token (market)
@@ -64,6 +66,13 @@ export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType
     isPausedCollateral: boolean
     isScaled: boolean
     isStaked: boolean
+  }
+}
+
+// mToken
+export interface M_TokenMetadataType extends TokenMetadataType {
+  mToken: {
+    interestRateDecimals: number
   }
 }
 
