@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
@@ -79,10 +79,23 @@ export const AddCollateralScreen = () => {
     selectedBaker,
   } = useCreateVaultContext()
 
+  // refs
+  const noDisabledCollateralAddressRef = useRef('')
+
   const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit } = useXTZMaxAmountValidator(
     selectedCollateralsAddresses,
     selectedCollaterals,
   )
+
+  useEffect(() => {
+    updateSelectedCollaterals({
+      [noDisabledCollateralAddressRef.current]: {
+        tokenAddress: noDisabledCollateralAddressRef.current,
+        amount: '0',
+        validation: INPUT_STATUS_DEFAULT,
+      },
+    })
+  }, [noDisabledCollateralAddressRef.current])
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -116,24 +129,11 @@ export const AddCollateralScreen = () => {
 
     if (!selectedCollateralsAddresses.length && firstNotDisabledCollateralAddress) {
       reducedCollaterals[firstNotDisabledCollateralAddress].disabled = true
-      updateSelectedCollaterals({
-        [firstNotDisabledCollateralAddress]: {
-          tokenAddress: firstNotDisabledCollateralAddress,
-          amount: '0',
-          validation: INPUT_STATUS_DEFAULT,
-        },
-      })
+      noDisabledCollateralAddressRef.current = firstNotDisabledCollateralAddress
     }
 
     return reducedCollaterals
-  }, [
-    collateralTokens,
-    selectedCollaterals,
-    selectedCollateralsAddresses.length,
-    tokensMetadata,
-    tokensPrices,
-    updateSelectedCollaterals,
-  ])
+  }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses.length, tokensMetadata, tokensPrices])
 
   const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
     ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress),
