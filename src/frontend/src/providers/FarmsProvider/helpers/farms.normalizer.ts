@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 
 import { FarmsQueryQuery } from 'utils/__generated__/graphql'
-import { FarmCtxStateType } from '../farms.provider.types'
+import { FarmCtxStateType, FarmDepositorType } from '../farms.provider.types'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
@@ -28,12 +28,15 @@ export const normalizeFarm = (indexerFarm: FarmsQueryQuery['farm'][number]) => {
       number: indexerFarm.current_reward_per_block,
       grade: MVK_DECIMALS,
     }),
-    farmDepositors: indexerFarm.farm_accounts.map((farmDepositor) => ({
-      address: farmDepositor.user.address,
-      participationRewardsPerShare: farmDepositor.participation_rewards_per_share,
-      depositedAmount: farmDepositor.deposited_amount,
-      rewardsToClaim: farmDepositor.unclaimed_rewards,
-    })),
+    farmDepositors: indexerFarm.farm_accounts.reduce<Record<string, FarmDepositorType>>((acc, farmDepositor) => {
+      acc[farmDepositor.user.address] = {
+        address: farmDepositor.user.address,
+        participationRewardsPerShare: farmDepositor.participation_rewards_per_share,
+        depositedAmount: farmDepositor.deposited_amount,
+        rewardsToClaim: farmDepositor.unclaimed_rewards,
+      }
+      return acc
+    }, {}),
     isMFarm: indexerFarm.is_m_farm,
 
     // TODO: add address here, no data in indexer for now

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // view
@@ -21,10 +21,12 @@ import {
   INPUT_LARGE,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
+  INPUT_STATUS_DEFAULT,
 } from '../../../../app/App.components/Input/Input.constants'
 
 // utils
 import { checkWhetherTokenIsFarmToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { depositToFarm } from 'providers/FarmsProvider/actions/farms.actions'
 
 // hooks
@@ -44,11 +46,20 @@ export const FarmDepositModal = ({
   data: FarmDepositPopupDataType
 }) => {
   const { tokensMetadata } = useTokensContext()
-  const { userAddress } = useUserContext()
+  const { userAddress, userTokensBalances } = useUserContext()
   const { bug } = useToasterContext()
   const { farmsMapper } = useFarmsContext()
 
   useLockBodyScroll(show)
+
+  useEffect(() => {
+    if (!show) {
+      setInputData({
+        amount: '0',
+        validation: INPUT_STATUS_DEFAULT,
+      })
+    }
+  }, [show])
 
   const { selectedFarmAddress } = data
 
@@ -60,8 +71,10 @@ export const FarmDepositModal = ({
     validation: '',
   })
 
-  // TODO: handle user balance
-  const userTokenBalance = 0
+  const userTokenBalance = getUserTokenBalanceByAddress({
+    userTokensBalances,
+    tokenAddress: selectedFarm?.liquidityTokenAddress,
+  })
 
   // input handlers
   const handleBlur = useCallback(
@@ -93,13 +106,14 @@ export const FarmDepositModal = ({
       return null
     }
 
-    return await depositToFarm(selectedFarmAddress, Number(inputData.amount), selectedFarmToken)
+    return await depositToFarm(selectedFarmAddress, userAddress, Number(inputData.amount), selectedFarmToken)
   }, [selectedFarmAddress, userAddress, inputData.amount])
 
   const depositToFarmContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: DEPOSIT_TO_FARM_ACTION,
       actionFn: depositToFarmAction,
+      afterActionCallback: closeHandler,
     }),
     [depositToFarmAction],
   )

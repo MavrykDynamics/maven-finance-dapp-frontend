@@ -11,7 +11,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 
 // utils
-import { calculateFarmAPY } from 'providers/FarmsProvider/helpers/farms.utils'
+import { calculateFarmAPY, getFarmUserDepositedAmount } from 'providers/FarmsProvider/helpers/farms.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // hooks
@@ -51,6 +51,11 @@ export const HorizontalFarmCard = ({
 
   const totalLiquidityAmount = convertNumberForClient({ number: farm.liquidityTokenBalance, grade: farmToken.decimals })
   const farmApy = calculateFarmAPY(farm.currentRewardPerBlock, totalLiquidityAmount)
+  const userDepositedAmount = getFarmUserDepositedAmount({
+    farmDepositors: farm?.farmDepositors,
+    userAddress,
+    farmToken: farmToken,
+  })
 
   return (
     <HorizontalFarmCardStyled className={classNames({ isCardOpened })}>
@@ -111,7 +116,7 @@ export const HorizontalFarmCard = ({
             isFarmHasDepositDisabled={farm.depositPaused}
             isFarmHasWithdrawDisabled={farm.withdrawPaused}
             userAddress={userAddress}
-            userDepositedAmount={0}
+            userDepositedAmount={userDepositedAmount}
           />
 
           <div className="links">

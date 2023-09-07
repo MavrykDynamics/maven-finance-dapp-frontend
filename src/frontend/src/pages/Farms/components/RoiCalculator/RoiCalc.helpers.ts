@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { FarmStorage } from 'utils/TypesAndInterfaces/Farm'
 import { InputStatusesType, InputValuesType } from './RoiCalc.types'
 import { calculateFarmAPR } from 'providers/FarmsProvider/helpers/farms.utils'

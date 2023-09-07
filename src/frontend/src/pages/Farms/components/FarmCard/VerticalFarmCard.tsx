@@ -18,7 +18,7 @@ import { FarmCardActions } from './cardParts/FarmCardActions'
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 // utils
-import { calculateFarmAPY } from 'providers/FarmsProvider/helpers/farms.utils'
+import { calculateFarmAPY, getFarmUserDepositedAmount } from 'providers/FarmsProvider/helpers/farms.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // hooks
@@ -53,6 +53,11 @@ export const VerticalFarmCard = ({
 
   const totalLiquidityAmount = convertNumberForClient({ number: farm.liquidityTokenBalance, grade: farmToken.decimals })
   const farmApy = calculateFarmAPY(farm.currentRewardPerBlock, totalLiquidityAmount)
+  const userDepositedAmount = getFarmUserDepositedAmount({
+    farmDepositors: farm?.farmDepositors,
+    userAddress,
+    farmToken: farmToken,
+  })
 
   return (
     <VerticalFarmCardStyled className={classNames({ isCardOpened })}>
@@ -112,7 +117,7 @@ export const VerticalFarmCard = ({
         isFarmHasDepositDisabled={farm.depositPaused}
         isFarmHasWithdrawDisabled={farm.withdrawPaused}
         userAddress={userAddress}
-        userDepositedAmount={0}
+        userDepositedAmount={userDepositedAmount}
         isVertical
       />
 

@@ -13,6 +13,9 @@ import {
   FARMS_ALL_LIVE_DATA_SUB,
   FARMS_LIVE_STAKED_DATA_SUB,
 } from './farms.const'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 // get provider value
 export const getFarmsReturnValue = ({
@@ -72,10 +75,24 @@ export const calculateFarmAPR = (currentRewardPerBlock: number, blocksAmount: nu
   lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
 
 // get amount of tokens user've deposited to farm
-export const getFarmUserDepositedAmount = (
-  farmAccounts: FarmRecordType['farmDepositors'],
-  userAddress: string | null,
-): number => {
-  if (!userAddress) return 0
-  return farmAccounts.find(({ address }) => userAddress === address, 0)?.depositedAmount ?? 0
+export const getFarmUserDepositedAmount = ({
+  farmDepositors,
+  farmToken,
+  userAddress,
+  withoutConvertation,
+}: {
+  farmDepositors?: FarmRecordType['farmDepositors']
+  farmToken?: TokenMetadataType | null
+  userAddress: string | null
+  withoutConvertation?: boolean
+}): number => {
+  if (!farmDepositors || !userAddress) return 0
+
+  const unconvertedTokenAmount = farmDepositors[userAddress]?.depositedAmount ?? 0
+
+  if (withoutConvertation) return unconvertedTokenAmount
+
+  if (!farmToken || !checkWhetherTokenIsFarmToken(farmToken)) return 0
+
+  return convertNumberForClient({ number: unconvertedTokenAmount, grade: farmToken.decimals })
 }

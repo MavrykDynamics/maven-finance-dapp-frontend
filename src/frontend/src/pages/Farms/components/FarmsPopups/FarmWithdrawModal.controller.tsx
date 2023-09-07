@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // view
@@ -21,10 +21,13 @@ import {
   INPUT_LARGE,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
+  INPUT_STATUS_DEFAULT,
 } from '../../../../app/App.components/Input/Input.constants'
 
 // utils
 import { checkWhetherTokenIsFarmToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { getFarmUserDepositedAmount } from 'providers/FarmsProvider/helpers/farms.utils'
 import { withdrawFromFarm } from 'providers/FarmsProvider/actions/farms.actions'
 
 // hooks
@@ -33,8 +36,6 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-
-// view
 
 export const FarmWithdrawModal = ({
   closeHandler,
@@ -46,11 +47,20 @@ export const FarmWithdrawModal = ({
   data: FarmDepositPopupDataType
 }) => {
   const { tokensMetadata } = useTokensContext()
-  const { userAddress } = useUserContext()
+  const { userAddress, userTokensBalances } = useUserContext()
   const { bug } = useToasterContext()
   const { farmsMapper } = useFarmsContext()
 
   useLockBodyScroll(show)
+
+  useEffect(() => {
+    if (!show) {
+      setInputData({
+        amount: '0',
+        validation: INPUT_STATUS_DEFAULT,
+      })
+    }
+  }, [show])
 
   const { selectedFarmAddress } = data
 
@@ -62,12 +72,16 @@ export const FarmWithdrawModal = ({
     validation: '',
   })
 
-  // TODO: handle user balance
-  const userTokenBalance = 0
+  const userTokenBalance = getUserTokenBalanceByAddress({
+    userTokensBalances,
+    tokenAddress: selectedFarm?.liquidityTokenAddress,
+  })
 
-  const depositedAmountByUser = useMemo(() => {
-    return Number(selectedFarm?.farmDepositors?.find(({ address }) => userAddress === address)?.depositedAmount)
-  }, [selectedFarm?.farmDepositors, userAddress])
+  const depositedAmountByUser = getFarmUserDepositedAmount({
+    farmDepositors: selectedFarm?.farmDepositors,
+    userAddress,
+    farmToken: selectedFarmToken,
+  })
 
   // input handlers
   const handleBlur = useCallback(
@@ -106,6 +120,7 @@ export const FarmWithdrawModal = ({
     () => ({
       actionType: WITHDRAW_FROM_FARM_ACTION,
       actionFn: withdrawFromFarmAction,
+      afterActionCallback: closeHandler,
     }),
     [withdrawFromFarmAction],
   )

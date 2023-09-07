@@ -66,8 +66,8 @@ export const sortFarms = ({
         break
       case 'yourLargestStake':
         res =
-          getFarmUserDepositedAmount(farmA.farmDepositors, userAddress) <
-          getFarmUserDepositedAmount(farmB.farmDepositors, userAddress)
+          getFarmUserDepositedAmount({ farmDepositors: farmA.farmDepositors, userAddress, withoutConvertation: true }) <
+          getFarmUserDepositedAmount({ farmDepositors: farmB.farmDepositors, userAddress, withoutConvertation: true })
             ? 1
             : -1
         break

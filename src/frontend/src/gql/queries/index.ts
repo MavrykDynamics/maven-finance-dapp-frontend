@@ -1,5 +1,4 @@
 export * from './getContractAddresses'
-export * from './getFarmStorage'
 export * from './getEmergencyGovernanceStorage'
 export * from './getCouncilStorage'
 export * from './getGovernanceStorage'

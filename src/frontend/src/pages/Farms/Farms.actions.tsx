@@ -1,89 +1,60 @@
-// types
-import { State } from '../../reducers'
-import { FarmContractType } from '../../utils/TypesAndInterfaces/Farm'
-import type { AppDispatch, GetState } from '../../app/App.controller'
-
-// queries
-import { FARM_STORAGE_QUERY, FARM_STORAGE_QUERY_NAME, FARM_STORAGE_QUERY_VARIABLE } from '../../gql/queries'
-
-// consts
-import {
-  ACTION_COMPLETION_MESSAGE_TEXT,
-  ACTION_START_MESSAGE_TEXT,
-  TOASTER_ERROR,
-  TOASTER_INFO,
-  TOASTER_LOADING,
-  TOASTER_SUCCESS,
-  TOASTER_UPDATE_DATA_AFTER_ACTION_DATA,
-} from '../../app/App.components/Toaster/Toaster.constants'
-
 //helpers
-import { getEndsInTimestampForFarmCards, getLPTokensInfo, normalizeFarmStorage } from './Farms.helpers'
-import { fetchFromIndexer } from '../../gql/fetchGraphQL'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { checkIndexerLevelAndRunDataUpdateCallback } from 'utils/checkIndexerLevel/checkIndexerLevel'
+// import { getEndsInTimestampForFarmCards, getLPTokensInfo, normalizeFarmStorage } from './Farms.helpers'
 
-// actions
-import { toggleActionCompletion, toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
-import { hideToaster, showToaster } from '../../app/App.components/Toaster/Toaster.actions'
-import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+// export const getFarmStorage =
+//   (tokens: TokensContext['tokensMetadata']) => async (dispatch: AppDispatch, getState: GetState) => {
+//     // main try/catch to fetch endTime for farmsCards and farms cards from gql, if nested willl end up with error, it will set fetched card, of if this fail, will set []
+//     try {
+//       const storage = await fetchFromIndexer(FARM_STORAGE_QUERY, FARM_STORAGE_QUERY_NAME, FARM_STORAGE_QUERY_VARIABLE)
+//       const farmCardEndsIn = await getEndsInTimestampForFarmCards(storage?.farm)
 
-export const GET_FARM_STORAGE = 'GET_FARM_STORAGE'
-export const getFarmStorage =
-  (tokens: TokensContext['tokensMetadata']) => async (dispatch: AppDispatch, getState: GetState) => {
-    // main try/catch to fetch endTime for farmsCards and farms cards from gql, if nested willl end up with error, it will set fetched card, of if this fail, will set []
-    try {
-      const storage = await fetchFromIndexer(FARM_STORAGE_QUERY, FARM_STORAGE_QUERY_NAME, FARM_STORAGE_QUERY_VARIABLE)
-      const farmCardEndsIn = await getEndsInTimestampForFarmCards(storage?.farm)
+//       // try/catch to fetch lp coins metadata, if fails will log error and dispatch just farms cards with endTime
+//       try {
+//         const farmLPTokensInfo = await getLPTokensInfo(storage?.farm)
 
-      // try/catch to fetch lp coins metadata, if fails will log error and dispatch just farms cards with endTime
-      try {
-        const farmLPTokensInfo = await getLPTokensInfo(storage?.farm)
+//         // try/catch to fetch farms contracts, if fails it will log error and dispatch farms cards without contacts data
+//         try {
+//           const urls = farmLPTokensInfo.reduce<string[]>(
+//             (acc, item: { lpTokenInfo: { liquidityPairToken: { tokenAddress: string[] } } }) => {
+//               if (item?.lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]) {
+//                 acc.push(`https://api.tzkt.io/v1/contracts/${item?.lpTokenInfo.liquidityPairToken.tokenAddress[0]}`)
+//               }
+//               return acc
+//             },
+//             [],
+//           )
 
-        // try/catch to fetch farms contracts, if fails it will log error and dispatch farms cards without contacts data
-        try {
-          const urls = farmLPTokensInfo.reduce<string[]>(
-            (acc, item: { lpTokenInfo: { liquidityPairToken: { tokenAddress: string[] } } }) => {
-              if (item?.lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]) {
-                acc.push(`https://api.tzkt.io/v1/contracts/${item?.lpTokenInfo.liquidityPairToken.tokenAddress[0]}`)
-              }
-              return acc
-            },
-            [],
-          )
+//           const farmContracts: FarmContractType[] = await Promise.all(
+//             urls.map(async (url) => await (await fetch(url)).json()),
+//           )
 
-          const farmContracts: FarmContractType[] = await Promise.all(
-            urls.map(async (url) => await (await fetch(url)).json()),
-          )
+//           const farms = normalizeFarmStorage(storage?.farm, tokens, farmCardEndsIn, farmLPTokensInfo, farmContracts)
+//           dispatch({
+//             type: GET_FARM_STORAGE,
+//             farms,
+//           })
+//         } catch (e) {
+//           console.error('getFarmStorage, fetching contracts error: ', e)
 
-          const farms = normalizeFarmStorage(storage?.farm, tokens, farmCardEndsIn, farmLPTokensInfo, farmContracts)
-          dispatch({
-            type: GET_FARM_STORAGE,
-            farms,
-          })
-        } catch (e) {
-          console.error('getFarmStorage, fetching contracts error: ', e)
+//           const farms = normalizeFarmStorage(storage?.farm, tokens, farmCardEndsIn, farmLPTokensInfo, [])
+//           dispatch({
+//             type: GET_FARM_STORAGE,
+//             farms,
+//           })
+//         }
+//       } catch (e) {
+//         console.error('getFarmStorage, fetching metadata error: ', e)
 
-          const farms = normalizeFarmStorage(storage?.farm, tokens, farmCardEndsIn, farmLPTokensInfo, [])
-          dispatch({
-            type: GET_FARM_STORAGE,
-            farms,
-          })
-        }
-      } catch (e) {
-        console.error('getFarmStorage, fetching metadata error: ', e)
-
-        const farms = normalizeFarmStorage(storage?.farm, tokens, [], [], [])
-        dispatch({
-          type: GET_FARM_STORAGE,
-          farms,
-        })
-      }
-    } catch (e) {
-      dispatch(showToaster(TOASTER_ERROR, 'Error while fetching farms data', 'Please try to reload page'))
-    }
-  }
+//         const farms = normalizeFarmStorage(storage?.farm, tokens, [], [], [])
+//         dispatch({
+//           type: GET_FARM_STORAGE,
+//           farms,
+//         })
+//       }
+//     } catch (e) {
+//       dispatch(showToaster(TOASTER_ERROR, 'Error while fetching farms data', 'Please try to reload page'))
+//     }
+//   }
 
 // export const harvest =
 //   (farmAddress: string, tokens: TokensContext['tokensMetadata']) =>

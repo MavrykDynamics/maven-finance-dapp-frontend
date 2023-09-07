@@ -15,6 +15,12 @@ import {
 import { normalizeFarm } from './helpers/farms.normalizer'
 
 // farms general
+export type FarmDepositorType = {
+  address: string
+  participationRewardsPerShare: number
+  depositedAmount: number
+  rewardsToClaim: number
+}
 export type FarmRecordType = ReturnType<typeof normalizeFarm>
 
 // farms actions

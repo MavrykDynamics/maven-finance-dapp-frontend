@@ -44,16 +44,23 @@ const DoormanProvider = ({ children }: Props) => {
   }
 
   // subscribes
-  useQueryWithRefetch(DAPP_MVK_SMVK_STATS, {
-    skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
-    variables: {
-      doormanContractAddress: doormanAddress,
+  useQueryWithRefetch(
+    DAPP_MVK_SMVK_STATS,
+    {
+      skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
+      variables: {
+        doormanContractAddress: doormanAddress,
+      },
+      onCompleted: (data) => {
+        console.log({ doormanQueryCompleted: data })
+        updateMvkSmvkStats(data)
+      },
+      onError: (error) => handleSubError(error, DAPP_MVK_SMVK_STATS_SUB),
     },
-    onCompleted: (data) => {
-      updateMvkSmvkStats(data)
+    {
+      name: 'DAPP_MVK_SMVK_STATS',
     },
-    onError: (error) => handleSubError(error, DAPP_MVK_SMVK_STATS_SUB),
-  })
+  )
 
   // methods to update context data
   const updateStakeHistoryData = (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {

@@ -25,6 +25,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   queryOptions: QueryHookOptions<TData, TVariables> | null,
   refetchOptions?: {
     blocksDiff?: number
+    name?: string
     refetchQueryVariables?: (() => TVariables) | TVariables
   },
 ) => {
@@ -40,15 +41,17 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   const queryResult = useQuery(query, {
     ...queryOptions,
     onCompleted: (data) => {
+      console.log('internalOnComplete ', { queryOptions, query, name: refetchOptions?.name ?? 'default name' })
       isInitialQueryDone.current = true
       queryOptions?.onCompleted?.(data)
     },
+    fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
   })
 
   // fn to refetch query on block lvl change
   const refetchQuery = useCallback(
-    (newIndexerLevel: number) => {
+    async (newIndexerLevel: number) => {
       // If we have't completed initial query, we can't refetch
       if (!isInitialQueryDone.current) return
 
@@ -64,14 +67,14 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         }
 
         if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
-          queryResult.refetch(newRefetchVariables)
+          await queryResult.refetch(newRefetchVariables)
           lastUpdatedBlock.current = newIndexerLevel
         }
 
         return
       }
 
-      queryResult.refetch(newRefetchVariables)
+      await queryResult.refetch(newRefetchVariables)
     },
     [blocksDiff, refetchQueryVariables],
   )

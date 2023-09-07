@@ -1,169 +1,24 @@
-// types
-import { FarmContractType, FarmGraphQL } from '../../utils/TypesAndInterfaces/Farm'
+// export const getLPTokensInfo = async (farmList: FarmGraphQL[]) => {
+//     return await Promise.all(
+//       farmList.map(async ({ address }) => {
+//         const lpTokenInfo = await getFarmMetadata(address)
+//         const parsedLpTokenInfo = typeof lpTokenInfo === 'string' ? JSON.parse(lpTokenInfo) : lpTokenInfo
 
-// helpers
-import { getContractBigmapKeys, network } from 'utils/blockchainApi'
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-
-type EndsInType = {
-  endsIn: any
-  address: string
-}[]
-
-type TokensInfoType = {
-  lpTokenInfo: {
-    liquidityPairToken: {
-      tokenAddress: string[]
-      token0: {
-        symbol: string[]
-        tokenAddress: string[]
-        thumbnailUri: string
-      }
-      token1: {
-        symbol: string[]
-        tokenAddress: string[]
-        thumbnailUri: string
-      }
-    }
-  }
-  lpTokenUserBalance: number
-}[]
-
-export const normalizeFarmStorage = (
-  farmList: FarmGraphQL[],
-  tokens: TokensContext['tokensMetadata'],
-  farmCardEndsIn: EndsInType,
-  farmLPTokensInfo: TokensInfoType,
-  farmContracts: FarmContractType[],
-) => {
-  if (!farmList?.length) return []
-
-  return farmList.map((farmItem: FarmGraphQL, idx: number) => {
-    const endsIn = farmCardEndsIn[idx].endsIn
-    const { lpTokenInfo, lpTokenUserBalance } = farmLPTokensInfo[idx]
-    const contract = farmContracts.find(
-      ({ address }) =>
-        lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] &&
-        address === lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0],
-    )
-    const dipDupToken = tokens[farmItem.lp_token.token_address]
-
-    return {
-      address: farmItem.address,
-      name: farmItem.name,
-      endsIn: endsIn,
-      isLive: Date.now() - new Date(endsIn).getTime() < 0,
-      open: farmItem.open,
-      withdrawPaused: farmItem.withdraw_paused,
-      claimPaused: farmItem.claim_paused,
-      depositPaused: farmItem.deposit_paused,
-      blocksPerMinute: 0,
-      currentRewardPerBlock: farmItem.current_reward_per_block / Math.pow(10, 9),
-      farmFactoryId: farmItem.factory_id || '',
-      infinite: farmItem.infinite,
-      initBlock: farmItem.init_block,
-      accumulatedMvkPerShare: 0,
-      lastBlockUpdate: farmItem.last_block_update,
-      lpTokenUserBalance,
-      lpTokenAddress: lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0] ?? '',
-      lpBalance: farmItem.lp_token_balance / Math.pow(10, Number(dipDupToken?.decimals ?? 0)),
-      lpToken1: {
-        symbol: lpTokenInfo?.liquidityPairToken?.token0?.symbol?.[0],
-        address: lpTokenInfo?.liquidityPairToken?.token0?.tokenAddress?.[0],
-        thumbnailUri: lpTokenInfo?.liquidityPairToken?.token0?.thumbnailUri,
-      },
-      lpToken2: {
-        symbol: lpTokenInfo?.liquidityPairToken?.token1?.symbol?.[0],
-        address: lpTokenInfo?.liquidityPairToken?.token1?.tokenAddress?.[0],
-        thumbnailUri: lpTokenInfo?.liquidityPairToken?.token1?.thumbnailUri,
-      },
-      rewardPerBlock: 0,
-      rewardsFromTreasury: false,
-      totalBlocks: farmItem.total_blocks,
-      farmAccounts: farmItem.farm_accounts,
-      farmContract: contract,
-    }
-  })
-}
-
-// getting end time for farm cards
-export const getEndsInTimestampForFarmCards = async (farmList: FarmGraphQL[]) => {
-  try {
-    return await Promise.all(
-      farmList.map(async (farmCard: { init_block: number; total_blocks: number; address: string }) => {
-        const endsIn = await getLvlTimestamp(farmCard.init_block + farmCard.total_blocks)
-        return { endsIn, address: farmCard.address }
-      }),
-    )
-  } catch (e: unknown) {
-    console.error('getEndsInTimestampForFarmCards fetching error: ', e)
-    return []
-  }
-}
-
-export const getLvlTimestamp = async (blocksLvl: number) => {
-  try {
-    return await (await fetch(`${process.env.REACT_APP_RPC_TZKT_API}/v1/blocks/${blocksLvl}/timestamp`)).json()
-  } catch (e) {
-    console.error('getLvlTimestamp fetching error: ', e)
-    throw e
-  }
-}
-
-// getting metadata for liquidity pair coins
-export const getLPTokensInfo = async (farmList: FarmGraphQL[]) => {
-  try {
-    return await Promise.all(
-      farmList.map(async ({ address }) => {
-        const lpTokenInfo = await getFarmMetadata(address)
-        const parsedLpTokenInfo = typeof lpTokenInfo === 'string' ? JSON.parse(lpTokenInfo) : lpTokenInfo
-
-        const lpTokenUserBalance =
-          typeof parsedLpTokenInfo === 'object'
-            ? Number(await getUserBalanceByAddressOld(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
-            : 0
-        return {
-          lpTokenInfo: parsedLpTokenInfo,
-          lpTokenUserBalance: lpTokenUserBalance,
-        }
-      }),
-    )
-  } catch (e: unknown) {
-    console.error('getLPTokensInfo fetching error: ', e)
-    return []
-  }
-}
-
-export async function getFarmMetadata(farmAddress: string) {
-  try {
-    const farmMetadata = await getContractBigmapKeys(farmAddress, 'metadata')
-    const targetMetadataItem =
-      farmMetadata.filter((farmItem: { value: string }) => {
-        const output = Buffer.from(farmItem.value, 'hex').toString()
-        return !output.endsWith('tezos-storage:data')
-      })[0] || {}
-    const targetFarmMetadataValue = Buffer.from(targetMetadataItem.value, 'hex').toString()
-
-    const parsedMetadataValue = JSON.parse(targetFarmMetadataValue)
-
-    if (!parsedMetadataValue['liquidityPairToken']) {
-      throw new Error(`invalid farm metadata: ${farmAddress}`)
-    }
-
-    return parsedMetadataValue
-  } catch (e) {
-    return {
-      liquidityPairToken: {
-        token0: { symbol: [''], tokenAddress: [''], thumbnailUri: '/images/coin-gold.svg' },
-        token1: { symbol: [''], tokenAddress: [''], thumbnailUri: '/images/coin-silver.svg' },
-      },
-    }
-  }
-}
+//         const lpTokenUserBalance =
+//           typeof parsedLpTokenInfo === 'object'
+//             ? Number(await getUserBalanceByAddressOld(parsedLpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]))
+//             : 0
+//         return {
+//           lpTokenInfo: parsedLpTokenInfo,
+//           lpTokenUserBalance: lpTokenUserBalance,
+//         }
+//       }),
+//     )
+// }
 
 // get user tokens balance
 export const getUserBalanceByAddressOld = async (tokenAddress?: string) => {
   if (!tokenAddress) return 0
 
-  return await (await fetch(`https://api.${network}.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()
+  return await (await fetch(`https://api.ghostnet.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()
 }

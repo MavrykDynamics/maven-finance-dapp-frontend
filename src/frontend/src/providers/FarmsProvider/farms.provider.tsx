@@ -47,18 +47,23 @@ const FarmsProvider = ({ children }: Props) => {
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
 
-  useQueryWithRefetch(getFarms(activeSubs[FARMS_DATA_SUB]), {
-    skip: activeSubs[FARMS_DATA_SUB] === null,
-    variables: { userAddress: userAddress ?? '' },
-    onError: (error) => handleSubError(error, 'getFarms ERROR'),
-    onCompleted: (data) => {
-      if (!data) return
-      updateFarms(data)
+  useQueryWithRefetch(
+    getFarms(activeSubs[FARMS_DATA_SUB]),
+    {
+      skip: !activeSubs[FARMS_DATA_SUB],
+      variables: { userAddress: userAddress ?? '' },
+      onCompleted: (data) => {
+        updateFarms(data)
+      },
+      onError: (error) => handleSubError(error, 'getFarms ERROR'),
     },
-  })
+    { name: 'farms query' },
+  )
 
   const updateFarms = (indexerData: FarmsQueryQuery) => {
+    console.log({ farms: indexerData.farm })
     const normalizedFarms = normalizeFarms(indexerData.farm)
+    console.log({ normalizedFarms: normalizedFarms })
 
     const isAllFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_DATA_SUB
 
@@ -106,8 +111,6 @@ const FarmsProvider = ({ children }: Props) => {
       }),
     [activeSubs, farmsCtxState],
   )
-
-  console.log({ contextProviderValue })
 
   return <farmsContext.Provider value={contextProviderValue}>{children}</farmsContext.Provider>
 }

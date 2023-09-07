@@ -74,8 +74,6 @@ export const TokensProvider = ({ children }: Props) => {
     }))
   }
 
-  console.log({ tokensCtxState })
-
   const providerValue = useMemo(() => {
     return {
       updateTokensPrices,
