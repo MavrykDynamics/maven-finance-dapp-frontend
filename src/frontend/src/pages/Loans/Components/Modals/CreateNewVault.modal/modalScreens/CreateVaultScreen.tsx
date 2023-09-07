@@ -74,6 +74,7 @@ export const CreateVaultScreen = () => {
           form={BUTTON_WIDE}
           onClick={handleButtonClick}
           disabled={vaultInputState.validationStatus !== INPUT_STATUS_SUCCESS}
+          ignoreLoading
         >
           Continue
           <Icon id="arrowRight" />

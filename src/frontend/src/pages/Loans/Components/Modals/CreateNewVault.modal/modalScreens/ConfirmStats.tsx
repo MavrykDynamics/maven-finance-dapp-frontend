@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 
 // providers
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -55,7 +54,6 @@ export const ConfirmStats = () => {
   const {
     contractAddresses: { vaultFactoryAddress, lendingControllerAddress },
   } = useDappConfigContext()
-  const { choosenBaker } = useXtzBakersForDD()
   const {
     selectedCollateralsAddresses,
     selectedCollaterals,
@@ -66,6 +64,7 @@ export const ConfirmStats = () => {
     data,
     borrowCapacity,
     collateralsBalance,
+    selectedBaker,
   } = useCreateVaultContext()
 
   const { marketTokenAddress = '' } = data ?? {}
@@ -115,7 +114,7 @@ export const ConfirmStats = () => {
         vaultFactoryAddress,
         lendingControllerAddress,
         tokensArr,
-        choosenBaker?.bakerAddress ?? null,
+        selectedBaker?.bakerAddress ?? null,
       )
     }
 
@@ -130,7 +129,7 @@ export const ConfirmStats = () => {
     updateVaultCreating,
     selectedCollateralsAddresses,
     vaultInputState.name,
-    choosenBaker?.bakerAddress,
+    selectedBaker?.bakerAddress,
     selectedCollaterals,
     tokensPrices,
   ])
@@ -203,7 +202,7 @@ export const ConfirmStats = () => {
         <div className="confirmation-stats">
           <ThreeLevelListItem>
             <div className="name">Selected Baker</div>
-            <div className="value">{choosenBaker?.bakerName ?? 'Not relevant'}</div>
+            <div className="value">{selectedBaker?.bakerName ?? 'Not relevant'}</div>
           </ThreeLevelListItem>
           <ThreeLevelListItem className="align-tree-item-right">
             <div className="name">Total Collateral Deposited</div>
