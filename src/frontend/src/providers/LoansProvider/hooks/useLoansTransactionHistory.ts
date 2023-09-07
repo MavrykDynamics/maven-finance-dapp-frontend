@@ -56,6 +56,9 @@ export const useLoansTransactionHistory = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
 
+  // when user has no data
+  const [isHistoryEmpty, setIsHistoryEmpty] = useState(false)
+
   // stuff for handling page out of limims
   const history = useHistory()
   const { search, pathname } = useLocation()
@@ -87,8 +90,11 @@ export const useLoansTransactionHistory = ({
       const itemsAmount = data.lending_controller[0].historyItemsAmount.aggregate?.count ?? 0
       const maxPage = Math.ceil(itemsAmount / transactionHistoryItemsPerPage)
 
+      // handle user empty history
+      itemsAmount === 0 ? setIsHistoryEmpty(true) : setIsHistoryEmpty(false)
+
       // if user updated manualy page, and set it wrong, redirect him to 1st page of the list
-      if (maxPage < currentPage || currentPage < 1) {
+      if ((maxPage < currentPage || currentPage < 1) && itemsAmount !== 0) {
         bug(`Page is out of limits, your page: ${currentPage}, max page: ${maxPage}, min page: 1`)
         const redirectToFirstPageOfTheList = updatePageInUrl({
           page,
@@ -175,7 +181,7 @@ export const useLoansTransactionHistory = ({
   }, [currentPage, tokensMetadata, tokensPrices, transactionHistoryIndexer.list])
 
   return {
-    isLoading: !transactionHistoryIndexer.list[currentPage],
+    isLoading: !transactionHistoryIndexer.list[currentPage] && !isHistoryEmpty,
     transactionHistory,
     itemsAmount: transactionHistoryIndexer.itemsAmount,
   }
