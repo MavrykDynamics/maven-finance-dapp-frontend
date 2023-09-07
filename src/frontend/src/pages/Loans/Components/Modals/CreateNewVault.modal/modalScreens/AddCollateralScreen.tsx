@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
@@ -66,15 +66,17 @@ export const AddCollateralScreen = () => {
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
+  const { bakersRecord, bakers } = useXtzBakersForDD()
   const {
     selectedCollateralsAddresses,
     selectedCollaterals,
     updateSelectedCollaterals,
     updateScreenToShow,
+    updateSelectedBaker,
     hasXTZTokenSelected,
     borrowCapacity,
     collateralsBalance,
+    selectedBaker,
   } = useCreateVaultContext()
 
   const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit } = useXTZMaxAmountValidator(
@@ -138,7 +140,7 @@ export const AddCollateralScreen = () => {
   )
 
   const isAddCollateralContinueDisabled = Boolean(
-    (hasXTZTokenSelected && !choosenBaker) ||
+    (hasXTZTokenSelected && !selectedBaker) ||
       !selectedCollateralsAddresses.every((tokenAddress) => {
         return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
       }),
@@ -162,7 +164,6 @@ export const AddCollateralScreen = () => {
     const _selectedCollateral = { ...selectedCollaterals }
 
     delete _selectedCollateral[tokenAddress]
-
     updateSelectedCollaterals({
       ..._selectedCollateral,
     })
@@ -182,7 +183,6 @@ export const AddCollateralScreen = () => {
         byDecimalPlaces: collateralDecimals,
       },
     })
-
     updateSelectedCollaterals({
       ...selectedCollaterals,
       [collateralAddress]: {
@@ -321,11 +321,11 @@ export const AddCollateralScreen = () => {
                       <div className="block-name">Select Baker</div>
                       <DropDown
                         placeholder="Select Bakery"
-                        activeItem={choosenBaker}
+                        activeItem={selectedBaker}
                         items={bakers}
                         className="select-xtz-baker"
                         clickItem={(bakerAddress: DDItemId) =>
-                          typeof bakerAddress === 'string' ? setChoosenBaker(bakerAddress) : null
+                          typeof bakerAddress === 'string' ? updateSelectedBaker(bakersRecord[bakerAddress]) : null
                         }
                       />
                     </div>

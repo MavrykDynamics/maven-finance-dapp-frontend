@@ -15,6 +15,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { getVaultBorrowCapacity } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { DropDownXTZBakerType } from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 
 type Props = CreateNewModalProps & {
   children: React.ReactNode
@@ -76,6 +77,13 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
     }))
   }, [])
 
+  const updateSelectedBaker = useCallback((selectedBaker: DropDownXTZBakerType | null) => {
+    setModalState((prev) => ({
+      ...prev,
+      selectedBaker,
+    }))
+  }, [])
+
   const setFinalBorrowInputAmount = useCallback(({ amount, rate, symbol }: FinalBorrowInputDataType) => {
     setModalState((prev) => ({
       ...prev,
@@ -117,6 +125,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       updateVaultCreating,
       updateNewVault,
       updateSelectedCollaterals,
+      updateSelectedBaker,
       closePopup,
       setFinalBorrowInputAmount,
       data,
@@ -134,14 +143,15 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       updateVaultCreating,
       updateNewVault,
       updateSelectedCollaterals,
+      updateSelectedBaker,
       closePopup,
       setFinalBorrowInputAmount,
       data,
       show,
       collateralsBalance,
       borrowCapacity,
-      convertedAvailableLiquidity,
       borrowAPR,
+      convertedAvailableLiquidity,
     ],
   )
 
