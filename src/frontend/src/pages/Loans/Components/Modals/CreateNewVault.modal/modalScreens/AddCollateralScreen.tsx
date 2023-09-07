@@ -80,6 +80,7 @@ export const AddCollateralScreen = () => {
   } = useCreateVaultContext()
 
   // refs
+  // TODO remove ref when moving mappedCollaterasl to separate file
   const noDisabledCollateralAddressRef = useRef('')
 
   const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit } = useXTZMaxAmountValidator(
