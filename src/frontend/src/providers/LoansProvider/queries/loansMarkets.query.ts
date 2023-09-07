@@ -45,9 +45,16 @@ export function getLoansMarketsQuery({
 					# market lending item address, and amount of suppliers
 					m_token {
 						address
-						accounts_aggregate(where: {balance: {_gte: 0}}) {
+						depositorsAmount: accounts_aggregate(where: {balance: {_gte: 0}}) {
 							aggregate {
 								count
+							}
+						}
+						mTokenRewardsAmount: accounts_aggregate {
+							aggregate {
+								sum {
+									rewards_earned
+								}
 							}
 						}
 					}

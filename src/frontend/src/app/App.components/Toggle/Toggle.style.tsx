@@ -103,7 +103,7 @@ export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
     }
 
     .slider::before {
-      background-color: ${({ theme }) => theme.strokeColor};
+      background-color: ${({ theme }) => theme.selectedColorSecondary};
     }
   }
 

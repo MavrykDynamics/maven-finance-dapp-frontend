@@ -35,6 +35,7 @@ export type LoanMarketType = {
   availableLiquidity: number // how much tokens left in the market pool
   totalBorrowed: number // how much borrowed per market
   totalLended: number // now much supplied to market pool
+  totalRewards: number // now much suppliers have earned rewards for supplying into the pool
 
   reserveFactor: number
   reserveAmount: number

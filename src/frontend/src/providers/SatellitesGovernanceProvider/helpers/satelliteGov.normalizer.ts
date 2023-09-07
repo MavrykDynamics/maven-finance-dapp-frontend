@@ -13,6 +13,7 @@ type SatelliteGovernanceActionType = {
   initiatorId: string
   expirationDatetime: string | null
   startDatetime: string | null
+  droppedTime: string | null
   smvkPercentageForApproval: number
   smvkRequiredForApproval: number
   snapshotSmvkTotalSupply: number
@@ -31,6 +32,13 @@ type SatelliteGovernanceActionType = {
     voterId: string
   }[]
 }
+
+const SATELLITE_GOV_USER_ACTIONS_SORT_ORDER = [
+  ProposalStatus.ONGOING,
+  ProposalStatus.EXECUTED,
+  ProposalStatus.DROPPED,
+  ProposalStatus.DEFEATED,
+] as const
 
 type SatelliteGovernanceActionsType = {
   ongoingSatelliteGovIds: number[]
@@ -109,6 +117,7 @@ export const normalizerSatelliteGovernanceActions = (
         initiatorId: item.initiator.address,
         expirationDatetime: item.executed ? item.execution_datetime : item.expiration_datetime ?? null,
         startDatetime: item.start_datetime ?? null,
+        droppedTime: statusFlag === ProposalStatus.DROPPED ? item.dropped_datetime : null,
         smvkPercentageForApproval: item.smvk_percentage_for_approval,
         smvkRequiredForApproval: item.smvk_required_for_approval,
         snapshotSmvkTotalSupply: item.snapshot_smvk_total_supply,
@@ -119,8 +128,7 @@ export const normalizerSatelliteGovernanceActions = (
         votes,
       }
 
-      // when sub type is SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB, need this logic
-      // to detect ongoing | user | past actions
+      // filter actions by past, user, ongoing
       if (
         action.statusFlag === ProposalStatus.EXECUTED ||
         action.statusFlag === ProposalStatus.DROPPED ||
@@ -154,17 +162,12 @@ export const normalizerSatelliteGovernanceActions = (
     ...actions,
     // sort user actions
     mySatelliteGovIds: actions.mySatelliteGovIds.sort((a, b) => {
-      const statusOrder = [
-        ProposalStatus.ONGOING,
-        ProposalStatus.EXECUTED,
-        ProposalStatus.DROPPED,
-        ProposalStatus.DEFEATED,
-      ] as const
-
       const statusA = actions.satelliteGovIdsMapper[a].statusFlag
       const statusB = actions.satelliteGovIdsMapper[b].statusFlag
 
-      return statusOrder.indexOf(statusA) - statusOrder.indexOf(statusB)
+      return (
+        SATELLITE_GOV_USER_ACTIONS_SORT_ORDER.indexOf(statusA) - SATELLITE_GOV_USER_ACTIONS_SORT_ORDER.indexOf(statusB)
+      )
     }),
   }
 }

@@ -1,5 +1,4 @@
 import React, { useCallback, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { useClickAway, useLockBodyScroll } from 'react-use'
 
 // providers
@@ -186,7 +185,6 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
 }
 
 const Themes = () => {
-  const dispatch = useDispatch()
   const {
     toggleTheme,
     preferences: { themeSelected },
@@ -204,7 +202,7 @@ const Themes = () => {
           isSquare
           onClick={() => setNewThemeHandler(SPACE_THEME)}
         >
-          Space
+          {SPACE_THEME}
         </Button>
         <Button
           kind={themeSelected === DARK_THEME ? BUTTON_SECONDARY_CYAN : BUTTON_SECONDARY_PURPLE}
@@ -213,7 +211,7 @@ const Themes = () => {
           isSquare
           onClick={() => setNewThemeHandler(DARK_THEME)}
         >
-          Dark
+          {DARK_THEME}
         </Button>
         <Button
           kind={themeSelected === LIGHT_THEME ? BUTTON_SECONDARY_CYAN : BUTTON_SECONDARY_PURPLE}
@@ -222,7 +220,7 @@ const Themes = () => {
           isSquare
           onClick={() => setNewThemeHandler(LIGHT_THEME)}
         >
-          Light
+          {LIGHT_THEME}
         </Button>
       </div>
     </div>

@@ -12,6 +12,7 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   line-height: 24px;
   color: ${({ theme }) => theme.placeholders};
   background: ${({ theme }) => theme.backgroundColor};
+  border-radius: 10px;
 
   &.disabled {
     cursor: not-allowed;
@@ -115,7 +116,7 @@ export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
   align-items: center;
   height: 40px;
   padding-left: 16px;
-  border-width: 1.5px;
+  border-width: 1px;
   border-style: solid;
   border-color: ${({ theme }) => theme.strokeForForms};
   color: ${({ theme }) => theme.placeholders};

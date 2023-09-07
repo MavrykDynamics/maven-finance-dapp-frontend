@@ -6,6 +6,7 @@ import {
   TokenIndexerMetadataType,
   TokenMetadataType,
   TokensContext,
+  mTokenMetadataSchema,
   tokenMetadataSchema,
 } from '../tokens.provider.types'
 import { TokensMetadataQuery } from 'utils/__generated__/graphql'
@@ -205,7 +206,19 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         // if token is mToken
-        if (m_tokens?.[0]?.address) acc.mTokens.push(token_address)
+        if (m_tokens?.[0]?.address) {
+          const {
+            assets: [{ decimals: interestRateDecimals }],
+          } = mTokenMetadataSchema.parse(m_tokens[0].metadata)
+
+          acc.mTokens.push(token_address)
+          tokenMetadata = {
+            ...tokenMetadata,
+            mToken: {
+              interestRateDecimals: Number(interestRateDecimals),
+            },
+          }
+        }
 
         acc.tokensMetadata[token_address] = { ...acc.tokensMetadata[token_address], ...tokenMetadata }
       } catch (e) {
