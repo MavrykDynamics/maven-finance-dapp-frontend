@@ -30,7 +30,12 @@ import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { ERR_MSG_INPUT, INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import {
+  ERR_MSG_INPUT,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+} from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // actions
@@ -243,7 +248,9 @@ export const AddNewCollateral = ({
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
   const isDepositBtnDisabled =
-    (isTezosAsset(selectedCollateral) && !choosenBaker) || inputData.validationStatus === INPUT_STATUS_ERROR
+    (isTezosAsset(selectedCollateral) && !choosenBaker) ||
+    inputData.validationStatus === INPUT_STATUS_ERROR ||
+    inputData.validationStatus === INPUT_STATUS_DEFAULT
 
   if (!collateralToken || !collateralToken.rate) return null
 
