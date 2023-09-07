@@ -213,7 +213,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
               className="tooltip"
             />
           </div>
-          <CommaNumber value={daoFee} decimalsToShow={2} className="value" endingText="%" />
+          <CommaNumber value={daoFee} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
       </div>
 
@@ -230,16 +230,14 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
           </InputPinnedTokenInfo>
         </Input>
       </div>
-      <MemoizedComponent returnMemoizedComponent={isDisabledButton}>
-        <BorrowScreenBottomStats
-          inputAmount={inputAmount}
-          assetDecimalsToShow={assetDecimalsToShow}
-          daoFee={daoFee}
-          futureCollateralRatio={futureCollateralRatio}
-          futureBorrowCapacity={futureBorrowCapacity}
-          headerText="New Vault stats"
-        />
-      </MemoizedComponent>
+      <BorrowScreenBottomStats
+        inputAmount={inputAmount}
+        assetDecimalsToShow={assetDecimalsToShow}
+        daoFee={daoFee}
+        futureCollateralRatio={futureCollateralRatio}
+        futureBorrowCapacity={futureBorrowCapacity}
+        headerText="New Vault stats"
+      />
 
       <div className="manage-btn">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={continueHandler} disabled={isDisabledButton}>

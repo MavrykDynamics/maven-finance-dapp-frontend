@@ -40,6 +40,10 @@ export type TokenMetadataType = {
       icon: string
     } | null
   }
+  // M tokens fields
+  mToken: {
+    interestRateDecimals: number
+  }
 }>
 
 // loan token metadata
@@ -61,6 +65,7 @@ export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType
   }
 }
 
+// farms tokens
 export interface FarmsTokenMetadataType extends TokenMetadataType {
   farmLpData: {
     token1: {
@@ -77,6 +82,13 @@ export interface FarmsTokenMetadataType extends TokenMetadataType {
       decimals: number
       icon: string
     } | null
+  }
+}
+
+// mToken
+export interface M_TokenMetadataType extends TokenMetadataType {
+  mToken: {
+    interestRateDecimals: number
   }
 }
 

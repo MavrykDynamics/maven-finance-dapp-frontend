@@ -14,6 +14,7 @@ import {
   farmLiquidityPairTokenMetadataSchema,
   farmLiquidityTokenMetadataSchema,
   farmLpSubtokenMetadataSchema,
+  mTokenMetadataSchema,
   tokenMetadataSchema,
 } from './tokens.schemes'
 
@@ -191,14 +192,10 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         if (tokenFromGql.farms_lp_tokens.length) {
           const farmLpTokenMetadata = handleFarmLpToken(tokenFromGql)
 
-          console.log({ tokenFromGql, farmLpTokenMetadata })
-
           if (farmLpTokenMetadata) {
             acc.tokensMetadata[farmLpTokenMetadata.address] = farmLpTokenMetadata
             acc.farmLpTokens.push(farmLpTokenMetadata.address)
           }
-
-          console.log({ tokensAcc: acc })
         }
 
         const {
@@ -302,7 +299,19 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         // if token is mToken
-        if (m_tokens?.[0]?.address) acc.mTokens.push(token_address)
+        if (m_tokens?.[0]?.address) {
+          const {
+            assets: [{ decimals: interestRateDecimals }],
+          } = mTokenMetadataSchema.parse(m_tokens[0].metadata)
+
+          acc.mTokens.push(token_address)
+          tokenMetadata = {
+            ...tokenMetadata,
+            mToken: {
+              interestRateDecimals: Number(interestRateDecimals),
+            },
+          }
+        }
 
         acc.tokensMetadata[token_address] = { ...acc.tokensMetadata[token_address], ...tokenMetadata }
       } catch (e) {
