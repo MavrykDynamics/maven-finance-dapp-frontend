@@ -15,6 +15,7 @@ export const DEFAULT_CREATE_VAULT_STATE: CreateVaultModalState = {
   isVaultCreating: false,
   selectedCollaterals: {},
   selectedCollateralsAddresses: [],
+  selectedBaker: null,
   newVault: {
     id: 0,
     address: '',
