@@ -36,6 +36,7 @@ export const dark = {
   downBgColor: 'rgba(255, 67, 67, 0.2)',
   neutralBgColor: 'rgba(119, 164, 242, 0.2)',
   // specific colors
+  coralColor: '#FF8080',
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(80, 62, 170)',
   ipfsHoverBorderColor: '%2386D4C9FF',
@@ -100,6 +101,7 @@ export const light = {
   downBgColor: 'rgba(255, 67, 67, 0.2)',
   neutralBgColor: 'rgba(119, 164, 242, 0.2)',
   // specific colors
+  coralColor: '#FF8080',
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(31, 31, 31)',
   ipfsHoverBorderColor: '%238D86EBFF',
@@ -164,6 +166,7 @@ export const space = {
   downBgColor: 'rgba(255, 67, 67, 0.2)',
   neutralBgColor: 'rgba(119, 164, 242, 0.2)',
   // specific colors
+  coralColor: '#FF8080',
   inputFocusColor: '#7068AA',
   ipfsBorderColor: 'rgb(80, 62, 170)',
   ipfsHoverBorderColor: '%2386D4C9FF',

@@ -31,6 +31,7 @@ type VerticalFarmCardPropsType = {
   isCardOpened: boolean
   harvestRewards: () => void
   expandCallback: () => void
+  isDoubleRewards?: boolean
 }
 
 export const VerticalFarmCard = ({
@@ -39,6 +40,7 @@ export const VerticalFarmCard = ({
   isCardOpened,
   harvestRewards,
   expandCallback,
+  isDoubleRewards = true,
 }: VerticalFarmCardPropsType) => {
   const { userAddress } = useUserContext()
   const { availableFarmRewards } = useUserRewards()
@@ -54,6 +56,12 @@ export const VerticalFarmCard = ({
 
   return (
     <VerticalFarmCardStyled className={classNames({ isCardOpened })}>
+      {isDoubleRewards ? (
+        <div className="double-rewards-tag">
+          <Icon id={'loans'} /> Double Rewards
+        </div>
+      ) : null}
+
       <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
@@ -63,6 +71,7 @@ export const VerticalFarmCard = ({
         farmName={farm.name}
         farmCreator={farm.creatorAddress}
         farmToken={farmToken}
+        isVerticalFarm
       />
 
       <div className="farm-stats">

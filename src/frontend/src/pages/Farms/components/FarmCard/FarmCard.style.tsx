@@ -140,7 +140,33 @@ export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Ma
 `
 
 export const VerticalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: MavrykTheme }>`
-  padding: 40px 20px 0 20px;
+  padding: 43px 20px 0 20px;
+
+  .double-rewards-tag {
+    position: absolute;
+    top: 10px;
+    left: 0px;
+
+    width: fit-content;
+    height: 30px;
+    padding: 0 11px;
+    column-gap: 5px;
+
+    display: flex;
+    align-items: center;
+
+    background-color: ${({ theme }) => theme.coralColor};
+    color: ${({ theme }) => theme.backgroundColor};
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+
+      fill: ${({ theme }) => theme.backgroundColor};
+    }
+  }
 
   .farm-card-header {
     width: 100%;

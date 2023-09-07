@@ -1,23 +1,34 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { PopupContentWrapperBase } from '../PopupMain.style'
 
-export const FarmLpActionsPopupsContent = styled.div<{ theme: MavrykTheme }>`
+export const FarmLpActionsPopupsContent = styled(PopupContentWrapperBase)`
+  height: 360px;
+  width: 480px;
+
   row-gap: 5px;
+  padding: 40px 35px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 10px;
+  justify-content: space-between;
 
   .popup-header {
     display: flex;
-    width: 100%;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    column-gap: 20px;
+
+    width: 100%;
+
+    > div {
+      max-width: 70%;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
 
     font-weight: 600;
     font-size: 18px;
-    line-height: 18px;
     color: ${({ theme }) => theme.mainHeadingText};
   }
 

@@ -5,13 +5,10 @@ import { useLockBodyScroll } from 'react-use'
 import Icon from 'app/App.components/Icon/Icon.view'
 import Button from 'app/App.components/Button/NewButton'
 import { Input } from '../../../../app/App.components/Input/NewInput'
-import {
-  InputStatusType,
-  INPUT_LARGE,
-  INPUT_STATUS_ERROR,
-  INPUT_STATUS_SUCCESS,
-} from '../../../../app/App.components/Input/Input.constants'
-import CoinsIcons from '../../../../app/App.components/Icon/CoinsIcons.view'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
+import { FarmLpActionsPopupsContent } from 'app/App.components/popup/bases/FarmsPopup.style'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { FarmCardCoinIcons, FARM_CARD_COINS_LARGE } from '../FarmCard/cardParts/FarmCardCoinIcons'
 
 // types
 import { FarmDepositPopupDataType } from 'providers/FarmsProvider/farms.provider.types'
@@ -19,6 +16,12 @@ import { FarmDepositPopupDataType } from 'providers/FarmsProvider/farms.provider
 // consts
 import { WITHDRAW_FROM_FARM_ACTION } from 'providers/FarmsProvider/helpers/farms.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import {
+  InputStatusType,
+  INPUT_LARGE,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from '../../../../app/App.components/Input/Input.constants'
 
 // utils
 import { checkWhetherTokenIsFarmToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -32,9 +35,6 @@ import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // view
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { FarmLpActionsPopupsContent } from 'app/App.components/popup/bases/FarmsPopup.style'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 
 export const FarmWithdrawModal = ({
   closeHandler,
@@ -80,8 +80,7 @@ export const FarmWithdrawModal = ({
   )
   const handleChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-      const validationStatus =
-        +value <= depositedAmountByUser && +value >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      const validationStatus = +value <= depositedAmountByUser && +value > 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
       setInputData({ ...inputData, amount: value, validation: validationStatus })
     },
@@ -121,47 +120,49 @@ export const FarmWithdrawModal = ({
 
   return (
     <PopupContainer onClick={closeHandler} show={show}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
+      <FarmLpActionsPopupsContent onClick={(e) => e.stopPropagation()}>
         <button onClick={closeHandler} className="close-modal" />
-        <FarmLpActionsPopupsContent>
-          <div className="popup-header">
-            <CoinsIcons />
-            <div>Unstake {tokenName} LP Tokens</div>
-          </div>
+        <div className="popup-header">
+          <FarmCardCoinIcons
+            farmToken={selectedFarmToken}
+            isMFarm={selectedFarm.isMFarm}
+            size={FARM_CARD_COINS_LARGE}
+          />
+          <div>Unstake {tokenName} LP Tokens</div>
+        </div>
 
-          <Input
-            className={`pinned-dropdown mb-45`}
-            inputProps={{
-              value: inputData.amount,
-              type: 'number',
-              onBlur: handleBlur,
-              onFocus: handleFocus,
-              onChange: handleChange,
-            }}
-            settings={{
-              balance: userTokenBalance,
-              balanceAsset: tokenName,
-              useMaxHandler: () => setInputData({ ...inputData, amount: String(userTokenBalance) }),
-              inputStatus: inputData.validation,
-              inputSize: INPUT_LARGE,
-            }}
+        <Input
+          className={`pinned-dropdown`}
+          inputProps={{
+            value: inputData.amount,
+            type: 'number',
+            onBlur: handleBlur,
+            onFocus: handleFocus,
+            onChange: handleChange,
+          }}
+          settings={{
+            balance: userTokenBalance,
+            balanceAsset: tokenName,
+            useMaxHandler: () => setInputData({ ...inputData, amount: String(userTokenBalance) }),
+            inputStatus: inputData.validation,
+            inputSize: INPUT_LARGE,
+          }}
+        >
+          <InputPinnedTokenInfo>{tokenName}</InputPinnedTokenInfo>
+        </Input>
+
+        <div className="action-btn">
+          <Button
+            disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
+            kind={BUTTON_PRIMARY}
+            form={BUTTON_WIDE}
+            onClick={handleWithdrawFromFarm}
           >
-            <InputPinnedTokenInfo>{tokenName}</InputPinnedTokenInfo>
-          </Input>
-
-          <div className="action-btn">
-            <Button
-              disabled={inputData.validation !== INPUT_STATUS_SUCCESS}
-              kind={BUTTON_PRIMARY}
-              form={BUTTON_WIDE}
-              onClick={handleWithdrawFromFarm}
-            >
-              <Icon id="out" />
-              Unstake LP
-            </Button>
-          </div>
-        </FarmLpActionsPopupsContent>
-      </PopupContainerWrapper>
+            <Icon id="out" />
+            Unstake LP
+          </Button>
+        </div>
+      </FarmLpActionsPopupsContent>
     </PopupContainer>
   )
 }
