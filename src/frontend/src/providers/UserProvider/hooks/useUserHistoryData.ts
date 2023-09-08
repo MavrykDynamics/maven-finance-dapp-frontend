@@ -5,6 +5,7 @@ import { useHistory, useLocation } from 'react-router'
 // hooks
 import { useUserContext } from '../user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // utils
@@ -12,8 +13,6 @@ import { normalizeUserHistoryData } from '../helpers/userData.helpers'
 
 // consts
 import { USER_ACTIONS_HISTORY_DATA_QUERY } from '../queries/userData.query'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import {
   LIST_NAMES_MAPPER,
   USER_ACTIONS_HISTORY,
@@ -24,6 +23,7 @@ import {
 const userActionsHistoryItemsPerPage = LIST_NAMES_MAPPER[USER_ACTIONS_HISTORY]
 
 export const useUserHistoryData = () => {
+  const { handleApolloError } = useApolloContext()
   const { setUserHistoryData, userAddress, actionsHistory } = useUserContext()
   const { bug } = useToasterContext()
 
@@ -68,10 +68,7 @@ export const useUserHistoryData = () => {
         setUserHistoryData(currentPage, normalizedUserHistoryData, itemsAmount)
       }
     },
-    onError: (e) => {
-      console.error(`USER_ACTIONS_HISTORY_DATA_QUERY query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
+    onError: (error) => handleApolloError(error, 'USER_ACTIONS_HISTORY_DATA_QUERY'),
   })
 
   return {

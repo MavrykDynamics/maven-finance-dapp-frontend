@@ -1,27 +1,22 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { usePrevious } from 'react-use'
-import { ApolloError } from '@apollo/client'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // helpers
 import { normalizeGovernanceConfig } from './helpers/governanceConfig.normalizer'
 import { getProposalsProviderReturnValue } from './helpers/proposals.utils'
 import { normalizeProposals, normalizeSubmissionProposals } from './helpers/proposals.normalizer'
 
-// queries
-import { getProposalsQuery, PROPOSALS_SUBMISSION_QUERY } from './queries/proposalsData.query'
-import { GOVERNANCE_CONFIG_QUERY } from './queries/governanceConfig.query'
-
 // types
 import { ProposalsContext, NullableProposalsContextState, ProposalsSubsRecordType } from './proposals.provider.types'
 
 // consts
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { getProposalsQuery, PROPOSALS_SUBMISSION_QUERY } from './queries/proposalsData.query'
+import { GOVERNANCE_CONFIG_QUERY } from './queries/governanceConfig.query'
 import {
   DEFAULT_PROPOSALS_ACTIVE_SUBS,
   GOVERNANCE_CONFIG_SUB,
@@ -41,7 +36,7 @@ type Props = {
 }
 
 const ProposalsProvider = ({ children }: Props) => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
   const { userAddress } = useUserContext()
 
   const prevUserAddress = usePrevious(userAddress)
@@ -57,11 +52,6 @@ const ProposalsProvider = ({ children }: Props) => {
       }))
     }
   }, [userAddress])
-
-  const handleSubError = (error: ApolloError, subName: keyof ProposalsSubsRecordType) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
 
   // subscribe to past proposals, active proposals or all proposals
   useQueryWithRefetch(
@@ -112,18 +102,19 @@ const ProposalsProvider = ({ children }: Props) => {
           proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
         }))
 
-        console.log('getProposalsQuery', {
-          data,
-          allProposalsIds,
-          pastProposalsIds,
-          currentRoundProposalsIds,
-          waitingProposalsIdsToBeExecuted,
-          waitingProposalsIdsToBePaid,
-          proposalsMapper,
-          activeSubs,
-        })
+        // TODO: debug log, remove before merge
+        // console.log('getProposalsQuery', {
+        //   data,
+        //   allProposalsIds,
+        //   pastProposalsIds,
+        //   currentRoundProposalsIds,
+        //   waitingProposalsIdsToBeExecuted,
+        //   waitingProposalsIdsToBePaid,
+        //   proposalsMapper,
+        //   activeSubs,
+        // })
       },
-      onError: (error) => handleSubError(error, PROPOSALS_DATA_SUB),
+      onError: (error) => handleApolloError(error, 'getProposalsQuery'),
     },
   )
 
@@ -146,10 +137,8 @@ const ProposalsProvider = ({ children }: Props) => {
         submissionProposalsIds,
         proposalsMapper: { ...prev.proposalsMapper, ...proposalsMapper },
       }))
-
-      console.log('PROPOSALS_SUBMISSION_QUERY', { data, submissionProposalsIds, proposalsMapper, activeSubs })
     },
-    onError: (error) => handleSubError(error, PROPOSALS_DATA_SUB),
+    onError: (error) => handleApolloError(error, 'PROPOSALS_SUBMISSION_QUERY'),
   })
 
   // subscribe to governance config changes
@@ -161,7 +150,7 @@ const ProposalsProvider = ({ children }: Props) => {
         config: normalizeGovernanceConfig(data),
       }))
     },
-    onError: (error) => handleSubError(error, GOVERNANCE_CONFIG_SUB),
+    onError: (error) => handleApolloError(error, 'GOVERNANCE_CONFIG_QUERY'),
   })
 
   const changeProposalsSubscriptionsList = (newSkips: Partial<ProposalsSubsRecordType>) => {

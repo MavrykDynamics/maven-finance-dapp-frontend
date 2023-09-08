@@ -1,10 +1,24 @@
-import React, { createContext, useContext, useMemo, useState } from 'react'
-import { ApolloClient, InMemoryCache, from, ApolloProvider as OriginalApolloProvider } from '@apollo/client'
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  ApolloClient,
+  InMemoryCache,
+  from,
+  ApolloProvider as OriginalApolloProvider,
+  ApolloError,
+} from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
-import { ApolloContext } from './apollo.provider.types'
-import { backuphttpLink, backupwsLink, httpLink, retryLink, splitLink, wsLink } from './apollo.config'
-import { FatalError } from 'errors/error'
+
+// consts
+import { httpLink, retryLink, splitLink, wsLink } from './apollo.config'
+import { FatalError, isAbortError } from 'errors/error'
+
+// hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+
+// types
+import { ApolloContext } from './apollo.provider.types'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // context
 const apolloContext = createContext<ApolloContext>(undefined!)
@@ -20,6 +34,8 @@ export const ApolloProvider = ({ children }: Props) => {
   const errorLink = useMemo(
     () =>
       onError(({ networkError, graphQLErrors }) => {
+        if (isAbortError(networkError)) return
+
         if (graphQLErrors) {
           for (const { message, locations, path } of graphQLErrors) {
             console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
@@ -33,7 +49,7 @@ export const ApolloProvider = ({ children }: Props) => {
             bug('Sorry, your browser is offline.')
           } else {
             console.log('Some other network error occurred.')
-            if (hasNetworkError) fatal(new FatalError('Both servers are disabled.'))
+            if (hasNetworkError) fatal(new FatalError('Server is disabled.'))
 
             setHasNetworkError(true)
           }
@@ -51,27 +67,27 @@ export const ApolloProvider = ({ children }: Props) => {
     [errorLink],
   )
 
-  const backupApolloClient = useMemo(
-    () =>
-      new ApolloClient({
-        link: from([errorLink, retryLink, splitLink(backupwsLink, backuphttpLink)]),
-        cache: new InMemoryCache(),
-      }),
-    [errorLink],
-  )
+  const handleApolloError = useCallback((error: ApolloError, subName: string, bugMessage?: string) => {
+    if (isAbortError(error.networkError)) return
 
-  const internalApolloClient = useMemo(() => (hasNetworkError ? backupApolloClient : apolloClient), [hasNetworkError])
+    console.error(`${subName} query error: `, error)
+    bug(
+      TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'],
+      bugMessage ?? TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'],
+    )
+  }, [])
 
   const context = useMemo(
     () => ({
-      apolloClient: internalApolloClient,
+      apolloClient,
+      handleApolloError,
     }),
-    [internalApolloClient],
+    [apolloClient],
   )
 
   return (
     <apolloContext.Provider value={context}>
-      <OriginalApolloProvider client={internalApolloClient}>{children}</OriginalApolloProvider>
+      <OriginalApolloProvider client={apolloClient}>{children}</OriginalApolloProvider>
     </apolloContext.Provider>
   )
 }
