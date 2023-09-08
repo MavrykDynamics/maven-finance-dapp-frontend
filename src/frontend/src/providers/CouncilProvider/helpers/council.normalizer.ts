@@ -19,8 +19,8 @@ import { ValidationError } from 'errors/error'
 import { BreakGlassCouncilActionsSubsType, CouncilActionsSubsType } from '../council.provider.types'
 
 function pushIdBasedOnSubType(
-  userAddress: string,
-  sub: BreakGlassCouncilActionsSubsType | CouncilActionsSubsType,
+  userAddress: string | null,
+  sub: BreakGlassCouncilActionsSubsType | CouncilActionsSubsType | null,
   acc: CouncilActionsType,
   { id, initiatorId }: CouncilActionType,
 ) {
@@ -71,8 +71,8 @@ export function normalizeCouncilMembers(
 
 export function normalizeCouncilActions(
   storage: GetBreakGlassCouncilActionsQuery['break_glass_action'] | GetCouncilActionsQuery['council_action'],
-  userAddress: string,
-  sub: BreakGlassCouncilActionsSubsType | CouncilActionsSubsType,
+  userAddress: string | null,
+  sub: BreakGlassCouncilActionsSubsType | CouncilActionsSubsType | null,
 ) {
   const initialData: CouncilActionsType = {
     allPendingActions: [],

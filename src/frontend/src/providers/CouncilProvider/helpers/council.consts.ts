@@ -1,4 +1,10 @@
-import { CouncilStateType, CouncilSubsRecordType, NullableCouncilContextStateType } from '../council.provider.types'
+import {
+  CouncilActionsRecordType,
+  CouncilStateType,
+  CouncilSubsRecordType,
+  NullableActionsDataType,
+  NullableCouncilContextStateType,
+} from '../council.provider.types'
 
 // actions
 export const SET_ALL_CONTRACTS_ADMIN_ACTION = 'setAllContractsAdmin'
@@ -37,7 +43,7 @@ export const DEFAULT_COUNCIL_ACTIVE_SUBS: CouncilSubsRecordType = {
   [BREAK_GLASS_COUNCIL_MEMBERS_SUB]: false,
 } as const
 
-const NULLABLE_COUNCIL_ACTIONS_DATA = {
+const NULLABLE_COUNCIL_ACTIONS_DATA: NullableActionsDataType = {
   allPendingActions: null,
   notMyPendingActions: null,
   myPendingActions: null,
@@ -45,7 +51,7 @@ const NULLABLE_COUNCIL_ACTIONS_DATA = {
   myPastActions: null,
   actionsMapper: null,
 }
-const EMPTY_COUNCIL_ACTIONS_DATA = {
+const EMPTY_COUNCIL_ACTIONS_DATA: CouncilActionsRecordType = {
   allPendingActions: [],
   notMyPendingActions: [],
   myPendingActions: [],

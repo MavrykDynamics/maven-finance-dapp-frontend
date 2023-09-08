@@ -49,25 +49,27 @@ export type CouncilActionsRecordType = {
   actionsMapper: CouncilActionsType['actionsMapper']
 }
 
-export type NullableActionsDataType = TupleKeyValueAny<string, CouncilActionsRecordType | null>
+export type NullableActionsDataType = DeepNullable<CouncilActionsRecordType>
 
 export type CouncilStateType = {
   breakGlassCouncilMembers: CouncilMembersType
   councilMembers: CouncilMembersType
-  councilActions: CouncilActionsRecordType
-  breakGlassCouncilActions: CouncilActionsRecordType
+  councilActions: NullableActionsDataType
+  breakGlassCouncilActions: NullableActionsDataType
 }
 
 export type NullableCouncilContextStateType = DeepNullable<
-  Omit<CouncilStateType, 'councilActions' | 'breakGlassCouncilActions'> & {
-    councilActions: NullableActionsDataType
-    breakGlassCouncilActions: NullableActionsDataType
-  }
->
+  Omit<CouncilStateType, 'councilActions' | 'breakGlassCouncilActions'>
+> & {
+  councilActions: NullableActionsDataType
+  breakGlassCouncilActions: NullableActionsDataType
+}
 
 export type CouncilContext = CouncilStateType & {
-  isCouncilLoading: boolean
-  isBreakGlassCouncilLoading: boolean
+  areCouncilActionsLoading: boolean
+  areBreakGlassActionsLoading: boolean
+  areCouncilBreakGlassMembersLoading: boolean
+  areCouncilMembersLoading: boolean
 
   changeCouncilSubscriptionList: (subs: Partial<CouncilSubsRecordType>) => void
 }
