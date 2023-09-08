@@ -25,7 +25,6 @@ import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/T
 // providers
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -46,7 +45,6 @@ export const ConfirmationScreen = () => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { vaultsMapper } = useVaultsContext()
-  const { choosenBaker } = useXtzBakersForDD()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -58,6 +56,7 @@ export const ConfirmationScreen = () => {
     closePopup,
     finalBorrowInputData,
     marketAvailableLiquidity,
+    selectedBaker,
   } = useCreateVaultContext()
   const {
     config: { daoFee },
@@ -143,7 +142,7 @@ export const ConfirmationScreen = () => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Selected Baker</div>
-              <div className="value">{choosenBaker?.bakerName ?? 'Not relevant'}</div>
+              <div className="value">{selectedBaker?.bakerName ?? 'Not relevant'}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Total Collateral Deposited</div>

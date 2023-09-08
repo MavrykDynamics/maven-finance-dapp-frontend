@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
@@ -66,21 +66,37 @@ export const AddCollateralScreen = () => {
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
+  const { bakersRecord, bakers } = useXtzBakersForDD()
   const {
     selectedCollateralsAddresses,
     selectedCollaterals,
     updateSelectedCollaterals,
     updateScreenToShow,
+    updateSelectedBaker,
     hasXTZTokenSelected,
     borrowCapacity,
     collateralsBalance,
+    selectedBaker,
   } = useCreateVaultContext()
+
+  // refs
+  // TODO remove ref when moving mappedCollaterasl to separate file
+  const noDisabledCollateralAddressRef = useRef('')
 
   const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit } = useXTZMaxAmountValidator(
     selectedCollateralsAddresses,
     selectedCollaterals,
   )
+
+  useEffect(() => {
+    updateSelectedCollaterals({
+      [noDisabledCollateralAddressRef.current]: {
+        tokenAddress: noDisabledCollateralAddressRef.current,
+        amount: '0',
+        validation: INPUT_STATUS_DEFAULT,
+      },
+    })
+  }, [noDisabledCollateralAddressRef.current])
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -114,31 +130,18 @@ export const AddCollateralScreen = () => {
 
     if (!selectedCollateralsAddresses.length && firstNotDisabledCollateralAddress) {
       reducedCollaterals[firstNotDisabledCollateralAddress].disabled = true
-      updateSelectedCollaterals({
-        [firstNotDisabledCollateralAddress]: {
-          tokenAddress: firstNotDisabledCollateralAddress,
-          amount: '0',
-          validation: INPUT_STATUS_DEFAULT,
-        },
-      })
+      noDisabledCollateralAddressRef.current = firstNotDisabledCollateralAddress
     }
 
     return reducedCollaterals
-  }, [
-    collateralTokens,
-    selectedCollaterals,
-    selectedCollateralsAddresses.length,
-    tokensMetadata,
-    tokensPrices,
-    updateSelectedCollaterals,
-  ])
+  }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses.length, tokensMetadata, tokensPrices])
 
   const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
     ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress),
   )
 
   const isAddCollateralContinueDisabled = Boolean(
-    (hasXTZTokenSelected && !choosenBaker) ||
+    (hasXTZTokenSelected && !selectedBaker) ||
       !selectedCollateralsAddresses.every((tokenAddress) => {
         return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
       }),
@@ -162,7 +165,6 @@ export const AddCollateralScreen = () => {
     const _selectedCollateral = { ...selectedCollaterals }
 
     delete _selectedCollateral[tokenAddress]
-
     updateSelectedCollaterals({
       ..._selectedCollateral,
     })
@@ -321,11 +323,11 @@ export const AddCollateralScreen = () => {
                       <div className="block-name">Select Baker</div>
                       <DropDown
                         placeholder="Select Bakery"
-                        activeItem={choosenBaker}
+                        activeItem={selectedBaker}
                         items={bakers}
                         className="select-xtz-baker"
                         clickItem={(bakerAddress: DDItemId) =>
-                          typeof bakerAddress === 'string' ? setChoosenBaker(bakerAddress) : null
+                          typeof bakerAddress === 'string' ? updateSelectedBaker(bakersRecord[bakerAddress]) : null
                         }
                       />
                     </div>

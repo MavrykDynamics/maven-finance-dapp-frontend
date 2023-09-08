@@ -1,4 +1,3 @@
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import {
   ADD_COLLATERAL_SCREEN_ID,
   BORROW_SCREEN_ID,
@@ -6,8 +5,12 @@ import {
   CONFIRM_STATS_SCREEN_ID,
   INITIAL_SCREEN_ID,
 } from './createNewVault.consts'
+
+// types
+import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { CreateVaultPopupDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
+import { DropDownXTZBakerType } from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 
 export type ScreenType =
   | typeof INITIAL_SCREEN_ID
@@ -50,6 +53,7 @@ export type CreateVaultModalState = {
   isVaultCreating: boolean
   newVault: NewVaultType
   hasXTZTokenSelected: string | undefined
+  selectedBaker: DropDownXTZBakerType | null
   finalBorrowInputData: FinalBorrowInputDataType
 }
 
@@ -61,6 +65,7 @@ export type CreateVaultModalContext = CreateVaultModalState &
     updateVaultCreating: (value: boolean) => void
     updateNewVault: (newVault: NewVaultType) => void
     updateSelectedCollaterals: (selectedCollaterals: SelectedCollateralsType) => void
+    updateSelectedBaker: (selectedBaker: DropDownXTZBakerType | null) => void
     setFinalBorrowInputAmount: (args: FinalBorrowInputDataType) => void
     collateralsBalance: number
     borrowCapacity: number
