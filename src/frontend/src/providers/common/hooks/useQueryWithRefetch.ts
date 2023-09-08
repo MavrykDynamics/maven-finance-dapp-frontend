@@ -17,6 +17,7 @@ import { isAbortError } from 'errors/error'
  * @returns returned default params from apollo's useQuery
  *
  * NOTES:
+ *    --- variables should consist of primitive values
  *    --- if variable change it will provoke useQuery to work, so we don't need to pass new variables to refetch function, cuz refetch won't work
  *    --- @refetchQueryVariables should be in UseCallback if it depends on data from cmp/hook, or be outside cmp/hook to not provoke useCallback to recreate refetch fn on parent's rerender
  */
@@ -49,7 +50,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         return currentValue === prevValue
       })
 
-      // if variables are different, we need to reset isInitialQueryDone
+      // if variables are different, we need to reset isInitialQueryDone, to load it's data, without waiting for refetch
       if (!isVariablesEq) isInitialQueryDone.current = false
     }
   }, [queryOptions?.variables])
@@ -121,7 +122,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     [blocksDiff, refetchQueryVariables],
   )
 
-  // subscribe to indexer lvl change
+  // subscribe to indexer lvl change, and unsibscribe when component unmounts, or if it's provider when query becomes inactive
   useEffect(() => {
     if (!userQuerySkip) refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
 
