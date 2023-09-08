@@ -1,13 +1,16 @@
+// utils
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenSymbolAndName } from './tokenNames'
 import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
-import { TokenType, isValidTokenType } from 'utils/TypesAndInterfaces/General'
 
+// types
 import { TokenMetadataType, TokensContextStateType } from '../tokens.provider.types'
+import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
+import { TokenType, isValidTokenType } from 'utils/TypesAndInterfaces/General'
 import { TokensMetadataQuery } from 'utils/__generated__/graphql'
 
+// consts
 import { DEFAULT_MIN_COLLATERAL_AMOUNT, SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 import {
   TokenIndexerMetadataType,
   TokensGqlSchemaType,
@@ -92,6 +95,11 @@ const handleMvkToken = ({
   }
 }
 
+/**
+ * farm can have liquidityPairTokenParsed -> 2 tokens unite into 1 token,
+ * and liquidityTokenParsed -> 1 tokens that represents farm
+ * this util parsing metadata of that tokens to get it's address and symbol
+ */
 const parseFarmLiquidityToken = (lpTokenMetadata: any) => {
   const liquidityPairTokenParsed = farmLiquidityPairTokenMetadataSchema.safeParse(lpTokenMetadata)
   const liquidityTokenParsed = farmLiquidityTokenMetadataSchema.safeParse(lpTokenMetadata)
@@ -111,6 +119,10 @@ const parseFarmLiquidityToken = (lpTokenMetadata: any) => {
   throw new Error('parsing lp token metadata error')
 }
 
+/**
+ * util to get tokens that related to farms, and get tokens that creating this token, by uniting
+ * also farm token can consis only from 1 token, it's also covered here
+ */
 const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMetadataType | null => {
   try {
     const { token_id, token_standard, farms_lp_tokens, metadata } = tokenFromGql

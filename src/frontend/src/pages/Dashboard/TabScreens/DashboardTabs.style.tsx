@@ -563,6 +563,10 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
         opacity: 0.8;
       }
 
+      p {
+        margin: 0;
+      }
+
       .top {
         align-items: center;
         margin-bottom: 30px;
@@ -578,10 +582,6 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
 
           font-weight: 500;
           font-size: 12px;
-
-          p {
-            margin: 0;
-          }
 
           .large {
             font-weight: 600;

@@ -61,15 +61,11 @@ const FarmsProvider = ({ children }: Props) => {
   )
 
   const updateFarms = (indexerData: FarmsQueryQuery) => {
-    console.log({ farms: indexerData.farm })
     const normalizedFarms = normalizeFarms(indexerData.farm)
-    console.log({ normalizedFarms: normalizedFarms })
 
     const isAllFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_DATA_SUB
-
     const isAllLiveFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_LIVE_DATA_SUB
     const isLiveStakedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_LIVE_STAKED_DATA_SUB
-
     const isAllFinishedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_FINISHED_DATA_SUB
     const isFinishedStakedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_FINISHED_STAKED_DATA_SUB
 

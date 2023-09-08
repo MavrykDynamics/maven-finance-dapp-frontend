@@ -143,7 +143,7 @@ export const FarmsTab = () => {
 
               <div className="collumn">
                 <div className="name">Highest APY</div>
-                <CommaNumber value={highestAPY} className="value" />
+                <CommaNumber value={highestAPY} className="value" endingText="%" />
               </div>
 
               <div className="collumn">
@@ -182,7 +182,7 @@ export const FarmsTab = () => {
 
                       <div className="row-info">
                         <div className="name">APY: </div>
-                        <div className="value">{apy}</div>
+                        <CommaNumber value={apy} className="value" endingText="%" />
                       </div>
 
                       <div className="row-info">

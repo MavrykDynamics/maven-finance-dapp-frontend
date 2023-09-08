@@ -41,11 +41,9 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   const queryResult = useQuery(query, {
     ...queryOptions,
     onCompleted: (data) => {
-      console.log('internalOnComplete ', { queryOptions, query, name: refetchOptions?.name ?? 'default name' })
       isInitialQueryDone.current = true
       queryOptions?.onCompleted?.(data)
     },
-    fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
   })
 
@@ -67,14 +65,28 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         }
 
         if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
-          await queryResult.refetch(newRefetchVariables)
+          const refetchData = await queryResult.refetch(newRefetchVariables)
+          console.log('refetch ', {
+            queryOptions,
+            queryResult,
+            refetchData,
+            query,
+            name: refetchOptions?.name ?? 'default name',
+          })
           lastUpdatedBlock.current = newIndexerLevel
         }
 
         return
       }
 
-      await queryResult.refetch(newRefetchVariables)
+      const refetchData = await queryResult.refetch(newRefetchVariables)
+      console.log('refetch ', {
+        queryOptions,
+        queryResult,
+        refetchData,
+        query,
+        name: refetchOptions?.name ?? 'default name',
+      })
     },
     [blocksDiff, refetchQueryVariables],
   )

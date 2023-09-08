@@ -145,11 +145,9 @@ export const FarmCardCoinIcons = ({ isMFarm, farmToken, size }: CoinIconsPropsTy
 
   const token0Metadata = getTokenDataByAddress({ tokenAddress: farmToken.farmLpData.token0?.address, tokensMetadata })
   const token0Icon = token0Metadata?.icon ?? farmToken.farmLpData.token0?.icon ?? token0Metadata?.icon
-  // const token0Icon = null
 
   const token1Metadata = getTokenDataByAddress({ tokenAddress: farmToken.farmLpData.token1?.address, tokensMetadata })
   const token1Icon = token1Metadata?.icon ?? farmToken.farmLpData.token1?.icon ?? token1Metadata?.icon
-  // const token1Icon = null
 
   return (
     <FarmCardCoinIconsStyled className={classNames(size)}>

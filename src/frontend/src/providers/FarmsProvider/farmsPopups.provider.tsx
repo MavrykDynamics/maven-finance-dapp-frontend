@@ -18,6 +18,8 @@ import { FarmWithdrawModal } from '../../pages/Farms/components/FarmsPopups/Farm
 
 export const farmsPopupsContext = createContext<FarmsPopupsContextStateType>(undefined!)
 
+// TODO: implement ROI calculator later
+
 /**
  * FarmsPopupsProvider - provides the context for managing popups in the Farm component of the application.
  * It maintains the state of different popups and provides methods to open and close these popups.

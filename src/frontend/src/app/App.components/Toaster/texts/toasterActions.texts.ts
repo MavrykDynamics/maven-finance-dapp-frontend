@@ -81,6 +81,8 @@ import {
   VOTE_FOR_ACTION,
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
+
+// farms consts
 import {
   DEPOSIT_TO_FARM_ACTION,
   HARVEST_FARM_REWARDS_ACTION,

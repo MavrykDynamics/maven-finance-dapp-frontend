@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { PopupContentWrapperBase } from '../PopupMain.style'
 
-export const FarmLpActionsPopupsContent = styled(PopupContentWrapperBase)`
+export const FarmActionsPopupsContent = styled(PopupContentWrapperBase)`
   height: 360px;
   width: 480px;
 

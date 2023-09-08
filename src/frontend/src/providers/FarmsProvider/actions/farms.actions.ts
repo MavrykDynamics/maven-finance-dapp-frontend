@@ -11,6 +11,7 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { OpKind } from '@taquito/taquito'
 
+// TODO: test harvest, cuz no data now
 export const harvestRewards = async (farmAddress: string): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction

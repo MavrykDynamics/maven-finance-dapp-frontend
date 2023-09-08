@@ -1,6 +1,8 @@
+// types
 import { ModalStateType } from 'providers/LoansProvider/helpers/LoansModals.types'
 import FarmsPopupsProvider from './farmsPopups.provider'
 
+// consts
 import {
   FARMS_LIVE_STAKED_DATA_SUB,
   FARMS_FINISHED_STAKED_DATA_SUB,
@@ -12,6 +14,8 @@ import {
   WITHDRAW_FROM_FARM_ACTION,
   FARMS_ALL_FINISHED_DATA_SUB,
 } from './helpers/farms.const'
+
+// utils
 import { normalizeFarm } from './helpers/farms.normalizer'
 
 // farms general
@@ -63,6 +67,7 @@ export type RoiCalculatorPopupDataType = { selectedFarmAddress: string }
 export type FarmWithdrawPopupDataType = { selectedFarmAddress: string }
 export type FarmDepositPopupDataType = { selectedFarmAddress: string }
 
+// TODO: in future inplement ROI
 export type FarmsPopupsContextStateType = {
   // roiPopup: ModalStateType<RoiCalculatorPopupDataType>
   depositPopup: ModalStateType<FarmDepositPopupDataType>

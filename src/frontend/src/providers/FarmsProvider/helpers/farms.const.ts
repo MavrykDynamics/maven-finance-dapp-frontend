@@ -8,7 +8,6 @@ export const FINISHED_TAB_ID = 2
 
 // farms popups context
 export const DEFAULT_FARMS_POPUPS_STATE = {
-  // roiPopup: DEFAULT_FARMS_POPUP_STATE,
   depositPopup: {
     showModal: false,
     data: {

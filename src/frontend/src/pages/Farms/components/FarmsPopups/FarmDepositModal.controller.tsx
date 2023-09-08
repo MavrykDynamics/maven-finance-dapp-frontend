@@ -5,8 +5,8 @@ import { useLockBodyScroll } from 'react-use'
 import Icon from 'app/App.components/Icon/Icon.view'
 import Button from 'app/App.components/Button/NewButton'
 import { Input } from '../../../../app/App.components/Input/NewInput'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { FarmLpActionsPopupsContent } from 'app/App.components/popup/bases/FarmsPopup.style'
+import { PopupContainer } from 'app/App.components/popup/PopupMain.style'
+import { FarmActionsPopupsContent } from 'app/App.components/popup/bases/FarmsPopup.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { FarmCardCoinIcons, FARM_CARD_COINS_LARGE } from '../FarmCard/cardParts/FarmCardCoinIcons'
 
@@ -82,7 +82,7 @@ export const FarmDepositModal = ({
     [inputData],
   )
   const handleFocus = useCallback(
-    () => (inputData.amount === '' ? setInputData({ ...inputData, amount: '' }) : null),
+    () => (inputData.amount === '0' ? setInputData({ ...inputData, amount: '' }) : null),
     [inputData],
   )
   const handleChange = useCallback(
@@ -128,7 +128,7 @@ export const FarmDepositModal = ({
 
   return (
     <PopupContainer onClick={closeHandler} show={show}>
-      <FarmLpActionsPopupsContent onClick={(e) => e.stopPropagation()}>
+      <FarmActionsPopupsContent onClick={(e) => e.stopPropagation()}>
         <button onClick={closeHandler} className="close-modal" />
         <div className="popup-header">
           <FarmCardCoinIcons
@@ -170,7 +170,7 @@ export const FarmDepositModal = ({
             Stake LP
           </Button>
         </div>
-      </FarmLpActionsPopupsContent>
+      </FarmActionsPopupsContent>
     </PopupContainer>
   )
 }

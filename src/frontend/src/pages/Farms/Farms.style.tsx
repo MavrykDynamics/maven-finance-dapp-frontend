@@ -8,9 +8,9 @@ export const FarmsStyled = styled.div<{ theme: MavrykTheme }>`
     gap: 20px;
 
     &.isVerticalView {
-      grid-template-columns: repeat(3, 31.5%);
+      grid-template-columns: repeat(3, 32%);
       align-items: baseline;
-      column-gap: 30px;
+      column-gap: 2%;
     }
   }
 `
