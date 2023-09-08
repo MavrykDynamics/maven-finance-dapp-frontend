@@ -1,26 +1,25 @@
+import { ApolloError } from '@apollo/client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 // types
 import { ChartPeriodType } from 'types/charts.type'
 
-// providers
-import { useDoormanContext } from '../doorman.provider'
-
 // hooks
+import { useDoormanContext } from '../doorman.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // queries
 import { SMVK_MVK_HISTORY_DATA } from '../queries/doorman.query'
 
 // consts
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { ONE_HOUR } from 'consts/charts.const'
 
 // utils
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
-import { ApolloError } from '@apollo/client'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { isAbortError } from 'errors/error'
 
 // getTimestampBasedOnPeriod
 export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
@@ -28,6 +27,7 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
   const { bug } = useToasterContext()
 
   const handleSubError = (error: ApolloError, subName: string) => {
+    if (isAbortError(error.networkError)) return
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
