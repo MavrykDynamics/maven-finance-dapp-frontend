@@ -1,3 +1,4 @@
+import { normalizeCouncilActions, normalizeCouncilMembers } from './helpers/breakGlass.normalizer'
 import {
   ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
@@ -5,6 +6,10 @@ import {
   MY_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
 } from './helpers/breakGlassCouncil.consts'
+
+// normalizer types
+export type BreakGlassCouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
+export type BreakGlassCouncilActionsType = ReturnType<typeof normalizeCouncilActions>
 
 // subs consts type
 export type BreakGlassCouncilActionsSubsType =
@@ -18,17 +23,20 @@ export type BreakGlassCouncilSubsRecordType = {
   [BG_COUNCIL_ACTIONS_DATA]: BreakGlassCouncilActionsSubsType | null
 }
 
-//   export type FinancialRequestsStateType = {
-//     allFinRequestsIds: string[]
-//     pastFinRequestsIds: string[]
-//     ongoingFinRequestsIds: string[]
-//     financialRequestsMapper: Record<string, FinancialRequestRecord>
-//   }
+export type BreakGlassCouncilStateType = {
+  breakGlassCouncilMembers: BreakGlassCouncilMembersType
+  allPendingActions: BreakGlassCouncilActionsType['allPendingActions']
+  notMyPendingActions: BreakGlassCouncilActionsType['notMyPendingActions']
+  myPendingActions: BreakGlassCouncilActionsType['myPendingActions']
+  allPastActions: BreakGlassCouncilActionsType['allPastActions']
+  myPastActions: BreakGlassCouncilActionsType['myPastActions']
+  actionsMapper: BreakGlassCouncilActionsType['actionsMapper']
+}
 
-//   export type NullableFinancialRequestsContextStateType = DeepNullable<FinancialRequestsStateType>
+export type NullableBreakGlassCouncilContextStateType = DeepNullable<BreakGlassCouncilStateType>
 
-// export type FinancialRequestsContext = FinancialRequestsStateType & {
-//   isLoading: boolean
+export type BreakGlassCouncilContext = BreakGlassCouncilStateType & {
+  isLoading: boolean
 
-//   changeFinancialRequestsSubscriptionList: (skips: Partial<FinRequestsSubsRecordType>) => void
-// }
+  changeBreakGlassCouncilSubscriptionList: (subs: Partial<BreakGlassCouncilSubsRecordType>) => void
+}
