@@ -1,5 +1,11 @@
-import React, { createContext, useContext, useMemo, useState } from 'react'
-import { ApolloClient, InMemoryCache, from, ApolloProvider as OriginalApolloProvider } from '@apollo/client'
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  ApolloClient,
+  InMemoryCache,
+  from,
+  ApolloProvider as OriginalApolloProvider,
+  ApolloError,
+} from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 
 // consts
@@ -11,6 +17,8 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { ApolloContext } from './apollo.provider.types'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // context
 const apolloContext = createContext<ApolloContext>(undefined!)
@@ -59,9 +67,20 @@ export const ApolloProvider = ({ children }: Props) => {
     [errorLink],
   )
 
+  const handleApolloError = useCallback((error: ApolloError, subName: string, bugMessage?: string) => {
+    if (isAbortError(error.networkError)) return
+
+    console.error(`${subName} query error: `, error)
+    bug(
+      TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'],
+      bugMessage ?? TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'],
+    )
+  }, [])
+
   const context = useMemo(
     () => ({
       apolloClient,
+      handleApolloError,
     }),
     [apolloClient],
   )

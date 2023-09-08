@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 
 // hooks
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useVaultsContext } from '../vaults.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
@@ -10,16 +10,14 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { DashboardVaultsTabDataQuery } from 'utils/__generated__/graphql'
 
 // consts
+import { EMPTY_VAULTS_DASHBOARD_DATA } from '../vaults.provider.consts'
 import { GET_VAULTS_DASHBOARD_DATA } from '../queries/vaultsDashboardData.query'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // utils
-import { EMPTY_VAULTS_DASHBOARD_DATA } from '../vaults.provider.consts'
 import { normalizeVaultsDashboardData } from '../helpers/vaultsDashboard.normalizer'
 
 export const useVaultsDashboardData = () => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { setVaultsDashboardData, vaultsDashboardData } = useVaultsContext()
 
@@ -29,10 +27,7 @@ export const useVaultsDashboardData = () => {
     onCompleted: (data) => {
       setIndexerData(data)
     },
-    onError: (e) => {
-      console.error(`DappConfigProvider query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
+    onError: (error) => handleApolloError(error, 'GET_VAULTS_DASHBOARD_DATA'),
   })
 
   useEffect(() => {

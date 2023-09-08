@@ -1,36 +1,24 @@
-import { ApolloError } from '@apollo/client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 // types
 import { ChartPeriodType } from 'types/charts.type'
 
 // hooks
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useDoormanContext } from '../doorman.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
-// queries
-import { SMVK_MVK_HISTORY_DATA } from '../queries/doorman.query'
-
 // consts
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { SMVK_MVK_HISTORY_DATA } from '../queries/doorman.query'
 import { ONE_HOUR } from 'consts/charts.const'
 
 // utils
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
-import { isAbortError } from 'errors/error'
 
 // getTimestampBasedOnPeriod
 export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
   const { updateStakeHistoryData, mvkHistoryData, smvkHistoryData, noChartData } = useDoormanContext()
-  const { bug } = useToasterContext()
-
-  const handleSubError = (error: ApolloError, subName: string) => {
-    if (isAbortError(error.networkError)) return
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
+  const { handleApolloError } = useApolloContext()
 
   const [currentPeriod, setCurrentPeriod] = useState(() => getTimestampBasedOnPeriod(period))
   const aborterRef = useRef(new AbortController())
@@ -45,7 +33,7 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
     setCurrentPeriod(getTimestampBasedOnPeriod(period))
 
     return () => {
-      // cancel queries
+      // cancel query
       aborterRef.current.abort()
       aborterRef.current = new AbortController()
     }
@@ -67,15 +55,10 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
       variables: {
         periodTimestamp: currentPeriod,
       },
-      onError: (error) => handleSubError(error, 'SMVK_MVK_HISTORY_DATA'),
+      onError: (error) => handleApolloError(error, 'SMVK_MVK_HISTORY_DATA'),
     },
     { refetchQueryVariables },
   )
-
-  console.log({
-    mvkHistoryData,
-    smvkHistoryData,
-  })
 
   return {
     isLoading: mvkHistoryData[period] === null || smvkHistoryData[period] === null,

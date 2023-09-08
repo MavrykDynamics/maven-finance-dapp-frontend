@@ -2,8 +2,9 @@ import qs from 'qs'
 import { useHistory, useLocation } from 'react-router'
 import { useEffect, useMemo, useState } from 'react'
 
-// providers
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
@@ -53,6 +54,7 @@ export const useLoansTransactionHistory = ({
   vaultAddress,
   typeFilter,
 }: LoansMarketTransactionHistoryArgs) => {
+  const { handleApolloError } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
 
@@ -108,10 +110,8 @@ export const useLoansTransactionHistory = ({
         }))
       }
     },
-    onError: (error) => {
-      console.error('GET_LOANS_HISTORY_DATA error: ', { error })
-      bug('Loading transactions history error, please reload the page')
-    },
+    onError: (error) =>
+      handleApolloError(error, 'GET_LOANS_HISTORY_DATA', 'Loading transactions history error, please reload the page'),
   })
 
   const transactionHistory = useMemo(() => {

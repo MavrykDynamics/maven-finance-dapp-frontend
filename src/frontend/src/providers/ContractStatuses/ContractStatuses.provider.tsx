@@ -1,29 +1,33 @@
-import { ApolloError, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
-// consts
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+// hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+
+// consts
 import { CONTRACT_STATUSES_CONFIG_QUERY } from './queries/contractStatusConfig.query'
-import {
-  ContractStatusesContext,
-  ContractStatusesSubsRecordType,
-  NullableContractStatusesContextStateType,
-} from './contractStatuses.types'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import {
   CONTRACT_STATUSES_ALL_SUB,
   CONTRACT_STATUSES_CONFIG_SUB,
   DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
   DEFAULT_CONTRACT_STATUSES_CTX,
 } from './helpers/contractStatuses.consts'
+import { CONTRACT_STATUSES_ALL_DATA_QUERY } from './queries/contractStatuses.query'
+
+// types
+import {
+  ContractStatusesContext,
+  ContractStatusesSubsRecordType,
+  NullableContractStatusesContextStateType,
+} from './contractStatuses.types'
+
+// utils
+import { normalizeContractStatuses } from './helpers/normalizeContractStatuses'
 import {
   getContractStatusesProviderReturnValue,
   normalizeContractStatusesConfig,
 } from './helpers/contractStatuses.utils'
-import { CONTRACT_STATUSES_ALL_DATA_QUERY } from './queries/contractStatuses.query'
-import { normalizeContractStatuses } from './helpers/normalizeContractStatuses'
 
 export const contractStatusesContext = React.createContext<ContractStatusesContext>(undefined!)
 
@@ -32,16 +36,11 @@ type Props = {
 }
 
 const ContractStatusesProvider = ({ children }: Props) => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
 
   const [contractStatusesCtxState, setContractStatusesCtxState] =
     useState<NullableContractStatusesContextStateType>(DEFAULT_CONTRACT_STATUSES_CTX)
   const [activeSubs, setActiveSubs] = useState<ContractStatusesSubsRecordType>(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
-
-  const handleSubError = (error: ApolloError, subName: string) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
 
   // sub to config
   useQueryWithRefetch(
@@ -53,7 +52,7 @@ const ContractStatusesProvider = ({ children }: Props) => {
         const config = normalizeContractStatusesConfig(data)
         setContractStatusesConfig(config)
       },
-      onError: (error) => handleSubError(error, 'CONTRACT_STATUSES_CONFIG_QUERY'),
+      onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_CONFIG_QUERY'),
     },
     {
       blocksDiff: 2000,
@@ -72,7 +71,7 @@ const ContractStatusesProvider = ({ children }: Props) => {
         contractStatuses: normalizedContractStatuses,
       }))
     },
-    onError: (error) => handleSubError(error, 'CONTRACT_STATUSES_ALL_DATA_QUERY'),
+    onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_ALL_DATA_QUERY'),
   })
 
   const setContractStatusesConfig = (config: NullableContractStatusesContextStateType['config']) => {
