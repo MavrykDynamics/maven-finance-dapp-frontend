@@ -1,13 +1,14 @@
 import { DocumentNode, OperationVariables, TypedDocumentNode, gql as apolloGql } from '@apollo/client'
 import { gql } from 'utils/__generated__'
-import { GetPastBreakGlassCouncilActionsQuery } from 'utils/__generated__/graphql'
-import { BreakGlassCouncilActionsSubsType } from '../breakGlassCouncil.types'
+import { GetBreakGlassCouncilActionsQuery } from 'utils/__generated__/graphql'
+import { CouncilSubsRecordType } from '../council.provider.types'
 import {
   ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
+  BG_COUNCIL_ACTIONS_DATA,
   MY_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
-} from '../helpers/breakGlassCouncil.consts'
+} from '../helpers/council.consts'
 import { ValidationError } from 'errors/error'
 
 export const BREAK_GLASS_COUNCIL_MEMBERS_QUERY = gql(`
@@ -27,7 +28,7 @@ export const BREAK_GLASS_COUNCIL_MEMBERS_QUERY = gql(`
   }
 `)
 
-function getBreakGlassCouncilActionsFilter(actionType: BreakGlassCouncilActionsSubsType) {
+function getBreakGlassCouncilActionsFilter(actionType: CouncilSubsRecordType[typeof BG_COUNCIL_ACTIONS_DATA]) {
   switch (actionType) {
     case ALL_BG_PAST_COUNCIL_ACTIONS_SUB:
       return 'expiration_datetime: {_lt: $currentTimestamp}, _or: {executed: {_eq: true}}'
@@ -45,12 +46,12 @@ function getBreakGlassCouncilActionsFilter(actionType: BreakGlassCouncilActionsS
 }
 
 export const getBreakGlassCouncilActions = (
-  actionType: BreakGlassCouncilActionsSubsType,
-): DocumentNode | TypedDocumentNode<GetPastBreakGlassCouncilActionsQuery, OperationVariables> => {
+  actionType: CouncilSubsRecordType[typeof BG_COUNCIL_ACTIONS_DATA],
+): DocumentNode | TypedDocumentNode<GetBreakGlassCouncilActionsQuery, OperationVariables> => {
   const filterCondition = getBreakGlassCouncilActionsFilter(actionType)
 
   return apolloGql(`
-  query GetPastBreakGlassCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z", $userAddress: String = ""){
+  query GetBreakGlassCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z", $userAddress: String = ""){
     break_glass_action(order_by: {start_datetime: desc}, where: {${filterCondition}}) {
       action_type
       break_glass {

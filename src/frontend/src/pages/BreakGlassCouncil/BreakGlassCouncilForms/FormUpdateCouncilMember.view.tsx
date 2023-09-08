@@ -21,7 +21,7 @@ import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provid
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { updateCouncilMember } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { updateCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -32,7 +32,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
-import { UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 const INIT_FORM = {
   newMemberWebsite: '',

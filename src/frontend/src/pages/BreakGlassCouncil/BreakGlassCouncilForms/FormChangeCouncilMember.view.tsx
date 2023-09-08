@@ -18,7 +18,7 @@ import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provid
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { changeCouncilMember } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { changeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
@@ -28,7 +28,7 @@ import { validateFormAddress, validateFormField } from 'utils/validatorFunctions
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
-import { CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'

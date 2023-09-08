@@ -44,7 +44,7 @@ import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provid
 import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // actions
-import { propagateBreakGlass } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -55,7 +55,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // consts
-import { PROPAGATE_BREAK_GLASS_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { PROPAGATE_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 export const councilEmptyContainer = (
   <EmptyContainer>

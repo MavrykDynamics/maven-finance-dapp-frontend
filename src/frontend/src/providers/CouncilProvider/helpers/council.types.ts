@@ -8,7 +8,7 @@ import {
   SET_SINGLE_CONTRACT_ADMIN_ACTION,
   SIGN_BREAK_GLASS_ACTION,
   UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-} from './breakGlassCouncil.consts'
+} from './council.consts'
 
 export type BreakGlassCouncilActions =
   | typeof SET_ALL_CONTRACTS_ADMIN_ACTION

@@ -13,7 +13,7 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { signAction } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { signAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -21,7 +21,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
-import { SIGN_BREAK_GLASS_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { SIGN_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 // consts
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'

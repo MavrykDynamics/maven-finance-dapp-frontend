@@ -92,7 +92,7 @@ import {
   SET_SINGLE_CONTRACT_ADMIN_ACTION,
   SIGN_BREAK_GLASS_ACTION,
   UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-} from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+} from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 // types
 import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'

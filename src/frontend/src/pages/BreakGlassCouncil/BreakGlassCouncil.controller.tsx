@@ -25,7 +25,7 @@ import {
   getBreakGlassCouncilPendingActions,
   getBreakGlassCouncilPastActions,
 } from './BreakGlassCouncil.actions'
-import { dropBreakGlass, signAction } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { dropBreakGlass, signAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -34,7 +34,7 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 import {
   DROP_BREAK_GLASS_ACTION,
   SIGN_BREAK_GLASS_ACTION,
-} from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+} from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'

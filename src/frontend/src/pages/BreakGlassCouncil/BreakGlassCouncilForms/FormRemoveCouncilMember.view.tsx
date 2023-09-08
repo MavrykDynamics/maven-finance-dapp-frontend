@@ -15,7 +15,7 @@ import { FormStyled } from './BreakGlassCouncilForm.style'
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
 // actions
-import { removeCouncilMember } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -26,7 +26,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
-import { REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 export function FormRemoveCouncilMemberView() {
   const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)

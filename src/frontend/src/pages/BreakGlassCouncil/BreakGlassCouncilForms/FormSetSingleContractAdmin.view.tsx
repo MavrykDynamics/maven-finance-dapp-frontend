@@ -13,7 +13,7 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { setSingleContractAdmin } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { setSingleContractAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // utils
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
@@ -22,7 +22,7 @@ import { validateFormAddress, validateFormField } from 'utils/validatorFunctions
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
-import { SET_SINGLE_CONTRACT_ADMIN_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { SET_SINGLE_CONTRACT_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'

@@ -19,10 +19,10 @@ import { validateFormAddress, validateFormField } from 'utils/validatorFunctions
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { addCouncilMember } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { addCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { State } from 'reducers'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'

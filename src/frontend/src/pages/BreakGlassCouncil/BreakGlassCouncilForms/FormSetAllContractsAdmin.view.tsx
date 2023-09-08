@@ -13,7 +13,7 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { setAllContractsAdmin } from 'providers/BreakGlassCouncilProvider/actions/breakGlassCouncil.actions'
+import { setAllContractsAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // utils
 import { validateFormAddress } from 'utils/validatorFunctions'
@@ -27,7 +27,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // consts
-import { SET_ALL_CONTRACTS_ADMIN_ACTION } from 'providers/BreakGlassCouncilProvider/helpers/breakGlassCouncil.consts'
+import { SET_ALL_CONTRACTS_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
 
 const INIT_FORM = {
   newAdminAddress: '',
