@@ -1,4 +1,3 @@
-import { ApolloError } from '@apollo/client'
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 
@@ -12,7 +11,6 @@ import { getSatelliteGovernanceProviderReturnValue } from './helpers/satelliteGo
 // types
 import {
   NullableSatelliteGovernanceContextStateType,
-  SatelliteGovSubsType,
   SatelliteGovernanceContext,
   SatelliteGovernanceSubsRecordType,
 } from './satelliteGovernance.provider.types'
@@ -27,12 +25,10 @@ import {
   SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB,
   SATELLITE_GOV_ACTIONS_DATA,
 } from './helpers/satellitesGov.consts'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // hooks
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // queries
@@ -47,7 +43,7 @@ type Props = {
 }
 
 const SatelliteGovernanceProvider = ({ children }: Props) => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
   const { userAddress } = useUserContext()
 
   const [satelliteGovCtxState, setSatelliteGovCtxState] =
@@ -68,11 +64,6 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
     }
   }, [activeSubs])
 
-  const handleSubError = (error: ApolloError, subName: SatelliteGovSubsType | null) => {
-    console.error(`${subName ?? 'Nullable'} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
-
   // subscribes
   useQueryWithRefetch(
     SATELLITE_GOVERNANCE_CONFIG_QUERY,
@@ -82,7 +73,7 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
         if (!data) return
         updateSatelliteGovConfig(data)
       },
-      onError: (error) => handleSubError(error, SATELLITES_GOVERNANCE_CONFIG_SUB),
+      onError: (error) => handleApolloError(error, 'SATELLITE_GOVERNANCE_CONFIG_QUERY'),
     },
     {
       blocksDiff: 4000,
@@ -101,7 +92,7 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
         userAddress,
         currentTimestamp: currentTimeRef.current,
       },
-      onError: (error) => handleSubError(error, activeSubs[SATELLITE_GOV_ACTIONS_DATA]),
+      onError: (error) => handleApolloError(error, 'getGovernanceActionsQuery'),
     },
     {
       refetchQueryVariables,

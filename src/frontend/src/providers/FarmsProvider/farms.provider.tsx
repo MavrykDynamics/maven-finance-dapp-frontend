@@ -1,13 +1,11 @@
 import React, { useContext, useMemo, useState } from 'react'
-import { ApolloError } from '@apollo/client'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_FARMS_ACTIVE_SUBS,
   DEFAULT_FARMS_CTX,
@@ -18,7 +16,6 @@ import {
   FARMS_FINISHED_STAKED_DATA_SUB,
   FARMS_LIVE_STAKED_DATA_SUB,
 } from './helpers/farms.const'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // utils
 import { getFarms } from './queries/farms.query'
@@ -37,28 +34,19 @@ type Props = {
 
 const FarmsProvider = ({ children }: Props) => {
   const { userAddress } = useUserContext()
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
 
   const [farmsCtxState, setFarmsCtxState] = useState<NullableFarmCtxStateType>(DEFAULT_FARMS_CTX)
   const [activeSubs, setActiveSubs] = useState<FarmsProviderSubsType>(DEFAULT_FARMS_ACTIVE_SUBS)
 
-  const handleSubError = (error: ApolloError, subName: string) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
-
-  useQueryWithRefetch(
-    getFarms(activeSubs[FARMS_DATA_SUB]),
-    {
-      skip: !activeSubs[FARMS_DATA_SUB],
-      variables: { userAddress: userAddress ?? '' },
-      onCompleted: (data) => {
-        updateFarms(data)
-      },
-      onError: (error) => handleSubError(error, 'getFarms ERROR'),
+  useQueryWithRefetch(getFarms(activeSubs[FARMS_DATA_SUB]), {
+    skip: !activeSubs[FARMS_DATA_SUB],
+    variables: { userAddress: userAddress ?? '' },
+    onCompleted: (data) => {
+      updateFarms(data)
     },
-    { name: 'farms query' },
-  )
+    onError: (error) => handleApolloError(error, 'getFarms'),
+  })
 
   const updateFarms = (indexerData: FarmsQueryQuery) => {
     const normalizedFarms = normalizeFarms(indexerData.farm)

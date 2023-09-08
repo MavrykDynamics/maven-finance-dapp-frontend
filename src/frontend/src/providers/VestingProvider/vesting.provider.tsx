@@ -1,23 +1,16 @@
 import React, { useContext, useMemo, useState } from 'react'
-import { ApolloError } from '@apollo/client'
 
-// providers
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+// hooks
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // types
 import { NullableVestingContextStateType, VestingContext, VestingSubsRecordType } from './vesting.provider.types'
 import { GetVestingQueryQuery } from 'utils/__generated__/graphql'
 
 // consts
-import { DEFAULT_VESTING_CTX, DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from './helpers/vesting.consts'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-
-// hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-
-// queries
 import { GET_VESTING_STORAGE_QUERY } from './queries/vesting.query'
+import { DEFAULT_VESTING_CTX, DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from './helpers/vesting.consts'
 
 // utils
 import { getVestingProviderReturnValue } from './helpers/vesting.utils'
@@ -31,15 +24,10 @@ type Props = {
 }
 
 const VestingProvider = ({ children }: Props) => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
 
   const [vestingCtxState, setVestingCtxState] = useState<NullableVestingContextStateType>(DEFAULT_VESTING_CTX)
   const [activeSubs, setActiveSubs] = useState<VestingSubsRecordType>(DEFAULT_VESTING_SUBS)
-
-  const handleSubError = (error: ApolloError, subName: string) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
 
   // subscribes
   useQueryWithRefetch(GET_VESTING_STORAGE_QUERY, {
@@ -48,7 +36,7 @@ const VestingProvider = ({ children }: Props) => {
       if (!data || !data?.vesting[0]) return
       updateVestingStorage(data)
     },
-    onError: (error) => handleSubError(error, 'GET_VESTING_STORAGE_QUERY'),
+    onError: (error) => handleApolloError(error, 'GET_VESTING_STORAGE_QUERY'),
   })
 
   // methods to update context data

@@ -1,4 +1,3 @@
-import { ApolloError } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
@@ -6,9 +5,9 @@ import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
 import { normalizeDoormanChartsData } from './helpers/doormanCharts.normalizer'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
-// providers
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
@@ -18,10 +17,8 @@ import { ChartPeriodType } from 'types/charts.type'
 
 // consts
 import { MVK_DECIMALS } from 'utils/constants'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { DEFAULT_STAKING_CTX, DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from './helpers/doorman.consts'
 import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
@@ -30,7 +27,7 @@ type Props = {
 }
 
 const DoormanProvider = ({ children }: Props) => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
   const {
     contractAddresses: { doormanAddress },
   } = useDappConfigContext()
@@ -38,29 +35,15 @@ const DoormanProvider = ({ children }: Props) => {
   const [stakingCtxState, setStakingCtxState] = useState<NullableDoormanContextStateType>(DEFAULT_STAKING_CTX)
   const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
-  const handleSubError = (error: ApolloError, subName: string) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
-
   // subscribes
-  useQueryWithRefetch(
-    DAPP_MVK_SMVK_STATS,
-    {
-      skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
-      variables: {
-        doormanContractAddress: doormanAddress,
-      },
-      onCompleted: (data) => {
-        console.log({ doormanQueryCompleted: data })
-        updateMvkSmvkStats(data)
-      },
-      onError: (error) => handleSubError(error, DAPP_MVK_SMVK_STATS_SUB),
+  useQueryWithRefetch(DAPP_MVK_SMVK_STATS, {
+    skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
+    variables: {
+      doormanContractAddress: doormanAddress,
     },
-    {
-      name: 'DAPP_MVK_SMVK_STATS',
-    },
-  )
+    onCompleted: (data) => updateMvkSmvkStats(data),
+    onError: (error) => handleApolloError(error, 'DAPP_MVK_SMVK_STATS_SUB'),
+  })
 
   // methods to update context data
   const updateStakeHistoryData = (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {

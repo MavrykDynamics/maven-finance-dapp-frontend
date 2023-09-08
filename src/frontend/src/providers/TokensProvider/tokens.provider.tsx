@@ -4,8 +4,11 @@ import React, { useContext, useMemo, useRef, useState } from 'react'
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { QUERY_TOKENS_METADATA } from './queries/tokens.query'
 
-// helpers
+// hooks
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+
+// helpers
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
 
 // types
@@ -21,6 +24,8 @@ type Props = {
 
 // TODO: handle itial loading with null init values
 export const TokensProvider = ({ children }: Props) => {
+  const { handleApolloError } = useApolloContext()
+
   const initialLoadingStatus = useRef(true)
 
   const [tokensCtxState, setTokensCtxState] = useState<TokensContextStateType>({
@@ -46,7 +51,7 @@ export const TokensProvider = ({ children }: Props) => {
           console.error('zod parsing tokens error:', { e })
         }
       },
-      onError: (error) => console.log({ error }),
+      onError: (error) => handleApolloError(error, 'QUERY_TOKENS_METADATA'),
     },
     { blocksDiff: 100 },
   )
