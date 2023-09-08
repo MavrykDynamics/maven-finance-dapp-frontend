@@ -21,6 +21,7 @@ import { ChartPeriodType } from 'types/charts.type'
 
 // utils
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
+import { isAbortError } from 'errors/error'
 
 export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE_HOUR) => {
   const { updateFeedsHistoryAndVolatility, dataFeedsHistory, dataFeedsVolatility, resetFeedsHistoryAndVolatility } =
@@ -37,6 +38,7 @@ export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE
   }, [period])
 
   const handleSubError = (error: ApolloError, subName: string) => {
+    if (isAbortError(error.networkError)) return
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }

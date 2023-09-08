@@ -97,12 +97,10 @@ export const DataFeedsProvider = ({ children }: Props) => {
 
   // normalize and update for small feeds query
   const updateSmallDataFeeds = (data: SmallFeedsQueryType) => {
-    const updatedFeeds = normalizeFeedsPrices(feedsCtxState.feedsMapper ?? {}, data)
-
-    setFeedsCtxState({
-      ...feedsCtxState,
-      feedsMapper: updatedFeeds,
-    })
+    setFeedsCtxState((prevState) => ({
+      ...prevState,
+      feedsMapper: normalizeFeedsPrices(prevState.feedsMapper ?? {}, data),
+    }))
   }
 
   // normalize feeds history and volatility
@@ -136,6 +134,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
       }),
     [feedsCtxState],
   )
+  console.log({ feedsCtxState, contextProviderValue })
 
   return <dataFeedsContext.Provider value={contextProviderValue}>{children}</dataFeedsContext.Provider>
 }

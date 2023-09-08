@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from 'react'
 import { DocumentNode, OperationVariables, QueryHookOptions, TypedDocumentNode, useQuery } from '@apollo/client'
 
 import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
+import { usePrevious } from 'react-use'
+import { isAbortError } from 'errors/error'
 
 /**
  *
@@ -17,73 +19,120 @@ import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
  * NOTES:
  *    --- if variable change it will provoke useQuery to work, so we don't need to pass new variables to refetch function, cuz refetch won't work
  *    --- @refetchQueryVariables should be in UseCallback if it depends on data from cmp/hook, or be outside cmp/hook to not provoke useCallback to recreate refetch fn on parent's rerender
- *
- * TODO: add log to effect and 50% of hook rerenders from outer listener is recreating and resubscribes to lvl in effect
  */
 export const useQueryWithRefetch = <TData = unknown, TVariables extends OperationVariables = OperationVariables>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
-  queryOptions: QueryHookOptions<TData, TVariables> | null,
+  queryOptions: QueryHookOptions<TData, TVariables>,
   refetchOptions?: {
     blocksDiff?: number
+    name?: string
     refetchQueryVariables?: (() => TVariables) | TVariables
   },
 ) => {
   const lastUpdatedBlock = useRef<null | number>(null)
   const refetchId = useRef<null | string>(null)
-
-  const { blocksDiff, refetchQueryVariables } = refetchOptions ?? {}
-
-  // trach whether we can refetch query, cuz if we will refetch without this check we will have 2 simultamiously queries on init
   const isInitialQueryDone = useRef(false)
 
-  // completing 1st query fetch and getting callback to refetch this query later
+  const prevQueryVariables = usePrevious(queryOptions?.variables)
+  const currentQueryVariables = queryOptions?.variables
+
+  const { blocksDiff, refetchQueryVariables, name = 'default name' } = refetchOptions ?? {}
+  const userQuerySkip = queryOptions?.skip
+
+  // Effect to reset isInitialQueryDone, on variables change
+  useEffect(() => {
+    if (prevQueryVariables && currentQueryVariables) {
+      const isVariablesEq = Object.keys(currentQueryVariables ?? {}).every((key) => {
+        const currentValue = currentQueryVariables?.[key]
+        const prevValue = prevQueryVariables?.[key]
+
+        return currentValue === prevValue
+      })
+
+      // if variables are different, we need to reset isInitialQueryDone
+      if (!isVariablesEq) isInitialQueryDone.current = false
+    }
+  }, [queryOptions?.variables])
+
+  /**
+   * completing 1st query fetch and getting callback to refetch this query later
+   *
+   * skip query when:
+   * 1. we have already loaded for the 1st time, we need to refetch it only
+   * 2. user skip for query
+   */
   const queryResult = useQuery(query, {
     ...queryOptions,
+    skip: isInitialQueryDone.current || userQuerySkip,
     onCompleted: (data) => {
+      if (!data) return
       isInitialQueryDone.current = true
+
       queryOptions?.onCompleted?.(data)
     },
     notifyOnNetworkStatusChange: true,
   })
 
-  // fn to refetch query on block lvl change
+  // callback to refetch query on block lvl change
   const refetchQuery = useCallback(
-    (newIndexerLevel: number) => {
-      // If we have't completed initial query, we can't refetch
-      if (!isInitialQueryDone.current) return
+    async (newIndexerLevel: number) => {
+      try {
+        // If we have't completed initial query, we can't refetch
+        if (!isInitialQueryDone.current) return
 
-      const newRefetchVariables =
-        typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
+        const newRefetchVariables =
+          typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
 
-      // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
-      if (typeof blocksDiff === 'number') {
-        // if we don't have blocks diff first indexer change just set lastUpdatedBlock
-        if (lastUpdatedBlock.current === null) {
-          lastUpdatedBlock.current = newIndexerLevel
+        // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
+        if (typeof blocksDiff === 'number') {
+          // if we don't have blocks diff first indexer change just set lastUpdatedBlock
+          if (lastUpdatedBlock.current === null) {
+            lastUpdatedBlock.current = newIndexerLevel
+            return
+          }
+
+          if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
+            const refetchData = await queryResult.refetch(newRefetchVariables)
+
+            console.log('%crefetch ', 'color: red', { refetchData, name })
+
+            // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
+            if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
+            if (refetchData.error) queryOptions?.onError?.(refetchData.error)
+
+            lastUpdatedBlock.current = newIndexerLevel
+          }
+
           return
         }
 
-        if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
-          queryResult.refetch(newRefetchVariables)
-          lastUpdatedBlock.current = newIndexerLevel
-        }
+        const refetchData = await queryResult.refetch(newRefetchVariables)
 
-        return
+        console.log('%crefetch ', 'color: red', { refetchData, name })
+
+        // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
+        if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
+        if (refetchData.error) queryOptions?.onError?.(refetchData.error)
+      } catch (e) {
+        if (isAbortError(e)) return
+        console.error('refetch error:', { e })
       }
-
-      queryResult.refetch(newRefetchVariables)
     },
     [blocksDiff, refetchQueryVariables],
   )
 
   // subscribe to indexer lvl change
   useEffect(() => {
-    refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+    if (!userQuerySkip) refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+
+    if (userQuerySkip && refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
 
     return () => {
-      if (refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
+      if (refetchId.current && userQuerySkip) currentIndexerLevelProxy.removeListener(refetchId.current)
     }
-  }, [refetchQuery])
+  }, [refetchQuery, userQuerySkip])
 
-  return queryResult
+  // need to return cancel query sub, cuz provider don't unmount, and we need to unsubscribe from lvl change, manualy on activeSubs change
+
+  return { ...queryResult }
 }
