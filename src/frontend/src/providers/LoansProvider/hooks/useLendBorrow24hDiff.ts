@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 
+// consts
 import { LEND_BORROW_24H_DIFF } from 'providers/LoansProvider/queries/loansHistory.query'
 
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
+// utils
 import { calcDiffBetweenTwoNumbersInPersentage, convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
+// types
 import { GetLending24hDiffQuery } from 'utils/__generated__/graphql'
 
 const refetchQueryVariables = () => ({
@@ -26,6 +31,7 @@ const useLendBorrow24hDiff = (): {
   borrowing24hPersentChange: number
   isLoading: boolean
 } => {
+  const { handleApolloError } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const hookInitIsoTime = useRef(dayjs().subtract(1, 'day').toISOString())
@@ -42,12 +48,8 @@ const useLendBorrow24hDiff = (): {
       variables: {
         currentTimestamp: hookInitIsoTime.current,
       },
-      onCompleted: (data) => {
-        setIndexerData(data)
-      },
-      onError: (error) => {
-        console.error('LENDING_24H_OPERATIONS_QUERY error: ', { error })
-      },
+      onCompleted: (data) => setIndexerData(data),
+      onError: (error) => handleApolloError(error, 'LEND_BORROW_24H_DIFF'),
     },
     {
       refetchQueryVariables,

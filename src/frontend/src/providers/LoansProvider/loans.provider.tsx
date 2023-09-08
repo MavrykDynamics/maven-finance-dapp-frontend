@@ -1,8 +1,8 @@
-import { ApolloError, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
-// context & hooks
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+// hooks
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
@@ -12,8 +12,6 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 
 // consts
 import { GET_LOANS_CONFIG, getLoansMarketsQuery } from './queries/loansMarkets.query'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import {
   DEFAULT_LOANS_ACTIVE_SUBS,
   DEFAULT_LOANS_CONTEXT,
@@ -39,16 +37,11 @@ type Props = {
  *    with apolloClient and CHECK_WHETHER_SATELLITE_EXISTS query, othervise if satellite is not exists it will show infinity loader
  */
 export const LoansProvider = ({ children }: Props) => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
   const [loansCtxState, setLoansCtxState] = useState<NullableLoansContextState>(DEFAULT_LOANS_CONTEXT)
-
-  const handleSubError = (error: ApolloError, subName: string) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
 
   // subscribe to markets or market data
   useQueryWithRefetch(getLoansMarketsQuery({ marketTokenAddress: marketAddressToSubscribe }), {
@@ -59,7 +52,7 @@ export const LoansProvider = ({ children }: Props) => {
     onCompleted: (data) => {
       updateMarketsContext(data)
     },
-    onError: (error) => handleSubError(error, 'getLoansMarketsSubscription'),
+    onError: (error) => handleApolloError(error, 'getLoansMarketsQuery'),
   })
 
   // subscribe to markets config
@@ -71,7 +64,7 @@ export const LoansProvider = ({ children }: Props) => {
         config: normalizeLoansConfig({ indexerData: data }),
       }))
     },
-    onError: (error) => handleSubError(error, 'GET_LOANS_CONFIG'),
+    onError: (error) => handleApolloError(error, 'GET_LOANS_CONFIG'),
   })
 
   // set markets to context and turn off loaders

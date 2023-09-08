@@ -2,14 +2,15 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import * as signalR from '@microsoft/signalr'
 
 // consts
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { USER_DATA_QUERY } from './queries/userData.query'
 import { DEFAULT_USER, DEFAULT_USER_TZKT_TOKENS } from './helpers/user.consts'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
 
-// context
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserApi } from './hooks/useUserApi'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // helpers
@@ -18,10 +19,8 @@ import { normalizeUser } from './helpers/userData.helpers'
 import { getUsersFarmRewards } from './helpers/userRewards.helpers'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
-// queries
-import { USER_DATA_QUERY } from './queries/userData.query'
-
 // types
+import { GetUserDataQuery } from 'utils/__generated__/graphql'
 import {
   UserContext,
   UserContextStateType,
@@ -30,10 +29,6 @@ import {
   UserRewardsType,
   UserTzKtTokenBalances,
 } from './user.provider.types'
-
-import { useUserApi } from './hooks/useUserApi'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { GetUserDataQuery } from 'utils/__generated__/graphql'
 
 export const userContext = React.createContext<UserContext>(undefined!)
 
@@ -51,11 +46,11 @@ const hasUserInLocalStorage =
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
  */
 export const UserProvider = ({ children }: Props) => {
+  const { handleApolloError } = useApolloContext()
   const { tokensMetadata } = useTokensContext()
   const {
     contractAddresses: { mvkTokenAddress },
   } = useDappConfigContext()
-  const { bug } = useToasterContext()
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
   const isUserRestored = useRef<boolean>(false)
@@ -127,10 +122,7 @@ export const UserProvider = ({ children }: Props) => {
       userAddress: userCtxState.userAddress ?? '',
     },
     onCompleted: (data) => setUserIndexerData(data),
-    onError: (e) => {
-      console.error(`UserProvider query error: `, e)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
+    onError: (error) => handleApolloError(error, 'USER_DATA_QUERY'),
   })
 
   /**

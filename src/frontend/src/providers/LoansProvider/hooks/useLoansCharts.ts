@@ -1,6 +1,7 @@
-// provider
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from './../loans.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // consts & helpers
@@ -17,6 +18,7 @@ export type LoansChartsToCalcType = {
 }
 
 const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
+  const { handleApolloError } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { chartsData, setLoansChartsData, marketsAddresses } = useLoansContext()
 
@@ -25,9 +27,7 @@ const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
       const newChartsData = normalizeLoansCharts({ indexerData: data, chartsToCalc, tokensPrices, tokensMetadata })
       setLoansChartsData(newChartsData)
     },
-    onError: (error) => {
-      console.error('GET_LOANS_HISTORY_DATA error: ', { error })
-    },
+    onError: (error) => handleApolloError(error, 'GET_LOANS_HISTORY_DATA'),
   })
 
   const {
