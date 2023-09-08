@@ -134,7 +134,6 @@ export const DataFeedsProvider = ({ children }: Props) => {
       }),
     [feedsCtxState],
   )
-  console.log({ feedsCtxState, contextProviderValue })
 
   return <dataFeedsContext.Provider value={contextProviderValue}>{children}</dataFeedsContext.Provider>
 }

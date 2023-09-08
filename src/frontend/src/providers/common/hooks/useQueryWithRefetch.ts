@@ -132,7 +132,5 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     }
   }, [refetchQuery, userQuerySkip])
 
-  // need to return cancel query sub, cuz provider don't unmount, and we need to unsubscribe from lvl change, manualy on activeSubs change
-
-  return { ...queryResult }
+  return queryResult
 }
