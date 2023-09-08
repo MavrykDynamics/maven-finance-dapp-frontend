@@ -28,7 +28,6 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
 
   const handleSubError = (error: ApolloError, subName: string) => {
     if (isAbortError(error.networkError)) return
-
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }
