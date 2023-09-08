@@ -27,7 +27,8 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
       token: { token_address: loanTokenAddress },
       m_token: {
         address: loanMTokenAddress,
-        accounts_aggregate: { aggregate: suppliers },
+        depositorsAmount: { aggregate: suppliers },
+        mTokenRewardsAmount: { aggregate: mTokenRewardsAggregate },
       },
       vaults_aggregate: { aggregate: borrowers },
     } = loanToken
@@ -48,6 +49,7 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMa
       availableLiquidity,
       totalLended: token_pool_total,
       totalBorrowed: total_borrowed,
+      totalRewards: mTokenRewardsAggregate?.sum?.rewards_earned ?? 0,
 
       borrowers: borrowers?.count ?? 0,
       suppliers: suppliers?.count ?? 0,

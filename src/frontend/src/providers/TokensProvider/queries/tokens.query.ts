@@ -24,6 +24,7 @@ export const QUERY_TOKENS_METADATA = gql(`
 
       # check whether tokens is mToken
       m_tokens {
+        metadata
         address
       }
 

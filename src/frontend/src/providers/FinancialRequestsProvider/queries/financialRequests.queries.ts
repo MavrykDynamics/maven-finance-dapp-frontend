@@ -24,6 +24,7 @@ export function getFinancialRequestsStorageSubscription({
     governance_financial_request: governance_financial_request(order_by: {requested_datetime: desc}, where: {${filteredQuery}}) {
         executed
         expiration_datetime
+        dropped_datetime
         execution_datetime
         id
         request_purpose

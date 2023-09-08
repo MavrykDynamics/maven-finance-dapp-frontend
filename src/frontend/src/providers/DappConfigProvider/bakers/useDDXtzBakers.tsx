@@ -67,6 +67,7 @@ const useXtzBakersForDD = (useMavrykBakers = true) => {
     choosenBaker: choosenBakerAddress ? bakers[choosenBakerAddress] : null,
     setChoosenBaker: (bakerAddress: string) => setChoosenBakerAddress(bakerAddress),
     bakers: Object.values(bakers),
+    bakersRecord: bakers,
   }
 }
 

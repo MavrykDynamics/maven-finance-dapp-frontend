@@ -1,10 +1,9 @@
-import { ApolloError } from '@apollo/client'
 import { usePrevious } from 'react-use'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
@@ -17,8 +16,6 @@ import {
 } from './vaults.provider.types'
 
 // consts
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { GET_ALL_VAULTS_QUERY, getUserVaultsQuery } from './queries/vaults.query'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
@@ -28,7 +25,7 @@ import {
   VAULTS_USER_DEPOSITOR,
 } from './vaults.provider.consts'
 
-// helpers
+// utils
 import { normalizeVaults } from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 
@@ -41,14 +38,9 @@ type Props = {
 // TODO: if will need implement query that will take vaults where owner === current user and market token === vault loan token
 export const VaultsProvider = ({ children }: Props) => {
   const { userAddress } = useUserContext()
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
 
   const prevUserAddress = usePrevious(userAddress)
-
-  const handleSubError = (error: ApolloError, subName: string) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
 
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
   const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
@@ -74,7 +66,7 @@ export const VaultsProvider = ({ children }: Props) => {
     onCompleted: (data) => {
       updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
     },
-    onError: (error) => handleSubError(error, 'getVaultsSubscription'),
+    onError: (error) => handleApolloError(error, 'getUserVaultsQuery'),
   })
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
@@ -82,7 +74,7 @@ export const VaultsProvider = ({ children }: Props) => {
     onCompleted: (data) => {
       updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
     },
-    onError: (error) => handleSubError(error, 'SUBSCRIBE_TO_ALL_VAULTS'),
+    onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
 
   const updateVaultsData = (

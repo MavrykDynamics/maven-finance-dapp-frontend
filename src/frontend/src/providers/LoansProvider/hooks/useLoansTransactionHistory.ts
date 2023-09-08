@@ -2,8 +2,9 @@ import qs from 'qs'
 import { useHistory, useLocation } from 'react-router'
 import { useEffect, useMemo, useState } from 'react'
 
-// providers
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
@@ -53,8 +54,12 @@ export const useLoansTransactionHistory = ({
   vaultAddress,
   typeFilter,
 }: LoansMarketTransactionHistoryArgs) => {
+  const { handleApolloError } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
+
+  // when user has no data
+  const [isHistoryEmpty, setIsHistoryEmpty] = useState(false)
 
   // stuff for handling page out of limims
   const history = useHistory()
@@ -87,8 +92,11 @@ export const useLoansTransactionHistory = ({
       const itemsAmount = data.lending_controller[0].historyItemsAmount.aggregate?.count ?? 0
       const maxPage = Math.ceil(itemsAmount / transactionHistoryItemsPerPage)
 
+      // handle user empty history
+      itemsAmount === 0 ? setIsHistoryEmpty(true) : setIsHistoryEmpty(false)
+
       // if user updated manualy page, and set it wrong, redirect him to 1st page of the list
-      if (maxPage < currentPage || currentPage < 1) {
+      if ((maxPage < currentPage || currentPage < 1) && itemsAmount !== 0) {
         bug(`Page is out of limits, your page: ${currentPage}, max page: ${maxPage}, min page: 1`)
         const redirectToFirstPageOfTheList = updatePageInUrl({
           page,
@@ -108,10 +116,8 @@ export const useLoansTransactionHistory = ({
         }))
       }
     },
-    onError: (error) => {
-      console.error('GET_LOANS_HISTORY_DATA error: ', { error })
-      bug('Loading transactions history error, please reload the page')
-    },
+    onError: (error) =>
+      handleApolloError(error, 'GET_LOANS_HISTORY_DATA', 'Loading transactions history error, please reload the page'),
   })
 
   const transactionHistory = useMemo(() => {
@@ -175,7 +181,7 @@ export const useLoansTransactionHistory = ({
   }, [currentPage, tokensMetadata, tokensPrices, transactionHistoryIndexer.list])
 
   return {
-    isLoading: !transactionHistoryIndexer.list[currentPage],
+    isLoading: !transactionHistoryIndexer.list[currentPage] && !isHistoryEmpty,
     transactionHistory,
     itemsAmount: transactionHistoryIndexer.itemsAmount,
   }

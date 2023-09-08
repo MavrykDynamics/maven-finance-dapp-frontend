@@ -141,7 +141,7 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataQueryQuery['sa
       currentlyRegistered: satelliteRecord.currently_registered,
 
       // delegation data
-      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 10 ?? 0,
+      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 100 ?? 0,
       delegatorCount: satelliteRecord.delegatorCount.aggregate?.count ?? 0,
       totalVotingPower,
       satelliteFee: (satelliteRecord?.fee ?? 0) / 100,

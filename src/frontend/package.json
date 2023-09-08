@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
-    "@apollo/client": "^3.7.12",
+    "@apollo/client": "^3.8.3",
     "@microsoft/signalr": "^7.0.7",
     "@taquito/beacon-wallet": "^15.0.1",
     "@taquito/signer": "^15.0.1",

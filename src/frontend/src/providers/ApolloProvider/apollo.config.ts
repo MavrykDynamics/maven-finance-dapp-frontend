@@ -4,6 +4,7 @@ import { RetryLink } from '@apollo/client/link/retry'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { createClient } from 'graphql-ws'
 import { getMainDefinition } from '@apollo/client/utilities'
+import { isAbortError } from 'errors/error'
 
 // apollo client setup
 export const httpLink = new HttpLink({
@@ -29,6 +30,6 @@ export const splitLink = (wsLink: GraphQLWsLink, httpLink: HttpLink) =>
 export const retryLink = new RetryLink({
   attempts: {
     max: 3,
-    retryIf: (error) => !!error,
+    retryIf: (error) => !isAbortError(error),
   },
 })

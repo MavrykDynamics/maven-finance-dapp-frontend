@@ -278,6 +278,7 @@ export const SatelliteGovernance = () => {
                         satelliteId={convertBytesAddressToAddress(action.parameters[0].value)}
                         initiatorId={action.initiatorId}
                         actionExpirationDate={action.expirationDatetime}
+                        actionDroppedDate={action.droppedTime}
                         actionStartDate={action.startDatetime}
                         statusFlag={action.statusFlag}
                         purpose={action.purpose}

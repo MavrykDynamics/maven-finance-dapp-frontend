@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 
 // hooks
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from '../dappConfig.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // utils
@@ -16,12 +16,10 @@ import { DashboardTvlQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { GET_DAPP_TVL } from '../queries/dappTvl.query'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 export const useDappTvl = () => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
     setDappTotalValueLocked,
@@ -38,13 +36,8 @@ export const useDappTvl = () => {
       variables: {
         doormanContractAddress: doormanAddress ?? '',
       },
-      onCompleted: (data) => {
-        setIndexerData(data)
-      },
-      onError: (e) => {
-        console.error(`DappConfigProvider query error: `, e)
-        bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-      },
+      onCompleted: (data) => setIndexerData(data),
+      onError: (error) => handleApolloError(error, 'GET_DAPP_TVL'),
     },
     {
       blocksDiff: 2000,
