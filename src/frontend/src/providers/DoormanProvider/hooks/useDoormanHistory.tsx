@@ -17,6 +17,7 @@ import { ONE_HOUR } from 'consts/charts.const'
 
 // utils
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
+import { isAbortError } from 'errors/error'
 
 // getTimestampBasedOnPeriod
 export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
@@ -24,6 +25,7 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
   const { bug } = useToasterContext()
 
   const handleSubError = (error: ApolloError, subName: string) => {
+    if (isAbortError(error.networkError)) return
     console.error(`${subName} query error: `, error)
     bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
   }

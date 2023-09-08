@@ -20,7 +20,8 @@ const currentIndexerLevel: {
       this.listeners.delete(listenerId)
       // console.info(`listener with Id: ${listenerId} removed`)
     } else {
-      throw new Error(`listener with Id: ${listenerId} do not present in: ${JSON.stringify(this.listeners)}`)
+      console.error(`listener with Id: ${listenerId} do not present in: ${JSON.stringify(this.listeners)}`)
+      // throw new Error(`listener with Id: ${listenerId} do not present in: ${JSON.stringify(this.listeners)}`)
     }
   },
 }

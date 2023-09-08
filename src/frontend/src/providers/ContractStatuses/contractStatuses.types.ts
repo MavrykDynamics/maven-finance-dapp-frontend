@@ -1,6 +1,4 @@
-import { GetAllContractStatusesDataQuery, Maybe } from 'utils/__generated__/graphql'
-
-import { SubscriptionSkipType } from 'utils/api/apollo.consts'
+import { Maybe } from 'utils/__generated__/graphql'
 import { CONTRACT_STATUSES_ALL_SUB, CONTRACT_STATUSES_CONFIG_SUB } from './helpers/contractStatuses.consts'
 
 export type ContractStatusesStorage = Array<{
@@ -11,13 +9,6 @@ export type ContractStatusesStorage = Array<{
   lastUpdated?: Maybe<string>
   methods: Record<string, boolean>
 }>
-
-export type ContractStatusesConfigSkips = {
-  skipGlassBroken?: SubscriptionSkipType
-  skipWhitelistDevelopers?: SubscriptionSkipType
-}
-
-export type ContractStatusesType = GetAllContractStatusesDataQuery
 
 export type ContractStatusesConfigType = {
   isGlassBroken: boolean
