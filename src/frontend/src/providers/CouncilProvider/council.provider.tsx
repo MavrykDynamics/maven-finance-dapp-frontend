@@ -40,6 +40,8 @@ type Props = {
   children: React.ReactNode
 }
 
+// @mxkucher I didn't replaced old redux logic yet
+// also I tested queries only inside hasura
 const CouncilProvider = ({ children }: Props) => {
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
@@ -182,6 +184,7 @@ const CouncilProvider = ({ children }: Props) => {
     setActiveSubs((prev) => ({ ...prev, ...newSubs }))
   }
 
+  // @mxkucher Take a look at  getCouncilProviderReturnValue for isLoading --------------------------------------------------------------------------------
   const contextProviderValue = useMemo(
     () =>
       getCouncilProviderReturnValue({

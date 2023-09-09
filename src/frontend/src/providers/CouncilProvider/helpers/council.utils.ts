@@ -34,6 +34,10 @@ export const getCouncilProviderReturnValue = ({
   const commonToReturn = {
     changeCouncilSubscriptionList,
   }
+
+  // @mxkucher we have 4 loading statuses, so i think we can return empty state instead of nullable
+  // and take loadings from hooks. --------------------------------------------------------------------------------
+
   // council & bg council members loading statuses
   const areCouncilMembersLoading =
     (activeSubs[COUNCIL_MEMBERS_SUB] && councilMembers === null) ||
@@ -51,42 +55,6 @@ export const getCouncilProviderReturnValue = ({
   const areBreakGlassCouncilActionsLoading =
     (activeSubs[BG_COUNCIL_ACTIONS_DATA] !== null && checkObjectValuesForNull(breakGlassCouncilActions)) ||
     (activeSubs[BG_COUNCIL_ACTIONS_DATA] === null && checkObjectValuesForNull(breakGlassCouncilActions))
-
-  if (areCouncilMembersLoading) {
-    return {
-      ...councilCtxState,
-      councilMembers: EMPTY_COUNCIL_CTX.councilMembers,
-      ...commonToReturn,
-      areCouncilMembersLoading: true,
-    }
-  }
-
-  if (areBreakGlassCouncilMembersLoading) {
-    return {
-      ...councilCtxState,
-      councilMembers: EMPTY_COUNCIL_CTX.breakGlassCouncilMembers,
-      ...commonToReturn,
-      areBreakGlassCouncilMembersLoading: true,
-    }
-  }
-
-  if (areCouncilActionsLoading) {
-    return {
-      ...councilCtxState,
-      councilMembers: EMPTY_COUNCIL_CTX.councilActions,
-      ...commonToReturn,
-      areCouncilActionsLoading: true,
-    }
-  }
-
-  if (areBreakGlassCouncilActionsLoading) {
-    return {
-      ...councilCtxState,
-      councilMembers: EMPTY_COUNCIL_CTX.breakGlassCouncilActions,
-      ...commonToReturn,
-      areBreakGlassCouncilActionsLoading: true,
-    }
-  }
 
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
   const nonNullableProviderValue = replaceNullValuesWithDefault<CouncilStateType>(councilCtxState, EMPTY_COUNCIL_CTX)
