@@ -2,6 +2,7 @@ import React, { useContext, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 // consts
+import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 import {
   DEFAULT_DATA_FEEDS_CTX,
   DEFAULT_DATA_FEEDS_HISTORY,
@@ -21,10 +22,10 @@ import {
 // helpers
 import { getDataFeedsProviderReturnValue } from './helpers/feeds.utils'
 import { normalizeDataFeedsHistory, normalizeFeeds, normalizeFeedsPrices } from './helpers/feedsNormalizer'
-import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
 
-// contexts
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
@@ -44,6 +45,7 @@ type Props = {
 
 export const DataFeedsProvider = ({ children }: Props) => {
   const { updateTokensPrices } = useTokensContext()
+  const { handleApolloError } = useApolloContext()
 
   const [feedsCtxState, setFeedsCtxState] = useState<NullableDataFeedsContextStateType>(DEFAULT_DATA_FEEDS_CTX)
 
@@ -59,7 +61,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
         console.log('zod full feeds query parsing error:', { e })
       }
     },
-    onError: (error) => console.log({ error }),
+    onError: (error) => handleApolloError(error, 'FEEDS_QUERY'),
   })
 
   // update feeds price and track whether need to load new feed
@@ -80,7 +82,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
         console.log('zod small feeds query parsing error:', { e })
       }
     },
-    onError: (error) => console.log({ error }),
+    onError: (error) => handleApolloError(error, 'FEEDS_UPDATE_QUERY'),
   })
 
   // normalize and update for full feeds query
@@ -97,12 +99,10 @@ export const DataFeedsProvider = ({ children }: Props) => {
 
   // normalize and update for small feeds query
   const updateSmallDataFeeds = (data: SmallFeedsQueryType) => {
-    const updatedFeeds = normalizeFeedsPrices(feedsCtxState.feedsMapper ?? {}, data)
-
-    setFeedsCtxState({
-      ...feedsCtxState,
-      feedsMapper: updatedFeeds,
-    })
+    setFeedsCtxState((prevState) => ({
+      ...prevState,
+      feedsMapper: normalizeFeedsPrices(prevState.feedsMapper ?? {}, data),
+    }))
   }
 
   // normalize feeds history and volatility

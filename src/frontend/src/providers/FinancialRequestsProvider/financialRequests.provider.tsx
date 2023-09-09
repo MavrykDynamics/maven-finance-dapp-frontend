@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { ApolloError } from '@apollo/client'
 import dayjs from 'dayjs'
 
 // types
@@ -11,6 +10,7 @@ import {
 } from './financialRequests.types'
 
 // consts
+import { getFinancialRequestsStorageSubscription } from './queries/financialRequests.queries'
 import {
   ALL_FIN_REQUESTS_SUB,
   DEFAULT_FINANCIAL_REQUESTS_CTX,
@@ -19,15 +19,10 @@ import {
   ONGOING_FIN_REQUESTS_SUB,
   PAST_FIN_REQUESTS_SUB,
 } from './helpers/financialRequests.consts'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // providers
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-
-// queries
-import { getFinancialRequestsStorageSubscription } from './queries/financialRequests.queries'
 
 // utils
 import { getFinRequestsProviderReturnValue, normalizeFinancialRequests } from './helpers/financialRequests.utils'
@@ -39,7 +34,7 @@ type Props = {
 }
 
 const FinancialRequestsProvider = ({ children }: Props) => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
 
   const [finRequestsCtxState, setFinRequestsCtxState] =
     useState<NullableFinancialRequestsContextStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
@@ -59,16 +54,10 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     }
   }, [activeSubs])
 
-  const handleSubError = (error: ApolloError, subName: string) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
-
   useQueryWithRefetch(
     getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }),
     {
       skip: activeSubs[FIN_REQUESTS_DATA] === null,
-      onError: (error) => handleSubError(error, 'getFinancialRequestsStorageSubscription ERROR'),
       onCompleted: (data) => {
         if (!data) return
         updateFinRequestsData(data, activeSubs[FIN_REQUESTS_DATA])
@@ -76,6 +65,7 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
+      onError: (error) => handleApolloError(error, 'getFinancialRequestsStorageSubscription'),
     },
     {
       refetchQueryVariables,

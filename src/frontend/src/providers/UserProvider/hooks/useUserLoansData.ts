@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react'
 
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useUserContext } from '../user.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
+// utils
 import { normalizeUserLoansData } from '../helpers/userLoansData.normalizer'
+
+// consts
+import { DEFAULT_USER_LOANS_DATA } from '../helpers/user.consts'
 import { GET_USER_LOANS_DATA } from '../queries/userLoans.query'
 
+// types
 import { GetUserLoansDataQuery } from 'utils/__generated__/graphql'
-import { DEFAULT_USER_LOANS_DATA } from '../helpers/user.consts'
-import { useUserContext } from '../user.provider'
 
 /**
  *
@@ -16,6 +22,7 @@ import { useUserContext } from '../user.provider'
  * @returns returns user's loans data, all values are converted to USD, this data is used to show his loans stats
  */
 const useUserLoansData = () => {
+  const { handleApolloError } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userLoansData, setUserLoansData, userAddress } = useUserContext()
 
@@ -43,12 +50,8 @@ const useUserLoansData = () => {
     variables: {
       userAddress,
     },
-    onCompleted: (data) => {
-      setIndexerData(data)
-    },
-    onError: (error) => {
-      console.error('GET_USER_LOANS_DATA error: ', { error })
-    },
+    onCompleted: (data) => setIndexerData(data),
+    onError: (error) => handleApolloError(error, 'GET_USER_LOANS_DATA'),
   })
 
   return {
