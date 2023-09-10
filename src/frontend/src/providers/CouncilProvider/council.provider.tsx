@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
+import { usePrevious } from 'react-use'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 // utils
 import { normalizeCouncilActions, normalizeCouncilMembers } from './helpers/council.normalizer'
@@ -21,12 +22,18 @@ import {
 
 // consts
 import {
+  ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
+  ALL_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_PAST_COUNCIL_ACTIONS_SUB,
   BG_COUNCIL_ACTIONS_DATA,
   BREAK_GLASS_COUNCIL_MEMBERS_SUB,
   COUNCIL_ACTIONS_DATA,
   COUNCIL_MEMBERS_SUB,
   DEFAULT_COUNCIL_ACTIVE_SUBS,
   DEFAULT_COUNCIL_CTX,
+  MY_BG_PAST_COUNCIL_ACTIONS_SUB,
+  MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './helpers/council.consts'
 import { BREAK_GLASS_COUNCIL_MEMBERS_QUERY, getBreakGlassCouncilActions } from './queries/breakGlassCouncil.query'
 import { COUNCIL_MEMBERS_QUERY, getCouncilActions } from './queries/council.query'
@@ -37,30 +44,50 @@ type Props = {
   children: React.ReactNode
 }
 
-// @mxkucher I didn't replaced old redux logic yet
-// also I tested queries only inside hasura
+const refetchQueryVariables = () => ({
+  currentTimestamp: dayjs().toISOString(),
+})
+
 const CouncilProvider = ({ children }: Props) => {
   const { handleApolloError } = useApolloContext()
   const { userAddress } = useUserContext()
 
+  const currentTimeRef = useRef(dayjs().toISOString())
+  const prevUserAddress = usePrevious(userAddress)
+
   const [councilCtxState, setCouncilCtxState] = useState<NullableCouncilContextStateType>(DEFAULT_COUNCIL_CTX)
   const [activeSubs, setActiveSubs] = useState<CouncilSubsRecordType>(DEFAULT_COUNCIL_ACTIVE_SUBS)
 
-  const currentTimeRef = useRef(dayjs().toISOString())
+  // update current time when sub that requires it becomes active, to load initial data due to current time, not provider init time
+  useEffect(() => {
+    if (activeSubs[BG_COUNCIL_ACTIONS_DATA] !== null || activeSubs[COUNCIL_ACTIONS_DATA] !== null) {
+      currentTimeRef.current = dayjs().toISOString()
+    }
+  }, [activeSubs])
 
-  const refetchQueryVariables = useCallback(
-    () => ({
-      currentTimestamp: dayjs().toISOString(),
-    }),
-    [currentTimeRef.current], // to have up-to-date query data after some indexer block update, DO NOT REMOVE from deps
-  )
+  // reset user specific fields on user change
+  useEffect(() => {
+    if (prevUserAddress !== userAddress) {
+      setCouncilCtxState((prev) => ({
+        ...prev,
+        breakGlassCouncilActions: {
+          ...prev.breakGlassCouncilActions,
+          myPastActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions.myPastActions,
+          myPendingActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions.myPendingActions,
+        },
+        councilActions: {
+          ...prev.councilActions,
+          myPastActions: DEFAULT_COUNCIL_CTX.councilActions.myPastActions,
+          myPendingActions: DEFAULT_COUNCIL_CTX.councilActions.myPendingActions,
+        },
+      }))
+    }
+  }, [userAddress])
 
   // council members
   useQueryWithRefetch(COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[COUNCIL_MEMBERS_SUB],
-    onCompleted: (data) => {
-      updateCouncilMembers(data)
-    },
+    onCompleted: (data) => updateCouncilMembers(data),
     onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_SUB'),
   })
 
@@ -68,14 +95,12 @@ const CouncilProvider = ({ children }: Props) => {
   useQueryWithRefetch(
     getCouncilActions(activeSubs[COUNCIL_ACTIONS_DATA]),
     {
-      skip: activeSubs[COUNCIL_ACTIONS_DATA] === null,
-      onCompleted: (data) => {
-        updateCouncilActionsData(data)
-      },
+      skip: !activeSubs[COUNCIL_ACTIONS_DATA],
       variables: {
         currentTimestamp: currentTimeRef.current,
         userAddress,
       },
+      onCompleted: (data) => updateCouncilActionsData(data),
       onError: (error) => handleApolloError(error, 'getCouncilActions'),
     },
     { refetchQueryVariables },
@@ -84,9 +109,7 @@ const CouncilProvider = ({ children }: Props) => {
   // break glass members
   useQueryWithRefetch(BREAK_GLASS_COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[BREAK_GLASS_COUNCIL_MEMBERS_SUB],
-    onCompleted: (data) => {
-      updateBreakGlassCouncilMembers(data)
-    },
+    onCompleted: (data) => updateBreakGlassCouncilMembers(data),
     onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_SUB'),
   })
 
@@ -94,60 +117,70 @@ const CouncilProvider = ({ children }: Props) => {
   useQueryWithRefetch(
     getBreakGlassCouncilActions(activeSubs[BG_COUNCIL_ACTIONS_DATA]),
     {
-      skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] === null,
-      onCompleted: (data) => {
-        updateBreakGlassCouncilActionsData(data)
-      },
+      skip: !activeSubs[BG_COUNCIL_ACTIONS_DATA],
       variables: {
         currentTimestamp: currentTimeRef.current,
         userAddress,
       },
+      onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
       onError: (error) => handleApolloError(error, 'getBreakGlassCouncilActions'),
     },
     { refetchQueryVariables },
   )
 
-  // methods to update data ----------------------------------------
-
-  // actions update
+  // mavryk council actions update
   const updateCouncilActionsData = (data: GetCouncilActionsQuery) => {
     const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
-      normalizeCouncilActions(data.council_action, userAddress, activeSubs[COUNCIL_ACTIONS_DATA])
+      normalizeCouncilActions(data.council_action, userAddress)
 
-    // TODO compare prev data is it's not empty to don't show the loader
+    const isAllPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB
+    const isMyPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB
+    const isPendingActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_ONGOING_COUNCIL_ACTIONS_SUB
+
     setCouncilCtxState((prev) => ({
       ...prev,
       councilActions: {
-        myPastActions,
-        myPendingActions,
-        notMyPendingActions,
-        allPastActions,
-        allPendingActions,
+        allPastActions: isAllPastActionsSubActive ? allPastActions : prev.councilActions.allPastActions,
+        myPastActions:
+          isAllPastActionsSubActive || isMyPastActionsSubActive ? myPastActions : prev.councilActions.myPastActions,
+        allPendingActions: isPendingActionsSubActive ? allPendingActions : prev.councilActions.allPendingActions,
+        notMyPendingActions: isPendingActionsSubActive ? notMyPendingActions : prev.councilActions.notMyPendingActions,
+        myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.councilActions.myPendingActions,
         actionsMapper,
       },
     }))
   }
 
+  // break glass council actions update
   const updateBreakGlassCouncilActionsData = (data: GetBreakGlassCouncilActionsQuery) => {
     const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
-      normalizeCouncilActions(data.break_glass_action, userAddress, activeSubs[BG_COUNCIL_ACTIONS_DATA])
+      normalizeCouncilActions(data.break_glass_action, userAddress)
 
-    // TODO compare prev data is it's not empty to don't show the loader
+    const isAllPastActionsSubActive = activeSubs[BG_COUNCIL_ACTIONS_DATA] === ALL_BG_PAST_COUNCIL_ACTIONS_SUB
+    const isMyPastActionsSubActive = activeSubs[BG_COUNCIL_ACTIONS_DATA] === MY_BG_PAST_COUNCIL_ACTIONS_SUB
+    const isPendingActionsSubActive = activeSubs[BG_COUNCIL_ACTIONS_DATA] === ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB
+
     setCouncilCtxState((prev) => ({
       ...prev,
       breakGlassCouncilActions: {
-        myPastActions,
-        myPendingActions,
-        notMyPendingActions,
-        allPastActions,
-        allPendingActions,
+        allPastActions: isAllPastActionsSubActive ? allPastActions : prev.breakGlassCouncilActions.allPastActions,
+        myPastActions:
+          isAllPastActionsSubActive || isMyPastActionsSubActive
+            ? myPastActions
+            : prev.breakGlassCouncilActions.myPastActions,
+        allPendingActions: isPendingActionsSubActive
+          ? allPendingActions
+          : prev.breakGlassCouncilActions.allPendingActions,
+        notMyPendingActions: isPendingActionsSubActive
+          ? notMyPendingActions
+          : prev.breakGlassCouncilActions.notMyPendingActions,
+        myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.breakGlassCouncilActions.myPendingActions,
         actionsMapper,
       },
     }))
   }
 
-  // members update
-
+  // mavryk council members update
   const updateCouncilMembers = (data: GetCouncilMembersQuery) => {
     if (!data.council[0]?.members) return
     const members = normalizeCouncilMembers(data.council[0].members)
@@ -158,6 +191,7 @@ const CouncilProvider = ({ children }: Props) => {
     }))
   }
 
+  // break glass council members update
   const updateBreakGlassCouncilMembers = (data: GetBreakGlassCouncilMembersQuery) => {
     if (!data.break_glass_council_member) return
     const members = normalizeCouncilMembers(data.break_glass_council_member)
@@ -172,7 +206,6 @@ const CouncilProvider = ({ children }: Props) => {
     setActiveSubs((prev) => ({ ...prev, ...newSubs }))
   }
 
-  // @mxkucher Take a look at  getCouncilProviderReturnValue for isLoading --------------------------------------------------------------------------------
   const contextProviderValue = useMemo(
     () =>
       getCouncilProviderReturnValue({

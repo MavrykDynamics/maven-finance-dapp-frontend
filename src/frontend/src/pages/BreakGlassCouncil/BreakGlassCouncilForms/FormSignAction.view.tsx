@@ -21,7 +21,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
-import { SIGN_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
+import { SIGN_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 // consts
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'

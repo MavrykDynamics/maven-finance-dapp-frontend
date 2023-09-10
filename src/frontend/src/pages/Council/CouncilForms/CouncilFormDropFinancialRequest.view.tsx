@@ -16,7 +16,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
-import { dropFinancialRequest } from '../Council.actions'
+// import { dropFinancialRequest } from '../Council.actions'
 
 // style
 import { CouncilFormDropFinancialRequestLoaderWrapper, CouncilFormStyled } from './CouncilForm.style'
@@ -64,7 +64,7 @@ export const CouncilFormDropFinancialRequest = () => {
       const financialReqID = Number(chosenDdItem?.id)
       if (!financialReqID) return
 
-      await dispatch(dropFinancialRequest(financialReqID))
+      // await dispatch(dropFinancialRequest(financialReqID))
       setChosenDdItem(undefined)
     } catch (error) {
       console.error(error)

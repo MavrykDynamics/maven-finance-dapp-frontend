@@ -1,5 +1,8 @@
+// utils
+import { isObjectChildrenNulls } from 'providers/common/utils/checkUtils'
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 
+// types
 import {
   CouncilContext,
   CouncilStateType,
@@ -13,10 +16,6 @@ import {
   COUNCIL_MEMBERS_SUB,
   EMPTY_COUNCIL_CTX,
 } from './council.consts'
-
-function checkObjectValuesForNull(obj: Record<string, unknown>) {
-  return Object.values(obj).every((el) => el === null)
-}
 
 type CouncilContextReturnValueArgs = {
   councilCtxState: NullableCouncilContextStateType
@@ -35,36 +34,30 @@ export const getCouncilProviderReturnValue = ({
     changeCouncilSubscriptionList,
   }
 
-  // @mxkucher we have 4 loading statuses, so i think we can return empty state instead of nullable
-  // and take loadings from hooks. --------------------------------------------------------------------------------
+  const isBgCounsilMembersLoading = activeSubs[BREAK_GLASS_COUNCIL_MEMBERS_SUB] && breakGlassCouncilMembers === null
+  const isMavCounsilMembersLoading = activeSubs[COUNCIL_MEMBERS_SUB] && councilMembers === null
+  const isBgCounsilActionsLoading = activeSubs[COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(councilActions)
+  const isMavCounsilActionsLoading =
+    activeSubs[BG_COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(breakGlassCouncilActions)
 
-  // council & bg council members loading statuses
-  const areCouncilMembersLoading =
-    (activeSubs[COUNCIL_MEMBERS_SUB] && councilMembers === null) ||
-    (!activeSubs[COUNCIL_MEMBERS_SUB] && councilMembers === null)
+  // TODO: think about initial
+  const isLoading =
+    isBgCounsilMembersLoading || isMavCounsilMembersLoading || isBgCounsilActionsLoading || isMavCounsilActionsLoading
 
-  const areBreakGlassCouncilMembersLoading =
-    (activeSubs[BREAK_GLASS_COUNCIL_MEMBERS_SUB] && breakGlassCouncilMembers === null) ||
-    (!activeSubs[BREAK_GLASS_COUNCIL_MEMBERS_SUB] && breakGlassCouncilMembers === null)
-
-  // council & bg council actions loading statuses
-  const areCouncilActionsLoading =
-    (activeSubs[COUNCIL_ACTIONS_DATA] !== null && checkObjectValuesForNull(councilActions)) ||
-    (activeSubs[COUNCIL_ACTIONS_DATA] === null && checkObjectValuesForNull(councilActions))
-
-  const areBreakGlassCouncilActionsLoading =
-    (activeSubs[BG_COUNCIL_ACTIONS_DATA] !== null && checkObjectValuesForNull(breakGlassCouncilActions)) ||
-    (activeSubs[BG_COUNCIL_ACTIONS_DATA] === null && checkObjectValuesForNull(breakGlassCouncilActions))
+  if (isLoading) {
+    return {
+      isLoading: true,
+      ...commonToReturn,
+      ...EMPTY_COUNCIL_CTX,
+    }
+  }
 
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
   const nonNullableProviderValue = replaceNullValuesWithDefault<CouncilStateType>(councilCtxState, EMPTY_COUNCIL_CTX)
 
   return {
+    isLoading: false,
     ...commonToReturn,
     ...nonNullableProviderValue,
-    areCouncilActionsLoading: false,
-    areBreakGlassActionsLoading: false,
-    areCouncilBreakGlassMembersLoading: false,
-    areCouncilMembersLoading: false,
   }
 }

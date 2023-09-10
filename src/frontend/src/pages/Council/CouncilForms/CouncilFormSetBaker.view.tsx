@@ -14,7 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
-import { setBakerRequest } from '../Council.actions'
+// import { setBakerRequest } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -37,7 +37,7 @@ export const CouncilFormSetBaker = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(setBakerRequest(bakerHash))
+      // await dispatch(setBakerRequest(bakerHash))
       setForm({
         bakerHash: '',
       })

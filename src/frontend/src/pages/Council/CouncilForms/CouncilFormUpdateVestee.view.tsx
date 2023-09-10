@@ -14,7 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
-import { updateVestee } from '../Council.actions'
+// import { updateVestee } from '../Council.actions'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
@@ -48,7 +48,7 @@ export const CouncilFormUpdateVestee = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(updateVestee(vesteeAddress, +totalAllocated, +cliffInMonths, +vestingInMonths))
+      // await dispatch(updateVestee(vesteeAddress, +totalAllocated, +cliffInMonths, +vestingInMonths))
       setForm(INIT_FORM)
       setFormInputStatus({
         vesteeAddress: '',

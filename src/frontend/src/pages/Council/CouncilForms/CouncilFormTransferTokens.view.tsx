@@ -19,7 +19,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
 
 // action
-import { transferTokens } from '../Council.actions'
+// import { transferTokens } from '../Council.actions'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
@@ -82,17 +82,17 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
     const typeOfToken = tokenType?.value as TokenType | undefined
     if (!typeOfToken || !tokenDecimals) return
 
-    dispatch(
-      transferTokens(
-        receiverAddress,
-        tokenContractAddress,
-        +tokenAmount,
-        typeOfToken,
-        +tokenId,
-        purpose,
-        tokenDecimals,
-      ),
-    )
+    // dispatch(
+    //   transferTokens(
+    //     receiverAddress,
+    //     tokenContractAddress,
+    //     +tokenAmount,
+    //     typeOfToken,
+    //     +tokenId,
+    //     purpose,
+    //     tokenDecimals,
+    //   ),
+    // )
 
     setTokenDecimals(null)
     setTokenType(undefined)

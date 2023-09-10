@@ -2,7 +2,7 @@ import {
   CouncilActionsRecordType,
   CouncilStateType,
   CouncilSubsRecordType,
-  NullableActionsDataType,
+  NullableCouncilActionsRecordType,
   NullableCouncilContextStateType,
 } from '../council.provider.types'
 
@@ -17,6 +17,23 @@ export const REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'removeCouncilMember'
 export const PROPAGATE_BREAK_GLASS_ACTION = 'propagateBreakGlass'
 export const DROP_BREAK_GLASS_ACTION = 'dropBreakGlass'
 
+export const SIGN_ACTION_ACTION = 'counsilSignAction'
+export const ADD_VESTEE_ACTION = 'addVestee'
+export const ADD_COUNSIL_MEMBER_ACTION = 'addCounsilMember'
+export const UPDATE_VESTEE_ACTION = 'updateVestee'
+export const TOGGLE_VESTEE_LOCK_ACTION = 'toggleVesteeLock'
+export const CHANGE_COUNCIL_MEMBER_ACTION = 'changeCounsilMember'
+export const REMOVE_COUNCIL_MEMBER_ACTION = 'removeCounsilMember'
+export const UPDATE_COUNSIL_MEMBER_INFO_ACTION = 'updateCounsilMemberData'
+export const TRANSFER_TOKENS_ACTION = 'transferTokens'
+export const REQUEST_TOKENS_ACTION = 'requestTokens'
+export const REQUEST_TOKENS_MINT_ACTION = 'requestTokenMint'
+export const DROP_FIN_REQUEST_ACTION = 'dropFinReq'
+export const REMOVE_VESTEE_ACTION = 'removeVestee'
+export const SET_BAKER_REQUEST_ACTION = 'setBaker'
+export const SET_CONTRACT_BAKER_REQUEST_ACTION = 'setContractBaker'
+export const DROP_REQUEST_ACTION = 'daropRequest'
+
 // subs
 export const BG_COUNCIL_ACTIONS_DATA = 'BG_COUNCIL_ACTIONS_DATA'
 export const COUNCIL_ACTIONS_DATA = 'COUNCIL_ACTIONS_DATA'
@@ -25,17 +42,15 @@ export const BREAK_GLASS_COUNCIL_MEMBERS_SUB = 'BREAK_GLASS_COUNCIL_MEMBERS_SUB'
 
 // break glass
 export const MY_BG_PAST_COUNCIL_ACTIONS_SUB = 'myBgPastCouncilActions'
-export const MY_BG_ONGOING_COUNCIL_ACTIONS_SUB = 'myBgOngoingCouncilActions'
 export const ALL_BG_PAST_COUNCIL_ACTIONS_SUB = 'allBgPastCouncilActions'
 export const ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB = 'allBgOngoingCouncilActions'
 
 // council
 export const MY_PAST_COUNCIL_ACTIONS_SUB = 'myPastCouncilActions'
-export const MY_ONGOING_COUNCIL_ACTIONS_SUB = 'myOngoingCouncilActions'
 export const ALL_PAST_COUNCIL_ACTIONS_SUB = 'allPastCouncilActions'
 export const ALL_ONGOING_COUNCIL_ACTIONS_SUB = 'allOngoingCouncilActions'
 
-// PROVIDER DEFAULT CONSTS
+// PROVIDER DEFAULT SUBS CONSTS
 export const DEFAULT_COUNCIL_ACTIVE_SUBS: CouncilSubsRecordType = {
   [BG_COUNCIL_ACTIONS_DATA]: null,
   [COUNCIL_ACTIONS_DATA]: null,
@@ -43,18 +58,21 @@ export const DEFAULT_COUNCIL_ACTIVE_SUBS: CouncilSubsRecordType = {
   [BREAK_GLASS_COUNCIL_MEMBERS_SUB]: false,
 } as const
 
-const NULLABLE_COUNCIL_ACTIONS_DATA: NullableActionsDataType = {
+// PROVIDER DEFAULT DATA CONSTS
+
+const NULLABLE_COUNCIL_ACTIONS_DATA: NullableCouncilActionsRecordType = {
   allPendingActions: null,
-  notMyPendingActions: null,
   myPendingActions: null,
+  notMyPendingActions: null,
   allPastActions: null,
   myPastActions: null,
   actionsMapper: null,
 }
+
 const EMPTY_COUNCIL_ACTIONS_DATA: CouncilActionsRecordType = {
   allPendingActions: [],
-  notMyPendingActions: [],
   myPendingActions: [],
+  notMyPendingActions: [],
   allPastActions: [],
   myPastActions: [],
   actionsMapper: {},

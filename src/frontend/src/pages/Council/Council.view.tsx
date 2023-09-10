@@ -55,7 +55,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // consts
-import { PROPAGATE_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
+import { PROPAGATE_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 export const councilEmptyContainer = (
   <EmptyContainer>

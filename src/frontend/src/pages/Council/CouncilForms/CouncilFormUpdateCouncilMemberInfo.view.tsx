@@ -22,6 +22,7 @@ import { updateCouncilMemberInfo } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type Props = {
   maxLength: CouncilMaxLength
@@ -29,12 +30,13 @@ type Props = {
 }
 
 export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Props) => {
+  const { userAddress } = useUserContext()
+
   const dispatch = useDispatch()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
   const { councilMembers } = useSelector((state: State) => state.council)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
-  const myInfo = councilMembers.find((item) => item.userId === accountPkh)
+  const myInfo = councilMembers.find((item) => item.userId === userAddress)
 
   const [form, setForm] = useState({
     newMemberName: '',

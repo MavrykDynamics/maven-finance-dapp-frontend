@@ -21,8 +21,8 @@ import {
   getCouncilPastActions,
   getCouncilPendingActions,
   getCouncilMembers,
-  dropRequest,
-  sign,
+  // dropRequest,
+  // sign,
 } from './Council.actions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -63,11 +63,11 @@ export const Council = () => {
   } = useSelector((state: State) => state.council)
 
   const handleSignAction = (id: number) => {
-    dispatch(sign(id))
+    // dispatch(sign(id))
   }
 
   const handleDropAction = (id: number) => {
-    dispatch(dropRequest(id))
+    // dispatch(dropRequest(id))
   }
 
   const { isLoading } = useDataLoader(async (isDepsChanged) => {

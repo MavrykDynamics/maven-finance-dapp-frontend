@@ -12,7 +12,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
-import { removeCouncilMember } from '../Council.actions'
+// import { removeCouncilMember } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -41,7 +41,7 @@ export const CouncilFormRemoveCouncilMember = () => {
       const memberAddress = chosenDdItem?.tzAddress
       if (!memberAddress) return
 
-      await dispatch(removeCouncilMember(memberAddress))
+      // await dispatch(removeCouncilMember(memberAddress))
       setChosenDdItem(undefined)
     } catch (error) {
       console.error(error)

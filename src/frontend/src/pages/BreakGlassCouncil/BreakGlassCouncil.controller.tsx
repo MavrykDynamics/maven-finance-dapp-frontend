@@ -31,10 +31,7 @@ import { dropBreakGlass, signAction } from 'providers/CouncilProvider/actions/br
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
-import {
-  DROP_BREAK_GLASS_ACTION,
-  SIGN_BREAK_GLASS_ACTION,
-} from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
+import { DROP_BREAK_GLASS_ACTION, SIGN_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'

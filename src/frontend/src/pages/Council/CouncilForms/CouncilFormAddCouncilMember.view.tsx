@@ -11,7 +11,7 @@ import { validateFormAddress, validateFormField } from 'utils/validatorFunctions
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // action
-import { addCouncilMember } from '../Council.actions'
+// import { addCouncilMember } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -41,7 +41,7 @@ export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(addCouncilMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage))
+      // await dispatch(addCouncilMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage))
       setForm({
         newMemberAddress: '',
         newMemberName: '',

@@ -81,7 +81,7 @@ import {
   VOTE_FOR_ACTION,
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 
-// breal glass council consts
+// council consts
 import {
   ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
@@ -92,7 +92,23 @@ import {
   SET_SINGLE_CONTRACT_ADMIN_ACTION,
   SIGN_BREAK_GLASS_ACTION,
   UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-} from 'providers/CouncilProvider/helpers/breakGlassCouncil.consts'
+  SIGN_ACTION_ACTION,
+  ADD_VESTEE_ACTION,
+  ADD_COUNSIL_MEMBER_ACTION,
+  UPDATE_VESTEE_ACTION,
+  TOGGLE_VESTEE_LOCK_ACTION,
+  CHANGE_COUNCIL_MEMBER_ACTION,
+  REMOVE_COUNCIL_MEMBER_ACTION,
+  UPDATE_COUNSIL_MEMBER_INFO_ACTION,
+  TRANSFER_TOKENS_ACTION,
+  REQUEST_TOKENS_ACTION,
+  REQUEST_TOKENS_MINT_ACTION,
+  DROP_FIN_REQUEST_ACTION,
+  REMOVE_VESTEE_ACTION,
+  SET_BAKER_REQUEST_ACTION,
+  SET_CONTRACT_BAKER_REQUEST_ACTION,
+  DROP_REQUEST_ACTION,
+} from 'providers/CouncilProvider/helpers/council.consts'
 
 // types
 import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
@@ -721,6 +737,168 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
     end: {
       title: 'Drop Action is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // mavryk council actions -------------------------------------------------
+  [SIGN_ACTION_ACTION]: {
+    start: {
+      title: 'Sign...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Sign is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [ADD_VESTEE_ACTION]: {
+    start: {
+      title: 'Add Vestee...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Add Vestee is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [ADD_COUNSIL_MEMBER_ACTION]: {
+    start: {
+      title: 'Add Member...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Add Member is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_VESTEE_ACTION]: {
+    start: {
+      title: 'Update Vestee...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Update Vestee is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [TOGGLE_VESTEE_LOCK_ACTION]: {
+    start: {
+      title: 'Toggle Vestee Lock...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Toggle Vestee Lock is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [CHANGE_COUNCIL_MEMBER_ACTION]: {
+    start: {
+      title: 'Change Council Member...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Change Council Member is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REMOVE_COUNCIL_MEMBER_ACTION]: {
+    start: {
+      title: 'Remove Council Member...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Remove Council Member is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_COUNSIL_MEMBER_INFO_ACTION]: {
+    start: {
+      title: 'Update Council Member Info...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Update Council Member Info is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [TRANSFER_TOKENS_ACTION]: {
+    start: {
+      title: 'Transfer Tokens...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Transfer Tokens is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REQUEST_TOKENS_ACTION]: {
+    start: {
+      title: 'Request Tokens...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Request Tokens is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REQUEST_TOKENS_MINT_ACTION]: {
+    start: {
+      title: 'Request Token Mint...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Request Token Mint is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DROP_FIN_REQUEST_ACTION]: {
+    start: {
+      title: 'Drop Financial Request...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Drop Financial Request is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REMOVE_VESTEE_ACTION]: {
+    start: {
+      title: 'Remove Vestee Request...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Remove Vestee Request is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [SET_BAKER_REQUEST_ACTION]: {
+    start: {
+      title: 'Set Baker...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Set Baker is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [SET_CONTRACT_BAKER_REQUEST_ACTION]: {
+    start: {
+      title: 'Set Contract Baker...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Set Contract Baker is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DROP_REQUEST_ACTION]: {
+    start: {
+      title: 'Drop Request...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Drop Request is done.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

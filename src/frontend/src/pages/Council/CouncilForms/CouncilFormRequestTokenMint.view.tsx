@@ -16,7 +16,7 @@ import { TextArea } from '../../../app/App.components/TextArea/TextArea.controll
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
-import { requestTokenMint } from '../Council.actions'
+// import { requestTokenMint } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -45,7 +45,7 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(requestTokenMint(treasuryAddress, +tokenAmount, purpose))
+      // await dispatch(requestTokenMint(treasuryAddress, +tokenAmount, purpose))
       setForm(INIT_FORM)
       setFormInputStatus({
         treasuryAddress: '',

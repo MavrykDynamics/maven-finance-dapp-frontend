@@ -19,7 +19,7 @@ import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploa
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
-import { changeCouncilMember } from '../Council.actions'
+// import { changeCouncilMember } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -66,15 +66,15 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
       const oldCouncilMemberAddress = chosenDdItem?.tzAddress
       if (!oldCouncilMemberAddress) return
 
-      await dispatch(
-        changeCouncilMember(
-          oldCouncilMemberAddress,
-          newCouncilMemberAddress,
-          newMemberName,
-          newMemberWebsite,
-          newMemberImage,
-        ),
-      )
+      // await dispatch(
+      // changeCouncilMember(
+      //   oldCouncilMemberAddress,
+      //   newCouncilMemberAddress,
+      //   newMemberName,
+      //   newMemberWebsite,
+      //   newMemberImage,
+      // ),
+      // )
       setForm({
         oldCouncilMemberAddress: '',
         newCouncilMemberAddress: '',

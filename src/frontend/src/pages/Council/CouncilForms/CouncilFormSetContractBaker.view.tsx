@@ -14,7 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
-import { setContractBakerRequest } from '../Council.actions'
+// import { setContractBakerRequest } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -41,7 +41,7 @@ export const CouncilFormSetContractBaker = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(setContractBakerRequest(targetContractAddress, keyHash))
+      // await dispatch(setContractBakerRequest(targetContractAddress, keyHash))
       setForm(INIT_FORM)
       setFormInputStatus({
         targetContractAddress: '',

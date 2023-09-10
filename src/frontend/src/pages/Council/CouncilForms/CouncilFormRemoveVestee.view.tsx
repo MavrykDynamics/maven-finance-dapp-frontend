@@ -14,7 +14,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // action
-import { removeVesteeRequest } from '../Council.actions'
+// import { removeVesteeRequest } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -37,7 +37,7 @@ export const CouncilFormRemoveVestee = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(removeVesteeRequest(vesteeAddress))
+      // await dispatch(removeVesteeRequest(vesteeAddress))
       setForm({
         vesteeAddress: '',
       })

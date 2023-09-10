@@ -1,29 +1,30 @@
 import { DocumentNode, OperationVariables, TypedDocumentNode, gql as apolloGql } from '@apollo/client'
+
+// utils
 import { gql } from 'utils/__generated__'
+
+// types
 import { GetBreakGlassCouncilActionsQuery } from 'utils/__generated__/graphql'
 import { CouncilSubsRecordType } from '../council.provider.types'
+
+// consts
 import {
   ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
   BG_COUNCIL_ACTIONS_DATA,
-  MY_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
 } from '../helpers/council.consts'
-import { ValidationError } from 'errors/error'
 
 export const BREAK_GLASS_COUNCIL_MEMBERS_QUERY = gql(`
   query GetBreakGlassCouncilMembers {
     break_glass_council_member {
-      user {
-        address
-      }
       name
-      break_glass {
-        address
-      }
       website
       image
       id
+      user {
+        address
+      }
     }
   }
 `)
@@ -34,14 +35,10 @@ function getBreakGlassCouncilActionsFilter(actionType: CouncilSubsRecordType[typ
       return 'expiration_datetime: {_lt: $currentTimestamp}, _or: {executed: {_eq: true}}'
     case ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB:
       return 'expiration_datetime: {_gt: $currentTimestamp}, _or: {executed: {_eq: false}}'
-    case MY_BG_ONGOING_COUNCIL_ACTIONS_SUB:
-      return 'expiration_datetime: {_gt: $currentTimestamp}, _or: {executed: {_eq: false}, initiator: {address: {_eq: $userAddress}}}'
     case MY_BG_PAST_COUNCIL_ACTIONS_SUB:
       return 'expiration_datetime: {_lt: $currentTimestamp}, _or: {executed: {_eq: true}, initiator: {address: {_eq: $userAddress}}}'
     default:
-      throw new ValidationError('Break Glass actions filter error', {
-        code: 400,
-      })
+      return ''
   }
 }
 
@@ -51,26 +48,27 @@ export const getBreakGlassCouncilActions = (
   const filterCondition = getBreakGlassCouncilActionsFilter(actionType)
 
   return apolloGql(`
-  query GetBreakGlassCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z", $userAddress: String = ""){
-    break_glass_action(order_by: {start_datetime: desc}, where: {${filterCondition}}) {
-      action_type
-      break_glass {
-        address
-      }
-      executed
-      council_size_snapshot
-      id
-      initiator {
-        address
-      }
-      signers_count
-      start_datetime
-      parameters {
+    query GetBreakGlassCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z", $userAddress: String = ""){
+      break_glass_action(order_by: {start_datetime: desc}, where: {${filterCondition}}) {
+        action_type
+        signers_count
+        start_datetime
+        executed
+        council_size_snapshot
+        expiration_datetime
         id
-        name
-        value
+        initiator {
+          address
+        }
+        break_glass {
+          address
+        }
+        parameters {
+          id
+          name
+          value
+        }
       }
     }
-  }
   `)
 }

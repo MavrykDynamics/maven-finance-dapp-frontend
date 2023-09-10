@@ -19,7 +19,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // action
-import { requestTokens } from '../Council.actions'
+// import { requestTokens } from '../Council.actions'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
@@ -80,18 +80,18 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     const typeOfToken = chosenDdItem?.value as TokenType | undefined
     if (!typeOfToken || !tokenDecimals) return
 
-    dispatch(
-      requestTokens(
-        treasuryAddress,
-        tokenContractAddress,
-        tokenName,
-        +tokenAmount,
-        typeOfToken,
-        +tokenId,
-        purpose,
-        tokenDecimals,
-      ),
-    )
+    // dispatch(
+    //   requestTokens(
+    //     treasuryAddress,
+    //     tokenContractAddress,
+    //     tokenName,
+    //     +tokenAmount,
+    //     typeOfToken,
+    //     +tokenId,
+    //     purpose,
+    //     tokenDecimals,
+    //   ),
+    // )
 
     setForm(INIT_FORM)
     setFormInputStatus({

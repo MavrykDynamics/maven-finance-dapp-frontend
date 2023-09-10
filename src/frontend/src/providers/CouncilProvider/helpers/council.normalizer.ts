@@ -1,54 +1,94 @@
-import { CouncilActionType, CouncilActionsType } from 'utils/TypesAndInterfaces/Council'
+import dayjs from 'dayjs'
+
+// types
 import {
   GetBreakGlassCouncilMembersQuery,
   GetBreakGlassCouncilActionsQuery,
   GetCouncilMembersQuery,
   GetCouncilActionsQuery,
 } from 'utils/__generated__/graphql'
-import {
-  MY_BG_PAST_COUNCIL_ACTIONS_SUB,
-  MY_BG_ONGOING_COUNCIL_ACTIONS_SUB,
-  ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
-  ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
-  MY_PAST_COUNCIL_ACTIONS_SUB,
-  MY_ONGOING_COUNCIL_ACTIONS_SUB,
-  ALL_PAST_COUNCIL_ACTIONS_SUB,
-  ALL_ONGOING_COUNCIL_ACTIONS_SUB,
-} from './council.consts'
-import { ValidationError } from 'errors/error'
-import { BreakGlassCouncilActionsSubsType, CouncilActionsSubsType } from '../council.provider.types'
+import { CouncilActionType } from '../council.provider.types'
 
-function pushIdBasedOnSubType(
-  userAddress: string | null,
-  sub: BreakGlassCouncilActionsSubsType | CouncilActionsSubsType | null,
-  acc: CouncilActionsType,
-  { id, initiatorId }: CouncilActionType,
-) {
-  switch (sub) {
-    case ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB:
-    case ALL_ONGOING_COUNCIL_ACTIONS_SUB:
-      acc.allPendingActions.push(id)
-      if (initiatorId !== userAddress) {
-        acc.notMyPendingActions.push(id)
-      }
-      break
-    case ALL_PAST_COUNCIL_ACTIONS_SUB:
-    case ALL_BG_PAST_COUNCIL_ACTIONS_SUB:
-      acc.allPastActions.push(id)
-      break
-    case MY_BG_PAST_COUNCIL_ACTIONS_SUB:
-    case MY_PAST_COUNCIL_ACTIONS_SUB:
-      acc.myPastActions.push(id)
-      break
-    case MY_ONGOING_COUNCIL_ACTIONS_SUB:
-    case MY_BG_ONGOING_COUNCIL_ACTIONS_SUB:
-      acc.myPendingActions.push(id)
-      break
-    default:
-      throw new ValidationError('Incorrect council subscription type', {
-        code: 400,
-      })
+type MavrykCounsilIndexerItemType = GetCouncilActionsQuery['council_action'][number]
+type BreakGlassCounsilIndexerItemType = GetBreakGlassCouncilActionsQuery['break_glass_action'][number]
+
+const checkWhetherMavrykCounsilAction = (
+  indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
+): indexerAction is MavrykCounsilIndexerItemType => {
+  return 'council' in indexerAction
+}
+
+export const normalizeCouncilAction = (
+  indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
+) => {
+  const actionCommonDataBetweenCollections = {
+    actionType: indexerAction.action_type,
+    executed: indexerAction.executed,
+    id: indexerAction.id,
+    initiatorAddress: indexerAction.initiator.address,
+    signersCount: indexerAction.signers_count,
+    startDatetime: indexerAction.start_datetime ?? null,
+    expirationTime: indexerAction.expiration_datetime ?? null,
+    parameters: indexerAction.parameters,
+    councilSize: indexerAction.council_size_snapshot,
   }
+
+  if (checkWhetherMavrykCounsilAction(indexerAction)) {
+    return {
+      ...actionCommonDataBetweenCollections,
+      counsilAddress: indexerAction.council.address,
+    }
+  } else {
+    return {
+      ...actionCommonDataBetweenCollections,
+      counsilAddress: indexerAction.break_glass.address,
+    }
+  }
+}
+
+export const normalizeCouncilActions = (
+  storage: GetBreakGlassCouncilActionsQuery['break_glass_action'] | GetCouncilActionsQuery['council_action'],
+  userAddress: string | null,
+) => {
+  const convertedStorageForTs = storage as Array<MavrykCounsilIndexerItemType | BreakGlassCounsilIndexerItemType>
+
+  return convertedStorageForTs.reduce<{
+    allPendingActions: Array<number>
+    notMyPendingActions: Array<number>
+    myPendingActions: Array<number>
+    allPastActions: Array<number>
+    myPastActions: Array<number>
+    actionsMapper: Record<number, CouncilActionType>
+  }>(
+    (acc, indexerAction) => {
+      const normalizedAction = normalizeCouncilAction(indexerAction)
+      const { id: actionId, initiatorAddress, executed, expirationTime } = normalizedAction
+
+      const isUserAction = initiatorAddress === userAddress
+      const isPastAction = executed || (expirationTime && dayjs().isAfter(dayjs(expirationTime)))
+
+      if (isPastAction) acc.allPastActions.push(actionId)
+      // user created past action
+      if (isPastAction && isUserAction) acc.myPastActions.push(actionId)
+
+      if (!isPastAction) acc.allPendingActions.push(actionId)
+      // user created active actions
+      if (!isPastAction && isUserAction) acc.myPendingActions.push(actionId)
+      // active actions by other user, current user can vote on
+      if (!isPastAction && !isUserAction) acc.notMyPendingActions.push(actionId)
+
+      acc.actionsMapper[actionId] = normalizedAction
+      return acc
+    },
+    {
+      allPendingActions: [],
+      notMyPendingActions: [],
+      myPendingActions: [],
+      allPastActions: [],
+      myPastActions: [],
+      actionsMapper: {},
+    },
+  )
 }
 
 export function normalizeCouncilMembers(
@@ -67,42 +107,4 @@ export function normalizeCouncilMembers(
       website: item.website,
     }
   })
-}
-
-export function normalizeCouncilActions(
-  storage: GetBreakGlassCouncilActionsQuery['break_glass_action'] | GetCouncilActionsQuery['council_action'],
-  userAddress: string | null,
-  sub: BreakGlassCouncilActionsSubsType | CouncilActionsSubsType | null,
-) {
-  const initialData: CouncilActionsType = {
-    allPendingActions: [],
-    notMyPendingActions: [],
-    myPendingActions: [],
-    allPastActions: [],
-    myPastActions: [],
-    actionsMapper: {},
-  }
-
-  if (!storage?.length) return initialData
-
-  const normalizedActions = storage.reduce<CouncilActionsType>((acc, item) => {
-    const action: CouncilActionType = {
-      actionType: item.action_type,
-      councilId: 'council' in item ? item.council?.address : item.break_glass?.address,
-      executed: item.executed,
-      id: item.id,
-      initiatorId: item.initiator.address,
-      signersCount: item.signers_count,
-      startDatetime: item.start_datetime ?? '',
-      parameters: item.parameters,
-      councilSize: item.council_size_snapshot,
-    }
-
-    pushIdBasedOnSubType(userAddress, sub, acc, action)
-    acc.actionsMapper[action.id] = action
-
-    return acc
-  }, initialData)
-
-  return normalizedActions
 }
