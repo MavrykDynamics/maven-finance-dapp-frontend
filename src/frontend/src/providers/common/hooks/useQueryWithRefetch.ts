@@ -72,6 +72,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
       queryOptions?.onCompleted?.(data)
     },
     notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
   })
 
   // callback to refetch query on block lvl change
@@ -83,6 +84,15 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
         const newRefetchVariables =
           typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
+
+        console.log({
+          name,
+          refetchQueryVariables,
+          queryResult,
+          query,
+          vars: queryOptions.variables,
+          newRefetchVariables,
+        })
 
         // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
         if (typeof blocksDiff === 'number') {
