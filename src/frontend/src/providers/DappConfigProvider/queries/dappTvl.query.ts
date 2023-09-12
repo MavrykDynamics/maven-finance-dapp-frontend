@@ -1,7 +1,7 @@
 import { gql } from 'utils/__generated__'
 
 export const GET_DAPP_TVL = gql(`
-	query DashboardTVL($doormanContractAddress: String = "KT1MibkhXKqAURGy6kx9brGk2U8Y8Ysr4niN") {
+	query DashboardTVL($doormanContractAddress: String = "") {
 		doormanTVL: mavryk_user(where: {address: {_eq: $doormanContractAddress}}) {
 			smvk_balance
 			mvk_balance
