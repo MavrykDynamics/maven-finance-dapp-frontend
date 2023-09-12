@@ -23,10 +23,15 @@ import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/D
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
-export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
-  const dispatch = useDispatch()
-  const { councilMembers } = useSelector((state: State) => state.council)
+export const CouncilFormChangeCouncilMember = ({
+  councilMaxLengths,
+  councilMembers,
+}: {
+  councilMaxLengths: CouncilMaxLength
+  councilMembers: CouncilContext['councilMembers']
+}) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(
@@ -129,10 +134,10 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
   const newMemberNameProps = {
     name: 'newMemberName',
     value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberNameMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, maxLength.councilMemberNameMaxLength)
+      handleBlur(e, councilMaxLengths.councilMemberNameMaxLength)
     },
     required: true,
   }
@@ -144,10 +149,10 @@ export const CouncilFormChangeCouncilMember = (maxLength: CouncilMaxLength) => {
   const newMemberWebsiteProps = {
     name: 'newMemberWebsite',
     value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
+      handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength)
     },
     required: true,
   }

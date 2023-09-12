@@ -1,10 +1,18 @@
+import { useParams } from 'react-router'
 import { useEffect } from 'react'
-import { useLocation } from 'react-router'
 
 // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// utils
+import {
+  ALL_PAST_COUNSIL_TAB,
+  ALL_PENDING_COUNSIL_TAB,
+  MY_PAST_COUNSIL_TAB,
+  MY_PENDING_COUNSIL_TAB,
+  parseCounsilTab,
+} from './helpers/commonCouncil.utils'
 
 // view
 import { Page } from 'styles'
@@ -15,20 +23,17 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
 // consts
 import {
+  ALL_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_PAST_COUNCIL_ACTIONS_SUB,
   COUNCIL_ACTIONS_DATA,
   COUNCIL_MEMBERS_SUB,
   DEFAULT_COUNCIL_ACTIVE_SUBS,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from 'providers/CouncilProvider/helpers/council.consts'
 
-// types
-
 export const Council = () => {
-  const { search } = useLocation()
+  const { tabId } = useParams<{ tabId: string }>()
 
-  const {
-    maxLengths: { council: councilMaxLengths },
-  } = useDappConfigContext()
   const {
     userAvatars: { counsilAvatar },
   } = useUserContext()
@@ -47,19 +52,29 @@ export const Council = () => {
   } = useCouncilContext()
 
   useEffect(() => {
-    changeCouncilSubscriptionList({
-      [COUNCIL_MEMBERS_SUB]: true,
-      [COUNCIL_ACTIONS_DATA]: MY_PAST_COUNCIL_ACTIONS_SUB, // filter based on search
-    })
-
     return () => {
       changeCouncilSubscriptionList(DEFAULT_COUNCIL_ACTIVE_SUBS)
     }
   }, [])
 
-  const handleSignAction = (id: number) => {
-    // dispatch(sign(id))
-  }
+  useEffect(() => {
+    const parsedTab = parseCounsilTab(tabId)
+
+    const isMyPendingTab = parsedTab === MY_PENDING_COUNSIL_TAB
+    const isAllPendingTab = parsedTab === ALL_PENDING_COUNSIL_TAB
+    const isAllPastTab = parsedTab === ALL_PAST_COUNSIL_TAB
+
+    changeCouncilSubscriptionList({
+      [COUNCIL_MEMBERS_SUB]: true,
+      // if my ongoing or all ongoing load all ongoing, if my past load my past, otherwise load all past
+      [COUNCIL_ACTIONS_DATA]:
+        isMyPendingTab || isAllPendingTab
+          ? ALL_ONGOING_COUNCIL_ACTIONS_SUB
+          : isAllPastTab
+          ? ALL_PAST_COUNCIL_ACTIONS_SUB
+          : MY_PAST_COUNCIL_ACTIONS_SUB,
+    })
+  }, [tabId])
 
   const handleDropAction = (id: number) => {
     // dispatch(dropRequest(id))
@@ -83,14 +98,7 @@ export const Council = () => {
           myPastActions={myPastActions}
           actionsMapper={actionsMapper}
           members={councilMembers}
-          // actions
-          // handleSignAction={handleSignAction}
           // handleDropAction={handleDropAction}
-          // components
-          // getFormComponent={() => <CouncilForm />}
-          // getFormUpdateMemberInfo={(maxLength, callback: () => void) => (
-          //   <CouncilFormUpdateCouncilMemberInfo maxLength={maxLength} callback={callback} />
-          // )}
         />
       )}
     </Page>

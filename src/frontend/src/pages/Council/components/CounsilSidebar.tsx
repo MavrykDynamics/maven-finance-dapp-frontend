@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
+import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB } from '../helpers/commonCouncil.utils'
 import { BUTTON_WIDE, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 // hooks
@@ -20,15 +21,11 @@ type Props = {
   counsilMembers: CouncilMembersType
   openUpdateMemberProfilePopup: () => void
   showNavButtons: boolean
-  queryParameters: {
-    pathname: string
-    pastActions: string
-    pendingActions: string
-  }
+  pagePathname: string
 }
 
 export const CounsilSidebar = ({
-  queryParameters,
+  pagePathname,
   openUpdateMemberProfilePopup,
   membersTitle,
   counsilMembers,
@@ -54,13 +51,13 @@ export const CounsilSidebar = ({
     <div className="right-block">
       {showNavButtons && (
         <ReviewCard>
-          <Link to={`${queryParameters.pathname}${queryParameters.pastActions}`}>
+          <Link to={`${pagePathname}${ALL_PAST_COUNSIL_TAB}`}>
             <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
               Review Past Actions
             </NewButton>
           </Link>
 
-          <Link to={`${queryParameters.pathname}${queryParameters.pendingActions}`}>
+          <Link to={`${pagePathname}${ALL_PENDING_COUNSIL_TAB}`}>
             <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
               Review Pending Actions
             </NewButton>

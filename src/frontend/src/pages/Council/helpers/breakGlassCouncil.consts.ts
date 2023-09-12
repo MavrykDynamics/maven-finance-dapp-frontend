@@ -2,6 +2,7 @@ export const BgCounsilPageTitles = {
   membersName: 'Break Glass Council',
   cardIdName: 'Break Glass Action ID',
   allPastActions: 'Past Break Glass Council Actions',
+  allPending: 'Pending Signature Council Actions',
 }
 
 export const BgCounsilDdForms = {

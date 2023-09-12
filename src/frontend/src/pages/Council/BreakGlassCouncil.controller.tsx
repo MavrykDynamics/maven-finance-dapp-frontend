@@ -1,55 +1,53 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useParams } from 'react-router'
 
-// prviders
+// utils
+import { dropBreakGlass, propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+
+// hooks
+import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-// components
+// consts
+import {
+  ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
+  BG_COUNCIL_ACTIONS_DATA,
+  BG_COUNCIL_MEMBERS_SUB,
+  DEFAULT_COUNCIL_ACTIVE_SUBS,
+  DROP_BREAK_GLASS_ACTION,
+  MY_BG_PAST_COUNCIL_ACTIONS_SUB,
+  PROPAGATE_BREAK_GLASS_ACTION,
+} from 'providers/CouncilProvider/helpers/council.consts'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import {
+  ALL_PAST_COUNSIL_TAB,
+  ALL_PENDING_COUNSIL_TAB,
+  MY_PENDING_COUNSIL_TAB,
+  parseCounsilTab,
+} from './helpers/commonCouncil.utils'
+
+// view
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { CouncilView } from './Council.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-
-// utils
-
-// actions
-import {
-  dropBreakGlass,
-  propagateBreakGlass,
-  signAction,
-} from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-
-// consts
-import {
-  BREAK_GLASS_COUNCIL_MEMBERS_SUB,
-  DEFAULT_COUNCIL_ACTIVE_SUBS,
-  DROP_BREAK_GLASS_ACTION,
-  PROPAGATE_BREAK_GLASS_ACTION,
-  SIGN_BREAK_GLASS_ACTION,
-} from 'providers/CouncilProvider/helpers/council.consts'
-
-// types
-import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
-import qs from 'qs'
-import { useLocation, useParams } from 'react-router'
 import { PropagateBreakGlassCouncilCard } from 'pages/Council/Council.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+
+// deprecated
+import { State } from 'reducers'
+import { useSelector } from 'react-redux'
 
 export function BreakGlassCouncil() {
   const { tabId } = useParams<{ tabId: string }>()
 
   const { bug } = useToasterContext()
-
   const {
     contractAddresses: { breakGlassAddress },
   } = useDappConfigContext()
@@ -72,12 +70,29 @@ export function BreakGlassCouncil() {
   } = useCouncilContext()
 
   useEffect(() => {
-    changeCouncilSubscriptionList({ [BREAK_GLASS_COUNCIL_MEMBERS_SUB]: true })
-
     return () => {
       changeCouncilSubscriptionList(DEFAULT_COUNCIL_ACTIVE_SUBS)
     }
   }, [])
+
+  useEffect(() => {
+    const parsedTab = parseCounsilTab(tabId)
+
+    const isMyPendingTab = parsedTab === MY_PENDING_COUNSIL_TAB
+    const isAllPendingTab = parsedTab === ALL_PENDING_COUNSIL_TAB
+    const isAllPastTab = parsedTab === ALL_PAST_COUNSIL_TAB
+
+    changeCouncilSubscriptionList({
+      [BG_COUNCIL_MEMBERS_SUB]: true,
+      // if my ongoing or all ongoing load all ongoing, if my past load my past, otherwise load all past
+      [BG_COUNCIL_ACTIONS_DATA]:
+        isMyPendingTab || isAllPendingTab
+          ? ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB
+          : isAllPastTab
+          ? ALL_BG_PAST_COUNCIL_ACTIONS_SUB
+          : MY_BG_PAST_COUNCIL_ACTIONS_SUB,
+    })
+  }, [tabId])
 
   const {
     config: { emergencyGovActive },
@@ -109,17 +124,6 @@ export function BreakGlassCouncil() {
   //   },
   //   [breakGlassAddress, bug, userAddress],
   // )
-
-  // Sign action
-  // const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
-  //   () => ({
-  //     actionType: SIGN_BREAK_GLASS_ACTION,
-  //     actionFn: actionWithIdCaller(signAction),
-  //   }),
-  //   [actionWithIdCaller],
-  // )
-
-  // const { actionWithArgs: handleSignAction } = useContractAction(signActionContractActionProps)
 
   // // Drop action
   // const dropBreakGlassContractActionProps: HookContractActionArgs<number> = useMemo(
@@ -194,14 +198,7 @@ export function BreakGlassCouncil() {
             myPastActions={myPastActions}
             actionsMapper={actionsMapper}
             members={breakGlassCouncilMembers}
-            // actions
-            // handleSignAction={handleSignAction}
             // handleDropAction={handleDropAction}
-            // components
-            // getFormComponent={() => <BreakGlassCouncilForm />}
-            // getFormUpdateMemberInfo={(maxLength, callback: () => void) => (
-            //   <FormUpdateCouncilMemberView maxLength={maxLength} callback={callback} />
-            // )}
           />
         </>
       )}

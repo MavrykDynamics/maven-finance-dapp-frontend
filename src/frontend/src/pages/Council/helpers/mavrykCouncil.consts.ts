@@ -2,6 +2,7 @@ export const MavrykCounsilPageTitles = {
   membersName: 'Council Members',
   cardIdName: 'Council action ID',
   allPastActions: 'Past Council Actions',
+  allPending: 'Pending Signature Council Actions',
 }
 
 export const MavrykCounsilDdForms = {

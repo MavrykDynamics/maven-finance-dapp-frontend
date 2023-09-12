@@ -18,13 +18,15 @@ import { CouncilFormRequestTokenMint } from './CouncilFormRequestTokenMint.view'
 import { CouncilFormDropFinancialRequest } from './CouncilFormDropFinancialRequest.view'
 import { CouncilFormSetBaker } from './CouncilFormSetBaker.view'
 import { CouncilFormSetContractBaker } from './CouncilFormSetContractBaker.view'
+import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
 type Props = {
   councilMaxLengths: DappConfigContext['maxLengths']['council']
   selectedAction?: string
+  members: CouncilContext['councilMembers']
 }
 
-export function CouncilForm({ councilMaxLengths, selectedAction }: Props) {
+export function CouncilForm({ councilMaxLengths, selectedAction, members }: Props) {
   switch (selectedAction) {
     case MavrykCounsilDdForms.ADD_VESTEE:
       return <CouncilFormAddVestee />
@@ -37,9 +39,9 @@ export function CouncilForm({ councilMaxLengths, selectedAction }: Props) {
     case MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK:
       return <CouncilFormToggleVesteeLock />
     case MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER:
-      return <CouncilFormChangeCouncilMember {...councilMaxLengths} />
+      return <CouncilFormChangeCouncilMember councilMaxLengths={councilMaxLengths} councilMembers={members} />
     case MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER:
-      return <CouncilFormRemoveCouncilMember />
+      return <CouncilFormRemoveCouncilMember councilMembers={members} />
     case MavrykCounsilDdForms.TRANSFER_TOKENS:
       return <CouncilFormTransferTokens {...councilMaxLengths} />
     case MavrykCounsilDdForms.REQUEST_TOKENS:

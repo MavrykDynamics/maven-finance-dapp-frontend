@@ -2,25 +2,35 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { FormUpdateCouncilMemberView } from 'pages/Council/BreakGlassCouncilForms/FormUpdateCouncilMember.view'
 import { CouncilFormUpdateCouncilMemberInfo } from '../CouncilForms/CouncilFormUpdateCouncilMemberInfo.view'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
 
 type PropsType = {
   isBreakGlassCounsil: boolean
   closePopup: () => void
+  memberProfile?: CouncilMembersType[number]
   show: boolean
 }
 
-export const UpdateMemberInfoPopup = ({ closePopup, show, isBreakGlassCounsil }: PropsType) => {
+export const UpdateMemberInfoPopup = ({ closePopup, show, isBreakGlassCounsil, memberProfile }: PropsType) => {
   const {
-    maxLengths: { council },
+    maxLengths: { council: councilMaxLengths },
   } = useDappConfigContext()
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
         {isBreakGlassCounsil ? (
-          <FormUpdateCouncilMemberView maxLength={council} callback={closePopup} />
+          <FormUpdateCouncilMemberView
+            councilMaxLengths={councilMaxLengths}
+            callback={closePopup}
+            memberProfile={memberProfile}
+          />
         ) : (
-          <CouncilFormUpdateCouncilMemberInfo maxLength={council} callback={closePopup} />
+          <CouncilFormUpdateCouncilMemberInfo
+            councilMaxLengths={councilMaxLengths}
+            callback={closePopup}
+            memberProfile={memberProfile}
+          />
         )}
       </PopupContainerWrapper>
     </PopupContainer>

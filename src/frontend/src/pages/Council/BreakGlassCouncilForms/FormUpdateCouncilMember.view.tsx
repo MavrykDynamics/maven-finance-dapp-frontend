@@ -33,6 +33,7 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 
 // consts
 import { UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { CouncilContext, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
 
 const INIT_FORM = {
   newMemberWebsite: '',
@@ -41,12 +42,12 @@ const INIT_FORM = {
 }
 
 type Props = {
-  maxLength: CouncilMaxLength
+  councilMaxLengths: CouncilMaxLength
+  memberProfile?: CouncilMembersType[number]
   callback: () => void
 }
 
-export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
-  const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, memberProfile }: Props) {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
@@ -55,7 +56,6 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
   const { bug } = useToasterContext()
 
   const [form, setForm] = useState(INIT_FORM)
-  const myInfo = breakGlassCouncilMembers.find((item) => item.userId === userAddress)
 
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
     newMemberWebsite: '',
@@ -118,10 +118,10 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
   const newMemberNameProps = {
     name: 'newMemberName',
     value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberNameMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, maxLength.councilMemberNameMaxLength)
+      handleBlur(e, councilMaxLengths.councilMemberNameMaxLength)
     },
     required: true,
   }
@@ -133,10 +133,10 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
   const newMemberWebsiteProps = {
     name: 'newMemberWebsite',
     value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
+      handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength)
     },
     required: true,
   }
@@ -146,11 +146,11 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
   }
 
   useEffect(() => {
-    if (myInfo) {
+    if (memberProfile) {
       setForm({
-        newMemberName: myInfo.name,
-        newMemberWebsite: myInfo.website,
-        newMemberImage: myInfo.image,
+        newMemberName: memberProfile.name,
+        newMemberWebsite: memberProfile.website,
+        newMemberImage: memberProfile.image,
       })
 
       setFormInputStatus({
@@ -159,7 +159,7 @@ export function FormUpdateCouncilMemberView({ maxLength, callback }: Props) {
         newMemberImage: 'success',
       })
     }
-  }, [myInfo])
+  }, [memberProfile])
 
   return (
     <FormStyled className="without-divider">

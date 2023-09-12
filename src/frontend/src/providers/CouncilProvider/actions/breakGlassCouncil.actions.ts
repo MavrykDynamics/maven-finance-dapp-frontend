@@ -180,7 +180,7 @@ export const propagateBreakGlass = async (breakGlassAddress: string) => {
 }
 
 // Drop Action
-export const dropBreakGlass = async (breakGlassAddress: string, breakGlassActionID: number) => {
+export const dropBreakGlass = async (breakGlassActionID: number, breakGlassAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()

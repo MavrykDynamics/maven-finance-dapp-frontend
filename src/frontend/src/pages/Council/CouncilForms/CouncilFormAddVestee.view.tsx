@@ -31,7 +31,6 @@ const INIT_FORM = {
 }
 
 export const CouncilFormAddVestee = () => {
-  const dispatch = useDispatch()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [form, setForm] = useState(INIT_FORM)

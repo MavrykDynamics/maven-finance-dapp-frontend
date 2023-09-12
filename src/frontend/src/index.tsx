@@ -28,6 +28,7 @@ import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuse
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import VestingProvider from 'providers/VestingProvider/vesting.provider'
 import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
+import CouncilProvider from 'providers/CouncilProvider/council.provider'
 import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
 
 // components
@@ -99,11 +100,13 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
               <SatellitesProvider>
                 <LoansProvider>
                   <VaultsProvider>
-                    <FinancialRequestsProvider>
-                      <TreasuryProvider>
-                        <VestingProvider>{children}</VestingProvider>
-                      </TreasuryProvider>
-                    </FinancialRequestsProvider>
+                    <CouncilProvider>
+                      <FinancialRequestsProvider>
+                        <TreasuryProvider>
+                          <VestingProvider>{children}</VestingProvider>
+                        </TreasuryProvider>
+                      </FinancialRequestsProvider>
+                    </CouncilProvider>
                   </VaultsProvider>
                 </LoansProvider>
               </SatellitesProvider>

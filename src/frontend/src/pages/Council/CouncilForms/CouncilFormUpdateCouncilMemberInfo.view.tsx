@@ -23,19 +23,18 @@ import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploa
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
 
 type Props = {
-  maxLength: CouncilMaxLength
+  councilMaxLengths: CouncilMaxLength
+  memberProfile?: CouncilMembersType[number]
   callback: () => void
 }
 
-export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Props) => {
+export const CouncilFormUpdateCouncilMemberInfo = ({ councilMaxLengths, callback, memberProfile }: Props) => {
   const { userAddress } = useUserContext()
 
-  const { councilMembers } = useSelector((state: State) => state.council)
   const { isActionActive } = useSelector((state: State) => state.loading)
-
-  const myInfo = councilMembers.find((item) => item.userId === userAddress)
 
   const [form, setForm] = useState({
     newMemberName: '',
@@ -54,10 +53,10 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Prop
   const newMemberNameProps = {
     name: 'newMemberName',
     value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberNameMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, maxLength.councilMemberNameMaxLength)
+      handleBlur(e, councilMaxLengths.councilMemberNameMaxLength)
     },
     required: true,
   }
@@ -69,10 +68,10 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Prop
   const newMemberWebsiteProps = {
     name: 'newMemberWebsite',
     value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
+    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength),
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       handleChange(e)
-      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
+      handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength)
     },
     required: true,
   }
@@ -82,11 +81,11 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Prop
   }
 
   useEffect(() => {
-    if (myInfo) {
+    if (memberProfile) {
       setForm({
-        newMemberName: myInfo.name,
-        newMemberWebsite: myInfo.website,
-        newMemberImage: myInfo.image,
+        newMemberName: memberProfile.name,
+        newMemberWebsite: memberProfile.website,
+        newMemberImage: memberProfile.image,
       })
 
       setFormInputStatus({
@@ -95,7 +94,7 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Prop
         newMemberImage: 'success',
       })
     }
-  }, [myInfo])
+  }, [memberProfile])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

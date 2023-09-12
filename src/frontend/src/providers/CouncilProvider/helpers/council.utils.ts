@@ -11,7 +11,7 @@ import {
 } from '../council.provider.types'
 import {
   BG_COUNCIL_ACTIONS_DATA,
-  BREAK_GLASS_COUNCIL_MEMBERS_SUB,
+  BG_COUNCIL_MEMBERS_SUB,
   COUNCIL_ACTIONS_DATA,
   COUNCIL_MEMBERS_SUB,
   EMPTY_COUNCIL_CTX,
@@ -34,7 +34,7 @@ export const getCouncilProviderReturnValue = ({
     changeCouncilSubscriptionList,
   }
 
-  const isBgCounsilMembersLoading = activeSubs[BREAK_GLASS_COUNCIL_MEMBERS_SUB] && breakGlassCouncilMembers === null
+  const isBgCounsilMembersLoading = activeSubs[BG_COUNCIL_MEMBERS_SUB] && breakGlassCouncilMembers === null
   const isMavCounsilMembersLoading = activeSubs[COUNCIL_MEMBERS_SUB] && councilMembers === null
   const isBgCounsilActionsLoading = activeSubs[COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(councilActions)
   const isMavCounsilActionsLoading =

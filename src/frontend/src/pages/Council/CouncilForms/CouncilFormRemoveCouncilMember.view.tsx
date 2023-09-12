@@ -16,10 +16,13 @@ import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/D
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
+import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
-export const CouncilFormRemoveCouncilMember = () => {
-  const dispatch = useDispatch()
-  const { councilMembers } = useSelector((state: State) => state.council)
+export const CouncilFormRemoveCouncilMember = ({
+  councilMembers,
+}: {
+  councilMembers: CouncilContext['councilMembers']
+}) => {
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const dropDownItems = useMemo(

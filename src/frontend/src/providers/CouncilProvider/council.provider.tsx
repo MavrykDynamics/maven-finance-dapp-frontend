@@ -27,7 +27,7 @@ import {
   ALL_ONGOING_COUNCIL_ACTIONS_SUB,
   ALL_PAST_COUNCIL_ACTIONS_SUB,
   BG_COUNCIL_ACTIONS_DATA,
-  BREAK_GLASS_COUNCIL_MEMBERS_SUB,
+  BG_COUNCIL_MEMBERS_SUB,
   COUNCIL_ACTIONS_DATA,
   COUNCIL_MEMBERS_SUB,
   DEFAULT_COUNCIL_ACTIVE_SUBS,
@@ -114,7 +114,7 @@ const CouncilProvider = ({ children }: Props) => {
 
   // break glass members
   useQueryWithRefetch(BREAK_GLASS_COUNCIL_MEMBERS_QUERY, {
-    skip: !activeSubs[BREAK_GLASS_COUNCIL_MEMBERS_SUB],
+    skip: !activeSubs[BG_COUNCIL_MEMBERS_SUB],
     onCompleted: (data) => updateBreakGlassCouncilMembers(data),
     onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_SUB'),
   })

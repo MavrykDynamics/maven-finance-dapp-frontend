@@ -1,40 +1,61 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 
-// components
+// utils
+import { parseDate } from 'utils/time'
+import { scrollToFullView } from 'utils/scrollToFullView'
+import { convertBytesAddressToAddress } from 'app/App.helpers'
+import { getSeparateCamelCase } from '../../../utils/parse'
+import { dropBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { dropRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+
+// consts
+import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
+import { DROP_BREAK_GLASS_ACTION, DROP_REQUEST_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+
+// hooks
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+// view
 import NewButton from 'app/App.components/Button/NewButton'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import Icon from 'app/App.components/Icon/Icon.view'
-
-// helpers
-import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { parseDate } from 'utils/time'
-import { getSeparateCamelCase } from '../../../utils/parse'
-import { scrollToFullView } from 'utils/scrollToFullView'
-import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
-import { convertBytesAddressToAddress } from 'app/App.helpers'
-import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-
-// styles
 import { CouncilActionStyled } from '../Council.style'
 import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 
-// types
-
-type Props = CouncilActionType & {
-  numCouncilMembers: number
-  handleDropAction: (arg: number) => void
+type Props = {
+  isBreakGlassCounsil: boolean
   cardIdName: string
+  counsilAddress: string
+  startDatetime: string | null
+  actionType: string
+  signersCount: number
+  numCouncilMembers: number
+  id: number
+  parameters: CouncilActionType['parameters']
 }
 
-export function CouncilOngoingAction(props: Props) {
-  const { startDatetime, actionType, signersCount, numCouncilMembers, id, parameters, handleDropAction, cardIdName } =
-    props
+export function CouncilOngoingAction({
+  startDatetime,
+  actionType,
+  signersCount,
+  numCouncilMembers,
+  id,
+  parameters,
+  isBreakGlassCounsil,
+  cardIdName,
+  counsilAddress,
+}: Props) {
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
 
-  const handleClickCard = () => {
-    setIsOpen(!isOpen)
-  }
+  const handleClickCard = () => setIsOpen(!isOpen)
 
   const findActionByName = useCallback(
     (name: string, type?: BytesType) => {
@@ -48,6 +69,36 @@ export function CouncilOngoingAction(props: Props) {
     },
     [parameters],
   )
+
+  // Drop action
+  const dropAction = useCallback(async (actionId: number) => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!counsilAddress) {
+      bug('Wrong counsil address')
+      return null
+    }
+
+    if (isBreakGlassCounsil) {
+      return await dropBreakGlass(actionId, counsilAddress)
+    } else {
+      return await dropRequest(actionId, counsilAddress)
+    }
+  }, [])
+
+  // Sign break glass action
+  const dropBreakGlassContractActionProps: HookContractActionArgs<number> = useMemo(
+    () => ({
+      actionType: isBreakGlassCounsil ? DROP_BREAK_GLASS_ACTION : DROP_REQUEST_ACTION,
+      actionFn: dropAction,
+    }),
+    [dropAction],
+  )
+
+  const { actionWithArgs: handleDropAction } = useContractAction(dropBreakGlassContractActionProps)
 
   const isChangeCouncilMember = actionType === 'changeCouncilMember'
   const isAddCouncilMember = actionType === 'addCouncilMember'
