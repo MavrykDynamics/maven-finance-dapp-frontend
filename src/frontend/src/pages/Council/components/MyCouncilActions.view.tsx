@@ -1,17 +1,17 @@
 import { CouncilOngoingAction } from './CouncilOngoingAction.view'
 
 // components
-import { CouncilAction } from 'pages/Council/CouncilActions/CouncilAction.view'
+import { CouncilAction } from 'pages/Council/components/CouncilAction.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { councilEmptyContainer } from '../Council.view'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // types
-import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
 import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // helpers
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 
 type Props = {
   myPastCouncilAction: number[]
@@ -64,7 +64,7 @@ export function MyCouncilActions({
                     actionType={action.actionType}
                     signersCount={action.signersCount}
                     numCouncilMembers={action.councilSize}
-                    councilId={action.councilId}
+                    councilId={action.counsilAddress}
                   />
                 )
               })}

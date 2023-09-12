@@ -55,6 +55,50 @@ export const replaceNullValuesWithDefault = <T extends Record<string, unknown>>(
   return providerStateCopy as T
 }
 
+export const replaceDeepNullValuesWithDefault = <T extends Record<string, unknown>>(
+  currentValues: DeepDeepNullable<T>,
+  defaultValues: T,
+): T => {
+  // TODO: find more reliable method to copy
+  const providerStateCopy: DeepDeepNullable<T> = JSON.parse(JSON.stringify(currentValues))
+
+  // if passed objects to merge are not objects return default values
+  if (!isObject(providerStateCopy) || !isObject(defaultValues)) {
+    return defaultValues
+  }
+
+  // iterate over all
+  Object.keys(defaultValues).forEach((key) => {
+    const targetValue = providerStateCopy[key]
+    const sourceValue = defaultValues[key]
+
+    if (!providerStateCopy) return
+
+    // merging arrays
+    if (Array.isArray(targetValue) && Array.isArray(sourceValue)) {
+      // @ts-expect-error
+      providerStateCopy[key] = Array.from(new Set([...targetValue, ...sourceValue]))
+    }
+    // merging more deep objects
+    else if (isObject(targetValue) && isObject(sourceValue)) {
+      // @ts-expect-error
+      providerStateCopy[key] = replaceNullValuesWithDefault<typeof targetValue>(
+        Object.assign({}, targetValue),
+        sourceValue,
+      )
+    }
+    // replacing values on merge if target value is null set default, othervise keep value from provider
+    else {
+      if (targetValue === null) {
+        // @ts-expect-error
+        providerStateCopy[key] = sourceValue
+      }
+    }
+  })
+
+  return providerStateCopy as T
+}
+
 /*
 TEST CONSTS FOR replaceNullValuesWithDefault
 Playground: https://codesandbox.io/s/romantic-christian-nvktdv?file=/src/index.ts

@@ -3,23 +3,10 @@ import { Link, useHistory, useLocation } from 'react-router-dom'
 import { useParams } from 'react-router'
 import qs from 'qs'
 
-// components
-import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
-import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilAction } from 'pages/Council/CouncilActions/CouncilAction.view'
-import Carousel from '../../app/App.components/Carousel/Carousel.view'
-import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
-import { CouncilPending } from './CouncilPending/CouncilPending.controller'
-import { MyCouncilActions } from './CouncilActions/MyCouncilActions.view'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { EmptyContainer } from 'app/App.style'
-
-// helpers
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../app/App.components/Button/Button.constants'
-import { getSeparateSnakeCase } from 'utils/parse'
-import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
+// consts
+import { BgCounsilDdForms, BgCounsilPageTitles } from 'pages/Council/helpers/breakGlassCouncil.consts'
+import { MavrykCounsilDdForms, MavrykCounsilPageTitles } from './helpers/mavrykCouncil.consts'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from '../../app/App.components/Button/Button.constants'
 import {
   COUNCIL_ALL_PAST_ACTIONS_LIST_NAME,
   COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME,
@@ -29,33 +16,31 @@ import {
   getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
 
-// styles
-import {
-  CouncilStyled,
-  ReviewCard,
-  AvaliableActions,
-  PropagateBreakGlassCouncilCard,
-  CounsilPageWrapper,
-} from './Council.style'
-
 // types
-import { CouncilActionType, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
-import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
 import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
-// actions
-import { propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+// utils
+import { getSeparateSnakeCase } from 'utils/parse'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-
-// providers
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-// consts
-import { PROPAGATE_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+// view
+import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
+import { CouncilForm } from './CouncilForms/CouncilForm.controller'
+import NewButton from 'app/App.components/Button/NewButton'
+import { BreakGlassCouncilForm } from 'pages/Council/BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
+import { CouncilAction } from 'pages/Council/components/CouncilAction.view'
+import { MyCouncilActions } from './components/MyCouncilActions.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
+import { EmptyContainer } from 'app/App.style'
+import { CouncilStyled, ReviewCard, AvaliableActions, CounsilPageWrapper } from './Council.style'
+import { CounsilActionsToSign } from './components/CounsilActionsToSign'
+import { UpdateMemberInfoPopup } from './components/UpdateMemberInfoPopup'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { CounsilSidebar } from './components/CounsilSidebar'
 
 export const councilEmptyContainer = (
   <EmptyContainer>
@@ -78,15 +63,7 @@ export const councilTabsList: SlidingTabButtonType[] = [
 ]
 
 type Props = {
-  pathnameOfPage: string
-  maxLength: CouncilMaxLength
-  glassBroken?: boolean
-  showPropagateBreakGlass?: boolean
-  titles: {
-    membersName: string
-    cardIdName: string
-    allPastActions: string
-  }
+  isBreakGlassCounsil?: boolean
 
   allPendingActions: number[]
   notMyPendingActions: number[]
@@ -96,25 +73,11 @@ type Props = {
   myPastActions: number[]
 
   actionsMapper: Record<number, CouncilActionType>
-
-  members: CouncilMembers
-  dropdowndActions: Record<string, string>
-
-  handleSignAction: (id: number) => void
-  handleDropAction: (id: number) => void
-
-  getFormComponent: () => React.ReactNode
-  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength, callback: () => void) => React.ReactNode
+  members: CouncilMembersType
 }
 
 export function CouncilView({
-  pathnameOfPage,
-  maxLength,
-  glassBroken,
-  showPropagateBreakGlass,
-  getFormComponent,
-  getFormUpdateMemberInfo,
-  titles,
+  isBreakGlassCounsil = false,
 
   allPendingActions,
   notMyPendingActions,
@@ -126,57 +89,68 @@ export function CouncilView({
   actionsMapper,
 
   members,
-  dropdowndActions,
-
-  handleSignAction,
-  handleDropAction,
 }: Props) {
   const history = useHistory()
   const { search, pathname } = useLocation()
 
+  const { page, action } = qs.parse(search, { ignoreQueryPrefix: true })
+  const { tabId } = useParams<{ tabId: string }>()
+
   const {
-    globalLoadingState: { isActionActive },
-    contractAddresses: { breakGlassAddress },
+    maxLengths: { council: counsilMaxLenghts },
   } = useDappConfigContext()
   const { userAddress } = useUserContext()
-  const { bug } = useToasterContext()
 
-  const queryParameters = {
-    pathname: pathnameOfPage,
-    pastActions: '/past-actions',
-    pendingActions: '/pending-actions',
-  }
+  const { queryParameters, dropDownItems, titles } = useMemo(() => {
+    return {
+      titles: isBreakGlassCounsil ? BgCounsilPageTitles : MavrykCounsilPageTitles,
+      queryParameters: {
+        pathname: isBreakGlassCounsil ? '/break-glass-council' : '/mavryk-council',
+        pastActions: '/past-actions',
+        pendingActions: '/pending-actions',
+      },
+      dropDownItems: Object.values(isBreakGlassCounsil ? BgCounsilDdForms : MavrykCounsilDdForms).map(
+        (item, index) => ({
+          content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
+          value: item,
+          id: index,
+        }),
+      ),
+    }
+  }, [isBreakGlassCounsil])
 
-  const dropDownItems = useMemo(
-    () =>
-      Object.values(dropdowndActions).map((item, index) => ({
-        content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
-        value: item,
-        id: index,
-      })),
-    [dropdowndActions],
-  )
+  const isCouncilMember = Boolean(members.find((item) => item.userId === userAddress)?.id)
+
+  // choose action after reload page
+  useEffect(() => {
+    setChosenDdItem(dropDownItems.find((item) => item.value === action))
+  }, [])
+
+  // redirect to review page when member changes
+  useEffect(() => {
+    if (!userAddress) history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
+  }, [queryParameters.pathname, queryParameters.pastActions, userAddress, isCouncilMember])
+
+  // check authorization when clicking on a review or a header in the menu
+  useEffect(() => {
+    if (!isCouncilMember) history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
+  }, [isCouncilMember, pathname, queryParameters.pathname, queryParameters.pastActions])
+
+  // update member popup
+  const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
+  const openPopup = useCallback(() => setIsUpdateCouncilMemberInfo(true), [])
+  const closePopup = useCallback(() => setIsUpdateCouncilMemberInfo(false), [])
 
   type DropDownItemType = (typeof dropDownItems)[0]
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
-  const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
   const [activeActionTab, setActiveActionTab] = useState(councilTabsList[0].text)
-  const sortedCouncilMembers = memberIsFirstOfList(members, userAddress)
-
-  const { page, action } = qs.parse(search, { ignoreQueryPrefix: true })
-  const { tabId } = useParams<{ tabId: string }>()
 
   const isPastActionsTab = tabId === 'past-actions'
   const isPendingActionsTab = tabId === 'pending-actions'
   const isMyPendingActionsTab = activeActionTab === councilTabsList[0].text
 
-  const isCouncilMember = Boolean(members.find((item) => item.userId === userAddress)?.id)
   const displayPendingSignature = Boolean(!tabId && isCouncilMember && notMyPendingActions.length)
-
-  const handleOpenleModal = () => {
-    setIsUpdateCouncilMemberInfo(true)
-  }
 
   const handleClickDropdownItem = (itemId: DDItemId) => {
     const foundItem = dropDownItems.find((item) => item.id === itemId)
@@ -192,10 +166,6 @@ export function CouncilView({
 
     history.push(newPageLink)
     setChosenDdItem(foundItem)
-  }
-
-  const closePopup = () => {
-    setIsUpdateCouncilMemberInfo(false)
   }
 
   const getCurrentListName = () => {
@@ -230,51 +200,6 @@ export function CouncilView({
     return myPastActions?.slice(from, to)
   }, [currentPage, myPastActions])
 
-  // propagate bg action -----------------------------------------------------------------------
-  const propagateBreakGlassAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    if (!breakGlassAddress) {
-      bug('Wrong breakGlass address')
-      return null
-    }
-
-    return await propagateBreakGlass(breakGlassAddress)
-  }, [userAddress, breakGlassAddress, bug])
-
-  const propagateBreakGlassContractActionProps: HookContractActionArgs = useMemo(
-    () => ({
-      actionType: PROPAGATE_BREAK_GLASS_ACTION,
-      actionFn: propagateBreakGlassAction,
-    }),
-    [propagateBreakGlassAction],
-  )
-
-  const { action: handleClickPropagateBreakGlass } = useContractAction(propagateBreakGlassContractActionProps)
-
-  useEffect(() => {
-    // choose action after reload page
-    const foundAction = dropDownItems.find((item) => item.value === action)
-    setChosenDdItem(foundAction)
-  }, [])
-
-  useEffect(() => {
-    // redirect to review page when member changes
-    if (!userAddress) {
-      history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
-    }
-  }, [history, queryParameters.pathname, queryParameters.pastActions, userAddress, isCouncilMember])
-
-  useEffect(() => {
-    // check authorization when clicking on a review or a header in the menu
-    if (!isCouncilMember) {
-      history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
-    }
-  }, [history, isCouncilMember, pathname, queryParameters.pathname, queryParameters.pastActions])
-
   return (
     <CounsilPageWrapper>
       {tabId && isCouncilMember && (
@@ -286,49 +211,18 @@ export function CouncilView({
         </Link>
       )}
 
-      {!tabId && isCouncilMember && showPropagateBreakGlass && (
-        <PropagateBreakGlassCouncilCard>
-          <div>
-            <h1>Propagate Break Glass</h1>
-            <p>
-              This action can only be taken to pause all contracts in the event of a successful emergency governance
-              where a critical flaw has been detected in the Mavryk Smart Contracts.
-            </p>
-          </div>
-
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={glassBroken}>
-            <Icon id="plus" />
-            Propagate Break Glass
-          </NewButton>
-        </PropagateBreakGlassCouncilCard>
-      )}
-
       {displayPendingSignature && <h1>Pending Signature</h1>}
 
       <CouncilStyled>
         <div className="left-block">
-          {displayPendingSignature && (
-            <article className="pending">
-              <div className="pending-items">
-                <Carousel itemLength={notMyPendingActions.length}>
-                  {notMyPendingActions.map((item, index) => {
-                    const action = actionsMapper[item]
-
-                    return (
-                      <CouncilPending
-                        {...action}
-                        key={action.id}
-                        numCouncilMembers={members.length}
-                        councilPendingActionsLength={notMyPendingActions.length}
-                        index={index}
-                        handleSignAction={handleSignAction}
-                      />
-                    )
-                  })}
-                </Carousel>
-              </div>
-            </article>
-          )}
+          {displayPendingSignature ? (
+            <CounsilActionsToSign
+              isBreakGlassAction={isBreakGlassCounsil}
+              actionstoSign={notMyPendingActions}
+              actionsMapper={actionsMapper}
+              members={members}
+            />
+          ) : null}
 
           {tabId ? (
             <>
@@ -348,7 +242,7 @@ export function CouncilView({
                             actionType={action.actionType}
                             signersCount={action.signersCount}
                             numCouncilMembers={action.councilSize}
-                            councilId={action.councilId}
+                            councilId={action.counsilAddress}
                           />
                         )
                       })}
@@ -374,7 +268,7 @@ export function CouncilView({
                             actionType={action.actionType}
                             signersCount={action.signersCount}
                             numCouncilMembers={members.length}
-                            councilId={action.councilId}
+                            councilId={action.counsilAddress}
                           />
                         )
                       })}
@@ -406,7 +300,15 @@ export function CouncilView({
                   </div>
                 </div>
 
-                {getFormComponent()}
+                {isBreakGlassCounsil ? (
+                  <BreakGlassCouncilForm
+                    selectedAction={action?.toString()}
+                    councilMaxLengths={counsilMaxLenghts}
+                    members={members}
+                  />
+                ) : (
+                  <CouncilForm selectedAction={action?.toString()} councilMaxLengths={counsilMaxLenghts} />
+                )}
               </AvaliableActions>
 
               <MyCouncilActions
@@ -427,50 +329,21 @@ export function CouncilView({
             </>
           )}
         </div>
-
-        <div className="right-block">
-          {!tabId && (
-            <ReviewCard>
-              <Link to={`${queryParameters.pathname}${queryParameters.pastActions}`}>
-                <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
-                  Review Past Actions
-                </NewButton>
-              </Link>
-
-              <Link to={`${queryParameters.pathname}${queryParameters.pendingActions}`}>
-                <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
-                  Review Pending Actions
-                </NewButton>
-              </Link>
-            </ReviewCard>
-          )}
-
-          {Boolean(sortedCouncilMembers.length) && (
-            <>
-              <h1>{titles.membersName}</h1>
-
-              <div>
-                {sortedCouncilMembers.map((item) => (
-                  <CouncilMemberView
-                    key={item.id}
-                    image={item.image}
-                    name={item.name}
-                    userId={item.userId}
-                    openModal={handleOpenleModal}
-                    showUpdateInfo={isCouncilMember}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-        </div>
       </CouncilStyled>
 
-      <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
-        <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          {getFormUpdateMemberInfo(maxLength, closePopup)}
-        </PopupContainerWrapper>
-      </PopupContainer>
+      <CounsilSidebar
+        membersTitle={titles.membersName}
+        counsilMembers={members}
+        openUpdateMemberProfilePopup={openPopup}
+        showNavButtons={!tabId}
+        queryParameters={queryParameters}
+      />
+
+      <UpdateMemberInfoPopup
+        show={isUpdateCouncilMemberInfo}
+        closePopup={closePopup}
+        isBreakGlassCounsil={isBreakGlassCounsil}
+      />
     </CounsilPageWrapper>
   )
 }

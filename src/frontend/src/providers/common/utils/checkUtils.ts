@@ -1,1 +1,2 @@
-export const isObjectChildrenNulls = (obj: Record<string, unknown>) => Object.values(obj).every((el) => el === null)
+export const isObjectChildrenNulls = (obj?: Record<string, unknown> | null) =>
+  Object.values(obj ?? {}).every((el) => el === null)

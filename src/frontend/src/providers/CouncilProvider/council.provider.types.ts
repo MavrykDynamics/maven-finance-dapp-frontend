@@ -13,8 +13,20 @@ import {
 } from './helpers/council.consts'
 
 // normalizer types
+export type CouncilActionType = {
+  actionType: string
+  executed: boolean
+  id: number
+  initiatorAddress: string
+  signersCount: number
+  startDatetime: string | null
+  expirationTime: string | null
+  parameters: Array<{ id: number; name: string; value: string }>
+  // TODO: fix type
+  councilSize: any
+  counsilAddress: string
+}
 export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
-export type CouncilActionType = ReturnType<typeof normalizeCouncilAction>
 export type CouncilActionsType = ReturnType<typeof normalizeCouncilActions>
 
 // -------- provider types
@@ -46,19 +58,16 @@ export type CouncilActionsRecordType = {
   myPastActions: CouncilActionsType['myPastActions']
   actionsMapper: CouncilActionsType['actionsMapper']
 }
-export type NullableCouncilActionsRecordType = DeepNullable<CouncilActionsRecordType>
+export type NullableCouncilActionsRecordType = DeepDeepNullable<CouncilActionsRecordType>
 
 export type CouncilStateType = {
   breakGlassCouncilMembers: CouncilMembersType
   councilMembers: CouncilMembersType
-  councilActions: DeepNullable<CouncilActionsRecordType>
-  breakGlassCouncilActions: DeepNullable<CouncilActionsRecordType>
+  councilActions: CouncilActionsRecordType
+  breakGlassCouncilActions: CouncilActionsRecordType
 }
 
-export type NullableCouncilContextStateType = DeepNullable<
-  Exclude<CouncilStateType, 'councilActions' | 'breakGlassCouncilActions'>
-> &
-  Pick<CouncilStateType, 'breakGlassCouncilActions' | 'councilActions'>
+export type NullableCouncilContextStateType = DeepDeepNullable<CouncilStateType>
 
 export type CouncilContext = CouncilStateType & {
   isLoading: boolean

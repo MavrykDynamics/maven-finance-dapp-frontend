@@ -6,7 +6,7 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 
 // Sign
-export const sign = async (actionID: number, counsilAddress: string) => {
+export const signMavrykAction = async (actionID: number, counsilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()

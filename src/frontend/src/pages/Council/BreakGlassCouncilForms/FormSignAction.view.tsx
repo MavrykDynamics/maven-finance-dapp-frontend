@@ -1,30 +1,26 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
-// components
+// view
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
+import { FormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// consts
+import { SIGN_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 // types
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 
-// styles
-import { FormStyled } from './BreakGlassCouncilForm.style'
-
-// actions
-import { signAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-
-// providers
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-
-// hooks
-import { SIGN_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-
-// consts
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+// urils
+import { signBreakGlassAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 const INIT_FORM = {
   breakGlassActionID: '',
@@ -58,7 +54,7 @@ export function FormSignActionView() {
         return null
       }
 
-      return await signAction(breakGlassAddress, id)
+      return await signBreakGlassAction(id, breakGlassAddress)
     },
     [userAddress, breakGlassAddress, bug],
   )

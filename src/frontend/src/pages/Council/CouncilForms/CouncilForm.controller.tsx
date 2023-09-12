@@ -1,10 +1,10 @@
-import { useLocation } from 'react-router-dom'
-import qs from 'qs'
+// types
+import { DappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
-// providers
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+// consts
+import { MavrykCounsilDdForms } from '../helpers/mavrykCouncil.consts'
 
-// components
+// view
 import { CouncilFormAddVestee } from './CouncilFormAddVestee.view'
 import { CouncilFormAddCouncilMember } from './CouncilFormAddCouncilMember.view'
 import { CouncilFormUpdateVestee } from './CouncilFormUpdateVestee.view'
@@ -19,59 +19,41 @@ import { CouncilFormDropFinancialRequest } from './CouncilFormDropFinancialReque
 import { CouncilFormSetBaker } from './CouncilFormSetBaker.view'
 import { CouncilFormSetContractBaker } from './CouncilFormSetContractBaker.view'
 
-export const actions = {
-  ADD_VESTEE: 'ADD_VESTEE',
-  ADD_COUNCIL_MEMBER: 'ADD_COUNCIL_MEMBER',
-  UPDATE_VESTEE: 'UPDATE_VESTEE',
-  TOGGLE_VESTEE_LOCK: 'TOGGLE_VESTEE_LOCK',
-  REMOVE_VESTEE: 'REMOVE_VESTEE',
-  CHANGE_COUNCIL_MEMBER: 'CHANGE_COUNCIL_MEMBER',
-  REMOVE_COUNCIL_MEMBER: 'REMOVE_COUNCIL_MEMBER',
-  TRANSFER_TOKENS: 'TRANSFER_TOKENS',
-  REQUEST_TOKENS: 'REQUEST_TOKENS',
-  REQUEST_TOKEN_MINT: 'REQUEST_TOKEN_MINT',
-  DROP_FINANCIAL_REQUEST: 'DROP_FINANCIAL_REQUEST',
-  SET_BAKER: 'SET_BAKER',
-  SET_CONTRACT_BAKER: 'SET_CONTRACT_BAKER',
+type Props = {
+  councilMaxLengths: DappConfigContext['maxLengths']['council']
+  selectedAction?: string
 }
 
-export function CouncilForm() {
-  const { search } = useLocation()
-  const { action } = qs.parse(search, { ignoreQueryPrefix: true })
-
-  const {
-    maxLengths: { council: councilMaxLengths },
-  } = useDappConfigContext()
-
-  switch (action) {
-    case actions.ADD_VESTEE:
+export function CouncilForm({ councilMaxLengths, selectedAction }: Props) {
+  switch (selectedAction) {
+    case MavrykCounsilDdForms.ADD_VESTEE:
       return <CouncilFormAddVestee />
-    case actions.ADD_COUNCIL_MEMBER:
+    case MavrykCounsilDdForms.ADD_COUNCIL_MEMBER:
       return <CouncilFormAddCouncilMember {...councilMaxLengths} />
-    case actions.UPDATE_VESTEE:
+    case MavrykCounsilDdForms.UPDATE_VESTEE:
       return <CouncilFormUpdateVestee />
-    case actions.REMOVE_VESTEE:
+    case MavrykCounsilDdForms.REMOVE_VESTEE:
       return <CouncilFormRemoveVestee />
-    case actions.TOGGLE_VESTEE_LOCK:
+    case MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK:
       return <CouncilFormToggleVesteeLock />
-    case actions.CHANGE_COUNCIL_MEMBER:
+    case MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER:
       return <CouncilFormChangeCouncilMember {...councilMaxLengths} />
-    case actions.REMOVE_COUNCIL_MEMBER:
+    case MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER:
       return <CouncilFormRemoveCouncilMember />
-    case actions.TRANSFER_TOKENS:
+    case MavrykCounsilDdForms.TRANSFER_TOKENS:
       return <CouncilFormTransferTokens {...councilMaxLengths} />
-    case actions.REQUEST_TOKENS:
+    case MavrykCounsilDdForms.REQUEST_TOKENS:
       return <CouncilFormRequestTokens {...councilMaxLengths} />
-    case actions.REQUEST_TOKEN_MINT:
+    case MavrykCounsilDdForms.REQUEST_TOKEN_MINT:
       return <CouncilFormRequestTokenMint {...councilMaxLengths} />
-    case actions.DROP_FINANCIAL_REQUEST:
+    case MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST:
       return <CouncilFormDropFinancialRequest />
-    case actions.SET_BAKER:
+    case MavrykCounsilDdForms.SET_BAKER:
       return <CouncilFormSetBaker />
-    case actions.SET_CONTRACT_BAKER:
+    case MavrykCounsilDdForms.SET_CONTRACT_BAKER:
       return <CouncilFormSetContractBaker />
 
     default:
-      return <></>
+      return null
   }
 }

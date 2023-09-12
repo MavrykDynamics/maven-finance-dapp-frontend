@@ -2,6 +2,12 @@ declare type DeepNullable<T> = {
   [P in keyof T]: T[P] | null
 }
 
+declare type DeepDeepNullable<T> = T extends object
+  ? {
+      [P in keyof T]: T[P] extends object ? DeepDeepNullable<T[P]> | null : T[P]
+    }
+  : T
+
 declare type DeepPartial<T> = T extends object
   ? {
       [P in keyof T]?: DeepPartial<T[P]>

@@ -3,12 +3,12 @@ import { createPortal } from 'react-dom'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
+import { TzAddress } from '../../../../app/App.components/TzAddress/TzAddress.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import Icon from '../../../app/App.components/Icon/Icon.view'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
 
 // helpers
-import { getSeparateCamelCase } from '../../../utils/parse'
+import { getSeparateCamelCase } from '../../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { convertBytesAddressToAddress } from 'app/App.helpers'
@@ -17,14 +17,14 @@ import { MVK_DECIMALS } from 'utils/constants'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // types
-import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
 
 // styles
 import { CouncilPendingStyled, CouncilModalBase } from './CouncilPending.style'
-import { AvatarStyle } from '../../../app/App.components/Avatar/Avatar.style'
+import { AvatarStyle } from '../../../../app/App.components/Avatar/Avatar.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { useSelector } from 'react-redux'
 import { State } from 'reducers'
+import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 
 type Props = CouncilActionType & {
   numCouncilMembers: number

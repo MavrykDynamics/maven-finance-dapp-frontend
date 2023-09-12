@@ -71,14 +71,20 @@ const CouncilProvider = ({ children }: Props) => {
       setCouncilCtxState((prev) => ({
         ...prev,
         breakGlassCouncilActions: {
-          ...prev.breakGlassCouncilActions,
-          myPastActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions.myPastActions,
-          myPendingActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions.myPendingActions,
+          allPendingActions: prev.breakGlassCouncilActions?.allPendingActions ?? null,
+          notMyPendingActions: prev.breakGlassCouncilActions?.notMyPendingActions ?? null,
+          allPastActions: prev.breakGlassCouncilActions?.allPastActions ?? null,
+          actionsMapper: prev.breakGlassCouncilActions?.actionsMapper ?? null,
+          myPastActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.myPastActions ?? null,
+          myPendingActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.myPendingActions ?? null,
         },
         councilActions: {
-          ...prev.councilActions,
-          myPastActions: DEFAULT_COUNCIL_CTX.councilActions.myPastActions,
-          myPendingActions: DEFAULT_COUNCIL_CTX.councilActions.myPendingActions,
+          allPendingActions: prev.councilActions?.allPendingActions ?? null,
+          notMyPendingActions: prev.councilActions?.notMyPendingActions ?? null,
+          allPastActions: prev.councilActions?.allPastActions ?? null,
+          actionsMapper: prev.councilActions?.actionsMapper ?? null,
+          myPastActions: DEFAULT_COUNCIL_CTX.councilActions?.myPastActions ?? null,
+          myPendingActions: DEFAULT_COUNCIL_CTX.councilActions?.myPendingActions ?? null,
         },
       }))
     }
@@ -140,13 +146,17 @@ const CouncilProvider = ({ children }: Props) => {
     setCouncilCtxState((prev) => ({
       ...prev,
       councilActions: {
-        allPastActions: isAllPastActionsSubActive ? allPastActions : prev.councilActions.allPastActions,
+        allPastActions: isAllPastActionsSubActive ? allPastActions : prev.councilActions?.allPastActions ?? [],
         myPastActions:
-          isAllPastActionsSubActive || isMyPastActionsSubActive ? myPastActions : prev.councilActions.myPastActions,
-        allPendingActions: isPendingActionsSubActive ? allPendingActions : prev.councilActions.allPendingActions,
-        notMyPendingActions: isPendingActionsSubActive ? notMyPendingActions : prev.councilActions.notMyPendingActions,
-        myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.councilActions.myPendingActions,
-        actionsMapper,
+          isAllPastActionsSubActive || isMyPastActionsSubActive
+            ? myPastActions
+            : prev.councilActions?.myPastActions ?? [],
+        allPendingActions: isPendingActionsSubActive ? allPendingActions : prev.councilActions?.allPendingActions ?? [],
+        notMyPendingActions: isPendingActionsSubActive
+          ? notMyPendingActions
+          : prev.councilActions?.notMyPendingActions ?? [],
+        myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.councilActions?.myPendingActions ?? [],
+        actionsMapper: { ...prev.councilActions?.actionsMapper, ...actionsMapper },
       },
     }))
   }
@@ -163,19 +173,23 @@ const CouncilProvider = ({ children }: Props) => {
     setCouncilCtxState((prev) => ({
       ...prev,
       breakGlassCouncilActions: {
-        allPastActions: isAllPastActionsSubActive ? allPastActions : prev.breakGlassCouncilActions.allPastActions,
+        allPastActions: isAllPastActionsSubActive
+          ? allPastActions
+          : prev.breakGlassCouncilActions?.allPastActions ?? [],
         myPastActions:
           isAllPastActionsSubActive || isMyPastActionsSubActive
             ? myPastActions
-            : prev.breakGlassCouncilActions.myPastActions,
+            : prev.breakGlassCouncilActions?.myPastActions ?? [],
         allPendingActions: isPendingActionsSubActive
           ? allPendingActions
-          : prev.breakGlassCouncilActions.allPendingActions,
+          : prev.breakGlassCouncilActions?.allPendingActions ?? [],
         notMyPendingActions: isPendingActionsSubActive
           ? notMyPendingActions
-          : prev.breakGlassCouncilActions.notMyPendingActions,
-        myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.breakGlassCouncilActions.myPendingActions,
-        actionsMapper,
+          : prev.breakGlassCouncilActions?.notMyPendingActions ?? [],
+        myPendingActions: isPendingActionsSubActive
+          ? myPendingActions
+          : prev.breakGlassCouncilActions?.myPendingActions ?? [],
+        actionsMapper: { ...prev.breakGlassCouncilActions?.actionsMapper, ...actionsMapper },
       },
     }))
   }

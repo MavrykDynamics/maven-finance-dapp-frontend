@@ -39,7 +39,7 @@ export const setSingleContractAdmin = async (
 }
 
 // Sign Action
-export const signAction = async (breakGlassAddress: string, breakGlassActionID: number) => {
+export const signBreakGlassAction = async (breakGlassActionID: number, breakGlassAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()

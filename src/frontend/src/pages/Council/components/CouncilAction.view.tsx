@@ -9,7 +9,7 @@ import { getSeparateCamelCase } from '../../../utils/parse'
 import { CouncilActionStyled } from '../Council.style'
 
 type Props = {
-  startDatetime: string
+  startDatetime: string | null
   actionType: string
   signersCount: number
   numCouncilMembers: number

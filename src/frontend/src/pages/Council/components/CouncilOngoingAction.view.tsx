@@ -16,9 +16,9 @@ import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress
 
 // styles
 import { CouncilActionStyled } from '../Council.style'
+import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 
 // types
-import { CouncilActionType } from 'utils/TypesAndInterfaces/Council'
 
 type Props = CouncilActionType & {
   numCouncilMembers: number

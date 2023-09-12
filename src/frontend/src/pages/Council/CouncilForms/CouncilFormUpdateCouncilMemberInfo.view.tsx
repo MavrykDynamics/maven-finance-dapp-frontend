@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { State } from 'reducers'
 
 // type
@@ -18,7 +18,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 
 // action
-import { updateCouncilMemberInfo } from '../Council.actions'
+// import { updateCouncilMemberInfo } from '../Council.actions'
 
 // style
 import { CouncilFormStyled } from './CouncilForm.style'
@@ -32,7 +32,6 @@ type Props = {
 export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Props) => {
   const { userAddress } = useUserContext()
 
-  const dispatch = useDispatch()
   const { councilMembers } = useSelector((state: State) => state.council)
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -101,7 +100,7 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Prop
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage, callback))
+      // await dispatch(updateCouncilMemberInfo(newMemberName, newMemberWebsite, newMemberImage, callback))
     } catch (error) {
       console.error(error)
     }
@@ -126,7 +125,7 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ maxLength, callback }: Prop
         <div>
           <label>Council Member Address</label>
           <div className="form-grid-adress">
-            <TzAddress tzAddress={accountPkh || ''} hasIcon={false} />
+            <TzAddress tzAddress={userAddress} hasIcon={false} />
           </div>
         </div>
 

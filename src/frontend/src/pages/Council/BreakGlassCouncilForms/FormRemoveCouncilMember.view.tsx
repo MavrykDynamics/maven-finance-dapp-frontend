@@ -27,9 +27,13 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 
 // consts
 import { REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
-export function FormRemoveCouncilMemberView() {
-  const { breakGlassCouncilMembers } = useSelector((state: State) => state.council)
+export function FormRemoveCouncilMemberView({
+  breakGlassCouncilMembers,
+}: {
+  breakGlassCouncilMembers: CouncilContext['breakGlassCouncilMembers']
+}) {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
