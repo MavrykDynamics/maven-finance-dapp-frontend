@@ -54,6 +54,7 @@ const getGovernanceActionFilters = (userAddress: string | null, filterType: Sate
   })
 }
 
+// TODO: check refetch work & check tab change new query provoke
 export const getGovernanceActionsQuery = (
   userAddress: string | null,
   filterType: SatelliteGovActionSubsType | null,

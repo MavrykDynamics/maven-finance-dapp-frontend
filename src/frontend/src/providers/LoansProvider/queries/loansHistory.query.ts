@@ -59,6 +59,8 @@ query getLoansHistoryData {
  * @param userAddress - get transctions of specific user
  * @param vaultAddress - get transactions on specific vault only
  * @param typeFilter - get specific operation types only
+ *
+ * TODO: check refetch logic
  */
 export function getLoansTransactionsHistory({
   userAddress,
