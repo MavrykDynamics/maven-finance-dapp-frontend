@@ -36,7 +36,39 @@ function getBreakGlassCouncilActionsFilter(actionType: CouncilSubsRecordType[typ
     case ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB:
       return 'expiration_datetime: {_gt: $currentTimestamp}, _or: {executed: {_eq: false}}'
     case MY_BG_PAST_COUNCIL_ACTIONS_SUB:
-      return 'expiration_datetime: {_lt: $currentTimestamp}, _or: {executed: {_eq: true}, initiator: {address: {_eq: $userAddress}}}'
+      return `_or: [
+        {_and: [
+          {_or: [
+            {execution_datetime: {
+              _lt: $currentTimestamp
+            }
+            }, 
+            {
+              executed: {
+                _eq: true
+              }
+            }
+          ]},
+          {
+            initiator: {address: {_eq: $userAddress}}
+          }
+        ]},
+        {_and: [
+          {_and: [
+            {execution_datetime: {
+              _gt: $currentTimestamp
+            }
+            }, 
+            {
+              executed: {
+                _eq: false
+              }
+            }
+          ]},
+          {
+            initiator: {address: {_neq: $userAddress}}
+          }
+        ]}]`
     default:
       return ''
   }

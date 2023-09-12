@@ -143,6 +143,13 @@ const CouncilProvider = ({ children }: Props) => {
     const isMyPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB
     const isPendingActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_ONGOING_COUNCIL_ACTIONS_SUB
 
+    console.log({
+      isAllPastActionsSubActive,
+      activeSubs,
+      allPastActions,
+      currentallPastActions: councilCtxState.councilActions?.allPastActions ?? [],
+    })
+
     setCouncilCtxState((prev) => ({
       ...prev,
       councilActions: {
@@ -229,6 +236,8 @@ const CouncilProvider = ({ children }: Props) => {
       }),
     [activeSubs, councilCtxState],
   )
+
+  console.log('useCouncilContext', { councilCtxState, contextProviderValue, activeSubs })
 
   return <councilContext.Provider value={contextProviderValue}>{children}</councilContext.Provider>
 }

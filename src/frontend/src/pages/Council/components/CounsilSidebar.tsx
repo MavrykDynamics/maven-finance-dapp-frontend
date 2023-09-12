@@ -51,13 +51,13 @@ export const CounsilSidebar = ({
     <div className="right-block">
       {showNavButtons && (
         <ReviewCard>
-          <Link to={`${pagePathname}${ALL_PAST_COUNSIL_TAB}`}>
+          <Link to={`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`}>
             <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
               Review Past Actions
             </NewButton>
           </Link>
 
-          <Link to={`${pagePathname}${ALL_PENDING_COUNSIL_TAB}`}>
+          <Link to={`${pagePathname}/${ALL_PENDING_COUNSIL_TAB}`}>
             <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
               Review Pending Actions
             </NewButton>

@@ -67,6 +67,15 @@ export const normalizeCouncilActions = (
       const isUserAction = initiatorAddress === userAddress
       const isPastAction = executed || (expirationTime && dayjs().isAfter(dayjs(expirationTime)))
 
+      console.log({
+        isPastAction,
+        isUserAction,
+        executed,
+        expirationTime,
+        isExpired: expirationTime && dayjs().isAfter(dayjs(expirationTime)),
+        actionId,
+      })
+
       if (isPastAction) acc.allPastActions.push(actionId)
       // user created past action
       if (isPastAction && isUserAction) acc.myPastActions.push(actionId)

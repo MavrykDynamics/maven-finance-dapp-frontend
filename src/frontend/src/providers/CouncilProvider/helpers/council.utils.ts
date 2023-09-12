@@ -36,9 +36,11 @@ export const getCouncilProviderReturnValue = ({
 
   const isBgCounsilMembersLoading = activeSubs[BG_COUNCIL_MEMBERS_SUB] && breakGlassCouncilMembers === null
   const isMavCounsilMembersLoading = activeSubs[COUNCIL_MEMBERS_SUB] && councilMembers === null
-  const isBgCounsilActionsLoading = activeSubs[COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(councilActions)
+
+  const isBgCounsilActionsLoading =
+    activeSubs[BG_COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(councilActions)
   const isMavCounsilActionsLoading =
-    activeSubs[BG_COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(breakGlassCouncilActions)
+    activeSubs[COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(breakGlassCouncilActions)
 
   // TODO: think about initial
   const isLoading =
