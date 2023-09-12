@@ -4,6 +4,7 @@ import { ProposalsSubsRecordType } from '../proposals.provider.types'
 import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
+// TODO: check how it workds with refetch
 export const getProposalsQuery = ({
   subType,
   isProposalRound,
