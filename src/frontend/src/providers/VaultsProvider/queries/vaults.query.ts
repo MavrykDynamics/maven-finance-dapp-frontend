@@ -1,5 +1,7 @@
 import { gql } from 'utils/__generated__'
 
+// TODO: use fragments for similar query parts
+
 export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 	query getUserDepositorAllVaultsQuery($userAddress: String) {
 		lending_controller(where: {mock_time: {_eq: false}}) {

@@ -5,6 +5,7 @@ import { gql } from 'utils/__generated__'
 
 import { GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
 
+// TODO: check refetch work
 export function getLoansMarketsQuery({
   marketTokenAddress,
 }: {

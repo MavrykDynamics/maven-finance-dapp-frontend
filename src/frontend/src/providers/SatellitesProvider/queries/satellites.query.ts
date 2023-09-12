@@ -4,6 +4,7 @@ import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
+// TODO: debug refetch work
 export function getSatelliteDataQuery(
   userAddress: string | null,
   isOnlyActive?: boolean,
