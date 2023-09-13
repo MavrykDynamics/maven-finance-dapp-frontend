@@ -1,16 +1,11 @@
 import dayjs from 'dayjs'
 
 // types
-import {
-  GetBreakGlassCouncilMembersQuery,
-  GetBreakGlassCouncilActionsQuery,
-  GetCouncilMembersQuery,
-  GetCouncilActionsQuery,
-} from 'utils/__generated__/graphql'
-import { CouncilActionType } from '../council.provider.types'
+import { GetBreakGlassCouncilMembersQuery, GetCouncilMembersQuery } from 'utils/__generated__/graphql'
+import { BgCounsilActionsQueryType, CouncilActionType, CounsilActionsQueryType } from '../council.provider.types'
 
-type MavrykCounsilIndexerItemType = GetCouncilActionsQuery['council_action'][number]
-type BreakGlassCounsilIndexerItemType = GetBreakGlassCouncilActionsQuery['break_glass_action'][number]
+type MavrykCounsilIndexerItemType = CounsilActionsQueryType['council_action'][number]
+type BreakGlassCounsilIndexerItemType = BgCounsilActionsQueryType['break_glass_action'][number]
 
 const checkWhetherMavrykCounsilAction = (
   indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
@@ -47,7 +42,7 @@ export const normalizeCouncilAction = (
 }
 
 export const normalizeCouncilActions = (
-  storage: GetBreakGlassCouncilActionsQuery['break_glass_action'] | GetCouncilActionsQuery['council_action'],
+  storage: BgCounsilActionsQueryType['break_glass_action'] | CounsilActionsQueryType['council_action'],
   userAddress: string | null,
 ) => {
   const convertedStorageForTs = storage as Array<MavrykCounsilIndexerItemType | BreakGlassCounsilIndexerItemType>
@@ -66,15 +61,6 @@ export const normalizeCouncilActions = (
 
       const isUserAction = initiatorAddress === userAddress
       const isPastAction = executed || (expirationTime && dayjs().isAfter(dayjs(expirationTime)))
-
-      console.log({
-        isPastAction,
-        isUserAction,
-        executed,
-        expirationTime,
-        isExpired: expirationTime && dayjs().isAfter(dayjs(expirationTime)),
-        actionId,
-      })
 
       if (isPastAction) acc.allPastActions.push(actionId)
       // user created past action

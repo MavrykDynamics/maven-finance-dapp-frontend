@@ -1,18 +1,12 @@
 import { useParams } from 'react-router'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // utils
-import {
-  ALL_PAST_COUNSIL_TAB,
-  ALL_PENDING_COUNSIL_TAB,
-  MY_PAST_COUNSIL_TAB,
-  MY_PENDING_COUNSIL_TAB,
-  parseCounsilTab,
-} from './helpers/commonCouncil.utils'
+import { parseCounsilTab } from './helpers/commonCouncil.utils'
 
 // view
 import { Page } from 'styles'
@@ -30,6 +24,7 @@ import {
   DEFAULT_COUNCIL_ACTIVE_SUBS,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from 'providers/CouncilProvider/helpers/council.consts'
+import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/commonCouncil.utils'
 
 export const Council = () => {
   const { tabId } = useParams<{ tabId: string }>()
@@ -57,12 +52,12 @@ export const Council = () => {
     }
   }, [])
 
-  useEffect(() => {
-    const parsedTab = parseCounsilTab(tabId)
+  const selectedTab = useMemo(() => parseCounsilTab(tabId), [tabId])
 
-    const isMyPendingTab = parsedTab === MY_PENDING_COUNSIL_TAB
-    const isAllPendingTab = parsedTab === ALL_PENDING_COUNSIL_TAB
-    const isAllPastTab = parsedTab === ALL_PAST_COUNSIL_TAB
+  useEffect(() => {
+    const isMyPendingTab = selectedTab === MY_PENDING_COUNSIL_TAB
+    const isAllPendingTab = selectedTab === ALL_PENDING_COUNSIL_TAB
+    const isAllPastTab = selectedTab === ALL_PAST_COUNSIL_TAB
 
     changeCouncilSubscriptionList({
       [COUNCIL_MEMBERS_SUB]: true,
@@ -74,11 +69,7 @@ export const Council = () => {
           ? ALL_PAST_COUNCIL_ACTIONS_SUB
           : MY_PAST_COUNCIL_ACTIONS_SUB,
     })
-  }, [tabId])
-
-  const handleDropAction = (id: number) => {
-    // dispatch(dropRequest(id))
-  }
+  }, [selectedTab])
 
   return (
     <Page>
@@ -87,7 +78,7 @@ export const Council = () => {
       {isCounsilLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading counsil</div>
+          <div className="text">Loading Mavryk Council Data</div>
         </DataLoaderWrapper>
       ) : (
         <CouncilView
@@ -98,7 +89,7 @@ export const Council = () => {
           myPastActions={myPastActions}
           actionsMapper={actionsMapper}
           members={councilMembers}
-          // handleDropAction={handleDropAction}
+          selectedTab={selectedTab}
         />
       )}
     </Page>

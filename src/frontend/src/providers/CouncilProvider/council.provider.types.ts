@@ -11,6 +11,14 @@ import {
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './helpers/council.consts'
+import {
+  GetAllOngoingCouncilActionsQuery,
+  GetAllPastCouncilActionsQuery,
+  GetBgAllOngoingCouncilActionsQuery,
+  GetBgAllPastCouncilActionsQuery,
+  GetBgMyPastCouncilActionsQuery,
+  GetMyPastCouncilActionsQuery,
+} from 'utils/__generated__/graphql'
 
 // normalizer types
 export type CouncilActionType = {
@@ -22,12 +30,21 @@ export type CouncilActionType = {
   startDatetime: string | null
   expirationTime: string | null
   parameters: Array<{ id: number; name: string; value: string }>
-  // TODO: fix type
-  councilSize: any
+  councilSize: number
   counsilAddress: string
 }
 export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
 export type CouncilActionsType = ReturnType<typeof normalizeCouncilActions>
+
+// queries type
+export type CounsilActionsQueryType =
+  | GetMyPastCouncilActionsQuery
+  | GetAllPastCouncilActionsQuery
+  | GetAllOngoingCouncilActionsQuery
+export type BgCounsilActionsQueryType =
+  | GetBgMyPastCouncilActionsQuery
+  | GetBgAllPastCouncilActionsQuery
+  | GetBgAllOngoingCouncilActionsQuery
 
 // -------- provider types
 

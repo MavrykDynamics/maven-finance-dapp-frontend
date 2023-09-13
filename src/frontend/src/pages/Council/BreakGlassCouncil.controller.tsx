@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router'
 
 // utils
-import { dropBreakGlass, propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
@@ -18,7 +18,6 @@ import {
   BG_COUNCIL_ACTIONS_DATA,
   BG_COUNCIL_MEMBERS_SUB,
   DEFAULT_COUNCIL_ACTIVE_SUBS,
-  DROP_BREAK_GLASS_ACTION,
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
   PROPAGATE_BREAK_GLASS_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
@@ -53,6 +52,7 @@ export function BreakGlassCouncil() {
   } = useDappConfigContext()
   const {
     userAddress,
+    isBreakGlassCouncil,
     userAvatars: { breakGlassAvatar },
   } = useUserContext()
   const {
@@ -75,12 +75,12 @@ export function BreakGlassCouncil() {
     }
   }, [])
 
-  useEffect(() => {
-    const parsedTab = parseCounsilTab(tabId)
+  const selectedTab = useMemo(() => parseCounsilTab(tabId), [tabId])
 
-    const isMyPendingTab = parsedTab === MY_PENDING_COUNSIL_TAB
-    const isAllPendingTab = parsedTab === ALL_PENDING_COUNSIL_TAB
-    const isAllPastTab = parsedTab === ALL_PAST_COUNSIL_TAB
+  useEffect(() => {
+    const isMyPendingTab = selectedTab === MY_PENDING_COUNSIL_TAB
+    const isAllPendingTab = selectedTab === ALL_PENDING_COUNSIL_TAB
+    const isAllPastTab = selectedTab === ALL_PAST_COUNSIL_TAB
 
     changeCouncilSubscriptionList({
       [BG_COUNCIL_MEMBERS_SUB]: true,
@@ -92,49 +92,11 @@ export function BreakGlassCouncil() {
           ? ALL_BG_PAST_COUNCIL_ACTIONS_SUB
           : MY_BG_PAST_COUNCIL_ACTIONS_SUB,
     })
-  }, [tabId])
+  }, [selectedTab])
 
   const {
     config: { emergencyGovActive },
   } = useSelector((state: State) => state.emergencyGovernance)
-
-  const isCouncilMember = Boolean(breakGlassCouncilMembers.find((item) => item.userId === userAddress)?.id)
-
-  // two actions have same parameters, so to avoid code duplication we use this helper
-  // const actionWithIdCaller = useCallback(
-  //   (
-  //     action: (
-  //       breakGlassAddress: string,
-  //       breakGlassActionID: number,
-  //     ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>,
-  //   ) => {
-  //     return async (id: number) => {
-  //       if (!userAddress) {
-  //         bug('Click Connect in the left menu', 'Please connect your wallet')
-  //         return null
-  //       }
-
-  //       if (!breakGlassAddress) {
-  //         bug('Wrong breakGlass address')
-  //         return null
-  //       }
-
-  //       return await action(breakGlassAddress, id)
-  //     }
-  //   },
-  //   [breakGlassAddress, bug, userAddress],
-  // )
-
-  // // Drop action
-  // const dropBreakGlassContractActionProps: HookContractActionArgs<number> = useMemo(
-  //   () => ({
-  //     actionType: DROP_BREAK_GLASS_ACTION,
-  //     actionFn: actionWithIdCaller(dropBreakGlass),
-  //   }),
-  //   [actionWithIdCaller],
-  // )
-
-  // const { actionWithArgs: handleDropAction } = useContractAction(dropBreakGlassContractActionProps)
 
   // propagate bg action -----------------------------------------------------------------------
   const propagateBreakGlassAction = useCallback(async () => {
@@ -168,11 +130,11 @@ export function BreakGlassCouncil() {
       {isBreakGlassCounsilLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading Break Glass Counsil</div>
+          <div className="text">Loading Break Glass Counsil Data</div>
         </DataLoaderWrapper>
       ) : (
         <>
-          {!tabId && isCouncilMember && (
+          {!tabId && isBreakGlassCouncil && (
             <PropagateBreakGlassCouncilCard>
               <div>
                 <h1>Propagate Break Glass</h1>
@@ -198,7 +160,7 @@ export function BreakGlassCouncil() {
             myPastActions={myPastActions}
             actionsMapper={actionsMapper}
             members={breakGlassCouncilMembers}
-            // handleDropAction={handleDropAction}
+            selectedTab={selectedTab}
           />
         </>
       )}

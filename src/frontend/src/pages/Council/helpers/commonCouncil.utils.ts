@@ -1,11 +1,12 @@
 import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
 
 export const MY_PENDING_COUNSIL_TAB = ''
 export const MY_PAST_COUNSIL_TAB = 'my-past-actions'
 export const ALL_PENDING_COUNSIL_TAB = 'pending-actions'
 export const ALL_PAST_COUNSIL_TAB = 'past-actions'
 
-export const parseCounsilTab = (tabId = '') => {
+export const parseCounsilTab = (tabId = ''): CouncilTabsType => {
   switch (tabId) {
     case MY_PENDING_COUNSIL_TAB:
       return MY_PENDING_COUNSIL_TAB

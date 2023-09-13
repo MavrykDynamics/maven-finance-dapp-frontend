@@ -12,13 +12,14 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { CouncilContext, CouncilSubsRecordType, NullableCouncilContextStateType } from './council.provider.types'
 import {
-  GetBreakGlassCouncilActionsQuery,
-  GetBreakGlassCouncilMembersQuery,
-  GetCouncilActionsQuery,
-  GetCouncilMembersQuery,
-} from 'utils/__generated__/graphql'
+  CouncilContext,
+  CouncilSubsRecordType,
+  NullableCouncilContextStateType,
+  CounsilActionsQueryType,
+  BgCounsilActionsQueryType,
+} from './council.provider.types'
+import { GetBreakGlassCouncilMembersQuery, GetCouncilMembersQuery } from 'utils/__generated__/graphql'
 
 // consts
 import {
@@ -35,8 +36,18 @@ import {
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './helpers/council.consts'
-import { BREAK_GLASS_COUNCIL_MEMBERS_QUERY, getBreakGlassCouncilActions } from './queries/breakGlassCouncil.query'
-import { COUNCIL_MEMBERS_QUERY, getCouncilActions } from './queries/council.query'
+import {
+  ALL_BG_ONGOING_COUNSILS_QUERY,
+  ALL_BG_PAST_COUNSILS_QUERY,
+  BREAK_GLASS_COUNCIL_MEMBERS_QUERY,
+  MY_BG_PAST_COUNSILS_QUERY,
+} from './queries/breakGlassCouncil.query'
+import {
+  COUNCIL_MEMBERS_QUERY,
+  ALL_ONGOING_COUNSILS_QUERY,
+  ALL_PAST_COUNSILS_QUERY,
+  MY_PAST_COUNSILS_QUERY,
+} from './queries/council.query'
 
 export const councilContext = React.createContext<CouncilContext>(undefined!)
 
@@ -90,52 +101,119 @@ const CouncilProvider = ({ children }: Props) => {
     }
   }, [userAddress])
 
-  // council members
+  /**
+   * councils memebers sub:
+   * COUNCIL_MEMBERS_QUERY -> members of mavryk council
+   * BREAK_GLASS_COUNCIL_MEMBERS_QUERY -> members of break glass council
+   */
   useQueryWithRefetch(COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[COUNCIL_MEMBERS_SUB],
     onCompleted: (data) => updateCouncilMembers(data),
     onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_SUB'),
   })
 
-  // council actions
-  useQueryWithRefetch(
-    getCouncilActions(activeSubs[COUNCIL_ACTIONS_DATA]),
-    {
-      skip: !activeSubs[COUNCIL_ACTIONS_DATA],
-      variables: {
-        currentTimestamp: currentTimeRef.current,
-        userAddress,
-      },
-      onCompleted: (data) => updateCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'getCouncilActions'),
-    },
-    { refetchQueryVariables },
-  )
-
-  // break glass members
   useQueryWithRefetch(BREAK_GLASS_COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[BG_COUNCIL_MEMBERS_SUB],
     onCompleted: (data) => updateBreakGlassCouncilMembers(data),
     onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_SUB'),
   })
 
-  // break glass actions
+  /**
+   * mavryk council actions:
+   * ALL_PAST_COUNSILS_QUERY -> expired or executed actions
+   * MY_PAST_COUNSILS_QUERY -> expired or executed actions where user is initiator and all ongoing actions,
+   *    where user is not initiator (actions to sign carousel)
+   * ALL_ONGOING_COUNSILS_QUERY -> all actions that are not executed nor expired
+   */
   useQueryWithRefetch(
-    getBreakGlassCouncilActions(activeSubs[BG_COUNCIL_ACTIONS_DATA]),
+    ALL_PAST_COUNSILS_QUERY,
     {
-      skip: !activeSubs[BG_COUNCIL_ACTIONS_DATA],
+      skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_PAST_COUNCIL_ACTIONS_SUB,
+      variables: {
+        currentTimestamp: currentTimeRef.current,
+      },
+      onCompleted: (data) => updateCouncilActionsData(data),
+      onError: (error) => handleApolloError(error, 'ALL_PAST_COUNSILS_QUERY'),
+    },
+    { refetchQueryVariables },
+  )
+
+  useQueryWithRefetch(
+    MY_PAST_COUNSILS_QUERY,
+    {
+      skip: activeSubs[COUNCIL_ACTIONS_DATA] !== MY_PAST_COUNCIL_ACTIONS_SUB,
+      variables: {
+        currentTimestamp: currentTimeRef.current,
+        userAddress,
+      },
+      onCompleted: (data) => updateCouncilActionsData(data),
+      onError: (error) => handleApolloError(error, 'MY_PAST_COUNSILS_QUERY'),
+    },
+    { refetchQueryVariables },
+  )
+
+  useQueryWithRefetch(
+    ALL_ONGOING_COUNSILS_QUERY,
+    {
+      skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_ONGOING_COUNCIL_ACTIONS_SUB,
+      variables: {
+        currentTimestamp: currentTimeRef.current,
+      },
+      onCompleted: (data) => updateCouncilActionsData(data),
+      onError: (error) => handleApolloError(error, 'ALL_ONGOING_COUNSILS_QUERY'),
+    },
+    { refetchQueryVariables },
+  )
+
+  /**
+   * break glass council actions:
+   * ALL_BG_PAST_COUNSILS_QUERY -> expired or executed actions
+   * MY_BG_PAST_COUNSILS_QUERY -> expired or executed actions where user is initiator and all ongoing actions,
+   *    where user is not initiator (actions to sign carousel)
+   * ALL_BG_ONGOING_COUNSILS_QUERY -> all actions that are not executed nor expired
+   */
+  useQueryWithRefetch(
+    ALL_BG_PAST_COUNSILS_QUERY,
+    {
+      skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
+      variables: {
+        currentTimestamp: currentTimeRef.current,
+      },
+      onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
+      onError: (error) => handleApolloError(error, 'ALL_PAST_COUNSILS_QUERY'),
+    },
+    { refetchQueryVariables },
+  )
+
+  useQueryWithRefetch(
+    MY_BG_PAST_COUNSILS_QUERY,
+    {
+      skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== MY_BG_PAST_COUNCIL_ACTIONS_SUB,
       variables: {
         currentTimestamp: currentTimeRef.current,
         userAddress,
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'getBreakGlassCouncilActions'),
+      onError: (error) => handleApolloError(error, 'MY_PAST_COUNSILS_QUERY'),
+    },
+    { refetchQueryVariables },
+  )
+
+  useQueryWithRefetch(
+    ALL_BG_ONGOING_COUNSILS_QUERY,
+    {
+      skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
+      variables: {
+        currentTimestamp: currentTimeRef.current,
+      },
+      onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
+      onError: (error) => handleApolloError(error, 'ALL_ONGOING_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
 
   // mavryk council actions update
-  const updateCouncilActionsData = (data: GetCouncilActionsQuery) => {
+  const updateCouncilActionsData = (data: CounsilActionsQueryType) => {
     const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.council_action, userAddress)
 
@@ -143,33 +221,28 @@ const CouncilProvider = ({ children }: Props) => {
     const isMyPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB
     const isPendingActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_ONGOING_COUNCIL_ACTIONS_SUB
 
-    console.log({
-      isAllPastActionsSubActive,
-      activeSubs,
-      allPastActions,
-      currentallPastActions: councilCtxState.councilActions?.allPastActions ?? [],
-    })
-
     setCouncilCtxState((prev) => ({
       ...prev,
       councilActions: {
-        allPastActions: isAllPastActionsSubActive ? allPastActions : prev.councilActions?.allPastActions ?? [],
+        allPastActions: isAllPastActionsSubActive ? allPastActions : prev.councilActions?.allPastActions ?? null,
         myPastActions:
           isAllPastActionsSubActive || isMyPastActionsSubActive
             ? myPastActions
-            : prev.councilActions?.myPastActions ?? [],
-        allPendingActions: isPendingActionsSubActive ? allPendingActions : prev.councilActions?.allPendingActions ?? [],
+            : prev.councilActions?.myPastActions ?? null,
+        allPendingActions: isPendingActionsSubActive
+          ? allPendingActions
+          : prev.councilActions?.allPendingActions ?? null,
         notMyPendingActions: isPendingActionsSubActive
           ? notMyPendingActions
-          : prev.councilActions?.notMyPendingActions ?? [],
-        myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.councilActions?.myPendingActions ?? [],
+          : prev.councilActions?.notMyPendingActions ?? null,
+        myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.councilActions?.myPendingActions ?? null,
         actionsMapper: { ...prev.councilActions?.actionsMapper, ...actionsMapper },
       },
     }))
   }
 
   // break glass council actions update
-  const updateBreakGlassCouncilActionsData = (data: GetBreakGlassCouncilActionsQuery) => {
+  const updateBreakGlassCouncilActionsData = (data: BgCounsilActionsQueryType) => {
     const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.break_glass_action, userAddress)
 
@@ -182,20 +255,20 @@ const CouncilProvider = ({ children }: Props) => {
       breakGlassCouncilActions: {
         allPastActions: isAllPastActionsSubActive
           ? allPastActions
-          : prev.breakGlassCouncilActions?.allPastActions ?? [],
+          : prev.breakGlassCouncilActions?.allPastActions ?? null,
         myPastActions:
           isAllPastActionsSubActive || isMyPastActionsSubActive
             ? myPastActions
-            : prev.breakGlassCouncilActions?.myPastActions ?? [],
+            : prev.breakGlassCouncilActions?.myPastActions ?? null,
         allPendingActions: isPendingActionsSubActive
           ? allPendingActions
-          : prev.breakGlassCouncilActions?.allPendingActions ?? [],
+          : prev.breakGlassCouncilActions?.allPendingActions ?? null,
         notMyPendingActions: isPendingActionsSubActive
           ? notMyPendingActions
-          : prev.breakGlassCouncilActions?.notMyPendingActions ?? [],
+          : prev.breakGlassCouncilActions?.notMyPendingActions ?? null,
         myPendingActions: isPendingActionsSubActive
           ? myPendingActions
-          : prev.breakGlassCouncilActions?.myPendingActions ?? [],
+          : prev.breakGlassCouncilActions?.myPendingActions ?? null,
         actionsMapper: { ...prev.breakGlassCouncilActions?.actionsMapper, ...actionsMapper },
       },
     }))
@@ -203,7 +276,6 @@ const CouncilProvider = ({ children }: Props) => {
 
   // mavryk council members update
   const updateCouncilMembers = (data: GetCouncilMembersQuery) => {
-    if (!data.council[0]?.members) return
     const members = normalizeCouncilMembers(data.council[0].members)
 
     setCouncilCtxState((prev) => ({
@@ -214,7 +286,6 @@ const CouncilProvider = ({ children }: Props) => {
 
   // break glass council members update
   const updateBreakGlassCouncilMembers = (data: GetBreakGlassCouncilMembersQuery) => {
-    if (!data.break_glass_council_member) return
     const members = normalizeCouncilMembers(data.break_glass_council_member)
 
     setCouncilCtxState((prev) => ({

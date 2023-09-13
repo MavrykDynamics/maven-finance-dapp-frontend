@@ -1,5 +1,4 @@
 // utils
-import { isObjectChildrenNulls } from 'providers/common/utils/checkUtils'
 import { replaceDeepNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 
 // types
@@ -10,11 +9,17 @@ import {
   NullableCouncilContextStateType,
 } from '../council.provider.types'
 import {
+  ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
+  ALL_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_PAST_COUNCIL_ACTIONS_SUB,
   BG_COUNCIL_ACTIONS_DATA,
   BG_COUNCIL_MEMBERS_SUB,
   COUNCIL_ACTIONS_DATA,
   COUNCIL_MEMBERS_SUB,
   EMPTY_COUNCIL_CTX,
+  MY_BG_PAST_COUNCIL_ACTIONS_SUB,
+  MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './council.consts'
 
 type CouncilContextReturnValueArgs = {
@@ -34,17 +39,38 @@ export const getCouncilProviderReturnValue = ({
     changeCouncilSubscriptionList,
   }
 
+  // break glass and mavryk councils members loadings
   const isBgCounsilMembersLoading = activeSubs[BG_COUNCIL_MEMBERS_SUB] && breakGlassCouncilMembers === null
   const isMavCounsilMembersLoading = activeSubs[COUNCIL_MEMBERS_SUB] && councilMembers === null
 
-  const isBgCounsilActionsLoading =
-    activeSubs[BG_COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(councilActions)
-  const isMavCounsilActionsLoading =
-    activeSubs[COUNCIL_ACTIONS_DATA] === null && isObjectChildrenNulls(breakGlassCouncilActions)
+  // mavryk council loadings
+  const isMavCounsilPendingActionsLoading =
+    activeSubs[COUNCIL_ACTIONS_DATA] === ALL_ONGOING_COUNCIL_ACTIONS_SUB && councilActions?.allPendingActions === null
+  const isMavCounsilPastActionsLoading =
+    activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB && councilActions?.allPastActions === null
+  const isMavCounsilMyPastActionsLoading =
+    activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB && councilActions?.myPastActions === null
 
-  // TODO: think about initial
+  // break glass council loadings
+  const isBgCounsilPendingActionsLoading =
+    activeSubs[BG_COUNCIL_ACTIONS_DATA] === ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB &&
+    breakGlassCouncilActions?.allPendingActions === null
+  const isBgCounsilPastActionsLoading =
+    activeSubs[BG_COUNCIL_ACTIONS_DATA] === ALL_BG_PAST_COUNCIL_ACTIONS_SUB &&
+    breakGlassCouncilActions?.allPastActions === null
+  const isBgCounsilMyPastActionsLoading =
+    activeSubs[BG_COUNCIL_ACTIONS_DATA] === MY_BG_PAST_COUNCIL_ACTIONS_SUB &&
+    breakGlassCouncilActions?.myPastActions === null
+
   const isLoading =
-    isBgCounsilMembersLoading || isMavCounsilMembersLoading || isBgCounsilActionsLoading || isMavCounsilActionsLoading
+    isBgCounsilMembersLoading ||
+    isBgCounsilPendingActionsLoading ||
+    isBgCounsilPastActionsLoading ||
+    isBgCounsilMyPastActionsLoading ||
+    isMavCounsilMembersLoading ||
+    isMavCounsilPendingActionsLoading ||
+    isMavCounsilPastActionsLoading ||
+    isMavCounsilMyPastActionsLoading
 
   if (isLoading) {
     return {

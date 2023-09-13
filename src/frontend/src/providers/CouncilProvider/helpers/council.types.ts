@@ -1,4 +1,10 @@
 import {
+  MY_PENDING_COUNSIL_TAB,
+  MY_PAST_COUNSIL_TAB,
+  ALL_PENDING_COUNSIL_TAB,
+  ALL_PAST_COUNSIL_TAB,
+} from 'pages/Council/helpers/commonCouncil.utils'
+import {
   ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   DROP_BREAK_GLASS_ACTION,
@@ -54,3 +60,10 @@ export type MavrykCouncilActions =
   | typeof SET_BAKER_REQUEST_ACTION
   | typeof SET_CONTRACT_BAKER_REQUEST_ACTION
   | typeof DROP_REQUEST_ACTION
+
+export type CouncilTabsType =
+  | typeof MY_PENDING_COUNSIL_TAB
+  | typeof MY_PAST_COUNSIL_TAB
+  | typeof ALL_PENDING_COUNSIL_TAB
+  | typeof ALL_PAST_COUNSIL_TAB
+  | null

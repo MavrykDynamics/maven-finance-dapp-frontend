@@ -1,7 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
-import { useParams } from 'react-router'
-import qs from 'qs'
 
 // consts
 import { BgCounsilDdForms, BgCounsilPageTitles } from 'pages/Council/helpers/breakGlassCouncil.consts'
@@ -21,12 +19,12 @@ import {
   MY_PAST_COUNSIL_TAB,
   MY_PENDING_COUNSIL_TAB,
   councilTabsList,
-  parseCounsilTab,
 } from './helpers/commonCouncil.utils'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // types
 import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
+import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // utils
@@ -52,45 +50,46 @@ import { CounsilSidebar } from './components/CounsilSidebar'
 import { CouncilOngoingAction } from './components/CouncilOngoingAction.view'
 
 type Props = {
+  selectedTab: CouncilTabsType
   isBreakGlassCounsil?: boolean
 
   allPendingActions: number[]
   notMyPendingActions: number[]
   myPendingActions: number[]
-
   allPastActions: number[]
   myPastActions: number[]
-
   actionsMapper: Record<number, CouncilActionType>
   members: CouncilMembersType
 }
 
+type ActionsDDItemType = {
+  content: JSX.Element
+  value: string
+  id: number
+}
+
 export function CouncilView({
+  selectedTab,
   isBreakGlassCounsil = false,
 
   allPendingActions,
   notMyPendingActions,
   myPendingActions,
-
   allPastActions,
   myPastActions,
-
   actionsMapper,
-
   members,
 }: Props) {
   const history = useHistory()
-  const { search, pathname } = useLocation()
-
-  const { page, action } = qs.parse(search, { ignoreQueryPrefix: true })
-  const { tabId } = useParams<{ tabId: string }>()
+  const { search } = useLocation()
 
   const {
     maxLengths: { council: counsilMaxLenghts },
   } = useDappConfigContext()
-  const { userAddress } = useUserContext()
+  const { userAddress, isBreakGlassCouncil, isMavrykCouncil } = useUserContext()
 
-  const userMemberProfile = members.find((item) => item.userId === userAddress)
+  const isUserCouncil = isBreakGlassCounsil ? isBreakGlassCouncil : isMavrykCouncil
+
   const { pagePathname, dropDownItems, titles } = useMemo(() => {
     return {
       titles: isBreakGlassCounsil ? BgCounsilPageTitles : MavrykCounsilPageTitles,
@@ -105,20 +104,10 @@ export function CouncilView({
     }
   }, [isBreakGlassCounsil])
 
-  // choose action after reload page
+  // redirect to review past actions page when member changes or when current user is not council
   useEffect(() => {
-    setChosenDdItem(dropDownItems.find((item) => item.value === action))
-  }, [])
-
-  // redirect to review page when member changes
-  useEffect(() => {
-    if (!userAddress) history.replace(`${pagePathname}${ALL_PAST_COUNSIL_TAB}`)
-  }, [pagePathname, userAddress])
-
-  // check authorization when clicking on a review or a header in the menu
-  useEffect(() => {
-    if (!userMemberProfile) history.replace(`${pagePathname}${ALL_PAST_COUNSIL_TAB}`)
-  }, [userMemberProfile, pathname, pagePathname])
+    if (!userAddress || !isUserCouncil) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
+  }, [pagePathname, userAddress, isUserCouncil])
 
   const {
     currentListName,
@@ -129,11 +118,10 @@ export function CouncilView({
     listItemsAmount,
     paginatedList,
   } = useMemo(() => {
-    const parsedTab = parseCounsilTab(tabId)
-    const isMyPendingTab = parsedTab === MY_PENDING_COUNSIL_TAB
-    const isMyPastTab = parsedTab === MY_PAST_COUNSIL_TAB
-    const isAllPendingTab = parsedTab === ALL_PENDING_COUNSIL_TAB
-    const isAllPastTab = parsedTab === ALL_PAST_COUNSIL_TAB
+    const isMyPendingTab = selectedTab === MY_PENDING_COUNSIL_TAB
+    const isMyPastTab = selectedTab === MY_PAST_COUNSIL_TAB
+    const isAllPendingTab = selectedTab === ALL_PENDING_COUNSIL_TAB
+    const isAllPastTab = selectedTab === ALL_PAST_COUNSIL_TAB
 
     const currentListName = isMyPendingTab
       ? COUNCIL_MY_PENDING_ACTIONS_LIST_NAME
@@ -165,44 +153,40 @@ export function CouncilView({
       paginatedList,
       listItemsAmount: listToPaginate.length,
     }
-  }, [tabId, search, myPendingActions, myPastActions, allPendingActions, allPastActions])
+  }, [selectedTab, search, myPendingActions, myPastActions, allPendingActions, allPastActions])
 
   // update member popup
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
   const openPopup = useCallback(() => setIsUpdateCouncilMemberInfo(true), [])
   const closePopup = useCallback(() => setIsUpdateCouncilMemberInfo(false), [])
 
-  type DropDownItemType = (typeof dropDownItems)[0]
+  const isMyActionsTabs = isMyPastTab || isMyPendingTab
+  const displayPendingSignature = Boolean(isMyActionsTabs && isUserCouncil && notMyPendingActions.length)
 
-  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
+  const [chosenDdItem, setChosenDdItem] = useState<ActionsDDItemType | undefined>()
 
-  const displayPendingSignature = Boolean(!tabId && userMemberProfile && notMyPendingActions.length)
+  const handleClickDropdownItem = useCallback(
+    (itemId: DDItemId) => {
+      const foundItem = dropDownItems.find((item) => item.id === itemId)
+      if (foundItem) setChosenDdItem(foundItem)
+    },
+    [dropDownItems],
+  )
 
-  const handleClickDropdownItem = (itemId: DDItemId) => {
-    const foundItem = dropDownItems.find((item) => item.id === itemId)
-
-    if (!foundItem) return
-
-    const newQueryParams = {
-      page,
-      action: foundItem.value,
-    }
-
-    const newPageLink = pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
-
-    history.push(newPageLink)
-    setChosenDdItem(foundItem)
-  }
-
-  const handleChangeTabs = (tabId?: number) => {
-    history.replace(
-      `${pagePathname}${tabId === 1 ? MY_PENDING_COUNSIL_TAB : `/${MY_PAST_COUNSIL_TAB}`}${search ? `?${search}` : ''}`,
-    )
-  }
+  const handleChangeTabs = useCallback(
+    (tabId?: number) => {
+      history.replace(
+        `${pagePathname}${tabId === 1 ? MY_PENDING_COUNSIL_TAB : `/${MY_PAST_COUNSIL_TAB}`}${
+          search ? `?${search}` : ''
+        }`,
+      )
+    },
+    [pagePathname, search],
+  )
 
   return (
     <CounsilPageWrapper>
-      {(isAllPastTab || isAllPendingTab) && userMemberProfile && (
+      {(isAllPastTab || isAllPendingTab) && isUserCouncil && (
         <Link to={pagePathname}>
           <NewButton kind={BUTTON_SECONDARY}>
             <Icon id="full-arrow-left" />
@@ -224,11 +208,7 @@ export function CouncilView({
             />
           ) : null}
 
-          {isAllPastTab || isAllPendingTab ? (
-            <h1>{isAllPastTab ? titles.allPastActions : isAllPendingTab ? titles.allPending : null}</h1>
-          ) : null}
-
-          {isMyPastTab || isMyPendingTab ? (
+          {isMyActionsTabs ? (
             <>
               <AvaliableActions>
                 <div className="top-bar">
@@ -246,13 +226,13 @@ export function CouncilView({
 
                 {isBreakGlassCounsil ? (
                   <BreakGlassCouncilForm
-                    selectedAction={action?.toString()}
+                    selectedAction={chosenDdItem?.value}
                     councilMaxLengths={counsilMaxLenghts}
                     members={members}
                   />
                 ) : (
                   <CouncilForm
-                    selectedAction={action?.toString()}
+                    selectedAction={chosenDdItem?.value}
                     councilMaxLengths={counsilMaxLenghts}
                     members={members}
                   />
@@ -265,7 +245,9 @@ export function CouncilView({
                 onClick={handleChangeTabs}
               />
             </>
-          ) : null}
+          ) : (
+            <h1>{isAllPastTab ? titles.allPastActions : isAllPendingTab ? titles.allPending : null}</h1>
+          )}
 
           <div>
             {paginatedList.length ? (
@@ -316,7 +298,7 @@ export function CouncilView({
           membersTitle={titles.membersName}
           counsilMembers={members}
           openUpdateMemberProfilePopup={openPopup}
-          showNavButtons={isMyPastTab || isMyPendingTab}
+          showNavButtons={isMyActionsTabs}
           pagePathname={pagePathname}
         />
       </CouncilStyled>
@@ -325,7 +307,7 @@ export function CouncilView({
         show={isUpdateCouncilMemberInfo}
         closePopup={closePopup}
         isBreakGlassCounsil={isBreakGlassCounsil}
-        memberProfile={userMemberProfile}
+        memberProfile={members.find((item) => item.userId === userAddress)}
       />
     </CounsilPageWrapper>
   )
