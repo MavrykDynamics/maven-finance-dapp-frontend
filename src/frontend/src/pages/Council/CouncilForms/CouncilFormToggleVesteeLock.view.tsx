@@ -1,51 +1,79 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useMemo, useState } from 'react'
 
-// type
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+// consts
+import { TOGGLE_VESTEE_LOCK_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { INPUT_STATUS_DEFAULT, type InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
+import { toggleVesteeLock } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { validateFormAddress } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
+import { CouncilFormStyled } from './CouncilForm.style'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
-// action
-// import { toggleVesteeLock } from '../Council.actions'
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
-// style
-import { CouncilFormStyled } from './CouncilForm.style'
-import { State } from 'reducers'
+const INIT_FORM = {
+  vesteeAddress: '',
+}
+
+const INTI_FORM_VALIDATION: Record<string, InputStatusType> = {
+  vesteeAddress: INPUT_STATUS_DEFAULT,
+}
 
 export const CouncilFormToggleVesteeLock = () => {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
-  const [form, setForm] = useState({
-    vesteeAddress: '',
-  })
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    vesteeAddress: '',
-  })
+  const [form, setForm] = useState(INIT_FORM)
+  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>(INTI_FORM_VALIDATION)
 
   const { vesteeAddress } = form
+
+  // toggle vestee lock council action
+  const toggleVesteeLockContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: TOGGLE_VESTEE_LOCK_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        return await toggleVesteeLock(vesteeAddress, councilAddress)
+      },
+    }),
+    [vesteeAddress, userAddress, councilAddress],
+  )
+
+  const { action: handleToggleVesteeLock } = useContractAction(toggleVesteeLockContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      // await dispatch(toggleVesteeLock(vesteeAddress))
-      setForm({
-        vesteeAddress: '',
-      })
-      setFormInputStatus({
-        vesteeAddress: '',
-      })
+      await handleToggleVesteeLock()
+
+      setForm(INIT_FORM)
+      setFormInputStatus(INTI_FORM_VALIDATION)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormToggleVesteeLock', error)
     }
   }
 

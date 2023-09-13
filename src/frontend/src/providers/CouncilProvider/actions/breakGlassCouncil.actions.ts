@@ -86,7 +86,7 @@ export const addCouncilMember = async (
 }
 
 // Update Council Member
-export const updateCouncilMember = async (
+export const updateBgCouncilMember = async (
   breakGlassAddress: string,
   newMemberName: string,
   newMemberWebsite: string,

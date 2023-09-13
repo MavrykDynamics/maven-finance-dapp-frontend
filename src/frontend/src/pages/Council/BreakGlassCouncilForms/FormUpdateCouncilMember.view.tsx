@@ -10,7 +10,7 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormField } from 'utils/validatorFunctions'
-import { updateCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { updateBgCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
 // types
 import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
@@ -61,6 +61,22 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
+  useEffect(() => {
+    if (memberProfile) {
+      setForm({
+        newMemberName: memberProfile.name,
+        newMemberWebsite: memberProfile.website,
+        newMemberImage: memberProfile.image,
+      })
+
+      setFormInputStatus({
+        newMemberName: INPUT_STATUS_DEFAULT,
+        newMemberWebsite: INPUT_STATUS_DEFAULT,
+        newMemberImage: INPUT_STATUS_DEFAULT,
+      })
+    }
+  }, [memberProfile])
+
   const { newMemberWebsite, newMemberName, newMemberImage } = form
 
   // update bg council action
@@ -78,7 +94,7 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
           return null
         }
 
-        return await updateCouncilMember(breakGlassAddress, newMemberName, newMemberWebsite, newMemberImage, callback)
+        return await updateBgCouncilMember(breakGlassAddress, newMemberName, newMemberWebsite, newMemberImage, callback)
       },
     }),
     [breakGlassAddress, callback, newMemberImage, newMemberName, newMemberWebsite, userAddress],
@@ -136,22 +152,6 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
   const newMemberWebsiteSettings = {
     inputStatus: formInputStatus.newMemberWebsite,
   }
-
-  useEffect(() => {
-    if (memberProfile) {
-      setForm({
-        newMemberName: memberProfile.name,
-        newMemberWebsite: memberProfile.website,
-        newMemberImage: memberProfile.image,
-      })
-
-      setFormInputStatus({
-        newMemberName: INPUT_STATUS_SUCCESS,
-        newMemberWebsite: INPUT_STATUS_SUCCESS,
-        newMemberImage: INPUT_STATUS_SUCCESS,
-      })
-    }
-  }, [memberProfile])
 
   return (
     <FormStyled className="without-divider">
