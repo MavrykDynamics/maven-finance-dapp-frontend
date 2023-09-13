@@ -1,33 +1,33 @@
-import React, { useState, useMemo, useCallback } from 'react'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+import React, { useState, useMemo } from 'react'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
+import { FormStyled } from './BreakGlassCouncilForm.style'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
-// styles
-import { FormStyled } from './BreakGlassCouncilForm.style'
+// types
+import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
 // helpers
+import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
-// actions
-import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-
-// providers
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-
-// hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
 import { REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
+
+type DdItemType = {
+  content: React.ReactNode
+  tzAddress: string
+  id: number
+}
 
 export function FormRemoveCouncilMemberView({
   breakGlassCouncilMembers,
@@ -43,7 +43,7 @@ export function FormRemoveCouncilMemberView({
 
   const dropDownItems = useMemo(
     () =>
-      breakGlassCouncilMembers.map((item, index) => ({
+      breakGlassCouncilMembers.map<DdItemType>((item, index) => ({
         content: (
           <div>
             {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
@@ -55,36 +55,31 @@ export function FormRemoveCouncilMemberView({
     [breakGlassCouncilMembers],
   )
 
-  type DropDownItemType = (typeof dropDownItems)[0]
+  const [chosenDdItem, setChosenDdItem] = useState<DdItemType | undefined>()
 
-  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
-
-  // ----------------------------------------------------------------------------
   // remove bg council action
-  const removeCouncilMemberAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    if (!breakGlassAddress) {
-      bug('Wrong breakGlass address')
-      return null
-    }
-
-    const memberAddress = chosenDdItem?.tzAddress
-
-    if (!memberAddress) return null
-
-    return await removeCouncilMember(breakGlassAddress, memberAddress)
-  }, [userAddress, breakGlassAddress, chosenDdItem?.tzAddress, bug])
-
   const removeBgCouncilContractContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-      actionFn: removeCouncilMemberAction,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!breakGlassAddress) {
+          bug('Wrong breakGlass address')
+          return null
+        }
+
+        const memberAddress = chosenDdItem?.tzAddress
+
+        if (!memberAddress) return null
+
+        return await removeCouncilMember(breakGlassAddress, memberAddress)
+      },
     }),
-    [removeCouncilMemberAction],
+    [userAddress, breakGlassAddress, chosenDdItem?.tzAddress],
   )
 
   const { action: handleRemoveCouncilMember } = useContractAction(removeBgCouncilContractContractActionProps)
@@ -100,8 +95,7 @@ export function FormRemoveCouncilMemberView({
   const handleClickDropdownItem = (itemId: DDItemId) => {
     const foundItem = dropDownItems.find((item) => item.id === itemId)
 
-    if (!foundItem) return
-    setChosenDdItem(foundItem)
+    if (foundItem) setChosenDdItem(foundItem)
   }
 
   return (

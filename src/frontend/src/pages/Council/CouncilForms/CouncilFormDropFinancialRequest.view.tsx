@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
 
 // const
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
@@ -8,28 +7,38 @@ import {
   FIN_REQUESTS_DATA,
   ONGOING_FIN_REQUESTS_SUB,
 } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
+import { DROP_FIN_REQUEST_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { SPINNER_LOADER_MEDIUM } from 'app/App.components/Loader/loader.const'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
-
-// action
-// import { dropFinancialRequest } from '../Council.actions'
-
-// style
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { CouncilFormDropFinancialRequestLoaderWrapper, CouncilFormStyled } from './CouncilForm.style'
+
+// utils
+import { dropFinancialRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+
+// hooks
 import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+type DdItemType = {
+  content: React.ReactNode
+  id: string
+}
 
 export const CouncilFormDropFinancialRequest = () => {
-  const dispatch = useDispatch()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
   const {
+    contractAddresses: { councilAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-
   const { ongoingFinRequestsIds, financialRequestsMapper, isLoading, changeFinancialRequestsSubscriptionList } =
     useFinancialRequestsContext()
 
@@ -43,9 +52,11 @@ export const CouncilFormDropFinancialRequest = () => {
     }
   }, [])
 
+  const [chosenDdItem, setChosenDdItem] = useState<DdItemType | undefined>()
+
   const dropDownItems = useMemo(
     () =>
-      ongoingFinRequestsIds.map((frId) => {
+      ongoingFinRequestsIds.map<DdItemType>((frId) => {
         const fr = financialRequestsMapper[frId]
         return {
           content: <DropdownTruncateOption text={`${fr.type} ${fr.purpose}`} />,
@@ -55,16 +66,39 @@ export const CouncilFormDropFinancialRequest = () => {
     [ongoingFinRequestsIds, financialRequestsMapper],
   )
 
-  type DropDownItemType = (typeof dropDownItems)[number]
-  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
+  // drop financial request council action
+  const dropFinReqContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DROP_FIN_REQUEST_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        if (!chosenDdItem) {
+          bug('Select financial request to drop')
+          return null
+        }
+
+        return await dropFinancialRequest(chosenDdItem.id, councilAddress)
+      },
+    }),
+    [chosenDdItem, userAddress, councilAddress],
+  )
+
+  const { action: handleDropFinReq } = useContractAction(dropFinReqContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      const financialReqID = Number(chosenDdItem?.id)
-      if (!financialReqID) return
+      await handleDropFinReq()
 
-      // await dispatch(dropFinancialRequest(financialReqID))
       setChosenDdItem(undefined)
     } catch (error) {
       console.error(error)
@@ -74,8 +108,7 @@ export const CouncilFormDropFinancialRequest = () => {
   const handleClickDropdownItem = (itemId: DDItemId) => {
     const foundItem = dropDownItems.find((item) => item.id === itemId)
 
-    if (!foundItem) return
-    setChosenDdItem(foundItem)
+    if (foundItem) setChosenDdItem(foundItem)
   }
 
   return isLoading ? (

@@ -1,36 +1,32 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
-// components
+// view
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
+import { FormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
-// types
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
-
-// styles
-import { FormStyled } from './BreakGlassCouncilForm.style'
-
-// actions
-import { setAllContractsAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+// consts
+import { SET_ALL_CONTRACTS_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
 
 // utils
+import { setAllContractsAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { validateFormAddress } from 'utils/validatorFunctions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-
-// providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
-// consts
-import { SET_ALL_CONTRACTS_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-
 const INIT_FORM = {
   newAdminAddress: '',
+}
+
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  newAdminAddress: INPUT_STATUS_DEFAULT,
 }
 
 export function FormSetAllContractsAdminView() {
@@ -42,32 +38,28 @@ export function FormSetAllContractsAdminView() {
   const { bug } = useToasterContext()
 
   const [form, setForm] = useState(INIT_FORM)
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    newAdminAddress: '',
-  })
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { newAdminAddress } = form
-
-  const setAllContractsAdminAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    if (!breakGlassAddress) {
-      bug('Wrong breakGlass address')
-      return null
-    }
-
-    return await setAllContractsAdmin(breakGlassAddress, newAdminAddress)
-  }, [userAddress, breakGlassAddress, newAdminAddress, bug])
 
   const setAllContractsAdminContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: SET_ALL_CONTRACTS_ADMIN_ACTION,
-      actionFn: setAllContractsAdminAction,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!breakGlassAddress) {
+          bug('Wrong breakGlass address')
+          return null
+        }
+
+        return await setAllContractsAdmin(breakGlassAddress, newAdminAddress)
+      },
     }),
-    [setAllContractsAdminAction],
+    [breakGlassAddress, newAdminAddress, userAddress],
   )
 
   const { action: handleSetAllContractAdmin } = useContractAction(setAllContractsAdminContractActionProps)
@@ -79,9 +71,7 @@ export function FormSetAllContractsAdminView() {
       await handleSetAllContractAdmin()
 
       setForm(INIT_FORM)
-      setFormInputStatus({
-        newAdminAddress: '',
-      })
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
       console.error('FormSetAllContractsAdminView', error)
     }

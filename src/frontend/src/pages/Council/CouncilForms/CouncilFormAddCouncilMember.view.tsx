@@ -1,61 +1,94 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useMemo, useState } from 'react'
+
+// view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
+import { CouncilFormStyled } from './CouncilForm.style'
+
+// types
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
-// helpers
+// utils
+import { addCouncilMember } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+
+// consts
+import { ADD_COUNSIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from 'app/App.components/Input/Input.constants'
 
-// action
-// import { addCouncilMember } from '../Council.actions'
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
-// style
-import { CouncilFormStyled } from './CouncilForm.style'
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { State } from 'reducers'
+const INIT_FORM = {
+  newMemberAddress: '',
+  newMemberName: '',
+  newMemberWebsite: '',
+  newMemberImage: '',
+}
+
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  newMemberAddress: INPUT_STATUS_DEFAULT,
+  newMemberName: INPUT_STATUS_DEFAULT,
+  newMemberWebsite: INPUT_STATUS_DEFAULT,
+  newMemberImage: INPUT_STATUS_DEFAULT,
+}
 
 export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
-  const [form, setForm] = useState({
-    newMemberAddress: '',
-    newMemberName: '',
-    newMemberWebsite: '',
-    newMemberImage: '',
-  })
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    newMemberAddress: '',
-    newMemberName: '',
-    newMemberWebsite: '',
-    newMemberImage: '',
-  })
+  const [form, setForm] = useState(INIT_FORM)
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { newMemberAddress, newMemberName, newMemberWebsite, newMemberImage } = form
+
+  // add council member council action
+  const addCouncilMemberContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: ADD_COUNSIL_MEMBER_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        return await addCouncilMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage, councilAddress)
+      },
+    }),
+    [newMemberAddress, newMemberName, newMemberWebsite, newMemberImage, userAddress, councilAddress],
+  )
+
+  const { action: handleAddCouncilMember } = useContractAction(addCouncilMemberContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      // await dispatch(addCouncilMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage))
-      setForm({
-        newMemberAddress: '',
-        newMemberName: '',
-        newMemberWebsite: '',
-        newMemberImage: '',
-      })
-      setFormInputStatus({
-        newMemberAddress: '',
-        newMemberName: '',
-        newMemberWebsite: '',
-        newMemberImage: '',
-      })
+      await handleAddCouncilMember()
+
+      setForm(INIT_FORM)
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormAddCouncilMember', error)
     }
   }
 
@@ -142,7 +175,10 @@ export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
         className="form-ipfs"
         setIpfsImageUrl={(e: string) => {
           setForm({ ...form, newMemberImage: e })
-          setFormInputStatus({ ...formInputStatus, newMemberImage: Boolean(e) ? 'success' : 'error' })
+          setFormInputStatus({
+            ...formInputStatus,
+            newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          })
         }}
         title={'Upload Profile Pic'}
       />

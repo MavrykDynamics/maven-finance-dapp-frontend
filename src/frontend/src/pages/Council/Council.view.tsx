@@ -36,9 +36,8 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // view
 import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
-import { CouncilForm } from './CouncilForms/CouncilForm.controller'
+import { CouncilForms } from './components/CouncilForms.controller'
 import NewButton from 'app/App.components/Button/NewButton'
-import { BreakGlassCouncilForm } from 'pages/Council/BreakGlassCouncilForms/BreakGlassCouncilForm.controller'
 import { CouncilAction } from 'pages/Council/components/CouncilAction.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
@@ -224,19 +223,11 @@ export function CouncilView({
                   </div>
                 </div>
 
-                {isBreakGlassCounsil ? (
-                  <BreakGlassCouncilForm
-                    selectedAction={chosenDdItem?.value}
-                    councilMaxLengths={counsilMaxLenghts}
-                    members={members}
-                  />
-                ) : (
-                  <CouncilForm
-                    selectedAction={chosenDdItem?.value}
-                    councilMaxLengths={counsilMaxLenghts}
-                    members={members}
-                  />
-                )}
+                <CouncilForms
+                  selectedAction={chosenDdItem?.value}
+                  councilMaxLengths={counsilMaxLenghts}
+                  members={members}
+                />
               </AvaliableActions>
 
               <SlidingTabButtons

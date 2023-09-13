@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
@@ -6,23 +6,23 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
+import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // types
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // helpers
+import { addCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
-// styles
-import { FormStyled } from './BreakGlassCouncilForm.style'
-
-// actions
-import { addCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+// consts
 import { ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const INIT_FORM = {
@@ -30,6 +30,13 @@ const INIT_FORM = {
   newMemberWebsite: '',
   newMemberName: '',
   newMemberImage: '',
+}
+
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  memberAddress: INPUT_STATUS_DEFAULT,
+  newMemberWebsite: INPUT_STATUS_DEFAULT,
+  newMemberName: INPUT_STATUS_DEFAULT,
+  newMemberImage: INPUT_STATUS_DEFAULT,
 }
 
 export function FormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLengths: CouncilMaxLength }) {
@@ -41,39 +48,29 @@ export function FormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLeng
   const { bug } = useToasterContext()
 
   const [form, setForm] = useState(INIT_FORM)
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    memberAddress: '',
-    newMemberWebsite: '',
-    newMemberName: '',
-    newMemberImage: '',
-  })
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { memberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
 
-  // ------------------------------------------------------------------------------
-
   // add bg council member action
-
-  const addBgCouncilAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    if (!breakGlassAddress) {
-      bug('Wrong breakGlass address')
-      return null
-    }
-
-    return await addCouncilMember(breakGlassAddress, memberAddress, newMemberName, newMemberWebsite, newMemberImage)
-  }, [breakGlassAddress, bug, memberAddress, newMemberImage, newMemberName, newMemberWebsite, userAddress])
-
   const signActionContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-      actionFn: addBgCouncilAction,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!breakGlassAddress) {
+          bug('Wrong breakGlass address')
+          return null
+        }
+
+        return await addCouncilMember(breakGlassAddress, memberAddress, newMemberName, newMemberWebsite, newMemberImage)
+      },
     }),
-    [addBgCouncilAction],
+    [breakGlassAddress, memberAddress, newMemberImage, newMemberName, newMemberWebsite, userAddress],
   )
 
   const { action: handleAddCouncilMember } = useContractAction(signActionContractActionProps)
@@ -85,12 +82,7 @@ export function FormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLeng
       await handleAddCouncilMember()
 
       setForm(INIT_FORM)
-      setFormInputStatus({
-        memberAddress: '',
-        newMemberWebsite: '',
-        newMemberName: '',
-        newMemberImage: '',
-      })
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
       console.error('FormAddCouncilMemberView', error)
     }

@@ -1,33 +1,51 @@
 import { useState, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
 
 // helpers
+import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { getShortTzAddress } from '../../../utils/tzAdress'
+
+// consts
+import { REMOVE_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
+import { CouncilFormStyled } from './CouncilForm.style'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
-// action
-// import { removeCouncilMember } from '../Council.actions'
-
-// style
-import { CouncilFormStyled } from './CouncilForm.style'
+// types
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+type DdItemType = {
+  content: React.ReactNode
+  tzAddress: string
+  id: number
+}
 
 export const CouncilFormRemoveCouncilMember = ({
   councilMembers,
 }: {
   councilMembers: CouncilContext['councilMembers']
 }) => {
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
+
+  const [chosenDdItem, setChosenDdItem] = useState<DdItemType | undefined>()
 
   const dropDownItems = useMemo(
     () =>
-      councilMembers.map((item, index) => ({
+      councilMembers.map<DdItemType>((item, index) => ({
         content: <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`} />,
         tzAddress: item.userId,
         id: index,
@@ -35,27 +53,49 @@ export const CouncilFormRemoveCouncilMember = ({
     [councilMembers],
   )
 
-  type DropDownItemType = (typeof dropDownItems)[0]
-  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
+  // remove council member council action
+  const removeCouncilMemberContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REMOVE_COUNCIL_MEMBER_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        if (!chosenDdItem) {
+          bug('Select member to remove')
+          return null
+        }
+
+        return await removeCouncilMember(chosenDdItem.tzAddress, councilAddress)
+      },
+    }),
+    [chosenDdItem, userAddress, councilAddress],
+  )
+
+  const { action: handleRemoveCouncilMember } = useContractAction(removeCouncilMemberContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      const memberAddress = chosenDdItem?.tzAddress
-      if (!memberAddress) return
+      await handleRemoveCouncilMember()
 
-      // await dispatch(removeCouncilMember(memberAddress))
       setChosenDdItem(undefined)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormRemoveCouncilMember', error)
     }
   }
 
   const handleClickDropdownItem = (itemId: DDItemId) => {
     const foundItem = dropDownItems.find((item) => item.id === itemId)
 
-    if (!foundItem) return
-    setChosenDdItem(foundItem)
+    if (foundItem) setChosenDdItem(foundItem)
   }
 
   return (

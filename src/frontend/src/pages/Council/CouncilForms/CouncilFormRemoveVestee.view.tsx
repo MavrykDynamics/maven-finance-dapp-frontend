@@ -1,51 +1,84 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-
-// type
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import { useMemo, useState } from 'react'
 
 // helpers
 import { validateFormAddress } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { removeVesteeRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
+import { CouncilFormStyled } from './CouncilForm.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
-// action
-// import { removeVesteeRequest } from '../Council.actions'
+// hooks
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
-// style
-import { CouncilFormStyled } from './CouncilForm.style'
-import { State } from 'reducers'
+// consts
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { INPUT_STATUS_DEFAULT, type InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import { REMOVE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+
+const INIT_FORM = {
+  vesteeAddress: '',
+}
+
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  vesteeAddress: INPUT_STATUS_DEFAULT,
+}
 
 export const CouncilFormRemoveVestee = () => {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
-  const [form, setForm] = useState({
-    vesteeAddress: '',
-  })
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    vesteeAddress: '',
-  })
+  const [form, setForm] = useState(INIT_FORM)
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { vesteeAddress } = form
+
+  // add council member council action
+  const removeVesteeContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REMOVE_VESTEE_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        if (!vesteeAddress) {
+          bug('Enter vestee address to remove')
+          return null
+        }
+
+        return await removeVesteeRequest(vesteeAddress, councilAddress)
+      },
+    }),
+    [vesteeAddress, userAddress, councilAddress],
+  )
+
+  const { action: handleRemoveVestee } = useContractAction(removeVesteeContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      // await dispatch(removeVesteeRequest(vesteeAddress))
-      setForm({
-        vesteeAddress: '',
-      })
-      setFormInputStatus({
-        vesteeAddress: '',
-      })
+      await handleRemoveVestee()
+
+      setForm(INIT_FORM)
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormRemoveVestee', error)
     }
   }
 

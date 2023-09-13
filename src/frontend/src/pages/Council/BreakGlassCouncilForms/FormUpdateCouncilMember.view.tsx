@@ -1,44 +1,47 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+import React, { useState, useEffect, useMemo } from 'react'
 
-// components
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+// view
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
+import { FormStyled } from './BreakGlassCouncilForm.style'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormField } from 'utils/validatorFunctions'
-
-// types
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-
-// styles
-import { FormStyled } from './BreakGlassCouncilForm.style'
-
-// actions
 import { updateCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
-// providers
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+// types
+import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
+import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // consts
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from 'app/App.components/Input/Input.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { CouncilContext, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
 
 const INIT_FORM = {
   newMemberWebsite: '',
   newMemberName: '',
   newMemberImage: '',
+}
+
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  newMemberWebsite: INPUT_STATUS_DEFAULT,
+  newMemberName: INPUT_STATUS_DEFAULT,
+  newMemberImage: INPUT_STATUS_DEFAULT,
 }
 
 type Props = {
@@ -56,36 +59,29 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
   const { bug } = useToasterContext()
 
   const [form, setForm] = useState(INIT_FORM)
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    newMemberWebsite: '',
-    newMemberName: '',
-    newMemberImage: '',
-  })
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { newMemberWebsite, newMemberName, newMemberImage } = form
 
   // update bg council action
-  const updateCouncilMemberAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    if (!breakGlassAddress) {
-      bug('Wrong breakGlass address')
-      return null
-    }
-
-    return await updateCouncilMember(breakGlassAddress, newMemberName, newMemberWebsite, newMemberImage, callback)
-  }, [userAddress, breakGlassAddress, newMemberName, newMemberWebsite, newMemberImage, callback, bug])
-
   const updateBgCouncilContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-      actionFn: updateCouncilMemberAction,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!breakGlassAddress) {
+          bug('Wrong breakGlass address')
+          return null
+        }
+
+        return await updateCouncilMember(breakGlassAddress, newMemberName, newMemberWebsite, newMemberImage, callback)
+      },
     }),
-    [updateCouncilMemberAction],
+    [breakGlassAddress, callback, newMemberImage, newMemberName, newMemberWebsite, userAddress],
   )
 
   const { action: handleUpdateCouncilMember } = useContractAction(updateBgCouncilContractActionProps)
@@ -97,11 +93,7 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
       await handleUpdateCouncilMember()
 
       setForm(INIT_FORM)
-      setFormInputStatus({
-        newMemberWebsite: '',
-        newMemberName: '',
-        newMemberImage: '',
-      })
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
       console.error('FormSetSingleContractAdminView', error)
     }
@@ -154,9 +146,9 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
       })
 
       setFormInputStatus({
-        newMemberName: 'success',
-        newMemberWebsite: 'success',
-        newMemberImage: 'success',
+        newMemberName: INPUT_STATUS_SUCCESS,
+        newMemberWebsite: INPUT_STATUS_SUCCESS,
+        newMemberImage: INPUT_STATUS_SUCCESS,
       })
     }
   }, [memberProfile])
@@ -194,7 +186,10 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
           className="form-ipfs"
           setIpfsImageUrl={(e: string) => {
             setForm({ ...form, newMemberImage: e })
-            setFormInputStatus({ ...formInputStatus, newMemberImage: Boolean(e) ? 'success' : 'error' })
+            setFormInputStatus({
+              ...formInputStatus,
+              newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+            })
           }}
           title={'Upload Profile Pic'}
         />

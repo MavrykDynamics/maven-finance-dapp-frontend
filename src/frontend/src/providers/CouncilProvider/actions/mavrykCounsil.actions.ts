@@ -277,7 +277,7 @@ export const requestTokenMint = async (
 }
 
 // Drop Financial Request
-export const dropFinancialRequest = async (financialReqID: number, counsilAddress: string) => {
+export const dropFinancialRequest = async (financialReqID: string, counsilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()

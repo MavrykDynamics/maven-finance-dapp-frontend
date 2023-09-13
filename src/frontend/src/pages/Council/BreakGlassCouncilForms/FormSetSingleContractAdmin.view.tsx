@@ -1,37 +1,36 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
-// components
+// view
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
+import { FormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // types
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
-
-// styles
-import { FormStyled } from './BreakGlassCouncilForm.style'
-
-// actions
-import { setSingleContractAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
 
 // utils
+import { setSingleContractAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
 import { SET_SINGLE_CONTRACT_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
-// providers
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const INIT_FORM = {
   newAdminAddress: '',
   targetContract: '',
+}
+
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  newAdminAddress: INPUT_STATUS_DEFAULT,
+  targetContract: INPUT_STATUS_DEFAULT,
 }
 
 export function FormSetSingleContractAdminView() {
@@ -43,33 +42,28 @@ export function FormSetSingleContractAdminView() {
   const { userAddress } = useUserContext()
 
   const [form, setForm] = useState(INIT_FORM)
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    newAdminAddress: '',
-    targetContract: '',
-  })
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { newAdminAddress, targetContract } = form
-
-  const setSingleContractAdminAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    if (!breakGlassAddress) {
-      bug('Wrong breakGlass address')
-      return null
-    }
-
-    return await setSingleContractAdmin(breakGlassAddress, newAdminAddress, targetContract)
-  }, [userAddress, breakGlassAddress, newAdminAddress, targetContract, bug])
 
   const setSingleContractAdminContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: SET_SINGLE_CONTRACT_ADMIN_ACTION,
-      actionFn: setSingleContractAdminAction,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!breakGlassAddress) {
+          bug('Wrong breakGlass address')
+          return null
+        }
+
+        return await setSingleContractAdmin(breakGlassAddress, newAdminAddress, targetContract)
+      },
     }),
-    [setSingleContractAdminAction],
+    [breakGlassAddress, newAdminAddress, targetContract, userAddress],
   )
 
   const { action: handleSetSingleContractAdmin } = useContractAction(setSingleContractAdminContractActionProps)
@@ -81,10 +75,7 @@ export function FormSetSingleContractAdminView() {
       await handleSetSingleContractAdmin()
 
       setForm(INIT_FORM)
-      setFormInputStatus({
-        newAdminAddress: '',
-        targetContract: '',
-      })
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
       console.error('FormSetSingleContractAdminView', error)
     }
