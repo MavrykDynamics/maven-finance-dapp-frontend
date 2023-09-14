@@ -1,9 +1,5 @@
 import { GovernancePhaseType, GovPhases, ProposalRecordType } from '../utils/TypesAndInterfaces/Governance'
 import type { Action } from '../utils/TypesAndInterfaces/ReduxTypes'
-import type {
-  GovernanceSatelliteActionGraphQL,
-  GovernanceSatelliteGraphQL,
-} from '../utils/TypesAndInterfaces/Governance'
 
 import { GET_GOVERNANCE_CONFIG, GET_PROPOSALS } from 'pages/Governance/actions/GovernanseData.actions'
 
@@ -51,11 +47,6 @@ export const DEFAULT_GOVERNANCE_STORAGE: GovernanceState = {
   allProposalsIds: [],
   proposalsMapper: {},
   isLoaded: false,
-}
-
-export type GovernanceSatellite = {
-  governance_satellite: GovernanceSatelliteGraphQL[]
-  governance_satellite_action: GovernanceSatelliteActionGraphQL[]
 }
 
 export function governance(state = DEFAULT_GOVERNANCE_STORAGE, action: Action) {

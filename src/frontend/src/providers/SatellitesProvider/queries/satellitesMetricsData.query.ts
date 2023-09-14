@@ -1,5 +1,6 @@
 import { gql } from 'utils/__generated__'
 
+// satellite metrics helper data
 export const SATELLITES_METRICS_DATA = gql(`
 	query dappDataForSatelliteMetrics{
 		# proposals amount

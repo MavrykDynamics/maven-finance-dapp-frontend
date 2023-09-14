@@ -1,51 +1,77 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { FEED_HISTORY_QUERY } from '../queries/feeds.query'
-import { normalizeDataFeedsHistory, normalizeDataFeedsVolatility } from '../helpers/feedsNormalizer'
+// hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useDataFeedsContext } from '../dataFeeds.provider'
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
-// TODO: after dev-demo store all data in ctx to show feed chart user was on immidiately
-export const useFeedCharts = (feedAddress: string) => {
-  // const { feedsCharts, setFeedChart } = useDataFeedsContext()
+// consts
+import { FEED_HISTORY_QUERY } from '../queries/feeds.query'
+import { ONE_HOUR } from 'consts/charts.const'
 
-  const [feedChartData, setFeedChartData] = useState<{
-    dataFeedsHistory: null | Array<AreaChartPlotType>
-    dataFeedsVolatility: null | Array<AreaChartPlotType>
-  }>({
-    dataFeedsHistory: null,
-    dataFeedsVolatility: null,
-  })
+// types
+import { ChartPeriodType } from 'types/charts.type'
+
+// utils
+import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
+
+export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE_HOUR) => {
+  const { updateFeedsHistoryAndVolatility, dataFeedsHistory, dataFeedsVolatility, resetFeedsHistoryAndVolatility } =
+    useDataFeedsContext()
+  const { handleApolloError } = useApolloContext()
+
+  const [currentPeriod, setCurrentPeriod] = useState(() => getTimestampBasedOnPeriod(period))
+  const aborterRef = useRef(new AbortController())
+
+  const refetchQueryVariables = useCallback(() => {
+    return {
+      periodTimestamp: getTimestampBasedOnPeriod(period),
+    }
+  }, [period])
 
   useEffect(() => {
+    setCurrentPeriod(getTimestampBasedOnPeriod(period))
+
     return () => {
-      setFeedChartData({
-        dataFeedsHistory: null,
-        dataFeedsVolatility: null,
-      })
+      // cancel query
+      aborterRef.current.abort()
+      aborterRef.current = new AbortController()
     }
+  }, [period])
+
+  useEffect(() => {
+    resetFeedsHistoryAndVolatility()
   }, [feedAddress])
 
-  useQueryWithRefetch(FEED_HISTORY_QUERY, {
-    variables: {
-      feedAddress,
-    },
-    fetchPolicy: 'no-cache',
-    onCompleted: (data) => {
-      const feedsHistory = data.aggregator[0].history_data
+  useQueryWithRefetch(
+    FEED_HISTORY_QUERY,
+    {
+      variables: {
+        feedAddress,
+        periodTimestamp: currentPeriod,
+      },
+      fetchPolicy: 'network-only',
+      context: {
+        fetchOptions: {
+          signal: aborterRef.current.signal,
+        },
+      },
+      onCompleted: (data) => {
+        if (!data) return
+        const feedsHistory = data.aggregator[0].history_data
 
-      setFeedChartData({
-        dataFeedsHistory: normalizeDataFeedsHistory(feedsHistory),
-        dataFeedsVolatility: normalizeDataFeedsVolatility(feedsHistory),
-      })
+        updateFeedsHistoryAndVolatility(feedsHistory, period)
+      },
+      onError: (error) => handleApolloError(error, 'FEED_HISTORY_QUERY'),
     },
-    onError: (e) => console.error('loading feed chart error:', { feedAddress, e }),
-  })
+    {
+      refetchQueryVariables,
+    },
+  )
 
   return {
-    isLoading: feedChartData.dataFeedsVolatility === null || feedChartData.dataFeedsHistory === null,
-    dataFeedsHistory: feedChartData.dataFeedsHistory,
-    dataFeedsVolatility: feedChartData.dataFeedsVolatility,
+    isLoading: dataFeedsHistory[period] === null || dataFeedsVolatility[period] === null,
+    dataFeedsHistory: dataFeedsHistory[period],
+    dataFeedsVolatility: dataFeedsVolatility[period],
   }
 }

@@ -1,6 +1,6 @@
-import { downColor, headerColor } from 'styles'
-
 import { TimerStyled } from './Timer.style'
+import colors from 'styles/colors'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export const LETTER_VIEW = 'letter'
 export const COLON_VIEW = 'colon'
@@ -21,21 +21,21 @@ type TimerViewProps = {
   }
 }
 
-export const TimerView = ({
-  seconds,
-  minutes,
-  hours,
-  days,
-  options: {
+export const TimerView = ({ seconds, minutes, hours, days, options }: TimerViewProps) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
+  const {
     showZeros = true,
-    negativeColor = downColor,
+    negativeColor = colors[themeSelected].downColor,
     endText,
-    defaultColor = headerColor,
+    defaultColor = colors[themeSelected].primaryText,
     timerView = LETTER_VIEW,
     shownParts = ['d', 'h', 'm', 's'],
     showFullDay = false,
-  },
-}: TimerViewProps) => {
+  } = options
+  
   return (
     <TimerStyled negativeColor={negativeColor} defaultColor={defaultColor} timerType={timerView}>
       {showFullDay && days >= 1 ? (

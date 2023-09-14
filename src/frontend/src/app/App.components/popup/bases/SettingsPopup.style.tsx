@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { cyanColor, royalPurpleColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const SettingsPopupBase = styled.div<{ theme: MavrykTheme }>`
@@ -7,7 +6,7 @@ export const SettingsPopupBase = styled.div<{ theme: MavrykTheme }>`
     font-weight: 700;
     font-size: 25px;
     line-height: 25px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     text-align: center;
   }
 
@@ -15,7 +14,7 @@ export const SettingsPopupBase = styled.div<{ theme: MavrykTheme }>`
     margin: 15px 0 15px 0;
     max-width: 620px;
     padding: 0 10px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     text-align: center;
     font-size: 14px;
     line-height: 21px;
@@ -40,6 +39,11 @@ export const SettingsPopupBase = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     column-gap: 7px;
     margin-top: 10px;
+
+    & button {
+      border-width: 2px;
+      text-transform: capitalize;
+    }
   }
 `
 
@@ -50,7 +54,7 @@ export const ChangeNodeNodesList = styled.div`
   padding-right: 10px;
 `
 
-export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
+export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean; theme: MavrykTheme }>`
   display: flex;
   align-items: center;
 
@@ -58,9 +62,9 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
   font-size: 18px;
   line-height: 18px;
 
-  color: ${({ theme }) => theme.textColor};
   border-radius: 10px;
-  border: ${({ isSelected }) => (isSelected ? `1px solid ${cyanColor}` : `1px solid ${royalPurpleColor};`)};
+  border: ${({ isSelected, theme }) =>
+    isSelected ? `2px solid ${theme.rpcNodeSelecledColor}` : `1px solid ${theme.strokeColor};`};
 
   position: relative;
   height: 75px;
@@ -79,7 +83,7 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     font-size: 18px;
     line-height: 18px;
 
@@ -98,7 +102,7 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean }>`
       font-weight: 600;
       font-size: 18px;
       line-height: 18px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
       white-space: nowrap;
       margin-right: 10px;
       pointer-events: none;

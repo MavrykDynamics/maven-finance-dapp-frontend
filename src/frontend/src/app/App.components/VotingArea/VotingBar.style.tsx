@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components/macro'
 import { dropShadow } from 'styles/animations'
-import { subTextColor, skyColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 import { getNumberInBounds } from 'utils/calcFunctions'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
@@ -22,7 +21,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
   width: 100%;
 
   .text {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     top: -27px;
     font-weight: 400;
     font-size: 12px;
@@ -37,7 +36,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
       position: absolute;
       height: 20px;
       width: 1px;
-      background: ${({ theme }) => theme.textColor};
+      background: ${({ theme }) => theme.mainHeadingText};
       top: 50%;
       ${({ width }) => css`
         ${width <= 50 ? 'left' : 'right'}: -5px;
@@ -105,8 +104,8 @@ export const VotingAgainst = styled.div<{ width: number; theme: MavrykTheme }>`
 `
 export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }>`
   width: ${({ width }) => width}%;
-  background-color: ${skyColor};
-  color: ${skyColor};
+  background-color: ${({ theme }) => theme.neutralColor};
+  color: ${({ theme }) => theme.neutralColor};
   cursor: pointer;
 
   &:hover {
@@ -118,8 +117,8 @@ export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }
 `
 export const NotYetVoted = styled.div<{ width: number; theme: MavrykTheme }>`
   width: ${({ width }) => width}%;
-  background-color: ${({ theme }) => theme.selectedColor};
-  color: ${subTextColor};
+  background-color: ${({ theme }) => theme.neutralSecondaryColor};
+  color: ${({ theme }) => theme.neutralSecondaryColor};
   cursor: pointer;
 
   &:hover {

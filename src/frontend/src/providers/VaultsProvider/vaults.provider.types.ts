@@ -14,6 +14,11 @@ import {
 import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
+import {
+  GetUserAllVaultsQueryQuery,
+  GetUserDepositorAllVaultsQueryQuery,
+  GetAllVaultsQueryQuery,
+} from 'utils/__generated__/graphql'
 
 // actions type
 export type VaultsActionsType =
@@ -31,7 +36,20 @@ export type VaultsActionsType =
 // context types
 export type VaultsContext = VaultsCtxState & {
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
+  setVaultsDashboardData: (newDashboardData: VaultsDashboardDataType) => void
   isLoading: boolean
+}
+
+export type VaultsDashboardDataType = {
+  reducedVaultsCollaterals: Array<{
+    balance: number
+    chartColor: string
+    tokenAddress: TokenAddressType
+  }>
+  totalCollateralRatio: number
+  vaultTvl: number
+  activeVaults: number
+  averageCollateralRatio: number
 }
 
 export type VaultsCtxState = {
@@ -39,18 +57,20 @@ export type VaultsCtxState = {
   permissionedVaultsIds: string[]
   myVaultsIds: string[]
   allVaultsIds: string[]
+  vaultsDashboardData: null | VaultsDashboardDataType
 }
 
 export type NullableVaultsCtxState = DeepNullable<VaultsCtxState>
 
-export type VaultsSubsType = typeof VAULTS_DATA
+type VaultsSubType = typeof VAULTS_ALL | typeof VAULTS_USER_ALL | typeof VAULTS_USER_DEPOSITOR
 export type VaultsSubsRecordType = {
-  [VAULTS_DATA]: typeof VAULTS_ALL | typeof VAULTS_USER_ALL | typeof VAULTS_USER_DEPOSITOR | null
+  [VAULTS_DATA]: VaultsSubType | null
 }
 
-export type VaultsSubsLoadingsRecordType = {
-  [VAULTS_DATA]: boolean
-}
+export type VaultsIndexerDataType =
+  | GetUserAllVaultsQueryQuery
+  | GetUserDepositorAllVaultsQueryQuery
+  | GetAllVaultsQueryQuery
 
 // TODO: add descr to liquidation fields while testing liquidation functionality and popup
 export type VaultType = {

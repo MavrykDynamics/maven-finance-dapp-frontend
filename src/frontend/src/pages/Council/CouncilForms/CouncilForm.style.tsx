@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 
 export const CouncilFormStyled = styled.form`
   padding: 24px 30px;
-  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-top: 1px solid ${({ theme }) => theme.divider};
   margin-top: 1px;
   position: relative;
 
@@ -19,7 +19,7 @@ export const CouncilFormStyled = styled.form`
   }
 
   p {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.primaryText};
     margin-bottom: 16px;
     margin-top: 1px;
   }
@@ -46,7 +46,7 @@ export const CouncilFormStyled = styled.form`
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     padding-left: 8px;
     padding-bottom: 5px;
     display: block;
@@ -86,8 +86,6 @@ export const CouncilFormStyled = styled.form`
     font-weight: 600;
     font-size: 14px;
     line-height: 14px;
-
-    color: ${({ theme }) => theme.textColor};
   }
 
   .drop-down {
@@ -106,4 +104,12 @@ export const CouncilFormStyled = styled.form`
       width: 280px;
     }
   }
+`
+
+export const CouncilFormDropFinancialRequestLoaderWrapper = styled.div`
+  height: 224px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `

@@ -17,6 +17,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { ThreeLevelListItem } from '../../Loans.style'
 import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
+import colors from 'styles/colors'
 
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
@@ -31,6 +32,7 @@ import {
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import { useHistory, useLocation } from 'react-router'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
@@ -69,7 +71,6 @@ export const BorrowingExpandCard = ({
     confirmRepayPartPopup,
     changeVaultNamePopup,
     changeBakerPopup,
-    borrowAssetPopup,
     addExistingCollateralPopup,
     addNewCollateralPopup,
     withdrawCollateralPopup,
@@ -82,6 +83,9 @@ export const BorrowingExpandCard = ({
 
   const history = useHistory()
   const location = useLocation()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const { isActionActive } = useSelector((state: State) => state.loading)
 
@@ -102,7 +106,6 @@ export const BorrowingExpandCard = ({
     confirmRepayFullPopup.showModal ||
     confirmRepayPartPopup.showModal ||
     changeBakerPopup.showModal ||
-    borrowAssetPopup.showModal ||
     addExistingCollateralPopup.showModal ||
     addNewCollateralPopup.showModal ||
     withdrawCollateralPopup.showModal ||
@@ -218,9 +221,9 @@ export const BorrowingExpandCard = ({
       inputAmount,
       vaultId,
       tokenAddress: borrowedTokenAddress,
-      borrowedAmount,
+      totalOutstanding,
+      availableLiquidity,
       collateralBalance,
-      borrowCapacity,
       DAOFee,
       callback: () => {
         scrollToCurrentVault()
@@ -236,7 +239,7 @@ export const BorrowingExpandCard = ({
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
       collateralBalance,
-      borrowCapacity,
+      availableLiquidity,
       totalOutstanding,
       callback: () => {
         scrollToCurrentVault()
@@ -252,7 +255,7 @@ export const BorrowingExpandCard = ({
       tokenAddress: borrowedTokenAddress,
       borrowedAmount,
       collateralBalance,
-      borrowCapacity,
+      availableLiquidity,
       totalOutstanding,
       callback: () => {
         scrollToCurrentVault()
@@ -265,7 +268,7 @@ export const BorrowingExpandCard = ({
     openAddNewCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -280,7 +283,7 @@ export const BorrowingExpandCard = ({
     openAddExistingCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -294,7 +297,8 @@ export const BorrowingExpandCard = ({
     openWithdrawCollateralPopup({
       vaultAddress,
       vaultId,
-      borrowedAmount,
+      currentTotalOutstanding: totalOutstanding,
+      availableLiquidity,
       collateralBalance,
       collateralRatio,
       borrowedTokenAddress,
@@ -348,7 +352,7 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -384,7 +388,7 @@ export const BorrowingExpandCard = ({
       >
         {children || (
           <BorrowingExpandedCard>
-            {status && <StatusMessage status={status} timestamp={timerTimestamp} />}
+            {status && <StatusMessage status={status} timestamp={timerTimestamp} theme={colors[themeSelected]} />}
 
             <div className="stats-and-actions">
               <BorrowingExpandCardValuesSection
@@ -421,7 +425,8 @@ export const BorrowingExpandCard = ({
                     currentCollateralBalance={collateralBalance}
                     hasUserBorrowed={Boolean(borrowedAmount)}
                     borrowCapacity={borrowCapacity}
-                    currentBorrowedAmount={borrowedAmount}
+                    availableLiquidity={availableLiquidity}
+                    totalOutstanding={totalOutstanding}
                     DAOFee={DAOFee}
                     openConfirmBorrowPopup={handleClickOpenConfirmBorrowPopup}
                   />
@@ -440,7 +445,7 @@ export const BorrowingExpandCard = ({
                     borrowedAmount={borrowedAmount}
                     minimumRepay={minimumRepay}
                     collateralBalance={collateralBalance}
-                    borrowCapacity={borrowCapacity}
+                    availableLiquidity={availableLiquidity}
                   />
                 )}
               </LoansActionsSection>

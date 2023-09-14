@@ -14,7 +14,9 @@ import { calcPersent, convertNumberForClient } from 'utils/calcFunctions'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { FeedsListItem, FeedsOraclesCardStyled, DataFeedListItemTextTruncated } from 'pages/DataFeeds/DataFeeds.styles'
-import { SatelliteOracleStatusComponent } from '../../Satellites/listItem/SatelliteCard.style'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import { getStatusColorBasedOnOracleType } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 
 export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed: Feed }) => {
   const { tokensPrices } = useTokensContext()
@@ -34,7 +36,7 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
     : 0
 
   return (
-    <Link to={`/satellites/satellite-details/${address}`}>
+    <Link to={`/satellites/satellite-details/${address}`} className="full-opacity">
       <FeedsOraclesCardStyled>
         <FeedsListItem>
           <h5>Oracle</h5>
@@ -71,8 +73,11 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
         </FeedsListItem>
 
         <FeedsListItem className="vertical-center">
-          <SatelliteOracleStatusComponent statusType={oracleStatus}>
-            {SATELLITE_ORACLE_STATUSES[oracleStatus]}
+          <SatelliteOracleStatusComponent>
+            <StatusFlag
+              status={getStatusColorBasedOnOracleType(oracleStatus)}
+              text={SATELLITE_ORACLE_STATUSES[oracleStatus]}
+            />
           </SatelliteOracleStatusComponent>
         </FeedsListItem>
 

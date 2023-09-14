@@ -1,22 +1,34 @@
 import { MavrykTheme } from '../../../styles/interfaces'
 import styled from 'styled-components/macro'
-import { Card, headerColor, cyanColor } from 'styles'
+import { Card } from 'styles'
 
 export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
   margin-bottom: 20px;
   display: flex;
-  padding: 17px 23px;
+  padding: 17px 21px;
 
   .change-view {
     display: flex;
-    gap: 12px;
     flex-shrink: 0;
-    margin-left: 20px;
+    margin-left: 17px;
 
     svg {
-      width: 20px;
-      height: 20px;
-      fill: ${cyanColor};
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+      fill: ${({ theme }) => theme.menuButtonText};
+    }
+
+    button {
+      outline: none;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      max-height: 36px;
+      max-width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-vertical {
@@ -24,9 +36,13 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
     }
   }
 
-  &.vertical .change-view .btn-vertical svg,
-  &.horizontal .change-view .btn-horizontal svg {
-    fill: ${headerColor};
+  &.vertical .change-view .btn-vertical,
+  &.horizontal .change-view .btn-horizontal {
+    border: ${({ theme }) => `1px solid ${theme.selectedColor}`};
+
+    & svg {
+      fill: ${({ theme }) => theme.selectedColor};
+    }
   }
 
   ul {

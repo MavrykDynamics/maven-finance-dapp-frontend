@@ -26,8 +26,7 @@ import { checkBytesPairExists, getBytesPairValidationStatus, PROPOSAL_BYTE } fro
 // styles
 import { SubmitProposalBytes, SubmitProposalBytesPair, SubmitProposalGeneralData } from '../ProposalSubmission.style'
 import { containSpaces } from 'app/App.utils/input'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 
 // valid bytes text for testing: 0502000000c703200743036e0a000000160136047207da50aa1f751393d670b8810457c21d43000655076504620000001525757064617465436f6e6669674e657756616c75650864046c0000001925636f6e6669675661756c744e616d654d61784c656e677468046c0000000625656d7074790000001325757064617465436f6e666967416374696f6e0000000d25757064617465436f6e666967072f0200000008074303620000032702000000000743036a0000034f0533036c0743036200140342034d053d036d034c031b
 export const StageTwoForm = ({
@@ -43,7 +42,6 @@ export const StageTwoForm = ({
       governance: { proposalMetadataTitleMaxLength, proposalDescriptionMaxLength },
     },
   } = useDappConfigContext()
-  const { isNewlyRegisteredSatellite } = useUserContext()
 
   const { governancePhase, fee, successReward } = useSelector((state: State) => state.governance.config)
 
@@ -256,7 +254,7 @@ export const StageTwoForm = ({
     <>
       <div className="stage-descr">{STAGE_2_DESCRIPTION}</div>
 
-      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
+      <ProposalSubmissionBanner />
 
       <SubmitProposalGeneralData>
         <div className="submitted-data">

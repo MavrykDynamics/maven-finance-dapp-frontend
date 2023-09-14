@@ -9,18 +9,17 @@ export const VaultModalStepper = styled.div<{ theme: MavrykTheme }>`
   font-style: normal;
   font-weight: 600;
   line-height: 21px;
-  color: ${({ theme }) => theme.lightTextColor};
+  color: ${({ theme }) => theme.mainHeadingText};
 
   div {
     display: inline-block;
   }
 
   span {
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
   span.active {
-    color: ${({ theme }) => theme.headerColor};
-    /* color: ${({ theme }) => theme.containerColor}; */
+    color: ${({ theme }) => theme.selectedColor};
   }
 `
 

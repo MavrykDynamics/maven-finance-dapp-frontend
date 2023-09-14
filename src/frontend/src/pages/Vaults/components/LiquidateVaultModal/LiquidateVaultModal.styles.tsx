@@ -35,6 +35,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   & > p {
     margin: 0;
     margin-bottom: 10px;
+    color: ${({ theme }) => theme.mainHeadingText};
   }
 
   div[class='g-centering-group'] > button {
@@ -46,15 +47,8 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     margin: 15px 0 20px 0;
 
     height: 1px;
-    background-color: ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.divider};
     border: none;
-  }
-
-  button:disabled {
-    &:hover {
-      border: none;
-      color: ${({ theme }) => theme.containerColor};
-    }
   }
 
   .flex-group {
@@ -77,6 +71,11 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     }
   }
 
+  .flex-group > div,
+  .grid-group > div {
+    color: ${({ theme }) => theme.subHeadingText};
+  }
+
   .table-amount-group {
     display: grid;
     grid-template-columns: 60px auto;
@@ -93,26 +92,8 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     justify-content: center;
   }
 
-  .toggle {
-    span {
-      color: ${({ theme }) => theme.valueColor};
-    }
-
-    ${({ showAsPercentage, theme }) =>
-      showAsPercentage
-        ? `.sufix {
-          color: ${theme.headerColor};
-        }`
-        : `.prefix {
-          color: ${theme.headerColor};
-        }`}
-  }
-
   .info-icon {
-    margin-left: 4px;
-    width: 12px;
-    height: 12px;
-    fill: ${({ theme }) => theme.textColor};
+    margin-bottom: 5px;
   }
 
   .numberColor,
@@ -124,7 +105,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
   }
 
   .numberColor {
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .upColor {
@@ -157,7 +138,7 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
 
     img,
     svg {
-      fill: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.primaryText};
       width: 100%;
       height: 100%;
       object-fit: cover;

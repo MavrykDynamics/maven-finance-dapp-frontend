@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // components
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -10,6 +9,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // consts
 import {
@@ -26,12 +26,10 @@ import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/lo
 import { AddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 // helpers
-import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // styles
-import { silverColor } from 'styles'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -44,12 +42,14 @@ import { depositLendingAssetAction } from 'providers/LoansProvider/actions/loans
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import colors from 'styles/colors'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -62,9 +62,12 @@ export const AddLendingAsset = ({
   data: AddLendingAssetDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const {
+    preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
+
   const { userTokensBalances, userAddress } = useUserContext()
   const { bug } = useToasterContext()
 
@@ -133,7 +136,7 @@ export const AddLendingAsset = ({
   if (!data || !loanToken || !loanToken.rate) return null
 
   const { mBalance, lendingAPY, tokenAddress } = data
-  const { symbol, icon, rate } = loanToken
+  const { symbol, icon, decimals, rate } = loanToken
   const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: tokenAddress })
 
   const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
@@ -184,7 +187,7 @@ export const AddLendingAsset = ({
                   Earn APY{' '}
                   <CustomTooltip
                     iconId="info"
-                    defaultStrokeColor={silverColor}
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
                     text={`You will receive m${symbol} instead of your ${symbol}`}
                     className="tooltip"
                   />
@@ -201,7 +204,6 @@ export const AddLendingAsset = ({
               </ThreeLevelListItem>
             </div>
           </MemoizedComponent>
-
           <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="manage-btn">

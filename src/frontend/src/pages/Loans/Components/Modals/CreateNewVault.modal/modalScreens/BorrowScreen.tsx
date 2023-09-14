@@ -36,7 +36,6 @@ import { DAO_FEE } from 'texts/tooltips/vault.text'
 
 // utils
 import { checkNan } from 'utils/checkNan'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { sleep } from 'utils/api/sleep'
@@ -49,10 +48,16 @@ import { useBorrowInputData } from '../../hooks/Market/useBorrowInputData'
 
 // types
 import { Settings } from 'app/App.components/Input/newInput.type'
+import { operationBorrow, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 type BorrowScreenProps = {
   setCurrentSymbol: React.Dispatch<React.SetStateAction<string>>
 }
+
+// new vault initial values
+const currentBorrowedAmount = 0
+const currentTotalOutstanding = 0
+const collateralRatio = 0
 
 export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const { apolloClient } = useApolloContext()
@@ -76,14 +81,13 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     updateVaultCreating,
     updateNewVault,
     newVault,
+    marketAvailableLiquidity,
   } = useCreateVaultContext()
   const {
     config: { daoFee },
   } = useLoansContext()
 
   const { marketTokenAddress: borrowedTokenAddress = '', setCreatedVaultAddress } = data ?? {}
-  const currentBorrowedAmount = 0
-  const collateralRatio = 0
 
   const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData(
     borrowedTokenAddress,
@@ -92,6 +96,16 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const convertedBorrowedAmount = convertNumberForClient({ number: currentBorrowedAmount, grade: decimals })
+
+  const { futureCollateralRatio, futureBorrowCapacity } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: currentTotalOutstanding,
+    vaultCurrentCollateralBalance: currentCollateralBalance,
+    vaultTokenAddress: borrowedTokenAddress,
+    operationType: operationBorrow,
+    inputValue: inputAmount,
+    marketAvailableLiquidity,
+  })
+
   const isDisabledButton =
     inputData.validationStatus === INPUT_STATUS_ERROR ||
     inputAmount === 0 ||
@@ -162,17 +176,6 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     updateScreenToShow(CONFIRMATION_SCREEN_ID)
   }, [inputData.amount, rate, setFinalBorrowInputAmount, symbol, updateScreenToShow])
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      currentCollateralBalance,
-      (currentBorrowedAmount + inputAmount) * rate,
-    )
-
-    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
-
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
-
   const newSettings: Settings = useMemo(
     () => ({
       ...settings,
@@ -205,12 +208,12 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
             DAO Fee
             <CustomTooltip
               iconId="info"
-              defaultStrokeColor={colors[themeSelected].textColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
               text={DAO_FEE}
               className="tooltip"
             />
           </div>
-          <CommaNumber value={daoFee} decimalsToShow={2} className="value" endingText="%" />
+          <CommaNumber value={daoFee} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
       </div>
 
@@ -227,16 +230,14 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
           </InputPinnedTokenInfo>
         </Input>
       </div>
-      <MemoizedComponent returnMemoizedComponent={isDisabledButton}>
-        <BorrowScreenBottomStats
-          inputAmount={inputAmount}
-          assetDecimalsToShow={assetDecimalsToShow}
-          daoFee={daoFee}
-          futureCollateralRatio={futureCollateralRatio}
-          futureBorrowCapacity={futureBorrowCapacity}
-          headerText="New Vault stats"
-        />
-      </MemoizedComponent>
+      <BorrowScreenBottomStats
+        inputAmount={inputAmount}
+        assetDecimalsToShow={assetDecimalsToShow}
+        daoFee={daoFee}
+        futureCollateralRatio={futureCollateralRatio}
+        futureBorrowCapacity={futureBorrowCapacity}
+        headerText="New Vault stats"
+      />
 
       <div className="manage-btn">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={continueHandler} disabled={isDisabledButton}>

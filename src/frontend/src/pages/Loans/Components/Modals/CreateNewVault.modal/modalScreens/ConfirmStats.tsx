@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 
 // providers
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -32,10 +31,10 @@ import { ADD_COLLATERAL_SCREEN_ID, BORROW_SCREEN_ID } from '../helpers/createNew
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 
 // styles
-import { silverColor } from 'styles'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { ConfirmStatsVaultOverview } from '../createNewVault.style'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import colors from 'styles/colors'
 
 // components
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
@@ -45,6 +44,9 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 export const ConfirmStats = () => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const { bug } = useToasterContext()
@@ -52,7 +54,6 @@ export const ConfirmStats = () => {
   const {
     contractAddresses: { vaultFactoryAddress, lendingControllerAddress },
   } = useDappConfigContext()
-  const { choosenBaker } = useXtzBakersForDD()
   const {
     selectedCollateralsAddresses,
     selectedCollaterals,
@@ -63,6 +64,7 @@ export const ConfirmStats = () => {
     data,
     borrowCapacity,
     collateralsBalance,
+    selectedBaker,
   } = useCreateVaultContext()
 
   const { marketTokenAddress = '' } = data ?? {}
@@ -112,7 +114,7 @@ export const ConfirmStats = () => {
         vaultFactoryAddress,
         lendingControllerAddress,
         tokensArr,
-        choosenBaker?.bakerAddress ?? null,
+        selectedBaker?.bakerAddress ?? null,
       )
     }
 
@@ -127,7 +129,7 @@ export const ConfirmStats = () => {
     updateVaultCreating,
     selectedCollateralsAddresses,
     vaultInputState.name,
-    choosenBaker?.bakerAddress,
+    selectedBaker?.bakerAddress,
     selectedCollaterals,
     tokensPrices,
   ])
@@ -178,7 +180,7 @@ export const ConfirmStats = () => {
                 const balance = Number(amount)
 
                 return (
-                  <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                  <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
                     <TableCell width="33%">{symbol}</TableCell>
                     <TableCell width="33%">
                       <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />
@@ -200,7 +202,7 @@ export const ConfirmStats = () => {
         <div className="confirmation-stats">
           <ThreeLevelListItem>
             <div className="name">Selected Baker</div>
-            <div className="value">{choosenBaker?.bakerName ?? 'Not relevant'}</div>
+            <div className="value">{selectedBaker?.bakerName ?? 'Not relevant'}</div>
           </ThreeLevelListItem>
           <ThreeLevelListItem className="align-tree-item-right">
             <div className="name">Total Collateral Deposited</div>
@@ -211,7 +213,7 @@ export const ConfirmStats = () => {
               Available To Borrow
               <CustomTooltip
                 iconId="info"
-                defaultStrokeColor={silverColor}
+                defaultStrokeColor={colors[themeSelected].subHeadingText}
                 text={AVALIABLE_TO_BORROW}
                 className="tooltip"
               />

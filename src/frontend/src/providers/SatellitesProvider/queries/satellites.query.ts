@@ -4,6 +4,7 @@ import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
+// TODO: debug refetch work
 export function getSatelliteDataQuery(
   userAddress: string | null,
   isOnlyActive?: boolean,
@@ -50,7 +51,6 @@ export function getSatelliteDataQuery(
           count
         }
       }
-
 
       delegation {
         delegation_ratio
@@ -112,11 +112,17 @@ export function getSatelliteDataQuery(
         }
 
         # last voted proposal
-        lastVotedProposal: governance_proposals_votes(order_by: {timestamp: desc}, where: {round: {_eq: "1"}}) {
+        lastVotedProposal: governance_proposals_votes(order_by: {timestamp: desc}, limit: 1) {
           vote
           governance_proposal {
             id
             title
+            
+            cycle
+            current_round_proposal
+            governance {
+              cycle_id
+            }
           }
         }
 

@@ -16,8 +16,17 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdro
   font-weight: 600;
   font-size: 18px;
 
-  color: ${({ theme }) => theme.valueColor};
-  background-color: ${({ backdropAlpha }) => `rgba(8, 6, 40,  ${backdropAlpha || 0.5})`};
+  color: ${({ theme }) => theme.linksAndButtons};
+
+  /* backdrop styles */
+  &::after {
+    content: '';
+    background-color: ${({ theme }) => theme.backgroundColor};
+    opacity: ${({ backdropAlpha }) => backdropAlpha ?? 0.5};
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+  }
 
   transition: 250ms opacity ease-out, 250ms visibility ease-out;
 
@@ -56,7 +65,7 @@ export const LoaderShineTextAnimation = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const SpinnerCircleLoaderStyled = styled.div<{ theme: MavrykTheme }>`
-  color: #ffffff;
+  color: ${({ theme }) => theme.mainHeadingText};
   font-size: 20px;
   width: 1em;
   height: 1em;
@@ -109,7 +118,7 @@ export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme; margin?: strin
       animation: ${ellipsis} steps(4, end) 1500ms infinite;
       content: '...';
       width: 0px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
     }
   }
 `

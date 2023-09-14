@@ -10,7 +10,10 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 // components
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
 import { VaultsCard } from './components/VaultsCard.view'
-import { TabSwitcher } from 'pages/Council/Council.style'
+import {
+  SlidingTabButtons,
+  SlidingTabButtonType,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
@@ -33,9 +36,7 @@ import {
   PERMISSIONED_VAULTS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
-
-// types
-import { TabItem } from 'app/App.components/TabSwitcher/TabSwitcher.controller'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // actions
 import { markForLiquidation } from './Vaults.actions'
@@ -170,7 +171,12 @@ export const VaultsView = () => {
 
   return (
     <VaultsStyled>
-      <TabSwitcher tabItems={tabsList} onClick={handleChangeTabs} className="primary-switcher" />
+      <SlidingTabButtons
+        kind={SECONDARY_SLIDING_TAB_BUTTONS}
+        tabItems={tabsList}
+        onClick={handleChangeTabs}
+        className="mt-30 mb-30"
+      />
 
       <VaultsSearchFilter
         vaultsMapper={vaultsMapper}

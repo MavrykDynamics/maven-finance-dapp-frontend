@@ -1,6 +1,7 @@
-import { ContractStatusesStorage, ContractStatusesType } from '../contractStatuses.types'
+import { GetAllContractStatusesDataQuery } from 'utils/__generated__/graphql'
+import { ContractStatusesStorage } from '../contractStatuses.types'
 
-export function normalizeContractStatuses(storage: ContractStatusesType): ContractStatusesStorage {
+export function normalizeContractStatuses(storage: GetAllContractStatusesDataQuery): ContractStatusesStorage {
   return [
     // doorman
     ...(storage?.doorman?.length

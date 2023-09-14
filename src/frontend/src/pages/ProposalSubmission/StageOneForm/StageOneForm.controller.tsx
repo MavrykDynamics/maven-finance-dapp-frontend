@@ -19,10 +19,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { containSpaces } from 'app/App.utils/input'
-import { Info } from 'app/App.components/Info/Info.view'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 
 export const StageOneForm = ({
   proposalId,
@@ -37,7 +34,6 @@ export const StageOneForm = ({
       governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
     },
   } = useDappConfigContext()
-  const { isNewlyRegisteredSatellite } = useUserContext()
 
   const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
 
@@ -108,7 +104,8 @@ export const StageOneForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_1_DESCRIPTION}</div>
-      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
+
+      <ProposalSubmissionBanner />
 
       <ProposalSubmittionStageOneBody isProposalSubmitted={isProposalSubmitted}>
         {isProposalSubmitted ? (
@@ -168,9 +165,7 @@ export const StageOneForm = ({
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
             <div className="label">5 - Proposal source code</div>
-            <a className="isCyan" href={currentProposal.sourceCode}>
-              {currentProposal.sourceCode}
-            </a>
+            <a href={currentProposal.sourceCode}>{currentProposal.sourceCode}</a>
           </div>
         ) : (
           <Input
@@ -202,9 +197,7 @@ export const StageOneForm = ({
                     alt="invoice for the proposal"
                   />
                 </div>{' '}
-                <a className="isCyan" href={currentProposal.invoice}>
-                  {currentProposal.invoice}
-                </a>
+                <a href={currentProposal.invoice}>{currentProposal.invoice}</a>
               </div>
             ) : (
               <div className="value">No link for an invoice given</div>

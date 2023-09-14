@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro'
-import { downColor, upColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
@@ -11,13 +10,12 @@ export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
   font-size: 14px;
   line-height: 21px;
   row-gap: 40px;
-  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-top: 1px solid ${({ theme }) => theme.divider};
 
   p {
     font-weight: 600;
     font-size: 14px;
     line-height: 18px;
-    color: ${({ theme }) => theme.valueColor};
   }
 `
 
@@ -25,7 +23,8 @@ export const BlockName = styled.div<{ theme: MavrykTheme }>`
   font-weight: 600;
   font-size: 18px;
   margin-bottom: 20px;
-  color: ${({ theme }) => theme.textColor};
+
+  color: ${({ theme }) => theme.mainHeadingText};
 `
 
 export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
@@ -38,7 +37,7 @@ export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
   p {
     margin: 0;
     text-align: right;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
 
     font-weight: 600;
     font-size: 16px;
@@ -47,7 +46,7 @@ export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
 
   h5 {
     margin: 0;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
 
     font-weight: 600;
     font-size: 14px;
@@ -83,12 +82,11 @@ export const SatelliteDescrBlock = styled.div<{ theme: MavrykTheme }>`
   p {
     padding-top: 8px;
     margin-bottom: 25px;
-    font-size: 15px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
   }
 
   .satellite-website {
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
     font-weight: 700;
     font-size: 14px;
     line-height: 14px;
@@ -102,7 +100,7 @@ export const SatelliteVotingHistoryListItem = styled.div`
   max-height: 28px;
 
   p {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
@@ -115,7 +113,7 @@ export const SatelliteVotingHistoryListItem = styled.div`
   .satellite-voting-history-info {
     flex-shrink: 0;
     padding-left: 16px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     font-weight: 400;
     font-size: 14px;
   }
@@ -125,15 +123,15 @@ export const SatelliteVotingHistoryListItem = styled.div`
     font-size: 14px;
 
     &.voting-yes {
-      color: ${upColor};
+      color: ${({ theme }) => theme.upColor};
     }
 
     &.voting-no {
-      color: ${downColor};
+      color: ${({ theme }) => theme.downColor};
     }
 
     &.voting-pass {
-      color: ${({ theme }) => theme.headerColor};
+      color: ${({ theme }) => theme.selectedColor};
     }
   }
 `

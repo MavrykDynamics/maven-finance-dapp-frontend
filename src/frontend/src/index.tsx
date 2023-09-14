@@ -25,6 +25,10 @@ import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
+import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
+import VestingProvider from 'providers/VestingProvider/vesting.provider'
+import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
+import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -75,10 +79,10 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   const { isLoading: isDappGeneralLoading } = useDappConfigContext()
   const { isLoading: isTokensLoading } = useTokensContext()
   const { isLoading: isFeedsLoading } = useDataFeedsContext()
-  const { isLoading: isUserLoading, isRunnedInitialConnect } = useUserContext()
+  const { isLoading: isUserLoading, isUserRestored } = useUserContext()
 
   // use user loading status only on dapp init loading
-  const isInitialUserLoading = !isRunnedInitialConnect ? isUserLoading : false
+  const isInitialUserLoading = !isUserRestored ? isUserLoading : false
 
   const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 
@@ -90,13 +94,21 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
         <FullScreenLoadingApp />
       ) : (
         <ContractStatusesProvider>
-          <DoormanProvider>
-            <SatellitesProvider>
-              <LoansProvider>
-                <VaultsProvider>{children}</VaultsProvider>
-              </LoansProvider>
-            </SatellitesProvider>
-          </DoormanProvider>
+          <SatelliteGovernanceProvider>
+            <DoormanProvider>
+              <SatellitesProvider>
+                <LoansProvider>
+                  <VaultsProvider>
+                    <FinancialRequestsProvider>
+                      <TreasuryProvider>
+                        <VestingProvider>{children}</VestingProvider>
+                      </TreasuryProvider>
+                    </FinancialRequestsProvider>
+                  </VaultsProvider>
+                </LoansProvider>
+              </SatellitesProvider>
+            </DoormanProvider>
+          </SatelliteGovernanceProvider>
         </ContractStatusesProvider>
       )}
     </>

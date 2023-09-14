@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { CardHover, headerColor, royalPurpleColor } from 'styles'
+import { CardHover } from 'styles'
 
 export const ExpandStyled = styled(CardHover)`
   margin: 0;
@@ -24,7 +24,7 @@ export const ExpandStyled = styled(CardHover)`
       font-weight: 400;
       font-size: 14px;
       line-height: 21px;
-      color: ${headerColor};
+      color: ${({ theme }) => theme.linksAndButtons};
       margin-right: 8px;
     }
 
@@ -87,7 +87,7 @@ export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: Mavry
   &::before {
     content: '';
     position: absolute;
-    border-top: 1px solid ${royalPurpleColor};
+    border-top: 1px solid ${({ theme }) => theme.divider};
     width: 100%;
     left: 0;
     top: 1px;

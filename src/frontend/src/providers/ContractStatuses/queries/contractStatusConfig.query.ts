@@ -6,7 +6,7 @@ query glasssBrokenStatusAndWhiteListDevs {
     glass_broken
   }
   
-    whitelist_developer {
+  whitelist_developer {
     developer {
       address
     }

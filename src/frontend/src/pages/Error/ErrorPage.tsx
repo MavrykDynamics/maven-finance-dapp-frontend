@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 // components
@@ -10,7 +10,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 // consts
 import { errorDescDefaultText, errorHeaderDefaultText } from 'providers/ToasterProvider/toaster.provider.const'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { SPACE_THEME } from 'consts/theme.const'
+import { SPACE_THEME, ThemeType, themeSchema } from 'consts/theme.const'
 import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from 'errors/error.const'
 
 // styles
@@ -30,6 +30,7 @@ import themeColors from 'styles/colors'
 import { ThemeProvider } from 'styled-components'
 // types
 import { InternalErrorType } from 'errors/error.type'
+import { getItemFromStorage } from 'utils/storage'
 
 type ErrorPageProps = {
   headerText?: string
@@ -42,22 +43,22 @@ export const ErrorPage = ({
   descText = errorDescDefaultText,
   type = ERROR_TYPE_FATAL,
 }: ErrorPageProps) => {
+  const themeSelected = useMemo(() => getItemFromStorage<ThemeType>('theme', themeSchema) || SPACE_THEME, [])
+
   const handleRedirect = useCallback(() => {
     window.location.assign('/')
   }, [])
 
-  // TODO take theme from localStorage when the logic for themes will be done.
-  const themeSelected = SPACE_THEME
   return (
     <Router>
       <ThemeProvider theme={themeColors[themeSelected]}>
-        <ErrorPageWrapper>
-          <ErrorTopbar handleRedirect={handleRedirect} />
+        <ErrorPageWrapper themeSelected={themeSelected}>
+          <ErrorTopbar themeSelected={themeSelected} handleRedirect={handleRedirect} />
           <ErrorPageInner>
             <ErrorTopHeader>Error</ErrorTopHeader>
-            <Vector1 src="/images/satellite-error.svg" />
+            <Vector1 src={`/images/${themeSelected}/satellite-error.svg`} />
             <ErrorLogoImage src="/images/404.svg" alt="404-logo" />
-            <Vector2 src="/images/space-cow.svg" />
+            <Vector2 src={`/images/${themeSelected}/space-cow.svg`} />
             <ErrorMidHeader>{headerText}</ErrorMidHeader>
             <ErrorParagraph>{descText}</ErrorParagraph>
             {type === ERROR_TYPE_ROUTER && (
@@ -67,7 +68,7 @@ export const ErrorPage = ({
               </NewButton>
             )}
           </ErrorPageInner>
-          <ErrorFooter handleRedirect={handleRedirect} />
+          <ErrorFooter themeSelected={themeSelected} handleRedirect={handleRedirect} />
         </ErrorPageWrapper>
       </ThemeProvider>
     </Router>

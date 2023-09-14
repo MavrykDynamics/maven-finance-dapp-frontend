@@ -1,6 +1,5 @@
 import { useContext } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useDispatch } from 'react-redux'
 
 // types
 import type { FarmsViewVariantType } from '../Farms.const'
@@ -23,6 +22,7 @@ import { FarmStorage, Normalizedfarm } from 'utils/TypesAndInterfaces/Farm'
 import { farmsPopupsContext } from '../FarmsPopups/FarmsPopups.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 const QuestionLinkBlock = () => (
   <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
@@ -223,7 +223,11 @@ const VerticalFarmComponent = ({
         />
       </div>
 
-      <Expand className="vertical-expand" onClickCallback={expandBlockCallback} isExpandedByDefault={isOpenedCard}>
+      <Expand
+        className="vertical-expand prevent-hover"
+        onClickCallback={expandBlockCallback}
+        isExpandedByDefault={isOpenedCard}
+      >
         <LinksBlock
           farmAddress={farm.address}
           token1Symbol={farm.lpToken1.symbol}
@@ -305,7 +309,8 @@ type FarmCardProps = {
 export const FarmCard = ({ farm, variant, isOpenedCard, currentRewardPerBlock, expandCallback }: FarmCardProps) => {
   const dispatch = useDispatch()
   const { tokensMetadata } = useTokensContext()
-  const { userAddress, availableFarmRewards } = useUserContext()
+  const { userAddress } = useUserContext()
+  const { availableFarmRewards } = useUserRewards()
   const { openDepositFarmPopup, openRoiCalculatorPopup, openWithdrawFarmPopup } = useContext(farmsPopupsContext)
 
   const valueAPY = calculateAPY(farm.currentRewardPerBlock, farm.lpBalance)

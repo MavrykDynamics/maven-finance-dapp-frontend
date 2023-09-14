@@ -16,15 +16,15 @@ export const ImpactStyled = styled.div<{ theme: MavrykTheme; impact: ImpactValue
     impact === NEGATIVE_IMPACT
       ? css`
           color: ${({ theme }) => theme.downColor};
-          background: rgba(255, 67, 67, 0.2);
+          background: ${({ theme }) => theme.downBgColor};
         `
       : impact === POSITIVE_IMPACT
       ? css`
           color: ${({ theme }) => theme.upColor};
-          background: rgba(52, 246, 106, 0.2);
+          background: ${({ theme }) => theme.upBgColor};
         `
       : css`
-          color: ${({ theme }) => theme.dataColor};
-          background: rgba(119, 164, 242, 0.2);
+          color: ${({ theme }) => theme.primaryText};
+          background: ${({ theme }) => theme.neutralBgColor};
         `}
 `

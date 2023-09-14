@@ -1,23 +1,20 @@
 import { useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
+import colors from 'styles/colors'
 import { State } from 'reducers'
-
 import { ClockLoaderWrapper, LoaderShineTextAnimation, LoaderStyledWithBackdrop } from './Loader.style'
-import { lightTextColor } from 'styles'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // Page data loader
-export const ClockLoader = ({
-  width = 75,
-  height = 75,
-  fillColor = lightTextColor,
-}: {
-  width?: number
-  height?: number
-  fillColor?: string
-}) => {
+export const ClockLoader = (props: { width?: number; height?: number; fillColor?: string }) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
+  const { width = 75, height = 75, fillColor = colors[themeSelected].mainHeadingText } = props
+
   return (
     <ClockLoaderWrapper
       width={width}
@@ -93,13 +90,13 @@ export const Loaders = () => {
       isWertLoading: CONTEXT_isWertLoading,
     },
   } = useDappConfigContext()
-  const { isLoading: isUserLoading, isRunnedInitialConnect } = useUserContext()
+  const { isLoading: isUserLoading, isUserRestored } = useUserContext()
 
   // TODO: remove when redux loading won't be used
   const { isWertLoading: REDUX_isWertLoading } = useSelector((state: State) => state.loading)
   const { isActiveFullScreenLoader: REDUX_isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
 
-  const isChangeUserLoading = isRunnedInitialConnect ? isUserLoading : false
+  const isChangeUserLoading = isUserRestored ? isUserLoading : false
 
   const isLoadingActive =
     CONTEXT_isWertLoading ||

@@ -26,6 +26,7 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // helpers
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import colors from 'styles/colors'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -51,6 +52,10 @@ export const ConfirmAddLendingAsset = ({
   } = useDappConfigContext()
 
   useLockBodyScroll(show)
+
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
 
   const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
   const { mBalance = 0, inputAmount = 0, lendingAPY = 0, callback = () => {} } = data ?? {}
@@ -104,7 +109,12 @@ export const ConfirmAddLendingAsset = ({
             <ThreeLevelListItem>
               <div className="name">
                 Lending APY
-                <CustomTooltip iconId="info" text={LENDING_APY(symbol)} className="tooltip" />
+                <CustomTooltip
+                  iconId="info"
+                  text={LENDING_APY(symbol)}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
+                  className="tooltip"
+                />
               </div>
               <CommaNumber value={lendingAPY} className="value" endingText="%" />
             </ThreeLevelListItem>

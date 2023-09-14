@@ -1,6 +1,6 @@
 import { gql } from 'utils/__generated__'
 
-// statistic subs
+// data for sidebar
 export const SATELLITES_STATS = gql(`
 query SatellitesStatsQuery{
   # oracles amount

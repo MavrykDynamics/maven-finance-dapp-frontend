@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux'
 // helpers
 import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { dropEmergencyGovernanceProposal, voteEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
-import { skyColor } from 'styles/colors'
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import { parseDate } from 'utils/time'
 
@@ -21,6 +20,7 @@ import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
 // providers
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
 // styles
@@ -32,6 +32,7 @@ import {
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import colors from 'styles/colors'
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem
@@ -46,6 +47,9 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
   const {
     config: { minStakedMvkRequiredToVote },
   } = useSelector((state: State) => state.emergencyGovernance)
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const isActiveProposal =
@@ -83,7 +87,8 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
           options={{
             showZeros: true,
             timerView: COLON_VIEW,
-            defaultColor: skyColor,
+            defaultColor: colors[themeSelected].primaryText,
+            negativeColor: colors[themeSelected].downColor,
           }}
         />
       </div>
@@ -117,12 +122,12 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
       header={
         <>
           <SatelliteGovernanceCardTitleTextGroup>
-            <h3>Title</h3>
-            <p className="inner">{emergencyGovernance.title}</p>
+            <h3 className="name">Title</h3>
+            <p className="value">{emergencyGovernance.title}</p>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <h3>Date</h3>
-            <p className="inner capitallize">
+            <h3 className="name">Date</h3>
+            <p className="value capitallize">
               {parseDate({
                 time: new Date(emergencyGovernance.startTimestamp).getTime(),
                 timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC',
@@ -130,8 +135,8 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
             </p>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
-            <h3>Proposer</h3>
-            <div className="inner">
+            <h3 className="name">Proposer</h3>
+            <div className="value">
               <TzAddress tzAddress={emergencyGovernance.proposerId} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
@@ -142,7 +147,7 @@ export const EGovCard = ({ emergencyGovernance }: EGovCardProps) => {
       <SatelliteGovernanceCardDropDown>
         <div className="left">
           <h3>Description</h3>
-          <p className="purpose">{emergencyGovernance.description}</p>
+          <p>{emergencyGovernance.description}</p>
         </div>
         <div className="voting-block">
           <h3>Vote Statistics</h3>

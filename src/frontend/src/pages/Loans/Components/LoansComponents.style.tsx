@@ -14,7 +14,7 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
   span {
     font-weight: 600;
     font-size: 16px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
   }
 
   .manage-btn {
@@ -51,10 +51,15 @@ export const BorrowingTabStyled = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: end;
+
+    display: grid;
+    grid-template-columns: auto 250px;
   }
 
-  .has-items-borrow-btn {
-    max-width: 250px;
+  .checkbox {
+    span {
+      color: ${({ theme }) => theme.mainHeadingText};
+    }
   }
 `
 
@@ -83,8 +88,8 @@ export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
   padding: 30px;
   row-gap: 30px;
 
-  background-color: ${({ theme }) => theme.containerColor};
-  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background-color: ${({ theme }) => theme.cards};
+  border-top: 1px solid ${({ theme }) => theme.divider};
   border-radius: 10px;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
@@ -107,42 +112,11 @@ export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
     margin: 0 auto;
   }
 
-  .bottom-info-row {
-    /* TODO: remove button styles from here */
-    button,
-    a {
-      margin-left: auto;
-      padding: 0;
-      height: fit-content;
-
-      &:hover {
-        opacity: 0.8;
-        color: ${({ theme }) => theme.valueColor};
-
-        svg {
-          opacity: 0.8;
-        }
-
-        &::before {
-          display: none;
-        }
-      }
-
-      svg {
-        height: 14px;
-        width: 8px;
-        transform: rotate(180deg);
-        stroke-width: 2px;
-        stroke: ${({ theme }) => theme.valueColor};
-      }
-    }
-  }
-
   // styles below useing only in OldBorrowingExpandComponent
   .block-name {
     font-weight: 600;
     font-size: 18px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
     margin-bottom: 10px;
 
     &.margin-top {
@@ -159,6 +133,10 @@ export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
 
     > div:not(.buttons-wrapper) {
       width: 17%;
+    }
+
+    .name {
+      color: ${({ theme }) => theme.mainHeadingText};
     }
 
     .buttons-wrapper {
@@ -193,8 +171,8 @@ export const LoansActionsSection = styled.div`
   }
 
   &.lending-tab {
-    background-color: ${({ theme }) => theme.containerColor};
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.cards};
+    border: 1px solid ${({ theme }) => theme.divider};
   }
 
   .useMax-btn {
@@ -210,7 +188,7 @@ export const LoansActionsSection = styled.div`
     font-size: 16px;
     line-height: 22px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
   }
 
   .switchers {
@@ -227,7 +205,7 @@ export const LoansActionsSection = styled.div`
     font-size: 14px;
     line-height: 22px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
   }
 
   .stats {
@@ -235,7 +213,7 @@ export const LoansActionsSection = styled.div`
     justify-content: space-between;
     padding: 20px 15px;
 
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border: 1px solid ${({ theme }) => theme.strokeCards};
     border-radius: 10px;
   }
 
@@ -270,8 +248,8 @@ export const LoansValuesSection = styled.div<{ theme: MavrykTheme }>`
 
   &.lending-tab {
     row-gap: 45px;
-    background-color: ${({ theme }) => theme.containerColor};
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.cards};
+    border: 1px solid ${({ theme }) => theme.divider};
 
     .stats {
       row-gap: 45px;
@@ -299,7 +277,7 @@ export const LoansValuesSectionInfo = styled.div<{
     font-size: 18px;
     line-height: 27px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   .value {
@@ -308,7 +286,7 @@ export const LoansValuesSectionInfo = styled.div<{
     line-height: 40px;
     word-break: break-all;
 
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .rate {
@@ -317,7 +295,7 @@ export const LoansValuesSectionInfo = styled.div<{
     line-height: 18px;
 
     visibility: ${({ theme }) => (theme.hasRate ? 'hidden' : 'visible')};
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .margin-top {
@@ -330,7 +308,7 @@ export const LoansValuesSectionInfo = styled.div<{
     line-height: 24px;
 
     a {
-      color: ${({ theme }) => theme.valueColor};
+      color: ${({ theme }) => theme.linksAndButtons};
     }
   }
 
@@ -343,7 +321,7 @@ export const LoansValuesSectionInfo = styled.div<{
       font-size: 14px;
       line-height: 21px;
       margin-bottom: 7px;
-      color: ${({ theme, customColor }) => customColor ?? theme.textColor};
+      color: ${({ theme, customColor }) => customColor ?? theme.subHeadingText};
 
       p {
         margin-left: 5px;
@@ -381,7 +359,7 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
     font-size: 18px;
     line-height: 27px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   .useful-info-line {
@@ -400,7 +378,7 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
 
     .name {
       margin-right: 10px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
@@ -408,7 +386,7 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
       align-items: center;
       column-gap: 6px;
 
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
 
     /* TODO: remove button styles from here */
@@ -420,7 +398,7 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
 
       &:hover {
         opacity: 0.8;
-        color: ${({ theme }) => theme.valueColor};
+        color: ${({ theme }) => theme.linksAndButtons};
 
         svg {
           opacity: 0.8;
@@ -436,7 +414,7 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
         width: 8px;
         transform: rotate(180deg);
         stroke-width: 2px;
-        stroke: ${({ theme }) => theme.valueColor};
+        stroke: ${({ theme }) => theme.linksAndButtons};
       }
     }
   }
@@ -446,7 +424,7 @@ export const VaultOverview = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 25px;
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   padding: 20px 15px;
   border-radius: 10px;
 
@@ -471,16 +449,18 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   align-items: center;
   column-gap: 20px;
   padding: 15px 25px;
-  background-color: ${({ theme }) => theme.dPurple_container_dPurple};
+  background-color: ${({ theme }) => theme.messagesBackground};
   font-weight: 600;
   font-size: 14px;
   line-height: 21px;
-
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.darkPurpleColor};
 
   .timer {
     display: inline-block;
+  }
+
+  .no-data {
+    color: ${({ theme }) => theme.primaryText};
   }
 
   &.borrow-message {
@@ -541,10 +521,10 @@ export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   &.${STATUS_FLAG_INFO} {
-    border: 1px solid ${({ theme }) => theme.headerColor};
+    border: 1px solid ${({ theme }) => theme.infoColor};
 
     svg {
-      fill: ${({ theme }) => theme.headerColor};
+      fill: ${({ theme }) => theme.infoColor};
     }
   }
 `

@@ -5,6 +5,7 @@ import { EarnHistoryStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import { SECONDARY_TOGGLE } from 'app/App.components/Toggle/Toggle.consts'
 
 export type DashboardPersonalEarningsHistoryProps = {
   satelliteRewards: number
@@ -32,7 +33,7 @@ const DashboardPersonalEarningsHistory = ({
         <Toggle
           prefix={'USD'}
           sufix={'MVK'}
-          className="personal-dashboard-toggler"
+          kind={SECONDARY_TOGGLE}
           checked={switcherActive}
           onChange={() => setSwithcerActive(!switcherActive)}
         />

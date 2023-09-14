@@ -33,7 +33,7 @@ export const MobilePlugWrapper = styled.div<{ theme: MavrykTheme }>`
     font-size: 22px;
     line-height: 22px;
     text-align: center;
-    color: ${({ theme }) => theme.textColor};
+    color: #ffffff;
 
     .space {
       margin: 10px 0;
@@ -60,7 +60,7 @@ export const MobilePlugFooter = styled.div<{ theme: MavrykTheme }>`
     max-width: 322px;
 
     svg {
-      fill: ${({ theme }) => theme.textColor};
+      fill: #ffffff;
     }
 
     #twitter {
@@ -103,7 +103,7 @@ export const MobilePlugFooter = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 18px;
     line-height: 27px;
-    color: ${({ theme }) => theme.dPurple_container_dPurple};
+    color: #38237c;
     text-align: center;
     margin-top: 45px;
   }
@@ -112,7 +112,7 @@ export const MobilePlugFooter = styled.div<{ theme: MavrykTheme }>`
     font-weight: 600;
     font-size: 18px;
     line-height: 27px;
-    color: ${({ theme }) => theme.dPurple_container_dPurple};
+    color: #38237c;
     text-align: center;
     margin-top: 35px;
   }

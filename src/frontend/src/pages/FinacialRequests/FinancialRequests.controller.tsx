@@ -1,32 +1,41 @@
-import { useDispatch, useSelector } from 'react-redux'
-
-// types
-import { State } from '../../reducers'
-
-//  actions
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getFinancialRequestStorage } from './FinancialRequest.actions'
-
+import { useEffect } from 'react'
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { FinancialRequestsView } from './FinancialRequests.view'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+// styles
 import { Page } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+
+// providers
+import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
+
+// consts
+import {
+  ALL_FIN_REQUESTS_SUB,
+  DEFAULT_FIN_REQUESTS_ACTIVE_SUBS,
+  FIN_REQUESTS_DATA,
+} from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 
 export const FinancialRequests = () => {
-  const dispatch = useDispatch()
-
   const {
-    financialRequestsIds,
-    financialRequestMapper,
-    isLoaded: isFinancialRequestsLoaded,
-  } = useSelector((state: State) => state.financialRequest)
+    pastFinRequestsIds,
+    ongoingFinRequestsIds,
+    financialRequestsMapper,
+    allFinRequestsIds,
+    isLoading,
+    changeFinancialRequestsSubscriptionList,
+  } = useFinancialRequestsContext()
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    if (!isFinancialRequestsLoaded || isDepsChanged) {
-      await dispatch(getFinancialRequestStorage())
+  useEffect(() => {
+    changeFinancialRequestsSubscriptionList({
+      [FIN_REQUESTS_DATA]: ALL_FIN_REQUESTS_SUB,
+    })
+
+    return () => {
+      changeFinancialRequestsSubscriptionList(DEFAULT_FIN_REQUESTS_ACTIVE_SUBS)
     }
   }, [])
 
@@ -38,10 +47,11 @@ export const FinancialRequests = () => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading financial requests</div>
         </DataLoaderWrapper>
-      ) : financialRequestsIds?.length ? (
+      ) : allFinRequestsIds.length ? (
         <FinancialRequestsView
-          financialRequestsIds={financialRequestsIds}
-          financialRequestMapper={financialRequestMapper}
+          ongoingFinancialRequestsIds={ongoingFinRequestsIds}
+          pastFinancialRequestsIds={pastFinRequestsIds}
+          financialRequestsMapper={financialRequestsMapper}
         />
       ) : (
         <EmptyContainer className="centered">

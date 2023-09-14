@@ -1,34 +1,52 @@
-import { useMemo } from 'react'
-import { useDispatch } from 'react-redux'
+import dayjs from 'dayjs'
+import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
+// components
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { getSeparateSnakeCase } from '../../../utils/parse'
-import { ProposalStatus, SatelliteGovernance } from '../../../utils/TypesAndInterfaces/Governance'
+import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
+import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
-import { dropAction, voteForAction } from '../SatelliteGovernance.actions'
+// actions
+import { dropAction, voteForAction } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
 
+// utils
+import { getSeparateSnakeCase } from '../../../utils/parse'
+import { parseDate } from 'utils/time'
+
+// styles
 import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardPurposeBlock,
   SatelliteGovernanceCardTitleTextGroup,
   SatelliteGovernanceCardVotingBlock,
 } from './SatelliteGovernanceCard.style'
-import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
+
+// consts
+import { DROP_ACTION, VOTE_FOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 import { PRECISION_NUMBER } from 'utils/constants'
-import { parseDate } from 'utils/time'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import dayjs from 'dayjs'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// types
+import { SatelliteGovNormalizerReturnType } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
 
 type Props = {
   satelliteId: string
   initiatorId: string
   actionExpirationDate: string | null
+  actionDroppedDate: string | null
   actionStartDate: string | null
   statusFlag: StatusFlagKind
   id: number
@@ -41,7 +59,7 @@ type Props = {
   snapshotSmvkTotalSupply: number
   accountPkh: string | null
   isActionActive: boolean
-  votes: SatelliteGovernance['satelliteGovIdsMapper'][0]['votes']
+  votes: SatelliteGovNormalizerReturnType['satelliteGovIdsMapper'][0]['votes']
 }
 
 export const SatelliteGovernanceCard = ({
@@ -49,6 +67,7 @@ export const SatelliteGovernanceCard = ({
   satelliteId,
   initiatorId,
   actionExpirationDate,
+  actionDroppedDate,
   actionStartDate,
   statusFlag,
   purpose,
@@ -62,7 +81,11 @@ export const SatelliteGovernanceCard = ({
   isActionActive,
   votes,
 }: Props) => {
-  const dispatch = useDispatch()
+  const {
+    contractAddresses: { governanceSatelliteAddress },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const myVote = useMemo(() => votes.find((item) => item.voterId === accountPkh)?.vote, [accountPkh, votes])
   const isEndingVotingTime = dayjs().diff(actionExpirationDate) < 0
@@ -83,12 +106,63 @@ export const SatelliteGovernanceCard = ({
     [yayVotesSmvkTotal, nayVotesSmvkTotal, passVoteSmvkTotal, snapshotSmvkTotalSupply, smvkPercentageForApproval],
   )
 
-  const handleVotingRoundVote = (type: string) => {
-    dispatch(voteForAction(id, type))
+  //   voteFor action ---------------------------------------------------------------------------
+  const voteForActionFn = useCallback(
+    async (type: string) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceSatelliteAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+
+      return await voteForAction(governanceSatelliteAddress, id, type)
+    },
+    [bug, governanceSatelliteAddress, id, userAddress],
+  )
+
+  const voteForContratActionProps: HookContractActionArgs<string> = useMemo(
+    () => ({
+      actionType: VOTE_FOR_ACTION,
+      actionFn: voteForActionFn,
+    }),
+    [voteForActionFn],
+  )
+
+  const { actionWithArgs: voteForActionHandler } = useContractAction(voteForContratActionProps)
+
+  //   drop action ---------------------------------------------------------------------------
+  const dropActionFn = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+    if (!governanceSatelliteAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    return await dropAction(governanceSatelliteAddress, id)
+  }, [bug, governanceSatelliteAddress, id, userAddress])
+
+  const dropContratActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: DROP_ACTION,
+      actionFn: dropActionFn,
+    }),
+    [dropActionFn],
+  )
+
+  const { action: dropActionHandler } = useContractAction(dropContratActionProps)
+
+  const handleVotingRoundVote = async (type: string) => {
+    await voteForActionHandler(type)
   }
 
   const handleDropAction = async () => {
-    await dispatch(dropAction(id))
+    await dropActionHandler()
   }
 
   return (
@@ -107,13 +181,13 @@ export const SatelliteGovernanceCard = ({
           <SatelliteGovernanceCardTitleTextGroup>
             <div className="name">Target</div>
             <div className="value">
-              <TzAddress tzAddress={satelliteId} hasIcon={true} />
+              <TzAddress tzAddress={satelliteId} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
           <SatelliteGovernanceCardTitleTextGroup>
             <div className="name">Initiator</div>
             <div className="value">
-              <TzAddress tzAddress={initiatorId} hasIcon={true} />
+              <TzAddress tzAddress={initiatorId} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
             </div>
           </SatelliteGovernanceCardTitleTextGroup>
         </>
@@ -146,8 +220,14 @@ export const SatelliteGovernanceCard = ({
         <SatelliteGovernanceCardVotingBlock>
           <h3>Vote Statistics</h3>
           <b className="voting-ends">
-            Voting {!isEndingVotingTime ? 'ended' : 'ending'} on{' '}
-            {parseDate({ time: actionExpirationDate, timeFormat: 'MMM DD, HH:mm' })} CEST
+            {actionDroppedDate ? (
+              <>Action was dropped on {parseDate({ time: actionDroppedDate, timeFormat: 'MMM DD, HH:mm' })} CEST</>
+            ) : (
+              <>
+                Voting {!isEndingVotingTime ? 'ended' : 'ending'} on{' '}
+                {parseDate({ time: actionExpirationDate, timeFormat: 'MMM DD, HH:mm' })} CEST
+              </>
+            )}
           </b>
 
           <VotingArea

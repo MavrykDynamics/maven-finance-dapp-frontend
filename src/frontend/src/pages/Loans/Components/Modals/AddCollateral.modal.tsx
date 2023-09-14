@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
@@ -10,8 +10,6 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   InputStatusType,
-  getOnBlurValue,
-  getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
@@ -28,7 +26,6 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
-import { silverColor } from 'styles'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -40,14 +37,14 @@ import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vault
 
 // helpers
 import { checkNan } from 'utils/checkNan'
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import colors from 'styles/colors'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -61,6 +58,7 @@ import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { operationAddCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -73,6 +71,7 @@ export const AddCollateral = ({
   data: AddCollateralPopupDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const { userTokensBalances, userAddress } = useUserContext()
   const {
     contractAddresses: { lendingControllerAddress },
@@ -102,15 +101,16 @@ export const AddCollateral = ({
   })
 
   const {
-    collateralBalance = 0,
-    vaultAddress = '',
-    vaultId = 0,
-    collateralRatio = 0,
-    borrowedAmount = 0,
-    borrowCapacity = 0,
-    availableLiquidity = 0,
-    collateralTokenAddress = '',
-  } = data ?? {}
+    collateralBalance,
+    vaultAddress,
+    vaultId,
+    collateralRatio,
+    currentTotalOutstanding,
+    borrowCapacity,
+    availableLiquidity,
+    collateralTokenAddress,
+    borrowedTokenAddress,
+  } = data
 
   const {
     inputData,
@@ -127,26 +127,24 @@ export const AddCollateral = ({
     setSelectedCollateral(collateralTokenAddress)
   }, [collateralTokenAddress, setSelectedCollateral])
 
-  const { rate: originalCollateralRate = 0, decimals = 0, symbol = '', name = '', icon = '' } = collateralToken ?? {}
+  const { rate: originalCollateralRate = 0, decimals = 0, symbol = '', icon = '' } = collateralToken ?? {}
   const collateralRate = originalCollateralRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({
     userTokensBalances,
     tokenAddress: collateralTokenAddress,
   })
-  const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
-  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralRatio = getVaultCollateralRatio(
-    collateralBalance + inputAmount * collateralRate,
-    borrowedAmount * borrowedTokenRate,
-  )
 
-  const futureCollateralBalance = collateralBalance + inputAmount * collateralRate
-  const futureBorrowCapacity = Math.min(
-    Math.max(availableLiquidity, 0),
-    futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
-  )
+  const { futureBorrowCapacity, futureCollateralBalance, futureCollateralRatio } = useVaultFutureStats({
+    operationType: operationAddCollateral,
+    inputValue: inputAmount,
+    marketAvailableLiquidity: availableLiquidity,
+    vaultCurrentTotalOutstanding: currentTotalOutstanding,
+    collateralTokenAddress: collateralTokenAddress,
+    vaultTokenAddress: borrowedTokenAddress,
+    vaultCurrentCollateralBalance: collateralBalance,
+  })
 
   // deposit action
   const depositAction = useCallback(async () => {
@@ -286,10 +284,17 @@ const AddCollateralTableStats = ({
   borrowCapacity: number
   validationStatus: InputStatusType
 }) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   return (
     <MemoizedComponent returnMemoizedComponent={validationStatus === INPUT_STATUS_ERROR}>
       <VaultModalOverview>
-        <ThreeLevelListItem className="collateral-diagram" customColor={getCollateralRationPersent(collateralRatio)}>
+        <ThreeLevelListItem
+          className="collateral-diagram"
+          customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+        >
           <div className={`percentage`}>
             Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
           </div>
@@ -309,7 +314,7 @@ const AddCollateralTableStats = ({
             <CustomTooltip
               text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
               iconId="info"
-              defaultStrokeColor={silverColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
             />
           </div>
           <CommaNumber value={borrowCapacity} className="value" beginningText="$" />

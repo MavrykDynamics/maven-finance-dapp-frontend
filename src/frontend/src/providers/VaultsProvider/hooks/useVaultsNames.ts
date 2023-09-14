@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import { useQuery } from '@apollo/client'
 
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+// hooks
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
+// consts
 import { CURRENT_USER_VAULTS_NAMES_QUERY } from '../queries/userVaultsNames.query'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 export const useUserVaultsNames = () => {
+  const { handleApolloError } = useApolloContext()
   const { userAddress } = useUserContext()
-  const { bug } = useToasterContext()
 
   const [vaultNames, setVaultNames] = useState<string[]>([])
 
@@ -27,10 +27,7 @@ export const useUserVaultsNames = () => {
         }, []) ?? [],
       )
     },
-    onError: (error) => {
-      console.error(`CURRENT_USER_VAULTS_NAMES_QUERY query error: `, error)
-      bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-    },
+    onError: (error) => handleApolloError(error, 'CURRENT_USER_VAULTS_NAMES_QUERY'),
   })
 
   return { vaultNames, isLoading: loading }

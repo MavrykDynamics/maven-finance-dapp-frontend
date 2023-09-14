@@ -1,21 +1,21 @@
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { Button } from 'app/App.components/Button/Button.controller'
+import Button from 'app/App.components/Button/NewButton'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import colors from 'styles/colors'
-import { Page, skyColor } from 'styles'
+import { Page } from 'styles'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
@@ -31,7 +31,7 @@ import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { checkWhetherTokenIsM_Token, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 // providers
@@ -39,6 +39,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import Icon from 'app/App.components/Icon/Icon.view'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 
@@ -48,13 +49,6 @@ const CHART_SETTINGS = {
   hideXAxis: true,
   hideYAxis: true,
   isPeriod: true,
-}
-
-const CHART_COLORS = {
-  lineColor: skyColor,
-  areaTopColor: skyColor,
-  areaBottomColor: 'rgba(119, 164, 242, 0)',
-  textColor: '#CDCDCD',
 }
 
 export const Loans = () => {
@@ -88,6 +82,16 @@ export const Loans = () => {
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
+
+  const CHART_COLORS = useMemo(
+    () => ({
+      lineColor: colors[themeSelected].primaryChartColor,
+      areaTopColor: colors[themeSelected].primaryChartColor,
+      areaBottomColor: colors[themeSelected].primaryChartBottomColor,
+      textColor: colors[themeSelected].regularText,
+    }),
+    [themeSelected],
+  )
 
   const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
     totalLended: number
@@ -190,13 +194,17 @@ export const Loans = () => {
                 totalBorrowed,
                 suppliers,
                 totalLended,
+                totalRewards,
                 borrowAPR,
                 lendingAPY,
               } = market
 
-              const { interestEarned } = userMTokens[loanMTokenAddress] ?? {
-                interestEarned: 0,
-              }
+              const mToken = getTokenDataByAddress({ tokenAddress: loanMTokenAddress, tokensPrices, tokensMetadata })
+
+              const interestEarned =
+                mToken && checkWhetherTokenIsM_Token(mToken)
+                  ? convertNumberForClient({ number: totalRewards, grade: mToken.mToken.interestRateDecimals })
+                  : 0
 
               const { symbol, decimals, icon, rate, address } = loanToken
 
@@ -266,7 +274,7 @@ export const Loans = () => {
                           <CommaNumber value={lendingAPY} className="value" endingText="%" />{' '}
                           <CustomTooltip
                             iconId="info"
-                            defaultStrokeColor={colors[themeSelected].dataColor}
+                            defaultStrokeColor={colors[themeSelected].primaryText}
                             text="Current yield suppliers are earning on their deposits."
                             className="tooltip"
                           />
@@ -285,7 +293,9 @@ export const Loans = () => {
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
                       <Link to={{ pathname: `/loans/${address}/${LEND_TAB_ID}`, state: { from: '/loans' } }}>
-                        <Button text="Earn" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                        <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                          Earn <Icon id="arrowRight" />
+                        </Button>
                       </Link>
                     </div>
                     <div className="row">
@@ -300,7 +310,7 @@ export const Loans = () => {
                           <CommaNumber value={borrowAPR} className="value" endingText="%" />{' '}
                           <CustomTooltip
                             iconId="info"
-                            defaultStrokeColor={colors[themeSelected].dataColor}
+                            defaultStrokeColor={colors[themeSelected].primaryText}
                             text="Current interest rate being charged to borrowers."
                             className="tooltip"
                           />
@@ -329,7 +339,9 @@ export const Loans = () => {
                         />
                       </ThreeLevelListItem>
                       <Link to={{ pathname: `/loans/${address}/${BORROW_TAB_ID}`, state: { from: '/loans' } }}>
-                        <Button text="Borrow" kind={ACTION_PRIMARY} iconAfter icon="arrowRight" />
+                        <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                          Borrow <Icon id="arrowRight" />
+                        </Button>
                       </Link>
                     </div>
                   </div>

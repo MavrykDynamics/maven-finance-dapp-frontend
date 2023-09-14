@@ -21,6 +21,7 @@ export const tokenGqlSchema = z.object({
     .tuple([
       z.object({
         loan_token_name: z.string(),
+        min_repayment_amount: z.number(),
       }),
     ])
     .or(z.tuple([])),
@@ -29,6 +30,7 @@ export const tokenGqlSchema = z.object({
     .tuple([
       z.object({
         address: z.string(),
+        metadata: z.any(),
       }),
     ])
     .or(z.tuple([])),

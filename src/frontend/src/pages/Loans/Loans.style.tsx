@@ -21,8 +21,8 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
       width: 100%;
       height: 270px;
       position: relative;
-      background: ${({ theme }) => theme.containerColor};
-      border: 1px solid ${({ theme }) => theme.cardBorderColor};
+      background: ${({ theme }) => theme.cards};
+      border: 1px solid ${({ theme }) => theme.strokeCards};
       border-radius: 10px;
     }
 
@@ -38,13 +38,13 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
       flex-direction: column;
       row-gap: 10px;
       align-items: center;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
       font-weight: 600;
       font-size: 16px;
 
       p {
         margin: 0;
-        color: ${({ theme }) => theme.dataColor};
+        color: ${({ theme }) => theme.primaryText};
         font-weight: 700;
         font-size: 25px;
       }
@@ -60,14 +60,8 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
       font-weight: 600;
       font-size: 10px;
       line-height: 18px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
     }
-  }
-
-  .loan-chart {
-    background-color: ${({ theme }) => theme.containerColor};
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
-    border-radius: 10px;
   }
 `
 
@@ -90,7 +84,7 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
     column-gap: 8px;
     max-width: 313px;
     background-color: ${({ theme }) => theme.backgroundColor};
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border: 1px solid ${({ theme }) => theme.divider};
     border-bottom: none;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -100,7 +94,7 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
     .img-wrapper {
       width: 36px;
       height: 36px;
-      fill: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.primaryText};
 
       img {
         width: 100%;
@@ -113,7 +107,7 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
     p {
       font-weight: 600;
       font-size: 18px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
 
     .rate {
@@ -122,10 +116,10 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
   }
 
   .content-wrapper {
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    border: 1px solid ${({ theme }) => theme.strokeCards};
     border-radius: 10px;
     border-top-left-radius: 0px;
-    background-color: ${({ theme }) => theme.containerColor};
+    background-color: ${({ theme }) => theme.cards};
 
     position: relative;
     padding: 0 20px;
@@ -134,7 +128,7 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
       content: '';
       width: calc(100% - 40px);
       height: 1px;
-      background-color: ${({ theme }) => theme.cardBorderColor};
+      background-color: ${({ theme }) => theme.divider};
       position: absolute;
       left: 50%;
       top: 50%;
@@ -156,14 +150,14 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
           font-weight: 600;
           font-size: 14px;
           line-height: 20px;
-          color: ${({ theme }) => theme.textColor};
+          color: ${({ theme }) => theme.subHeadingText};
         }
 
         .value {
           font-weight: 600;
           font-size: 16px;
           line-height: 20px;
-          color: ${({ theme }) => theme.dataColor};
+          color: ${({ theme }) => theme.primaryText};
 
           &.up {
             color: ${({ theme }) => theme.upColor};
@@ -178,7 +172,7 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
           font-weight: 400;
           font-size: 12px;
           line-height: 14px;
-          color: ${({ theme }) => theme.dataColor};
+          color: ${({ theme }) => theme.primaryText};
         }
       }
     }
@@ -202,12 +196,12 @@ export const MarketPagination = styled.div<{ theme: MavrykTheme }>`
       display: flex;
       align-items: center;
       column-gap: 8px;
-      color: ${({ theme }) => theme.valueColor};
+      color: ${({ theme }) => theme.linksAndButtons};
 
       svg {
         height: 24px;
         width: 10px;
-        stroke: ${({ theme }) => theme.valueColor};
+        stroke: ${({ theme }) => theme.linksAndButtons};
       }
 
       &.right {
@@ -267,7 +261,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
       .img-wrapper {
         width: 53px;
         height: 53px;
-        fill: ${({ theme }) => theme.dataColor};
+        fill: ${({ theme }) => theme.primaryText};
 
         img {
           width: 100%;
@@ -280,12 +274,12 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        color: ${({ theme }) => theme.dataColor};
 
         .symbol {
           font-weight: 600;
           font-size: 14px;
           line-height: 23px;
+          color: ${({ theme }) => theme.subHeadingText};
         }
 
         .full-name {
@@ -293,6 +287,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
           font-size: 25px;
           line-height: 30px;
           text-transform: capitalize;
+          color: ${({ theme }) => theme.primaryText};
         }
       }
     }
@@ -330,7 +325,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     .img-wrapper {
       width: 38px;
       height: 38px;
-      fill: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.primaryText};
 
       img {
         width: 100%;
@@ -363,7 +358,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
         svg {
           width: 14px;
           height: 14px;
-          stroke: ${({ theme }) => theme.dataColor};
+          stroke: ${({ theme }) => theme.primaryText};
         }
       }
     }
@@ -373,14 +368,14 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 
   .value {
     font-weight: 600;
     font-size: 16px;
     line-height: 22px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     display: flex;
     align-items: center;
 
@@ -392,7 +387,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
 
       img,
       svg {
-        fill: ${({ theme }) => theme.dataColor};
+        fill: ${({ theme }) => theme.primaryText};
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -408,7 +403,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     }
 
     &.neutral {
-      fill: ${({ theme }) => theme.dataColor};
+      fill: ${({ theme }) => theme.primaryText};
     }
   }
 
@@ -417,7 +412,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     font-weight: 500;
     font-size: 14px;
     line-height: 18px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   .tooltip {
@@ -436,7 +431,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
       font-size: 14px;
       line-height: 21px;
       margin-bottom: 7px;
-      color: ${({ theme, customColor }) => customColor ?? theme.textColor};
+      color: ${({ theme, customColor }) => customColor ?? theme.subHeadingText};
 
       p {
         margin-left: 5px;
@@ -446,28 +441,6 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     .copyIcon {
       font-weight: 600;
     }
-  }
-`
-
-export const FillBlock = styled.div<{ theme: MavrykTheme; width: number }>`
-  width: 220px;
-  height: 8px;
-  border-radius: 10px;
-  display: flex;
-  justify-content: flex-end;
-  position: relative;
-  margin: 3px 0 4px 0;
-  background-color: rgba(80, 62, 170, 0.5);
-
-  .colored {
-    position: absolute;
-    border-radius: 10px;
-    left: -1px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: ${({ width }) => 100 - width}%;
-    height: 8px;
-    background: linear-gradient(90deg, rgba(3, 212, 99, 1) 0%, rgba(255, 78, 67, 1) 100%);
   }
 `
 
@@ -481,7 +454,7 @@ export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
     font-size: 14px;
     line-height: 21px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
 
     div {
       font-weight: 600;
@@ -501,7 +474,7 @@ export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
   &.${SECONDARY_TRANSACTION_HISTORY_STYLE} {
     padding: 30px;
     border-radius: 10px;
-    background-color: ${({ theme }) => theme.containerColor};
-    border: 1px solid ${({ theme }) => theme.cardBorderColor};
+    background-color: ${({ theme }) => theme.cards};
+    border: 1px solid ${({ theme }) => theme.strokeCards};
   }
 `

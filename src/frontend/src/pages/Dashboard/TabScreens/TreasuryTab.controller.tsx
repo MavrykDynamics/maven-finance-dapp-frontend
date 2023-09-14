@@ -1,20 +1,26 @@
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-import { silverColor } from 'styles'
-import { State } from 'reducers'
+// consts
+import { VESTING_STORAGE_DATA_SUB, DEFAULT_VESTING_SUBS } from 'providers/VestingProvider/helpers/vesting.consts'
+import { TREASURY_STORAGE_DATA_SUB, DEFAULT_TREASURY_SUBS } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTreasuryTVL, reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
 
+// hooks
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// utils
+import { getTreasuryTVL, reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// components
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
 import {
   Table,
   TableHeader,
@@ -24,26 +30,60 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table'
+
+// styles
+import colors from 'styles/colors'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
-import { TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { EmptyContainer, TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
-export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
-  const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const { totalVestedAmount, totalClaimedAmount } = useSelector((state: State) => state.vesting)
-
+export const TreasuryTab = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const {
+    totalVestedAmount,
+    totalClaimedAmount,
+    changeVestingSubscriptionsList,
+    isLoading: isVestingLoading,
+  } = useVestingContext()
+  const {
+    treasuryAddresses,
+    treasuryMapper,
+    changeTreasurySubscriptionsList,
+    isLoading: isTreasuryLoading,
+  } = useTreasuryContext()
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
+  useEffect(() => {
+    changeTreasurySubscriptionsList({
+      [TREASURY_STORAGE_DATA_SUB]: true,
+    })
+
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
+    }
+  }, [])
 
   const amountOfTokens = totalVestedAmount + totalClaimedAmount
 
-  const treasuryTokens = useMemo(() => Object.values(reduceTreasuryAssets(treasuryStorage)), [treasuryStorage])
+  const treasuryTokens = useMemo(
+    () => Object.values(reduceTreasuryAssets(treasuryAddresses, treasuryMapper)),
+    [treasuryAddresses, treasuryMapper],
+  )
 
   const { mostSuppliedTreasuryName, mostSuppliedTreasuryTVL, globalTreasuryTVL } = useMemo(
     () =>
-      treasuryStorage.reduce(
-        (acc, treasury) => {
+      treasuryAddresses.reduce(
+        (acc, address) => {
+          const treasury = treasuryMapper[address]
           const treasuryTVL = getTreasuryTVL(treasury, tokensMetadata, tokensPrices)
 
           if (treasuryTVL > acc.mostSuppliedTreasuryTVL) {
@@ -57,7 +97,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
         },
         { mostSuppliedTreasuryName: '', globalTreasuryTVL: 0, mostSuppliedTreasuryTVL: 0 },
       ),
-    [tokensMetadata, tokensPrices, treasuryStorage],
+    [tokensMetadata, tokensPrices, treasuryAddresses, treasuryMapper],
   )
 
   return (
@@ -69,12 +109,12 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
         </Link>
       </div>
 
-      {isLoading ? (
+      {isVestingLoading || isTreasuryLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading treasury</div>
         </DataLoaderWrapper>
-      ) : treasuryStorage.length ? (
+      ) : treasuryAddresses.length ? (
         <TreasuryContentStyled>
           <div className="top">
             <StatBlock>
@@ -98,7 +138,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                 Treasury Assets
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
                 />
               </BlockName>
@@ -122,7 +162,7 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
                       const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
 
                       return (
-                        <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                        <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
                             {treasuryTokenBalance < 0.01 ? (
@@ -157,8 +197,8 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
 
                 <TreasuryVesting
                   totalPersent={(totalVestedAmount / amountOfTokens || 0.5) * 100}
-                  claimedColor={'navTitleColor'}
-                  totalColor={'primaryColor'}
+                  claimedColor={'linksAndButtons'}
+                  totalColor={'selectedColor'}
                 >
                   <div className="vest-stat">
                     <div className="name">
@@ -196,7 +236,10 @@ export const TreasuryTab = ({ isLoading }: { isLoading: boolean }) => {
           </div>
         </TreasuryContentStyled>
       ) : (
-        emptyContainer
+        <EmptyContainer>
+          <img src="/images/not-found.svg" alt=" No treasury assets to show" />
+          <figcaption> No treasury assets to show</figcaption>
+        </EmptyContainer>
       )}
 
       <div className="descr">

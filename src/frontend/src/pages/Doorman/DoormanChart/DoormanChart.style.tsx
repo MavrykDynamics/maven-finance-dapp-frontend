@@ -5,12 +5,7 @@ import { Card } from 'styles'
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-
-  .switcher {
-    margin-top: 30px;
-    width: fit-content;
-    column-gap: 20px;
-  }
+  margin-top: 30px;
 `
 
 export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
@@ -20,7 +15,7 @@ export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
 
   position: absolute;
   right: 20px;
-  top: 15px;
+  top: 20px;
 
   .row {
     display: flex;
@@ -34,19 +29,19 @@ export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
     .name {
       font-weight: 600;
       font-size: 12px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
       font-weight: 600;
       font-size: 12px;
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 `
 
-export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
-  padding: 40px 15px 0px 15px;
+export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme; isExitFeeChart: boolean }>`
+  padding: ${({ isExitFeeChart }) => (isExitFeeChart ? '40px 15px 5px 15px' : '50px 15px 5px 15px')};
   margin-top: 20px;
   height: 100%;
   display: flex;
@@ -65,14 +60,22 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
   }
 
   > div {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
     font-weight: 500;
     font-size: 12px;
   }
 
+  .chart-legend {
+    background-color: ${({ theme }) => theme.cards};
+    opacity: 0.8;
+    z-index: 15;
+    padding: 3px;
+    border-radius: 5px;
+  }
+
   .mli-label {
     position: absolute;
-    bottom: 55px;
+    bottom: 40px;
     right: 25px;
   }
 
@@ -84,8 +87,8 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
 
   .double-chart-legend {
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 15px;
+    left: 25px;
     display: flex;
     flex-direction: column;
     row-gap: 5px;
@@ -95,17 +98,18 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme }>`
       align-items: center;
       column-gap: 7px;
       font-size: 12px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.subHeadingText};
 
       &.mvk {
         .circle {
-          background: ${({ theme }) => theme.dataColor};
+          background: ${({ theme }) => theme.primaryChartColor};
         }
       }
 
       &.smvk {
         .circle {
-          background: ${({ theme }) => theme.valueColor};
+          // constant color for all theme
+          background: #86d4c9;
         }
       }
     }

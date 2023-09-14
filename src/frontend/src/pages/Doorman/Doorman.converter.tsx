@@ -2,7 +2,7 @@
 import { MvkTokenGraphQL, SmvkHistoryDataGraphQl } from '../../utils/TypesAndInterfaces/Doorman'
 
 // helpers
-import { isValidNumberValue } from 'utils/validatorFunctions'
+import { isNumberInRange } from 'utils/validatorFunctions'
 import { calcWithoutPrecision } from '../../utils/calcFunctions'
 import { UTCTimestamp } from 'lightweight-charts'
 import { Mavryk_User } from 'utils/__generated__/graphql'
@@ -76,7 +76,7 @@ export const stakingInputValidation = ({
 }) => {
   if (amount === 0) return ''
 
-  return isValidNumberValue(
+  return isNumberInRange(
     amount,
     1,
     userAddress ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,

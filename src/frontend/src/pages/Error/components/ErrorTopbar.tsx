@@ -7,16 +7,23 @@ import {
   PRODUCTS_LINKS,
 } from 'app/App.components/Menu/MenuTopBar/MenuTopBar.controller'
 import { TopBarLinks } from 'app/App.components/Menu/MenuTopBar/TopBarLinks/TopBarLinks.controller'
+import { ThemeType } from 'consts/theme.const'
 
 type ErrorTopbarProps = {
   handleRedirect: () => void
+  themeSelected: ThemeType
 }
 
-export const ErrorTopbar = ({ handleRedirect }: ErrorTopbarProps) => {
+export const ErrorTopbar = ({ themeSelected, handleRedirect }: ErrorTopbarProps) => {
   return (
     <ErrorMenuTopStyled>
       <div className="left-side">
-        <ErrorTopbarLogo alt="logo" className={'desktop-logo'} src="/logo-dark.svg" onClick={handleRedirect} />
+        <ErrorTopbarLogo
+          alt="logo"
+          className={'desktop-logo'}
+          src={`/images/${themeSelected}/logo.svg`}
+          onClick={handleRedirect}
+        />
       </div>
       <div className="grouped-links">
         <TopBarLinks groupName={'Products'} groupLinks={PRODUCTS_LINKS} />

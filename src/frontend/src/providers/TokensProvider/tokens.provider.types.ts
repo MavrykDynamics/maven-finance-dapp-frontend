@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { normalizeTokenPrices } from './helpers/tokens.normalizer'
 
 import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 
 export const tokenMetadataSchema = z.object({
   icon: z.string().optional(),
@@ -24,7 +24,6 @@ export const mTokenMetadataSchema = z.object({
 export type TokenAddressType = string
 
 // regular token
-
 export type TokenMetadataType = {
   id: number
   address: TokenAddressType
@@ -35,13 +34,19 @@ export type TokenMetadataType = {
   type: TokenType
 } & PropertiesFromDifferentTokenTypes
 
+export type TokenLoansDataType = {
+  indexerName: string
+  minDepositAmount: number
+  isPausedCollateral: boolean
+  isScaled: boolean
+  isStaked: boolean
+}
+
 type PropertiesFromDifferentTokenTypes = DeepPartial<{
   // loan & collateral tokens properties
-  loanData: {
-    indexerName: string
-    isPausedCollateral: boolean
-    isScaled: boolean
-    isStaked: boolean
+  loanData: TokenLoansDataType
+  mToken: {
+    interestRateDecimals: number
   }
 }>
 
@@ -49,6 +54,7 @@ type PropertiesFromDifferentTokenTypes = DeepPartial<{
 export interface LoansTokenMetadataType extends TokenMetadataType {
   loanData: {
     indexerName: string
+    minDepositAmount: number
   }
 }
 
@@ -56,9 +62,17 @@ export interface LoansTokenMetadataType extends TokenMetadataType {
 export interface LoansCollateralTokenMetadataType extends LoansTokenMetadataType {
   loanData: {
     indexerName: string
+    minDepositAmount: number
     isPausedCollateral: boolean
     isScaled: boolean
     isStaked: boolean
+  }
+}
+
+// mToken
+export interface M_TokenMetadataType extends TokenMetadataType {
+  mToken: {
+    interestRateDecimals: number
   }
 }
 

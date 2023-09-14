@@ -46,7 +46,7 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
       left: 0;
       top: 50%;
       transform: translateY(-50%);
-      fill: ${({ theme }) => theme.textColor};
+      fill: ${({ theme }) => theme.strokeColor};
 
       img {
         width: 100%;
@@ -57,7 +57,7 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
   }
 
   h5 {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
     font-weight: 600;
     font-size: 14px;
     line-height: 21px;
@@ -67,7 +67,7 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
 
   var {
     font-style: normal;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     font-weight: 600;
     font-size: 16px;
     display: flex;
@@ -86,7 +86,7 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
   .converted {
     font-weight: 500;
     font-size: 12px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     margin-top: -7px;
   }
 
@@ -108,20 +108,18 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
     svg {
       width: 16px;
       height: 16px;
-      fill: ${({ theme }) => theme.valueColor};
-      stroke: ${({ theme }) => theme.valueColor};
+      fill: ${({ theme }) => theme.linksAndButtons};
+      stroke: ${({ theme }) => theme.linksAndButtons};
     }
   }
 `
 
 export const DataFeedsSearchFilter = styled(Card)<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
+  background-color: ${({ theme }) => theme.cards};
   display: flex;
   align-items: center;
   padding: 16px 26px;
   margin-top: 30px;
-
-  color: ${({ theme }) => theme.subTextColor};
 
   input {
     width: 320px;
@@ -137,14 +135,14 @@ export const DataFeedsSearchFilter = styled(Card)<{ theme: MavrykTheme }>`
 
   .dropDown {
     min-width: 330px;
+
+    h4 {
+      color: ${({ theme }) => theme.mainHeadingText};
+    }
   }
 
   button {
     max-width: 250px;
-
-    svg {
-      fill: transparent;
-    }
   }
 `
 

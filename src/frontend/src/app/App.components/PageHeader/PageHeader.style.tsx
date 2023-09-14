@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
-
-import { whiteColor } from '../../../styles'
+import { MavrykTheme } from 'styles/interfaces'
 
 export const PageHeaderStyled = styled.div<{ backgroundImageSrc: string }>`
   width: 100%;
@@ -41,7 +40,7 @@ export const PageHeaderStyled = styled.div<{ backgroundImageSrc: string }>`
   }
 `
 
-export const PageHeaderTextArea = styled.div`
+export const PageHeaderTextArea = styled.div<{ theme: MavrykTheme }>`
   max-width: 45%;
   width: max-content;
   overflow: visible;
@@ -53,7 +52,7 @@ export const PageHeaderTextArea = styled.div`
   }
 
   h1 {
-    color: ${whiteColor};
+    color: ${({ theme }) => theme.pageHeaderColor};
     font-size: 25px;
     margin: 0;
     position: relative;
@@ -70,7 +69,7 @@ export const PageHeaderTextArea = styled.div`
     .icon {
       width: 45px;
       height: 45px;
-      fill: ${({ theme }) => theme.textColor};
+      fill: ${({ theme }) => theme.pageHeaderColor};
 
       img {
         width: 100%;
@@ -96,7 +95,7 @@ export const PageHeaderTextArea = styled.div`
   }
 
   p {
-    color: ${whiteColor};
+    color: ${({ theme }) => theme.pageHeaderColor};
     font-weight: 500;
     font-size: 14px;
     line-height: 24px;
