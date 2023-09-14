@@ -89,13 +89,15 @@ export const AddCollateralScreen = () => {
   )
 
   useEffect(() => {
-    updateSelectedCollaterals({
-      [noDisabledCollateralAddressRef.current]: {
-        tokenAddress: noDisabledCollateralAddressRef.current,
-        amount: '0',
-        validation: INPUT_STATUS_DEFAULT,
-      },
-    })
+    if (!selectedCollateralsAddresses.length) {
+      updateSelectedCollaterals({
+        [noDisabledCollateralAddressRef.current]: {
+          tokenAddress: noDisabledCollateralAddressRef.current,
+          amount: '0',
+          validation: INPUT_STATUS_DEFAULT,
+        },
+      })
+    }
   }, [noDisabledCollateralAddressRef.current])
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd add new collateral)
