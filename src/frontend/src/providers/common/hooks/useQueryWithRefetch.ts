@@ -85,14 +85,15 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         const newRefetchVariables =
           typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
 
-        console.log({
-          name,
-          refetchQueryVariables,
-          queryResult,
-          query,
-          vars: queryOptions.variables,
-          newRefetchVariables,
-        })
+        if (process.env.REACT_APP_ENV === 'dev')
+          console.log({
+            name,
+            refetchQueryVariables,
+            queryResult,
+            query,
+            vars: queryOptions.variables,
+            newRefetchVariables,
+          })
 
         // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
         if (typeof blocksDiff === 'number') {
@@ -105,7 +106,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
           if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
             const refetchData = await queryResult.refetch(newRefetchVariables)
 
-            console.log('%crefetch ', 'color: red', { refetchData, name })
+            if (process.env.REACT_APP_ENV === 'dev') console.log('%crefetch ', 'color: red', { refetchData, name })
 
             // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
             if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -119,7 +120,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
         const refetchData = await queryResult.refetch(newRefetchVariables)
 
-        console.log('%crefetch ', 'color: red', { refetchData, name })
+        if (process.env.REACT_APP_ENV === 'dev') console.log('%crefetch ', 'color: red', { refetchData, name })
 
         // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
         if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)

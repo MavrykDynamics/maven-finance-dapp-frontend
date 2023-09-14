@@ -48,7 +48,6 @@ export const ApolloProvider = ({ children }: Props) => {
           if (typeof window !== 'undefined' && !window.navigator.onLine) {
             bug('Sorry, your browser is offline.')
           } else {
-            console.log('Some other network error occurred.')
             if (hasNetworkError) fatal(new FatalError('Server is disabled.'))
 
             setHasNetworkError(true)

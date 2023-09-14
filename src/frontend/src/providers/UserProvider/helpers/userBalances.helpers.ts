@@ -111,7 +111,7 @@ export const normalizeUserIndexerTokensBalances = ({
         }
         acc.availableLoansRewards += mTokenInterestEarned
       } catch (e) {
-        console.error('normalize user mTokens error: ', { e })
+        if (process.env.REACT_APP_ENV === 'dev') console.error('normalize user mTokens error: ', { e })
       } finally {
         return acc
       }
@@ -223,11 +223,11 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
-      console.log('tzktSocket on token_balances msg', { data: msg.data })
+      if (process.env.REACT_APP_ENV === 'dev') console.log('tzktSocket on token_balances msg', { data: msg.data })
       const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
       handleTokens(tokensBalances)
     } catch (e) {
-      console.error('tzkt tokens balance parse error: ', { e, msg })
+      if (process.env.REACT_APP_ENV === 'dev') console.error('tzkt tokens balance parse error: ', { e, msg })
     }
   })
 
@@ -236,7 +236,7 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
-      console.log('tzktSocket on accounts msg', { data: msg.data })
+      if (process.env.REACT_APP_ENV === 'dev') console.log('tzktSocket on accounts msg', { data: msg.data })
       const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
       handleTokens([
         {
@@ -246,7 +246,7 @@ export const attachTzktSocketsEventHandlers = ({
         },
       ])
     } catch (e) {
-      console.error('tzkt xtz token balance parse error: ', { e, msg })
+      if (process.env.REACT_APP_ENV === 'dev') console.error('tzkt xtz token balance parse error: ', { e, msg })
     }
   })
 
