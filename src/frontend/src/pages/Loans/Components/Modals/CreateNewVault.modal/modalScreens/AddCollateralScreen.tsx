@@ -142,12 +142,11 @@ export const AddCollateralScreen = () => {
     ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress),
   )
 
-  const isAddCollateralContinueDisabled = Boolean(
+  const isAddCollateralContinueDisabled =
     (hasXTZTokenSelected && !selectedBaker) ||
-      !selectedCollateralsAddresses.every((tokenAddress) => {
-        return selectedCollaterals[tokenAddress].validation === INPUT_STATUS_SUCCESS
-      }),
-  )
+    selectedCollateralsAddresses.some(
+      (tokenAddress) => selectedCollaterals[tokenAddress].validation !== INPUT_STATUS_SUCCESS,
+    )
 
   // handlers
   const addNewCollateralHandler = () => {

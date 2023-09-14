@@ -121,7 +121,7 @@ export const AddNewCollateral = ({
     const reducedCollaterals = collateralTokens.reduce<
       Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
     >((acc, collateralTokenAddress) => {
-      const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
+      const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata })
 
       if (collateral && checkWhetherTokenIsCollateralToken(collateral)) {
         const { address, icon, symbol } = collateral
@@ -146,14 +146,12 @@ export const AddNewCollateral = ({
     }, {})
 
     if (!selectedCollateral && firstNotDisabledCollateralAddress) {
-      if (firstNotDisabledCollateralAddress) {
-        reducedCollaterals[firstNotDisabledCollateralAddress].disabled = true
-        setSelectedCollateral(firstNotDisabledCollateralAddress)
-      }
+      reducedCollaterals[firstNotDisabledCollateralAddress].disabled = true
+      setSelectedCollateral(firstNotDisabledCollateralAddress)
     }
 
     return reducedCollaterals
-  }, [collateralTokens, data, selectedCollateral, tokensMetadata, tokensPrices])
+  }, [collateralTokens, data, selectedCollateral, tokensMetadata])
 
   const collateralToken = getTokenDataByAddress({
     tokenAddress: selectedCollateral,
