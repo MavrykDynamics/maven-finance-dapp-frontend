@@ -1,33 +1,39 @@
-import { useState, useMemo, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useState, useMemo } from 'react'
 
-// type
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+// consts
+import { TRANSFER_TOKENS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from '../../../app/App.components/Input/Input.constants'
+
+// types
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { InputProps } from 'app/App.components/Input/newInput.type'
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
+import { transferTokens } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
-
-// action
-// import { transferTokens } from '../Council.actions'
-
-// types
-import { InputProps } from 'app/App.components/Input/newInput.type'
-
-// style
 import { CouncilFormStyled } from './CouncilForm.style'
+// import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
+
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const INIT_FORM = {
   receiverAddress: '',
@@ -37,74 +43,99 @@ const INIT_FORM = {
   purpose: '',
 }
 
-const itemsForDropDown = [
-  {
-    text: 'FA12',
-    value: 'fa12',
-  },
-  {
-    text: 'FA2',
-    value: 'fa2',
-  },
-  {
-    text: 'TEZ',
-    value: 'tez',
-  },
-]
+const INIT_FOR_VALIDATION: Record<string, InputStatusType> = {
+  receiverAddress: INPUT_STATUS_DEFAULT,
+  tokenContractAddress: INPUT_STATUS_DEFAULT,
+  tokenAmount: INPUT_STATUS_DEFAULT,
+  tokenId: INPUT_STATUS_DEFAULT,
+  purpose: INPUT_STATUS_DEFAULT,
+}
+
+// const itemsForDropDown = [
+//   {
+//     text: 'FA12',
+//     value: 'fa12',
+//   },
+//   {
+//     text: 'FA2',
+//     value: 'fa2',
+//   },
+//   {
+//     text: 'TEZ',
+//     value: 'tez',
+//   },
+// ]
 
 export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
-  const dispatch = useDispatch()
-
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
 
-  const { isActionActive } = useSelector((state: State) => state.loading)
-
   const [form, setForm] = useState(INIT_FORM)
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FOR_VALIDATION)
+  const [selectedToken, setSelectedToken] = useState<TokenMetadataType | undefined>()
 
-  const ddItems = useMemo(() => itemsForDropDown.map(({ text }) => text), [])
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [tokenType, setTokenType] = useState<DropdownItemType | undefined>()
-  const [tokenDecimals, setTokenDecimals] = useState<number | null>(null)
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    receiverAddress: '',
-    tokenContractAddress: '',
-    tokenAmount: '',
-    tokenId: '',
-    purpose: '',
-  })
+  // const ddItems = useMemo(() => itemsForDropDown.map(({ text }) => text), [])
+  // const [ddIsOpen, setDdIsOpen] = useState(false)
+  // const [tokenType, setTokenType] = useState<TokenType | undefined>()
+  // const [tokenDecimals, setTokenDecimals] = useState<number | null>(null)
 
   const { receiverAddress, tokenContractAddress, tokenAmount, tokenId, purpose } = form
 
+  // transfer tokens council action
+  const transferTokensContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: TRANSFER_TOKENS_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        if (!selectedToken) {
+          bug('Please enter correct token address')
+          return null
+        }
+
+        return await transferTokens(
+          receiverAddress,
+          tokenContractAddress,
+          Number(tokenAmount),
+          selectedToken.type,
+          Number(tokenId),
+          purpose,
+          selectedToken.decimals,
+          councilAddress,
+        )
+      },
+    }),
+    [userAddress, councilAddress, selectedToken, receiverAddress, tokenContractAddress, tokenAmount, tokenId, purpose],
+  )
+
+  const { action: handleTransferTokens } = useContractAction(transferTokensContractActionProps)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    try {
+      await handleTransferTokens()
 
-    const typeOfToken = tokenType?.value as TokenType | undefined
-    if (!typeOfToken || !tokenDecimals) return
-
-    // dispatch(
-    //   transferTokens(
-    //     receiverAddress,
-    //     tokenContractAddress,
-    //     +tokenAmount,
-    //     typeOfToken,
-    //     +tokenId,
-    //     purpose,
-    //     tokenDecimals,
-    //   ),
-    // )
-
-    setTokenDecimals(null)
-    setTokenType(undefined)
-    setDdIsOpen(false)
-    setForm(INIT_FORM)
-    setFormInputStatus({
-      receiverAddress: '',
-      tokenContractAddress: '',
-      tokenAmount: '',
-      tokenId: '',
-      purpose: '',
-    })
+      // setTokenDecimals(null)
+      // setTokenType(undefined)
+      // setDdIsOpen(false)
+      setForm(INIT_FORM)
+      setFormInputStatus(INIT_FOR_VALIDATION)
+    } catch (e) {
+      console.error('CouncilFormTransferTokens', e)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -120,22 +151,22 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
 
     const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
 
-    setFormInputStatus((prev) => {
-      const isValidAddress = token ? 'success' : 'error'
-      return { ...prev, [name]: isValidAddress }
-    })
+    setFormInputStatus((prev) => ({
+      ...prev,
+      [name]: token ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+    }))
 
-    if (token) setTokenDecimals(token.decimals)
+    if (token) setSelectedToken(token)
   }
 
-  const handleClickDropdownItem = useCallback(
-    (e: string) => {
-      const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-      setTokenType(chosenItem)
-      setDdIsOpen(!ddIsOpen)
-    },
-    [ddIsOpen],
-  )
+  // const handleClickDropdownItem = useCallback(
+  //   (e: string) => {
+  //     const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
+  //     setTokenType(chosenItem)
+  //     setDdIsOpen(!ddIsOpen)
+  //   },
+  //   [ddIsOpen],
+  // )
 
   const receiverAddressProps = {
     name: 'receiverAddress',
@@ -183,21 +214,21 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
     inputStatus: formInputStatus.tokenAmount,
   }
 
-  const tokenIdProps: InputProps = {
-    type: 'number',
-    name: 'tokenId',
-    value: tokenId,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
+  // const tokenIdProps: InputProps = {
+  //   type: 'number',
+  //   name: 'tokenId',
+  //   value: tokenId,
+  //   onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
+  //   onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     handleChange(e)
+  //     handleBlur(e)
+  //   },
+  //   required: true,
+  // }
 
-  const tokenIdSettings = {
-    inputStatus: formInputStatus.tokenId,
-  }
+  // const tokenIdSettings = {
+  //   inputStatus: formInputStatus.tokenId,
+  // }
   // TODO: need to add a sequence of fields
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -224,7 +255,7 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
           <Input inputProps={tokenAmountProps} settings={tokenAmountSettings} />
         </div>
 
-        <div>
+        {/* <div>
           <label>Token Type (FA12, FA2, TEZ)</label>
           <DropDown
             placeholder={'Choose token type'}
@@ -234,12 +265,12 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
             items={ddItems}
             clickOnItem={handleClickDropdownItem}
           />
-        </div>
+        </div> */}
 
-        <div>
+        {/* <div>
           <label>Token ID</label>
           <Input inputProps={tokenIdProps} settings={tokenIdSettings} />
-        </div>
+        </div> */}
       </div>
       <div className="textarea-group">
         <label>Purpose for Transfer</label>

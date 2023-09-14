@@ -7,7 +7,7 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-  type InputStatusType,
+  InputStatusType,
 } from '../../../app/App.components/Input/Input.constants'
 
 // types

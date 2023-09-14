@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { SET_BAKER_REQUEST_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { INPUT_STATUS_DEFAULT, type InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import { INPUT_STATUS_DEFAULT, InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { setBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'

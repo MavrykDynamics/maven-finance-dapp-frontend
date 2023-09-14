@@ -18,7 +18,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import { INPUT_STATUS_DEFAULT, type InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import { INPUT_STATUS_DEFAULT, InputStatusType } from '../../../app/App.components/Input/Input.constants'
 import { REMOVE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 const INIT_FORM = {

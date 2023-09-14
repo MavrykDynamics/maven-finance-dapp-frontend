@@ -1,26 +1,37 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useMemo, useState } from 'react'
 
-// type
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+// consts
+import { TREASURY_STORAGE_DATA_SUB, DEFAULT_TREASURY_SUBS } from 'providers/TreasuryProvider/helpers/treasury.consts'
+import { REQUEST_TOKENS_MINT_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from '../../../app/App.components/Input/Input.constants'
 
 // helpers
+import { requestTokenMint } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+
+// types
+import { TreasuryData } from 'providers/TreasuryProvider/helpers/treasury.types'
+import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-
-// action
-// import { requestTokenMint } from '../Council.actions'
-
-// style
 import { CouncilFormStyled } from './CouncilForm.style'
-import { State } from 'reducers'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const INIT_FORM = {
   treasuryAddress: '',
@@ -28,32 +39,76 @@ const INIT_FORM = {
   purpose: '',
 }
 
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  treasuryAddress: INPUT_STATUS_DEFAULT,
+  tokenAmount: INPUT_STATUS_DEFAULT,
+  purpose: INPUT_STATUS_DEFAULT,
+}
+
 export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
+
+  // const {
+  //   changeTreasurySubscriptionsList,
+  //   isLoading: isTreasuryLoading,
+  //   treasuryAddresses,
+  //   treasuryMapper,
+  // } = useTreasuryContext()
+
+  // useEffect(() => {
+  //   changeTreasurySubscriptionsList({
+  //     [TREASURY_STORAGE_DATA_SUB]: true,
+  //   })
+
+  //   return () => {
+  //     changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+  //   }
+  // }, [])
 
   const [form, setForm] = useState(INIT_FORM)
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    treasuryAddress: '',
-    tokenAmount: '',
-    purpose: '',
-  })
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
+  // const [selectedTreasury, setSelectedTreasury] = useState<TreasuryData | undefined>()
+  // const [tokenAmountInTreasury, setTokenAmountInTreasury] = useState<number | undefined>()
 
   const { treasuryAddress, tokenAmount, purpose } = form
+
+  // request tokens council action
+  const requestTokensMintContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REQUEST_TOKENS_MINT_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        return await requestTokenMint(treasuryAddress, Number(tokenAmount), purpose, councilAddress)
+      },
+    }),
+    [userAddress, councilAddress, treasuryAddress, tokenAmount, purpose],
+  )
+
+  const { action: handleRequestTokensMint } = useContractAction(requestTokensMintContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      // await dispatch(requestTokenMint(treasuryAddress, +tokenAmount, purpose))
+      await handleRequestTokensMint()
+
       setForm(INIT_FORM)
-      setFormInputStatus({
-        treasuryAddress: '',
-        tokenAmount: '',
-        purpose: '',
-      })
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormRequestTokenMint', error)
     }
   }
 
