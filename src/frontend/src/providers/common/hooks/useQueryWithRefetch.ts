@@ -88,10 +88,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         if (process.env.REACT_APP_ENV === 'dev')
           console.log({
             name,
-            refetchQueryVariables,
-            queryResult,
             query,
-            vars: queryOptions.variables,
             newRefetchVariables,
           })
 

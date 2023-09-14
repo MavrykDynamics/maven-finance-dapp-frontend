@@ -33,6 +33,7 @@ const getFreeSpace = (data: BakeryDelegateDataType) => {
   return Number(convertNumberForClient({ number: freeSpace, grade: XTZ_DECIMALS }).toFixed(2))
 }
 
+// TODO: check why ghostnet tzkt not working for delegates endpoint
 export const getXTZBakers = async (): Promise<{
   dao: XtzBakerType
   mavrykDynamics: XtzBakerType
@@ -46,12 +47,12 @@ export const getXTZBakers = async (): Promise<{
 
     const [{ data: daoBakerData }, { data: mavrykDynamicsBakerData }] = await Promise.all([
       api<BakeryDelegateDataType>(
-        `${process.env.REACT_APP_TZKT_API}/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
+        `https://api.tzkt.io/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
         {},
         bakeryDelegateDataSchema,
       ),
       api<BakeryDelegateDataType>(
-        `${process.env.REACT_APP_TZKT_API}/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
+        `https://api.tzkt.io/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
         {},
         bakeryDelegateDataSchema,
       ),

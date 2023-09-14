@@ -13,6 +13,7 @@ const currentIndexerLevel: {
   registerListener: function (listener) {
     const listenerId = generateUniqueId()
     this.listeners.set(listenerId, listener)
+    if (process.env.REACT_APP_ENV === 'dev') console.log({ refetchListeners: this.listeners })
     return listenerId
   },
   removeListener: function (listenerId) {
