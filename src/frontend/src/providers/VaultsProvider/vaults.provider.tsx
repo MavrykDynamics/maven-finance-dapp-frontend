@@ -92,6 +92,7 @@ export const VaultsProvider = ({ children }: Props) => {
 
     const isAllVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_ALL
     const isPermissionedVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_USER_DEPOSITOR
+    const isMyVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_USER_ALL
 
     setVaultsCtxState((prev) => ({
       ...prev,
@@ -99,7 +100,7 @@ export const VaultsProvider = ({ children }: Props) => {
       allVaultsIds: isAllVaultsQuery ? allVaultsIds : prev.allVaultsIds,
       permissionedVaultsIds:
         isAllVaultsQuery || isPermissionedVaultsQuery ? permissionedVaultsIds : prev.permissionedVaultsIds,
-      myVaultsIds: isPermissionedVaultsQuery ? prev.myVaultsIds : myVaultsIds,
+      myVaultsIds: isAllVaultsQuery || isMyVaultsQuery ? myVaultsIds : prev.myVaultsIds,
     }))
   }
 
