@@ -14,8 +14,8 @@ const envVariablesSchema = z.object({
   REACT_APP_NAME: z.string(),
   REACT_APP_NETWORK: z.literal(NetworkType.MAINNET).or(z.literal(NetworkType.GHOSTNET)),
 
-  IPFS_API_KEY: z.string(),
-  IPFS_PROJECT_ID: z.string(),
+  REACT_APP_IPFS_API_KEY: z.string(),
+  REACT_APP_IPFS_PROJECT_ID: z.string(),
   NODE_VERSION: z.string(),
 })
 
