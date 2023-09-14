@@ -1,7 +1,6 @@
-import { SubmissionProposalsDataqueryQuery } from './../../../utils/__generated__/graphql'
 import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
 import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { ProposalsContext } from '../proposals.provider.types'
+import { ProposalIndexerType, ProposalsContext } from '../proposals.provider.types'
 import { ProposalRecordType } from './proposals.types'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -105,15 +104,18 @@ export const normalizeProposal = (
 
 export const normalizeProposals = ({
   indexerData,
+  userAddress,
   governanceConfig,
 }: {
-  indexerData: SubmissionProposalsDataqueryQuery
+  indexerData: ProposalIndexerType
+  userAddress: string | null
   governanceConfig: ProposalsContext['config']
 }) => {
   return indexerData.governance_proposal.reduce<{
     currentRoundProposalsIds: Array<number>
     pastProposalsIds: Array<number>
     allProposalsIds: Array<number>
+    submissionProposalsIds: Array<number>
     waitingProposalsIdsToBeExecuted: Array<number>
     waitingProposalsIdsToBePaid: Array<number>
     proposalsMapper: Record<number, ProposalRecordType>
@@ -123,7 +125,7 @@ export const normalizeProposals = ({
       const isProposalRound = governancePhase === GovPhases.PROPOSAL
 
       const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
-      const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
+      const { id, executed, status, currentRoundProposal, paymentProcessed, proposerId } = normalizedProposal
 
       acc.allProposalsIds.push(normalizedProposal.id)
       acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
@@ -155,96 +157,21 @@ export const normalizeProposals = ({
         return acc
       }
 
+      if (currentRoundProposal && proposerId === userAddress) {
+        acc.submissionProposalsIds.push(id)
+        return acc
+      }
+
       return acc
     },
     {
       currentRoundProposalsIds: [],
       pastProposalsIds: [],
       allProposalsIds: [],
+      submissionProposalsIds: [],
       waitingProposalsIdsToBeExecuted: [],
       waitingProposalsIdsToBePaid: [],
       proposalsMapper: {},
     },
   )
 }
-
-export const normalizeSubmissionProposals = ({
-  indexerData,
-  governanceConfig,
-}: {
-  indexerData: SubmissionProposalsDataqueryQuery
-  governanceConfig: ProposalsContext['config']
-}) => {
-  return indexerData.governance_proposal.reduce<{
-    submissionProposalsIds: Array<number>
-    proposalsMapper: Record<number, ProposalRecordType>
-  }>(
-    (acc, indexerProposal) => {
-      const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
-
-      acc.submissionProposalsIds.push(normalizedProposal.id)
-      acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
-      return acc
-    },
-    {
-      submissionProposalsIds: [],
-      proposalsMapper: {},
-    },
-  )
-}
-
-// export const normalizeGovernanceProposals = (
-//   indexerData: ProposalsDataQueryQuery,
-//   governanceConfig: State['governance']['config'],
-// ): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
-//   const { governancePhase, timelockProposalId } = governanceConfig
-//   const isProposalRound = governancePhase === GovPhases.PROPOSAL
-
-//   return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
-//     (acc, proposalFromGQL) => {
-//       const normalizedProposal = normalizeProposal(proposalFromGQL, governanceConfig)
-
-//       const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
-
-//       acc.proposalsMapper[id] = normalizedProposal
-//       acc.allProposalsIds.push(id)
-
-//       const isPastProposal =
-//         status === ProposalStatus.DROPPED || status === ProposalStatus.EXECUTED || status === ProposalStatus.DEFEATED
-
-//       // Add id of proposal to be executed proposal
-//       if (isProposalRound && !executed && timelockProposalId === id && !isPastProposal) {
-//         acc.waitingProposalsIdsToBeExecuted.push(id)
-//         return acc
-//       }
-
-//       // Add id of proposal to be paid proposal
-//       if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
-//         acc.waitingProposalsIdsToBePaid.push(id)
-//         return acc
-//       }
-
-//       // Add id of past proposal
-//       if (isPastProposal) {
-//         acc.pastProposalsIds.push(id)
-//         return acc
-//       }
-
-//       // Add id of current round proposal
-//       if (currentRoundProposal) {
-//         acc.currentRoundProposalsIds.push(id)
-//         return acc
-//       }
-
-//       return acc
-//     },
-//     {
-//       currentRoundProposalsIds: [],
-//       pastProposalsIds: [],
-//       waitingProposalsIdsToBeExecuted: [],
-//       waitingProposalsIdsToBePaid: [],
-//       allProposalsIds: [],
-//       proposalsMapper: {},
-//     },
-//   )
-// }

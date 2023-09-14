@@ -15,7 +15,11 @@ import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
 
-// helpers
+// utils
+import { api } from 'utils/api/api'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { isAbortError } from 'errors/error'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { parseDate } from 'utils/time'
 import {
   getTimestampByLevelHeaders,
@@ -42,12 +46,8 @@ import { ProposalDetailsStyled } from './ProposalDetails.style'
 import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { api } from 'utils/api/api'
-import { isAbortError } from 'errors/error'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
-// actions
+// consts
 import {
   DROP_PROPOSAL_ACTION,
   EXECUTE_PROPOSAL_ACTION,
@@ -57,6 +57,8 @@ import {
   ProposalStatus,
   VOTING_ROUND_VOTE_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
+
+// actions
 import {
   executeProposal,
   processProposalPayment,

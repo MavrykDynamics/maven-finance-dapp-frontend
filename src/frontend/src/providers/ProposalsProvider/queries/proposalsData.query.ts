@@ -1,26 +1,8 @@
-import { PROPOSALS_CURRENT_DATA, PROPOSALS_DATA_SUB, PROPOSALS_PAST_DATA } from './../helpers/proposals.const'
-import { DocumentNode, OperationVariables, TypedDocumentNode, gql as apolloGql } from '@apollo/client'
-import { ProposalsSubsRecordType } from '../proposals.provider.types'
-import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
-// TODO: check how it workds with refetch
-export const getProposalsQuery = ({
-  subType,
-  isProposalRound,
-}: {
-  subType: ProposalsSubsRecordType[typeof PROPOSALS_DATA_SUB]
-  isProposalRound: boolean
-}): DocumentNode | TypedDocumentNode<ProposalsDataQueryQuery, OperationVariables> => {
-  const proposalsFilter =
-    subType === PROPOSALS_PAST_DATA
-      ? `, where: {_or: [{executed: {_eq: false}}, {current_round_proposal: {_eq: false}}, {status: {_eq: 1}}]}`
-      : subType === PROPOSALS_CURRENT_DATA
-      ? `, where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]}`
-      : ``
-  return apolloGql(`
-	query proposalsDataQuery($timelockProposalId: bigint) {
-		governance_proposal(order_by: {start_datetime: desc} ${proposalsFilter}) {
+export const PAST_PROPOSALS_QUERY = gql(`
+	query pastProposalsDataQuery {
+		governance_proposal(order_by: {start_datetime: desc}, where: {_or: [{executed: {_eq: false}}, {current_round_proposal: {_eq: false}}, {status: {_eq: 1}}]}) {
 			current_cycle_end_level
 			cycle
 			success_reward
@@ -83,8 +65,74 @@ export const getProposalsQuery = ({
 			}
 		}
 	}
+`)
+
+export const CURRENT_PROPOSALS_QUERY = gql(`
+		query proposalsDataQuery($timelockProposalId: bigint) {
+			governance_proposal(order_by: {start_datetime: desc}, where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]}) {
+				current_cycle_end_level
+				cycle
+				success_reward
+				id
+				proposer {
+					address
+				}
+				governance {
+					address
+				}
+				description
+				title
+				invoice
+				current_round_proposal
+				dropped_datetime
+				execution_datetime
+				defeated_datetime
+				locked
+				executed
+				status
+				payment_processed
+				min_quorum_percentage
+				quorum_smvk_total
+				nay_vote_smvk_total
+				pass_vote_smvk_total
+				yay_vote_smvk_total
+				proposal_vote_smvk_total
+				source_code
+				votes {
+					round
+					vote
+					voter {
+						address
+						satellites {
+							image
+							name
+						}
+					}
+				}
+				data {
+					encoded_code
+					governance_proposal_id
+					code_description
+					id
+					title
+				}
+				payments {
+					governance_proposal_id
+					id
+					internal_id
+					title
+					to_ {
+						address
+					}
+					token_id
+					token_amount
+					token {
+						token_address
+					}
+				}
+			}
+		}
 	`)
-}
 
 export const PROPOSALS_SUBMISSION_QUERY = gql(`
 	query submissionProposalsDataquery($userAddress: String) {
