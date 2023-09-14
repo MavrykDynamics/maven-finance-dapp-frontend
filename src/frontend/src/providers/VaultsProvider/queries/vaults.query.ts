@@ -1,10 +1,8 @@
 import { gql } from 'utils/__generated__'
 
-// TODO: use fragments for similar query parts
-
 export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 	query getUserDepositorAllVaultsQuery($userAddress: String) {
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			max_vault_liquidation_pct
 			decimals
 			liquidation_fee_pct
@@ -40,16 +38,6 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 					}
 				}
 
-				owner {
-					address
-				}
-				
-				marked_for_liquidation_level
-				loan_outstanding_total
-				loan_principal_total
-				internal_id
-				borrow_index
-
 				loan_token {
 					token {
 						token_address
@@ -61,6 +49,16 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 					reserve_ratio
 					min_repayment_amount
 				}
+
+				owner {
+					address
+				}
+				
+				marked_for_liquidation_level
+				loan_outstanding_total
+				loan_principal_total
+				internal_id
+				borrow_index
 			}
 		}
 	}
@@ -68,7 +66,7 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 
 export const GET_USER_ALL_VAULTS_QUERY = gql(`
 	query getUserAllVaultsQuery($userAddress: String) {
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			max_vault_liquidation_pct
 			decimals
 			liquidation_fee_pct
@@ -104,16 +102,6 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 					}
 				}
 
-				owner {
-					address
-				}
-				
-				marked_for_liquidation_level
-				loan_outstanding_total
-				loan_principal_total
-				internal_id
-				borrow_index
-
 				loan_token {
 					token {
 						token_address
@@ -125,6 +113,16 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 					reserve_ratio
 					min_repayment_amount
 				}
+
+				owner {
+					address
+				}
+				
+				marked_for_liquidation_level
+				loan_outstanding_total
+				loan_principal_total
+				internal_id
+				borrow_index
 			}
 		}
 	}
@@ -133,7 +131,7 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 // get all vaults
 export const GET_ALL_VAULTS_QUERY = gql(`
 	query getAllVaultsQuery {
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			max_vault_liquidation_pct
 			decimals
 			liquidation_fee_pct
@@ -169,16 +167,6 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 					}
 				}
 
-				owner {
-					address
-				}
-				
-				marked_for_liquidation_level
-				loan_outstanding_total
-				loan_principal_total
-				internal_id
-				borrow_index
-
 				loan_token {
 					token {
 						token_address
@@ -190,6 +178,16 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 					reserve_ratio
 					min_repayment_amount
 				}
+
+				owner {
+					address
+				}
+				
+				marked_for_liquidation_level
+				loan_outstanding_total
+				loan_principal_total
+				internal_id
+				borrow_index
 			}
 		}
 	}

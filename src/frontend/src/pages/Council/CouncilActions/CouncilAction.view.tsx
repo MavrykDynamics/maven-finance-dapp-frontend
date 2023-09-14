@@ -45,9 +45,7 @@ export const CouncilAction = (props: Props) => {
             <a
               className="icon-send"
               target="_blank"
-              href={`https://${
-                process.env.REACT_APP_BUILD_ENV === 'development' ? process.env.REACT_APP_NETWORK + '.' : ''
-              }tzkt.io/${councilId}/operations/`}
+              href={`${process.env.REACT_APP_TZKT_API}/${councilId}/operations/`}
               rel="noreferrer"
             >
               <Icon id="send" />

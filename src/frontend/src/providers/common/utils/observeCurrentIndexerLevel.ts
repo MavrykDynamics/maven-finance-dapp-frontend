@@ -20,7 +20,8 @@ const currentIndexerLevel: {
       this.listeners.delete(listenerId)
       // console.info(`listener with Id: ${listenerId} removed`)
     } else {
-      console.error(`listener with Id: ${listenerId} do not present in: ${JSON.stringify(this.listeners)}`)
+      if (process.env.REACT_APP_ENV === 'dev')
+        console.error(`listener with Id: ${listenerId} do not present in: ${JSON.stringify(this.listeners)}`)
       // throw new Error(`listener with Id: ${listenerId} do not present in: ${JSON.stringify(this.listeners)}`)
     }
   },

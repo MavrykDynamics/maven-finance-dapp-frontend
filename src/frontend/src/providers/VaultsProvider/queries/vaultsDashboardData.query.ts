@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 
 export const GET_VAULTS_DASHBOARD_DATA = gql(`
 	query dashboardVaultsTabData {
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			allVaultsCollaterals: collateral_tokens {
 				token {
 					token_address

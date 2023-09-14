@@ -46,12 +46,12 @@ export const getXTZBakers = async (): Promise<{
 
     const [{ data: daoBakerData }, { data: mavrykDynamicsBakerData }] = await Promise.all([
       api<BakeryDelegateDataType>(
-        `https://api.tzkt.io/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
+        `${process.env.REACT_APP_TZKT_API}/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
         {},
         bakeryDelegateDataSchema,
       ),
       api<BakeryDelegateDataType>(
-        `https://api.tzkt.io/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
+        `${process.env.REACT_APP_TZKT_API}/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
         {},
         bakeryDelegateDataSchema,
       ),
@@ -104,7 +104,7 @@ const GHOSTNET_BAKERS = [
     freespace: 115494,
   },
   {
-    logo: 'https://services.tzkt.io/v1/avatars/tz1eQmVDH438N6WN4CQSWJLVDFqpFfkZvt1R',
+    logo: `${process.env.REACT_APP_TZKT_SERVICE_API}/v1/avatars/tz1eQmVDH438N6WN4CQSWJLVDFqpFfkZvt1R`,
     name: 'Lil Shrek',
     address: 'tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
     fee: 0.14,
@@ -112,7 +112,7 @@ const GHOSTNET_BAKERS = [
     freespace: 115494,
   },
   {
-    logo: 'https://services.tzkt.io/v1/avatars/tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
+    logo: `${process.env.REACT_APP_TZKT_SERVICE_API}/v1/avatars/tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP`,
     name: "Shrek's donkey",
     address: 'tz1Qf1pSbJzMN4VtGFfVJRgbXhBksRv36TxW',
     fee: 0.14,
