@@ -106,17 +106,15 @@ export const AddNewCollateral = ({
         amount: '0',
         validationStatus: '',
       })
-      setSelectedCollateral('')
+      setSelectedCollateral(undefined)
     }
-  }, [setInputData, show])
+  }, [show])
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd create vault)
   const mappedAvaliableCollaterals = useMemo(() => {
     if (!data) return {}
 
     const { collateralData } = data
-
-    let firstNotDisabledCollateralAddress: string | null = null
 
     const reducedCollaterals = collateralTokens.reduce<
       Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
@@ -132,9 +130,6 @@ export const AddNewCollateral = ({
             selectedCollateral === collateralTokenAddress,
         )
 
-        if (!isCollateralDisabled && !firstNotDisabledCollateralAddress)
-          firstNotDisabledCollateralAddress = collateralTokenAddress
-
         acc[address] = {
           id: address,
           tokenAddress: address,
@@ -145,13 +140,16 @@ export const AddNewCollateral = ({
       return acc
     }, {})
 
-    if (!selectedCollateral && firstNotDisabledCollateralAddress) {
-      reducedCollaterals[firstNotDisabledCollateralAddress].disabled = true
-      setSelectedCollateral(firstNotDisabledCollateralAddress)
-    }
-
     return reducedCollaterals
   }, [collateralTokens, data, selectedCollateral, tokensMetadata])
+
+  useEffect(() => {
+    if (!selectedCollateral && show) {
+      setSelectedCollateral(
+        Object.values(mappedAvaliableCollaterals).find(({ disabled }) => disabled === false)?.tokenAddress,
+      )
+    }
+  }, [mappedAvaliableCollaterals, selectedCollateral])
 
   const collateralToken = getTokenDataByAddress({
     tokenAddress: selectedCollateral,
@@ -178,7 +176,7 @@ export const AddNewCollateral = ({
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
   const { futureCollateralRatio, futureCollateralBalance, futureBorrowCapacity } = useVaultFutureStats({
-    collateralTokenAddress: selectedCollateral,
+    collateralTokenAddress: selectedCollateral ?? '',
     vaultTokenAddress: borrowedTokenAddress,
     vaultCurrentCollateralBalance: collateralBalance,
     inputValue: inputAmount,
