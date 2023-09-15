@@ -52,7 +52,7 @@ export const useVaultFutureStats = ({
   const { bug } = useToasterContext()
 
   // if we pass default values, means we don't need to calcs anything
-  if (collateralTokenAddress === '' || vaultTokenAddress === '')
+  if (!collateralTokenAddress || !vaultTokenAddress)
     return {
       futureTotalOustanding: 0,
       futureCollateralRatio: 0,
