@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 import {
   STATUS_FLAG_UP,

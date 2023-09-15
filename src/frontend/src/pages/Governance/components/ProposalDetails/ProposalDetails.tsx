@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+
+// context
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
@@ -7,22 +15,25 @@ import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
 
-// helpers & actions
-import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
+// utils
+import { api } from 'utils/api/api'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { isAbortError } from 'errors/error'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { parseDate } from 'utils/time'
 import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import { dropProposal } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 
 // types
-import { State } from 'reducers'
-import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
+import { VoteStatistics } from 'app/App.components/VotingArea/helpers/voting'
 import { VotingTypes } from 'app/App.components/VotingArea/helpers/voting.const'
 
-// compoents
+// componets
 import Button from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -35,40 +46,35 @@ import { ProposalDetailsStyled } from './ProposalDetails.style'
 import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { api } from 'utils/api/api'
-import { isAbortError } from 'errors/error'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
-// providers
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useContractAction, HookContractActionArgs } from 'app/App.hooks/useContractAction'
+// consts
 import {
   DROP_PROPOSAL_ACTION,
   EXECUTE_PROPOSAL_ACTION,
+  GovPhases,
   PROCESS_PROPOSAL_ACTION,
   PROPOSAL_ROUND_VOTE_ACTION,
+  ProposalStatus,
   VOTING_ROUND_VOTE_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
+
+// actions
 import {
   executeProposal,
   processProposalPayment,
   proposalRoundVote,
   votingRoundVote,
 } from 'providers/ProposalsProvider/actions/proposals.actions'
-import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { dropProposal } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 
 export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRecordType; isHistory: boolean }) => {
   const dispatch = useDispatch()
 
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
-
-  const { governancePhase } = useSelector((state: State) => state.governance.config)
+  const {
+    config: { governancePhase },
+  } = useProposalsContext()
   const {
     preferences: { themeSelected },
     contractAddresses: { governanceAddress },
@@ -90,12 +96,6 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   const isPaymentProposal = proposal.anyCanPay && userAddress
 
   // Actions
-
-  // this callback is similar to all action down here
-  const dappActionCallback = useCallback(() => {
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
-
   /**
    * helper function for the current component actions
    * most of the actions have same parameters (governanceAddress, proposalId) and "if" conditions
@@ -127,9 +127,8 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     () => ({
       actionType: DROP_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, dropProposal),
-      dappActionCallback: dappActionCallback,
     }),
-    [invokeActionWithIdenticalParameters, dappActionCallback],
+    [invokeActionWithIdenticalParameters],
   )
 
   const { action: handleDeleteProposal } = useContractAction(dropProposalContractProps)
@@ -140,9 +139,8 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     () => ({
       actionType: EXECUTE_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, executeProposal),
-      dappActionCallback,
     }),
-    [invokeActionWithIdenticalParameters, dappActionCallback],
+    [invokeActionWithIdenticalParameters],
   )
 
   const { action: handleClickExecuteProposal } = useContractAction(executeProposalContractProps)
@@ -152,9 +150,8 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     () => ({
       actionType: PROCESS_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, processProposalPayment),
-      dappActionCallback,
     }),
-    [invokeActionWithIdenticalParameters, dappActionCallback],
+    [invokeActionWithIdenticalParameters],
   )
 
   const { action: handleClickProcessPayment } = useContractAction(processProposalPaymentContractProps)
@@ -164,9 +161,8 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     () => ({
       actionType: PROPOSAL_ROUND_VOTE_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, proposalRoundVote),
-      dappActionCallback,
     }),
-    [invokeActionWithIdenticalParameters, dappActionCallback],
+    [invokeActionWithIdenticalParameters],
   )
 
   const { action: handleProposalRoundVote } = useContractAction(proposaRoundVoteContractProps)
@@ -193,9 +189,8 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     () => ({
       actionType: VOTING_ROUND_VOTE_ACTION,
       actionFn: votingRoundVoteActionFn,
-      dappActionCallback,
     }),
-    [votingRoundVoteActionFn, dappActionCallback],
+    [votingRoundVoteActionFn],
   )
 
   const { actionWithArgs: handleVotingRoundVote } = useContractAction<VotingTypes>(handleVotingRoundContractProps)
@@ -243,8 +238,9 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
           console.error('getting timestamp by lvl error: ', e)
+          bug('Unexpected error happened occured, please reload the page')
         }
-        bug('Unexpected error happened occured, please reload the page')
+        return
       }
     })()
 
@@ -441,7 +437,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                 <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
                 <TableHeaderCell>Purpose</TableHeaderCell>
                 <TableHeaderCell>Amount</TableHeaderCell>
-                <TableHeaderCell className="right-border">Payment Type (XTZ/MVK)</TableHeaderCell>
+                <TableHeaderCell className="right-border">Payment Type</TableHeaderCell>
               </TableRow>
             </TableHeader>
             <TableBody>

@@ -120,8 +120,7 @@ export const HorizontalFarmCard = ({
           />
 
           <div className="links">
-            {/* TODO: get link for this */}
-            <a target="_blank" rel="noreferrer" href="https://mavryk.finance/">
+            <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farm.liquidityTokenAddress}`}>
               Get {tokenName} <Icon id="send" />
             </a>
             <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farm.address}`}>

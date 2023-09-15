@@ -67,6 +67,8 @@ import {
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { BecomeSatelliteBanners } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners'
 
+const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
+
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
     <div>
@@ -150,8 +152,6 @@ export const BecomeSatellite = () => {
 
     return () => setSatelliteAddressToSubsctibe(null)
   }, [userAddress])
-
-  const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
   const userMvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })

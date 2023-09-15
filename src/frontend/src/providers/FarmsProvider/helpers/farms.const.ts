@@ -23,8 +23,6 @@ export const DEFAULT_FARMS_POPUPS_STATE = {
 }
 
 // farms subs
-export const FARMS_ALL_DATA_SUB = 'FARMS_ALL_DATA_SUB'
-
 export const FARMS_ALL_LIVE_DATA_SUB = 'FARMS_ALL_LIVE_DATA_SUB'
 export const FARMS_LIVE_STAKED_DATA_SUB = 'FARMS__STAKED_LIVE_DATA_SUB'
 
@@ -49,7 +47,6 @@ export const DEFAULT_FARMS_CTX: NullableFarmCtxStateType = {
   liveStakedFarms: null,
   allLiveFarms: null,
   finishedStakedFarms: null,
-  allFarms: null,
 }
 
 export const EMPTY_FARMS_CTX: FarmCtxStateType = {
@@ -58,5 +55,4 @@ export const EMPTY_FARMS_CTX: FarmCtxStateType = {
   liveStakedFarms: [],
   allLiveFarms: [],
   finishedStakedFarms: [],
-  allFarms: [],
 }

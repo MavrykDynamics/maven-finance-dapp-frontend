@@ -53,6 +53,7 @@ type MostActiveFarmType = {
   isMFarm: boolean
   name: string
   farmToken: FarmsTokenMetadataType
+  totalLiquidityAmount: number
 } | null
 
 export const FarmsTab = () => {
@@ -91,13 +92,13 @@ export const FarmsTab = () => {
 
           if (acc.highestAPY <= farmApy) acc.highestAPY = farmApy
 
-          // TODO: ask Sam how to find out most active farm, by what fields?
-          if (!acc.mostActiveFarm) {
+          if (acc.mostActiveFarm?.totalLiquidityAmount ?? 0 <= totalLiquidityAmount) {
             acc.mostActiveFarm = {
               address,
               farmToken,
               isMFarm,
               name,
+              totalLiquidityAmount,
             }
           }
 

@@ -1,65 +1,133 @@
-import { DocumentNode, OperationVariables, TypedDocumentNode, gql as apolloGql } from '@apollo/client'
+import { gql } from 'utils/__generated__'
 
-import { FarmsQueryQuery } from 'utils/__generated__/graphql'
-import { FarmsProviderSubsType } from '../farms.provider.types'
+export const FARMS_LIVE_ALL = gql(`
+	query farmsAllLiveQuery {
+		farm: farm(order_by: {creation_timestamp: desc}, where: {open: {_eq: true}}) {
+			address
+			name
+			open
+			creation_timestamp
+			end_timestamp
 
-import {
-  FARMS_DATA_SUB,
-  FARMS_ALL_DATA_SUB,
-  FARMS_ALL_LIVE_DATA_SUB,
-  FARMS_LIVE_STAKED_DATA_SUB,
-  FARMS_ALL_FINISHED_DATA_SUB,
-  FARMS_FINISHED_STAKED_DATA_SUB,
-} from './../helpers/farms.const'
+			lp_token_balance
+			lp_token {
+				token_address
+			}
 
-const getFamrsFilter = (queryType: FarmsProviderSubsType[typeof FARMS_DATA_SUB]) => {
-  if (queryType === FARMS_ALL_DATA_SUB) return ``
+			withdraw_paused
+			claim_paused
+			deposit_paused
 
-  if (queryType === FARMS_ALL_LIVE_DATA_SUB) return `, where: {open: {_eq: true}}`
-  if (queryType === FARMS_LIVE_STAKED_DATA_SUB)
-    return `, where: {open: {_eq: true}, farm_accounts: {user: {address: {_eq: $userAddress}}}}`
+			is_m_farm
+			current_reward_per_block
 
-  if (queryType === FARMS_ALL_FINISHED_DATA_SUB) return `, where: {open: {_eq: false}}`
-  if (queryType === FARMS_FINISHED_STAKED_DATA_SUB)
-    return `, where: {open: {_eq: false}, farm_accounts: {user: {address: {_eq: $userAddress}}}}`
-
-  return ``
-}
-
-export const getFarms = (
-  queryType: FarmsProviderSubsType[typeof FARMS_DATA_SUB],
-): DocumentNode | TypedDocumentNode<FarmsQueryQuery, OperationVariables> => {
-  const farmsFilter = getFamrsFilter(queryType)
-
-  return apolloGql(`
-		query farmsQuery($userAddress: String) {
-			farm(order_by: {creation_timestamp: desc} ${farmsFilter}) {
-				address
-				name
-				open
-				creation_timestamp
-
-				lp_token_balance
-				lp_token {
-					token_address
+			farm_accounts {
+				user {
+					address
 				}
-
-				withdraw_paused
-				claim_paused
-				deposit_paused
-
-				is_m_farm
-				current_reward_per_block
-
-				farm_accounts {
-					user {
-						address
-					}
-					deposited_amount
-					unclaimed_rewards
-					participation_rewards_per_share
-				}
+				deposited_amount
+				unclaimed_rewards
+				participation_rewards_per_share
 			}
 		}
-	`)
-}
+	}	
+`)
+
+export const FARMS_LIVE_STAKED = gql(`
+	query farmsStakedLiveQuery($userAddress: String) {
+		farm: farm(order_by: {creation_timestamp: desc}, where: {open: {_eq: true}, farm_accounts: {user: {address: {_eq: $userAddress}}}}) {
+			address
+			name
+			open
+			creation_timestamp
+			end_timestamp
+
+			lp_token_balance
+			lp_token {
+				token_address
+			}
+
+			withdraw_paused
+			claim_paused
+			deposit_paused
+
+			is_m_farm
+			current_reward_per_block
+
+			farm_accounts {
+				user {
+					address
+				}
+				deposited_amount
+				unclaimed_rewards
+				participation_rewards_per_share
+			}
+		}
+	}	
+`)
+
+export const FARMS_FINISHED_ALL = gql(`
+	query farmsAllFinishedQuery {
+		farm: farm(order_by: {creation_timestamp: desc}, where: {open: {_eq: false}}) {
+			address
+			name
+			open
+			creation_timestamp
+			end_timestamp
+
+			lp_token_balance
+			lp_token {
+				token_address
+			}
+
+			withdraw_paused
+			claim_paused
+			deposit_paused
+
+			is_m_farm
+			current_reward_per_block
+
+			farm_accounts {
+				user {
+					address
+				}
+				deposited_amount
+				unclaimed_rewards
+				participation_rewards_per_share
+			}
+		}
+	}	
+`)
+
+export const FARMS_FINISHED_STAKED = gql(`
+	query farmsStakedFinishedQuery($userAddress: String) {
+		farm: farm(order_by: {creation_timestamp: desc}, where: {open: {_eq: false}, farm_accounts: {user: {address: {_eq: $userAddress}}}}) {
+			address
+			name
+			open
+			creation_timestamp
+			end_timestamp
+
+			lp_token_balance
+			lp_token {
+				token_address
+			}
+
+			withdraw_paused
+			claim_paused
+			deposit_paused
+
+			is_m_farm
+			current_reward_per_block
+
+			farm_accounts {
+				user {
+					address
+				}
+				deposited_amount
+				unclaimed_rewards
+				participation_rewards_per_share
+			}
+		}
+	}	
+`)

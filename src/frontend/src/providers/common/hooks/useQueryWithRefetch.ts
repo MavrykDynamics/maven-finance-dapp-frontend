@@ -85,14 +85,12 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         const newRefetchVariables =
           typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
 
-        console.log({
-          name,
-          refetchQueryVariables,
-          queryResult,
-          query,
-          vars: queryOptions.variables,
-          newRefetchVariables,
-        })
+        if (process.env.REACT_APP_ENV === 'dev')
+          console.log({
+            name,
+            query,
+            newRefetchVariables,
+          })
 
         // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
         if (typeof blocksDiff === 'number') {
@@ -104,7 +102,8 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
           if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
             const refetchData = await queryResult.refetch(newRefetchVariables)
-            console.log('%crefetch ', 'color: red', { refetchData, name })
+
+            if (process.env.REACT_APP_ENV === 'dev') console.log('%crefetch ', 'color: red', { refetchData, name })
 
             // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
             if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -117,7 +116,8 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         }
 
         const refetchData = await queryResult.refetch(newRefetchVariables)
-        console.log('%crefetch ', 'color: red', { refetchData, name })
+
+        if (process.env.REACT_APP_ENV === 'dev') console.log('%crefetch ', 'color: red', { refetchData, name })
 
         // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
         if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -132,11 +132,23 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
   // subscribe to indexer lvl change, and unsibscribe when component unmounts, or if it's provider when query becomes inactive
   useEffect(() => {
-    if (!userQuerySkip) refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+    // console.log({
+    //   userQuerySkip,
+    //   refetchId: refetchId.current,
+    // })
 
-    if (userQuerySkip && refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
+    if (!userQuerySkip && !refetchId.current) {
+      // console.log('mount', { listenerId })
+      refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+    }
+
+    if (userQuerySkip && refetchId.current) {
+      // console.log('unmount with userQuerySkip')
+      currentIndexerLevelProxy.removeListener(refetchId.current)
+    }
 
     return () => {
+      // console.log('unmount with return')
       if (refetchId.current && userQuerySkip) currentIndexerLevelProxy.removeListener(refetchId.current)
     }
   }, [refetchQuery, userQuerySkip])

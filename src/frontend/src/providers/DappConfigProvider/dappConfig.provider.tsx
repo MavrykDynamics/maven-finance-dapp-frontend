@@ -53,7 +53,7 @@ const DappConfigProvider = ({ children }: Props) => {
         const parsedLevelData = indexerLevelSchema.parse(data.dipdup_index)
 
         // TODO: remove log
-        console.log('new indexer level: ', parsedLevelData[0].level)
+        if (process.env.REACT_APP_ENV === 'dev') console.log('new indexer level: ', parsedLevelData[0].level)
 
         currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData[0].level
       } catch (e) {

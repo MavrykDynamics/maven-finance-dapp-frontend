@@ -9,7 +9,6 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import {
   DEFAULT_FARMS_ACTIVE_SUBS,
   DEFAULT_FARMS_CTX,
-  FARMS_ALL_DATA_SUB,
   FARMS_ALL_FINISHED_DATA_SUB,
   FARMS_ALL_LIVE_DATA_SUB,
   FARMS_DATA_SUB,
@@ -18,13 +17,17 @@ import {
 } from './helpers/farms.const'
 
 // utils
-import { getFarms } from './queries/farms.query'
+import { FARMS_FINISHED_ALL, FARMS_FINISHED_STAKED, FARMS_LIVE_ALL, FARMS_LIVE_STAKED } from './queries/farms.query'
 import { normalizeFarms } from './helpers/farms.normalizer'
 import { getFarmsReturnValue } from './helpers/farms.utils'
 
 // types
-import { FarmsProviderSubsType, NullableFarmCtxStateType, FarmsCtxType } from './farms.provider.types'
-import { FarmsQueryQuery } from 'utils/__generated__/graphql'
+import {
+  FarmsProviderSubsType,
+  NullableFarmCtxStateType,
+  FarmsCtxType,
+  FarmsIndexerDataType,
+} from './farms.provider.types'
 
 export const farmsContext = React.createContext<FarmsCtxType>(undefined!)
 
@@ -39,19 +42,42 @@ const FarmsProvider = ({ children }: Props) => {
   const [farmsCtxState, setFarmsCtxState] = useState<NullableFarmCtxStateType>(DEFAULT_FARMS_CTX)
   const [activeSubs, setActiveSubs] = useState<FarmsProviderSubsType>(DEFAULT_FARMS_ACTIVE_SUBS)
 
-  useQueryWithRefetch(getFarms(activeSubs[FARMS_DATA_SUB]), {
-    skip: !activeSubs[FARMS_DATA_SUB],
-    variables: { userAddress: userAddress ?? '' },
-    onCompleted: (data) => {
-      updateFarms(data)
-    },
-    onError: (error) => handleApolloError(error, 'getFarms'),
+  /**
+   * farms queries:
+   * 1. FARMS_LIVE_ALL -> all farms that are live
+   * 2. FARMS_FINISHED_ALL -> all farms that are finished
+   * 3. FARMS_FINISHED_STAKED- > all farms that are finished and user is depositor in it
+   * 4. FARMS_LIVE_STAKED -> all farms that are live and user is depositor in it
+   */
+  useQueryWithRefetch(FARMS_LIVE_ALL, {
+    skip: activeSubs[FARMS_DATA_SUB] !== FARMS_ALL_LIVE_DATA_SUB,
+    onCompleted: (data) => updateFarms(data),
+    onError: (error) => handleApolloError(error, 'FARMS_LIVE_ALL'),
   })
 
-  const updateFarms = (indexerData: FarmsQueryQuery) => {
-    const normalizedFarms = normalizeFarms(indexerData.farm)
+  useQueryWithRefetch(FARMS_FINISHED_ALL, {
+    skip: activeSubs[FARMS_DATA_SUB] !== FARMS_ALL_FINISHED_DATA_SUB,
+    onCompleted: (data) => updateFarms(data),
+    onError: (error) => handleApolloError(error, 'FARMS_FINISHED_ALL'),
+  })
 
-    const isAllFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_DATA_SUB
+  useQueryWithRefetch(FARMS_FINISHED_STAKED, {
+    skip: activeSubs[FARMS_DATA_SUB] !== FARMS_FINISHED_STAKED_DATA_SUB,
+    variables: { userAddress: userAddress ?? '' },
+    onCompleted: (data) => updateFarms(data),
+    onError: (error) => handleApolloError(error, 'FARMS_FINISHED_STAKED'),
+  })
+
+  useQueryWithRefetch(FARMS_LIVE_STAKED, {
+    skip: activeSubs[FARMS_DATA_SUB] !== FARMS_LIVE_STAKED_DATA_SUB,
+    variables: { userAddress: userAddress ?? '' },
+    onCompleted: (data) => updateFarms(data),
+    onError: (error) => handleApolloError(error, 'FARMS_LIVE_STAKED'),
+  })
+
+  const updateFarms = (indexerData: FarmsIndexerDataType) => {
+    const normalizedFarms = normalizeFarms(indexerData.farm, userAddress)
+
     const isAllLiveFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_LIVE_DATA_SUB
     const isLiveStakedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_LIVE_STAKED_DATA_SUB
     const isAllFinishedFarmsSubActive = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_FINISHED_DATA_SUB
@@ -60,25 +86,19 @@ const FarmsProvider = ({ children }: Props) => {
     setFarmsCtxState((prev) => ({
       ...prev,
       farmsMapper: { ...prev.farmsMapper, ...normalizedFarms.farmsMapper },
-      allFarms: isAllFarmsSubActive
-        ? normalizedFarms.allFarms
-        : [...(prev.allFarms ?? []), ...normalizedFarms.allFarms],
-      allLiveFarms:
-        isAllFarmsSubActive || isAllLiveFarmsSubActive
-          ? normalizedFarms.allLiveFarms
-          : [...(prev.allLiveFarms ?? []), ...normalizedFarms.allLiveFarms],
+      allLiveFarms: isAllLiveFarmsSubActive
+        ? normalizedFarms.allLiveFarms
+        : [...(prev.allLiveFarms ?? []), ...normalizedFarms.allLiveFarms],
       liveStakedFarms:
-        isAllFarmsSubActive || isLiveStakedFarmsSubActive || isAllLiveFarmsSubActive
+        isLiveStakedFarmsSubActive || isAllLiveFarmsSubActive
           ? normalizedFarms.liveStakedFarms
           : [...(prev.liveStakedFarms ?? []), ...normalizedFarms.liveStakedFarms],
-      allFinishedFarms:
-        isAllFarmsSubActive || isAllFinishedFarmsSubActive
-          ? normalizedFarms.allFinishedFarms
-          : [...(prev.allFinishedFarms ?? []), ...normalizedFarms.allFinishedFarms],
-      finishedStakedFarms:
-        isAllFarmsSubActive || isFinishedStakedFarmsSubActive
-          ? normalizedFarms.finishedStakedFarms
-          : [...(prev.finishedStakedFarms ?? []), ...normalizedFarms.finishedStakedFarms],
+      allFinishedFarms: isAllFinishedFarmsSubActive
+        ? normalizedFarms.allFinishedFarms
+        : [...(prev.allFinishedFarms ?? []), ...normalizedFarms.allFinishedFarms],
+      finishedStakedFarms: isFinishedStakedFarmsSubActive
+        ? normalizedFarms.finishedStakedFarms
+        : [...(prev.finishedStakedFarms ?? []), ...normalizedFarms.finishedStakedFarms],
     }))
   }
 

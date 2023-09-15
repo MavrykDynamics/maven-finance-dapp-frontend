@@ -65,7 +65,6 @@ export const Farms = () => {
     changeFarmsSubscriptionList,
     isLoading: isFarmsLoading,
     farmsMapper,
-    allFarms,
     allLiveFarms,
     liveStakedFarms,
     allFinishedFarms,
@@ -209,7 +208,7 @@ export const Farms = () => {
               <ClockLoader width={150} height={150} />
               <div className="text">Loading farms</div>
             </DataLoaderWrapper>
-          ) : allFarms.length ? (
+          ) : farmsToUse.length ? (
             <>
               <section className={classNames({ isVerticalView })}>
                 {paginatedFarms.map((farmAddress) => {

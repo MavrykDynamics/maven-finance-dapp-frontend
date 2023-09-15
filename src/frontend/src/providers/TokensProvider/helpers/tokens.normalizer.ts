@@ -104,16 +104,20 @@ const parseFarmLiquidityToken = (lpTokenMetadata: any) => {
   const liquidityPairTokenParsed = farmLiquidityPairTokenMetadataSchema.safeParse(lpTokenMetadata)
   const liquidityTokenParsed = farmLiquidityTokenMetadataSchema.safeParse(lpTokenMetadata)
 
+  console.log({ liquidityPairTokenParsed, liquidityTokenParsed })
+
   if (liquidityPairTokenParsed.success)
     return {
       tokenAddress: liquidityPairTokenParsed.data.liquidityPairToken.tokenAddress[0],
-      symbol: liquidityPairTokenParsed.data.liquidityPairToken.symbol[0],
+      // symbol: liquidityPairTokenParsed.data.liquidityPairToken.symbol[0],
+      symbol: liquidityPairTokenParsed.data.liquidityPairToken.origin[0],
     }
 
   if (liquidityTokenParsed.success)
     return {
       tokenAddress: liquidityTokenParsed.data.liquidityToken.tokenAddress[0],
-      symbol: liquidityTokenParsed.data.liquidityToken.symbol[0],
+      // symbol: liquidityTokenParsed.data.liquidityToken.symbol[0],
+      symbol: liquidityTokenParsed.data.liquidityToken.origin[0],
     }
 
   throw new Error('parsing lp token metadata error')
@@ -125,7 +129,7 @@ const parseFarmLiquidityToken = (lpTokenMetadata: any) => {
  */
 const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMetadataType | null => {
   try {
-    const { token_id, token_standard, farms_lp_tokens, metadata } = tokenFromGql
+    const { token_id, token_standard, farms_lp_tokens, metadata, token_address } = tokenFromGql
 
     const farmLpToken = farms_lp_tokens[0]
     if (!farmLpToken) return null
@@ -144,7 +148,9 @@ const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMeta
 
     const tokenMetadata: TokenMetadataType = {
       id: token_id,
-      address: tokenAddress,
+      // on indexer v1 farm token address fas adress in metadata, TODO: clarify it with tristan
+      // address: tokenAddress,
+      address: token_address,
       symbol,
       name: symbol,
       type: tokenType,
@@ -203,6 +209,8 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         // if token has farms_lp_tokens data, normalize it
         if (tokenFromGql.farms_lp_tokens.length) {
           const farmLpTokenMetadata = handleFarmLpToken(tokenFromGql)
+
+          console.log({ farmLpTokenMetadata })
 
           if (farmLpTokenMetadata) {
             acc.tokensMetadata[farmLpTokenMetadata.address] = farmLpTokenMetadata
@@ -327,7 +335,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
 
         acc.tokensMetadata[token_address] = { ...acc.tokensMetadata[token_address], ...tokenMetadata }
       } catch (e) {
-        console.error('normalizeTokensMetadata error: ', { e })
+        if (process.env.REACT_APP_ENV === 'dev') console.error('normalizeTokensMetadata error: ', { e })
       } finally {
         return acc
       }

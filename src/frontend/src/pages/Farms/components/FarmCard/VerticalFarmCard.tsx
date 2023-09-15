@@ -31,7 +31,6 @@ type VerticalFarmCardPropsType = {
   isCardOpened: boolean
   harvestRewards: () => void
   expandCallback: () => void
-  isDoubleRewards?: boolean
 }
 
 export const VerticalFarmCard = ({
@@ -40,7 +39,6 @@ export const VerticalFarmCard = ({
   isCardOpened,
   harvestRewards,
   expandCallback,
-  isDoubleRewards = true,
 }: VerticalFarmCardPropsType) => {
   const { userAddress } = useUserContext()
   const { availableFarmRewards } = useUserRewards()
@@ -61,7 +59,7 @@ export const VerticalFarmCard = ({
 
   return (
     <VerticalFarmCardStyled className={classNames({ isCardOpened })}>
-      {isDoubleRewards ? (
+      {farm.isMFarm ? (
         <div className="double-rewards-tag">
           <Icon id={'loans'} /> Double Rewards
         </div>
@@ -123,8 +121,7 @@ export const VerticalFarmCard = ({
 
       <ExpandSimple className="vertical-expand" onClick={expandCallback} isExpanded={isCardOpened}>
         <div className="links">
-          {/* TODO: get link for this */}
-          <a target="_blank" rel="noreferrer" href="https://mavryk.finance/">
+          <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farm.liquidityTokenAddress}`}>
             Get {tokenName} <Icon id="send" />
           </a>
           <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farm.address}`}>

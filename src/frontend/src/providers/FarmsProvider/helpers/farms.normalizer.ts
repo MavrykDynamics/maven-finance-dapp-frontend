@@ -1,18 +1,18 @@
 import dayjs from 'dayjs'
 
-import { FarmsQueryQuery } from 'utils/__generated__/graphql'
-import { FarmCtxStateType, FarmDepositorType } from '../farms.provider.types'
+import { FarmCtxStateType, FarmDepositorType, FarmsIndexerDataType } from '../farms.provider.types'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 
-export const normalizeFarm = (indexerFarm: FarmsQueryQuery['farm'][number]) => {
+export const normalizeFarm = (indexerFarm: FarmsIndexerDataType['farm'][number]) => {
   return {
     // farm metadata
     address: indexerFarm.address,
     name: indexerFarm.name,
     open: indexerFarm.open,
     createdTime: indexerFarm.creation_timestamp,
+    endsInTime: indexerFarm.end_timestamp ?? null,
 
     // farm liquidity token
     liquidityTokenBalance: indexerFarm.lp_token_balance,
@@ -41,21 +41,18 @@ export const normalizeFarm = (indexerFarm: FarmsQueryQuery['farm'][number]) => {
 
     // TODO: add address here, no data in indexer for now
     creatorAddress: 'tz1Y2tUUooW6QT6pQCeqz9ep9wCkX5bnKeTs',
-    // TODO: add ends in time here, no data in indexer for now
-    endsInTime: dayjs().add(10, 'day').toISOString(),
   }
 }
 
-export const normalizeFarms = (indexerFarms: FarmsQueryQuery['farm']) => {
+export const normalizeFarms = (indexerFarms: FarmsIndexerDataType['farm'], userAddress: string | null) => {
   return indexerFarms.reduce<FarmCtxStateType>(
     (acc, farm) => {
       const normalizedFarm = normalizeFarm(farm)
-      const { address, open, liquidityTokenBalance } = normalizedFarm
+      const { address, open, farmDepositors } = normalizedFarm
 
-      const isFarmStaked = liquidityTokenBalance > 0
+      const isFarmStaked = userAddress ? farmDepositors[userAddress] : false
 
       acc.farmsMapper[address] = normalizedFarm
-      acc.allFarms.push(address)
 
       if (open === true) {
         acc.allLiveFarms.push(address)
@@ -77,7 +74,6 @@ export const normalizeFarms = (indexerFarms: FarmsQueryQuery['farm']) => {
     },
     {
       farmsMapper: {},
-      allFarms: [],
       allLiveFarms: [],
       liveStakedFarms: [],
       allFinishedFarms: [],

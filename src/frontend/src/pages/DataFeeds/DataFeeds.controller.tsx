@@ -133,7 +133,11 @@ export const DataFeeds = () => {
             <>
               <div className="list-wrapper">
                 {paginatedFeeds.map((feedAddress) => (
-                  <DataFeedCard feed={feedsMapper[feedAddress]} oracleNodes={totalOracleNetworks} key={feedAddress} />
+                  <DataFeedCard
+                    feed={feedsMapper[feedAddress]}
+                    oracleNodes={feedsMapper[feedAddress].oraclesAmount}
+                    key={feedAddress}
+                  />
                 ))}
               </div>
 

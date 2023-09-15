@@ -5,7 +5,8 @@ export const tokenGqlSchema = z.object({
   token_id: z.number(),
   metadata: z.any(),
   token_address: z.string(),
-  token_standard: z.string(),
+  // For api v2 discuss with back-end
+  token_standard: z.string().or(z.null()),
 
   lending_controller_collateral_tokens: z
     .tuple([
@@ -45,7 +46,7 @@ export const tokenGqlSchema = z.object({
     .or(z.tuple([])),
 
   farms_lp_tokens: z
-    .tuple([
+    .array(
       z.object({
         name: z.string(),
         metadata: z.any(),
@@ -62,7 +63,7 @@ export const tokenGqlSchema = z.object({
           })
           .or(z.null()),
       }),
-    ])
+    )
     .or(z.tuple([])),
 })
 export const tokensGqlSchema = z.array(tokenGqlSchema)
@@ -88,14 +89,18 @@ export const mTokenMetadataSchema = z.object({
 // farm tokens schema
 export const farmLiquidityPairTokenMetadataSchema = z.object({
   liquidityPairToken: z.object({
-    symbol: z.tuple([z.string()]),
+    // TODO: clarify symbol for token
+    // symbol: z.tuple([z.string()]),
+    origin: z.tuple([z.string()]),
     tokenAddress: z.tuple([z.string()]),
   }),
 })
 
 export const farmLiquidityTokenMetadataSchema = z.object({
   liquidityToken: z.object({
-    symbol: z.tuple([z.string()]),
+    // TODO: clarify symbol for token
+    // symbol: z.tuple([z.string()]),
+    origin: z.tuple([z.string()]),
     tokenAddress: z.tuple([z.string()]),
   }),
 })

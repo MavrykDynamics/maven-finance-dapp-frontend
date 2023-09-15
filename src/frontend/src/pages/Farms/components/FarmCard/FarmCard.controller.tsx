@@ -53,6 +53,7 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
   const { action: handleHarvestRewards } = useContractAction(harvestRewardsContractActionProps)
 
   const farmToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: farm?.liquidityTokenAddress })
+  console.log({ farmToken, farm, tokensMetadata, liquidityTokenAddress: farm?.liquidityTokenAddress })
   if (!farmToken || !checkWhetherTokenIsFarmToken(farmToken)) return null
 
   if (isVertical) {
