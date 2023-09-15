@@ -1,4 +1,4 @@
-import { ProposalStatusType } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalStatusType } from 'providers/ProposalsProvider/helpers/proposals.types'
 
 export const STATUS_FLAG_UP = 'STATUS_FLAG_UP'
 export const STATUS_FLAG_DOWN = 'STATUS_FLAG_DOWN'

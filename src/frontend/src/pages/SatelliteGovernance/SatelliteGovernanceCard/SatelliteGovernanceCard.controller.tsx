@@ -7,7 +7,6 @@ import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
 import Expand from '../../../app/App.components/Expand/Expand.view'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
@@ -31,6 +30,7 @@ import { DROP_ACTION, VOTE_FOR_ACTION } from 'providers/SatellitesGovernanceProv
 import { PRECISION_NUMBER } from 'utils/constants'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // hooks

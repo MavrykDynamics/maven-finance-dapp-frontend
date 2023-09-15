@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Redirect, useLocation } from 'react-router'
+import QueryString from 'qs'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -41,7 +42,6 @@ import { useDappTvl } from 'providers/DappConfigProvider/hooks/useDappTvl'
 
 // utils
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
-import QueryString from 'qs'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {

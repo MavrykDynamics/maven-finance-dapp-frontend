@@ -23,6 +23,7 @@ import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider
 import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
+import ProposalsProvider from 'providers/ProposalsProvider/proposals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
@@ -37,6 +38,7 @@ import { FullScreenLoadingApp } from 'app/App.style'
 import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
+// styles
 import { GlobalStyle } from './styles'
 import themeColors from 'styles/colors'
 import './styles/fonts.css'
@@ -95,19 +97,21 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
       ) : (
         <ContractStatusesProvider>
           <SatelliteGovernanceProvider>
-            <DoormanProvider>
-              <SatellitesProvider>
-                <LoansProvider>
-                  <VaultsProvider>
-                    <FinancialRequestsProvider>
-                      <TreasuryProvider>
-                        <VestingProvider>{children}</VestingProvider>
-                      </TreasuryProvider>
-                    </FinancialRequestsProvider>
-                  </VaultsProvider>
-                </LoansProvider>
-              </SatellitesProvider>
-            </DoormanProvider>
+            <ProposalsProvider>
+              <DoormanProvider>
+                <SatellitesProvider>
+                  <LoansProvider>
+                    <VaultsProvider>
+                      <FinancialRequestsProvider>
+                        <TreasuryProvider>
+                          <VestingProvider>{children}</VestingProvider>
+                        </TreasuryProvider>
+                      </FinancialRequestsProvider>
+                    </VaultsProvider>
+                  </LoansProvider>
+                </SatellitesProvider>
+              </DoormanProvider>
+            </ProposalsProvider>
           </SatelliteGovernanceProvider>
         </ContractStatusesProvider>
       )}

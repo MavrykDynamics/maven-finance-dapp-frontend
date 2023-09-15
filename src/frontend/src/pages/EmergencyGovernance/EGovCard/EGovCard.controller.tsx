@@ -2,18 +2,24 @@ import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // helpers
-import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { dropEmergencyGovernanceProposal, voteEmergencyGovernanceProposal } from '../EmergencyGovernance.actions'
-import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { parseDate } from 'utils/time'
 
+// consts
+import { ACTION_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
+import colors from 'styles/colors'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
+
+// types
 import type { State } from 'reducers'
 import type { EmergergencyGovernanceItem } from '../../../utils/TypesAndInterfaces/EmergencyGovernance'
 
 // view
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
-import { ProposalStatus } from '../../../utils/TypesAndInterfaces/Governance'
 import { Button } from 'app/App.components/Button/Button.controller'
 import Expand from 'app/App.components/Expand/Expand.view'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
@@ -22,6 +28,7 @@ import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // styles
 import { EGovActiveCardStyled } from './EGovCard.style'
@@ -29,10 +36,6 @@ import {
   SatelliteGovernanceCardDropDown,
   SatelliteGovernanceCardTitleTextGroup,
 } from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import colors from 'styles/colors'
 
 type EGovCardProps = {
   emergencyGovernance: EmergergencyGovernanceItem

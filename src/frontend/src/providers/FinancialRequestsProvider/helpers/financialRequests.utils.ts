@@ -1,12 +1,12 @@
 import { FinRequestVoteType, FinancialRequestRecord } from './financialRequests.types'
 import { GetFinRequestsStorageQuery } from 'utils/__generated__/graphql'
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
   FinancialRequestsStateType,
   NullableFinancialRequestsContextStateType,
 } from '../financialRequests.types'
+
 import {
   ALL_FIN_REQUESTS_SUB,
   EMPTY_FINANCIAL_REQUESTS_CTX,
@@ -14,9 +14,11 @@ import {
   ONGOING_FIN_REQUESTS_SUB,
   PAST_FIN_REQUESTS_SUB,
 } from './financialRequests.consts'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
+
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { finRequestVote } from './financialRequests.schema'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { finRequestVote } from './financialRequests.schema'
 
 /**
  *

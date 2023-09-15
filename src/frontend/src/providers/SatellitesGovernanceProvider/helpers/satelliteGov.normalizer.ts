@@ -1,4 +1,4 @@
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { GetGovernanceSatelliteActionsDataQuery, GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
 import { SatelliteGovActionStatusType } from './satellitesGov.types'
 
