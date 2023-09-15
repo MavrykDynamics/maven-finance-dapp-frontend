@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 
 export const GOVERNANCE_CONFIG_QUERY = gql(`
 	query governanceConfigQuery {
-		governance {
+		governance: governance {
 			address
 			current_round
 			success_reward

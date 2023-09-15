@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 
 export const PAST_PROPOSALS_QUERY = gql(`
 	query pastProposalsDataQuery {
-		governance_proposal(order_by: {start_datetime: desc}, where: {_or: [{executed: {_eq: false}}, {current_round_proposal: {_eq: false}}, {status: {_eq: 1}}]}) {
+		governance_proposal: governance_proposal(order_by: {start_datetime: desc}, where: {_or: [{executed: {_eq: false}}, {current_round_proposal: {_eq: false}}, {status: {_eq: 1}}]}) {
 			current_cycle_end_level
 			cycle
 			success_reward
@@ -69,7 +69,7 @@ export const PAST_PROPOSALS_QUERY = gql(`
 
 export const CURRENT_PROPOSALS_QUERY = gql(`
 		query proposalsDataQuery($timelockProposalId: bigint) {
-			governance_proposal(order_by: {start_datetime: desc}, where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]}) {
+			governance_proposal: governance_proposal(order_by: {start_datetime: desc}, where: {_or: [{current_round_proposal: {_eq: true}}, {_and: [{id: {_eq: $timelockProposalId}}, {_or: [{executed: {_eq: false}}, {payment_processed: {_eq: false}}]}]}]}) {
 				current_cycle_end_level
 				cycle
 				success_reward
@@ -136,7 +136,7 @@ export const CURRENT_PROPOSALS_QUERY = gql(`
 
 export const PROPOSALS_SUBMISSION_QUERY = gql(`
 	query submissionProposalsDataquery($userAddress: String) {
-		governance_proposal(order_by: {start_datetime: desc}, where: {proposer: {address: {_eq: $userAddress}}, current_round_proposal: {_eq: true}, status: {_eq: 0}}, limit: 2) {
+		governance_proposal: governance_proposal(order_by: {start_datetime: desc}, where: {proposer: {address: {_eq: $userAddress}}, current_round_proposal: {_eq: true}, status: {_eq: 0}}, limit: 2) {
 			current_cycle_end_level
 			cycle
 			success_reward
