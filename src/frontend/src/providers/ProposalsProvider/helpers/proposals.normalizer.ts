@@ -136,30 +136,26 @@ export const normalizeProposals = ({
       // Add id of proposal to be executed proposal
       if (isProposalRound && !executed && timelockProposalId === id && !isPastProposal) {
         acc.waitingProposalsIdsToBeExecuted.push(id)
-        return acc
       }
 
       // Add id of proposal to be paid proposal
       if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
         acc.waitingProposalsIdsToBePaid.push(id)
-        return acc
       }
 
       // Add id of past proposal
       if (isPastProposal) {
         acc.pastProposalsIds.push(id)
-        return acc
       }
 
       // Add id of current round proposal
       if (currentRoundProposal) {
         acc.currentRoundProposalsIds.push(id)
-        return acc
       }
 
+      // Add id of user created live proposal
       if (currentRoundProposal && proposerId === userAddress) {
         acc.submissionProposalsIds.push(id)
-        return acc
       }
 
       return acc

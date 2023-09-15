@@ -25,12 +25,6 @@ export const getProposalStatus = (
   cycleHighestVotedProposalId: number | null,
   timelockProposalId: number | null,
 ): ProposalStatusType => {
-  console.log({
-    proposal,
-    governancePhase,
-    cycleHighestVotedProposalId,
-    timelockProposalId,
-  })
   // if proposal is executed give it's executed status
   if (proposal.executed) return ProposalStatus.EXECUTED
 
