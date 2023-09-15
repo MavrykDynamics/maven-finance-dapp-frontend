@@ -132,11 +132,23 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
   // subscribe to indexer lvl change, and unsibscribe when component unmounts, or if it's provider when query becomes inactive
   useEffect(() => {
-    if (!userQuerySkip) refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+    // console.log({
+    //   userQuerySkip,
+    //   refetchId: refetchId.current,
+    // })
 
-    if (userQuerySkip && refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
+    if (!userQuerySkip && !refetchId.current) {
+      // console.log('mount', { listenerId })
+      refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+    }
+
+    if (userQuerySkip && refetchId.current) {
+      // console.log('unmount with userQuerySkip')
+      currentIndexerLevelProxy.removeListener(refetchId.current)
+    }
 
     return () => {
+      // console.log('unmount with return')
       if (refetchId.current && userQuerySkip) currentIndexerLevelProxy.removeListener(refetchId.current)
     }
   }, [refetchQuery, userQuerySkip])

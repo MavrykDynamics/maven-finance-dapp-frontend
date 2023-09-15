@@ -37,7 +37,7 @@ export const FEEDS_QUERY = gql(`
       alpha_pct_per_thousand
 
       # feed oracles amount
-      oracles_aggregate {
+      oracles_aggregate(where: {user: {satellites: {currently_registered: {_eq: true}}}}) {
         aggregate {
           count
         }
