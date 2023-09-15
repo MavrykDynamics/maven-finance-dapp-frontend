@@ -21,7 +21,6 @@ export function getSatelliteDataQuery(
   const filters = [filteredByUserTable, activeSatellitesFilter].filter(Boolean).join(',')
 
   return apolloGql`query satelliteDataQuery($userAddress: String!) {
-
     satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}) {
 			nodes {
 				user {
@@ -30,7 +29,7 @@ export function getSatelliteDataQuery(
 			}
 		}
 
-    satellite(where: {registration_timestamp: {_is_null: false}, ${filters}}, order_by: {currently_registered: desc}) {
+    satellite: satellite(where: {registration_timestamp: {_is_null: false}, ${filters}}, order_by: {currently_registered: desc}) {
       description
       fee
       image
@@ -177,7 +176,7 @@ export function getSatelliteDataQuery(
 
 export const CHECK_WHETHER_SATELLITE_EXISTS = gql(`
   query checkWitherSatelliteExists($userAddress: String = "") {
-    satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}) {
+    satellite: satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}) {
       user {
         address
       }

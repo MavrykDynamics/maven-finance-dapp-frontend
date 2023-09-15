@@ -222,7 +222,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
 
         acc.tokensMetadata[token_address] = { ...acc.tokensMetadata[token_address], ...tokenMetadata }
       } catch (e) {
-        console.error('normalizeTokensMetadata error: ', { e })
+        if (process.env.REACT_APP_ENV === 'dev') console.error('normalizeTokensMetadata error: ', { e })
       } finally {
         return acc
       }

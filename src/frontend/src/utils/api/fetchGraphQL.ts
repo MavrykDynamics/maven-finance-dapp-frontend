@@ -5,8 +5,7 @@ import { DIP_DUP_HEAD_QUERY, DIP_DUP_HEAD_QUERY_NAME } from 'gql/queries/dipdup'
 import { DipDupGraphQLResponse } from 'types/dipDup.type'
 
 export const fetchGraphQL = (() => {
-  const { REACT_APP_BACKUP_GRAPHQL_API, REACT_APP_GRAPHQL_API } = process.env
-  let gqlAPINetwork = REACT_APP_GRAPHQL_API ?? ''
+  const { REACT_APP_GRAPHQL_API = '' } = process.env
 
   return async (
     operationsDoc: string,
@@ -15,7 +14,7 @@ export const fetchGraphQL = (() => {
     apiError = false,
   ) => {
     try {
-      const { data: dipdDupData } = await api<DipDupGraphQLResponse>(gqlAPINetwork, {
+      const { data: dipdDupData } = await api<DipDupGraphQLResponse>(REACT_APP_GRAPHQL_API, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
@@ -27,7 +26,7 @@ export const fetchGraphQL = (() => {
         }),
       })
 
-      const { data, code, status } = await api<any>(gqlAPINetwork, {
+      const { data, code, status } = await api<any>(REACT_APP_GRAPHQL_API, {
         method: 'POST',
         headers: {
           'Content-type': 'application/json',
@@ -44,7 +43,6 @@ export const fetchGraphQL = (() => {
         !apiError &&
         (dipdDupData.data.dipdup_head_status[0].status.toLowerCase() !== 'ok' || (code === 500 && status === 'ok'))
       ) {
-        gqlAPINetwork = REACT_APP_BACKUP_GRAPHQL_API ?? ''
         await fetchGraphQL(operationsDoc, operationName, variables, true)
       }
 

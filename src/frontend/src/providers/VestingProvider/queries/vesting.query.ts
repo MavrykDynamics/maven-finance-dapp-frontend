@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 
 export const GET_VESTING_STORAGE_QUERY = gql(`
   query getVestingQuery {
-    vesting {
+    vesting: vesting {
       address
       admin
       governance_id

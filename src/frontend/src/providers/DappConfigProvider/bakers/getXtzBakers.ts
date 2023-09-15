@@ -33,6 +33,7 @@ const getFreeSpace = (data: BakeryDelegateDataType) => {
   return Number(convertNumberForClient({ number: freeSpace, grade: XTZ_DECIMALS }).toFixed(2))
 }
 
+// TODO: check why ghostnet tzkt not working for delegates endpoint
 export const getXTZBakers = async (): Promise<{
   dao: XtzBakerType
   mavrykDynamics: XtzBakerType
@@ -104,7 +105,7 @@ const GHOSTNET_BAKERS = [
     freespace: 115494,
   },
   {
-    logo: 'https://services.tzkt.io/v1/avatars/tz1eQmVDH438N6WN4CQSWJLVDFqpFfkZvt1R',
+    logo: `${process.env.REACT_APP_TZKT_SERVICE_API}/v1/avatars/tz1eQmVDH438N6WN4CQSWJLVDFqpFfkZvt1R`,
     name: 'Lil Shrek',
     address: 'tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
     fee: 0.14,
@@ -112,7 +113,7 @@ const GHOSTNET_BAKERS = [
     freespace: 115494,
   },
   {
-    logo: 'https://services.tzkt.io/v1/avatars/tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP',
+    logo: `${process.env.REACT_APP_TZKT_SERVICE_API}/v1/avatars/tz1RuHDSj9P7mNNhfKxsyLGRDahTX5QD1DdP`,
     name: "Shrek's donkey",
     address: 'tz1Qf1pSbJzMN4VtGFfVJRgbXhBksRv36TxW',
     fee: 0.14,

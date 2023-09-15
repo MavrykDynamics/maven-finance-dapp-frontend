@@ -69,7 +69,7 @@ const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataQueryQuery['sa
 
   const latestObservation = aggregator_oracles.reduce(
     (acc, { init_epoch, init_round, observations: [lastFeedObservation] }) => {
-      const { timestamp, epoch, round } = lastFeedObservation
+      const { timestamp, epoch, round } = lastFeedObservation ?? {}
 
       if (dayjs(timestamp).unix() > acc.latestTimestamp) {
         acc.init_epoch = init_epoch

@@ -4,7 +4,8 @@ export const tokenGqlSchema = z.object({
   token_id: z.number(),
   metadata: z.any(),
   token_address: z.string(),
-  token_standard: z.string(),
+  // For api v2 discuss with back-end
+  token_standard: z.string().or(z.null()),
 
   lending_controller_collateral_tokens: z
     .tuple([
