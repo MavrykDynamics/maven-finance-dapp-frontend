@@ -1,6 +1,6 @@
 import React from 'react'
 
-// context
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 

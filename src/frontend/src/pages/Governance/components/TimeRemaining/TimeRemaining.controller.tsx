@@ -41,13 +41,12 @@ export default function TimeRemaining() {
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
-
   const { userAddress } = useUserContext()
   const {
     contractAddresses: { governanceAddress },
   } = useDappConfigContext()
-
   const { bug } = useToasterContext()
+
   const [timerDeadline, setTimerDeadline] = useState(0)
   const [showModal, setShowModal] = useState(false)
   const [estimatedValues] = useState({ fee: 0, cost: 0 })

@@ -5,6 +5,7 @@ import { State } from '../../reducers'
 import { getEmergencyGovernanceStorage } from './EmergencyGovernance.actions'
 import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
 
+// view
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { EmergencyGovernanceView } from './EmergencyGovernance.view'
@@ -12,16 +13,16 @@ import { EmergencyGovProposalModal } from './EmergencyGovProposalModal/Emergency
 import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
-// providers
+// hooks
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
+
+// consts
 import {
   DEFAULT_PROPOSALS_ACTIVE_SUBS,
   GOVERNANCE_CONFIG_SUB,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
-import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
-
-// consts
 import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   CONTRACT_STATUSES_CONFIG_SUB,

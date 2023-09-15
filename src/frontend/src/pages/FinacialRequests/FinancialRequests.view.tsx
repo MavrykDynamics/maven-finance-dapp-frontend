@@ -32,8 +32,6 @@ import { CommaNumber } from '../../app/App.components/CommaNumber/CommaNumber.co
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { FRSListItem } from './FRSListItem.view'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
-
-// styles
 import {
   FinancialRequestsRightContainer,
   FinancialRequestsStyled,

@@ -118,7 +118,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         // TODO: mb show bug in a future
         if (dayjs(votingEndTimestamp).diff() <= 0) {
           setIsFormDisabled(true)
-          console.error('current round is over, move round, please')
+          console.error('current round is over, move to next round, please')
           return
         }
 
@@ -282,15 +282,13 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         throw new Error(newProposalData.error.message)
       }
 
-      console.log('getNewProposalId result', { newProposalData, proposalState })
+      // changeActiveProposal
       if (newProposalData.data.governance_proposal.length) {
         const { id } = newProposalData.data.governance_proposal[0]
         changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
 
         if (proposalState[DEFAULT_PROPOSAL.id]) proposalState[DEFAULT_PROPOSAL.id] = DEFAULT_PROPOSAL
       }
-
-      // changeActiveProposal
     } catch (e) {
       bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
     }
@@ -339,12 +337,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: SUBMIT_PROPOSAL_ACTION,
       actionFn: submitActionFn,
-      dappActionCallback: () => {
-        console.log('dappActionCallback submit')
-        getNewProposalId()
-      },
+      dappActionCallback: getNewProposalId,
     }),
-    [submitActionFn],
+    [getNewProposalId, submitActionFn],
   )
 
   const { action: handleProposalSubmit } = useContractAction(submitContractProps)
@@ -473,11 +468,11 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     !isBytesValid ||
     !isPaymentsValid ||
     genProposalDisabledState ||
-    (currentProposal?.id === DEFAULT_PROPOSAL.id ? !isStageOneDataValid : currentProposal?.locked || !proposalHasChange)
+    (currentProposal.id === DEFAULT_PROPOSAL.id ? !isStageOneDataValid : currentProposal.locked || !proposalHasChange)
 
   const isSubmitDisabled =
     !isProposalSubmitted ||
-    currentProposal?.locked ||
+    currentProposal.locked ||
     proposalHasChange ||
     genProposalDisabledState ||
     currentProposal?.proposalData?.filter(({ title, encoded_code }) => title || encoded_code).length < 1
@@ -505,7 +500,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
         <SubmitProposalHeader>
           <H2Title>Step {activeTab}</H2Title>
-          <StatusFlag text={currentProposal?.status} status={currentProposal?.status} />
+          <StatusFlag text={currentProposal.status} status={currentProposal.status} />
         </SubmitProposalHeader>
 
         {activeTab === 1 && (

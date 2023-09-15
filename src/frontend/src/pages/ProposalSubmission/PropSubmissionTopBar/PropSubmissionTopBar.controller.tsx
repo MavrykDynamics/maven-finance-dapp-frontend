@@ -1,12 +1,15 @@
 import { useMemo } from 'react'
+
+// hooks
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
+// view
 import TimeRemaining from '../../Governance/components/TimeRemaining/TimeRemaining.controller'
 import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-
-import { getSeparateSnakeCase } from '../../../utils/parse'
-
 import { CurrentPhaseContainer, PropSubmissionTopBarStyled } from './PropSubmissionTopBar.style'
+
+// utils
+import { getSeparateSnakeCase } from '../../../utils/parse'
 
 export type PropSubmissionTopBarProps = {
   valueCallback: (val: number) => void

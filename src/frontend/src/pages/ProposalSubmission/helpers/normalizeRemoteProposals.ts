@@ -1,7 +1,6 @@
 import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { ProposalValidityObj, SubmittedProposalsMapper } from '../ProposalSubmission.types'
 import { DEFAULT_PROPOSAL, DEFAULT_PROPOSAL_VALIDATION } from './proposalSubmission.const'
-import { ProposalsContext } from 'providers/ProposalsProvider/proposals.provider.types'
 
 export const normalizeProposalsForSubmitProposal = ({
   submissionProposalsIds,
