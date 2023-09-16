@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "ESNext"
-    ],
+    "lib": ["dom", "dom.iterable", "ESNext"],
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "react-jsx",
@@ -32,14 +28,6 @@
     "esModuleInterop": true,
     "baseUrl": "src"
   },
-  "include": [
-    "src",
-    "**/*.spec.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "./node_modules",
-    "./node_modules/*",
-    "./node_modules/@types/node/index.d.ts"
-  ]
+  "include": ["src", "**/*.spec.ts"],
+  "exclude": ["node_modules", "./node_modules", "./node_modules/*", "./node_modules/@types/node/index.d.ts"]
 }

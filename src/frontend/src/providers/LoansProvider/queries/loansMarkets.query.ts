@@ -5,6 +5,7 @@ import { gql } from 'utils/__generated__'
 
 import { GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
 
+// TODO: check refetch work
 export function getLoansMarketsQuery({
   marketTokenAddress,
 }: {
@@ -22,7 +23,7 @@ export function getLoansMarketsQuery({
 				}
 			}
 
-      lending_controller(where: {mock_time: {_eq: false}}) {
+      lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 				collateral_ratio
 				interest_treasury_share
 				interest_rate_decimals
@@ -73,7 +74,7 @@ export function getLoansMarketsQuery({
 
 export const GET_LOANS_CONFIG = gql(`
 	query getLoansConfig($currentTimestamp: timestamptz) {
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			minimum_loan_fee_pct
 			collateral_ratio
 		}
@@ -82,7 +83,7 @@ export const GET_LOANS_CONFIG = gql(`
 
 export const CHECK_WHETHER_MARKET_EXISTS = gql(`
 	query checkWitherMarketExists($marketAddress: String = "") {
-		lending_controller(where: {mock_time: {_eq: false}}) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			loan_tokens(where: {token: {token_address: {_eq: $marketAddress}}}) {
 				token {
 					token_address

@@ -1,19 +1,27 @@
+import { useLocation } from 'react-router-dom'
+import { useMemo } from 'react'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+
+// view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { ProposalListContainer, ProposalListItem, ProposalItemLeftSide } from './Proposals.style'
+
+// helpers
 import {
   getPageNumber,
   calculateSlicePositions,
   LIST_NAMES_MAPPER,
   HISTORY_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
-import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { useLocation } from 'react-router-dom'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { State } from '../../../../reducers'
-import { GovPhases, ProposalRecordType } from '../../../../utils/TypesAndInterfaces/Governance'
-import { ProposalListContainer, ProposalListItem, ProposalItemLeftSide } from './Proposals.style'
+
+// consts
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
+
+// types
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 
 type ProposalsProps = {
   proposalsList: Array<number>
@@ -37,7 +45,7 @@ export const Proposals = ({
   const {
     proposalsMapper,
     config: { governancePhase },
-  } = useSelector((state: State) => state.governance)
+  } = useProposalsContext()
 
   const currentPage = getPageNumber(search, listName)
   const paginatedItemsList = useMemo(() => {

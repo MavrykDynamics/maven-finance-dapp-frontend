@@ -19,11 +19,11 @@ import {
 
 export const SATELLITE_GOVERNANCE_CONFIG_QUERY = gql(`
 query GetGovernanceSatelliteConfig {
-  governance_satellite {
+  governance_satellite: governance_satellite {
     address
     admin
-    gov_sat_approval_percentage
-    gov_sat_duration_in_days
+    approval_percentage
+    sat_action_duration_in_days
     governance {
       address
     }
@@ -54,6 +54,7 @@ const getGovernanceActionFilters = (userAddress: string | null, filterType: Sate
   })
 }
 
+// TODO: check refetch work & check tab change new query provoke
 export const getGovernanceActionsQuery = (
   userAddress: string | null,
   filterType: SatelliteGovActionSubsType | null,
@@ -62,7 +63,7 @@ export const getGovernanceActionsQuery = (
 
   return apolloGql(`
   query GetGovernanceSatelliteActionsData($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z", $userAddress: String = "") {
-    governance_satellite_action(order_by: {expiration_datetime: desc}, where: {${filterQuery}}) {
+    governance_satellite_action: governance_satellite_action(order_by: {expiration_datetime: desc}, where: {${filterQuery}}) {
       executed
       expiration_datetime
       execution_datetime

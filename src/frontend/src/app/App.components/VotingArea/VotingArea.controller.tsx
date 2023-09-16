@@ -14,7 +14,7 @@ import { VotingBar } from './VotingBar.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import ConnectWalletBtn from '../ConnectWallet/ConnectWalletBtn'
 import Button from '../Button/NewButton'
-import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { Info } from '../Info/Info.view'
 import { INFO_DEFAULT } from '../Info/info.constants'
 import { NEWLY_REGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
@@ -123,6 +123,7 @@ export const VotingProposalsArea = ({
   if (!selectedProposal.locked) return null
 
   if (!isVoteActive) {
+    // if we have voting round votes
     if (
       selectedProposal.upvoteMvkTotal > 0 ||
       selectedProposal.abstainMvkTotal > 0 ||
@@ -137,6 +138,7 @@ export const VotingProposalsArea = ({
       )
     }
 
+    // if only proposal round votes
     if (selectedProposal.passVoteMvkTotal > 0) {
       return (
         <VotingAreaStyled>

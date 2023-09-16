@@ -1,9 +1,11 @@
 import {
   DROP_PROPOSAL_ACTION,
   EXECUTE_PROPOSAL_ACTION,
+  GovPhases,
   LOCK_PROPOSAL_ACTION,
   PROCESS_PROPOSAL_ACTION,
   PROPOSAL_ROUND_VOTE_ACTION,
+  ProposalStatus,
   START_NEXT_ROUND_ACTION,
   START_PROPOSAL_ROUND_ACTION,
   START_VOTING_ROUND_ACTION,
@@ -11,6 +13,8 @@ import {
   UPDATE_PROPOSAL_DATA_ACTION,
   VOTING_ROUND_VOTE_ACTION,
 } from './proposals.const'
+
+import { normalizeProposal } from './proposals.normalizer'
 
 export type ProposalActionsTypes =
   | typeof PROPOSAL_ROUND_VOTE_ACTION
@@ -24,3 +28,11 @@ export type ProposalActionsTypes =
   | typeof START_PROPOSAL_ROUND_ACTION
   | typeof START_VOTING_ROUND_ACTION
   | typeof START_NEXT_ROUND_ACTION
+
+// Proposal types
+export type ProposalRecordType = ReturnType<typeof normalizeProposal>
+
+export type ProposalStatusType = (typeof ProposalStatus)[keyof typeof ProposalStatus]
+
+// Governance Proposals config types
+export type GovernancePhaseType = (typeof GovPhases)[keyof typeof GovPhases]

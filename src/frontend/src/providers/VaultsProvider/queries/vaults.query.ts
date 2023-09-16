@@ -1,114 +1,8 @@
-import { VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './../vaults.provider.consts'
-import { DocumentNode } from 'graphql'
-import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
-
-import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
-import { VaultsSubsRecordType } from '../vaults.provider.types'
 import { gql } from 'utils/__generated__'
 
-const VAULT_OPEN_FILTER = `open: {_eq: true}`
-
-// filter for user market specific vaults TODO: add if need
-// vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, owner: {address: {_eq: $userAddress}}, loan_token: {token: {token_address: {_eq: $marketAddress}}}})
-const getUserVaultsQueryFilters = (
-  filter: VaultsSubsRecordType[typeof VAULTS_DATA],
-  userAddress: string | null,
-): string => {
-  if (userAddress) {
-    // get all vaults where current user is owner
-    if (filter === VAULTS_USER_ALL) {
-      return `${VAULT_OPEN_FILTER} , owner: {address: {_eq: $userAddress}}`
-    }
-
-    // get all vaults where current user is depositor only, not owner
-    if (filter === VAULTS_USER_DEPOSITOR) {
-      return `${VAULT_OPEN_FILTER}, vault: {_or: [{allowance: {_eq: "0"}}, {_and: {depositors: {depositor: {address: {_eq: $userAddress}}}, allowance: {_eq: "1"}}}]}, owner: {address: {_neq: $userAddress}}`
-    }
-  }
-
-  // need to have userAddress variable used, othervise apolo query error can occur
-  return `${VAULT_OPEN_FILTER} , owner: {address: {_neq: $userAddress}}`
-}
-
-export function getUserVaultsQuery({
-  userAddress,
-  filters,
-}: {
-  userAddress: string | null
-  filters: VaultsSubsRecordType[typeof VAULTS_DATA]
-}): DocumentNode | TypedDocumentNode<GetUserVaultsQueryQuery, OperationVariables> {
-  const vaultsFilters = getUserVaultsQueryFilters(filters, userAddress)
-
-  return apolloGql(`
-		query getUserVaultsQuery($userAddress: String) {
-			lending_controller(where: {mock_time: {_eq: false}}) {
-				max_vault_liquidation_pct
-				decimals
-				liquidation_fee_pct
-				liquidation_ratio
-				interest_rate_decimals
-				admin_liquidation_fee_pct
-				liquidation_delay_in_minutes
-
-				vaults(order_by: {vault: {creation_timestamp: desc}}, where: {${vaultsFilters}}) {
-
-					# collaterals of the vault
-					collateral_balances {
-						balance
-						collateral_token {
-							token_name
-							token {
-								token_address
-							}
-						}
-					}
-
-					vault {
-						creation_timestamp
-						address
-						name
-						allowance
-						baker {
-							address
-						}
-						depositors {
-							depositor {
-								address
-							}
-						}
-					}
-
-					owner {
-						address
-					}
-					
-					marked_for_liquidation_level
-					loan_outstanding_total
-					loan_principal_total
-					internal_id
-					borrow_index
-
-					loan_token {
-						token {
-							token_address
-						}
-						current_interest_rate
-						borrow_index
-						total_remaining
-						token_pool_total
-						reserve_ratio
-						min_repayment_amount
-					}
-				}
-			}
-		}
-`)
-}
-
-// get all vaults
-export const GET_ALL_VAULTS_QUERY = gql(`
-	query getAllVaultsQuery {
-		lending_controller(where: {mock_time: {_eq: false}}) {
+export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
+	query getUserDepositorAllVaultsQuery($userAddress: String) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
 			max_vault_liquidation_pct
 			decimals
 			liquidation_fee_pct
@@ -117,8 +11,7 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 			admin_liquidation_fee_pct
 			liquidation_delay_in_minutes
 
-			vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
-
+			vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, vault: {_or: [{allowance: {_eq: "0"}}, {_and: {depositors: {depositor: {address: {_eq: $userAddress}}}, allowance: {_eq: "1"}}}]}, owner: {address: {_neq: $userAddress}}}) {
 				# collaterals of the vault
 				collateral_balances {
 					balance
@@ -129,7 +22,7 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 						}
 					}
 				}
-			
+
 				vault {
 					creation_timestamp
 					address
@@ -144,17 +37,7 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 						}
 					}
 				}
-			
-				owner {
-					address
-				}
-				
-				marked_for_liquidation_level
-				loan_outstanding_total
-				loan_principal_total
-				internal_id
-				borrow_index
-			
+
 				loan_token {
 					token {
 						token_address
@@ -166,6 +49,145 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 					reserve_ratio
 					min_repayment_amount
 				}
+
+				owner {
+					address
+				}
+				
+				marked_for_liquidation_level
+				loan_outstanding_total
+				loan_principal_total
+				internal_id
+				borrow_index
+			}
+		}
+	}
+`)
+
+export const GET_USER_ALL_VAULTS_QUERY = gql(`
+	query getUserAllVaultsQuery($userAddress: String) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+			max_vault_liquidation_pct
+			decimals
+			liquidation_fee_pct
+			liquidation_ratio
+			interest_rate_decimals
+			admin_liquidation_fee_pct
+			liquidation_delay_in_minutes
+
+			vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, owner: {address: {_eq: $userAddress}}}) {
+				# collaterals of the vault
+				collateral_balances {
+					balance
+					collateral_token {
+						token_name
+						token {
+							token_address
+						}
+					}
+				}
+
+				vault {
+					creation_timestamp
+					address
+					name
+					allowance
+					baker {
+						address
+					}
+					depositors {
+						depositor {
+							address
+						}
+					}
+				}
+
+				loan_token {
+					token {
+						token_address
+					}
+					current_interest_rate
+					borrow_index
+					total_remaining
+					token_pool_total
+					reserve_ratio
+					min_repayment_amount
+				}
+
+				owner {
+					address
+				}
+				
+				marked_for_liquidation_level
+				loan_outstanding_total
+				loan_principal_total
+				internal_id
+				borrow_index
+			}
+		}
+	}
+`)
+
+// get all vaults
+export const GET_ALL_VAULTS_QUERY = gql(`
+	query getAllVaultsQuery {
+		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+			max_vault_liquidation_pct
+			decimals
+			liquidation_fee_pct
+			liquidation_ratio
+			interest_rate_decimals
+			admin_liquidation_fee_pct
+			liquidation_delay_in_minutes
+
+			vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}}) {
+				# collaterals of the vault
+				collateral_balances {
+					balance
+					collateral_token {
+						token_name
+						token {
+							token_address
+						}
+					}
+				}
+
+				vault {
+					creation_timestamp
+					address
+					name
+					allowance
+					baker {
+						address
+					}
+					depositors {
+						depositor {
+							address
+						}
+					}
+				}
+
+				loan_token {
+					token {
+						token_address
+					}
+					current_interest_rate
+					borrow_index
+					total_remaining
+					token_pool_total
+					reserve_ratio
+					min_repayment_amount
+				}
+
+				owner {
+					address
+				}
+				
+				marked_for_liquidation_level
+				loan_outstanding_total
+				loan_principal_total
+				internal_id
+				borrow_index
 			}
 		}
 	}

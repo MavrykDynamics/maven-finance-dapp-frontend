@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__/gql'
 
 export const USER_DATA_QUERY = gql(`
   query getUserData($userAddress: String = "") {
-    mavryk_user(where: {address: {_eq: $userAddress}}) {
+    mavryk_user: mavryk_user(where: {address: {_eq: $userAddress}}) {
       address
       smvk_balance
       mvk_balance
@@ -78,11 +78,9 @@ export const USER_DATA_QUERY = gql(`
   }
 `)
 
-// period filter
-// stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}, timestamp: {_gte: $historyPeriod}}, order_by: {timestamp: desc}) {
 export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
   query getUserActionsHistoryData($userAddress: String, $offset: Int = 0, $limit: Int = 8) {
-    mavryk_user(where: {address: {_eq: $userAddress}}) {
+    mavryk_user: mavryk_user(where: {address: {_eq: $userAddress}}) {
       # actions history
       stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
         type
@@ -105,14 +103,13 @@ export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
   }
 `)
 
-// TODO: use this query on certain pages to reduce size of the USER_DATA_QUERY query
 export const USER_REWARDS_DATA_QUERY = gql(`
   query getUserRewardsData($userAddress: String = "") {
-    governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}, payments_aggregate: {count: {predicate: {_gt: 0}}}}) {
+    governance_proposal: governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}, payments_aggregate: {count: {predicate: {_gt: 0}}}}) {
       id
     }
 
-    mavryk_user(where: {address: {_eq: $userAddress}}) {
+    mavryk_user: mavryk_user(where: {address: {_eq: $userAddress}}) {
       smvk_balance
 
       # user doorman rewards, satellite claimed rewards, doorman claimed rewards

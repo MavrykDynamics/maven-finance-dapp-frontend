@@ -1,4 +1,4 @@
-const isObject = (item: unknown) => item && typeof item === 'object' && !Array.isArray(item)
+export const isObject = (item: unknown) => item && typeof item === 'object' && !Array.isArray(item)
 
 /**
  *

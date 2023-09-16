@@ -8,17 +8,17 @@ import {
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 
+// types
+import { ApolloContext } from './apollo.provider.types'
+
 // consts
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
 import { httpLink, retryLink, splitLink, wsLink } from './apollo.config'
 import { FatalError, isAbortError } from 'errors/error'
 
 // hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-
-// types
-import { ApolloContext } from './apollo.provider.types'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // context
 const apolloContext = createContext<ApolloContext>(undefined!)
@@ -48,7 +48,6 @@ export const ApolloProvider = ({ children }: Props) => {
           if (typeof window !== 'undefined' && !window.navigator.onLine) {
             bug('Sorry, your browser is offline.')
           } else {
-            console.log('Some other network error occurred.')
             if (hasNetworkError) fatal(new FatalError('Server is disabled.'))
 
             setHasNetworkError(true)

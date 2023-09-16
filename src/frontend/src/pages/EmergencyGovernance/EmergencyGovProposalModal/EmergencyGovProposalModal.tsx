@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // providers
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 import { State } from 'reducers'
@@ -32,7 +33,9 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
       emergencyGovernance: { proposalTitleMaxLength, proposalDescMaxLength },
     },
   } = useDappConfigContext()
-  const { fee } = useSelector((state: State) => state.governance.config)
+  const {
+    config: { fee },
+  } = useProposalsContext()
   const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [proposalData, setProposalData] = useState<{

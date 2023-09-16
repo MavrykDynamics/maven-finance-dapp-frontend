@@ -1,5 +1,5 @@
 import { usePrevious } from 'react-use'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -7,21 +7,26 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
 import {
   VaultsContext,
   NullableVaultsCtxState,
   VaultsSubsRecordType,
   VaultsDashboardDataType,
+  VaultsIndexerDataType,
 } from './vaults.provider.types'
 
 // consts
-import { GET_ALL_VAULTS_QUERY, getUserVaultsQuery } from './queries/vaults.query'
+import {
+  GET_ALL_VAULTS_QUERY,
+  GET_USER_ALL_VAULTS_QUERY,
+  GET_USER_DEPOSITOR_ALL_VAULTS_QUERY,
+} from './queries/vaults.query'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   DEFAULT_VAULTS_CONTEXT,
   VAULTS_ALL,
   VAULTS_DATA,
+  VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
 } from './vaults.provider.consts'
 
@@ -55,40 +60,39 @@ export const VaultsProvider = ({ children }: Props) => {
     }
   }, [userAddress])
 
-  useQueryWithRefetch(getUserVaultsQuery({ userAddress, filters: activeSubs[VAULTS_DATA] }), {
-    skip:
-      activeSubs[VAULTS_DATA] !== 'userIsOwner' &&
-      activeSubs[VAULTS_DATA] !== 'userIsDepositor' &&
-      Boolean(userAddress),
+  useQueryWithRefetch(GET_USER_DEPOSITOR_ALL_VAULTS_QUERY, {
+    skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     variables: {
       userAddress: userAddress ?? '',
     },
-    onCompleted: (data) => {
-      updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
+    onCompleted: (data) => updateVaultsData(data),
+    onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
+  })
+
+  useQueryWithRefetch(GET_USER_ALL_VAULTS_QUERY, {
+    skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
+    variables: {
+      userAddress: userAddress ?? '',
     },
-    onError: (error) => handleApolloError(error, 'getUserVaultsQuery'),
+    onCompleted: (data) => updateVaultsData(data),
+    onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
-    skip: activeSubs[VAULTS_DATA] !== 'allVaults',
-    onCompleted: (data) => {
-      updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
-    },
+    skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
+    onCompleted: (data) => updateVaultsData(data),
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
 
-  const updateVaultsData = (
-    indexerData: GetUserVaultsQueryQuery,
-    userAddress: string | null,
-    filterType: VaultsSubsRecordType[typeof VAULTS_DATA],
-  ) => {
+  const updateVaultsData = (indexerData: VaultsIndexerDataType) => {
     const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
       indexerData,
       userAddress,
     })
 
-    const isAllVaultsQuery = filterType === VAULTS_ALL
-    const isPermissionedVaultsQuery = filterType === VAULTS_USER_DEPOSITOR
+    const isAllVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_ALL
+    const isPermissionedVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_USER_DEPOSITOR
+    const isMyVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_USER_ALL
 
     setVaultsCtxState((prev) => ({
       ...prev,
@@ -96,7 +100,7 @@ export const VaultsProvider = ({ children }: Props) => {
       allVaultsIds: isAllVaultsQuery ? allVaultsIds : prev.allVaultsIds,
       permissionedVaultsIds:
         isAllVaultsQuery || isPermissionedVaultsQuery ? permissionedVaultsIds : prev.permissionedVaultsIds,
-      myVaultsIds: isPermissionedVaultsQuery ? prev.myVaultsIds : myVaultsIds,
+      myVaultsIds: isAllVaultsQuery || isMyVaultsQuery ? myVaultsIds : prev.myVaultsIds,
     }))
   }
 

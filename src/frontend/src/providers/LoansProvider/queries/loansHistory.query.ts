@@ -7,7 +7,7 @@ import { GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
 query getLending24hDiff($currentTimestamp: timestamptz) {
-  lending_controller(where: {mock_time: {_eq: false}}) {
+  lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
     history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, timestamp: {_gte: $currentTimestamp}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
       type
       amount
@@ -33,7 +33,7 @@ query getLending24hDiff($currentTimestamp: timestamptz) {
 // Loans history data
 export const GET_LOANS_HISTORY_DATA = gql(`
 query getLoansHistoryData {
-  lending_controller(where: {mock_time: {_eq: false}}) {
+  lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
     history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
       type
       amount
@@ -59,6 +59,8 @@ query getLoansHistoryData {
  * @param userAddress - get transctions of specific user
  * @param vaultAddress - get transactions on specific vault only
  * @param typeFilter - get specific operation types only
+ *
+ * TODO: check refetch logic
  */
 export function getLoansTransactionsHistory({
   userAddress,
@@ -77,7 +79,7 @@ export function getLoansTransactionsHistory({
 
   return apolloGql(`
     query getLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
-      lending_controller(where: {mock_time: {_eq: false}}) {
+      lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
           type
           amount

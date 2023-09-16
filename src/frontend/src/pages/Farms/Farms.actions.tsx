@@ -46,7 +46,9 @@ export const getFarmStorage =
           const urls = farmLPTokensInfo.reduce<string[]>(
             (acc, item: { lpTokenInfo: { liquidityPairToken: { tokenAddress: string[] } } }) => {
               if (item?.lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]) {
-                acc.push(`https://api.tzkt.io/v1/contracts/${item?.lpTokenInfo.liquidityPairToken.tokenAddress[0]}`)
+                acc.push(
+                  `${process.env.REACT_APP_TZKT_API}/v1/contracts/${item?.lpTokenInfo.liquidityPairToken.tokenAddress[0]}`,
+                )
               }
               return acc
             },

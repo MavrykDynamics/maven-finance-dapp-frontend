@@ -1,4 +1,5 @@
-import type { GovPhases, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { VotingTypes } from './voting.const'
 
 export type VoteStatistics = {
@@ -37,7 +38,7 @@ export type VotingProposalsProps = {
   isAbleToMakeProposalRoundVote?: boolean
   handleProposalVote: () => void
   vote?: ProposalRecordType['votes'][number]
-  govPhase: `${GovPhases}`
+  govPhase: `${keyof typeof GovPhases}`
 }
 
 export type VotingBarProps = {

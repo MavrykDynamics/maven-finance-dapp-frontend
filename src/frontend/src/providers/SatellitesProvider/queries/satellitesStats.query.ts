@@ -38,7 +38,7 @@ query SatellitesStatsQuery{
   }
 
   # total delegated to satellites
-  satellite_aggregate(where: {currently_registered: {_eq: true}, status: {_eq: "0"}}) {
+  satellite_aggregate: satellite_aggregate(where: {currently_registered: {_eq: true}, status: {_eq: "0"}}) {
     nodes {
       user {
         smvk_balance,

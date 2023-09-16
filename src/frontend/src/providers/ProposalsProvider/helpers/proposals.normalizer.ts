@@ -1,19 +1,18 @@
-import { State } from 'reducers'
-import { calcWithoutPrecision, calcWithoutMu, convertNumberForClient } from 'utils/calcFunctions'
-import {
-  GovernanceProposalGraphQL,
-  GovernanceGraphQL,
-  GovPhases,
-  ProposalStatus,
-} from 'utils/TypesAndInterfaces/Governance'
-import { getProposalStatus } from '../Governance.helpers'
-import { MVK_DECIMALS } from 'utils/constants'
+import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
 import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { ProposalIndexerType, ProposalsContext } from '../proposals.provider.types'
+import { ProposalRecordType } from './proposals.types'
+
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getProposalStatus } from './proposals.utils'
+
 import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
+import { MVK_DECIMALS } from 'utils/constants'
+import { GovPhases, ProposalStatus } from './proposals.const'
 
 export const normalizeProposal = (
-  item: GovernanceProposalGraphQL,
-  { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: State['governance']['config'],
+  item: ProposalsDataQueryQuery['governance_proposal'][number],
+  { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: ProposalsContext['config'],
 ) => {
   const proposalConvertedStatus = getProposalStatus(
     item,
@@ -62,6 +61,8 @@ export const normalizeProposal = (
     downvoteMvkTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVK_DECIMALS }),
     abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVK_DECIMALS }),
     quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVK_DECIMALS }),
+    minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
+
     votes: item.votes.reduce<
       Array<{ vote: SatelliteVoteType; address: string; name: string; avatar: string; round: number }>
     >((acc, vote) => {
@@ -80,7 +81,6 @@ export const normalizeProposal = (
         return acc
       }
     }, []),
-    minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
 
     proposalData: item.data.map((byte, idx) => ({
       ...byte,
@@ -102,21 +102,33 @@ export const normalizeProposal = (
   }
 }
 
-export const normalizeGovernanceProposals = (
-  proposals: Array<GovernanceProposalGraphQL>,
-  governanceConfig: State['governance']['config'],
-): Omit<Omit<State['governance'], 'isLoaded'>, 'config'> => {
-  const { governancePhase, timelockProposalId } = governanceConfig
-  const isProposalRound = governancePhase === GovPhases.PROPOSAL
+export const normalizeProposals = ({
+  indexerData,
+  userAddress,
+  governanceConfig,
+}: {
+  indexerData: ProposalIndexerType
+  userAddress: string | null
+  governanceConfig: ProposalsContext['config']
+}) => {
+  return indexerData.governance_proposal.reduce<{
+    currentRoundProposalsIds: Array<number>
+    pastProposalsIds: Array<number>
+    allProposalsIds: Array<number>
+    submissionProposalsIds: Array<number>
+    waitingProposalsIdsToBeExecuted: Array<number>
+    waitingProposalsIdsToBePaid: Array<number>
+    proposalsMapper: Record<number, ProposalRecordType>
+  }>(
+    (acc, indexerProposal) => {
+      const { governancePhase, timelockProposalId } = governanceConfig
+      const isProposalRound = governancePhase === GovPhases.PROPOSAL
 
-  return proposals.reduce<Omit<Omit<State['governance'], 'isLoaded'>, 'config'>>(
-    (acc, proposalFromGQL) => {
-      const normalizedProposal = normalizeProposal(proposalFromGQL, governanceConfig)
+      const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
+      const { id, executed, status, currentRoundProposal, paymentProcessed, proposerId } = normalizedProposal
 
-      const { id, executed, status, currentRoundProposal, paymentProcessed } = normalizedProposal
-
-      acc.proposalsMapper[id] = normalizedProposal
-      acc.allProposalsIds.push(id)
+      acc.allProposalsIds.push(normalizedProposal.id)
+      acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
 
       const isPastProposal =
         status === ProposalStatus.DROPPED || status === ProposalStatus.EXECUTED || status === ProposalStatus.DEFEATED
@@ -124,25 +136,26 @@ export const normalizeGovernanceProposals = (
       // Add id of proposal to be executed proposal
       if (isProposalRound && !executed && timelockProposalId === id && !isPastProposal) {
         acc.waitingProposalsIdsToBeExecuted.push(id)
-        return acc
       }
 
       // Add id of proposal to be paid proposal
       if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
         acc.waitingProposalsIdsToBePaid.push(id)
-        return acc
       }
 
       // Add id of past proposal
       if (isPastProposal) {
         acc.pastProposalsIds.push(id)
-        return acc
       }
 
       // Add id of current round proposal
       if (currentRoundProposal) {
         acc.currentRoundProposalsIds.push(id)
-        return acc
+      }
+
+      // Add id of user created live proposal
+      if (currentRoundProposal && proposerId === userAddress) {
+        acc.submissionProposalsIds.push(id)
       }
 
       return acc
@@ -150,27 +163,11 @@ export const normalizeGovernanceProposals = (
     {
       currentRoundProposalsIds: [],
       pastProposalsIds: [],
+      allProposalsIds: [],
+      submissionProposalsIds: [],
       waitingProposalsIdsToBeExecuted: [],
       waitingProposalsIdsToBePaid: [],
-      allProposalsIds: [],
       proposalsMapper: {},
     },
   )
-}
-
-const calcGovPhase = (round: number) =>
-  round === 0 ? GovPhases.PROPOSAL : round === 1 ? GovPhases.VOTING : GovPhases.TIMELOCK
-
-export const normalizeGovernanceConfig = (currentGovernance: GovernanceGraphQL): State['governance']['config'] => {
-  return {
-    address: currentGovernance.address,
-    fee: calcWithoutMu(currentGovernance.proposal_submission_fee_mutez),
-    successReward: calcWithoutPrecision(currentGovernance.success_reward),
-    currentRoundEndLevel: currentGovernance.current_round_end_level ?? 0,
-    cycle: currentGovernance.cycle_id ?? 0,
-    timelockProposalId: currentGovernance.timelock_proposal_id ?? 0,
-    cycleHighestVotedProposalId: currentGovernance.cycle_highest_voted_proposal_id ?? 0,
-
-    governancePhase: calcGovPhase(currentGovernance.current_round),
-  }
 }
