@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
-import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB } from '../helpers/commonCouncil.utils'
+import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB } from '../helpers/council.consts'
 import { BUTTON_WIDE, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 
 // hooks
@@ -45,7 +45,7 @@ export const CounsilSidebar = ({
       isUserCounsil: indexOfMember !== -1,
       sortedCounsils,
     }
-  }, [counsilMembers])
+  }, [counsilMembers, userAddress])
 
   return (
     <div className="right-block">

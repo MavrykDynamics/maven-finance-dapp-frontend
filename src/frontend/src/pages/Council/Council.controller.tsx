@@ -24,7 +24,7 @@ import {
   DEFAULT_COUNCIL_ACTIVE_SUBS,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from 'providers/CouncilProvider/helpers/council.consts'
-import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/commonCouncil.utils'
+import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/council.consts'
 
 export const Council = () => {
   const { tabId } = useParams<{ tabId: string }>()

@@ -102,20 +102,20 @@ const CouncilProvider = ({ children }: Props) => {
   }, [userAddress])
 
   /**
-   * councils memebers sub:
+   * councils memebers:
    * COUNCIL_MEMBERS_QUERY -> members of mavryk council
    * BREAK_GLASS_COUNCIL_MEMBERS_QUERY -> members of break glass council
    */
   useQueryWithRefetch(COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[COUNCIL_MEMBERS_SUB],
     onCompleted: (data) => updateCouncilMembers(data),
-    onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_SUB'),
+    onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_QUERY'),
   })
 
   useQueryWithRefetch(BREAK_GLASS_COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[BG_COUNCIL_MEMBERS_SUB],
     onCompleted: (data) => updateBreakGlassCouncilMembers(data),
-    onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_SUB'),
+    onError: (error) => handleApolloError(error, 'BREAK_GLASS_COUNCIL_MEMBERS_QUERY'),
   })
 
   /**
@@ -180,7 +180,7 @@ const CouncilProvider = ({ children }: Props) => {
         currentTimestamp: currentTimeRef.current,
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'ALL_PAST_COUNSILS_QUERY'),
+      onError: (error) => handleApolloError(error, 'ALL_BG_PAST_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
@@ -194,7 +194,7 @@ const CouncilProvider = ({ children }: Props) => {
         userAddress,
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'MY_PAST_COUNSILS_QUERY'),
+      onError: (error) => handleApolloError(error, 'MY_BG_PAST_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
@@ -207,7 +207,7 @@ const CouncilProvider = ({ children }: Props) => {
         currentTimestamp: currentTimeRef.current,
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'ALL_ONGOING_COUNSILS_QUERY'),
+      onError: (error) => handleApolloError(error, 'ALL_BG_ONGOING_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
@@ -307,8 +307,6 @@ const CouncilProvider = ({ children }: Props) => {
       }),
     [activeSubs, councilCtxState],
   )
-
-  console.log('useCouncilContext', { councilCtxState, contextProviderValue, activeSubs })
 
   return <councilContext.Provider value={contextProviderValue}>{children}</councilContext.Provider>
 }

@@ -3,6 +3,7 @@ import { useParams } from 'react-router'
 
 // utils
 import { propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { parseCounsilTab } from './helpers/commonCouncil.utils'
 
 // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
@@ -22,12 +23,7 @@ import {
   PROPAGATE_BREAK_GLASS_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import {
-  ALL_PAST_COUNSIL_TAB,
-  ALL_PENDING_COUNSIL_TAB,
-  MY_PENDING_COUNSIL_TAB,
-  parseCounsilTab,
-} from './helpers/commonCouncil.utils'
+import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/council.consts'
 
 // view
 import { Page } from 'styles'
@@ -43,7 +39,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { State } from 'reducers'
 import { useSelector } from 'react-redux'
 
-export function BreakGlassCouncil() {
+export const BreakGlassCouncil = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const { bug } = useToasterContext()

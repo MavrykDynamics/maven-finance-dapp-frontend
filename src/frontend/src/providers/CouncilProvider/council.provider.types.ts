@@ -20,7 +20,7 @@ import {
   GetMyPastCouncilActionsQuery,
 } from 'utils/__generated__/graphql'
 
-// normalizer types
+// ----- normalizer types
 export type CouncilActionType = {
   actionType: string
   executed: boolean
@@ -36,7 +36,7 @@ export type CouncilActionType = {
 export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
 export type CouncilActionsType = ReturnType<typeof normalizeCouncilActions>
 
-// queries type
+// ----- queries types
 export type CounsilActionsQueryType =
   | GetMyPastCouncilActionsQuery
   | GetAllPastCouncilActionsQuery
@@ -46,9 +46,7 @@ export type BgCounsilActionsQueryType =
   | GetBgAllPastCouncilActionsQuery
   | GetBgAllOngoingCouncilActionsQuery
 
-// -------- provider types
-
-// counsils subs types
+// ----- counsils subs types
 export type BreakGlassCouncilActionsSubsType =
   | typeof MY_BG_PAST_COUNCIL_ACTIONS_SUB
   | typeof ALL_BG_PAST_COUNCIL_ACTIONS_SUB
@@ -66,7 +64,7 @@ export type CouncilSubsRecordType = {
   [BG_COUNCIL_MEMBERS_SUB]: boolean
 }
 
-// counsils data type
+// ----- counsils context types
 export type CouncilActionsRecordType = {
   allPendingActions: CouncilActionsType['allPendingActions']
   notMyPendingActions: CouncilActionsType['notMyPendingActions']

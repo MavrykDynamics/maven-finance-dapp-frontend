@@ -1,6 +1,5 @@
 // consts
-import { MavrykCounsilDdForms } from '../helpers/mavrykCouncil.consts'
-import { BgCounsilDdForms } from '../helpers/breakGlassCouncil.consts'
+import { MavrykCounsilDdForms, BgCounsilDdForms } from '../helpers/council.consts'
 
 // types
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'

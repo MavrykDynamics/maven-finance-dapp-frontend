@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import { SET_BAKER_REQUEST_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { SET_BAKER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { INPUT_STATUS_DEFAULT, InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
@@ -45,7 +45,7 @@ export const CouncilFormSetBaker = () => {
   // set baker council action
   const setBakerContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: SET_BAKER_REQUEST_ACTION,
+      actionType: SET_BAKER_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')

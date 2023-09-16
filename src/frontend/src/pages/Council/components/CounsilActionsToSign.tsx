@@ -17,7 +17,10 @@ import { signBreakGlassAction } from 'providers/CouncilProvider/actions/breakGla
 import { signMavrykAction } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 
 // consts
-import { SIGN_ACTION_ACTION, SIGN_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import {
+  SIGN_MAVRYK_COUNCIL_ACTION,
+  SIGN_BREAK_GLASS_COUNCIL_ACTION,
+} from 'providers/CouncilProvider/helpers/council.consts'
 
 type PropsType = {
   isBreakGlassAction: boolean
@@ -58,7 +61,7 @@ export const CounsilActionsToSign = ({
   // Sign break glass action
   const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
     () => ({
-      actionType: isBreakGlassAction ? SIGN_BREAK_GLASS_ACTION : SIGN_ACTION_ACTION,
+      actionType: isBreakGlassAction ? SIGN_BREAK_GLASS_COUNCIL_ACTION : SIGN_MAVRYK_COUNCIL_ACTION,
       actionFn: signAction,
     }),
     [signAction],

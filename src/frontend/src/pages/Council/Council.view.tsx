@@ -2,8 +2,6 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 
 // consts
-import { BgCounsilDdForms, BgCounsilPageTitles } from 'pages/Council/helpers/breakGlassCouncil.consts'
-import { MavrykCounsilDdForms, MavrykCounsilPageTitles } from './helpers/mavrykCouncil.consts'
 import { BUTTON_SECONDARY } from '../../app/App.components/Button/Button.constants'
 import {
   COUNCIL_ALL_PAST_ACTIONS_LIST_NAME,
@@ -19,7 +17,11 @@ import {
   MY_PAST_COUNSIL_TAB,
   MY_PENDING_COUNSIL_TAB,
   councilTabsList,
-} from './helpers/commonCouncil.utils'
+  MavrykCounsilDdForms,
+  MavrykCounsilPageTitles,
+  BgCounsilDdForms,
+  BgCounsilPageTitles,
+} from './helpers/council.consts'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // types

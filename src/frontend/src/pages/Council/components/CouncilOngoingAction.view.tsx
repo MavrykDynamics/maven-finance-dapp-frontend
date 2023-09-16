@@ -11,7 +11,10 @@ import { dropRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.act
 // consts
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-import { DROP_BREAK_GLASS_ACTION, DROP_REQUEST_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import {
+  DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION,
+  DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
+} from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // hooks
@@ -92,7 +95,7 @@ export function CouncilOngoingAction({
   // Sign break glass action
   const dropBreakGlassContractActionProps: HookContractActionArgs<number> = useMemo(
     () => ({
-      actionType: isBreakGlassCounsil ? DROP_BREAK_GLASS_ACTION : DROP_REQUEST_ACTION,
+      actionType: isBreakGlassCounsil ? DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION : DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
       actionFn: dropAction,
     }),
     [dropAction],

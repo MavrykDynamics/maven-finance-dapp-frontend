@@ -10,7 +10,6 @@ export const setAllContractsAdmin = async (breakGlassAddress: string, newAdminAd
     const contract = await tezos.wallet.at(breakGlassAddress)
     const setAllContractsAdminMetaData = contract?.methods.setAllContractsAdmin(newAdminAddress)
 
-    // await dispatch(getBreakGlassCouncilPendingActions())
     return await getEstimationResult(setAllContractsAdminMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -30,7 +29,6 @@ export const setSingleContractAdmin = async (
     const contract = await tezos.wallet.at(breakGlassAddress)
     const setSingleContractAdminMetaData = contract?.methods.setSingleContractAdmin(newAdminAddress, targetContract)
 
-    // await dispatch(getBreakGlassCouncilPendingActions())
     return await getEstimationResult(setSingleContractAdminMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -45,10 +43,6 @@ export const signBreakGlassAction = async (breakGlassActionID: number, breakGlas
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(breakGlassAddress)
     const signActionMetaData = contract?.methods.signAction(breakGlassActionID)
-
-    // await dispatch(getBreakGlassCouncilPendingActions())
-    // await dispatch(getBreakGlassCouncilPastActions())
-    // await dispatch(getBreakGlassCouncilMembers())
 
     return await getEstimationResult(signActionMetaData)
   } catch (error) {
@@ -76,8 +70,6 @@ export const addCouncilMember = async (
       newMemberImage,
     )
 
-    // await dispatch(getBreakGlassCouncilPendingActions())
-
     return await getEstimationResult(addCouncilMemberMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -102,8 +94,6 @@ export const updateBgCouncilMember = async (
       newMemberWebsite,
       newMemberImage,
     )
-
-    // await dispatch(getBreakGlassCouncilMembers())
 
     return await getEstimationResult(updateCouncilMemberMetaData, {
       callback,
@@ -135,8 +125,6 @@ export const changeCouncilMember = async (
       newMemberImage,
     )
 
-    // await dispatch(getBreakGlassCouncilPendingActions())
-
     return await getEstimationResult(changeCouncilMemberMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -151,8 +139,6 @@ export const removeCouncilMember = async (breakGlassAddress: string, memberAddre
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(breakGlassAddress)
     const removeCouncilMemberMetaData = contract?.methods.removeCouncilMember(memberAddress)
-
-    // await dispatch(getBreakGlassCouncilPendingActions())
 
     return await getEstimationResult(removeCouncilMemberMetaData)
   } catch (error) {
@@ -169,9 +155,6 @@ export const propagateBreakGlass = async (breakGlassAddress: string) => {
     const contract = await tezos.wallet.at(breakGlassAddress)
     const propagateBreakGlassMetaData = contract?.methods.propagateBreakGlass()
 
-    // await dispatch(getBreakGlassCouncilPendingActions())
-    // await dispatch(getBreakGlassCouncilPastActions())
-    // await dispatch(getBreakGlassCouncilMembers())
     return await getEstimationResult(propagateBreakGlassMetaData)
   } catch (error) {
     const e = unknownToError(error)
@@ -187,7 +170,6 @@ export const dropBreakGlass = async (breakGlassActionID: number, breakGlassAddre
     const contract = await tezos.wallet.at(breakGlassAddress)
     const dropBreakGlassMetaData = contract?.methods.flushAction(breakGlassActionID)
 
-    // await dispatch(getBreakGlassCouncilPendingActions())
     return await getEstimationResult(dropBreakGlassMetaData)
   } catch (error) {
     const e = unknownToError(error)

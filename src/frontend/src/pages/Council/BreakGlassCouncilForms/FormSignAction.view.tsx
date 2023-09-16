@@ -14,7 +14,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
-import { SIGN_BREAK_GLASS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { SIGN_BREAK_GLASS_COUNCIL_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
 
 // urils
@@ -44,7 +44,7 @@ export function FormSignActionView() {
   // sign bg council action
   const signContractActionProps: HookContractActionArgs<number> = useMemo(
     () => ({
-      actionType: SIGN_BREAK_GLASS_ACTION,
+      actionType: SIGN_BREAK_GLASS_COUNCIL_ACTION,
       actionFn: async (id: number) => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')

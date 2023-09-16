@@ -1,10 +1,10 @@
-import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
-
-export const MY_PENDING_COUNSIL_TAB = ''
-export const MY_PAST_COUNSIL_TAB = 'my-past-actions'
-export const ALL_PENDING_COUNSIL_TAB = 'pending-actions'
-export const ALL_PAST_COUNSIL_TAB = 'past-actions'
+import {
+  MY_PENDING_COUNSIL_TAB,
+  MY_PAST_COUNSIL_TAB,
+  ALL_PENDING_COUNSIL_TAB,
+  ALL_PAST_COUNSIL_TAB,
+} from './council.consts'
 
 export const parseCounsilTab = (tabId = ''): CouncilTabsType => {
   switch (tabId) {
@@ -20,16 +20,3 @@ export const parseCounsilTab = (tabId = ''): CouncilTabsType => {
       return null
   }
 }
-
-export const councilTabsList: SlidingTabButtonType[] = [
-  {
-    text: 'My Ongoing Actions',
-    id: 1,
-    active: true,
-  },
-  {
-    text: 'My Past Actions',
-    id: 2,
-    active: false,
-  },
-]
