@@ -75,7 +75,7 @@ export type RoiCalculatorPopupDataType = { selectedFarmAddress: string }
 export type FarmWithdrawPopupDataType = { selectedFarmAddress: string }
 export type FarmDepositPopupDataType = { selectedFarmAddress: string }
 
-// TODO: in future inplement ROI
+// TODO: in future implement ROI
 export type FarmsPopupsContextStateType = {
   // roiPopup: ModalStateType<RoiCalculatorPopupDataType>
   depositPopup: ModalStateType<FarmDepositPopupDataType>

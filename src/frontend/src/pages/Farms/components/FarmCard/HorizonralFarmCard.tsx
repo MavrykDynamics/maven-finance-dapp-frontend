@@ -16,7 +16,6 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // consts
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
@@ -41,9 +40,8 @@ export const HorizontalFarmCard = ({
   expandCallback,
 }: HorizontalFarmCardPropsType) => {
   const { userAddress } = useUserContext()
-  const { availableFarmRewards } = useUserRewards()
 
-  const userReward = availableFarmRewards[farm.address]
+  const userReward = userAddress ? farm.farmDepositors[userAddress]?.rewardsToClaim : 0
 
   const tokenName = farm.isMFarm
     ? farmToken.symbol

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 
 // view
 import { VerticalFarmCard } from './VerticalFarmCard'
@@ -33,27 +33,29 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
   const { bug } = useToasterContext()
 
   // harvest rewards action ---------------------------
-  const harvestRewardsAction = useCallback(async () => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    return await harvestRewards(farm.address)
-  }, [farm.address, userAddress])
-
   const harvestRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: HARVEST_FARM_REWARDS_ACTION,
-      actionFn: harvestRewardsAction,
+      actionFn: async () => {
+        try {
+          if (!userAddress) {
+            bug('Click Connect in the left menu', 'Please connect your wallet')
+            return null
+          }
+
+          return await harvestRewards(farm.address)
+        } catch (e) {
+          console.error('harvestRewardsAction', e)
+          return null
+        }
+      },
     }),
-    [harvestRewardsAction],
+    [farm.address, userAddress],
   )
 
   const { action: handleHarvestRewards } = useContractAction(harvestRewardsContractActionProps)
 
   const farmToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: farm?.liquidityTokenAddress })
-  console.log({ farmToken, farm, tokensMetadata, liquidityTokenAddress: farm?.liquidityTokenAddress })
   if (!farmToken || !checkWhetherTokenIsFarmToken(farmToken)) return null
 
   if (isVertical) {

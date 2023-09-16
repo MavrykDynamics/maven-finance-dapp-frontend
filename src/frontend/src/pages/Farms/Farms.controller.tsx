@@ -37,7 +37,6 @@ import {
 // hooks
 import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // utils
 import {
@@ -70,8 +69,6 @@ export const Farms = () => {
     allFinishedFarms,
     finishedStakedFarms,
   } = useFarmsContext()
-
-  const { isLoading: isUserRewardsLoading } = useUserRewards()
 
   // Farms filter from top bar
   const farmsFilers: FarmsFiltersStateType = useMemo(() => {
@@ -203,7 +200,7 @@ export const Farms = () => {
         />
 
         <FarmsStyled>
-          {isFarmsLoading || isUserRewardsLoading ? (
+          {isFarmsLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
               <div className="text">Loading farms</div>

@@ -25,7 +25,6 @@ import {
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // view
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
@@ -42,9 +41,14 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 
-const SatelliteTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
+const SatelliteTab = ({
+  distributeProposalRewards,
+  availableProposalRewards,
+}: {
+  distributeProposalRewards: () => void
+  availableProposalRewards: Array<number>
+}) => {
   const { userAddress } = useUserContext()
-  const { availableProposalRewards } = useUserRewards()
   const {
     satelliteMapper,
     proposalsAmount,
