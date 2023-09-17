@@ -5,6 +5,7 @@ const envVariablesSchema = z.object({
   REACT_APP_ENV: z.literal('dev').or(z.literal('prod')),
 
   REACT_APP_TZKT_API: z.literal('https://api.ghostnet.tzkt.io').or(z.literal('https://api.tzkt.io')),
+  REACT_APP_TZKT_LINK: z.literal('https://ghostnet.tzkt.io').or(z.literal('https://tzkt.io')),
   REACT_APP_TZKT_SERVICE_API: z.literal('https://services.tzkt.io'),
   REACT_APP_WERT_API: z.literal('https://sandbox.wert.io'),
 

@@ -87,7 +87,7 @@ export const LoansTxTab = ({
                     <TableCell width="10%" contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
                         <Link
-                          to={{ pathname: `${process.env.REACT_APP_TZKT_API}/${operationHash}` }}
+                          to={{ pathname: `${process.env.REACT_APP_TZKT_LINK}/${operationHash}` }}
                           target="_blank"
                           className="isCyan"
                         >
