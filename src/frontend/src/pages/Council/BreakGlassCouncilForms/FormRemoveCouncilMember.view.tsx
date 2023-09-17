@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react'
 
 // components
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
 import { FormStyled } from './BreakGlassCouncilForm.style'
@@ -21,6 +20,7 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 type DdItemType = {
@@ -98,6 +98,8 @@ export function FormRemoveCouncilMemberView({
     if (foundItem) setChosenDdItem(foundItem)
   }
 
+  const isButtonDisabled = isActionActive || !chosenDdItem
+
   return (
     <FormStyled>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -120,7 +122,7 @@ export function FormRemoveCouncilMemberView({
         </div>
 
         <div className="btn-wrapper">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="minus" />
             Remove Council Member
           </NewButton>

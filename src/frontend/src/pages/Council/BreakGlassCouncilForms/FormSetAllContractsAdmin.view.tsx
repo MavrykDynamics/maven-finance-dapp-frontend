@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react'
 
 // view
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { FormStyled } from './BreakGlassCouncilForm.style'
@@ -9,7 +8,8 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 // consts
 import { SET_ALL_CONTRACTS_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 
 // utils
 import { setAllContractsAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
@@ -83,22 +83,29 @@ export function FormSetAllContractsAdminView() {
     })
   }
 
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const { adminAddressProps, adminAddressSettings } = useMemo(() => {
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
-  const inputProps = {
-    name: 'newAdminAddress',
-    value: newAdminAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+    const adminAddressProps = {
+      name: 'newAdminAddress',
+      value: newAdminAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const inputSettings = {
-    inputStatus: formInputStatus.newAdminAddress,
-  }
+    return {
+      adminAddressProps,
+      adminAddressSettings: {
+        inputStatus: formInputStatus.newAdminAddress,
+      },
+    }
+  }, [formInputStatus.newAdminAddress, newAdminAddress])
+
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
   return (
     <FormStyled>
@@ -109,11 +116,11 @@ export function FormSetAllContractsAdminView() {
         <div className="form-fields input-size-primary">
           <label>New Admin Address</label>
 
-          <Input inputProps={inputProps} settings={inputSettings} />
+          <Input inputProps={adminAddressProps} settings={adminAddressSettings} />
         </div>
 
         <div className="btn-wrapper">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="profile" />
             Set Contracts Admin
           </NewButton>

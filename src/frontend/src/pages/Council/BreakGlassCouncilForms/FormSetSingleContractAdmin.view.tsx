@@ -1,20 +1,18 @@
 import React, { useMemo, useState } from 'react'
 
 // view
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
-
-// types
-import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
 
 // utils
 import { setSingleContractAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // consts
+import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { SET_SINGLE_CONTRACT_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 // hooks
@@ -87,38 +85,44 @@ export function FormSetSingleContractAdminView() {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const newAdminAddressProps = {
-    name: 'newAdminAddress',
-    value: newAdminAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const { newAdminAddressProps, newAdminAddressSettings, targetContractProps, targetContracSettings } = useMemo(() => {
+    const validateText = validateFormField(setFormInputStatus)
+    const validateAddress = validateFormAddress(setFormInputStatus)
+    const newAdminAddressProps = {
+      name: 'newAdminAddress',
+      value: newAdminAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const newAdminAddressSettings = {
-    inputStatus: formInputStatus.newAdminAddress,
-  }
+    const targetContractProps = {
+      name: 'targetContract',
+      value: targetContract,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        // TODO: should validate for kt address?
+        validateText(e)
+      },
+      required: true,
+    }
 
-  const targetContractProps = {
-    name: 'targetContract',
-    value: targetContract,
-    onBlur: handleBlur,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
-
-  const targetContracSettings = {
-    inputStatus: formInputStatus.targetContract,
-  }
+    return {
+      newAdminAddressProps,
+      newAdminAddressSettings: {
+        inputStatus: formInputStatus.newAdminAddress,
+      },
+      targetContractProps,
+      targetContracSettings: {
+        inputStatus: formInputStatus.targetContract,
+      },
+    }
+  }, [formInputStatus.newAdminAddress, formInputStatus.targetContract, newAdminAddress, targetContract])
 
   return (
     <FormStyled>
@@ -135,7 +139,7 @@ export function FormSetSingleContractAdminView() {
         </div>
 
         <div className="btn-wrapper">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="profile" />
             Set Contract Admin
           </NewButton>

@@ -40,6 +40,10 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     height: 40px;
     margin-left: 20px;
     color: ${({ theme }) => theme.upColor};
+
+    p {
+      margin: 0;
+    }
   }
 
   .form {

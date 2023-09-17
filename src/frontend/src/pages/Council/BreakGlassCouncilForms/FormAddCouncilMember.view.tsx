@@ -9,7 +9,12 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // types
-import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from 'app/App.components/Input/Input.constants'
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // helpers
@@ -94,53 +99,74 @@ export function FormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLeng
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const memberAddressProps = {
-    name: 'memberAddress',
-    value: memberAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const {
+    memberAddressProps,
+    memberAddressSettings,
+    newMemberNameProps,
+    newMemberNameSettings,
+    newMemberWebsiteProps,
+    newMemberWebsiteSettings,
+  } = useMemo(() => {
+    const validateLenght = validateFormField(setFormInputStatus)
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
-  const memberAddressSettings = {
-    inputStatus: formInputStatus.memberAddress,
-  }
+    const memberAddressProps = {
+      name: 'memberAddress',
+      value: memberAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const newMemberNameProps = {
-    name: 'newMemberName',
-    value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberNameMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, councilMaxLengths.councilMemberNameMaxLength)
-    },
-    required: true,
-  }
+    const newMemberNameProps = {
+      name: 'newMemberName',
+      value: newMemberName,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLenght(e, councilMaxLengths.councilMemberNameMaxLength)
+      },
+      required: true,
+    }
 
-  const newMemberNameSettings = {
-    inputStatus: formInputStatus.newMemberName,
-  }
+    const newMemberWebsiteProps = {
+      name: 'newMemberWebsite',
+      value: newMemberWebsite,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLenght(e, councilMaxLengths.councilMemberWebsiteMaxLength)
+      },
+      required: true,
+    }
 
-  const newMemberWebsiteProps = {
-    name: 'newMemberWebsite',
-    value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength)
-    },
-    required: true,
-  }
-
-  const newMemberWebsiteSettings = {
-    inputStatus: formInputStatus.newMemberWebsite,
-  }
+    return {
+      memberAddressProps,
+      memberAddressSettings: {
+        inputStatus: formInputStatus.memberAddress,
+      },
+      newMemberNameProps,
+      newMemberNameSettings: {
+        inputStatus: formInputStatus.newMemberName,
+      },
+      newMemberWebsiteProps,
+      newMemberWebsiteSettings: {
+        inputStatus: formInputStatus.newMemberWebsite,
+      },
+    }
+  }, [
+    councilMaxLengths.councilMemberNameMaxLength,
+    councilMaxLengths.councilMemberWebsiteMaxLength,
+    formInputStatus.memberAddress,
+    formInputStatus.newMemberName,
+    formInputStatus.newMemberWebsite,
+    memberAddress,
+    newMemberName,
+    newMemberWebsite,
+  ])
 
   return (
     <FormStyled>
@@ -175,13 +201,16 @@ export function FormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLeng
           className="form-ipfs"
           setIpfsImageUrl={(e: string) => {
             setForm({ ...form, newMemberImage: e })
-            setFormInputStatus({ ...formInputStatus, newMemberImage: Boolean(e) ? 'success' : 'error' })
+            setFormInputStatus({
+              ...formInputStatus,
+              newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+            })
           }}
           title={'Upload Profile Pic'}
         />
 
         <div className="align-to-right">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="plus" />
             Add Council Member
           </NewButton>

@@ -10,7 +10,12 @@ import Icon from '../../../app/App.components/Icon/Icon.view'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // types
-import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from 'app/App.components/Input/Input.constants'
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
@@ -119,6 +124,9 @@ export function FormChangeCouncilMemberView({
 
   const { action: handleChangeCouncilMember } = useContractAction(changeBgCouncilContractContractActionProps)
 
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -139,9 +147,6 @@ export function FormChangeCouncilMemberView({
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
-
   const handleClickDropdownItem = (itemId: DDItemId) => {
     const foundItem = dropDownItems.find((item) => item.id === itemId)
 
@@ -149,50 +154,69 @@ export function FormChangeCouncilMemberView({
     setChosenDdItem(foundItem)
   }
 
-  const newCouncilMemberAddressProps = {
-    name: 'newCouncilMemberAddress',
-    value: newCouncilMemberAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const {
+    memberAddressProps,
+    memberAddressSettings,
+    newMemberNameProps,
+    newMemberNameSettings,
+    newMemberWebsiteProps,
+    newMemberWebsiteSettings,
+  } = useMemo(() => {
+    const validateLenght = validateFormField(setFormInputStatus)
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
-  const newCouncilMemberAddressSettings = {
-    inputStatus: formInputStatus.newCouncilMemberAddress,
-  }
+    const memberAddressProps = {
+      name: 'newCouncilMemberAddress',
+      value: newCouncilMemberAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const newMemberNameProps = {
-    name: 'newMemberName',
-    value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberNameMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, councilMaxLengths.councilMemberNameMaxLength)
-    },
-    required: true,
-  }
-
-  const newMemberNameSettings = {
-    inputStatus: formInputStatus.newMemberName,
-  }
-
-  const newMemberWebsiteProps = {
-    name: 'newMemberWebsite',
-    value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength)
-    },
-    required: true,
-  }
-
-  const newMemberWebsiteSettings = {
-    inputStatus: formInputStatus.newMemberWebsite,
-  }
+    const newMemberNameProps = {
+      name: 'newMemberName',
+      value: newMemberName,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLenght(e, councilMaxLengths.councilMemberNameMaxLength)
+      },
+      required: true,
+    }
+    const newMemberWebsiteProps = {
+      name: 'newMemberWebsite',
+      value: newMemberWebsite,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLenght(e, councilMaxLengths.councilMemberWebsiteMaxLength)
+      },
+      required: true,
+    }
+    return {
+      memberAddressProps,
+      memberAddressSettings: {
+        inputStatus: formInputStatus.newCouncilMemberAddress,
+      },
+      newMemberNameProps,
+      newMemberNameSettings: {
+        inputStatus: formInputStatus.newMemberName,
+      },
+      newMemberWebsiteProps,
+      newMemberWebsiteSettings: {
+        inputStatus: formInputStatus.newMemberWebsite,
+      },
+    }
+  }, [
+    councilMaxLengths.councilMemberNameMaxLength,
+    councilMaxLengths.councilMemberWebsiteMaxLength,
+    formInputStatus.newCouncilMemberAddress,
+    formInputStatus.newMemberName,
+    formInputStatus.newMemberWebsite,
+    newCouncilMemberAddress,
+    newMemberName,
+    newMemberWebsite,
+  ])
 
   return (
     <FormStyled>
@@ -217,7 +241,7 @@ export function FormChangeCouncilMemberView({
         <div className="form-fields in-two-columns">
           <div className="input-size-secondary margin-bottom-20">
             <label>Council Member Address</label>
-            <Input inputProps={newCouncilMemberAddressProps} settings={newCouncilMemberAddressSettings} />
+            <Input inputProps={memberAddressProps} settings={memberAddressSettings} />
           </div>
 
           <div className="input-size-tertiary">
@@ -237,13 +261,16 @@ export function FormChangeCouncilMemberView({
           className="form-ipfs"
           setIpfsImageUrl={(e: string) => {
             setForm({ ...form, newMemberImage: e })
-            setFormInputStatus({ ...formInputStatus, newMemberImage: Boolean(e) ? 'success' : 'error' })
+            setFormInputStatus({
+              ...formInputStatus,
+              newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+            })
           }}
           title={'Upload Profile Pic'}
         />
 
         <div className="align-to-right">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="exchange" />
             Change Council Member
           </NewButton>

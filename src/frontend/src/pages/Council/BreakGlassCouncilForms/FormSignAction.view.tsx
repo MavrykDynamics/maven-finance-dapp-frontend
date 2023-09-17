@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react'
 
 // view
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { FormStyled } from './BreakGlassCouncilForm.style'
@@ -14,11 +13,13 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { SIGN_BREAK_GLASS_COUNCIL_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { INPUT_STATUS_DEFAULT, InputStatusType } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 
 // urils
 import { signBreakGlassAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { validateFormField } from 'utils/validatorFunctions'
 
 const INIT_FORM = {
   breakGlassActionID: '',
@@ -83,26 +84,29 @@ export function FormSignActionView() {
     })
   }
 
-  const handleBlur = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFormInputStatus((prev) => {
-      return { ...prev, [e.target.name]: e.target.value ? 'success' : 'error' }
-    })
-  }
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const inputProps = {
-    name: 'breakGlassActionID',
-    value: breakGlassActionID,
-    onBlur: handleBlur,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
+  const { actionIdProps, actionIdSettings } = useMemo(() => {
+    const validateText = validateFormField(setFormInputStatus)
 
-  const inputSettings = {
-    inputStatus: formInputStatus.breakGlassActionID,
-  }
+    const actionIdProps = {
+      name: 'breakGlassActionID',
+      value: breakGlassActionID,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateText(e)
+      },
+      required: true,
+    }
+
+    return {
+      actionIdProps,
+      actionIdSettings: {
+        inputStatus: formInputStatus.breakGlassActionID,
+      },
+    }
+  }, [breakGlassActionID, formInputStatus.breakGlassActionID])
 
   return (
     <FormStyled>
@@ -113,11 +117,11 @@ export function FormSignActionView() {
         <div className="form-fields input-size-primary">
           <label>Break Glass Action ID</label>
 
-          <Input inputProps={inputProps} settings={inputSettings} />
+          <Input inputProps={actionIdProps} settings={actionIdSettings} />
         </div>
 
         <div className="btn-wrapper">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="sign" />
             Sign Action
           </NewButton>

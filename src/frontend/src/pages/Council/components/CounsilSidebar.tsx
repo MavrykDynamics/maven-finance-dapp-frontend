@@ -15,13 +15,15 @@ import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.t
 import NewButton from 'app/App.components/Button/NewButton'
 import { ReviewCard } from '../Council.style'
 import { CouncilMemberView } from './CouncilMember/CouncilMember.view'
+import { EmptyContainer } from 'app/App.style'
+import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
 
 type Props = {
   membersTitle: string
   counsilMembers: CouncilMembersType
   openUpdateMemberProfilePopup: () => void
-  showNavButtons: boolean
   pagePathname: string
+  selectedTab: CouncilTabsType
 }
 
 export const CounsilSidebar = ({
@@ -29,7 +31,7 @@ export const CounsilSidebar = ({
   openUpdateMemberProfilePopup,
   membersTitle,
   counsilMembers,
-  showNavButtons,
+  selectedTab,
 }: Props) => {
   const { userAddress } = useUserContext()
 
@@ -49,40 +51,40 @@ export const CounsilSidebar = ({
 
   return (
     <div className="right-block">
-      {showNavButtons && (
-        <ReviewCard>
-          <Link to={`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`}>
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
-              Review Past Actions
-            </NewButton>
-          </Link>
+      <ReviewCard>
+        <Link to={`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`}>
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY} disabled={selectedTab === ALL_PAST_COUNSIL_TAB}>
+            Review Past Actions
+          </NewButton>
+        </Link>
 
-          <Link to={`${pagePathname}/${ALL_PENDING_COUNSIL_TAB}`}>
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
-              Review Pending Actions
-            </NewButton>
-          </Link>
-        </ReviewCard>
-      )}
+        <Link to={`${pagePathname}/${ALL_PENDING_COUNSIL_TAB}`}>
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY} disabled={selectedTab === ALL_PENDING_COUNSIL_TAB}>
+            Review Pending Actions
+          </NewButton>
+        </Link>
+      </ReviewCard>
 
+      <h1>{membersTitle}</h1>
       {sortedCounsils.length ? (
-        <>
-          <h1>{membersTitle}</h1>
-
-          <div>
-            {sortedCounsils.map((item) => (
-              <CouncilMemberView
-                key={item.id}
-                image={item.image}
-                name={item.name}
-                userId={item.userId}
-                openModal={openUpdateMemberProfilePopup}
-                showUpdateInfo={isUserCounsil}
-              />
-            ))}
-          </div>
-        </>
-      ) : null}
+        <div>
+          {sortedCounsils.map((item) => (
+            <CouncilMemberView
+              key={item.id}
+              image={item.image}
+              name={item.name}
+              userId={item.userId}
+              openModal={openUpdateMemberProfilePopup}
+              showUpdateInfo={isUserCounsil}
+            />
+          ))}
+        </div>
+      ) : (
+        <EmptyContainer>
+          <img src="/images/not-found.svg" alt=" No members to show" />
+          <figcaption> No members to show</figcaption>
+        </EmptyContainer>
+      )}
     </div>
   )
 }

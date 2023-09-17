@@ -5,6 +5,9 @@ import { createPortal } from 'react-dom'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { TzAddress } from '../../../../app/App.components/TzAddress/TzAddress.view'
 import NewButton from 'app/App.components/Button/NewButton'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
+import { AvatarStyle } from '../../../../app/App.components/Avatar/Avatar.style'
+import { CouncilPendingStyled, CouncilModalBase } from './CouncilPending.style'
 import Icon from '../../../../app/App.components/Icon/Icon.view'
 
 // helpers
@@ -12,19 +15,19 @@ import { getSeparateCamelCase } from '../../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { convertBytesAddressToAddress } from 'app/App.helpers'
-import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-import { MVK_DECIMALS } from 'utils/constants'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
+// consts
+import { MVK_DECIMALS } from 'utils/constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
+
 // types
+import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 
 // styles
-import { CouncilPendingStyled, CouncilModalBase } from './CouncilPending.style'
-import { AvatarStyle } from '../../../../app/App.components/Avatar/Avatar.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
-import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type Props = CouncilActionType & {
   numCouncilMembers: number
@@ -45,7 +48,9 @@ export const CouncilPending = (props: Props) => {
     handleSignAction,
   } = props
 
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const [showPopup, setShowPopup] = useState(false)
   const { name, value } = parameters?.[0] || {}

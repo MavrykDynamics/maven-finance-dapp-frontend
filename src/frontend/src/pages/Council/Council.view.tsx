@@ -105,11 +105,6 @@ export function CouncilView({
     }
   }, [isBreakGlassCounsil])
 
-  // redirect to review past actions page when member changes or when current user is not council
-  useEffect(() => {
-    if (!userAddress || !isUserCouncil) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
-  }, [pagePathname, userAddress, isUserCouncil])
-
   const {
     currentListName,
     isMyPendingTab,
@@ -156,12 +151,18 @@ export function CouncilView({
     }
   }, [selectedTab, search, myPendingActions, myPastActions, allPendingActions, allPastActions])
 
+  const isMyActionsTabs = isMyPastTab || isMyPendingTab
+
+  // redirect to review past actions page when member changes or when current user is not council and user is on my request page
+  useEffect(() => {
+    if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
+  }, [userAddress, isUserCouncil])
+
   // update member popup
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
   const openPopup = useCallback(() => setIsUpdateCouncilMemberInfo(true), [])
   const closePopup = useCallback(() => setIsUpdateCouncilMemberInfo(false), [])
 
-  const isMyActionsTabs = isMyPastTab || isMyPendingTab
   const displayPendingSignature = Boolean(isMyActionsTabs && isUserCouncil && notMyPendingActions.length)
 
   const [chosenDdItem, setChosenDdItem] = useState<ActionsDDItemType | undefined>()
@@ -291,7 +292,7 @@ export function CouncilView({
           membersTitle={titles.membersName}
           counsilMembers={members}
           openUpdateMemberProfilePopup={openPopup}
-          showNavButtons={isMyActionsTabs}
+          selectedTab={selectedTab}
           pagePathname={pagePathname}
         />
       </CouncilStyled>

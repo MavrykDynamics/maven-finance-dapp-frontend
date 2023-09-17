@@ -5,10 +5,10 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // helpers
-import { getShortTzAddress } from '../../../utils/tzAdress'
 import { validateFormField } from 'utils/validatorFunctions'
 import { updateBgCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 
@@ -121,37 +121,49 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const newMemberNameProps = {
-    name: 'newMemberName',
-    value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberNameMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, councilMaxLengths.councilMemberNameMaxLength)
-    },
-    required: true,
-  }
+  const { newMemberNameProps, newMemberNameSettings, newMemberWebsiteProps, newMemberWebsiteSettings } = useMemo(() => {
+    const validateLength = validateFormField(setFormInputStatus)
+    const newMemberNameProps = {
+      name: 'newMemberName',
+      value: newMemberName,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLength(e, councilMaxLengths.councilMemberNameMaxLength)
+      },
+      required: true,
+    }
 
-  const newMemberNameSettings = {
-    inputStatus: formInputStatus.newMemberName,
-  }
+    const newMemberWebsiteProps = {
+      name: 'newMemberWebsite',
+      value: newMemberWebsite,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLength(e, councilMaxLengths.councilMemberWebsiteMaxLength)
+      },
+      required: true,
+    }
 
-  const newMemberWebsiteProps = {
-    name: 'newMemberWebsite',
-    value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength)
-    },
-    required: true,
-  }
-
-  const newMemberWebsiteSettings = {
-    inputStatus: formInputStatus.newMemberWebsite,
-  }
+    return {
+      newMemberNameProps,
+      newMemberNameSettings: {
+        inputStatus: formInputStatus.newMemberName,
+      },
+      newMemberWebsiteProps,
+      newMemberWebsiteSettings: {
+        inputStatus: formInputStatus.newMemberWebsite,
+      },
+    }
+  }, [
+    councilMaxLengths.councilMemberNameMaxLength,
+    councilMaxLengths.councilMemberWebsiteMaxLength,
+    formInputStatus.newMemberName,
+    formInputStatus.newMemberWebsite,
+    newMemberName,
+    newMemberWebsite,
+  ])
 
   return (
     <FormStyled className="without-divider">
@@ -166,7 +178,7 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
         <div className="form-fields in-two-columns">
           <div className="input-size-secondary margin-bottom-20">
             <label>Council Member Address</label>
-            <div className="address">{getShortTzAddress({ tzAddress: userAddress ?? '' })}</div>
+            <TzAddress tzAddress={userAddress} className="address" />
           </div>
 
           <div className="input-size-tertiary">
@@ -195,7 +207,7 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
         />
 
         <div className="align-to-right">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="upload" />
             Update Council Member
           </NewButton>
