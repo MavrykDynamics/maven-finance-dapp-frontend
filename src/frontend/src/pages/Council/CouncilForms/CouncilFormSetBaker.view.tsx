@@ -3,7 +3,11 @@ import { useMemo, useState } from 'react'
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { SET_BAKER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { INPUT_STATUS_DEFAULT, InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from '../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { setBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -83,22 +87,29 @@ export const CouncilFormSetBaker = () => {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const bakerHashProps = {
-    name: 'bakerHash',
-    value: bakerHash,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
+  const { bakerHashProps, bakerHashSettings } = useMemo(() => {
+    const validateText = validateFormField(setFormInputStatus)
 
-  const bakerHashSettings = {
-    inputStatus: formInputStatus.bakerHash,
-  }
+    const bakerHashProps = {
+      name: 'bakerHash',
+      value: bakerHash,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateText(e)
+      },
+      required: true,
+    }
+
+    return {
+      bakerHashProps,
+      bakerHashSettings: {
+        inputStatus: formInputStatus.bakerHash,
+      },
+    }
+  }, [bakerHash, formInputStatus.bakerHash])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -113,7 +124,7 @@ export const CouncilFormSetBaker = () => {
           <Input inputProps={bakerHashProps} settings={bakerHashSettings} />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="plus" />
             Set Baker
           </NewButton>

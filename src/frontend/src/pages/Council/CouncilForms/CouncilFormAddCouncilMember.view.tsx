@@ -98,53 +98,74 @@ export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const newMemberAddressProps = {
-    name: 'newMemberAddress',
-    value: newMemberAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const {
+    newMemberAddressProps,
+    newMemberAddressSettings,
+    newMemberNameProps,
+    newMemberNameSettings,
+    newMemberWebsiteProps,
+    newMemberWebsiteSettings,
+  } = useMemo(() => {
+    const validateAddress = validateFormAddress(setFormInputStatus)
+    const validateLength = validateFormField(setFormInputStatus)
 
-  const newMemberAddressSettings = {
-    inputStatus: formInputStatus.newMemberAddress,
-  }
+    const newMemberAddressProps = {
+      name: 'newMemberAddress',
+      value: newMemberAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const newMemberNameProps = {
-    name: 'newMemberName',
-    value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberNameMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, maxLength.councilMemberNameMaxLength)
-    },
-    required: true,
-  }
+    const newMemberNameProps = {
+      name: 'newMemberName',
+      value: newMemberName,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLength(e, maxLength.councilMemberNameMaxLength)
+      },
+      required: true,
+    }
 
-  const newMemberNameSettings = {
-    inputStatus: formInputStatus.newMemberName,
-  }
+    const newMemberWebsiteProps = {
+      name: 'newMemberWebsite',
+      value: newMemberWebsite,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLength(e, maxLength.councilMemberWebsiteMaxLength)
+      },
+      required: true,
+    }
 
-  const newMemberWebsiteProps = {
-    name: 'newMemberWebsite',
-    value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.councilMemberWebsiteMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, maxLength.councilMemberWebsiteMaxLength)
-    },
-    required: true,
-  }
-
-  const newMemberWebsiteSettings = {
-    inputStatus: formInputStatus.newMemberWebsite,
-  }
+    return {
+      newMemberAddressProps,
+      newMemberAddressSettings: {
+        inputStatus: formInputStatus.newMemberAddress,
+      },
+      newMemberNameProps,
+      newMemberNameSettings: {
+        inputStatus: formInputStatus.newMemberName,
+      },
+      newMemberWebsiteProps,
+      newMemberWebsiteSettings: {
+        inputStatus: formInputStatus.newMemberWebsite,
+      },
+    }
+  }, [
+    formInputStatus.newMemberAddress,
+    formInputStatus.newMemberName,
+    formInputStatus.newMemberWebsite,
+    maxLength.councilMemberNameMaxLength,
+    maxLength.councilMemberWebsiteMaxLength,
+    newMemberAddress,
+    newMemberName,
+    newMemberWebsite,
+  ])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -183,7 +204,7 @@ export const CouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
           <Icon id="plus" />
           Add Council Member
         </NewButton>

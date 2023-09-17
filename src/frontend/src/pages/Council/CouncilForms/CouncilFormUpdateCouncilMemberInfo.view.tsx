@@ -7,12 +7,12 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-  InputStatusType,
 } from '../../../app/App.components/Input/Input.constants'
 
 // types
-import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
+import type { CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
 import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { validateFormField } from 'utils/validatorFunctions'
@@ -112,43 +112,55 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ councilMaxLengths, callback
     }
   }
 
-  const newMemberNameProps = {
-    name: 'newMemberName',
-    value: newMemberName,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberNameMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, councilMaxLengths.councilMemberNameMaxLength)
-    },
-    required: true,
-  }
-
-  const newMemberNameSettings = {
-    inputStatus: formInputStatus.newMemberName,
-  }
-
-  const newMemberWebsiteProps = {
-    name: 'newMemberWebsite',
-    value: newMemberWebsite,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e, councilMaxLengths.councilMemberWebsiteMaxLength)
-    },
-    required: true,
-  }
-
-  const newMemberWebsiteSettings = {
-    inputStatus: formInputStatus.newMemberWebsite,
-  }
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => {
       return { ...prev, [e.target.name]: e.target.value }
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
+
+  const { newMemberNameProps, newMemberNameSettings, newMemberWebsiteProps, newMemberWebsiteSettings } = useMemo(() => {
+    const validateLength = validateFormField(setFormInputStatus)
+    const newMemberNameProps = {
+      name: 'newMemberName',
+      value: newMemberName,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLength(e, councilMaxLengths.councilMemberNameMaxLength)
+      },
+      required: true,
+    }
+
+    const newMemberWebsiteProps = {
+      name: 'newMemberWebsite',
+      value: newMemberWebsite,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateLength(e, councilMaxLengths.councilMemberWebsiteMaxLength)
+      },
+      required: true,
+    }
+
+    return {
+      newMemberNameProps,
+      newMemberNameSettings: {
+        inputStatus: formInputStatus.newMemberName,
+      },
+      newMemberWebsiteProps,
+      newMemberWebsiteSettings: {
+        inputStatus: formInputStatus.newMemberWebsite,
+      },
+    }
+  }, [
+    councilMaxLengths.councilMemberNameMaxLength,
+    councilMaxLengths.councilMemberWebsiteMaxLength,
+    formInputStatus.newMemberName,
+    formInputStatus.newMemberWebsite,
+    newMemberName,
+    newMemberWebsite,
+  ])
 
   return (
     <CouncilFormStyled className="update-council-member-info" onSubmit={handleSubmit}>
@@ -189,7 +201,7 @@ export const CouncilFormUpdateCouncilMemberInfo = ({ councilMaxLengths, callback
         title={'Upload Profile Pic'}
       />
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
           <Icon id="upload" />
           Update Council Member Info
         </NewButton>

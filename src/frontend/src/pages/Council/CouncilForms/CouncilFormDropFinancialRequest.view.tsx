@@ -101,7 +101,7 @@ export const CouncilFormDropFinancialRequest = () => {
 
       setChosenDdItem(undefined)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormDropFinancialRequest', error)
     }
   }
 
@@ -110,6 +110,8 @@ export const CouncilFormDropFinancialRequest = () => {
 
     if (foundItem) setChosenDdItem(foundItem)
   }
+
+  const isButtonDisabled = isActionActive || !chosenDdItem
 
   return isLoading ? (
     <CouncilFormDropFinancialRequestLoaderWrapper>
@@ -133,7 +135,7 @@ export const CouncilFormDropFinancialRequest = () => {
           />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="navigation-menu_close" />
             Drop Financial Request
           </NewButton>

@@ -11,6 +11,12 @@ export const CouncilFormStyled = styled.form`
     margin-bottom: 0;
   }
 
+  .loading-label {
+    display: flex;
+    column-gap: 5px;
+    align-items: center;
+  }
+
   input,
   p {
     font-weight: 500;
@@ -21,7 +27,7 @@ export const CouncilFormStyled = styled.form`
   p {
     color: ${({ theme }) => theme.primaryText};
     margin-bottom: 16px;
-    margin-top: 1px;
+    margin-top: 3px;
   }
 
   .form-grid {

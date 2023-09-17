@@ -45,6 +45,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   purpose: INPUT_STATUS_DEFAULT,
 }
 
+// TODO: implement inputs validation after clarification with sam
 export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()

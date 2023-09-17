@@ -3,7 +3,11 @@ import { useMemo, useState } from 'react'
 // consts
 import { SET_CONTRACT_BAKER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import { INPUT_STATUS_DEFAULT, InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from '../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { setContractBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -85,37 +89,44 @@ export const CouncilFormSetContractBaker = () => {
     })
   }
 
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const targetContractAddressProps = {
-    name: 'targetContractAddress',
-    value: targetContractAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const { targetContractAddressProps, targetContractAddressSettings, keyHashProps, keyHashSettings } = useMemo(() => {
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
-  const targetContractAddressSettings = {
-    inputStatus: formInputStatus.targetContractAddress,
-  }
+    const targetContractAddressProps = {
+      name: 'targetContractAddress',
+      value: targetContractAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const keyHashProps = {
-    name: 'keyHash',
-    value: keyHash,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlurAddress(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+    const keyHashProps = {
+      name: 'keyHash',
+      value: keyHash,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        // TODO: address or text?
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const keyHashSettings = {
-    inputStatus: formInputStatus.keyHash,
-  }
+    return {
+      targetContractAddressProps,
+      targetContractAddressSettings: {
+        inputStatus: formInputStatus.targetContractAddress,
+      },
+      keyHashProps,
+      keyHashSettings: {
+        inputStatus: formInputStatus.keyHash,
+      },
+    }
+  }, [formInputStatus.keyHash, formInputStatus.targetContractAddress, keyHash, targetContractAddress])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -136,7 +147,7 @@ export const CouncilFormSetContractBaker = () => {
         </div>
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
           <Icon id="plus" />
           Set Contract Baker
         </NewButton>

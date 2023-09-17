@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { UPDATE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { INPUT_STATUS_DEFAULT, InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS } from '../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { updateVestee } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -16,7 +16,8 @@ import { CouncilFormStyled } from './CouncilForm.style'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // types
-import { InputProps } from 'app/App.components/Input/newInput.type'
+import type { InputProps } from 'app/App.components/Input/newInput.type'
+import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -98,71 +99,93 @@ export const CouncilFormUpdateVestee = () => {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const vesteeAddressProps = {
-    name: 'vesteeAddress',
-    value: vesteeAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const {
+    vesteeAddressProps,
+    vesteeAddressSettings,
+    totalAllocatedProps,
+    totalAllocatedSettings,
+    cliffInMonthsProps,
+    cliffInMonthsSettings,
+    vestingInMonthsProps,
+    vestingInMonthsSettings,
+  } = useMemo(() => {
+    const validateText = validateFormField(setFormInputStatus)
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
-  const vesteeAddressSettings = {
-    inputStatus: formInputStatus.vesteeAddress,
-  }
+    const vesteeAddressProps = {
+      name: 'vesteeAddress',
+      value: vesteeAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const totalAllocatedProps: InputProps = {
-    type: 'number',
-    name: 'totalAllocated',
-    value: totalAllocated,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
+    const totalAllocatedProps: InputProps = {
+      type: 'number',
+      name: 'totalAllocated',
+      value: totalAllocated,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateText(e)
+      },
+      required: true,
+    }
 
-  const totalAllocatedSettings = {
-    inputStatus: formInputStatus.totalAllocated,
-  }
+    const cliffInMonthsProps: InputProps = {
+      type: 'number',
+      name: 'cliffInMonths',
+      value: cliffInMonths,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateText(e)
+      },
+      required: true,
+    }
 
-  const cliffInMonthsProps: InputProps = {
-    type: 'number',
-    name: 'cliffInMonths',
-    value: cliffInMonths,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
+    const vestingInMonthsProps: InputProps = {
+      type: 'number',
+      name: 'vestingInMonths',
+      value: vestingInMonths,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateText(e)
+      },
+      required: true,
+    }
 
-  const cliffInMonthsSettings = {
-    inputStatus: formInputStatus.cliffInMonths,
-  }
-
-  const vestingInMonthsProps: InputProps = {
-    type: 'number',
-    name: 'vestingInMonths',
-    value: vestingInMonths,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
-
-  const vestingInMonthsSettings = {
-    inputStatus: formInputStatus.vestingInMonths,
-  }
+    return {
+      vesteeAddressProps,
+      vesteeAddressSettings: {
+        inputStatus: formInputStatus.vesteeAddress,
+      },
+      totalAllocatedProps,
+      totalAllocatedSettings: {
+        inputStatus: formInputStatus.totalAllocated,
+      },
+      cliffInMonthsProps,
+      cliffInMonthsSettings: {
+        inputStatus: formInputStatus.cliffInMonths,
+      },
+      vestingInMonthsProps,
+      vestingInMonthsSettings: {
+        inputStatus: formInputStatus.vestingInMonths,
+      },
+    }
+  }, [
+    cliffInMonths,
+    formInputStatus.cliffInMonths,
+    formInputStatus.totalAllocated,
+    formInputStatus.vesteeAddress,
+    formInputStatus.vestingInMonths,
+    totalAllocated,
+    vesteeAddress,
+    vestingInMonths,
+  ])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -197,7 +220,7 @@ export const CouncilFormUpdateVestee = () => {
         </div>
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
           <Icon id="update" />
           Update Vestee
         </NewButton>

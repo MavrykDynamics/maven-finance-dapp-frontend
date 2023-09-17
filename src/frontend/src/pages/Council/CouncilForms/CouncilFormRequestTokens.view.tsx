@@ -8,30 +8,28 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-  InputStatusType,
 } from '../../../app/App.components/Input/Input.constants'
 
 // types
-import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { TreasuryData } from 'providers/TreasuryProvider/helpers/treasury.types'
-import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import type { TreasuryData } from 'providers/TreasuryProvider/helpers/treasury.types'
+import type { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import type { InputProps } from 'app/App.components/Input/newInput.type'
 
 // helpers
 import { requestTokens } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { validateFormField } from 'utils/validatorFunctions'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { CouncilFormStyled } from './CouncilForm.style'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
-
-// types
-import { InputProps } from 'app/App.components/Input/newInput.type'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -44,24 +42,18 @@ import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider
 const INIT_FORM = {
   treasuryAddress: '',
   tokenContractAddress: '',
-  tokenName: '',
   tokenAmount: 0,
-  tokenId: 0,
   purpose: '',
 }
 
 const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   treasuryAddress: INPUT_STATUS_DEFAULT,
   tokenContractAddress: INPUT_STATUS_DEFAULT,
-  tokenName: INPUT_STATUS_DEFAULT,
   tokenAmount: INPUT_STATUS_DEFAULT,
-  tokenId: INPUT_STATUS_DEFAULT,
   purpose: INPUT_STATUS_DEFAULT,
 }
 
-// const tokenTypes = ['FA12', 'FA2', 'TEZ']
-
-// TODO: finish when sam answer for this form
+// TODO: test inputs validation after db will be from api-v1
 export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -71,12 +63,7 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
 
-  const {
-    changeTreasurySubscriptionsList,
-    isLoading: isTreasuryLoading,
-    treasuryAddresses,
-    treasuryMapper,
-  } = useTreasuryContext()
+  const { changeTreasurySubscriptionsList, isLoading: isTreasuryLoading, treasuryMapper } = useTreasuryContext()
 
   useEffect(() => {
     changeTreasurySubscriptionsList({
@@ -88,25 +75,13 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     }
   }, [])
 
-  console.log({ isTreasuryLoading, treasuryAddresses, treasuryMapper })
-
-  // const dropDownItems = useMemo(
-  //   () =>
-  //     tokenTypes.map((item, index) => ({
-  //       content: <DropdownTruncateOption text={item} />,
-  //       value: item.toLowerCase(),
-  //       id: index,
-  //     })),
-  //   [],
-  // )
-
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
-  const [selectedToken, setSelectedToken] = useState<TokenMetadataType | undefined>()
+  const [selectedToken, setSelectedToken] = useState<TokenMetadataType | null>()
   const [selectedTreasury, setSelectedTreasury] = useState<TreasuryData | undefined>()
-  const [tokenAmountInTreasury, setTokenAmountInTreasury] = useState<number | undefined>()
+  const [tokenAmountInTreasury, setTokenAmountInTreasury] = useState<number>(0)
 
-  const { treasuryAddress, tokenContractAddress, tokenName, tokenAmount, tokenId, purpose } = form
+  const { treasuryAddress, tokenContractAddress, tokenAmount, purpose } = form
 
   // request tokens council action
   const requestTokensContractActionProps: HookContractActionArgs = useMemo(
@@ -146,11 +121,6 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
 
   const { action: handleRequestTokens } = useContractAction(requestTokensContractActionProps)
 
-  // type DropDownItemType = (typeof dropDownItems)[0]
-  // const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
-
-  // const [tokenDecimals, setTokenDecimals] = useState<number | null>(null)
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -159,8 +129,6 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
 
       setForm(INIT_FORM)
       setFormInputStatus(INIT_FORM_VALIDATION)
-      // setTokenDecimals(null)
-      // setChosenDdItem(undefined)
     } catch (e) {
       console.error('CouncilFormRequestTokens', e)
     }
@@ -172,169 +140,183 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  // const handleClickDropdownItem = (itemId: DDItemId) => {
-  //   const foundItem = dropDownItems.find((item) => item.id === itemId)
+  const validateText = validateFormField(setFormInputStatus)
 
-  //   if (!foundItem) return
-  //   setChosenDdItem(foundItem)
-  // }
+  const {
+    treasuryAddressProps,
+    treasuryAddressSettings,
+    tokenContractAddressProps,
+    tokenContractAddressSettings,
+    tokenAmountProps,
+    tokenAmountSettings,
+  } = useMemo(() => {
+    const treasuryAddressProps = {
+      name: 'treasuryAddress',
+      value: treasuryAddress,
+      disabled: isTreasuryLoading,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
 
-  // revalidate token and token amount on treasury change
-  useEffect(() => {
-    if (formInputStatus['tokenAmount'] !== INPUT_STATUS_DEFAULT) {
-      setFormInputStatus((prev) => ({
-        ...prev,
-        tokenAmount:
-          Number(tokenAmount) > 0 && Number(tokenAmount) <= Number(tokenAmountInTreasury)
-            ? INPUT_STATUS_SUCCESS
-            : INPUT_STATUS_ERROR,
-      }))
+        // validate entered treasury address
+        const { value: treasuryAddress, name } = e.target
+
+        const treasuryByAddress = treasuryMapper[treasuryAddress]
+
+        setFormInputStatus((prev) => ({
+          ...prev,
+          [name]: treasuryByAddress ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
+        setSelectedTreasury(treasuryByAddress ? treasuryByAddress : undefined)
+
+        // ---- revalidate deps inputs
+        const tokenInTreasury = treasuryByAddress?.balances.find(
+          ({ tokenAddress }) => selectedToken?.address === tokenAddress,
+        )
+
+        // revalidate token address from treasury, if was entered
+        // if selected token is in treasury it's valid otherwise no
+        if (formInputStatus.tokenContractAddress !== INPUT_STATUS_DEFAULT) {
+          setFormInputStatus((prev) => ({
+            ...prev,
+            tokenContractAddress: tokenInTreasury ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          }))
+        }
+
+        // revalidate token amount of token, if was entered
+        // if token selected & presented in treasury, and amount of token lessEq that amount of token in treasury it's valid otherwise no
+        if (formInputStatus.tokenAmount !== INPUT_STATUS_DEFAULT) {
+          const convetedTokenAmountInTreasury =
+            tokenInTreasury && selectedToken
+              ? convertNumberForClient({ number: tokenInTreasury.balance, grade: selectedToken.decimals })
+              : 0
+          const isTokenAmountValid = Number(tokenAmount) > 0 && Number(tokenAmount) <= convetedTokenAmountInTreasury
+
+          setFormInputStatus((prev) => ({
+            ...prev,
+            tokenAmount: isTokenAmountValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          }))
+        }
+      },
+      required: true,
     }
 
-    if (formInputStatus['tokenContractAddress'] !== INPUT_STATUS_DEFAULT) {
-      const token = getTokenDataByAddress({ tokenAddress: tokenContractAddress, tokensMetadata })
-      const tokenInTreasury = selectedTreasury?.balances.find(
-        ({ tokenAddress }) => tokenContractAddress === tokenAddress,
-      )
-      setFormInputStatus((prev) => ({
-        ...prev,
-        tokenContractAddress: token && tokenInTreasury ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-      }))
+    const tokenContractAddressProps = {
+      name: 'tokenContractAddress',
+      value: tokenContractAddress,
+      disabled: isTreasuryLoading,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+
+        // validate token
+        const { value: tokenAddress } = e.target
+        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+        const tokenInTreasury = selectedTreasury?.balances.find(({ tokenAddress }) => token?.address === tokenAddress)
+        const convetedTokenAmountInTreasury =
+          tokenInTreasury && token
+            ? convertNumberForClient({ number: tokenInTreasury.balance, grade: token.decimals })
+            : 0
+
+        setFormInputStatus((prev) => ({
+          ...prev,
+          tokenContractAddress: token && tokenInTreasury ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
+        setSelectedToken(token)
+        setTokenAmountInTreasury(convetedTokenAmountInTreasury)
+
+        // revalidate token amount of token, if was entered
+        if (formInputStatus.tokenAmount !== INPUT_STATUS_DEFAULT) {
+          const isTokenAmountValid = Number(tokenAmount) > 0 && Number(tokenAmount) <= convetedTokenAmountInTreasury
+          setFormInputStatus((prev) => ({
+            ...prev,
+            tokenAmount: isTokenAmountValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          }))
+        }
+      },
+      required: true,
     }
-  }, [selectedTreasury])
 
-  // revalidate token amount on token change
-  useEffect(() => {
-    if (formInputStatus['tokenAmount'] !== INPUT_STATUS_DEFAULT) {
-      setFormInputStatus((prev) => ({
-        ...prev,
-        tokenAmount:
-          Number(tokenAmount) > 0 && Number(tokenAmount) <= Number(tokenAmountInTreasury)
-            ? INPUT_STATUS_SUCCESS
-            : INPUT_STATUS_ERROR,
-      }))
+    const tokenAmountProps: InputProps = {
+      type: 'number',
+      name: 'tokenAmount',
+      value: tokenAmount,
+      disabled: isTreasuryLoading,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+
+        // validate value
+        const { value: tokenAmount } = e.target
+        const isTokenAmountValid = Number(tokenAmount) > 0 && Number(tokenAmount) <= tokenAmountInTreasury
+        setFormInputStatus((prev) => ({
+          ...prev,
+          tokenAmount: isTokenAmountValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
+      },
+      required: true,
     }
-  }, [tokenAmountInTreasury])
 
-  const treasuryAddressProps = {
-    name: 'treasuryAddress',
-    value: treasuryAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
+    return {
+      treasuryAddressProps,
+      treasuryAddressSettings: {
+        inputStatus: formInputStatus.treasuryAddress,
+      },
+      tokenContractAddressProps,
+      tokenContractAddressSettings: {
+        inputStatus: formInputStatus.tokenContractAddress,
+      },
+      tokenAmountProps,
+      tokenAmountSettings: {
+        inputStatus: formInputStatus.tokenAmount,
+      },
+    }
+  }, [
+    formInputStatus.tokenAmount,
+    formInputStatus.tokenContractAddress,
+    formInputStatus.treasuryAddress,
+    isTreasuryLoading,
+    selectedToken,
+    selectedTreasury?.balances,
+    tokenAmount,
+    tokenAmountInTreasury,
+    tokenContractAddress,
+    tokensMetadata,
+    treasuryAddress,
+    treasuryMapper,
+  ])
 
-      const { value: treasuryAddress, name } = e.target
-
-      const treasuryByAddress = treasuryMapper[treasuryAddress]
-
-      setFormInputStatus((prev) => ({
-        ...prev,
-        [name]: treasuryByAddress ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-      }))
-
-      setSelectedTreasury(treasuryByAddress ? treasuryByAddress : undefined)
-    },
-    required: true,
+  const tokenTypeProps = {
+    name: 'tokenType',
+    value: selectedToken?.type ?? 'No token selected',
+    onChange: () => null,
+    disabled: true,
   }
 
-  const treasuryAddressSettings = {
-    inputStatus: formInputStatus.treasuryAddress,
+  const tokenNameProps = {
+    name: 'tokenName',
+    value: selectedToken?.name ?? 'No token selected',
+    onChange: () => null,
+    disabled: true,
   }
-
-  const tokenContractAddressProps = {
-    name: 'tokenContractAddress',
-    value: tokenContractAddress,
-    disabled: !selectedTreasury,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-
-      const { value: tokenAddress } = e.target
-      const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
-      const tokenInTreasury = selectedTreasury?.balances.find(({ tokenAddress }) => token?.address === tokenAddress)
-
-      setFormInputStatus((prev) => ({
-        ...prev,
-        tokenContractAddress: token && tokenInTreasury ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-      }))
-
-      setSelectedToken(token ? token : undefined)
-      setTokenAmountInTreasury(
-        tokenInTreasury && token
-          ? convertNumberForClient({ number: tokenInTreasury.balance, grade: token.decimals })
-          : undefined,
-      )
-    },
-    required: true,
-  }
-
-  const tokenContractAddressSettings = {
-    inputStatus: formInputStatus.tokenContractAddress,
-  }
-
-  // const tokenNameProps = {
-  //   name: 'tokenName',
-  //   value: tokenName,
-  //   onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e, maxLength.requestTokenNameMaxLength),
-  //   onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     handleChange(e)
-  //     handleBlur(e, maxLength.requestTokenNameMaxLength)
-  //   },
-  //   required: true,
-  // }
-
-  // const tokenNameSettings = {
-  //   inputStatus: formInputStatus.tokenName,
-  // }
-
-  const tokenAmountProps: InputProps = {
-    type: 'number',
-    name: 'tokenAmount',
-    value: tokenAmount,
-    disabled: !tokenAmountInTreasury,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      const { value: tokenAmount } = e.target
-
-      setFormInputStatus((prev) => ({
-        ...prev,
-        tokenAmount:
-          Number(tokenAmount) > 0 && Number(tokenAmount) <= Number(tokenAmountInTreasury)
-            ? INPUT_STATUS_SUCCESS
-            : INPUT_STATUS_ERROR,
-      }))
-    },
-    required: true,
-  }
-
-  const tokenAmountSettings = {
-    inputStatus: formInputStatus.tokenAmount,
-  }
-
-  // const tokenIdProps: InputProps = {
-  //   type: 'number',
-  //   name: 'tokenId',
-  //   value: tokenId,
-  //   onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-  //   onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     handleChange(e)
-  //     handleBlur(e)
-  //   },
-  //   required: true,
-  // }
-
-  // const tokenIdSettings = {
-  //   inputStatus: formInputStatus.tokenId,
-  // }
-  // TODO: need to add a sequence of fields
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
       <h1 className="form-h1">Request Tokens</h1>
-      <p>Please enter valid function parameters for requesting tokens</p>
+
+      <p>
+        {isTreasuryLoading ? (
+          <>
+            <div className="loading-label">
+              Loading Treasuries <SpinnerCircleLoaderStyled />
+            </div>
+          </>
+        ) : (
+          'Please enter valid function parameters for requesting tokens'
+        )}
+      </p>
       <div className="form-grid">
         <div>
           <label>Treasury Address</label>
@@ -346,31 +328,22 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
           <Input inputProps={tokenContractAddressProps} settings={tokenContractAddressSettings} />
         </div>
 
-        {/* <div>
+        <div>
           <label>Token Name</label>
-          <Input inputProps={tokenNameProps} settings={tokenNameSettings} />
-        </div> */}
+          <Input inputProps={tokenNameProps} settings={tokenContractAddressSettings} />
+        </div>
 
         <div>
           <label>Token Amount to Transfer</label>
           <Input inputProps={tokenAmountProps} settings={tokenAmountSettings} />
         </div>
 
-        {/* <div>
+        <div>
           <label>Token Type (FA12, FA2, TEZ)</label>
-          <DropDown
-            placeholder="Choose token type"
-            activeItem={chosenDdItem}
-            items={dropDownItems}
-            clickItem={handleClickDropdownItem}
-          />
-        </div> */}
-
-        {/* <div>
-          <label>Token ID</label>
-          <Input inputProps={tokenIdProps} settings={tokenIdSettings} />
-        </div> */}
+          <Input inputProps={tokenTypeProps} settings={tokenContractAddressSettings} />
+        </div>
       </div>
+
       <div className="textarea-group">
         <label>Purpose for Request</label>
         <TextArea
@@ -379,15 +352,14 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
-            handleBlur(e, maxLength.requestPurposeMaxLength)
+            validateText(e, maxLength.requestPurposeMaxLength)
           }}
-          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
           textAreaMaxLimit={maxLength.requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
           <Icon id="request_token" />
           Request Tokens
         </NewButton>

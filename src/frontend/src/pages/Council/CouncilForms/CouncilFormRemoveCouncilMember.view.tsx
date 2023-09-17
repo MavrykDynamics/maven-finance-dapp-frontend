@@ -98,6 +98,8 @@ export const CouncilFormRemoveCouncilMember = ({
     if (foundItem) setChosenDdItem(foundItem)
   }
 
+  const isButtonDisabled = isActionActive || !chosenDdItem
+
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -116,7 +118,7 @@ export const CouncilFormRemoveCouncilMember = ({
           />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="minus" />
             Remove Council Member
           </NewButton>

@@ -18,7 +18,11 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import { INPUT_STATUS_DEFAULT, InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from '../../../app/App.components/Input/Input.constants'
 import { REMOVE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 const INIT_FORM = {
@@ -88,22 +92,29 @@ export const CouncilFormRemoveVestee = () => {
     })
   }
 
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const vesteeAddressProps = {
-    name: 'vesteeAddress',
-    value: vesteeAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const { vesteeAddressProps, vesteeAddressSettings } = useMemo(() => {
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
-  const vesteeAddressSettings = {
-    inputStatus: formInputStatus.vesteeAddress,
-  }
+    const vesteeAddressProps = {
+      name: 'vesteeAddress',
+      value: vesteeAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
+
+    return {
+      vesteeAddressProps,
+      vesteeAddressSettings: {
+        inputStatus: formInputStatus.vesteeAddress,
+      },
+    }
+  }, [formInputStatus.vesteeAddress, vesteeAddress])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -118,7 +129,7 @@ export const CouncilFormRemoveVestee = () => {
           <Input inputProps={vesteeAddressProps} settings={vesteeAddressSettings} />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="minus" />
             Remove Vestee
           </NewButton>
