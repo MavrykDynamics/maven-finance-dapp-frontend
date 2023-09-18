@@ -124,10 +124,14 @@ export const HorizontalFarmCard = ({
           />
 
           <div className="links">
-            <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farm.liquidityTokenAddress}`}>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href={`${process.env.REACT_APP_TZKT_LINK}/${farm.liquidityTokenAddress}`}
+            >
               Get {tokenName} <Icon id="send" />
             </a>
-            <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farm.address}`}>
+            <a target="_blank" rel="noreferrer" href={`${process.env.REACT_APP_TZKT_LINK}/${farm.address}`}>
               View Contract <Icon id="send" />
             </a>
           </div>

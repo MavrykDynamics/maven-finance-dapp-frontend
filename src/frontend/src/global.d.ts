@@ -6,6 +6,7 @@ declare global {
     interface ProcessEnv extends ProcessEnvType {
       REACT_APP_ENV: 'dev' | 'prod'
       REACT_APP_TZKT_API: 'https://api.ghostnet.tzkt.io' | 'https://api.tzkt.io'
+      REACT_APP_TZKT_LINK: 'https://ghostnet.tzkt.io' | 'https://tzkt.io'
       REACT_APP_TZKT_SERVICE_API: 'https://services.tzkt.io'
       REACT_APP_WERT_API: 'https://sandbox.wert.io'
       REACT_APP_GRAPHQL_API: 'https://api-v2.mavryk.finance/v1/graphql'
