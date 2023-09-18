@@ -44,7 +44,6 @@ export const tokenGqlSchema = z.object({
       }),
     ])
     .or(z.tuple([])),
-
   farms_lp_tokens: z
     .tuple([
       z.object({

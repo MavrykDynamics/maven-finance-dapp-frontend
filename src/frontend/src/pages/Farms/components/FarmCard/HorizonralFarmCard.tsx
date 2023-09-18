@@ -96,6 +96,12 @@ export const HorizontalFarmCard = ({
               {/* TODO: use beginningText="$" when we will have rate for lpTokens, currently Total Liquidity is in lpTokens amount */}
               <CommaNumber value={totalLiquidityAmount} className="value" />
             </div>
+
+            {farm.isMFarm ? (
+              <div className="double-rewards-tag">
+                <Icon id={'loans'} /> Double Rewards
+              </div>
+            ) : null}
           </>
         }
       >

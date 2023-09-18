@@ -580,9 +580,6 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
           row-gap: 5px;
           color: ${({ theme }) => theme.mainHeadingText};
 
-          font-weight: 500;
-          font-size: 12px;
-
           .large {
             font-weight: 600;
             font-size: 18px;
@@ -590,6 +587,14 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+          }
+
+          .creator {
+            font-weight: 500;
+            font-size: 12px;
+
+            // TODO: remove when address will be in indexer
+            visibility: hidden;
           }
         }
 

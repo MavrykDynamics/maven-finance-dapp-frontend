@@ -140,7 +140,7 @@ export const Farms = () => {
     }
 
     return farmsIds
-  }, [farmsMapper, allFinishedFarms, finishedStakedFarms, allLiveFarms, liveStakedFarms, search])
+  }, [farmsFilers, liveStakedFarms, finishedStakedFarms, allLiveFarms, allFinishedFarms, farmsMapper, userAddress])
 
   // paginate farms
   const paginatedFarms = useMemo(
@@ -203,7 +203,7 @@ export const Farms = () => {
           {isFarmsLoading ? (
             <DataLoaderWrapper>
               <ClockLoader width={150} height={150} />
-              <div className="text">Loading farms</div>
+              <div className="text">Loading Farms</div>
             </DataLoaderWrapper>
           ) : farmsToUse.length ? (
             <>

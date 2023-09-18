@@ -41,6 +41,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 type DashboardSmallFarmCardDataType = {
   address: string
   isMFarm: boolean
+  infinite: boolean
   name: string
   farmToken: FarmsTokenMetadataType
   apy: number
@@ -84,8 +85,16 @@ export const FarmsTab = () => {
           if (!farm || !farmToken || !checkWhetherTokenIsFarmToken(farmToken)) return acc
 
           const { decimals: grade } = farmToken
-          const { liquidityTokenBalance, currentRewardPerBlock, name, address, creatorAddress, isMFarm, endsInTime } =
-            farm
+          const {
+            liquidityTokenBalance,
+            currentRewardPerBlock,
+            name,
+            address,
+            creatorAddress,
+            isMFarm,
+            endsInTime,
+            infinite,
+          } = farm
 
           const totalLiquidityAmount = convertNumberForClient({ number: liquidityTokenBalance, grade })
           const farmApy = calculateFarmAPY(currentRewardPerBlock, totalLiquidityAmount)
@@ -110,6 +119,7 @@ export const FarmsTab = () => {
             endsInTime,
             farmToken,
             isMFarm,
+            infinite,
           })
 
           return acc
@@ -167,7 +177,7 @@ export const FarmsTab = () => {
             </div>
             <div className="farms-list scroll-block">
               {farmsToIterate.map((farmData) => {
-                const { address, apy, name, creatorAddress, endsInTime, farmToken, isMFarm } = farmData
+                const { address, apy, name, creatorAddress, endsInTime, farmToken, isMFarm, infinite } = farmData
 
                 return (
                   <Link to={`/yield-farms?${qs.stringify({ openedFarmsCards: [address] })}`} key={address}>
@@ -175,7 +185,12 @@ export const FarmsTab = () => {
                       <div className="top">
                         <div className="name">
                           <div className="large">{name}</div>
-                          <TzAddress tzAddress={creatorAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={false} />
+                          <TzAddress
+                            tzAddress={creatorAddress}
+                            type={PRIMARY_TZ_ADDRESS_COLOR}
+                            className="creator"
+                            hasIcon={false}
+                          />
                         </div>
 
                         <FarmCardCoinIcons farmToken={farmToken} isMFarm={isMFarm} size={FARM_CARD_COINS_LARGE} />
@@ -193,9 +208,7 @@ export const FarmsTab = () => {
 
                       <div className="row-info">
                         <div className="name">Ends in: </div>
-                        <div className="value">
-                          <Timer deadline={endsInTime} />
-                        </div>
+                        <div className="value">{infinite ? 'Not ending' : <Timer deadline={endsInTime} />}</div>
                       </div>
                     </div>
                   </Link>

@@ -8,6 +8,7 @@ export const FARMS_LIVE_ALL = gql(`
 			open
 			creation_timestamp
 			end_timestamp
+			infinite
 
 			lp_token_balance
 			lp_token {
@@ -41,6 +42,7 @@ export const FARMS_LIVE_STAKED = gql(`
 			open
 			creation_timestamp
 			end_timestamp
+			infinite
 
 			lp_token_balance
 			lp_token {
@@ -74,6 +76,7 @@ export const FARMS_FINISHED_ALL = gql(`
 			open
 			creation_timestamp
 			end_timestamp
+			infinite
 
 			lp_token_balance
 			lp_token {
@@ -107,6 +110,7 @@ export const FARMS_FINISHED_STAKED = gql(`
 			open
 			creation_timestamp
 			end_timestamp
+			infinite
 
 			lp_token_balance
 			lp_token {

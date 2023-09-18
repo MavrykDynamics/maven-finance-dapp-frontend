@@ -1,5 +1,3 @@
-import dayjs from 'dayjs'
-
 import { FarmCtxStateType, FarmDepositorType, FarmsIndexerDataType } from '../farms.provider.types'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -13,6 +11,7 @@ export const normalizeFarm = (indexerFarm: FarmsIndexerDataType['farm'][number])
     open: indexerFarm.open,
     createdTime: indexerFarm.creation_timestamp,
     endsInTime: indexerFarm.end_timestamp ?? null,
+    infinite: indexerFarm.infinite,
 
     // farm liquidity token
     liquidityTokenBalance: indexerFarm.lp_token_balance,
@@ -43,7 +42,7 @@ export const normalizeFarm = (indexerFarm: FarmsIndexerDataType['farm'][number])
     isMFarm: indexerFarm.is_m_farm,
 
     // TODO: add address here, no data in indexer for now
-    creatorAddress: 'tz1Y2tUUooW6QT6pQCeqz9ep9wCkX5bnKeTs',
+    creatorAddress: '',
   }
 }
 

@@ -7,6 +7,27 @@ export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavrykTheme }>`
   margin: 0;
   position: relative;
 
+  .double-rewards-tag {
+    width: fit-content;
+    height: 30px;
+    padding: 0 11px;
+    column-gap: 5px;
+
+    display: flex;
+    align-items: center;
+
+    background-color: ${({ theme }) => theme.coralColor};
+    color: ${({ theme }) => theme.backgroundColor};
+    white-space: nowrap;
+
+    svg {
+      width: 20px;
+      height: 20px;
+
+      fill: ${({ theme }) => theme.backgroundColor};
+    }
+  }
+
   .name {
     font-size: 14px;
     font-weight: 600;
@@ -59,13 +80,18 @@ export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Ma
   border: none;
 
   .expand-header {
-    grid-template-columns: 240px 60px 0.9fr 0.9fr 1fr 100px;
-    column-gap: 50px;
+    display: flex;
+    justify-content: space-between;
     padding: 0 30px;
     align-items: center;
   }
 
+  .double-rewards-tag {
+    border-radius: 4px;
+  }
+
   .farm-card-header {
+    min-width: 225px;
     height: 48px;
     align-items: center;
     padding: 0;
@@ -147,25 +173,8 @@ export const VerticalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Mavr
     top: 10px;
     left: 0px;
 
-    width: fit-content;
-    height: 30px;
-    padding: 0 11px;
-    column-gap: 5px;
-
-    display: flex;
-    align-items: center;
-
-    background-color: ${({ theme }) => theme.coralColor};
-    color: ${({ theme }) => theme.backgroundColor};
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
-
-    svg {
-      width: 20px;
-      height: 20px;
-
-      fill: ${({ theme }) => theme.backgroundColor};
-    }
   }
 
   .farm-card-header {

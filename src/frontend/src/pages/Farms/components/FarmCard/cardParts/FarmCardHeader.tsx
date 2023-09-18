@@ -36,6 +36,9 @@ const FarmCardHeaderStyled = styled.div`
     .creator {
       font-size: 14px;
       font-weight: 400;
+
+      // TODO: remove when address will be in indexer
+      visibility: hidden;
     }
   }
 `
