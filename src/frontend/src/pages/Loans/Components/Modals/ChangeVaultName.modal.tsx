@@ -15,6 +15,7 @@ import {
   ERR_MSG_NONE,
   INPUT_LARGE,
   INPUT_STATUS_SUCCESS,
+  INPUT_STATUS_DEFAULT,
   InputStatusType,
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -42,6 +43,16 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 
+const VAULT_NAME_INPUT: {
+  name: string
+  validationStatus: InputStatusType
+  errorMessage: string
+} = {
+  name: '',
+  validationStatus: INPUT_STATUS_DEFAULT,
+  errorMessage: '',
+}
+
 export const ChangeVaultName = ({
   closePopup,
   show,
@@ -51,26 +62,17 @@ export const ChangeVaultName = ({
   show: boolean
   data: ChangeVaultNamePopupDataType
 }) => {
-  // TODO: test it
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
 
   useLockBodyScroll(show)
 
-  const [newVaultName, setNewVaultName] = useState<{
-    name: string
-    validationStatus: InputStatusType
-    errorMessage: string
-  }>({
-    name: '',
-    validationStatus: '',
-    errorMessage: '',
-  })
+  const [newVaultName, setNewVaultName] = useState(VAULT_NAME_INPUT)
 
   useEffect(() => {
     if (!show) {
-      setNewVaultName({ name: '', validationStatus: '', errorMessage: '' })
+      setNewVaultName(VAULT_NAME_INPUT)
     }
   }, [show])
 
@@ -149,6 +151,8 @@ export const ChangeVaultName = ({
                 [validateInputLength, ERR_MSG_INPUT, [15]],
                 [validateVaultName, ERR_MSG_NONE, [vaultNames]],
               ],
+              updateInputStatus: (newInputStatus) =>
+                setNewVaultName((prev) => ({ ...prev, validationStatus: newInputStatus })),
               allowInputAfterError: true,
             }}
           />

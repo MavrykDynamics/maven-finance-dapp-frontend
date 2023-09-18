@@ -24,6 +24,7 @@ export type Settings = {
   showErrorMessage?: boolean
   allowInputAfterError?: boolean
   validationFns?: ValidatorFnType[]
+  updateInputStatus?: (newInputStatus: InputStatusType) => void
 }
 
 export type InputProps = {

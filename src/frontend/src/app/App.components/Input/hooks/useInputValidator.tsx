@@ -4,6 +4,7 @@ import {
   ERR_MSG_NONE,
   ERR_MSG_TOAST,
   INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
   InputStatusType,
 } from 'app/App.components/Input/Input.constants'
 
@@ -18,6 +19,7 @@ export interface InputValidatorProps<T> {
   onBlur?: (e: React.FocusEvent<T>) => void
   validationFns?: ValidatorFnType[]
   handleMax?: () => void
+  updateInputStatus?: (newInputStatus: InputStatusType) => void
   value?: string | number
   allowInputAfterError: boolean
 }
@@ -35,6 +37,7 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
   onBlur,
   handleMax,
   validationFns,
+  updateInputStatus,
   value,
   allowInputAfterError,
 }: InputValidatorProps<G>) {
@@ -50,7 +53,7 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
         const [containsError, errMsg] = args ? fn.apply(null, [value, ...args]) : fn(value)
 
         // show err message under the input or just make input red if errMessage equals "none" -> (ERR_MSG_NONE)
-        if ((containsError && type === ERR_MSG_INPUT) || type === ERR_MSG_NONE) {
+        if (containsError && (type === ERR_MSG_INPUT || type === ERR_MSG_NONE)) {
           setErrorMsg(errMsg)
           return true
         }
@@ -81,6 +84,8 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
       const { value } = e.target
 
       const hasError = internalValidationFn(value)
+
+      if (updateInputStatus) updateInputStatus(hasError ? INPUT_STATUS_ERROR : INPUT_STATUS_SUCCESS)
 
       const _allowInput = allowInputAfterError ? allowInputAfterError : !hasError
       if (_allowInput) {
