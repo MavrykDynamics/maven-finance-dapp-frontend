@@ -39,6 +39,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
         inputStatus,
         inputSize,
         validationFns = [[validateInput, ERR_MSG_INPUT]],
+        updateInputStatus,
         errorMessage: errorMessageFromProps,
         showErrorMessage = true,
         allowInputAfterError = false,
@@ -55,6 +56,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
       allowInputAfterError,
       handleMax: useMaxHandler,
       value,
+      updateInputStatus,
       validationFns:
         validationFns && validationFns.length > 0 ? [[validateInput, ERR_MSG_INPUT], ...validationFns] : validationFns,
     })
