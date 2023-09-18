@@ -8,7 +8,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 // utils
 import { setSingleContractAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { validateFormAddress } from 'utils/validatorFunctions'
 
 // consts
 import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
@@ -89,8 +89,8 @@ export function FormSetSingleContractAdminView() {
     isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
   const { newAdminAddressProps, newAdminAddressSettings, targetContractProps, targetContracSettings } = useMemo(() => {
-    const validateText = validateFormField(setFormInputStatus)
     const validateAddress = validateFormAddress(setFormInputStatus)
+
     const newAdminAddressProps = {
       name: 'newAdminAddress',
       value: newAdminAddress,
@@ -106,8 +106,7 @@ export function FormSetSingleContractAdminView() {
       value: targetContract,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        // TODO: should validate for kt address?
-        validateText(e)
+        validateAddress(e)
       },
       required: true,
     }

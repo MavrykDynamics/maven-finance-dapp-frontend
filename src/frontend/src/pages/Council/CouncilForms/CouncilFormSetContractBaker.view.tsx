@@ -110,7 +110,6 @@ export const CouncilFormSetContractBaker = () => {
       value: keyHash,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        // TODO: address or text?
         validateAddress(e)
       },
       required: true,

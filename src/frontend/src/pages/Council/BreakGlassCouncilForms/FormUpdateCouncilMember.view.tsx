@@ -125,13 +125,14 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
     isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
   const { newMemberNameProps, newMemberNameSettings, newMemberWebsiteProps, newMemberWebsiteSettings } = useMemo(() => {
-    const validateLength = validateFormField(setFormInputStatus)
+    const validateText = validateFormField(setFormInputStatus)
+
     const newMemberNameProps = {
       name: 'newMemberName',
       value: newMemberName,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateLength(e, councilMaxLengths.councilMemberNameMaxLength)
+        validateText(e, councilMaxLengths.councilMemberNameMaxLength)
       },
       required: true,
     }
@@ -141,7 +142,7 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
       value: newMemberWebsite,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateLength(e, councilMaxLengths.councilMemberWebsiteMaxLength)
+        validateText(e, councilMaxLengths.councilMemberWebsiteMaxLength)
       },
       required: true,
     }

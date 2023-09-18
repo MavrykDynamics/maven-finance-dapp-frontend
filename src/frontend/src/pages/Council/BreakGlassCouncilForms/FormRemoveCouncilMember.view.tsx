@@ -87,9 +87,13 @@ export function FormRemoveCouncilMemberView({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    await handleRemoveCouncilMember()
+    try {
+      await handleRemoveCouncilMember()
 
-    setChosenDdItem(undefined)
+      setChosenDdItem(undefined)
+    } catch (e) {
+      console.error('removeBgCouncilContractContractActionProps', e)
+    }
   }
 
   const handleClickDropdownItem = (itemId: DDItemId) => {

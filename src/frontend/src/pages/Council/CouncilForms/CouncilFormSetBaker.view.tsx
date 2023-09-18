@@ -11,7 +11,7 @@ import {
 
 // helpers
 import { setBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
-import { validateFormField } from 'utils/validatorFunctions'
+import { validateFormAddress } from 'utils/validatorFunctions'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
@@ -91,14 +91,14 @@ export const CouncilFormSetBaker = () => {
     isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
   const { bakerHashProps, bakerHashSettings } = useMemo(() => {
-    const validateText = validateFormField(setFormInputStatus)
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
     const bakerHashProps = {
       name: 'bakerHash',
       value: bakerHash,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateText(e)
+        validateAddress(e)
       },
       required: true,
     }

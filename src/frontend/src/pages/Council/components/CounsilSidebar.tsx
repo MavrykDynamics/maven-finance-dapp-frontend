@@ -9,6 +9,7 @@ import { BUTTON_WIDE, BUTTON_SECONDARY } from 'app/App.components/Button/Button.
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
+import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
 import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
 
 // view
@@ -16,7 +17,6 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { ReviewCard } from '../Council.style'
 import { CouncilMemberView } from './CouncilMember/CouncilMember.view'
 import { EmptyContainer } from 'app/App.style'
-import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
 
 type Props = {
   membersTitle: string

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 
 // view
 import Carousel from 'app/App.components/Carousel/Carousel.view'
@@ -40,31 +40,29 @@ export const CounsilActionsToSign = ({
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
 
-  const signAction = useCallback(async (actionId: number) => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    if (!counsilAddress) {
-      bug('Wrong counsil address')
-      return null
-    }
-
-    if (isBreakGlassAction) {
-      return await signBreakGlassAction(actionId, counsilAddress)
-    } else {
-      return await signMavrykAction(actionId, counsilAddress)
-    }
-  }, [])
-
-  // Sign break glass action
+  // Sign request action
   const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
     () => ({
       actionType: isBreakGlassAction ? SIGN_BREAK_GLASS_COUNCIL_ACTION : SIGN_MAVRYK_COUNCIL_ACTION,
-      actionFn: signAction,
+      actionFn: async (actionId: number) => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!counsilAddress) {
+          bug('Wrong counsil address')
+          return null
+        }
+
+        if (isBreakGlassAction) {
+          return await signBreakGlassAction(actionId, counsilAddress)
+        } else {
+          return await signMavrykAction(actionId, counsilAddress)
+        }
+      },
     }),
-    [signAction],
+    [counsilAddress, isBreakGlassAction, userAddress],
   )
 
   const { actionWithArgs: handleSignAction } = useContractAction(signActionContractActionProps)

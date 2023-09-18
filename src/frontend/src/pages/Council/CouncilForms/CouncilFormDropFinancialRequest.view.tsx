@@ -8,14 +8,13 @@ import {
   ONGOING_FIN_REQUESTS_SUB,
 } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 import { DROP_FIN_REQUEST_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { SPINNER_LOADER_MEDIUM } from 'app/App.components/Loader/loader.const'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import { CouncilFormDropFinancialRequestLoaderWrapper, CouncilFormStyled } from './CouncilForm.style'
+import { CouncilFormStyled } from './CouncilForm.style'
 
 // utils
 import { dropFinancialRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -39,8 +38,12 @@ export const CouncilFormDropFinancialRequest = () => {
     contractAddresses: { councilAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-  const { ongoingFinRequestsIds, financialRequestsMapper, isLoading, changeFinancialRequestsSubscriptionList } =
-    useFinancialRequestsContext()
+  const {
+    ongoingFinRequestsIds,
+    financialRequestsMapper,
+    isLoading: isFinancialRequestsLoading,
+    changeFinancialRequestsSubscriptionList,
+  } = useFinancialRequestsContext()
 
   useEffect(() => {
     changeFinancialRequestsSubscriptionList({
@@ -113,17 +116,23 @@ export const CouncilFormDropFinancialRequest = () => {
 
   const isButtonDisabled = isActionActive || !chosenDdItem
 
-  return isLoading ? (
-    <CouncilFormDropFinancialRequestLoaderWrapper>
-      <SpinnerCircleLoaderStyled className={SPINNER_LOADER_MEDIUM} />
-    </CouncilFormDropFinancialRequestLoaderWrapper>
-  ) : (
+  return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
       <h1 className="form-h1">Drop Financial Request</h1>
-      <p>Please enter valid function parameters for dropping a financial request</p>
+      <p>
+        {isFinancialRequestsLoading ? (
+          <>
+            <div className="loading-label">
+              Loading Financial Requests <SpinnerCircleLoaderStyled />
+            </div>
+          </>
+        ) : (
+          'Please enter valid function parameters for dropping a financial request'
+        )}
+      </p>
       <div className="form-grid form-grid-button-right">
         <div>
           <label>Choose Financial Request to drop</label>

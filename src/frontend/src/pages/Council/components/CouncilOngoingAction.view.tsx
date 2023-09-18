@@ -17,6 +17,9 @@ import {
 } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
+// types
+import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
+
 // hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -27,7 +30,6 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CouncilActionStyled } from '../Council.style'
-import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 
 type Props = {
   isBreakGlassCounsil: boolean
@@ -73,32 +75,29 @@ export function CouncilOngoingAction({
     [parameters],
   )
 
-  // Drop action
-  const dropAction = useCallback(async (actionId: number) => {
-    if (!userAddress) {
-      bug('Click Connect in the left menu', 'Please connect your wallet')
-      return null
-    }
-
-    if (!counsilAddress) {
-      bug('Wrong counsil address')
-      return null
-    }
-
-    if (isBreakGlassCounsil) {
-      return await dropBreakGlass(actionId, counsilAddress)
-    } else {
-      return await dropRequest(actionId, counsilAddress)
-    }
-  }, [])
-
-  // Sign break glass action
+  // drop request action
   const dropBreakGlassContractActionProps: HookContractActionArgs<number> = useMemo(
     () => ({
       actionType: isBreakGlassCounsil ? DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION : DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
-      actionFn: dropAction,
+      actionFn: async (actionId: number) => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!counsilAddress) {
+          bug('Wrong counsil address')
+          return null
+        }
+
+        if (isBreakGlassCounsil) {
+          return await dropBreakGlass(actionId, counsilAddress)
+        } else {
+          return await dropRequest(actionId, counsilAddress)
+        }
+      },
     }),
-    [dropAction],
+    [counsilAddress, isBreakGlassCounsil, userAddress],
   )
 
   const { actionWithArgs: handleDropAction } = useContractAction(dropBreakGlassContractActionProps)
