@@ -62,7 +62,6 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
-
   const { changeTreasurySubscriptionsList, isLoading: isTreasuryLoading, treasuryMapper } = useTreasuryContext()
 
   useEffect(() => {
