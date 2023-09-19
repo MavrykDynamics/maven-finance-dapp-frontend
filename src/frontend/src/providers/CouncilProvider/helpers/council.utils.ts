@@ -1,5 +1,5 @@
 // utils
-import { replaceDeepNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 
 // types
 import {
@@ -81,10 +81,7 @@ export const getCouncilProviderReturnValue = ({
   }
 
   // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceDeepNullValuesWithDefault<CouncilStateType>(
-    councilCtxState,
-    EMPTY_COUNCIL_CTX,
-  )
+  const nonNullableProviderValue = replaceNullValuesWithDefault<CouncilStateType>(councilCtxState, EMPTY_COUNCIL_CTX)
 
   return {
     isLoading: false,

@@ -1,4 +1,4 @@
-import { normalizeCouncilActions, normalizeCouncilMembers, normalizeCouncilAction } from './helpers/council.normalizer'
+import { normalizeCouncilActions, normalizeCouncilMembers } from './helpers/council.normalizer'
 import {
   ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
@@ -73,7 +73,7 @@ export type CouncilActionsRecordType = {
   myPastActions: CouncilActionsType['myPastActions']
   actionsMapper: CouncilActionsType['actionsMapper']
 }
-export type NullableCouncilActionsRecordType = DeepDeepNullable<CouncilActionsRecordType>
+export type NullableCouncilActionsRecordType = DeepNullable<CouncilActionsRecordType>
 
 export type CouncilStateType = {
   breakGlassCouncilMembers: CouncilMembersType
@@ -82,7 +82,7 @@ export type CouncilStateType = {
   breakGlassCouncilActions: CouncilActionsRecordType
 }
 
-export type NullableCouncilContextStateType = DeepDeepNullable<CouncilStateType>
+export type NullableCouncilContextStateType = DeepNullable<CouncilStateType>
 
 export type CouncilContext = CouncilStateType & {
   isLoading: boolean
