@@ -63,7 +63,7 @@ import {
 // fin requests
 import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 
-// sat governance consts
+// sat governance
 import {
   ADD_ORACLES_AGGREGATOR_ACTION,
   BAN_SATELLITE_ACTION,
@@ -82,12 +82,18 @@ import {
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
-// farms consts
+// farms
 import {
   DEPOSIT_TO_FARM_ACTION,
   HARVEST_FARM_REWARDS_ACTION,
   WITHDRAW_FROM_FARM_ACTION,
 } from 'providers/FarmsProvider/helpers/farms.const'
+
+// eGov
+import {
+  SUBMIT_EGOV_PROPOSAL_ACTION,
+  VOTE_FOR_EGOV_PROPOSAL_ACTION,
+} from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
 
 // types
 type ToastMessageContent = {
@@ -652,6 +658,27 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
     end: {
       title: 'Withdrawing done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // emergency governance actions ------------------------------------
+  [VOTE_FOR_EGOV_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Voting for emergency proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Emergency Proposal voted',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [SUBMIT_EGOV_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Submitting emergency proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Emergency Proposal Submitted',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

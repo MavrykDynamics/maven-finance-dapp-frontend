@@ -7,17 +7,15 @@ import {
 } from '../vesting.provider.types'
 import { EMPTY_VESTING_CTX, VESTING_STORAGE_DATA_SUB } from './vesting.consts'
 
-type TreasuryContextReturnValueArgs = {
-  vestingCtxState: NullableVestingContextStateType
-  changeVestingSubscriptionsList: VestingContext['changeVestingSubscriptionsList']
-  activeSubs: VestingSubsRecordType
-}
-
 export const getVestingProviderReturnValue = ({
   vestingCtxState,
   changeVestingSubscriptionsList,
   activeSubs,
-}: TreasuryContextReturnValueArgs) => {
+}: {
+  vestingCtxState: NullableVestingContextStateType
+  changeVestingSubscriptionsList: VestingContext['changeVestingSubscriptionsList']
+  activeSubs: VestingSubsRecordType
+}) => {
   const { address, vesteesMapper, vesteeIds } = vestingCtxState
   const commonToReturn = {
     changeVestingSubscriptionsList,

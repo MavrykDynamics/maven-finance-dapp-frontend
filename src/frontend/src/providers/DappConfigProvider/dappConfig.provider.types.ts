@@ -14,6 +14,7 @@ import { WalletOperationError } from 'errors/error'
 import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { SatellitesGovType } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.types'
 import { FarmActionsType } from 'providers/FarmsProvider/farms.provider.types'
+import { EGovProposalActionsType } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider.types'
 
 export type ActionTypes =
   | StakeActionType
@@ -25,9 +26,9 @@ export type ActionTypes =
   | FinancialRequestsActionsTypes
   | SatellitesGovType
   | FarmActionsType
+  | EGovProposalActionsType
 
 export type DappConfigContext = {
-  // data
   maxLengths: DappMaxLengths
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number
