@@ -7,6 +7,7 @@ import { parseCounsilTab } from './helpers/commonCouncil.utils'
 
 // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
+import { useEGovContext } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -23,6 +24,7 @@ import {
   PROPAGATE_BREAK_GLASS_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { DEFAULT_EGOV_SUBS, EGOV_CONFIG_SUB } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
 import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/council.consts'
 
 // view
@@ -34,10 +36,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PropagateBreakGlassCouncilCard } from 'pages/Council/Council.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-
-// deprecated
-import { State } from 'reducers'
-import { useSelector } from 'react-redux'
 
 export const BreakGlassCouncil = () => {
   const { tabId } = useParams<{ tabId: string }>()
@@ -65,9 +63,20 @@ export const BreakGlassCouncil = () => {
     },
   } = useCouncilContext()
 
+  const {
+    changeEGovSubscriptionsList,
+    config: { emergencyGovActive },
+    isLoading: isEGovLoading,
+  } = useEGovContext()
+
   useEffect(() => {
+    changeEGovSubscriptionsList({
+      [EGOV_CONFIG_SUB]: true,
+    })
+
     return () => {
       changeCouncilSubscriptionList(DEFAULT_COUNCIL_ACTIVE_SUBS)
+      changeEGovSubscriptionsList(DEFAULT_EGOV_SUBS)
     }
   }, [])
 
@@ -89,10 +98,6 @@ export const BreakGlassCouncil = () => {
           : MY_BG_PAST_COUNCIL_ACTIONS_SUB,
     })
   }, [selectedTab])
-
-  const {
-    config: { emergencyGovActive },
-  } = useSelector((state: State) => state.emergencyGovernance)
 
   // propagate bg action -----------------------------------------------------------------------
   const propagateBreakGlassAction = useCallback(async () => {
@@ -123,7 +128,7 @@ export const BreakGlassCouncil = () => {
     <Page>
       <PageHeader page={'break glass council'} avatar={breakGlassAvatar} />
 
-      {isBreakGlassCounsilLoading ? (
+      {isBreakGlassCounsilLoading || isEGovLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading Break Glass Counsil Data</div>

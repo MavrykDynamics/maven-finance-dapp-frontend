@@ -31,6 +31,7 @@ import VestingProvider from 'providers/VestingProvider/vesting.provider'
 import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
 import CouncilProvider from 'providers/CouncilProvider/council.provider'
 import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
+import EGovProvider from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -97,25 +98,27 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
         <FullScreenLoadingApp />
       ) : (
         <ContractStatusesProvider>
-          <SatelliteGovernanceProvider>
-            <ProposalsProvider>
-              <DoormanProvider>
-                <SatellitesProvider>
-                  <LoansProvider>
-                    <VaultsProvider>
+          <ProposalsProvider>
+            <DoormanProvider>
+              <SatellitesProvider>
+                <LoansProvider>
+                  <VaultsProvider>
+                    <EGovProvider>
                       <CouncilProvider>
-                        <FinancialRequestsProvider>
-                          <TreasuryProvider>
-                            <VestingProvider>{children}</VestingProvider>
-                          </TreasuryProvider>
-                        </FinancialRequestsProvider>
+                        <SatelliteGovernanceProvider>
+                          <FinancialRequestsProvider>
+                            <TreasuryProvider>
+                              <VestingProvider>{children}</VestingProvider>
+                            </TreasuryProvider>
+                          </FinancialRequestsProvider>
+                        </SatelliteGovernanceProvider>
                       </CouncilProvider>
-                    </VaultsProvider>
-                  </LoansProvider>
-                </SatellitesProvider>
-              </DoormanProvider>
-            </ProposalsProvider>
-          </SatelliteGovernanceProvider>
+                    </EGovProvider>
+                  </VaultsProvider>
+                </LoansProvider>
+              </SatellitesProvider>
+            </DoormanProvider>
+          </ProposalsProvider>
         </ContractStatusesProvider>
       )}
     </>

@@ -63,7 +63,7 @@ import {
 // fin requests
 import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 
-// sat governance consts
+// sat governance
 import {
   ADD_ORACLES_AGGREGATOR_ACTION,
   BAN_SATELLITE_ACTION,
@@ -81,7 +81,7 @@ import {
   VOTE_FOR_ACTION,
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 
-// council consts
+// council
 import {
   ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
@@ -110,10 +110,15 @@ import {
   DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 
+// eGov
+import {
+  SUBMIT_EGOV_PROPOSAL_ACTION,
+  VOTE_FOR_EGOV_PROPOSAL_ACTION,
+} from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
+
 // types
 import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
-// types
 type ToastMessageContent = {
   title: string
   message: string
@@ -899,6 +904,28 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
     end: {
       title: 'Drop Request is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
+  // emergency governance actions ------------------------------------
+  [VOTE_FOR_EGOV_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Voting for emergency proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Emergency Proposal voted',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [SUBMIT_EGOV_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Submitting emergency proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Emergency Proposal Submitted',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

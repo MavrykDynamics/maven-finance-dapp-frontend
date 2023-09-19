@@ -58,12 +58,7 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
                 className="tooltip"
               />
             </div>
-            <CommaNumber
-              value={inputAmount * (daoFee / 100)}
-              decimalsToShow={assetDecimalsToShow}
-              className="value"
-              endingText="%"
-            />
+            <CommaNumber value={inputAmount * (daoFee / 100)} decimalsToShow={assetDecimalsToShow} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Amount Received</div>
