@@ -213,7 +213,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
               className="tooltip"
             />
           </div>
-          <CommaNumber value={daoFee} decimalsToShow={2} className="value" />
+          <CommaNumber value={daoFee} decimalsToShow={2} className="value" endingText="%" />
         </ThreeLevelListItem>
       </div>
 
