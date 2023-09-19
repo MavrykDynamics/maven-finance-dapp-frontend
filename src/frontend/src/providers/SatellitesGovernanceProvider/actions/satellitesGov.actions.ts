@@ -61,7 +61,7 @@ export const unbanSatellite = async (governanceSatelliteAddress: string, satelli
   try {
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
-    const unbanSatelliteMetaData = contract?.methods.restoreSatellite(satelliteAddress, purpose)
+    const unbanSatelliteMetaData = contract?.methods.unbanSatellite(satelliteAddress, purpose)
 
     return await getEstimationResult(unbanSatelliteMetaData)
   } catch (error) {

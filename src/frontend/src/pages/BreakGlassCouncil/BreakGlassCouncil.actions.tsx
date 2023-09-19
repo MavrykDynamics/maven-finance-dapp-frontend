@@ -219,7 +219,7 @@ export const setSingleContractAdmin =
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
-      const transaction = await contract?.methods.setSingleContractAdmin(newAdminAddress, targetContract).send()
+      const transaction = await contract?.methods.setSingleContractAdmin(targetContract, newAdminAddress).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
