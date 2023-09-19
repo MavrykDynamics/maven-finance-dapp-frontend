@@ -25,6 +25,9 @@ import {
   signAction,
 } from './BreakGlassCouncil.actions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useEGovContext } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
+import { useEffect } from 'react'
+import { EGOV_CONFIG_SUB, DEFAULT_EGOV_SUBS } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
 
 // types
 
@@ -40,11 +43,25 @@ export function BreakGlassCouncil() {
   const {
     maxLengths: { council: councilMaxLengths },
   } = useDappConfigContext()
-
   const {
     userAddress,
     userAvatars: { breakGlassAvatar },
   } = useUserContext()
+  const {
+    changeEGovSubscriptionsList,
+    config: { emergencyGovActive },
+    isLoading: isEGovLoading,
+  } = useEGovContext()
+
+  useEffect(() => {
+    changeEGovSubscriptionsList({
+      [EGOV_CONFIG_SUB]: true,
+    })
+
+    return () => {
+      changeEGovSubscriptionsList(DEFAULT_EGOV_SUBS)
+    }
+  }, [])
 
   const {
     breakGlassCouncilMembers,
@@ -61,9 +78,6 @@ export function BreakGlassCouncil() {
     isBreakGlassCouncilPendingActionsLoaded,
     isBreakGlassCouncilPastActionsLoaded,
   } = useSelector((state: State) => state.council)
-  const {
-    config: { emergencyGovActive },
-  } = useSelector((state: State) => state.emergencyGovernance)
 
   const handleSignAction = (id: number) => {
     dispatch(signAction(id))
@@ -106,7 +120,7 @@ export function BreakGlassCouncil() {
     <Page>
       <PageHeader page={'break glass council'} avatar={breakGlassAvatar} />
 
-      {isLoading ? (
+      {isLoading || isEGovLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading break glass counsil</div>
