@@ -1,26 +1,39 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useMemo, useState } from 'react'
 
-// type
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+// consts
+import { REQUEST_TOKENS_MINT_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
+import { TREASURY_STORAGE_DATA_SUB, DEFAULT_TREASURY_SUBS } from 'providers/TreasuryProvider/helpers/treasury.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from '../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { requestTokenMint } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { validateFormField } from 'utils/validatorFunctions'
+
+// types
+import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-
-// action
-import { requestTokenMint } from '../Council.actions'
-
-// style
 import { CouncilFormStyled } from './CouncilForm.style'
-import { State } from 'reducers'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 const INIT_FORM = {
   treasuryAddress: '',
@@ -28,32 +41,74 @@ const INIT_FORM = {
   purpose: '',
 }
 
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  treasuryAddress: INPUT_STATUS_DEFAULT,
+  tokenAmount: INPUT_STATUS_DEFAULT,
+  purpose: INPUT_STATUS_DEFAULT,
+}
+
+// TODO: test inputs validation after db will be from api-v1
 export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
+  const { totalSupply, isLoading: isDoormanLoading, changeStakingSubscriptionsList } = useDoormanContext()
+  const { changeTreasurySubscriptionsList, isLoading: isTreasuryLoading, treasuryMapper } = useTreasuryContext()
+
+  useEffect(() => {
+    changeStakingSubscriptionsList({
+      [DAPP_MVK_SMVK_STATS_SUB]: true,
+    })
+    changeTreasurySubscriptionsList({
+      [TREASURY_STORAGE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)
+      changeTreasurySubscriptionsList(DEFAULT_TREASURY_SUBS)
+    }
+  }, [])
 
   const [form, setForm] = useState(INIT_FORM)
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    treasuryAddress: '',
-    tokenAmount: '',
-    purpose: '',
-  })
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { treasuryAddress, tokenAmount, purpose } = form
+
+  // request tokens council action
+  const requestTokensMintContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: REQUEST_TOKENS_MINT_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        return await requestTokenMint(treasuryAddress, Number(tokenAmount), purpose, councilAddress)
+      },
+    }),
+    [userAddress, councilAddress, treasuryAddress, tokenAmount, purpose],
+  )
+
+  const { action: handleRequestTokensMint } = useContractAction(requestTokensMintContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(requestTokenMint(treasuryAddress, +tokenAmount, purpose))
+      await handleRequestTokensMint()
+
       setForm(INIT_FORM)
-      setFormInputStatus({
-        treasuryAddress: '',
-        tokenAmount: '',
-        purpose: '',
-      })
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormRequestTokenMint', error)
     }
   }
 
@@ -63,40 +118,65 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const treasuryAddressProps = {
-    name: 'treasuryAddress',
-    value: treasuryAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const { treasuryAddressProps, treasuryAddressSettings, tokenAmountProps, tokenAmountSettings } = useMemo(() => {
+    const treasuryAddressProps = {
+      name: 'treasuryAddress',
+      value: treasuryAddress,
+      disabled: isTreasuryLoading,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
 
-  const treasuryAddressSettings = {
-    inputStatus: formInputStatus.treasuryAddress,
-  }
+        // validate treasury address
+        setFormInputStatus((prev) => ({
+          ...prev,
+          tokenAmount: treasuryMapper[e.target.value] ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
+      },
+      required: true,
+    }
 
-  const tokenAmountProps = {
-    name: 'tokenAmount',
-    value: tokenAmount,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
+    const tokenAmountProps = {
+      name: 'tokenAmount',
+      value: tokenAmount,
+      disabled: isDoormanLoading,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
 
-  const tokenAmountSettings = {
-    inputStatus: formInputStatus.tokenAmount,
-  }
+        // validate mvk amount
+        const amountInNumber = Number(e.target.value)
+        setFormInputStatus((prev) => ({
+          ...prev,
+          tokenAmount: amountInNumber >= 1 && amountInNumber <= totalSupply ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
+      },
+      required: true,
+    }
 
-  const inputPinnedChild = <div className="pinned-child">MVK</div>
+    return {
+      treasuryAddressProps,
+      treasuryAddressSettings: {
+        inputStatus: formInputStatus.treasuryAddress,
+      },
+      tokenAmountProps,
+      tokenAmountSettings: {
+        inputStatus: formInputStatus.tokenAmount,
+      },
+    }
+  }, [
+    formInputStatus.tokenAmount,
+    formInputStatus.treasuryAddress,
+    isDoormanLoading,
+    isTreasuryLoading,
+    tokenAmount,
+    totalSupply,
+    treasuryAddress,
+    treasuryMapper,
+  ])
+
+  const validateText = validateFormField(setFormInputStatus)
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -104,7 +184,19 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
         <Icon id="question" />
       </a>
       <h1 className="form-h1">Request Token Mint</h1>
-      <p>Please enter valid function parameters for requesting token mint</p>
+
+      <p>
+        {isTreasuryLoading || isDoormanLoading ? (
+          <>
+            <div className="loading-label">
+              Loading Treasuries & MVK token data <SpinnerCircleLoaderStyled />
+            </div>
+          </>
+        ) : (
+          'Please enter valid function parameters for requesting token mint'
+        )}
+      </p>
+
       <div className="form-grid">
         <div>
           <label>Treasury Address</label>
@@ -113,12 +205,9 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
 
         <div>
           <label>Token Amount</label>
-          <Input
-            className="transparent-child-wrap"
-            children={inputPinnedChild}
-            inputProps={tokenAmountProps}
-            settings={tokenAmountSettings}
-          />
+          <Input className="transparent-child-wrap" inputProps={tokenAmountProps} settings={tokenAmountSettings}>
+            <div className="pinned-child">MVK</div>
+          </Input>
         </div>
       </div>
       <div className="textarea-group">
@@ -129,15 +218,14 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
-            handleBlur(e, maxLength.requestPurposeMaxLength)
+            validateText(e, maxLength.requestPurposeMaxLength)
           }}
-          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
           textAreaMaxLimit={maxLength.requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
           <Icon id="loans" />
           Request Mint
         </NewButton>

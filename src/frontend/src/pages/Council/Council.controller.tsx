@@ -1,53 +1,41 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useParams } from 'react-router'
+import { useEffect, useMemo } from 'react'
 
-// providers
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+// hooks
+import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
-// components
+// utils
+import { parseCounsilTab } from './helpers/commonCouncil.utils'
+
+// view
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { CouncilView } from 'pages/Council/Council.view'
-import { CouncilForm, actions } from './CouncilForms/CouncilForm.controller'
-import { CouncilFormUpdateCouncilMemberInfo } from './CouncilForms/CouncilFormUpdateCouncilMemberInfo.view'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-// helpers
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-
-// actions
+// consts
 import {
-  getCouncilPastActions,
-  getCouncilPendingActions,
-  getCouncilMembers,
-  dropRequest,
-  sign,
-} from './Council.actions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-
-// types
-
-const titles = {
-  membersName: 'Council Members',
-  cardIdName: 'Council action ID',
-  allPastActions: 'Past Council Actions',
-}
+  ALL_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_PAST_COUNCIL_ACTIONS_SUB,
+  COUNCIL_ACTIONS_DATA,
+  COUNCIL_MEMBERS_SUB,
+  DEFAULT_COUNCIL_ACTIVE_SUBS,
+  MY_PAST_COUNCIL_ACTIONS_SUB,
+} from 'providers/CouncilProvider/helpers/council.consts'
+import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/council.consts'
 
 export const Council = () => {
-  const dispatch = useDispatch()
+  const { tabId } = useParams<{ tabId: string }>()
 
   const {
-    maxLengths: { council: councilMaxLengths },
-  } = useDappConfigContext()
-
-  const {
-    userAddress,
     userAvatars: { counsilAvatar },
   } = useUserContext()
-
   const {
+    changeCouncilSubscriptionList,
     councilMembers,
+    isLoading: isCounsilLoading,
     councilActions: {
       allPendingActions,
       notMyPendingActions,
@@ -56,82 +44,52 @@ export const Council = () => {
       myPastActions,
       actionsMapper,
     },
-    isStorageLoaded,
-    isCouncilMembersLoaded,
-    isCouncilPendingActionsLoaded,
-    isCouncilPastActionsLoaded,
-  } = useSelector((state: State) => state.council)
+  } = useCouncilContext()
 
-  const handleSignAction = (id: number) => {
-    dispatch(sign(id))
-  }
-
-  const handleDropAction = (id: number) => {
-    dispatch(dropRequest(id))
-  }
-
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      await Promise.all(
-        [
-          (!isCouncilMembersLoaded || isDepsChanged) && dispatch(getCouncilMembers()),
-          (!isCouncilPastActionsLoaded || isDepsChanged) && dispatch(getCouncilPastActions()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
+  useEffect(() => {
+    return () => {
+      changeCouncilSubscriptionList(DEFAULT_COUNCIL_ACTIVE_SUBS)
+    }
   }, [])
 
-  useDataLoader(
-    async (isDepsChanged) => {
-      if (!userAddress) return
+  const selectedTab = useMemo(() => parseCounsilTab(tabId), [tabId])
 
-      try {
-        await Promise.all(
-          [
-            (!isCouncilPendingActionsLoaded || isDepsChanged) && dispatch(getCouncilPendingActions()),
-            (!isCouncilPastActionsLoaded || isDepsChanged) && dispatch(getCouncilPastActions()),
-          ].filter(Boolean),
-        )
-      } catch (e) {}
-    },
-    [userAddress],
-  )
+  useEffect(() => {
+    const isMyPendingTab = selectedTab === MY_PENDING_COUNSIL_TAB
+    const isAllPendingTab = selectedTab === ALL_PENDING_COUNSIL_TAB
+    const isAllPastTab = selectedTab === ALL_PAST_COUNSIL_TAB
+
+    changeCouncilSubscriptionList({
+      [COUNCIL_MEMBERS_SUB]: true,
+      // if my ongoing or all ongoing load all ongoing, if my past load my past, otherwise load all past
+      [COUNCIL_ACTIONS_DATA]:
+        isMyPendingTab || isAllPendingTab
+          ? ALL_ONGOING_COUNCIL_ACTIONS_SUB
+          : isAllPastTab
+          ? ALL_PAST_COUNCIL_ACTIONS_SUB
+          : MY_PAST_COUNCIL_ACTIONS_SUB,
+    })
+  }, [selectedTab])
 
   return (
     <Page>
       <PageHeader page={'council'} avatar={counsilAvatar} />
 
-      {isLoading ? (
+      {isCounsilLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading counsil</div>
+          <div className="text">Loading Mavryk Council Data</div>
         </DataLoaderWrapper>
       ) : (
         <CouncilView
-          // general info
-          pathnameOfPage="/mavryk-council"
-          maxLength={councilMaxLengths}
-          titles={titles}
-          // pending actions
           allPendingActions={allPendingActions}
           notMyPendingActions={notMyPendingActions}
           myPendingActions={myPendingActions}
-          // past actions
           allPastActions={allPastActions}
           myPastActions={myPastActions}
-          // mapper
           actionsMapper={actionsMapper}
-          // other lists
           members={councilMembers}
-          dropdowndActions={actions}
-          // actions
-          handleSignAction={handleSignAction}
-          handleDropAction={handleDropAction}
-          // components
-          getFormComponent={() => <CouncilForm />}
-          getFormUpdateMemberInfo={(maxLength, callback: () => void) => (
-            <CouncilFormUpdateCouncilMemberInfo maxLength={maxLength} callback={callback} />
-          )}
+          selectedTab={selectedTab}
         />
       )}
     </Page>

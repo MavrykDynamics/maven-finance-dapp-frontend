@@ -1,9 +1,15 @@
+import dayjs from 'dayjs'
+
+// types
 import { GetUserActionsHistoryDataQuery, GetUserDataQuery, GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
 import { UserMetadataType, UserRewardsType } from '../user.provider.types'
-import dayjs from 'dayjs'
+
+// utils
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
 import { getUserDoomanRewards, getUserSatelliteRewards } from './userRewards.helpers'
+
+// consts
+import { MVK_DECIMALS } from 'utils/constants'
 import { DEFAULT_USER_AVATAR } from './user.consts'
 
 export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }): UserMetadataType => {
@@ -24,6 +30,8 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
   const satelliteMvkIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
   const isSatellite = satellite?.status === 0 && satellite?.currently_registered
   const isVestee = vestee?.end_vesting_timestamp && dayjs().diff(vestee.end_vesting_timestamp) <= 0
+  const isMavrykCouncil = Boolean(counsilMember?.user?.address)
+  const isBreakGlassCouncil = Boolean(bgCounsilMember?.user?.address)
 
   return {
     userAvatars: {
@@ -33,6 +41,8 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
       breakGlassAvatar,
     },
     isVestee,
+    isMavrykCouncil,
+    isBreakGlassCouncil,
     isSatellite,
     satelliteMvkIsDelegatedTo,
 

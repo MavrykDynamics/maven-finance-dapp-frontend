@@ -9,7 +9,7 @@ import {
   ERR_MSG_TOAST,
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
-import { stakingInputValidation } from '../Doorman.converter'
+import { stakingInputValidation } from '../helpers/validators'
 import { UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 import colors from 'styles/colors'

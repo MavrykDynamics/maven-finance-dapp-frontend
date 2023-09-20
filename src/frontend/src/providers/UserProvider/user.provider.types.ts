@@ -1,8 +1,10 @@
 import { z } from 'zod'
 
+// types
 import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 import { GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
 
+// consts
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
@@ -10,6 +12,8 @@ import {
   REWARDS_COMPOUND_ACTION,
 } from './helpers/user.consts'
 import { userTzktTokenBalancesSchema, userTzktWSAccountSchema } from './helpers/user.schemes'
+
+// utils
 import { normalizeUserHistoryData } from './helpers/userData.helpers'
 
 // User loans data types
@@ -88,6 +92,8 @@ export type UserMetadataType = {
   satelliteMvkIsDelegatedTo: string | null
   isSatellite: boolean
   isVestee: boolean
+  isMavrykCouncil: boolean
+  isBreakGlassCouncil: boolean
   isNewlyRegisteredSatellite: boolean
   govActionsCount: number
   userAvatars: {

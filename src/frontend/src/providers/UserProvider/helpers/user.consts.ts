@@ -10,8 +10,6 @@ export const DEFAULT_USER_LOANS_DATA: UserLoansData = {
   userVaultsData: {},
 }
 
-// TODO: extract fields with comments into separate useQuery hooks
-// store in whole user context, but load in separate queries, cuz rare use cases
 export const DEFAULT_USER: UserContextStateType = {
   userAddress: null,
   satelliteMvkIsDelegatedTo: null,
@@ -24,6 +22,8 @@ export const DEFAULT_USER: UserContextStateType = {
   isNewlyRegisteredSatellite: false,
   isSatellite: false,
   isVestee: false,
+  isMavrykCouncil: false,
+  isBreakGlassCouncil: false,
   actionsHistory: {
     paginatedList: {},
     itemsAmount: 0,
