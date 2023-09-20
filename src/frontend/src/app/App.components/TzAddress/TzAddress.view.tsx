@@ -1,5 +1,3 @@
-import { useDispatch } from 'react-redux'
-
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 

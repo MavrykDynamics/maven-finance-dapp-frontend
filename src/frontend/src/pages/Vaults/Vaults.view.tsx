@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
-import { useDispatch } from 'react-redux'
 import { useLocation, useHistory, useParams } from 'react-router'
 
 // context

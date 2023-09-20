@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -68,8 +67,6 @@ import {
 import { dropProposal } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 
 export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRecordType; isHistory: boolean }) => {
-  const dispatch = useDispatch()
-
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
