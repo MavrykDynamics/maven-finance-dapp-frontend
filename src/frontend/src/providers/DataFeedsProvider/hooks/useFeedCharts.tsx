@@ -25,15 +25,16 @@ export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE
 
   const refetchQueryVariables = useCallback(() => {
     return {
+      feedAddress,
       periodTimestamp: getTimestampBasedOnPeriod(period),
     }
-  }, [period])
+  }, [feedAddress, period])
 
   useEffect(() => {
     setCurrentPeriod(getTimestampBasedOnPeriod(period))
 
+    // cancel query
     return () => {
-      // cancel query
       aborterRef.current.abort()
       aborterRef.current = new AbortController()
     }
@@ -50,14 +51,12 @@ export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE
         feedAddress,
         periodTimestamp: currentPeriod,
       },
-      fetchPolicy: 'network-only',
       context: {
         fetchOptions: {
           signal: aborterRef.current.signal,
         },
       },
       onCompleted: (data) => {
-        if (!data) return
         const feedsHistory = data.aggregator[0].history_data
 
         updateFeedsHistoryAndVolatility(feedsHistory, period)

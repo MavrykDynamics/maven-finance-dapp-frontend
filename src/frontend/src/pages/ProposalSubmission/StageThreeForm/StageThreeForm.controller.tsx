@@ -191,7 +191,10 @@ export const StageThreeForm = ({
     )
   }
 
-  const isTableDisabled = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
+  const isTableDisabled = useMemo(
+    () => !isProposalRound || locked || !Object.keys(treasuryTokens)?.[0],
+    [isProposalRound, locked, treasuryTokens],
+  )
 
   return (
     <>
