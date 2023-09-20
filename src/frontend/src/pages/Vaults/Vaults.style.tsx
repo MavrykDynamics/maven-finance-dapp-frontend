@@ -125,6 +125,21 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
         height: 160px;
         overflow-y: auto;
       }
+
+      .collateral-icon {
+        > svg,
+        .img-wrapper {
+          width: 24px;
+          height: 24px;
+          fill: ${({ theme }) => theme.primaryText};
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+      }
     }
 
     .value {
