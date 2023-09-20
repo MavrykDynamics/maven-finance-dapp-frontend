@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DocumentNode, OperationVariables, QueryHookOptions, TypedDocumentNode, useQuery } from '@apollo/client'
 
 import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
@@ -26,32 +26,37 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   queryOptions: QueryHookOptions<TData, TVariables>,
   refetchOptions?: {
     blocksDiff?: number
-    name?: string
     refetchQueryVariables?: (() => TVariables) | TVariables
   },
 ) => {
+  // test variable for debug
+  // @ts-expect-error
+  const queryName = query.definitions?.[0]?.name?.value
+
+  // lastUpdatedBlock -> block of last query refetch, used along with blocksDiff option
   const lastUpdatedBlock = useRef<null | number>(null)
+
+  // refetchId -> id of callback that subscibes to indexer block change
   const refetchId = useRef<null | string>(null)
-  const isInitialQueryDone = useRef(false)
+
+  // NOTE: previously was with useRef, but on query vars change query was not refetching
+  const [isInitialQueryDone, setIsInitialQueryDone] = useState(false)
 
   const prevQueryVariables = usePrevious(queryOptions?.variables)
   const currentQueryVariables = queryOptions?.variables
 
-  const { blocksDiff, refetchQueryVariables, name = 'default name' } = refetchOptions ?? {}
+  const { blocksDiff, refetchQueryVariables } = refetchOptions ?? {}
   const userQuerySkip = queryOptions?.skip
 
   // Effect to reset isInitialQueryDone, on variables change
   useEffect(() => {
     if (prevQueryVariables && currentQueryVariables) {
-      const isVariablesEq = Object.keys(currentQueryVariables ?? {}).every((key) => {
-        const currentValue = currentQueryVariables?.[key]
-        const prevValue = prevQueryVariables?.[key]
-
-        return currentValue === prevValue
+      const isVarsChanged = Object.keys(currentQueryVariables ?? {}).some((key) => {
+        return currentQueryVariables?.[key] !== prevQueryVariables?.[key]
       })
 
       // if variables are different, we need to reset isInitialQueryDone, to load it's data, without waiting for refetch
-      if (!isVariablesEq) isInitialQueryDone.current = false
+      if (isVarsChanged) setIsInitialQueryDone(false)
     }
   }, [queryOptions?.variables])
 
@@ -64,10 +69,10 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
    */
   const queryResult = useQuery(query, {
     ...queryOptions,
-    skip: isInitialQueryDone.current || userQuerySkip,
+    skip: isInitialQueryDone || userQuerySkip,
     onCompleted: (data) => {
       if (!data) return
-      isInitialQueryDone.current = true
+      setIsInitialQueryDone(true)
 
       queryOptions?.onCompleted?.(data)
     },
@@ -80,19 +85,10 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     async (newIndexerLevel: number) => {
       try {
         // If we have't completed initial query, we can't refetch
-        if (!isInitialQueryDone.current) return
+        if (!isInitialQueryDone) return
 
         const newRefetchVariables =
           typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
-
-        console.log({
-          name,
-          refetchQueryVariables,
-          queryResult,
-          query,
-          vars: queryOptions.variables,
-          newRefetchVariables,
-        })
 
         // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
         if (typeof blocksDiff === 'number') {
@@ -105,7 +101,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
           if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
             const refetchData = await queryResult.refetch(newRefetchVariables)
 
-            console.log('%crefetch ', 'color: red', { refetchData, name })
+            console.log('%crefetch ', 'color: red', { refetchData, queryName })
 
             // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
             if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -119,7 +115,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
         const refetchData = await queryResult.refetch(newRefetchVariables)
 
-        console.log('%crefetch ', 'color: red', { refetchData, name })
+        console.log('%crefetch ', 'color: red', { refetchData, queryName })
 
         // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
         if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -134,12 +130,15 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
   // subscribe to indexer lvl change, and unsibscribe when component unmounts, or if it's provider when query becomes inactive
   useEffect(() => {
+    // if query is active subscibe to indexer lvl change, and save id of subscription
     if (!userQuerySkip) refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
 
+    // if query is not active and we have id, then unsubscibe from indexer lvl change
     if (userQuerySkip && refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
 
     return () => {
-      if (refetchId.current && userQuerySkip) currentIndexerLevelProxy.removeListener(refetchId.current)
+      // if we have id and hook unmounts, then unsubscibe from indexer lvl change
+      if (refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
     }
   }, [refetchQuery, userQuerySkip])
 

@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux'
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Icon from 'app/App.components/Icon/Icon.view'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/BorrowingExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
@@ -17,6 +16,7 @@ import { Button } from 'app/App.components/Button/Button.controller'
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors, { ThemeColorsType } from 'styles/colors'
 
 // types
@@ -262,16 +262,8 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                   return (
                     <TableRow rowHeight={44} key={symbol + '-' + index}>
                       <TableCell width={columnWidth} className="vert-middle">
-                        <div className="cell-content row">
-                          {icon ? (
-                            <div className="img-wrapper">
-                              <img src={icon} alt={`${symbol} logo`} />
-                            </div>
-                          ) : (
-                            <div className="no-icon">
-                              <Icon id="noImage" />
-                            </div>
-                          )}
+                        <div className="cell-content row collateral-icon">
+                          <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
                           {symbol}
                         </div>
                       </TableCell>
