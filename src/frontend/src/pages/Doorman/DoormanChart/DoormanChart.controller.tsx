@@ -38,6 +38,7 @@ import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import { getChartXAxisTicks } from 'utils/charts.utils'
+import { SPACE_THEME } from 'consts/theme.const'
 
 const tabsList: SlidingTabButtonType[] = [
   {
@@ -137,8 +138,8 @@ export function DoormanChart() {
                   plots: mvkHistoryData,
                 },
                 colors: {
-                  lineColor: colors[themeSelected].primaryChartColor,
-                  areaTopColor: colors[themeSelected].primaryChartColor,
+                  lineColor: colors[SPACE_THEME].primaryChartColor,
+                  areaTopColor: colors[SPACE_THEME].primaryChartColor,
                   areaBottomColor: colors[themeSelected].primaryChartBottomColor,
                 },
               }}
@@ -148,8 +149,8 @@ export function DoormanChart() {
                   plots: smvkHistoryData,
                 },
                 colors: {
-                  lineColor: colors[themeSelected].secondaryChartColor,
-                  areaTopColor: colors[themeSelected].secondaryChartColor,
+                  lineColor: colors[SPACE_THEME].secondaryChartColor,
+                  areaTopColor: colors[SPACE_THEME].secondaryChartColor,
                   areaBottomColor: colors[themeSelected].secondaryChartBottomColor,
                 },
               }}
