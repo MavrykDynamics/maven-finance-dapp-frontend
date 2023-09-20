@@ -1,6 +1,9 @@
 import { ChartPeriodType } from 'types/charts.type'
 import { normalizeFeeds, normalizeFeed, normalizeDataFeedsHistory } from './helpers/feedsNormalizer'
 import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
+import { REGISTER_FEED_ACTION } from './helpers/feeds.consts'
+
+export type FeedsActionsType = typeof REGISTER_FEED_ACTION
 
 export type DataFeedsStorageType = ReturnType<typeof normalizeFeeds>
 export type Feed = NonNullable<ReturnType<typeof normalizeFeed>>

@@ -3,11 +3,9 @@ import { useDispatch } from 'react-redux'
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
-import { showToaster } from '../Toaster/Toaster.actions'
-import { TOASTER_SUCCESS } from '../Toaster/Toaster.constants'
 import { TzAddressStyles } from './TzAddress.constants'
 import { TzAddressContainer, TzAddressIcon, TzAddressStyled } from './TzAddress.style'
-import { AppDispatch } from 'app/App.controller'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type TzAddressProps = {
   tzAddress?: string | null
@@ -20,18 +18,6 @@ type TzAddressProps = {
   className?: string
   amountFromStart?: number
   amountFromEnd?: number
-}
-
-// Action to copy to clipboard
-export const handleCopyToClipboard = (textToCopy: string) => async (dispatch: AppDispatch) => {
-  try {
-    if (textToCopy) {
-      navigator.clipboard.writeText(textToCopy)
-      dispatch(showToaster(TOASTER_SUCCESS, 'Copied to Clipboard', `${textToCopy}`))
-    }
-  } catch (e) {
-    console.error('copy to clipboard error: ', e)
-  }
 }
 
 // TODO: make classes via classNames lib, check classes usage for styling
@@ -47,18 +33,18 @@ export const TzAddress = ({
   amountFromStart = 4,
   amountFromEnd = 4,
 }: TzAddressProps) => {
-  const dispatch = useDispatch()
+  const { handleCopy } = useDappConfigContext()
+
+  const handleTzAddressClick = () => (tzAddress && shouldCopy ? handleCopy(tzAddress) : undefined)
 
   if (!tzAddress) return <TzAddressContainer className={`${className} tzAddressToClick`}>–</TzAddressContainer>
 
   const addrClasses = `${type} ${isBold ? 'bold' : ''}  ${isLargeIcon ? 'largeIcon' : ''} copyIcon`
 
-  const handleCopy = () => dispatch(handleCopyToClipboard(tzAddress))
-
   return (
     <TzAddressContainer
       className={`${className} tzAddressToClick ${!shouldCopy ? 'notCopy' : ''}`}
-      onClick={shouldCopy ? handleCopy : undefined}
+      onClick={handleTzAddressClick}
     >
       {hasIcon && iconToLeft && shouldCopy && (
         <TzAddressIcon className={addrClasses}>

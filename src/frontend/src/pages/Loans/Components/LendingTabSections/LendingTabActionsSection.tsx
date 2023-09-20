@@ -1,16 +1,19 @@
-import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 
+// hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useCollateralInputData } from '../Modals/hooks/Market/useCollateralInputData'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 
-import { State } from 'reducers'
+// types
 import { LendingItemType } from 'providers/LoansProvider/loans.provider.types'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 
+// consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { LENDING_TAB_SLIDING_BUTTONS, loansTabNames } from '../../Loans.const'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -25,10 +28,10 @@ import {
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
 
+// view
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from '../../Loans.style'
 import { CardSectionWrapper, LoansActionsSection } from './../LoansComponents.style'
-
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
@@ -36,11 +39,9 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import colors from 'styles/colors'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
-import { useCollateralInputData } from '../Modals/hooks/Market/useCollateralInputData'
 import { XTZLimitInfoBanner } from '../Modals/components/XTZLimitInfoBanner'
 
 type LendingTabPropsType = {
@@ -59,10 +60,11 @@ export const LendingTabActionsSection = ({
   const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userTokensBalances } = useUserContext()
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const loanToken = getTokenDataByAddress({ tokenAddress: loanTokenAddress, tokensMetadata, tokensPrices })
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const { lendValue = 0 } = lendingItem || {}
 

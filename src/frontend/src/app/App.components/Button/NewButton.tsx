@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react'
-import { AppDispatch } from 'app/App.controller'
 
 import {
   ButtonForm,
@@ -15,7 +14,7 @@ import classNames from 'classnames'
 import { SpinnerCircleLoaderStyled } from '../Loader/Loader.style'
 
 export type ButtonProps = {
-  onClick?: AppDispatch | ((e: React.MouseEvent<HTMLElement>) => Promise<unknown> | void)
+  onClick?: (e: React.MouseEvent<HTMLElement>) => Promise<unknown> | void
   kind: ButtonKind
   form?: ButtonForm
   type?: ButtonTypes

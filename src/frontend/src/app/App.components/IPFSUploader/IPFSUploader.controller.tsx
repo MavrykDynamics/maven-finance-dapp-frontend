@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { create } from 'ipfs-http-client'
 
+// view
 import { IPFSUploaderView } from './IPFSUploader.view'
 
-import { showToaster } from '../Toaster/Toaster.actions'
-import { ERROR } from '../Toaster/Toaster.constants'
+// utils
 import { isHexadecimalByteString } from '../../../utils/validatorFunctions'
+
+// hooks
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 export type IPFSUploaderTypeFile = 'document' | 'image'
 type IPFSUploaderProps = {
@@ -45,8 +47,9 @@ export const IPFSUploader = ({
   setFormInputStatus,
   className,
 }: IPFSUploaderProps) => {
+  const { bug } = useToasterContext()
+
   const isKeysChecked = useRef(false)
-  const dispatch = useDispatch()
   const [isUploading, setIsUploading] = useState(false)
   const [imageOk, setImageOk] = useState(false)
   const [isDisabled, setIsDisabled] = useState(true)
@@ -61,7 +64,7 @@ export const IPFSUploader = ({
       } catch (e) {
         // disable if keys are invalid
         setIsDisabled(true)
-        dispatch(showToaster(ERROR, 'Keys are invalid', 'IPFS auth keys are invalid, image selection will be disabled'))
+        bug('IPFS auth keys are invalid, image selection will be disabled', 'Keys are invalid')
       } finally {
         isKeysChecked.current = true
       }
@@ -80,7 +83,7 @@ export const IPFSUploader = ({
     } catch (error) {
       if (error instanceof Error) {
         if (process.env.REACT_APP_ENV === 'dev') console.error(error)
-        dispatch(showToaster(ERROR, error.message, ''))
+        bug(error.message)
         setIsUploading(false)
       }
     }

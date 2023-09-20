@@ -1,7 +1,6 @@
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
-import { Provider as ReduxProvider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
 import { ApolloProvider } from 'providers/ApolloProvider/apollo.provider'
 
@@ -36,7 +35,7 @@ import EGovProvider from 'providers/EmergencyGovernanceProvider/emergencyGoverna
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
-import { App, store } from './app/App.controller'
+import { App } from './app/App.controller'
 import { FullScreenLoadingApp } from 'app/App.style'
 import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
@@ -55,9 +54,7 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <ReduxProvider store={store}>
-        <Router>{children}</Router>
-      </ReduxProvider>
+      <Router>{children}</Router>
     </GoogleReCaptchaProvider>
   )
 }

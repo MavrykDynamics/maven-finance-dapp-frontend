@@ -1,21 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { AnyAction } from 'redux'
-import { useDispatch } from 'react-redux'
 import { useMedia } from 'react-use'
-import { ThunkDispatch } from 'redux-thunk'
 import { useCookies } from 'react-cookie'
 
-import { configureStore } from './App.store'
-
-// consts
-import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
-import { ecadLabGhostnetRpcNode } from 'consts/rpcNodes.const'
-
-// types
-import { State } from '../reducers'
-
 // view, styles
-import { Toaster } from './App.components/Toaster/Toaster.controller'
 import { Menu } from './App.components/Menu/Menu.controller'
 import { SettingPopup } from './App.components/SettingsPopup/SettingsPopup'
 import { Loaders } from './App.components/Loader/Loader.view'
@@ -24,18 +11,17 @@ import { AppStyled } from './App.style'
 import { PolicyPopup } from 'app/App.components/PolicyPopup/Policy.controller'
 import { Footer } from './App.components/Footer/Footer'
 
-// actions
-import { getContractAddressesStorage } from 'reducers/actions/contractAddresses.actions'
+// consts
+import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
+import { ecadLabGhostnetRpcNode } from 'consts/rpcNodes.const'
+
+// utils
 import { setItemInStorage } from 'utils/storage'
+
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
-export const { store } = configureStore({})
-export type AppDispatch = ThunkDispatch<State, unknown, AnyAction>
-export type GetState = typeof store.getState
-
 export const App = () => {
-  const dispatch = useDispatch()
-
   const showSidebarOpened = useMedia('(min-width: 1400px)')
   const [{ policyPopup }, setCookie] = useCookies(['policyPopup'])
 
@@ -44,10 +30,6 @@ export const App = () => {
     toggleRPCNodePopup,
     preferences: { changeNodePopupOpen, sidebarOpened },
   } = useDappConfigContext()
-
-  useEffect(() => {
-    dispatch(getContractAddressesStorage())
-  }, [])
 
   useEffect(() => {
     toggleSidebarCollapsing(showSidebarOpened)
@@ -82,7 +64,6 @@ export const App = () => {
     <AppStyled isExpandedMenu={sidebarOpened}>
       <Loaders />
 
-      <Toaster />
       <Menu />
 
       <SettingPopup isModalOpened={changeNodePopupOpen} closeModal={closeModalHandler} />

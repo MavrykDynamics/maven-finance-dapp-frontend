@@ -1,14 +1,13 @@
 import { Link } from 'react-router-dom'
 
-import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { State } from 'reducers'
+// consts
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 import Button from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-
 import {
   Table,
   TableBody,
@@ -19,13 +18,19 @@ import {
   TableScrollable,
 } from 'app/App.components/Table'
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
-import { parseDate } from 'utils/time'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { useSelector } from 'react-redux'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// utils
+import { parseDate } from 'utils/time'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// types
 import { UserLoansData } from 'providers/UserProvider/user.provider.types'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const LoansTxTab = ({
   txVariant,
@@ -37,7 +42,8 @@ export const LoansTxTab = ({
   userLoansData: UserLoansData['userLendings'] | UserLoansData['userBorrowings']
 }) => {
   const { tokensMetadata } = useTokensContext()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { userAddress } = useUserContext()
+
   const isLending = txVariant === 'lending'
 
   return (
@@ -103,7 +109,7 @@ export const LoansTxTab = ({
         </TableScrollable>
       ) : (
         <div className="no-data">
-          {accountPkh ? (
+          {userAddress ? (
             <>
               <span>{isLending ? 'Nothing supplied at this time' : 'Nothing borrowed at this time'}</span>
               <div className="nav-button">

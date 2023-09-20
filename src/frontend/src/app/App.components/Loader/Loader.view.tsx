@@ -1,8 +1,6 @@
-import { useSelector } from 'react-redux'
 import { useLockBodyScroll } from 'react-use'
 
 import colors from 'styles/colors'
-import { State } from 'reducers'
 import { ClockLoaderWrapper, LoaderShineTextAnimation, LoaderStyledWithBackdrop } from './Loader.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -85,30 +83,14 @@ export const LottieLoader = ({ isActive, backdropAlpha }: { isActive: boolean; b
 
 export const Loaders = () => {
   const {
-    globalLoadingState: {
-      isActiveFullScreenLoader: CONTEXT_isActiveFullScreenLoader,
-      isWertLoading: CONTEXT_isWertLoading,
-    },
+    globalLoadingState: { isActiveFullScreenLoader, isWertLoading },
   } = useDappConfigContext()
   const { isLoading: isUserLoading, isUserRestored } = useUserContext()
 
-  // TODO: remove when redux loading won't be used
-  const { isWertLoading: REDUX_isWertLoading } = useSelector((state: State) => state.loading)
-  const { isActiveFullScreenLoader: REDUX_isActiveFullScreenLoader } = useSelector((state: State) => state.loading)
-
   const isChangeUserLoading = isUserRestored ? isUserLoading : false
-
-  const isLoadingActive =
-    CONTEXT_isWertLoading ||
-    CONTEXT_isActiveFullScreenLoader ||
-    REDUX_isWertLoading ||
-    REDUX_isActiveFullScreenLoader ||
-    isChangeUserLoading
+  const isLoadingActive = isWertLoading || isActiveFullScreenLoader || isChangeUserLoading
 
   useLockBodyScroll(isLoadingActive)
-
-  const isWertLoading = CONTEXT_isWertLoading || REDUX_isWertLoading
-  const isActiveFullScreenLoader = CONTEXT_isActiveFullScreenLoader || REDUX_isActiveFullScreenLoader
 
   return (
     <>

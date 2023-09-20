@@ -1,5 +1,5 @@
 // consts
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_ACTIONS_TEXTS } from 'providers/ToasterProvider/helpers/texts/toasterActions.texts'
 import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 

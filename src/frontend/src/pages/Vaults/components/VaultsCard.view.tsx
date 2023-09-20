@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -20,7 +19,6 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors, { ThemeColorsType } from 'styles/colors'
 
 // types
-import { State } from 'reducers'
 import {
   STATUS_FLAG_DOWN,
   STATUS_FLAG_INFO,
@@ -36,13 +34,15 @@ import { vaultsStatuses } from '../Vaults.consts'
 import { LIQUIDATION_COST, LIQUIDATION_PRICE, VAULT_RISK } from 'texts/tooltips/vault.text'
 import { getStringWithoutUnderline } from 'utils/parse'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
-import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
-import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+
+// hooks
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -120,7 +120,7 @@ const findFooterText = ({
 type Props = {
   vault: VaultType
   isOwner: boolean
-  handleMarkForLiquidation: (vaultId: number, vaultOwner: string) => void
+  handleMarkForLiquidation: ({}: { vaultId: number; vaultOwner: string }) => void
   vaultTab: string
 }
 
@@ -131,10 +131,9 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     config: { daoFee },
   } = useLoansContext()
   const {
+    globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -330,7 +329,9 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
             text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
             kind={ACTION_PRIMARY}
             onClick={() => {
-              return isMarkStatus ? handleMarkForLiquidation(vaultId, ownerAddress) : liquidateModalHandler()
+              return isMarkStatus
+                ? handleMarkForLiquidation({ vaultId, vaultOwner: ownerAddress })
+                : liquidateModalHandler()
             }}
             disabled={vaultsStatuses.GRACE_PERIOD === status || isActionActive}
           />

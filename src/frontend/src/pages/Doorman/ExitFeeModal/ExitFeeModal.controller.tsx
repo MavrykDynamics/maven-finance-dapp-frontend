@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux'
-
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import {
@@ -24,15 +22,14 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
-// context
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { State } from 'reducers'
 import { unstakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useCallback, useMemo } from 'react'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 
@@ -63,9 +60,9 @@ export const ExitFeeModal = ({
   } = useDappConfigContext()
   const { bug } = useToasterContext()
   const {
+    globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const parsedInputAmount = Number(inputData.amount)
   const convertedValue = mvkExchangeRate ? parsedInputAmount * mvkExchangeRate : 0

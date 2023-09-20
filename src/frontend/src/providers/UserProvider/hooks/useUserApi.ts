@@ -6,7 +6,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // consts
 import { DAPP_INSTANCE } from '../user.provider'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { TOASTER_TEXTS } from 'providers/ToasterProvider/helpers/texts/toaster.texts'
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { DEFAULT_USER } from '../helpers/user.consts'
 
@@ -21,10 +21,6 @@ import {
   normalizeUserTzktTokensBalances,
   openTzktWebSocket,
 } from '../helpers/userBalances.helpers'
-
-// TODO: remove after user addres won't be needed in redux actions
-import { useDispatch } from 'react-redux'
-import { DISCONNECT, SET_REDUX_USER } from 'reducers/wallet'
 
 /**
  * hook to handle CRUD with user (connect, changeWallet, signOut)
@@ -56,8 +52,6 @@ export const useUserApi = ({
 
   userCtxState: UserContextStateType
 }) => {
-  const dispatch = useDispatch()
-
   const { info, bug, success, loading, hideToasterMessage } = useToasterContext()
   const { tokensMetadata } = useTokensContext()
 
@@ -149,8 +143,6 @@ export const useUserApi = ({
         setUserLoading(true)
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
 
-        dispatch({ type: SET_REDUX_USER, accountPkh: userAddress })
-
         if (tzktSocket) {
           attachTzktSocketsEventHandlers({
             userAddress,
@@ -178,8 +170,6 @@ export const useUserApi = ({
 
       setUserCtxState(DEFAULT_USER)
 
-      dispatch({ type: DISCONNECT })
-
       await tzktSocket?.stop()
       setTzktSocket(null)
     } catch (e) {
@@ -202,8 +192,6 @@ export const useUserApi = ({
         setUserCtxState((prev) => ({ ...DEFAULT_USER, userAddress: prev.userAddress }))
 
         loadInitialTzktTokensForNewlyConnectedUser({ userAddress: newUserAddress, isUsingLoader: false })
-
-        dispatch({ type: SET_REDUX_USER, accountPkh: newUserAddress })
 
         await tzktSocket?.stop()
 

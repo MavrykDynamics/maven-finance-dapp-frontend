@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Link, useHistory, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
@@ -16,6 +15,7 @@ import {
   assetDecimalsToShow,
   loansTabNames,
 } from 'pages/Loans/Loans.const'
+import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -58,8 +58,6 @@ import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vault
 // types
 import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
 import { CollateralType, DepositorsFlagType } from 'providers/VaultsProvider/vaults.provider.types'
-import { State } from 'reducers'
-import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -108,14 +106,13 @@ export const BorrowingExpandCardMenuSection = ({
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const {
     contractAddresses: { lendingControllerAddress },
+    globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
 
   const { pathname, search } = useLocation()
   const history = useHistory()
   const { page, ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const menuTabs = useMemo(
     () =>
@@ -309,7 +306,11 @@ export const BorrowingExpandCardMenuSection = ({
             <div className="useful-info-line">
               <div className="name">Lending Controller Address</div>
               <div className="value">
-                {lendingControllerAddress ? <TzAddress tzAddress={lendingControllerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} /> : '–'}
+                {lendingControllerAddress ? (
+                  <TzAddress tzAddress={lendingControllerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                ) : (
+                  '–'
+                )}
               </div>
             </div>
           </div>

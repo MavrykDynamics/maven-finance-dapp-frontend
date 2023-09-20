@@ -16,6 +16,7 @@ import { SatellitesGovType } from 'providers/SatellitesGovernanceProvider/helper
 import { FarmActionsType } from 'providers/FarmsProvider/farms.provider.types'
 import { BreakGlassCouncilActions, MavrykCouncilActions } from 'providers/CouncilProvider/helpers/council.types'
 import { EGovProposalActionsType } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider.types'
+import { FeedsActionsType } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
 export type ActionTypes =
   | StakeActionType
@@ -30,6 +31,7 @@ export type ActionTypes =
   | BreakGlassCouncilActions
   | MavrykCouncilActions
   | EGovProposalActionsType
+  | FeedsActionsType
 
 export type DappConfigContext = {
   maxLengths: DappMaxLengths
@@ -46,6 +48,8 @@ export type DappConfigContext = {
   preferences: PreferencesState
   globalLoadingState: LoadingState
 
+  // general
+  handleCopy: (testToCopy: string) => void
   // methods
   setAction: (actionName: null | UserActionType) => void
   setDappTotalValueLocked: (tvl: number) => void

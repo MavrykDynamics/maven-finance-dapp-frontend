@@ -1,8 +1,8 @@
 import {
-  ACTION_COMPLETION_MESSAGE_TEXT,
   ACTION_START_MESSAGE_TEXT,
+  ACTION_COMPLETION_MESSAGE_TEXT,
   DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
-} from '../Toaster.constants'
+} from 'providers/ToasterProvider/toaster.provider.const'
 
 // doorman
 import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
@@ -38,7 +38,9 @@ import {
   CHANGE_VAULT_NAME_ACTION,
   CREATE_VAULT_ACTION,
   DEPOSIT_COLLATERAL_ACTION,
+  LIQUIDATE_VAULT_ACTION,
   MANAGE_PERMISSIONS_ACTION,
+  MARK_FOR_LIQUIDATION_ACTION,
   REPAY_FULL_VAULT_ACTION,
   REPAY_PART_OF_VAULT_ACTION,
   UPDATE_OPERATORS_ACTION,
@@ -123,6 +125,9 @@ import {
   VOTE_FOR_EGOV_PROPOSAL_ACTION,
 } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
 
+// feeds
+import { REGISTER_FEED_ACTION } from 'providers/DataFeedsProvider/helpers/feeds.consts'
+
 // types
 import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
@@ -137,6 +142,18 @@ type ToastMessageFullContent = {
 }
 
 export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent> = {
+  // feeds actions -------------------------------------
+  [REGISTER_FEED_ACTION]: {
+    start: {
+      title: 'Registering feed...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Feed registered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+
   // doorman actions -------------------------------------
   [STAKE_ACTION]: {
     start: {
@@ -336,6 +353,26 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
+  [MARK_FOR_LIQUIDATION_ACTION]: {
+    start: {
+      title: 'Marking vault for Liquidation...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Vault marked for Liquidation.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [LIQUIDATE_VAULT_ACTION]: {
+    start: {
+      title: 'Liquidating vault...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Vault Liquidated.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
 
   // vaults collateral actions -------------------------------------
   [WITHDRAW_COLLATERAL_ACTION]: {
@@ -359,7 +396,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
   },
 
-  // vault permission actions
+  // vault permission actions -------------------------------------
   [CHANGE_BAKER_ACTION]: {
     start: {
       title: 'Changing XTZ Baker...',

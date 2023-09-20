@@ -1,41 +1,42 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useMemo, useState } from 'react'
 
-// components
+// view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import Toggle from 'app/App.components/Toggle/Toggle.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
-// styles
 import { LiquidateVaultModalStyled } from './LiquidateVaultModal.styles'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
-import colors from 'styles/colors'
+import { Button } from 'app/App.components/Button/Button.controller'
 
-// helpers
+// consts
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { LIQUIDATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { SECONDARY_TOGGLE } from 'app/App.components/Toggle/Toggle.consts'
+import colors from 'styles/colors'
 
 // types
 import { LiquidateVaultDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 
-// actions
-import { liquidateVault } from 'pages/Vaults/Vaults.actions'
-import { State } from 'reducers'
-import { Button } from 'app/App.components/Button/Button.controller'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { calculateAdminLiquidationFee, calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
+// utils
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { calculateAdminLiquidationFee, calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { liquidateVault } from 'providers/VaultsProvider/actions/vaultsLiquidation.actions'
+
+// hooks
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -47,16 +48,16 @@ type Props = {
 }
 
 // TODO: need to test values here, don't have valid vault for it
+// TODO: test and do this as other loans popups, while testing
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, userAddress } = useUserContext()
+  const { bug } = useToasterContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
+    contractAddresses: { lendingControllerAddress },
+    globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
-
-  const dispatch = useDispatch()
 
   const [showAsPercentage, setShowAsPercentage] = useState(true)
 
@@ -65,20 +66,42 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
+  const contractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: LIQUIDATE_VAULT_ACTION,
+      actionFn: async () => {
+        if ((borrowedToken && !checkWhetherTokenIsLoanToken(borrowedToken)) || !borrowedToken) {
+          return null
+        }
+
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!lendingControllerAddress) {
+          bug('Wrong lending address')
+          return null
+        }
+
+        return await liquidateVault(
+          data.vaultId,
+          data.ownerAddress,
+          Number(inputAmount),
+          borrowedToken,
+          lendingControllerAddress,
+        )
+      },
+    }),
+    [borrowedToken, inputAmount, lendingControllerAddress, data.ownerAddress, userAddress, data.vaultId],
+  )
+
+  const { action: handleLiquidateVault } = useContractAction(contractActionProps)
+
   if (!data || !borrowedToken || !borrowedToken.rate) return null
 
-  const {
-    vaultId,
-    ownerAddress,
-    collateralData,
-    liquidationMax,
-    liquidationReward,
-    adminLiquidateFee,
-    collateralBalance,
-    tokenAddress,
-  } = data
-
-  const { symbol, icon, decimals, rate: borrowedTokenRate } = borrowedToken
+  const { collateralData, liquidationMax, liquidationReward, adminLiquidateFee, collateralBalance, tokenAddress } = data
+  const { symbol, icon, rate: borrowedTokenRate } = borrowedToken
 
   const userBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
 
@@ -111,19 +134,6 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const handleToggle = () => {
     setInputAmount('0')
     setShowAsPercentage(!showAsPercentage)
-  }
-
-  const handleLiquidateVault = () => {
-    if (!vaultId || !ownerAddress || !decimals) return
-
-    dispatch(
-      liquidateVault({
-        vaultId,
-        vaultOwner: ownerAddress,
-        liquidateAmount: costToLiquidate,
-        decimals: decimals,
-      }),
-    )
   }
 
   const inputProps: InputProps = {

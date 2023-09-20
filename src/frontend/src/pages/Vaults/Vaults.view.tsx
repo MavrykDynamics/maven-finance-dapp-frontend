@@ -10,10 +10,7 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 // components
 import { VaultsSearchFilter } from './components/VaultsSearchFilter.view'
 import { VaultsCard } from './components/VaultsCard.view'
-import {
-  SlidingTabButtons,
-  SlidingTabButtonType,
-} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
@@ -39,7 +36,6 @@ import { calculateSlicePositions } from 'app/App.components/Pagination/paginatio
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // actions
-import { markForLiquidation } from './Vaults.actions'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_ALL,
@@ -47,6 +43,11 @@ import {
   VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
 } from 'providers/VaultsProvider/vaults.provider.consts'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { MARK_FOR_LIQUIDATION_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import { markForLiquidation } from 'providers/VaultsProvider/actions/vaultsLiquidation.actions'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 const pathname = '/vaults'
 
@@ -57,12 +58,15 @@ export const vaultTabs = {
 }
 
 export const VaultsView = () => {
-  const dispatch = useDispatch()
   const history = useHistory()
   const { search } = useLocation()
   const { tabId } = useParams<{ tabId: string }>()
 
   const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { lendingControllerAddress },
+  } = useDappConfigContext()
   const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
   const {
     changeVaultsSubscriptionsList,
@@ -165,9 +169,27 @@ export const VaultsView = () => {
     return vaultsIds?.slice(from, to)
   }, [currentListName, currentPage, vaultsIds])
 
-  const handleMarkForLiquidation = async (vaultId: number, vaultOwner: string) => {
-    await dispatch(markForLiquidation(vaultId, vaultOwner))
-  }
+  const contractActionProps: HookContractActionArgs<{ vaultId: number; vaultOwner: string }> = useMemo(
+    () => ({
+      actionType: MARK_FOR_LIQUIDATION_ACTION,
+      actionFn: async ({ vaultId, vaultOwner }: { vaultId: number; vaultOwner: string }) => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!lendingControllerAddress) {
+          bug('Wrong lending address')
+          return null
+        }
+
+        return await markForLiquidation(vaultId, vaultOwner, lendingControllerAddress)
+      },
+    }),
+    [lendingControllerAddress, userAddress],
+  )
+
+  const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
 
   return (
     <VaultsStyled>

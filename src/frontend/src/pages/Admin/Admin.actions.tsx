@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { State } from '../../reducers'
 import { showToaster } from '../../app/App.components/Toaster/Toaster.actions'
-import { ERROR, INFO, SUCCESS } from '../../app/App.components/Toaster/Toaster.constants'
+import { ERROR, INFO, SUCCESS } from '../../providers/ToasterProvider/helpers/Toaster.constants'
 import type { AppDispatch, GetState } from '../../app/App.controller'
 
 import { OpKind } from '@taquito/taquito'

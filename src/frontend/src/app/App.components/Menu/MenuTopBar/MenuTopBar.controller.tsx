@@ -1,25 +1,24 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import WertWidget from '@wert-io/widget-initializer'
 import { Link } from 'react-router-dom'
 
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-import { toggleWertLoader } from 'app/App.components/Loader/Loader.action'
-import { State } from 'reducers'
-
+// utils
 import { getWertOptions } from 'app/App.components/ConnectWallet/Wert/WertIO.const'
-import { TOASTER_ERROR } from 'app/App.components/Toaster/Toaster.constants'
 
+// view
 import { WalletDetails } from 'app/App.components/ConnectWallet/ConnectedWalletInfo'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 import Icon from 'app/App.components/Icon/Icon.view'
 import WertIoPopup from 'app/App.components/ConnectWallet/Wert/WertIoPopup'
 import { TopBarLinks } from './TopBarLinks/TopBarLinks.controller'
 import { MobileTopBar } from './TopBarLinks/MobileTopBar.controller'
-
 import { MenuLogo } from '../Menu.style'
 import { MenuMobileBurger, MenuTopStyled } from './MenuTopBar.style'
+
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type MenuTopBarProps = {
   burgerClickHandler: () => void
@@ -69,11 +68,12 @@ export const DOCS_LINKS = [
 ]
 
 export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodePopupHandler }: MenuTopBarProps) => {
-  const dispatch = useDispatch()
   const {
     preferences: { themeSelected },
+    toggleWertLoader,
   } = useDappConfigContext()
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
   const [showMobileTopBar, setShowMobileTopBar] = useState(false)
   const [showWertIoPopup, setShowWertIoPopup] = useState(false)
@@ -89,19 +89,13 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
   }
 
   const showWertIoErrorToaster = () => {
-    dispatch(
-      showToaster(
-        TOASTER_ERROR,
-        'Wert io interaction error',
-        'Error while interaction with wert io service happened, try later',
-      ),
-    )
+    bug('Error while interaction with wert io service happened, try later', 'Wert io interaction error')
   }
 
   const mountWertWiget = (commodity: string) => {
-    dispatch(toggleWertLoader(true))
+    toggleWertLoader(true)
     const wertOptions = getWertOptions(commodity, setShowWertIoPopup, showWertIoErrorToaster, () =>
-      dispatch(toggleWertLoader(false)),
+      toggleWertLoader(false),
     )
     const wertWidgetInstance = new WertWidget(wertOptions)
     wertWidgetInstance.mount()
@@ -127,7 +121,7 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
           <TopBarLinks groupName={'Docs'} groupLinks={DOCS_LINKS} />
         </div>
         <div className="right-side">
-          {!accountPkh ? <ConnectWalletBtn /> : <WalletDetails mountWertWiget={mountWertWiget} />}
+          {!userAddress ? <ConnectWalletBtn /> : <WalletDetails mountWertWiget={mountWertWiget} />}
           <div className="settingsIcon" onClick={openChangeNodePopupHandler}>
             <Icon id="gear" />
           </div>
