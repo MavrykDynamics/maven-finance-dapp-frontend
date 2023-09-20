@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { useQuery, useSubscription } from '@apollo/client'
 
-// contexts
+// hooks
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { ApolloError, useQuery, useSubscription } from '@apollo/client'
 
 // types
 import { DappConfigContext, DappConfigContextStateType, RPCNodeType, UserActionType } from './dappConfig.provider.types'
@@ -10,24 +11,19 @@ import { ThemeType } from 'consts/theme.const'
 
 // consts
 import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 import { DEFAULT_DAPP_CONFIG_CONTEXT, RPC_NODE } from './helpers/dappConfig.const'
+import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
+import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
 
-// helpers
-import { sleep } from 'utils/api/sleep'
-import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
-
-// queries
-import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
-import { getXTZBakers } from './bakers/getXtzBakers'
-import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
-
 // utils
+import { getXTZBakers } from './bakers/getXtzBakers'
 import { setItemInStorage } from 'utils/storage'
 import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schemes'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
+import { unknownToError } from 'errors/error'
+import { sleep } from 'utils/api/sleep'
+import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -35,15 +31,12 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: handle initial loading with null values
 const DappConfigProvider = ({ children }: Props) => {
-  const handleSubError = (error: ApolloError) => {
-    console.error(`DappConfigProvider query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
-
-  // HANDLING DATA UPDATE LOADER STATE AFTER USER FIRED ACTION
+  const { handleApolloError } = useApolloContext()
   const { bug, hideToasterMessage, success } = useToasterContext()
 
+  // HANDLING DATA UPDATE LOADER STATE AFTER USER FIRED ACTION
   const [action, setAction] = useState<UserActionType | null>(null)
 
   /**
@@ -60,7 +53,7 @@ const DappConfigProvider = ({ children }: Props) => {
         const parsedLevelData = indexerLevelSchema.parse(data.dipdup_index)
 
         // TODO: remove log
-        console.log('new indexer level: ', parsedLevelData[0].level)
+        if (process.env.REACT_APP_ENV === 'dev') console.log('new indexer level: ', parsedLevelData[0].level)
 
         currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData[0].level
       } catch (e) {
@@ -68,7 +61,7 @@ const DappConfigProvider = ({ children }: Props) => {
       }
     },
     onError: (error) => {
-      handleSubError(error)
+      handleApolloError(error, 'SUBSCRIPTION_INDEXER_LVL')
 
       if (action && action.toasterId) {
         hideToasterMessage(action.toasterId)
@@ -76,11 +69,6 @@ const DappConfigProvider = ({ children }: Props) => {
       }
     },
   })
-
-  // TODO: test fps
-  // setInterval(() => {
-  //   currentIndexerLevelProxy.currentIndexedLevel = currentIndexerLevelProxy.currentIndexedLevel + 1
-  // }, 7000)
 
   /**
    * effect to handle action toasters and turn them off when level of operation is already performed by indexer
@@ -130,7 +118,7 @@ const DappConfigProvider = ({ children }: Props) => {
         console.error('zod parsing DAPP_INITIAL_CONFIG_QUERY error:', { e })
       }
     },
-    onError: handleSubError,
+    onError: (error) => handleApolloError(error, 'DAPP_INITIAL_CONFIG_QUERY'),
   })
 
   // TODO: addresses that are general, not page specific load in DAPP_INITIAL_CONFIG_QUERY other addresses load only on pages that requires them
@@ -141,7 +129,7 @@ const DappConfigProvider = ({ children }: Props) => {
         contractAddresses: normalizeContractAddresses(data),
       }))
     },
-    onError: handleSubError,
+    onError: (error) => handleApolloError(error, 'GET_DAPP_CONTRACT_ADDRESSES'),
   })
 
   // TODO: move it to the custom hook for bakers
@@ -164,7 +152,13 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // preferences actions
   const toggleTheme = (theme: ThemeType) => {
-    setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
+    try {
+      setItemInStorage('theme', theme)
+      setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
+    } catch (e) {
+      const err = unknownToError(e)
+      bug(err)
+    }
   }
 
   const toggleRPCNodePopup = (isOpened: boolean) => {
@@ -215,10 +209,18 @@ const DappConfigProvider = ({ children }: Props) => {
     }))
   }
 
+  const setDappTotalValueLocked = (newTvlValie: number) => {
+    setDappConfigCtxState((prev) => ({
+      ...prev,
+      dappTotalValueLocked: newTvlValie,
+    }))
+  }
+
   const contextProviderValue = useMemo(() => {
     return {
       isLoading: initialConfigLoading || contractAddressesLoading,
       setAction,
+      setDappTotalValueLocked,
       // preferences
       toggleTheme,
       toggleRPCNodePopup,

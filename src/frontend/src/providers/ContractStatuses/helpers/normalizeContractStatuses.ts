@@ -1,6 +1,7 @@
-import { ContractStatusesStorage, ContractStatusesType } from '../contractStatuses.types'
+import { GetAllContractStatusesDataQuery } from 'utils/__generated__/graphql'
+import { ContractStatusesStorage } from '../contractStatuses.types'
 
-export function normalizeContractStatuses(storage: ContractStatusesType): ContractStatusesStorage {
+export function normalizeContractStatuses(storage: GetAllContractStatusesDataQuery): ContractStatusesStorage {
   return [
     // doorman
     ...(storage?.doorman?.length
@@ -93,9 +94,9 @@ export function normalizeContractStatuses(storage: ContractStatusesType): Contra
               lastUpdated: item.last_updated_at,
               methods: {
                 'mint mvk and transfer': item.mint_mvk_and_transfer_paused,
-                'stake mvk': item.stake_mvk_paused,
+                'stake mvk': item.stake_tokens_paused,
                 transfer: item.transfer_paused,
-                'unstake mvk': item.unstake_mvk_paused,
+                'unstake mvk': item.unstake_tokens_paused,
               },
             }
           }),

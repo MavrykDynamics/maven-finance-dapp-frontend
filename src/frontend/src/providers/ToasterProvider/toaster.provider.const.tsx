@@ -41,7 +41,7 @@ export const getColorByToasterStatus = ({
     case TOASTER_INFO:
       return theme.infoColor
     case TOASTER_LOADING:
-      return theme.lPurple_dPurple_lPuprple
+      return theme.selectedColor
     case TOASTER_WARNING:
       return theme.warningColor
     default:

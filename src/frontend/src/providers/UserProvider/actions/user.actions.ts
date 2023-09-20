@@ -102,14 +102,14 @@ export const getMVKTokensFromFaucet = async (
 }
 
 export const distributeProposalRewards = async (
-  delegationAddress: string,
+  governanceAddress: string,
   satelliteAddress: string,
   proposals: number[],
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(delegationAddress)
+    const contract = await tezos.wallet.at(governanceAddress)
     const distributeProposalsMetaData = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals)
 
     return await getEstimationResult(distributeProposalsMetaData)

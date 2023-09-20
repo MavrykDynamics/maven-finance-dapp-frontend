@@ -43,9 +43,6 @@ export const checkIndexerLevelAndRunDataUpdateCallback = ({
           ({ name }) => name === process.env.REACT_APP_RPC_TZKT_API,
         )?.level
 
-        // TODO: debug log, remove later
-        console.info({ indexerLevel, currentOperationLevel, callsCounter })
-
         // if indexer level in gql > current level in client => update data and clear interval
         if (currentOperationLevel && indexerLevel && indexerLevel - currentOperationLevel >= 2) {
           clearInterval(intervalId)

@@ -5,7 +5,7 @@ export const ExitFeeModalContent = styled.div<{ theme: MavrykTheme }>`
   padding: 10px 40px 0 40px;
 
   label {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     font-weight: 600;
     font-size: 16px;
     line-height: 22px;
@@ -30,7 +30,7 @@ export const ExitFeeModalStats = styled.div`
     font-size: 16px;
     line-height: 22px;
 
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   h4 {
@@ -38,14 +38,14 @@ export const ExitFeeModalStats = styled.div`
     font-size: 14px;
     line-height: 24px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
 
     svg {
       width: 12px;
       height: 12px;
       margin-left: 4px;
 
-      fill: ${({ theme }) => theme.textColor};
+      fill: ${({ theme }) => theme.subHeadingText};
     }
   }
 `
@@ -54,37 +54,4 @@ export const ExitFeeModalButtons = styled.div`
   display: flex;
   margin-top: 30px;
   column-gap: 10px;
-`
-
-export const ExitFeeModalGrid = styled.div<{ theme: MavrykTheme }>`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
-  font-weight: 500;
-  margin: auto;
-  text-align: center;
-
-  > div {
-    color: ${({ theme }) => theme.subTextColor};
-  }
-
-  > p {
-    color: ${({ theme }) => theme.primaryColor};
-    margin-top: 0;
-  }
-`
-
-export const ExitFeeModalFee = styled.div<{ theme: MavrykTheme }>`
-  font-size: 24px;
-  font-weight: bold;
-  margin: 50px auto;
-  text-align: center;
-
-  > div {
-    color: ${({ theme }) => theme.subTextColor};
-  }
-
-  > p {
-    color: ${({ theme }) => theme.primaryColor};
-  }
 `

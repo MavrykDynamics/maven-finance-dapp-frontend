@@ -9,8 +9,11 @@ import { WalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
 import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
+import { FinancialRequestsActionsTypes } from 'providers/FinancialRequestsProvider/financialRequests.types'
 import { WalletOperationError } from 'errors/error'
 import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
+import { SatellitesGovType } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.types'
+import { EGovProposalActionsType } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider.types'
 
 export type ActionTypes =
   | StakeActionType
@@ -19,12 +22,16 @@ export type ActionTypes =
   | LoansActionsType
   | VaultsActionsType
   | ProposalActionsTypes
+  | FinancialRequestsActionsTypes
+  | SatellitesGovType
+  | EGovProposalActionsType
 
 export type DappConfigContext = {
   // data
   maxLengths: DappMaxLengths
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number
+  dappTotalValueLocked: number | null
   contractAddresses: Record<DappContractAddressesKeysType, string | null>
   xtzBakers: {
     dao: XtzBakerType
@@ -37,6 +44,7 @@ export type DappConfigContext = {
 
   // methods
   setAction: (actionName: null | UserActionType) => void
+  setDappTotalValueLocked: (tvl: number) => void
   // preferences actions
   toggleTheme: (theme: ThemeType) => void
   toggleRPCNodePopup: (isOpened: boolean) => void
@@ -58,6 +66,7 @@ export type DappConfigContextStateType = Pick<
   | 'contractAddresses'
   | 'preferences'
   | 'globalLoadingState'
+  | 'dappTotalValueLocked'
 >
 
 export type UserActionType = {

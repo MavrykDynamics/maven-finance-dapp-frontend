@@ -1,11 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import useCollapse from 'react-collapsed'
-import { useSelector } from 'react-redux'
 import { Link, matchPath } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 
 // types
-import { State } from '../../../../reducers'
 import { SubNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
 
 // styles

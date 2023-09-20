@@ -1,17 +1,18 @@
-import React from 'react'
-import { ErrorFooterMiddle, ErrorFooterRight, ErrorFooterWrapper } from '../ErrorPage.style'
+import { ErrorFooterWrapper, ErrorFooterMiddle, ErrorFooterRight } from '../ErrorPage.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { mavrykLinks } from 'app/App.components/Footer/footer.const'
+import { ThemeType } from 'consts/theme.const'
 
 type ErrorFooterProps = {
   handleRedirect: () => void
+  themeSelected: ThemeType
 }
 
-export const ErrorFooter = ({ handleRedirect }: ErrorFooterProps) => {
+export const ErrorFooter = ({ handleRedirect, themeSelected }: ErrorFooterProps) => {
   return (
     <ErrorFooterWrapper>
       <span onClick={handleRedirect}>
-        <ImageWithPlug plugSrc="/images/mavryk-logo-small.svg" alt="logo-small" />
+        <ImageWithPlug plugSrc={`/images/${themeSelected}/mavryk-logo-small.svg`} alt="logo-small" />
       </span>
       <ErrorFooterMiddle>
         Powered by&nbsp;

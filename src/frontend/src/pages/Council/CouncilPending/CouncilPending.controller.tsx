@@ -12,7 +12,7 @@ import { getSeparateCamelCase } from '../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { convertBytesAddressToAddress } from 'app/App.helpers'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { MVK_DECIMALS } from 'utils/constants'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
@@ -139,7 +139,7 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Council Member</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={councilMemberAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={councilMemberAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
             {councilMemberName ? (
@@ -213,7 +213,7 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Council Member</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={newCouncilMemberAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={newCouncilMemberAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
 
@@ -286,13 +286,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p className="without-margin">Council Member to change</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={oldCouncilMemberAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={oldCouncilMemberAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
             <article>
               <p className="without-margin">Council Member Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={newCouncilMemberAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={newCouncilMemberAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
 
@@ -365,7 +365,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>New Admin Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={newAdminAddress} type={BLUE} hasIcon />
+              <TzAddress tzAddress={newAdminAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </article>
 
@@ -384,7 +384,7 @@ export const CouncilPending = (props: Props) => {
             <div>
               <p>Target Contract</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={targetContractAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={targetContractAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </div>
           </article>
@@ -419,7 +419,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Vestee Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={vesteeAddress} type={BLUE} hasIcon />
+              <TzAddress tzAddress={vesteeAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </article>
 
@@ -481,7 +481,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Vestee Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={vesteeAddress} type={BLUE} hasIcon />
+              <TzAddress tzAddress={vesteeAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </article>
 
@@ -540,13 +540,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Treasury Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={treasuryAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={treasuryAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
             <article>
               <p>Token Contract Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={tokenContractAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={tokenContractAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
 
@@ -616,13 +616,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Receiver Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={receiverAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={receiverAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
             <article>
               <p>Token Contract Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={tokenContractAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={tokenContractAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
 
@@ -688,7 +688,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Treasury Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={treasuryAddress} type={BLUE} hasIcon />
+              <TzAddress tzAddress={treasuryAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </article>
 
@@ -753,7 +753,7 @@ export const CouncilPending = (props: Props) => {
           <div>
             <p className="parameters-name">{getSeparateCamelCase(name)}</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={address} type={BLUE} hasIcon />
+              <TzAddress tzAddress={address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </div>
           <div>

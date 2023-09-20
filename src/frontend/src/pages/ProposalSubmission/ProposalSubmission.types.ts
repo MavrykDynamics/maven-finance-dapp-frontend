@@ -1,6 +1,6 @@
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import BigNumber from 'bignumber.js'
-import { ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 
 export type ProposalBytesType = ProposalRecordType['proposalData'][number]
 

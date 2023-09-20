@@ -68,7 +68,7 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                       <CustomTooltip
                         iconId="info"
                         text="Current yield suppliers are earning on their deposits."
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
                       />
                     </span>
                     <span>Total Supplied</span>
@@ -77,7 +77,7 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                       <CustomTooltip
                         iconId="info"
                         text="Rewards To Date"
-                        defaultStrokeColor={colors[themeSelected].textColor}
+                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
                       />
                     </span>
                     <span></span>
@@ -115,17 +115,19 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                   const { symbol, icon, rate, decimals, address } = loanToken
 
                   const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
+                  const {
+                    principle = 0,
+                    interest = 0,
+                    borrowedVaultsCollateralBalance = 0,
+                  } = marketVaultsUserData ?? {}
 
                   const collateralRatio = marketVaultsUserData
-                    ? getVaultCollateralRatio(
-                        marketVaultsUserData?.borrowedVaultsCollateralAmount ?? 0,
-                        marketVaultsUserData.borrowedAmount,
-                      )
+                    ? getVaultCollateralRatio(borrowedVaultsCollateralBalance, principle + interest)
                     : 0
                   const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
 
                   return (
-                    <TableRow rowHeight={60} borderColor="cardBorderColor" className="add-hover" key={symbol}>
+                    <TableRow rowHeight={60} borderColor="divider" className="add-hover" key={symbol}>
                       <TableCell width="15%">
                         <div className="cell-content row with-icon asset-name">
                           <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
@@ -174,7 +176,7 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                           {marketVaultsUserData ? (
                             <>
                               <CommaNumber value={borrowAPR} endingText="%" />
-                              <CommaNumber value={marketVaultsUserData.borrowedAmount} beginningText="$" />
+                              <CommaNumber value={marketVaultsUserData.principle} beginningText="$" />
                               <div className={`vault-status ${averageVaultStatus.status}`}>
                                 {averageVaultStatus.text}
                               </div>

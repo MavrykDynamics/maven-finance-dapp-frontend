@@ -87,7 +87,7 @@ export const FarmDepositModal = ({
         <FarmLpActionsPopupsContent>
           <div className="popup-header">
             <CoinsIcons />
-            <div className="token-names">Stake {tokensNames} LP Tokens</div>
+            <div>Stake {tokensNames} LP Tokens</div>
           </div>
 
           <Input

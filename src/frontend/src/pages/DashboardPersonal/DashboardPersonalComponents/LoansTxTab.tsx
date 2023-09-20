@@ -68,7 +68,7 @@ export const LoansTxTab = ({
 
                 const { icon, symbol } = token
                 return (
-                  <TableRow rowHeight={55} borderColor="cardBorderColor" className="add-hover" key={id + operationHash}>
+                  <TableRow rowHeight={55} borderColor="divider" className="add-hover" key={id + operationHash}>
                     <TableCell width="20%">
                       <div className="cell-content row">
                         <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
@@ -87,7 +87,7 @@ export const LoansTxTab = ({
                     <TableCell width="10%" contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
                         <Link
-                          to={{ pathname: `https://ghostnet.tzkt.io/${operationHash}` }}
+                          to={{ pathname: `${process.env.REACT_APP_TZKT_LINK}/${operationHash}` }}
                           target="_blank"
                           className="isCyan"
                         >

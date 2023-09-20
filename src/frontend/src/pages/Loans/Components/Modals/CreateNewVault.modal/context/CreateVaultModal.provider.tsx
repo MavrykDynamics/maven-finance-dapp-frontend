@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { createVaultModalContext } from './createVaultModalContext'
 import {
   CreateNewModalProps,
@@ -15,6 +15,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { getVaultBorrowCapacity } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { DropDownXTZBakerType } from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 
 type Props = CreateNewModalProps & {
   children: React.ReactNode
@@ -29,9 +30,8 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   const { availableLiquidity = 0, borrowAPR } = marketsMapper[marketTokenAddress] ?? {}
 
   const marketToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
-  const convertedAvailableLiquidity = marketToken?.rate
-    ? Math.max(convertNumberForClient({ number: availableLiquidity, grade: marketToken.decimals }), 0) *
-      marketToken.rate
+  const convertedAvailableLiquidity = marketToken
+    ? Math.max(convertNumberForClient({ number: availableLiquidity, grade: marketToken.decimals }), 0)
     : 0
 
   const resetCreateVaultModalState = useCallback(() => {
@@ -77,6 +77,13 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
     }))
   }, [])
 
+  const updateSelectedBaker = useCallback((selectedBaker: DropDownXTZBakerType | null) => {
+    setModalState((prev) => ({
+      ...prev,
+      selectedBaker,
+    }))
+  }, [])
+
   const setFinalBorrowInputAmount = useCallback(({ amount, rate, symbol }: FinalBorrowInputDataType) => {
     setModalState((prev) => ({
       ...prev,
@@ -99,10 +106,14 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
     [modalState.selectedCollaterals, modalState.selectedCollateralsAddresses, tokensMetadata, tokensPrices],
   )
 
-  const borrowedAmount = 0
   const borrowCapacity = useMemo(
-    () => getVaultBorrowCapacity(convertedAvailableLiquidity, borrowedAmount, collateralsBalance),
-    [convertedAvailableLiquidity, collateralsBalance],
+    () =>
+      getVaultBorrowCapacity(
+        marketToken?.rate ? convertedAvailableLiquidity * marketToken.rate : 0,
+        0,
+        collateralsBalance,
+      ),
+    [marketToken?.rate, convertedAvailableLiquidity, collateralsBalance],
   )
 
   const ctx = useMemo(
@@ -114,6 +125,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       updateVaultCreating,
       updateNewVault,
       updateSelectedCollaterals,
+      updateSelectedBaker,
       closePopup,
       setFinalBorrowInputAmount,
       data,
@@ -121,6 +133,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       collateralsBalance,
       borrowCapacity,
       borrowAPR,
+      marketAvailableLiquidity: convertedAvailableLiquidity,
     }),
     [
       modalState,
@@ -130,6 +143,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       updateVaultCreating,
       updateNewVault,
       updateSelectedCollaterals,
+      updateSelectedBaker,
       closePopup,
       setFinalBorrowInputAmount,
       data,
@@ -137,6 +151,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       collateralsBalance,
       borrowCapacity,
       borrowAPR,
+      convertedAvailableLiquidity,
     ],
   )
 

@@ -50,7 +50,7 @@ export const Plug = styled.div`
     line-height: 22px;
 
     text-align: center;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
   }
 `
 
@@ -64,8 +64,8 @@ const BaseTooltipStyles = styled.div<{ theme: MavrykTheme }>`
   position: absolute;
   z-index: 100;
   padding: 7px 10px 7px 10px;
-  background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background: ${({ theme }) => theme.cards};
+  border: 1px solid ${({ theme }) => theme.strokeColor};
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -82,7 +82,7 @@ export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
   .value {
     font-weight: 600;
     font-size: 18px;
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     white-space: pre;
     p {
       margin: 0;
@@ -92,7 +92,7 @@ export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
   .date {
     font-weight: 600;
     font-size: 12px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     white-space: pre;
   }
 `
@@ -125,11 +125,11 @@ export const MliFeeTooltipStyled = styled(BaseTooltipStyles)`
     }
 
     .name {
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
     }
 
     .value {
-      color: ${({ theme }) => theme.dataColor};
+      color: ${({ theme }) => theme.primaryText};
     }
   }
 `

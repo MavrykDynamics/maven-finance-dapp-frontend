@@ -1,28 +1,28 @@
-import { useSelector } from 'react-redux'
 import React from 'react'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
 // view
 import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
 import { ProposalSubmittionStageOneBody } from '../ProposalSubmission.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
 // types
 import { StageOneFormProps } from '../ProposalSubmission.types'
-import { State } from 'reducers'
 
-// helpers, constants
+// helpers
 import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
-import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { containSpaces } from 'app/App.utils/input'
-import { Info } from 'app/App.components/Info/Info.view'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+
+// consts
+import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
+import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
 export const StageOneForm = ({
   proposalId,
@@ -37,9 +37,9 @@ export const StageOneForm = ({
       governance: { proposalTitleMaxLength, proposalDescriptionMaxLength, proposalSourceCodeMaxLength },
     },
   } = useDappConfigContext()
-  const { isNewlyRegisteredSatellite } = useUserContext()
-
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
+  const {
+    config: { governancePhase, fee, successReward },
+  } = useProposalsContext()
 
   const isProposalSubmitted = proposalId >= 0
   const isProposalPeriod = governancePhase === 'PROPOSAL'
@@ -108,7 +108,8 @@ export const StageOneForm = ({
   return (
     <>
       <div className="stage-descr">{STAGE_1_DESCRIPTION}</div>
-      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
+
+      <ProposalSubmissionBanner />
 
       <ProposalSubmittionStageOneBody isProposalSubmitted={isProposalSubmitted}>
         {isProposalSubmitted ? (
@@ -168,9 +169,7 @@ export const StageOneForm = ({
         {isProposalSubmitted ? (
           <div className="submitted-data source-code">
             <div className="label">5 - Proposal source code</div>
-            <a className="isCyan" href={currentProposal.sourceCode}>
-              {currentProposal.sourceCode}
-            </a>
+            <a href={currentProposal.sourceCode}>{currentProposal.sourceCode}</a>
           </div>
         ) : (
           <Input
@@ -202,9 +201,7 @@ export const StageOneForm = ({
                     alt="invoice for the proposal"
                   />
                 </div>{' '}
-                <a className="isCyan" href={currentProposal.invoice}>
-                  {currentProposal.invoice}
-                </a>
+                <a href={currentProposal.invoice}>{currentProposal.invoice}</a>
               </div>
             ) : (
               <div className="value">No link for an invoice given</div>

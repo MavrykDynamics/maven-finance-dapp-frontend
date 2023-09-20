@@ -4,6 +4,7 @@ import { gql as apolloGql } from '@apollo/client'
 import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { gql } from 'utils/__generated__'
 
+// TODO: debug refetch work
 export function getSatelliteDataQuery(
   userAddress: string | null,
   isOnlyActive?: boolean,
@@ -20,7 +21,6 @@ export function getSatelliteDataQuery(
   const filters = [filteredByUserTable, activeSatellitesFilter].filter(Boolean).join(',')
 
   return apolloGql`query satelliteDataQuery($userAddress: String!) {
-
     satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}) {
 			nodes {
 				user {
@@ -29,7 +29,7 @@ export function getSatelliteDataQuery(
 			}
 		}
 
-    satellite(where: {registration_timestamp: {_is_null: false}, ${filters}}, order_by: {currently_registered: desc}) {
+    satellite: satellite(where: {registration_timestamp: {_is_null: false}, ${filters}}, order_by: {currently_registered: desc}) {
       description
       fee
       image
@@ -50,7 +50,6 @@ export function getSatelliteDataQuery(
           count
         }
       }
-
 
       delegation {
         delegation_ratio
@@ -112,11 +111,17 @@ export function getSatelliteDataQuery(
         }
 
         # last voted proposal
-        lastVotedProposal: governance_proposals_votes(order_by: {timestamp: desc}, where: {round: {_eq: "1"}}) {
+        lastVotedProposal: governance_proposals_votes(order_by: {timestamp: desc}, limit: 1) {
           vote
           governance_proposal {
             id
             title
+            
+            cycle
+            current_round_proposal
+            governance {
+              cycle_id
+            }
           }
         }
 
@@ -171,7 +176,7 @@ export function getSatelliteDataQuery(
 
 export const CHECK_WHETHER_SATELLITE_EXISTS = gql(`
   query checkWitherSatelliteExists($userAddress: String = "") {
-    satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}) {
+    satellite: satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}) {
       user {
         address
       }

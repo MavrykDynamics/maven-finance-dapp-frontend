@@ -28,3 +28,5 @@ export const BLOCKS_PER_MINUTE = 7.5
 export const SECONDS_PER_BLOCK = 30
 export const FIXED_POINT_ACCURACY = 10 ** 27
 export const SECONDS_PER_YEAR = 60 * 60 * 24 * 365
+
+export const DEFAULT_MIN_COLLATERAL_AMOUNT = 0.0001

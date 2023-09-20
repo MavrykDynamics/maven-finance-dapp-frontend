@@ -69,7 +69,7 @@ const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataQueryQuery['sa
 
   const latestObservation = aggregator_oracles.reduce(
     (acc, { init_epoch, init_round, observations: [lastFeedObservation] }) => {
-      const { timestamp, epoch, round } = lastFeedObservation
+      const { timestamp, epoch, round } = lastFeedObservation ?? {}
 
       if (dayjs(timestamp).unix() > acc.latestTimestamp) {
         acc.init_epoch = init_epoch
@@ -141,7 +141,7 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataQueryQuery['sa
       currentlyRegistered: satelliteRecord.currently_registered,
 
       // delegation data
-      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 10 ?? 0,
+      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 100 ?? 0,
       delegatorCount: satelliteRecord.delegatorCount.aggregate?.count ?? 0,
       totalVotingPower,
       satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
@@ -158,13 +158,15 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataQueryQuery['sa
       oracleEfficiency: getSatelliteOracleEfficiency(satelliteUser),
 
       // votes & voting metrix
-      lastVotedProposal: lastVotedProposal
-        ? {
-            vote: lastVotedProposal.vote,
-            proposalTitle: lastVotedProposal.governance_proposal.title,
-            proposalId: lastVotedProposal.governance_proposal.id,
-          }
-        : null,
+      lastVotedProposal:
+        lastVotedProposal &&
+        lastVotedProposal.governance_proposal.cycle === lastVotedProposal.governance_proposal.governance.cycle_id
+          ? {
+              vote: satelliteVoteSchema.parse(lastVotedProposal.vote),
+              proposalTitle: lastVotedProposal.governance_proposal.title,
+              proposalId: lastVotedProposal.governance_proposal.id,
+            }
+          : null,
       proposalsVotesAmount: satelliteUser.govProposalsVotesAmount.aggregate?.count ?? 0,
       financialRequestsVotesAmount: satelliteUser.finRequestsVotesAmount.aggregate?.count ?? 0,
       satelliteActionVotesAmount: satelliteUser.satelliteGovActionsVotesAmount.aggregate?.count ?? 0,

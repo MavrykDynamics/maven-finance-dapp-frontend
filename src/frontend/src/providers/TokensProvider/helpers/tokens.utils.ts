@@ -5,10 +5,14 @@ import {
   TokenMetadataType,
   TokenAddressType,
   TokensContext,
+  M_TokenMetadataType,
 } from '../tokens.provider.types'
 
 export const checkWhetherTokenIsLoanToken = (token: TokenMetadataType): token is LoansTokenMetadataType =>
   Boolean(token.loanData)
+
+export const checkWhetherTokenIsM_Token = (token: TokenMetadataType): token is M_TokenMetadataType =>
+  Boolean(token.mToken)
 
 export const checkWhetherTokenIsCollateralToken = (
   token: TokenMetadataType,

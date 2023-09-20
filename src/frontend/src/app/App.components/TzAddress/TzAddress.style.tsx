@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { CYAN, PRIMARY, SECONDARY, TRANSPARENT, BLUE } from './TzAddress.constants'
+import { SECONDARY_TZ_ADDRESS_COLOR, PRIMARY_TZ_ADDRESS_COLOR } from './TzAddress.constants'
 
 export const TzAddressContainer = styled.div`
   display: flex;
@@ -13,35 +13,16 @@ export const TzAddressContainer = styled.div`
   }
 
   &:not(.notCopy):hover {
-    opacity: 0.7;
+    opacity: 0.8;
   }
 `
 export const TzAddressStyled = styled.div<{ theme: MavrykTheme }>`
-  &.${PRIMARY} {
-    color: ${({ theme }) => theme.primaryColor};
+  &.${PRIMARY_TZ_ADDRESS_COLOR} {
+    color: ${({ theme }) => theme.primaryText};
   }
 
-  &.${SECONDARY} {
-    color: ${({ theme }) => theme.headerColor};
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 21px;
-  }
-
-  &.${TRANSPARENT} {
-    color: ${({ theme }) => theme.backgroundTextColor};
-  }
-
-  &.${BLUE} {
-    color: ${({ theme }) => theme.dataColor};
-  }
-
-  &.${CYAN} {
-    color: ${({ theme }) => theme.navTitleColor};
-  }
-
-  &.${BLUE} {
-    color: ${({ theme }) => theme.headerSkyColor};
+  &.${SECONDARY_TZ_ADDRESS_COLOR} {
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 
   &.bold {
@@ -65,27 +46,11 @@ export const TzAddressIcon = styled.svg<{ theme: MavrykTheme }>`
     margin-bottom: 2px;
   }
 
-  &.${PRIMARY} {
-    fill: ${({ theme }) => theme.backgroundTextColor};
+  &.${PRIMARY_TZ_ADDRESS_COLOR} {
+    fill: ${({ theme }) => theme.primaryText};
   }
 
-  &.${SECONDARY} {
-    fill: ${({ theme }) => theme.headerColor};
-  }
-
-  &.${TRANSPARENT} {
-    fill: ${({ theme }) => theme.primaryColor};
-  }
-
-  &.${BLUE} {
-    fill: ${({ theme }) => theme.dataColor};
-  }
-
-  &.${CYAN} {
-    fill: ${({ theme }) => theme.navIconColor};
-  }
-
-  &.${BLUE} {
-    fill: ${({ theme }) => theme.headerSkyColor};
+  &.${SECONDARY_TZ_ADDRESS_COLOR} {
+    fill: ${({ theme }) => theme.linksAndButtons};
   }
 `

@@ -6,7 +6,12 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 
 // consts
-import { INPUT_LARGE, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  ERR_MSG_INPUT,
+  ERR_MSG_NONE,
+  INPUT_LARGE,
+  INPUT_STATUS_SUCCESS,
+} from 'app/App.components/Input/Input.constants'
 import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
@@ -19,6 +24,7 @@ import { containSpaces } from 'app/App.utils/input'
 
 // hooks
 import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 export const CreateVaultScreen = () => {
   const { vaultNames } = useUserVaultsNames()
@@ -27,16 +33,13 @@ export const CreateVaultScreen = () => {
   // handlers
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    const validationStatus = validateVaultName(value, vaultNames)
-
-    updateInputVaultState({ name: value, validationStatus })
+    updateInputVaultState({ name: value, validationStatus: INPUT_STATUS_SUCCESS })
   }
 
   const handleVaultNameOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (containSpaces(e.target.value)) {
       const trimmedValue = e.target.value.trim()
-      const validationStatus = validateVaultName(trimmedValue, vaultNames)
-      updateInputVaultState({ validationStatus, name: trimmedValue })
+      updateInputVaultState({ name: trimmedValue })
     }
   }
 
@@ -58,6 +61,11 @@ export const CreateVaultScreen = () => {
           inputStatus: vaultInputState.validationStatus,
           inputSize: INPUT_LARGE,
           errorMessage: vaultInputState.errorMessage,
+          validationFns: [
+            [validateInputLength, ERR_MSG_INPUT, [15]],
+            [validateVaultName, ERR_MSG_NONE, [vaultNames]],
+          ],
+          allowInputAfterError: true,
         }}
       />
       <div className="manage-btn">
@@ -66,6 +74,7 @@ export const CreateVaultScreen = () => {
           form={BUTTON_WIDE}
           onClick={handleButtonClick}
           disabled={vaultInputState.validationStatus !== INPUT_STATUS_SUCCESS}
+          ignoreLoading
         >
           Continue
           <Icon id="arrowRight" />

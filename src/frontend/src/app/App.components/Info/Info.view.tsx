@@ -4,7 +4,7 @@ import { getIconForInfoTyType, infoType, InfoSize } from './info.constants'
 import { InfoBlock } from './info.style'
 
 type Props = {
-  text: string | JSX.Element
+  text: React.ReactNode
   type: infoType
   showIcon?: boolean
   children?: React.ReactNode
@@ -17,7 +17,7 @@ type Props = {
  *
  * @props
  * {
- * text: simple string or JSX.Element (you should use JSX when there is a need to add some colored text, timer etc.
+ * text: simple string or React.ReactNode (you should use JSX when there is a need to add some colored text, timer etc.
  * NOTE: no images, buttons and other similar stuff, only text)
  * type: 'info' | 'error' | 'success
  * showIcon: boolean value to show left banner icon

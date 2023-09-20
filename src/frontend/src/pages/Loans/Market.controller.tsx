@@ -162,14 +162,17 @@ export const Market = () => {
           const vaultCollateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
           const convertedBorrowedAmount =
             convertNumberForClient({ number: vault.borrowedAmount, grade: loanTokenDecimals }) * loanTokenRate
+          const convertedInterestAmount =
+            convertNumberForClient({ number: vault.fee, grade: loanTokenDecimals }) * loanTokenRate
+          const convertedMarketAvailableLiquidity =
+            convertNumberForClient({ number: vault.availableLiquidity, grade: loanTokenDecimals }) * loanTokenRate
 
           acc.userTotalBorrowed += convertedBorrowedAmount
           acc.userTotalCollateral += vaultCollateralBalance
-          acc.userAccruedInterest +=
-            convertNumberForClient({ number: vault.fee, grade: loanTokenDecimals }) * loanTokenRate
+          acc.userAccruedInterest += convertedInterestAmount
           acc.userAvailableBorrow += getVaultBorrowCapacity(
-            convertNumberForClient({ number: vault.availableLiquidity, grade: loanTokenDecimals }) * loanTokenRate,
-            convertedBorrowedAmount,
+            convertedMarketAvailableLiquidity,
+            convertedBorrowedAmount + convertedInterestAmount,
             vaultCollateralBalance,
           )
           return acc
@@ -327,7 +330,7 @@ export const Market = () => {
                     <CustomTooltip
                       iconId="info"
                       text={USER_AVAILABLE_BORROW(currentMarketAddress)}
-                      defaultStrokeColor={colors[themeSelected].textColor}
+                      defaultStrokeColor={colors[themeSelected].subHeadingText}
                       className="tooltip"
                     />
                   </div>

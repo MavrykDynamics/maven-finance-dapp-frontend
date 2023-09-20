@@ -21,24 +21,20 @@ import { ConfirmationScreenWrapper } from '../createNewVault.style'
 
 // utils
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
-// types
-import { NewVaultType } from '../helpers/createNewVault.types'
-
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
+import { operationBorrow, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 // actions
 import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
@@ -49,7 +45,6 @@ export const ConfirmationScreen = () => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { vaultsMapper } = useVaultsContext()
-  const { choosenBaker } = useXtzBakersForDD()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -58,10 +53,10 @@ export const ConfirmationScreen = () => {
     selectedCollaterals,
     updateScreenToShow,
     newVault,
-    borrowCapacity,
     closePopup,
     finalBorrowInputData,
-    collateralsBalance,
+    marketAvailableLiquidity,
+    selectedBaker,
   } = useCreateVaultContext()
   const {
     config: { daoFee },
@@ -79,16 +74,16 @@ export const ConfirmationScreen = () => {
 
   const { amount: inputAmount, rate, symbol } = finalBorrowInputData
 
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      currentCollateralBalance,
-      (currentBorrowedAmount + inputAmount) * rate,
-    )
+  const newVaultTotalOutstanding = (currentBorrowedAmount + inputAmount) * rate
 
-    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
-
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
+  const { futureCollateralRatio, futureBorrowCapacity } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: newVaultTotalOutstanding,
+    vaultCurrentCollateralBalance: currentCollateralBalance,
+    vaultTokenAddress: borrowedTokenAddress,
+    operationType: operationBorrow,
+    inputValue: inputAmount,
+    marketAvailableLiquidity,
+  })
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
 
@@ -147,11 +142,11 @@ export const ConfirmationScreen = () => {
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Selected Baker</div>
-              <div className="value">{choosenBaker?.bakerName ?? 'Not relevant'}</div>
+              <div className="value">{selectedBaker?.bakerName ?? 'Not relevant'}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Total Collateral Deposited</div>
-              <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" beginningText="$" />
+              <CommaNumber value={currentCollateralBalance} decimalsToShow={2} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
           <Table>
@@ -174,7 +169,7 @@ export const ConfirmationScreen = () => {
                 const balance = Number(amount)
 
                 return (
-                  <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                  <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
                     <TableCell width="33%">{symbol}</TableCell>
                     <TableCell width="33%">
                       <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />

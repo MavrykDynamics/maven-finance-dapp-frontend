@@ -1,5 +1,4 @@
 import { LoansMarketMiniChartType } from 'providers/LoansProvider/helpers/loans.types'
-import { skyColor } from 'styles'
 
 export const numberOfItemsToDisplay = 0
 
@@ -17,14 +16,6 @@ export const CHART_SETTINGS = {
   hideXAxis: true,
   hideYAxis: true,
   isPeriod: true,
-}
-
-// TODO: use colors[theme]
-export const CHART_COLORS = {
-  lineColor: skyColor,
-  areaTopColor: skyColor,
-  areaBottomColor: 'rgba(119, 164, 242, 0)',
-  textColor: '#CDCDCD',
 }
 
 export type MarketSettingsType = {

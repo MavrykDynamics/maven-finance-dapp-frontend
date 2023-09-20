@@ -22,6 +22,10 @@ export const RemoveRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
   right: -25px;
   opacity: 1;
 
+  svg {
+    fill: ${({ theme }) => theme.linksAndButtons};
+  }
+
   .text {
     bottom: 150%;
   }
@@ -33,7 +37,7 @@ export const AddRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
 
   span {
     font-size: 25px;
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
     font-weight: 500;
   }
 

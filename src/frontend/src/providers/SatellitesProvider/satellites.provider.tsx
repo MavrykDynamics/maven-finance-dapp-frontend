@@ -1,4 +1,3 @@
-import { ApolloError } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
@@ -19,8 +18,6 @@ import {
   SATELLITE_PARTICIPATION_DATA_SUB,
 } from './satellites.const'
 import { SATELLITES_METRICS_DATA } from './queries/satellitesMetricsData.query'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 // types
 import {
@@ -30,9 +27,9 @@ import {
   SatellitesSubsRecordType,
 } from './satellites.provider.types'
 
-// context
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+// hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -49,18 +46,13 @@ export type Props = {
  * with apolloClient and CHECK_WHETHER_SATELLITE_EXISTS query, othervise if satellite is not exists it will show infinity loader
  */
 export const SatellitesProvider = ({ children }: Props) => {
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
 
   const [satellitesCtxState, setSatellitesCtxState] =
     useState<DeepNullable<SatellitesContextState>>(DEFAULT_SATELLITES_CONTEXT)
 
   const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<string | null>(null)
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
-
-  const handleSubError = (e: ApolloError, queryName: string) => {
-    console.error(`${queryName} query error: `, { e })
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
 
   useQueryWithRefetch(
     getSatelliteDataQuery(
@@ -81,7 +73,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         if (!data) return
         updateSatellitesContext(data, satelliteAddressToSubsctibe, activeSubs[SATELLITE_DATA_SUB])
       },
-      onError: (e) => handleSubError(e, 'getSatelliteDataQuery'),
+      onError: (error) => handleApolloError(error, 'getSatelliteDataQuery'),
     },
   )
 
@@ -96,7 +88,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         finRequestsAmount: data.governance_financial_request_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: (e) => handleSubError(e, 'SATELLITES_METRICS_DATA'),
+    onError: (error) => handleApolloError(error, 'SATELLITES_METRICS_DATA'),
   })
 
   // actions
@@ -111,7 +103,7 @@ export const SatellitesProvider = ({ children }: Props) => {
     const allSatellitesIds = storage.satelliteAddresses.nodes.map(({ user: { address } }) => address)
 
     const isAllSatellitesSub = subType === SATELLITES_DATA_ALL_SUB && !satelliteAddressToSub
-    const isLoadingSingleSatellite = subType === SATELLITES_DATA_SINGLE_SUB
+    const isLoadingSingleSatellite = subType === SATELLITES_DATA_SINGLE_SUB && satelliteAddressToSub
 
     setSatellitesCtxState((prev) => ({
       ...prev,

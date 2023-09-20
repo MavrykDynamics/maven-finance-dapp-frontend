@@ -23,12 +23,19 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import {
+  SATELLITE_DATA_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+} from 'providers/SatellitesProvider/satellites.const'
 
 const DelegationTab = ({ distributeProposalRewards }: { distributeProposalRewards: () => void }) => {
   const {
@@ -36,16 +43,28 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
     proposalsAmount,
     satelliteGovActionsAmount,
     finRequestsAmount,
+    changeSatellitesSubscriptionsList,
     setSatelliteAddressToSubsctibe,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
-
-  const { userTokensBalances, satelliteMvkIsDelegatedTo, userAddress, availableProposalRewards } = useUserContext()
+  const { userTokensBalances, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
+  const { availableProposalRewards } = useUserRewards()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+    }
+  }, [])
 
   useEffect(() => {
     if (satelliteMvkIsDelegatedTo) {
@@ -102,7 +121,7 @@ const DelegationTab = ({ distributeProposalRewards }: { distributeProposalReward
                   <CustomTooltip
                     text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
                     iconId="info"
-                    defaultStrokeColor={colors[themeSelected]['textColor']}
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
                   />
                 </div>
                 <div className="value">

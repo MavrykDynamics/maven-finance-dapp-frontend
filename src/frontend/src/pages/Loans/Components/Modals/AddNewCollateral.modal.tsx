@@ -10,6 +10,7 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 
 // helpers
 import {
@@ -22,14 +23,19 @@ import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 // consts
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
 import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-import { INPUT_LARGE, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import {
+  ERR_MSG_INPUT,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+} from 'app/App.components/Input/Input.constants'
 import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // actions
@@ -41,7 +47,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { silverColor } from 'styles'
+import colors from 'styles/colors'
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
@@ -49,14 +55,14 @@ import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { Info } from 'app/App.components/Info/Info.view'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
-import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { operationAddCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -72,6 +78,7 @@ export const AddNewCollateral = ({
   const { userTokensBalances, userAddress } = useUserContext()
   const {
     contractAddresses: { lendingControllerAddress },
+    preferences: { themeSelected },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
 
@@ -99,9 +106,9 @@ export const AddNewCollateral = ({
         amount: '0',
         validationStatus: '',
       })
-      setSelectedCollateral('')
+      setSelectedCollateral(undefined)
     }
-  }, [setInputData, show])
+  }, [show])
 
   // TODO: consider esctract to hook, cuz it's repeated twice (2nd create vault)
   const mappedAvaliableCollaterals = useMemo(() => {
@@ -109,12 +116,10 @@ export const AddNewCollateral = ({
 
     const { collateralData } = data
 
-    let firstNotDisabledCollateralAddress: string | null = null
-
     const reducedCollaterals = collateralTokens.reduce<
       Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
     >((acc, collateralTokenAddress) => {
-      const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
+      const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata })
 
       if (collateral && checkWhetherTokenIsCollateralToken(collateral)) {
         const { address, icon, symbol } = collateral
@@ -124,9 +129,6 @@ export const AddNewCollateral = ({
             collateralData?.find(({ tokenAddress }) => address === tokenAddress) ||
             selectedCollateral === collateralTokenAddress,
         )
-
-        if (!isCollateralDisabled && !firstNotDisabledCollateralAddress)
-          firstNotDisabledCollateralAddress = collateralTokenAddress
 
         acc[address] = {
           id: address,
@@ -138,21 +140,17 @@ export const AddNewCollateral = ({
       return acc
     }, {})
 
-    if (!selectedCollateral && firstNotDisabledCollateralAddress) {
-      if (firstNotDisabledCollateralAddress) {
-        reducedCollaterals[firstNotDisabledCollateralAddress].disabled = true
-        setSelectedCollateral(firstNotDisabledCollateralAddress)
-      }
-    }
-
     return reducedCollaterals
-  }, [collateralTokens, data, selectedCollateral, tokensMetadata, tokensPrices])
+  }, [collateralTokens, data, selectedCollateral, tokensMetadata])
 
-  const borrowedToken = getTokenDataByAddress({
-    tokenAddress: data?.borrowedTokenAddress,
-    tokensMetadata,
-    tokensPrices,
-  })
+  useEffect(() => {
+    if (!selectedCollateral && show) {
+      setSelectedCollateral(
+        Object.values(mappedAvaliableCollaterals).find(({ disabled }) => disabled === false)?.tokenAddress,
+      )
+    }
+  }, [mappedAvaliableCollaterals, selectedCollateral])
+
   const collateralToken = getTokenDataByAddress({
     tokenAddress: selectedCollateral,
     tokensMetadata,
@@ -160,33 +158,32 @@ export const AddNewCollateral = ({
   })
 
   const {
-    collateralBalance = 0,
-    vaultAddress = '',
-    vaultId = 0,
-    collateralRatio = 0,
-    borrowedAmount = 0,
-    availableLiquidity = 0,
-    borrowCapacity = 0,
-    xtzDelegatedTo = null,
-  } = data ?? {}
+    collateralBalance,
+    vaultAddress,
+    vaultId,
+    collateralRatio,
+    currentTotalOutstanding,
+    availableLiquidity,
+    borrowCapacity,
+    xtzDelegatedTo,
+    borrowedTokenAddress,
+  } = data
 
   const { symbol = '', rate: originalRate } = collateralToken ?? {}
   const rate = originalRate ?? 0
   const userCollateralBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: selectedCollateral })
-  const { rate: originalBorrowedTokenRate } = borrowedToken ?? {}
-
-  const borrowedTokenRate = originalBorrowedTokenRate ?? 0
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-  const futureCollateralRatio = getVaultCollateralRatio(
-    collateralBalance + inputAmount,
-    borrowedAmount * borrowedTokenRate,
-  )
-  const futureCollateralBalance = collateralBalance + inputAmount * rate
-  const futureBorrowCapacity = Math.min(
-    Math.max(availableLiquidity, 0),
-    futureCollateralBalance / 2 - borrowedAmount * borrowedTokenRate,
-  )
+
+  const { futureCollateralRatio, futureCollateralBalance, futureBorrowCapacity } = useVaultFutureStats({
+    collateralTokenAddress: selectedCollateral ?? '',
+    vaultTokenAddress: borrowedTokenAddress,
+    vaultCurrentCollateralBalance: collateralBalance,
+    inputValue: inputAmount,
+    operationType: operationAddCollateral,
+    vaultCurrentTotalOutstanding: currentTotalOutstanding,
+    marketAvailableLiquidity: availableLiquidity,
+  })
 
   // deposit collateral action --------------------------
   const depositAction = useCallback(async () => {
@@ -247,9 +244,11 @@ export const AddNewCollateral = ({
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
   const isDepositBtnDisabled =
-    (isTezosAsset(selectedCollateral) && !choosenBaker) || inputData.validationStatus === INPUT_STATUS_ERROR
+    (isTezosAsset(selectedCollateral) && !choosenBaker) ||
+    inputData.validationStatus === INPUT_STATUS_ERROR ||
+    inputData.validationStatus === INPUT_STATUS_DEFAULT
 
-  if (!data || !borrowedToken || !borrowedToken.rate || !collateralToken || !collateralToken.rate) return null
+  if (!collateralToken || !collateralToken.rate) return null
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -265,7 +264,7 @@ export const AddNewCollateral = ({
           <VaultModalOverview style={{ marginBottom: '45px' }}>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(collateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -286,7 +285,7 @@ export const AddNewCollateral = ({
                 <CustomTooltip
                   text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
                   iconId="info"
-                  defaultStrokeColor={silverColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </div>
               <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
@@ -312,6 +311,7 @@ export const AddNewCollateral = ({
                   inputSize: INPUT_LARGE,
                   inputStatus: inputData.validationStatus,
                   convertedValue: Number(inputData.amount) * rate,
+                  validationFns: [[validateInputLength, ERR_MSG_INPUT]],
                 }}
               >
                 <InputPinnedDropDown>
@@ -340,7 +340,11 @@ export const AddNewCollateral = ({
                     <ThreeLevelListItem>
                       <div className="name">Bakery Address</div>
                       {choosenBaker?.bakerAddress ? (
-                        <TzAddress className="value" tzAddress={choosenBaker.bakerAddress} type={BLUE} />
+                        <TzAddress
+                          className="value"
+                          tzAddress={choosenBaker.bakerAddress}
+                          type={PRIMARY_TZ_ADDRESS_COLOR}
+                        />
                       ) : (
                         <div className="value">-</div>
                       )}
@@ -370,37 +374,39 @@ export const AddNewCollateral = ({
           <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="block-name">New Vault Status</div>
-          <VaultModalOverview>
-            <ThreeLevelListItem
-              className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
-            >
-              <div className={`percentage`}>
-                Collateral Ratio:{' '}
-                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-              </div>
-              <GradientDiagram
-                className="diagram"
-                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
-              />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">Collateral Value</div>
-              <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">
-                Available to Borrow{' '}
-                <CustomTooltip
-                  text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
-                  iconId="info"
-                  defaultStrokeColor={silverColor}
+          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+            <VaultModalOverview>
+              <ThreeLevelListItem
+                className="collateral-diagram"
+                customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
+              >
+                <div className={`percentage`}>
+                  Collateral Ratio:{' '}
+                  <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+                </div>
+                <GradientDiagram
+                  className="diagram"
+                  colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                  currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
                 />
-              </div>
-              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
-            </ThreeLevelListItem>
-          </VaultModalOverview>
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">Collateral Value</div>
+                <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">
+                  Available to Borrow{' '}
+                  <CustomTooltip
+                    text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
+                    iconId="info"
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
+                  />
+                </div>
+                <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
+              </ThreeLevelListItem>
+            </VaultModalOverview>
+          </MemoizedComponent>
 
           <div className="manage-btn">
             <NewButton

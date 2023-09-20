@@ -1,4 +1,6 @@
+import classNames from 'classnames'
 import { ToggleStyle } from './Toggle.style'
+import { PRIMARY_TOGGLE, ToggleType } from './Toggle.consts'
 
 type Props = {
   onChange: () => void
@@ -7,14 +9,23 @@ type Props = {
   prefix?: string
   disabled?: boolean
   checked: boolean
+  kind?: ToggleType
 }
 
-export default function Toggle({ onChange, className, sufix, prefix, disabled = false, checked }: Props) {
+export default function Toggle({
+  onChange,
+  className,
+  sufix,
+  prefix,
+  disabled = false,
+  checked,
+  kind = PRIMARY_TOGGLE,
+}: Props) {
   return (
-    <ToggleStyle className={`${className} ${disabled ? 'disabled' : ''}`}>
+    <ToggleStyle className={classNames(className, kind, { disabled: disabled }, { checked: checked })}>
       {prefix ? <span className="prefix">{prefix}</span> : null}
       <div className="toggler">
-        <label className={checked ? 'checked' : ''}>
+        <label>
           <input type="checkbox" checked={checked} onChange={onChange} />
           <span className="slider" />
         </label>

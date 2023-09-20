@@ -26,7 +26,6 @@ import colors from 'styles/colors'
 // utils
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -36,6 +35,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -55,23 +55,29 @@ export const ConfirmRepay = ({
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
-  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
-
   const {
-    vaultId = 0,
-    vaultAddress = '',
-    collateralBalance = 0,
-    borrowCapacity = 0,
-    totalOutstanding = 0,
-    inputAmount = 0,
-    callback = () => {},
-  } = data ?? {}
+    vaultId,
+    vaultAddress,
+    collateralBalance,
+    totalOutstanding,
+    inputAmount,
+    availableLiquidity,
+    tokenAddress: vaultTokenAddress,
+    callback,
+  } = data
 
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: vaultTokenAddress, tokensMetadata, tokensPrices })
   const { symbol = '', rate: originalRate } = borrowedToken ?? {}
   const rate = originalRate ?? 0
 
-  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (totalOutstanding - inputAmount) * rate)
-  const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
+  const { futureCollateralRatio, futureBorrowCapacity } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: totalOutstanding,
+    vaultCurrentCollateralBalance: collateralBalance,
+    vaultTokenAddress,
+    operationType: operationRepay,
+    inputValue: inputAmount,
+    marketAvailableLiquidity: availableLiquidity,
+  })
 
   // partly repay action ---------------------
   const partlyRepayAction = useCallback(async () => {
@@ -153,7 +159,7 @@ export const ConfirmRepay = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
@@ -174,7 +180,7 @@ export const ConfirmRepay = ({
                 Available To Borrow
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={AVALIABLE_TO_BORROW}
                   className="tooltip"
                 />

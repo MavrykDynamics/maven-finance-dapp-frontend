@@ -79,8 +79,8 @@ export const IPFSUploader = ({
       setIsUploading(false)
     } catch (error) {
       if (error instanceof Error) {
+        if (process.env.REACT_APP_ENV === 'dev') console.error(error)
         dispatch(showToaster(ERROR, error.message, ''))
-        console.error(error)
         setIsUploading(false)
       }
     }

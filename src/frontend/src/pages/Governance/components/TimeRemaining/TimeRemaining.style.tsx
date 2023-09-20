@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components/macro'
-import { darkPurpleColor } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const TimeLeftAreaWrap = styled.div<{ showBorder: boolean }>`
@@ -17,7 +16,7 @@ export const TimeLeftAreaWrap = styled.div<{ showBorder: boolean }>`
             transform: translateY(-50%);
             left: -15px;
             position: absolute;
-            background-color: ${darkPurpleColor};
+            background-color: ${({ theme }) => theme.divider};
           }
         `
       : ''}
@@ -38,7 +37,7 @@ export const MoveNextRoundModalBase = styled.div<{ theme: MavrykTheme }>`
     line-height: 27px;
     text-align: center;
     padding: 0 30px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
   }
 
   .calcs {
@@ -59,13 +58,13 @@ export const MoveNextRoundModalBase = styled.div<{ theme: MavrykTheme }>`
       .name {
         font-weight: 500;
         font-size: 14px;
-        color: ${({ theme }) => theme.dataColor};
+        color: ${({ theme }) => theme.regularText};
       }
 
       .value {
         font-weight: 600;
         font-size: 16px;
-        color: ${({ theme }) => theme.valueColor};
+        color: ${({ theme }) => theme.primaryText};
       }
     }
   }

@@ -13,7 +13,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
   > svg {
     width: 12px;
     height: 12px;
-    fill: ${({ theme, defaultStrokeColor }) => defaultStrokeColor ?? theme.textColor};
+    fill: ${({ theme, defaultStrokeColor }) => defaultStrokeColor ?? theme.regularText};
     transition: opacity 250ms;
   }
 
@@ -29,8 +29,8 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     padding: 3px 5px;
     border-radius: 3px;
     line-height: 15px;
-    background: #503eaa;
-    color: ${({ theme }) => theme.textColor};
+    background: ${({ theme }) => theme.tooltipTextBg};
+    color: ${({ theme }) => theme.placeholders};
     opacity: 0;
     transition: 0.3s all;
     visibility: hidden;
@@ -39,7 +39,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     z-index: 1000;
 
     a {
-      color: ${({ theme }) => theme.valueColor};
+      color: ${({ theme }) => theme.linksAndButtons};
     }
   }
 
@@ -52,7 +52,7 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
     border-width: 5px;
     border-style: solid;
     z-index: 1000;
-    border-color: #503eaa transparent transparent transparent;
+    border-color: transparent;
   }
 
   &:hover {

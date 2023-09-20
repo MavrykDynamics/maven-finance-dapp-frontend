@@ -9,9 +9,16 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // consts
-import { INPUT_LARGE, INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {
+  ERR_MSG_INPUT,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
 
@@ -23,7 +30,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // styles
-import { silverColor } from 'styles'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -36,12 +42,14 @@ import { depositLendingAssetAction } from 'providers/LoansProvider/actions/loans
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import colors from 'styles/colors'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -54,9 +62,12 @@ export const AddLendingAsset = ({
   data: AddLendingAssetDataType
 }) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+
   const {
+    preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
+
   const { userTokensBalances, userAddress } = useUserContext()
   const { bug } = useToasterContext()
 
@@ -160,6 +171,7 @@ export const AddLendingAsset = ({
               inputStatus: inputData.validationStatus,
               inputSize: INPUT_LARGE,
               convertedValue: rate * Number(inputData.amount),
+              validationFns: [[validateInputLength, ERR_MSG_INPUT]],
             }}
           >
             <InputPinnedTokenInfo>
@@ -168,29 +180,30 @@ export const AddLendingAsset = ({
             </InputPinnedTokenInfo>
           </Input>
 
-          <div className="lending-stats" style={{ marginTop: '45px' }}>
-            <ThreeLevelListItem>
-              <div className="name">
-                Earn APY{' '}
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={silverColor}
-                  text={`You will receive m${symbol} instead of your ${symbol}`}
-                  className="tooltip"
-                />
-              </div>
-              <CommaNumber value={lendingAPY} className="value" endingText="%" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">m{symbol} Received</div>
-              <CommaNumber value={Number(inputData.amount)} className="value" />
-            </ThreeLevelListItem>
-            <ThreeLevelListItem>
-              <div className="name">New m{symbol} Balance</div>
-              <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
-            </ThreeLevelListItem>
-          </div>
-
+          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
+            <div className="lending-stats" style={{ marginTop: '45px' }}>
+              <ThreeLevelListItem>
+                <div className="name">
+                  Earn APY{' '}
+                  <CustomTooltip
+                    iconId="info"
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
+                    text={`You will receive m${symbol} instead of your ${symbol}`}
+                    className="tooltip"
+                  />
+                </div>
+                <CommaNumber value={lendingAPY} className="value" endingText="%" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">m{symbol} Received</div>
+                <CommaNumber value={Number(inputData.amount)} className="value" />
+              </ThreeLevelListItem>
+              <ThreeLevelListItem>
+                <div className="name">New m{symbol} Balance</div>
+                <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
+              </ThreeLevelListItem>
+            </div>
+          </MemoizedComponent>
           <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="manage-btn">
