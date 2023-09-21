@@ -79,10 +79,7 @@ const ProposalsProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(CURRENT_PROPOSALS_QUERY, {
-    skip:
-      !activeSubs[PROPOSALS_DATA_SUB] ||
-      activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_CURRENT_DATA ||
-      !proposalsCtxState.config,
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_CURRENT_DATA || !proposalsCtxState.config,
     variables: {
       timelockProposalId: proposalsCtxState.config?.timelockProposalId ?? -1,
     },
@@ -91,10 +88,7 @@ const ProposalsProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(PAST_PROPOSALS_QUERY, {
-    skip:
-      !activeSubs[PROPOSALS_DATA_SUB] ||
-      activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_PAST_DATA ||
-      !proposalsCtxState.config,
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_PAST_DATA || !proposalsCtxState.config,
     onCompleted: (data) => updateProposals(data),
     onError: (error) => handleApolloError(error, 'PAST_PROPOSALS_QUERY'),
   })
