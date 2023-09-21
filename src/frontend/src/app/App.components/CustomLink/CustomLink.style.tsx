@@ -62,7 +62,7 @@ const linkAppearanceStyles = css`
     text-decoration: underline;
   }
 
-  &.hover {
+  &.useHover {
     &:hover {
       opacity: 0.8;
     }

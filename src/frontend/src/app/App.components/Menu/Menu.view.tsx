@@ -184,6 +184,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               {sidebarOpened ? 'MVK Faucet' : 'mvk'}
             </NewButton>
 
+            {/* TODO: replace disabled with canGetInitThouthand disabled when users will be able to use faucet */}
             <CustomLink to="https://faucet.marigold.dev/" disabled kind={sidebarOpened ? LinkWide : LinkWrapper}>
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin disabled>
                 {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}

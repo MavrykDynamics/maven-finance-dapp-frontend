@@ -76,7 +76,7 @@ export const CustomLink = ({
       : { to: `${to}${queryPart}` }
   }, [isExternalLink, queryParams, to])
 
-  const linkClassName = classNames(kind, { ...styling, disabled })
+  const linkClassName = classNames(kind, { ...styling, disabled, useHover: styling.useHover ?? true })
 
   return (
     <LinkStyled className={linkClassName} {...finalToAttr} {...optionalLinkProps} onClick={linkClickHandler}>
