@@ -219,8 +219,6 @@ import { defaultLanguage } from '../app/languages';
 import type { Language } from '../../@types/types';
 
 import styles from './link.module.css';
-import { toasterContext } from '../../core/toaster/toaster.provider';
-import { useLanguage } from '../route/route-params.provider';
 
 
 export type GlobalLinkProps = {

@@ -26,13 +26,17 @@ type Props = LinkProps & {
 }
 
 /**
- * Use this component to create links.
- * Do not use Link component directly
- * @param param0
+ * Use this component for links
+ * Do not use Link component from react-router directly
+ *
+ * @param LinkProps - mix of react-router link props and custom props, that link should support @Props
  * @returns Custom Link Component
  * in future if DAPP will support add language param to link
  *
- * TODO: consider using NavLink for internal links
+ * NOTES:
+ *    - consider adding saving scroll for page, inside linkClickHandlerпоки, and restore it in app.controller, of whenever
+ *    - if DAPP will support languages, add lang parametr support
+ *    - for internal links, or links that can have active state, consider using NavLink
  */
 export const CustomLink = ({
   children,
@@ -67,9 +71,9 @@ export const CustomLink = ({
           rel: 'noreferrer',
         }
       : { to: `${to}${queryPart}` }
-  }, [isExternalLink, to])
+  }, [isExternalLink, queryParams, to])
 
-  const linkClassName = classNames(kind, { ...styling /*disabled*/ })
+  const linkClassName = classNames(kind, { ...styling, disabled })
 
   return (
     <LinkStyled className={linkClassName}>
