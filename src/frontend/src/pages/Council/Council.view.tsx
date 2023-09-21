@@ -67,6 +67,7 @@ type ActionsDDItemType = {
   content: JSX.Element
   value: string
   id: number
+  disabled?: boolean
 }
 
 export function CouncilView({
@@ -95,13 +96,17 @@ export function CouncilView({
     return {
       titles: isBreakGlassCounsil ? BgCounsilPageTitles : MavrykCounsilPageTitles,
       pagePathname: isBreakGlassCounsil ? '/break-glass-council' : '/mavryk-council',
-      dropDownItems: Object.values(isBreakGlassCounsil ? BgCounsilDdForms : MavrykCounsilDdForms).map(
-        (item, index) => ({
-          content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
-          value: item,
-          id: index,
-        }),
-      ),
+      dropDownItems: Object.values(
+        isBreakGlassCounsil ? BgCounsilDdForms : MavrykCounsilDdForms,
+      ).map<ActionsDDItemType>((item, index) => ({
+        content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
+        value: item,
+        id: index,
+        // TODO: remove after forms will be ready to use
+        disabled: ['UNPAUSE_ALL_ENTRYPOINTS', 'REMOVE_BREAK_GLASS_CONTROLL', 'SET_SELECTED_CONTRACTS_ADMIN'].includes(
+          item,
+        ),
+      })),
     }
   }, [isBreakGlassCounsil])
 

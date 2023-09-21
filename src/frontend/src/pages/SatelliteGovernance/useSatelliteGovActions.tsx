@@ -39,9 +39,7 @@ import {
   restoreSatellite,
   setAggregatorMaintainer,
   suspendSatellite,
-  unsuspendSatellite,
   updateAggregatorStatus,
-  unbanSatellite,
 } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
 
 export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: string, purpose: string) => {
@@ -121,11 +119,12 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
 
   const { action: suspendSatelliteAction } = useContractAction(suspendSatelliteContratActionProps)
 
+  // restore instead of unsuspend, cuz https://www.notion.so/unbanSatellite-a5337dc17bdb452ba4d58851f51b282a?pvs=4
   //   unsuspend action ---------------------------------------------------------------------------
   const unSuspendSatelliteContratActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: UNSUSPEND_SATELLITE_ACTION,
-      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, unsuspendSatellite),
+      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, restoreSatellite),
     }),
     [invokeActionWithSatellitAddressAndPurpose],
   )
@@ -143,11 +142,12 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
 
   const { action: banSatelliteAction } = useContractAction(banSatelliteContratActionProps)
 
+  // restore instead of unban, cuz https://www.notion.so/unbanSatellite-a5337dc17bdb452ba4d58851f51b282a?pvs=4
   //   unbanSatellite action ---------------------------------------------------------------------------
   const unbanSatelliteContratActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: UNBAN_SATELLITE_ACTION,
-      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, unbanSatellite),
+      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, restoreSatellite),
     }),
     [invokeActionWithSatellitAddressAndPurpose],
   )

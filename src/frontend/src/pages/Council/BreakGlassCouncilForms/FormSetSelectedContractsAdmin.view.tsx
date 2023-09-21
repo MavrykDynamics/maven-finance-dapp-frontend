@@ -7,13 +7,13 @@ import { FormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // utils
-import { setSingleContractAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { setSelectedContractsAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { validateFormAddress } from 'utils/validatorFunctions'
 
 // consts
 import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
-import { SET_SINGLE_CONTRACT_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { SET_SELECTED_CONTRACTS_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -31,7 +31,8 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   targetContract: INPUT_STATUS_DEFAULT,
 }
 
-export function FormSetSingleContractAdminView() {
+// TODO: update test after design will be ready
+export function FormSetSelectedContractsAdminView() {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
@@ -44,9 +45,9 @@ export function FormSetSingleContractAdminView() {
 
   const { newAdminAddress, targetContract } = form
 
-  const setSingleContractAdminContractActionProps: HookContractActionArgs = useMemo(
+  const setSelectedContractsAdminContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: SET_SINGLE_CONTRACT_ADMIN_ACTION,
+      actionType: SET_SELECTED_CONTRACTS_ADMIN_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -58,13 +59,14 @@ export function FormSetSingleContractAdminView() {
           return null
         }
 
-        return await setSingleContractAdmin(breakGlassAddress, newAdminAddress, targetContract)
+        // TODO: implement correct list, when design will be ready
+        return await setSelectedContractsAdmin(breakGlassAddress, newAdminAddress, [targetContract])
       },
     }),
     [breakGlassAddress, newAdminAddress, targetContract, userAddress],
   )
 
-  const { action: handleSetSingleContractAdmin } = useContractAction(setSingleContractAdminContractActionProps)
+  const { action: handleSetSingleContractAdmin } = useContractAction(setSelectedContractsAdminContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
