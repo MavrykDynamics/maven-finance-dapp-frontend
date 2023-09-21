@@ -138,7 +138,7 @@ export function DoormanChart() {
                 },
                 colors: {
                   lineColor: colors[themeSelected].primaryChartColor,
-                  areaTopColor: colors[themeSelected].primaryChartColor,
+                  areaTopColor: colors[themeSelected].primaryChartTopColor,
                   areaBottomColor: colors[themeSelected].primaryChartBottomColor,
                 },
               }}
@@ -149,7 +149,7 @@ export function DoormanChart() {
                 },
                 colors: {
                   lineColor: colors[themeSelected].secondaryChartColor,
-                  areaTopColor: colors[themeSelected].secondaryChartColor,
+                  areaTopColor: colors[themeSelected].secondaryChartTopColor,
                   areaBottomColor: colors[themeSelected].secondaryChartBottomColor,
                 },
               }}
