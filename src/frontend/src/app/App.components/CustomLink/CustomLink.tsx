@@ -1,16 +1,21 @@
 import { useMemo } from 'react'
-import { Link, LinkProps } from 'react-router-dom'
+import { LinkProps } from 'react-router-dom'
 import classNames from 'classnames'
-
-import { LinkStyled } from './CustomLink.style'
-import { LinkKind, LinkWrapper } from './CustomLink.const'
 import qs from 'qs'
+
+// view
+import { LinkStyled } from './CustomLink.style'
+
+// consts
+import { LinkKind, LinkWrapper } from './CustomLink.const'
+
+// hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type LinkStyling = {
   isCyan?: boolean
   underline?: boolean
-  hover?: boolean
+  useHover?: boolean
   navigationLink?: boolean
   navigationActiveLink?: boolean
 }
@@ -36,7 +41,7 @@ type Props = LinkProps & {
  * NOTES:
  *    - consider adding saving scroll for page, inside linkClickHandlerпоки, and restore it in app.controller, of whenever
  *    - if DAPP will support languages, add lang parametr support
- *    - for internal links, or links that can have active state, consider using NavLink
+ *    - for internal links, or links that can have active state, consider using NavLink, no need for now
  */
 export const CustomLink = ({
   children,
@@ -52,8 +57,6 @@ export const CustomLink = ({
   const isExternalLink = to.toString().startsWith('http')
 
   const linkClickHandler = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    if (disabled) event.preventDefault()
-
     // reset error in toaster context if we navigate from 404 page
     if (error) setError(null)
 
@@ -76,10 +79,8 @@ export const CustomLink = ({
   const linkClassName = classNames(kind, { ...styling, disabled })
 
   return (
-    <LinkStyled className={linkClassName}>
-      <Link {...finalToAttr} {...optionalLinkProps} onClick={linkClickHandler}>
-        {children}
-      </Link>
+    <LinkStyled className={linkClassName} {...finalToAttr} {...optionalLinkProps} onClick={linkClickHandler}>
+      {children}
     </LinkStyled>
   )
 }
