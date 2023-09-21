@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { usePrevious } from 'react-use'
 import { DocumentNode, OperationVariables, QueryHookOptions, TypedDocumentNode, useQuery } from '@apollo/client'
 
+import { isAbortError } from '../../../errors/error'
 import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
-import { usePrevious } from 'react-use'
-import { isAbortError } from 'errors/error'
 
 /**
  *
@@ -39,8 +39,11 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   // refetchId -> id of callback that subscibes to indexer block change
   const refetchId = useRef<null | string>(null)
 
-  // NOTE: previously was with useRef, but on query vars change query was not refetching
-  const [isInitialQueryDone, setIsInitialQueryDone] = useState(false)
+  // shouldRunUseQuery -> when variables changing we need to rerun useQuery, isInitialQueryDone is ref so resetting it won't trigger useQuery rerun
+  const [shouldRunUseQuery, setShouldRunUseQuery] = useState(true)
+
+  // isInitialQueryDone -> managing completing useQuery only 1 time, so not to rerun useQuery after every provider | hook that uses it rerender
+  const isInitialQueryDone = useRef(false)
 
   const prevQueryVariables = usePrevious(queryOptions?.variables)
   const currentQueryVariables = queryOptions?.variables
@@ -56,7 +59,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
       })
 
       // if variables are different, we need to reset isInitialQueryDone, to load it's data, without waiting for refetch
-      if (isVarsChanged) setIsInitialQueryDone(false)
+      if (isVarsChanged) setShouldRunUseQuery(true)
     }
   }, [queryOptions?.variables])
 
@@ -64,15 +67,17 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
    * completing 1st query fetch and getting callback to refetch this query later
    *
    * skip query when:
-   * 1. we have already loaded for the 1st time, we need to refetch it only
-   * 2. user skip for query
+   * 1. we have already loaded for the 1st time, we need to refetch it only, BUT when vars of useQuery changed we need to rerun useQuery,
+   *    so skip when we have runned it already, AND no need to rerun useQuery (on vars change for example)
+   * 2. user skip for query from useQueryWithRefetch props
    */
   const queryResult = useQuery(query, {
     ...queryOptions,
-    skip: isInitialQueryDone || userQuerySkip,
+    skip: (isInitialQueryDone.current && !shouldRunUseQuery) || userQuerySkip,
     onCompleted: (data) => {
       if (!data) return
-      setIsInitialQueryDone(true)
+      setShouldRunUseQuery(false)
+      isInitialQueryDone.current = true
 
       queryOptions?.onCompleted?.(data)
     },
@@ -83,10 +88,9 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   // callback to refetch query on block lvl change
   const refetchQuery = useCallback(
     async (newIndexerLevel: number) => {
-      try {
-        // If we have't completed initial query, we can't refetch
-        if (!isInitialQueryDone) return
+      if (!isInitialQueryDone.current) return
 
+      try {
         const newRefetchVariables =
           typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
 
@@ -128,10 +132,11 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     [blocksDiff, refetchQueryVariables],
   )
 
-  // subscribe to indexer lvl change, and unsibscribe when component unmounts, or if it's provider when query becomes inactive
+  // subscribe to indexer lvl change, and unsibscribe when component unmounts, or query becomes inactive
   useEffect(() => {
     // if query is active subscibe to indexer lvl change, and save id of subscription
-    if (!userQuerySkip) refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+    if (!userQuerySkip && !refetchId.current)
+      refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
 
     // if query is not active and we have id, then unsubscibe from indexer lvl change
     if (userQuerySkip && refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
