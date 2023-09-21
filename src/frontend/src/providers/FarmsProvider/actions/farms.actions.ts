@@ -12,12 +12,15 @@ import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider
 import { OpKind } from '@taquito/taquito'
 
 // TODO: test harvest, cuz no data now
-export const harvestRewards = async (farmAddress: string): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
+export const harvestRewards = async (
+  farmAddress: string,
+  userAddress: string,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(farmAddress)
-    const harvestOperationMetaData = await contract?.methods.claim(farmAddress)
+    const harvestOperationMetaData = await contract?.methods.claim([userAddress])
 
     return await getEstimationResult(harvestOperationMetaData)
   } catch (error) {
