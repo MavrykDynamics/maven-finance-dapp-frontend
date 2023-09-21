@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { usePrevious } from 'react-use'
 import { DocumentNode, OperationVariables, QueryHookOptions, TypedDocumentNode, useQuery } from '@apollo/client'
 
 import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
-import { usePrevious } from 'react-use'
 import { isAbortError } from 'errors/error'
 
 /**
@@ -20,6 +20,7 @@ import { isAbortError } from 'errors/error'
  *    --- variables should consist of primitive values
  *    --- if variable change it will provoke useQuery to work, so we don't need to pass new variables to refetch function, cuz refetch won't work
  *    --- @refetchQueryVariables should be in UseCallback if it depends on data from cmp/hook, or be outside cmp/hook to not provoke useCallback to recreate refetch fn on parent's rerender
+ *    --- on vars change should i forbid refetch call?
  */
 export const useQueryWithRefetch = <TData = unknown, TVariables extends OperationVariables = OperationVariables>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
@@ -39,8 +40,11 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   // refetchId -> id of callback that subscibes to indexer block change
   const refetchId = useRef<null | string>(null)
 
-  // NOTE: previously was with useRef, but on query vars change query was not recreating
-  const [isInitialQueryDone, setIsInitialQueryDone] = useState(false)
+  // shouldRunUseQuery -> when variables changing we need to rerun useQuery, isInitialQueryDone is ref so resetting it won't trigger useQuery rerun
+  const [shouldRunUseQuery, setShouldRunUseQuery] = useState(true)
+
+  // isInitialQueryDone -> managing completing useQuery only 1 time, so not to rerun useQuery after every provider | hook that uses it rerender
+  const isInitialQueryDone = useRef(false)
 
   const prevQueryVariables = usePrevious(queryOptions?.variables)
   const currentQueryVariables = queryOptions?.variables
@@ -56,7 +60,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
       })
 
       // if variables are different, we need to reset isInitialQueryDone, to load it's data, without waiting for refetch
-      if (isVarsChanged) setIsInitialQueryDone(false)
+      if (isVarsChanged) setShouldRunUseQuery(true)
     }
   }, [queryOptions?.variables])
 
@@ -64,15 +68,17 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
    * completing 1st query fetch and getting callback to refetch this query later
    *
    * skip query when:
-   * 1. we have already loaded for the 1st time, we need to refetch it only
-   * 2. user skip for query
+   * 1. we have already loaded for the 1st time, we need to refetch it only, BUT when vars of useQuery changed we need to rerun useQuery,
+   *    so skip when we have runned it already, AND no need to rerun useQuery (on vars change for example)
+   * 2. user skip for query from useQueryWithRefetch props
    */
   const queryResult = useQuery(query, {
     ...queryOptions,
-    skip: isInitialQueryDone || userQuerySkip,
+    skip: (isInitialQueryDone.current && !shouldRunUseQuery) || userQuerySkip,
     onCompleted: (data) => {
       if (!data) return
-      setIsInitialQueryDone(true)
+      setShouldRunUseQuery(false)
+      isInitialQueryDone.current = true
 
       queryOptions?.onCompleted?.(data)
     },
@@ -83,15 +89,11 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   // callback to refetch query on block lvl change
   const refetchQuery = useCallback(
     async (newIndexerLevel: number) => {
-      try {
-        // If we have't completed initial query, we can't refetch
-        if (!isInitialQueryDone) return
+      if (!isInitialQueryDone.current) return
 
+      try {
         const newRefetchVariables =
           typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
-
-        if (process.env.REACT_APP_ENV === 'dev')
-          console.log('%crefetch variables ', 'color: red', { queryName, newRefetchVariables })
 
         // blocks diff case, call refetch only when block difference is more equal than specified in blocksDiff
         if (typeof blocksDiff === 'number') {

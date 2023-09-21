@@ -7,7 +7,7 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // helpers
-import { normalizeGovernanceConfig } from './helpers/governanceConfig.normalizer'
+import { normalizeGovernanceConfig, normalizeSmallGovernanceConfig } from './helpers/governanceConfig.normalizer'
 import { getProposalsProviderReturnValue } from './helpers/proposals.utils'
 import { normalizeProposals } from './helpers/proposals.normalizer'
 
@@ -79,7 +79,7 @@ const ProposalsProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(CURRENT_PROPOSALS_QUERY, {
-    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_CURRENT_DATA || !proposalsCtxState.config,
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_CURRENT_DATA,
     variables: {
       timelockProposalId: proposalsCtxState.config?.timelockProposalId ?? -1,
     },
@@ -88,13 +88,13 @@ const ProposalsProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(PAST_PROPOSALS_QUERY, {
-    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_PAST_DATA || !proposalsCtxState.config,
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_PAST_DATA,
     onCompleted: (data) => updateProposals(data),
     onError: (error) => handleApolloError(error, 'PAST_PROPOSALS_QUERY'),
   })
 
   useQueryWithRefetch(PROPOSALS_SUBMISSION_QUERY, {
-    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_SUBMISSION_DATA || !userAddress || !proposalsCtxState.config,
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_SUBMISSION_DATA || !userAddress,
     variables: {
       userAddress: userAddress ?? '',
     },
@@ -103,10 +103,9 @@ const ProposalsProvider = ({ children }: Props) => {
   })
 
   const updateProposals = (indexerData: ProposalIndexerType) => {
-    if (!proposalsCtxState.config) return
+    const govConfigForProposalsNormalization = normalizeSmallGovernanceConfig(indexerData.governance?.[0])
 
     const {
-      allProposalsIds,
       pastProposalsIds,
       currentRoundProposalsIds,
       waitingProposalsIdsToBeExecuted,
@@ -116,7 +115,7 @@ const ProposalsProvider = ({ children }: Props) => {
     } = normalizeProposals({
       indexerData,
       userAddress,
-      governanceConfig: proposalsCtxState.config,
+      governanceConfig: govConfigForProposalsNormalization,
     })
 
     const isPastProposalsQuery = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_PAST_DATA
@@ -125,7 +124,6 @@ const ProposalsProvider = ({ children }: Props) => {
 
     setProposalsCtxState((prev) => ({
       ...prev,
-      allProposalsIds: Array.from(new Set([...(prev.allProposalsIds ?? []), ...allProposalsIds])),
       pastProposalsIds: isPastProposalsQuery ? pastProposalsIds : prev.pastProposalsIds,
       currentRoundProposalsIds: isCurrentProposalsQuery ? currentRoundProposalsIds : prev.currentRoundProposalsIds,
       waitingProposalsIdsToBeExecuted: isCurrentProposalsQuery

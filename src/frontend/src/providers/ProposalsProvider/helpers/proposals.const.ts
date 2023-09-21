@@ -47,7 +47,6 @@ export const DEFAULT_PROPOSALS_CTX: NullableProposalsContextState = {
   currentRoundProposalsIds: null,
   pastProposalsIds: null,
   submissionProposalsIds: null,
-  allProposalsIds: null,
   waitingProposalsIdsToBeExecuted: null,
   waitingProposalsIdsToBePaid: null,
 }
@@ -67,7 +66,6 @@ export const EMPTY_PROPOSALS_CTX: ProposalsContextStateType = {
   currentRoundProposalsIds: [],
   pastProposalsIds: [],
   submissionProposalsIds: [],
-  allProposalsIds: [],
   waitingProposalsIdsToBeExecuted: [],
   waitingProposalsIdsToBePaid: [],
 }
