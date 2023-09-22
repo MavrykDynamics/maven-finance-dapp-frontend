@@ -11,6 +11,8 @@ import { LinkKind, LinkWrapper } from './CustomLink.const'
 
 // hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { FatalError } from 'errors/error'
+import { ERROR_TYPE_ROUTER } from 'errors/error.const'
 
 type LinkStyling = {
   isCyan?: boolean
@@ -57,8 +59,8 @@ export const CustomLink = ({
   const isExternalLink = to.toString().startsWith('http')
 
   const linkClickHandler = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    // reset error in toaster context if we navigate from 404 page
-    if (error) setError(null)
+    // reset error in toaster context if we navigate from 404 page, only if we have router fatal, and it's not external link
+    if (error instanceof FatalError && error.type === ERROR_TYPE_ROUTER && !isExternalLink) setError(null)
 
     onClick?.(event)
   }
