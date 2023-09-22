@@ -156,7 +156,7 @@ export const normalizeProposals = ({
       }
 
       // Add id of user created live proposal
-      if (currentRoundProposal && proposerId === userAddress) {
+      if (currentRoundProposal && !isPastProposal && proposerId === userAddress) {
         acc.submissionProposalsIds.push(id)
       }
 
