@@ -62,7 +62,6 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const { apolloClient } = useApolloContext()
   const { userAddress } = useUserContext()
   const { info, bug } = useToasterContext()
-  const { vaultsMapper } = useVaultsContext()
   const {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
@@ -77,9 +76,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     collateralsBalance: currentCollateralBalance,
     borrowAPR,
     vaultInputState,
-    updateVaultCreating,
     updateNewVault,
-    newVault,
     marketAvailableLiquidity,
   } = useCreateVaultContext()
   const {
