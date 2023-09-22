@@ -83,13 +83,13 @@ const ProposalsProvider = ({ children }: Props) => {
     variables: {
       timelockProposalId: proposalsCtxState.config?.timelockProposalId ?? -1,
     },
-    onCompleted: (data) => updateProposals(data),
+    onCompleted: (data) => updateProposals(data, PROPOSALS_CURRENT_DATA),
     onError: (error) => handleApolloError(error, 'CURRENT_PROPOSALS_QUERY'),
   })
 
   useQueryWithRefetch(PAST_PROPOSALS_QUERY, {
     skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_PAST_DATA,
-    onCompleted: (data) => updateProposals(data),
+    onCompleted: (data) => updateProposals(data, PROPOSALS_PAST_DATA),
     onError: (error) => handleApolloError(error, 'PAST_PROPOSALS_QUERY'),
   })
 
@@ -98,11 +98,14 @@ const ProposalsProvider = ({ children }: Props) => {
     variables: {
       userAddress: userAddress ?? '',
     },
-    onCompleted: (data) => updateProposals(data),
+    onCompleted: (data) => updateProposals(data, PROPOSALS_SUBMISSION_DATA),
     onError: (error) => handleApolloError(error, 'PROPOSALS_SUBMISSION_QUERY'),
   })
 
-  const updateProposals = (indexerData: ProposalIndexerType) => {
+  const updateProposals = (
+    indexerData: ProposalIndexerType,
+    subType: ProposalsSubsRecordType['PROPOSALS_DATA_SUB'],
+  ) => {
     const govConfigForProposalsNormalization = normalizeSmallGovernanceConfig(indexerData.governance?.[0])
 
     const {
@@ -118,9 +121,9 @@ const ProposalsProvider = ({ children }: Props) => {
       governanceConfig: govConfigForProposalsNormalization,
     })
 
-    const isPastProposalsQuery = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_PAST_DATA
-    const isCurrentProposalsQuery = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_CURRENT_DATA
-    const isSubmissionProposalsQuery = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_SUBMISSION_DATA
+    const isPastProposalsQuery = subType === PROPOSALS_PAST_DATA
+    const isCurrentProposalsQuery = subType === PROPOSALS_CURRENT_DATA
+    const isSubmissionProposalsQuery = subType === PROPOSALS_SUBMISSION_DATA
 
     setProposalsCtxState((prev) => ({
       ...prev,
