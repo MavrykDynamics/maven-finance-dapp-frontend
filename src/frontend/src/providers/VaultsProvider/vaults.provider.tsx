@@ -65,7 +65,7 @@ export const VaultsProvider = ({ children }: Props) => {
     variables: {
       userAddress: userAddress ?? '',
     },
-    onCompleted: (data) => updateVaultsData(data),
+    onCompleted: (data) => updateVaultsData(data, VAULTS_USER_DEPOSITOR),
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
 
@@ -74,25 +74,25 @@ export const VaultsProvider = ({ children }: Props) => {
     variables: {
       userAddress: userAddress ?? '',
     },
-    onCompleted: (data) => updateVaultsData(data),
+    onCompleted: (data) => updateVaultsData(data, VAULTS_USER_ALL),
     onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
-    onCompleted: (data) => updateVaultsData(data),
+    onCompleted: (data) => updateVaultsData(data, VAULTS_ALL),
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
 
-  const updateVaultsData = (indexerData: VaultsIndexerDataType) => {
+  const updateVaultsData = (indexerData: VaultsIndexerDataType, subType: VaultsSubsRecordType['vaultsData']) => {
     const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
       indexerData,
       userAddress,
     })
 
-    const isAllVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_ALL
-    const isPermissionedVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_USER_DEPOSITOR
-    const isMyVaultsQuery = activeSubs[VAULTS_DATA] === VAULTS_USER_ALL
+    const isAllVaultsQuery = subType === VAULTS_ALL
+    const isPermissionedVaultsQuery = subType === VAULTS_USER_DEPOSITOR
+    const isMyVaultsQuery = subType === VAULTS_USER_ALL
 
     setVaultsCtxState((prev) => ({
       ...prev,
