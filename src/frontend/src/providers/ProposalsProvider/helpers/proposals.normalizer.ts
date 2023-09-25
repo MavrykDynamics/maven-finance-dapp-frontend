@@ -128,7 +128,8 @@ export const normalizeProposals = ({
       const isProposalRound = governancePhase === GovPhases.PROPOSAL
 
       const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
-      const { id, executed, status, currentRoundProposal, paymentProcessed, proposerId } = normalizedProposal
+      const { id, executed, status, currentRoundProposal, paymentProcessed, proposerId, proposalPayments } =
+        normalizedProposal
 
       acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
 
@@ -141,7 +142,14 @@ export const normalizeProposals = ({
       }
 
       // Add id of proposal to be paid proposal
-      if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
+      if (
+        isProposalRound &&
+        !executed &&
+        timelockProposalId === id &&
+        !paymentProcessed &&
+        proposalPayments.length > 0 &&
+        !isPastProposal
+      ) {
         acc.waitingProposalsIdsToBePaid.push(id)
       }
 
@@ -151,7 +159,7 @@ export const normalizeProposals = ({
       }
 
       // Add id of current round proposal
-      if (currentRoundProposal) {
+      if (currentRoundProposal && !isPastProposal) {
         acc.currentRoundProposalsIds.push(id)
       }
 
