@@ -288,7 +288,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         const { id } = newProposalData.data.governance_proposal[0]
         changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
 
-        if (proposalState[DEFAULT_PROPOSAL.id]) proposalState[DEFAULT_PROPOSAL.id] = DEFAULT_PROPOSAL
+        if (proposalState[DEFAULT_PROPOSAL.id]) {
+          setProposalsState((prev) => ({
+            ...prev,
+            [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL,
+          }))
+        }
       }
     } catch (e) {
       bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
