@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { ThemeProvider } from 'styled-components'
@@ -40,8 +40,10 @@ import { FullScreenLoadingApp } from 'app/App.style'
 import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
+// proxy
+import GlobalStyleProxy from 'proxy/GlobalStyleProxy'
+
 // styles
-import { GlobalStyle } from './styles'
 import themeColors from 'styles/colors'
 import './styles/fonts.css'
 import './styles/animations.css'
@@ -131,7 +133,7 @@ const AppContainer = () => {
   return (
     <>
       <LoansPopupsProvider>
-        <GlobalStyle />
+        <GlobalStyleProxy />
         <ToasterMessages />
         <App />
       </LoansPopupsProvider>
@@ -139,7 +141,7 @@ const AppContainer = () => {
   )
 }
 
-export const Root = () => {
+export const RootContainer = () => {
   return (
     <DappLibsProviders>
       <ToasterProvider>
@@ -155,8 +157,9 @@ export const Root = () => {
   )
 }
 
-const rootElement = document.getElementById('root')
-ReactDOM.render(<Root />, rootElement)
+const rootElement = document.getElementById('root') as HTMLElement
+const root = createRoot(rootElement)
+root.render(<RootContainer />)
 
 unregister()
 reportWebVitals()
