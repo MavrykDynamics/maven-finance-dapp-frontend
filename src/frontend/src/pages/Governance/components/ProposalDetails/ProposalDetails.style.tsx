@@ -129,6 +129,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
         color: ${({ theme }) => theme.regularText};
         font-size: 16px;
         white-space: nowrap;
+        align-self: flex-start;
       }
 
       .title-main {

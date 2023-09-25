@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useLayoutEffect } from 'react'
 import { Redirect, useHistory, useLocation } from 'react-router'
 import QueryString from 'qs'
 
@@ -73,7 +73,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
     changeProposalsSubscriptionsList,
   } = useProposalsContext()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     changeProposalsSubscriptionsList({
       [GOVERNANCE_CONFIG_SUB]: true,
       [PROPOSALS_DATA_SUB]: isHistory ? PROPOSALS_PAST_DATA : PROPOSALS_CURRENT_DATA,
@@ -199,7 +199,8 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   ])
 
   const selectedProposalVoters = useMemo(
-    () => (rightSideContentId ? proposalsMapper[rightSideContentId]?.votes ?? [] : []),
+    () =>
+      rightSideContentId ? proposalsMapper[rightSideContentId]?.votes?.filter(({ round }) => round === 1) ?? [] : [],
     [proposalsMapper, rightSideContentId],
   )
 

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import dayjs from 'dayjs'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 // Components
 import { Timer } from 'app/App.components/Timer/Timer.controller'
@@ -24,7 +25,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
-// Actions, helpers
+// actions, helpers
 import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
@@ -35,21 +36,63 @@ import { api } from 'utils/api/api'
 import { isAbortError, unknownToError } from 'errors/error'
 
 export default function TimeRemaining() {
+  const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
   const {
     config: { currentRoundEndLevel, timelockProposalId, governancePhase },
   } = useProposalsContext()
   const {
+    contractAddresses: { governanceAddress },
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { userAddress } = useUserContext()
-  const {
-    contractAddresses: { governanceAddress },
-  } = useDappConfigContext()
-  const { bug } = useToasterContext()
+
+  const intervalRef = useRef<null | any>(null)
 
   const [timerDeadline, setTimerDeadline] = useState(0)
+  const [showTimer, setShowTimer] = useState(true)
   const [showModal, setShowModal] = useState(false)
+
+  // TODO: implement this estimation for popup
   const [estimatedValues] = useState({ fee: 0, cost: 0 })
+
+  useEffect(() => {
+    const abortController = new AbortController()
+
+    ;(async () => {
+      try {
+        const { data: duration } = await api(
+          getTimestampByLevelUrl(currentRoundEndLevel),
+          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
+        const convertedToTimestamp = new Date(duration).getTime()
+
+        setTimerDeadline(convertedToTimestamp)
+      } catch (e) {
+        // TODO: handle fetch errors when error boundary will be ready
+        if (!isAbortError(e)) {
+          console.error('getting timestamp by lvl error: ', e)
+          bug('Unexpected error happened occured, please reload the page')
+        }
+      }
+    })()
+
+    return () => abortController.abort()
+  }, [currentRoundEndLevel])
+
+  useEffect(() => {
+    if (timerDeadline) {
+      intervalRef.current = setInterval(() => {
+        const isTimerActive = dayjs().isBefore(timerDeadline)
+
+        if (showTimer !== isTimerActive) setShowTimer(isTimerActive)
+      }, 1000)
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [showTimer, timerDeadline])
 
   const handleCloseModal = () => setShowModal(false)
 
@@ -86,8 +129,7 @@ export default function TimeRemaining() {
       await handleNextRound(false)
       handleCloseModal()
     } catch (e) {
-      const err = unknownToError(e)
-      bug(err.message)
+      bug(unknownToError(e).message)
     }
   }
 
@@ -96,8 +138,7 @@ export default function TimeRemaining() {
       await handleNextRound(true)
       handleCloseModal()
     } catch (e) {
-      const err = unknownToError(e)
-      bug(err.message)
+      bug(unknownToError(e).message)
     }
   }
 
@@ -109,36 +150,9 @@ export default function TimeRemaining() {
     }
   }
 
-  useEffect(() => {
-    const abortController = new AbortController()
-
-    ;(async () => {
-      try {
-        const { data: duration } = await api(
-          getTimestampByLevelUrl(currentRoundEndLevel),
-          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
-          getTimestampByLevelSchema,
-        )
-        const convertedToTimestamp = new Date(duration).getTime()
-
-        setTimerDeadline(convertedToTimestamp)
-      } catch (e) {
-        // TODO: handle fetch errors when error boundary will be ready
-        if (!isAbortError(e)) {
-          console.error('getting timestamp by lvl error: ', e)
-          bug('Unexpected error happened occured, please reload the page')
-        }
-      }
-    })()
-
-    return () => abortController.abort()
-  }, [currentRoundEndLevel])
-
-  const isTimerActive = timerDeadline > Date.now()
-
   return (
-    <TimeLeftAreaWrap showBorder={isTimerActive}>
-      {isTimerActive ? (
+    <TimeLeftAreaWrap showBorder={showTimer}>
+      {showTimer ? (
         <>
           <Timer
             timestamp={timerDeadline}
