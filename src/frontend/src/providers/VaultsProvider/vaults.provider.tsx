@@ -1,5 +1,5 @@
 import { usePrevious } from 'react-use'
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -12,7 +12,6 @@ import {
   NullableVaultsCtxState,
   VaultsSubsRecordType,
   VaultsDashboardDataType,
-  VaultsIndexerDataType,
 } from './vaults.provider.types'
 
 // consts

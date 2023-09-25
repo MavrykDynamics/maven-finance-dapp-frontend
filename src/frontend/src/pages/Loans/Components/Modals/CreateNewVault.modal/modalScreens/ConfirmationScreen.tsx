@@ -72,12 +72,10 @@ export const ConfirmationScreen = () => {
     name,
   } = vaultData ?? {}
 
-  const { amount: inputAmount, rate, symbol } = finalBorrowInputData
-
-  const newVaultTotalOutstanding = (currentBorrowedAmount + inputAmount) * rate
+  const { amount: inputAmount, symbol } = finalBorrowInputData
 
   const { futureCollateralRatio, futureBorrowCapacity } = useVaultFutureStats({
-    vaultCurrentTotalOutstanding: newVaultTotalOutstanding,
+    vaultCurrentTotalOutstanding: currentBorrowedAmount,
     vaultCurrentCollateralBalance: currentCollateralBalance,
     vaultTokenAddress: borrowedTokenAddress,
     operationType: operationBorrow,
