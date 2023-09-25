@@ -7,11 +7,10 @@ import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
 import { LoansContext, NullableLoansContextState, LoansSubsRecordType, LoansChartsType } from './loans.provider.types'
-import { GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // consts
-import { GET_LOANS_CONFIG, getLoansMarketsQuery } from './queries/loansMarkets.query'
+import { GET_ALL_MARKETS_QUERY, GET_MARKET_BY_ADDRESS_QUERY, GET_LOANS_CONFIG } from './queries/loansMarkets.query'
 import {
   DEFAULT_LOANS_ACTIVE_SUBS,
   DEFAULT_LOANS_CONTEXT,
@@ -43,19 +42,11 @@ export const LoansProvider = ({ children }: Props) => {
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
   const [loansCtxState, setLoansCtxState] = useState<NullableLoansContextState>(DEFAULT_LOANS_CONTEXT)
 
-  // subscribe to markets or market data
-  useQueryWithRefetch(getLoansMarketsQuery({ marketTokenAddress: marketAddressToSubscribe }), {
-    skip: !activeSubs[LOANS_MARKETS_DATA],
-    variables: {
-      marketTokenAddress: marketAddressToSubscribe ?? '',
-    },
-    onCompleted: (data) => {
-      updateMarketsContext(data)
-    },
-    onError: (error) => handleApolloError(error, 'getLoansMarketsQuery'),
-  })
-
-  // subscribe to markets config
+  /**
+   * GET_LOANS_CONFIG -> load lending controller config
+   * GET_MARKET_BY_ADDRESS_QUERY -> load market by address
+   * GET_ALL_MARKETS_QUERY -> load all loans markets
+   */
   useQuery(GET_LOANS_CONFIG, {
     skip: !activeSubs[LOANS_CONFIG],
     onCompleted: (data) => {
@@ -67,22 +58,41 @@ export const LoansProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_LOANS_CONFIG'),
   })
 
-  // set markets to context and turn off loaders
-  const updateMarketsContext = (indexerData: GetLoansMarketsQueryQuery) => {
-    const newMarkets = normalizeLoansMarkets({ indexerData })
+  useQueryWithRefetch(GET_MARKET_BY_ADDRESS_QUERY, {
+    skip: !activeSubs[LOANS_MARKETS_DATA] || !marketAddressToSubscribe,
+    variables: {
+      marketTokenAddress: marketAddressToSubscribe ?? '',
+    },
+    onCompleted: (data) => {
+      const newMarkets = normalizeLoansMarkets({ indexerData: data })
 
-    // all addresses needed for pagination
-    const allMarketsAddresses = indexerData.allMarketsAddresses[0].loan_tokens.map(
-      ({ token: { token_address } }) => token_address,
-    )
+      setLoansCtxState((prev) => ({
+        ...prev,
+        allMarketsAddresses: data.allMarketsAddresses[0].loan_tokens.map(
+          ({ token: { token_address } }) => token_address,
+        ),
+        marketsMapper: { ...prev.marketsMapper, ...newMarkets },
+        marketsAddresses: Array.from(new Set([...(prev?.marketsAddresses ?? []), ...Object.keys(newMarkets)])),
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'GET_MARKET_BY_ADDRESS_QUERY'),
+  })
 
-    setLoansCtxState((prev) => ({
-      ...prev,
-      allMarketsAddresses,
-      marketsMapper: { ...prev.marketsMapper, ...newMarkets },
-      marketsAddresses: Array.from(new Set([...(prev?.marketsAddresses ?? []), ...Object.keys(newMarkets)])),
-    }))
-  }
+  useQueryWithRefetch(GET_ALL_MARKETS_QUERY, {
+    skip: !activeSubs[LOANS_MARKETS_DATA],
+    onCompleted: (data) => {
+      const newMarkets = normalizeLoansMarkets({ indexerData: data })
+
+      const marketsAddresses = Object.keys(newMarkets)
+      setLoansCtxState((prev) => ({
+        ...prev,
+        allMarketsAddresses: marketsAddresses,
+        marketsAddresses,
+        marketsMapper: { ...prev.marketsMapper, ...newMarkets },
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'GET_ALL_MARKETS_QUERY'),
+  })
 
   const changeLoansSubscriptionsList = (newSkips: Partial<LoansSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
