@@ -84,15 +84,14 @@ export default function TimeRemaining() {
     if (timerDeadline) {
       intervalRef.current = setInterval(() => {
         const isTimerActive = dayjs().isBefore(timerDeadline)
-
-        if (showTimer !== isTimerActive) setShowTimer(isTimerActive)
+        setShowTimer(isTimerActive)
       }, 1000)
     }
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [showTimer, timerDeadline])
+  }, [timerDeadline])
 
   const handleCloseModal = () => setShowModal(false)
 
