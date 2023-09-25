@@ -87,6 +87,7 @@ export const Market = () => {
     return () => {
       changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
       changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+      setMarketAddressToSubscribe(null)
     }
   }, [])
 
@@ -125,10 +126,6 @@ export const Market = () => {
 
     return () => setMarketAddressToSubscribe(null)
   }, [currentMarketAddress])
-
-  useEffect(() => {
-    return () => setMarketAddressToSubscribe(null)
-  }, [])
 
   const {
     preferences: { themeSelected },

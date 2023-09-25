@@ -211,7 +211,7 @@ export const VaultsView = () => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : paginatedVaultsList.length ? (
+      ) : vaultsIds.length ? (
         <VaultsList>
           {paginatedVaultsList.map((item) => {
             const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
@@ -231,7 +231,7 @@ export const VaultsView = () => {
         </VaultsList>
       ) : (
         <EmptyContainer className="centered">
-          <img src="/images/not-found.svg" alt=" No financial requests to show" />
+          <img src="/images/not-found.svg" alt=" No vaults to show" />
           <figcaption>No Vaults to show</figcaption>
         </EmptyContainer>
       )}

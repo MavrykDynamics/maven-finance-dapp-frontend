@@ -3,6 +3,7 @@ import React, { useContext, useMemo, useRef, useState } from 'react'
 // consts
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { QUERY_TOKENS_METADATA } from './queries/tokens.query'
+import { tokensGqlSchema } from './helpers/tokens.schemes'
 
 // hooks
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
@@ -14,7 +15,6 @@ import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.
 // types
 import { TokensContext, TokensContextStateType } from './tokens.provider.types'
 import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
-import { TokensGqlSchemaType, tokensGqlSchema } from './helpers/tokens.schemes'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -46,14 +46,21 @@ export const TokensProvider = ({ children }: Props) => {
 
           initialLoadingStatus.current = false
 
-          updateTokensMetadata(parsedTokens)
+          const { tokensMetadata, mTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
+
+          setTokensCtxState((prev) => ({
+            ...prev,
+            tokensMetadata,
+            collateralTokens,
+            mTokens,
+          }))
         } catch (e) {
           console.error('zod parsing tokens error:', { e })
         }
       },
       onError: (error) => handleApolloError(error, 'QUERY_TOKENS_METADATA'),
     },
-    { blocksDiff: 100 },
+    { blocksDiff: 2000 },
   )
 
   // update token prices in ctx
@@ -63,19 +70,6 @@ export const TokensProvider = ({ children }: Props) => {
     setTokensCtxState((prev) => ({
       ...prev,
       tokensPrices: { ...prev.tokensPrices, ...normalizedTokenPrices },
-    }))
-  }
-
-  // update tokens metadata in ctx
-  const updateTokensMetadata = (tokensGql: TokensGqlSchemaType) => {
-    const tokensMetadata = normalizeTokensMetadata(tokensGql)
-
-    setTokensCtxState((prev) => ({
-      ...tokensCtxState,
-      tokensMetadata: { ...prev.tokensMetadata, ...tokensMetadata.tokensMetadata },
-      farmLpTokens: tokensMetadata.farmLpTokens,
-      collateralTokens: tokensMetadata.collateralTokens,
-      mTokens: tokensMetadata.mTokens,
     }))
   }
 

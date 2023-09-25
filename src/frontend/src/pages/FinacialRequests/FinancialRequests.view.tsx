@@ -23,7 +23,7 @@ import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvid
 import { votingFinancialRequestVote } from 'providers/FinancialRequestsProvider/actions/financialRequests.actions'
 
 // types
-import { FinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.types'
+import { FinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider.types'
 
 // view
 import { StatusFlag } from '../../app/App.components/StatusFlag/StatusFlag.controller'
