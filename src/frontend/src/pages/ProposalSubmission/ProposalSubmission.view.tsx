@@ -83,7 +83,6 @@ import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } f
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const history = useHistory()
-  const getNewProposalIdAbortRef = useRef(new AbortController())
 
   const { bug } = useToasterContext()
   const { apolloClient } = useApolloContext()
@@ -103,13 +102,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const [activeTab, setActiveTab] = useState(1)
   const [isFormDisabled, setIsFormDisabled] = useState(true)
   const [lastProposalIdFromOperation, setLastProposalIdFromOperation] = useState<null | number>(null)
-
-  useEffect(() => {
-    return () => {
-      getNewProposalIdAbortRef.current.abort()
-      getNewProposalIdAbortRef.current = new AbortController()
-    }
-  }, [])
 
   useEffect(() => {
     if (governancePhase !== GovPhases.PROPOSAL) return
@@ -191,7 +183,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // Change user's vieving proposal
   const changeActiveProposal = useCallback(
     (proposalId: number) => {
-      if (proposalId !== selectedUserProposalId)
+      // redirect if id is different from current and user is on the submit proposal page, cuz redirect occurs after an operation, so user can change the page
+      if (proposalId !== selectedUserProposalId && window.location.pathname.includes('submit-proposal'))
         history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
     },
     [history, selectedUserProposalId],
@@ -282,11 +275,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         query: GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
         variables: {
           userAddress,
-        },
-        context: {
-          fetchOptions: {
-            signal: getNewProposalIdAbortRef.current.signal,
-          },
         },
       })
 
