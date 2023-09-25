@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -83,6 +83,7 @@ import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } f
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const history = useHistory()
+  const getNewProposalIdAbortRef = useRef(new AbortController())
 
   const { bug } = useToasterContext()
   const { apolloClient } = useApolloContext()
@@ -102,6 +103,13 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const [activeTab, setActiveTab] = useState(1)
   const [isFormDisabled, setIsFormDisabled] = useState(true)
   const [lastProposalIdFromOperation, setLastProposalIdFromOperation] = useState<null | number>(null)
+
+  useEffect(() => {
+    return () => {
+      getNewProposalIdAbortRef.current.abort()
+      getNewProposalIdAbortRef.current = new AbortController()
+    }
+  }, [])
 
   useEffect(() => {
     if (governancePhase !== GovPhases.PROPOSAL) return
@@ -275,9 +283,14 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         variables: {
           userAddress,
         },
+        context: {
+          fetchOptions: {
+            signal: getNewProposalIdAbortRef.current.signal,
+          },
+        },
       })
 
-      if (newProposalData.error) {
+      if (newProposalData.error && !isAbortError(newProposalData.error)) {
         console.error('loading new proposal error', newProposalData.error)
         throw new Error(newProposalData.error.message)
       }

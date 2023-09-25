@@ -84,9 +84,9 @@ const DappConfigProvider = ({ children }: Props) => {
     const turnOffAction = async () => {
       // if we don't have toasterId it means that action is silent, and we don't show anything to user
       if (toasterId) {
-        await sleep(750)
+        await sleep(850)
         hideToasterMessage(toasterId)
-        await sleep(750)
+        await sleep(850)
         success(TOASTER_ACTIONS_TEXTS[actionName]['end']['message'], TOASTER_ACTIONS_TEXTS[actionName]['end']['title'])
       }
       toggleActionCompletion(false)
