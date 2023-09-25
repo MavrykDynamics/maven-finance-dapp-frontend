@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { LinkProps } from 'react-router-dom'
+import { LinkProps, generatePath } from 'react-router-dom'
 import classNames from 'classnames'
 import qs from 'qs'
 
@@ -27,6 +27,7 @@ type Props = LinkProps & {
   disabled?: boolean
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
   external?: boolean
+  params?: Record<string, string>
   queryParams?: Record<string, string>
   kind?: LinkKind
   styling?: LinkStyling
@@ -49,6 +50,7 @@ export const CustomLink = ({
   children,
   to,
   onClick,
+  params,
   queryParams,
   styling = {},
   disabled = false,
@@ -67,16 +69,15 @@ export const CustomLink = ({
 
   // handling external link for react-router link
   const finalToAttr = useMemo(() => {
-    const queryPart = qs.stringify(queryParams, { addQueryPrefix: true })
+    if (isExternalLink)
+      return {
+        to: { pathname: to.toString() },
+        target: '_blank',
+        rel: 'noreferrer',
+      }
 
-    return isExternalLink
-      ? {
-          to: { pathname: to.toString(), search: queryPart },
-          target: '_blank',
-          rel: 'noreferrer',
-        }
-      : { to: `${to}${queryPart}` }
-  }, [isExternalLink, queryParams, to])
+    return { to: `${generatePath(to.toString(), params)}${qs.stringify(queryParams, { addQueryPrefix: true })}` }
+  }, [isExternalLink, params, queryParams, to])
 
   const linkClassName = classNames(kind, { ...styling, disabled, useHover: styling.useHover ?? true })
 
