@@ -43,7 +43,7 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
             return null
           }
 
-          return await harvestRewards(farm.address)
+          return await harvestRewards(farm.address, userAddress)
         } catch (e) {
           console.error('harvestRewardsAction', e)
           return null
