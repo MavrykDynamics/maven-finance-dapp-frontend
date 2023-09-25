@@ -1,5 +1,5 @@
-import { GetLoansConfigQuery, GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
-import { LoansContext } from '../loans.provider.types'
+import { GetLoansConfigQuery } from 'utils/__generated__/graphql'
+import { LoansContext, MarketsIndexerDataType } from '../loans.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 import { calcLendingAPY, calcMarketAvaliableLiquidity } from './loans.utils'
 
@@ -10,7 +10,7 @@ export const normalizeLoansConfig = ({ indexerData }: { indexerData: GetLoansCon
   }
 }
 
-export const normalizeLoansMarkets = ({ indexerData }: { indexerData: GetLoansMarketsQueryQuery }) => {
+export const normalizeLoansMarkets = ({ indexerData }: { indexerData: MarketsIndexerDataType }) => {
   const {
     lending_controller: [
       { interest_rate_decimals: interestRateDecimals, interest_treasury_share, decimals, loan_tokens },
