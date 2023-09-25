@@ -46,11 +46,12 @@ export const TokensProvider = ({ children }: Props) => {
 
           initialLoadingStatus.current = false
 
-          const { tokensMetadata, mTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
+          const { tokensMetadata, mTokens, farmLpTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
 
           setTokensCtxState((prev) => ({
             ...prev,
             tokensMetadata,
+            farmLpTokens,
             collateralTokens,
             mTokens,
           }))
