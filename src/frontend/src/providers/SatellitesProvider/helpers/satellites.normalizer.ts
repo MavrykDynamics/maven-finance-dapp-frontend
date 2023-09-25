@@ -2,11 +2,12 @@ import dayjs from 'dayjs'
 
 // types
 import {
-  SatelliteVoteItemType,
   SatelliteRecordType,
   SatelliteIndexerStatusType,
+  SatelliteVoteType,
+  SatellitesIndexerDataType,
 } from 'providers/SatellitesProvider/satellites.provider.types'
-import { SatelliteDataQueryQuery, SatelliteVotesQueryQuery } from 'utils/__generated__/graphql'
+import { SatelliteVotesQueryQuery } from 'utils/__generated__/graphql'
 
 // helpers
 import { calcPersent, convertNumberForClient } from '../../../utils/calcFunctions'
@@ -15,13 +16,20 @@ import { calcPersent, convertNumberForClient } from '../../../utils/calcFunction
 import { MVK_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
 import { satelliteVoteSchema, satelliteStatusSchema, INACTIVE_SATELLITE_STATUS } from '../satellites.const'
 
+type SatelliteVoteItemType = {
+  id: number
+  timestamp: number
+  vote: SatelliteVoteType
+  voteName: string
+}
+
 /**
  *
  * @param satelliteOracleData – satellite predictions on feeds and rewards for this predictions
  * @returns @sMVKRewards – sMVK rewards from feeds, @XTZRewards – XTZ rewards from feeds, @participatedFeeds – object where satellite participated and his latest prediction price
  */
 const getSatelliteOracleRewards = (
-  satelliteOracleData: SatelliteDataQueryQuery['satellite'][number]['user']['aggregator_oracles'],
+  satelliteOracleData: SatellitesIndexerDataType['satellite'][number]['user']['aggregator_oracles'],
 ) => {
   return satelliteOracleData.reduce<{
     sMVKRewards: number
@@ -64,7 +72,7 @@ const getSatelliteOracleRewards = (
  * @returns oracle efficiency – how often satellite predict feed price
  * TODO: @Sam-M-Israel should be reviewed by you
  */
-const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataQueryQuery['satellite'][number]['user']) => {
+const getSatelliteOracleEfficiency = (satelliteUser: SatellitesIndexerDataType['satellite'][number]['user']) => {
   const { aggregator_oracles, feedsObservationsAmount } = satelliteUser
 
   const latestObservation = aggregator_oracles.reduce(
@@ -102,7 +110,7 @@ const getSatelliteOracleEfficiency = (satelliteUser: SatelliteDataQueryQuery['sa
   return calcPersent(predictionSuccessRatio, totalFeedsObservation)
 }
 
-export const normallizeSatellite = (satelliteRecord: SatelliteDataQueryQuery['satellite'][0]) => {
+export const normallizeSatellite = (satelliteRecord: SatellitesIndexerDataType['satellite'][number]) => {
   try {
     const satelliteAddress = satelliteRecord.user.address
     const satelliteUser = satelliteRecord.user
@@ -183,7 +191,7 @@ export const normallizeSatellite = (satelliteRecord: SatelliteDataQueryQuery['sa
   }
 }
 
-export const normalizeSatellitesLedger = (store: SatelliteDataQueryQuery) => {
+export const normalizeSatellitesLedger = (store: SatellitesIndexerDataType) => {
   return store.satellite.reduce<{
     satelliteMapper: Record<string, SatelliteRecordType>
     activeSatellitesIds: string[]

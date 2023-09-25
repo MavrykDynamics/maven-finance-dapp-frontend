@@ -2,20 +2,18 @@ import {
   FinRequestsSubsRecordType,
   FinancialRequestsStateType,
   NullableFinancialRequestsContextStateType,
-} from '../financialRequests.types'
+} from '../financialRequests.provider.types'
 
 // actions
 export const FINANCIAL_REQUEST_VOTE_ACTION = 'votingFinancialRequestVote'
 
-// CONSTS FOR STAKING PROVIDER STATES
+// subs consts
 export const ONGOING_FIN_REQUESTS_SUB = 'ongoingFinRequestsSub'
-export const PAST_FIN_REQUESTS_SUB = 'pastFinRequestsSub'
 export const ALL_FIN_REQUESTS_SUB = 'allFinRequestsSub'
 
 export const FIN_REQUESTS_DATA = 'finRequestsData'
 
-// PROVIDER DEFAULT CONSTS
-
+// context consts
 export const DEFAULT_FIN_REQUESTS_ACTIVE_SUBS: FinRequestsSubsRecordType = {
   [FIN_REQUESTS_DATA]: null,
 } as const

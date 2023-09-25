@@ -25,15 +25,17 @@ import {
   SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB,
   SATELLITE_GOV_ACTIONS_DATA,
 } from './helpers/satellitesGov.consts'
+import {
+  ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY,
+  PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY,
+  SATELLITE_GOVERNANCE_CONFIG_QUERY,
+  USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY,
+} from './queries/satelliteGov.query'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-
-// queries
-import { SATELLITE_GOVERNANCE_CONFIG_QUERY, getGovernanceActionsQuery } from './queries/satelliteGov.query'
-import { GetGovernanceSatelliteActionsDataQuery, GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
 
 // context
 export const satelliteGovernanceContext = React.createContext<SatelliteGovernanceContext>(undefined!)
@@ -64,14 +66,21 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
     }
   }, [activeSubs])
 
-  // subscribes
+  /**
+   * SATELLITE_GOVERNANCE_CONFIG_QUERY -> load satellite governance config
+   * ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY -> load all ongoing satellite governance actions
+   * PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY -> load all past satellite governance actions
+   * USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY -> load all satellite governance actions created by user
+   */
   useQueryWithRefetch(
     SATELLITE_GOVERNANCE_CONFIG_QUERY,
     {
       skip: !activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB],
       onCompleted: (data) => {
-        if (!data) return
-        updateSatelliteGovConfig(data)
+        setSatelliteGovCtxState((prev) => ({
+          ...prev,
+          config: normalizeSatelliteGovernanceConfig(data),
+        }))
       },
       onError: (error) => handleApolloError(error, 'SATELLITE_GOVERNANCE_CONFIG_QUERY'),
     },
@@ -81,54 +90,70 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
   )
 
   useQueryWithRefetch(
-    getGovernanceActionsQuery(userAddress, activeSubs[SATELLITE_GOV_ACTIONS_DATA]),
+    ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY,
     {
-      skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null || userAddress === null,
+      skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] !== SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB,
       onCompleted: (data) => {
-        if (!data) return
-        updateSatelliteGovActionsData(data)
+        const { satelliteGovIdsMapper, ongoingSatelliteGovIds } = normalizerSatelliteGovernanceActions(
+          data,
+          userAddress,
+        )
+
+        setSatelliteGovCtxState((prev) => ({
+          ...prev,
+          satelliteGovIdsMapper: { ...prev.satelliteGovIdsMapper, ...satelliteGovIdsMapper },
+          ongoingSatelliteGovIds,
+        }))
       },
       variables: {
-        userAddress,
         currentTimestamp: currentTimeRef.current,
       },
-      onError: (error) => handleApolloError(error, 'getGovernanceActionsQuery'),
+      onError: (error) => handleApolloError(error, 'ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
     },
     {
       refetchQueryVariables,
     },
   )
 
-  // methods to update context data
-  const updateSatelliteGovConfig = (configData: GetGovernanceSatelliteConfigQuery) => {
-    const config = normalizeSatelliteGovernanceConfig(configData)
+  useQueryWithRefetch(
+    PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY,
+    {
+      skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] !== SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB,
+      onCompleted: (data) => {
+        const { satelliteGovIdsMapper, pastSatelliteGovIds } = normalizerSatelliteGovernanceActions(data, userAddress)
 
-    setSatelliteGovCtxState((prev) => ({
-      ...prev,
-      config,
-    }))
-  }
+        setSatelliteGovCtxState((prev) => ({
+          ...prev,
+          satelliteGovIdsMapper: { ...prev.satelliteGovIdsMapper, ...satelliteGovIdsMapper },
+          pastSatelliteGovIds,
+        }))
+      },
+      variables: {
+        currentTimestamp: currentTimeRef.current,
+      },
+      onError: (error) => handleApolloError(error, 'PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
+    },
+    {
+      refetchQueryVariables,
+    },
+  )
 
-  const updateSatelliteGovActionsData = (actionsData: GetGovernanceSatelliteActionsDataQuery) => {
-    const { satelliteGovIdsMapper, mySatelliteGovIds, pastSatelliteGovIds, ongoingSatelliteGovIds } =
-      normalizerSatelliteGovernanceActions(actionsData, userAddress)
+  useQueryWithRefetch(USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY, {
+    skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] !== SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB || !userAddress,
+    onCompleted: (data) => {
+      const { satelliteGovIdsMapper, mySatelliteGovIds } = normalizerSatelliteGovernanceActions(data, userAddress)
 
-    const isUserSatelliteGovActionsSub =
-      activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB
-    const isPastSatelliteGovActionsSub =
-      activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB
-    const isOngoingSatelliteGovActionsSub =
-      activeSubs[SATELLITE_GOV_ACTIONS_DATA] === SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB
-
-    setSatelliteGovCtxState((prev) => ({
-      ...prev,
-      satelliteGovIdsMapper: { ...prev.satelliteGovIdsMapper, ...satelliteGovIdsMapper },
-      // to avoid empty screen or loader between tab switches - just show old data
-      mySatelliteGovIds: isUserSatelliteGovActionsSub ? mySatelliteGovIds : prev.mySatelliteGovIds,
-      pastSatelliteGovIds: isPastSatelliteGovActionsSub ? pastSatelliteGovIds : prev.pastSatelliteGovIds,
-      ongoingSatelliteGovIds: isOngoingSatelliteGovActionsSub ? ongoingSatelliteGovIds : prev.ongoingSatelliteGovIds,
-    }))
-  }
+      setSatelliteGovCtxState((prev) => ({
+        ...prev,
+        satelliteGovIdsMapper: { ...prev.satelliteGovIdsMapper, ...satelliteGovIdsMapper },
+        mySatelliteGovIds,
+      }))
+    },
+    variables: {
+      userAddress,
+    },
+    onError: (error) => handleApolloError(error, 'USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
+  })
 
   const changeSatelliteGovSubscriptionsList = (subs: Partial<SatelliteGovernanceSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...subs }))

@@ -1,7 +1,7 @@
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { ValidationResult } from 'pages/ProposalSubmission/ProposalSubmission.types'
-import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satellites.provider.types'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { SatelliteGovernanceTransfer } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
+import { ALL_TOKEN_TYPES } from 'utils/TypesAndInterfaces/General'
 
 export const SATELLITE_GOVERNANCE_CONTENT_FORM = {
   'Suspend Satellite': {
@@ -132,9 +132,6 @@ export const SATELLITE_GOVERNANCE_MENU_TABS = {
 
 export const SATELLITE_GOVERNANCE_PATHNAME = '/satellite-governance'
 
-// TODO: delete after updating tokens data
-export const SATELLITE_GOVERNANCE_TOKEN_TYPES: Array<TokenType> = ['fa12', 'fa2', 'tez']
-
 type InitialDataType = {
   firstInput: string
   secondInput: string
@@ -160,5 +157,5 @@ export const SATELLITE_GOVERNANCE_INITIAL_DATA: InitialDataType = {
   firstInput: '',
   secondInput: '',
   purpose: '',
-  table: [{ to_: '', amount: 0, token: SATELLITE_GOVERNANCE_TOKEN_TYPES[0] }],
+  table: [{ to_: '', amount: 0, token: ALL_TOKEN_TYPES[0] }],
 }

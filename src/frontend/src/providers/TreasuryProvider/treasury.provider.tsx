@@ -31,6 +31,7 @@ const TreasuryProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<TreasurySubsRecordType>(DEFAULT_TREASURY_SUBS)
   const [allowTreasurtSMVKBalances, setAllowTreasurySMVKBalances] = useState(false)
 
+  // methods to update context data
   const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, smvkBalances: GetTreasurySmvkBalancesQuery) => {
     const data = { ...treasury, ...smvkBalances }
     const treasuryMapper = normalizeTreasuryStorage(data)
@@ -41,6 +42,13 @@ const TreasuryProvider = ({ children }: Props) => {
     }))
   }
 
+  const updateTreasuryAddresses = ({ treasury }: GetTreasuryStorageDataQuery) => {
+    setTreasuryCtxState((prev) => ({
+      ...prev,
+      treasuryAddresses: treasury.map(({ address }) => address).filter((address) => address !== ''),
+    }))
+  }
+
   //   helper to collect treasury data for normalizer using curry  -----------------------------
   const treasuryNormalizerDataUpdaterRef = useRef(curry(updateTreasuryStorage))
 
@@ -48,7 +56,6 @@ const TreasuryProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_TREASURY_STORAGE_QUERY, {
     skip: !activeSubs[TREASURY_STORAGE_DATA_SUB],
     onCompleted: (data) => {
-      if (!data) return
       updateTreasuryAddresses(data)
 
       //   pass the first part of data -> treasury data
@@ -64,7 +71,6 @@ const TreasuryProvider = ({ children }: Props) => {
     variables: {
       addresses: treasuryCtxState.treasuryAddresses,
     },
-    fetchPolicy: 'network-only',
     onCompleted: (data) => {
       if (!data) {
         setAllowTreasurySMVKBalances(false)
@@ -81,15 +87,6 @@ const TreasuryProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_TREASURY_SMVK_BALANCES'),
   })
 
-  // methods to update context data
-  const updateTreasuryAddresses = ({ treasury }: GetTreasuryStorageDataQuery) => {
-    setTreasuryCtxState((prev) => ({
-      ...prev,
-      treasuryAddresses: treasury.map(({ address }) => address).filter((address) => address !== ''),
-    }))
-  }
-
-  //   set what data to subscribe
   const changeTreasurySubscriptionsList = (newSkips: Partial<TreasurySubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }

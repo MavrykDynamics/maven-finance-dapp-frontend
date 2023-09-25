@@ -8,6 +8,7 @@ import {
 } from './helpers/loans.const'
 import { SingleValueData } from 'lightweight-charts'
 import { LoansMarketMiniChartType } from './helpers/loans.types'
+import { AllLoansMarketsQueryQuery, LoansMarketByAddressQueryQuery } from 'utils/__generated__/graphql'
 
 export type LoanVaultAllowanceType = typeof VAULT_ALLOWANCE_ANY | typeof VAULT_ALLOWANCE_ACCOUNTS
 
@@ -48,6 +49,9 @@ export type LoansChartsType = {
   marketBorrowChart: Record<TokenAddressType, LoansMarketMiniChartType>
   marketLendingChart: Record<TokenAddressType, LoansMarketMiniChartType>
 }
+
+// context types
+export type MarketsIndexerDataType = LoansMarketByAddressQueryQuery | AllLoansMarketsQueryQuery
 
 export type LoansContext = LoansContextState & {
   isLoading: boolean
