@@ -14,7 +14,7 @@ import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.
 // types
 import { TokensContext, TokensContextState } from './tokens.provider.types'
 import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
-import { TokensGqlSchemaType, tokensGqlSchema } from './helpers/tokens.schemes'
+import { tokensGqlSchema } from './helpers/tokens.schemes'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -45,7 +45,14 @@ export const TokensProvider = ({ children }: Props) => {
 
           initialLoadingStatus.current = false
 
-          updateTokensMetadata(parsedTokens)
+          const tokensMetadata = normalizeTokensMetadata(parsedTokens)
+
+          setTokensCtxState({
+            ...tokensCtxState,
+            tokensMetadata: { ...tokensCtxState.tokensMetadata, ...tokensMetadata.tokensMetadata },
+            collateralTokens: [...tokensCtxState.collateralTokens, ...tokensMetadata.collateralTokens],
+            mTokens: [...tokensCtxState.mTokens, ...tokensMetadata.mTokens],
+          })
         } catch (e) {
           console.error('zod parsing tokens error:', { e })
         }
@@ -63,18 +70,6 @@ export const TokensProvider = ({ children }: Props) => {
       ...prev,
       tokensPrices: { ...prev.tokensPrices, ...normalizedTokenPrices },
     }))
-  }
-
-  // update tokens metadata in ctx
-  const updateTokensMetadata = (tokensGql: TokensGqlSchemaType) => {
-    const tokensMetadata = normalizeTokensMetadata(tokensGql)
-
-    setTokensCtxState({
-      ...tokensCtxState,
-      tokensMetadata: { ...tokensCtxState.tokensMetadata, ...tokensMetadata.tokensMetadata },
-      collateralTokens: [...tokensCtxState.collateralTokens, ...tokensMetadata.collateralTokens],
-      mTokens: [...tokensCtxState.mTokens, ...tokensMetadata.mTokens],
-    })
   }
 
   const providerValue = useMemo(() => {

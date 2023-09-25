@@ -7,7 +7,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteGovernanceTransfer } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'

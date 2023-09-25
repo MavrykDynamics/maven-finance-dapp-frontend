@@ -6,7 +6,6 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // types
 import { NullableVestingContextStateType, VestingContext, VestingSubsRecordType } from './vesting.provider.types'
-import { GetVestingQueryQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { GET_VESTING_STORAGE_QUERY } from './queries/vesting.query'
@@ -33,27 +32,20 @@ const VestingProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_VESTING_STORAGE_QUERY, {
     skip: !activeSubs[VESTING_STORAGE_DATA_SUB],
     onCompleted: (data) => {
-      if (!data || !data?.vesting[0]) return
-      updateVestingStorage(data)
+      const { vesteeIds, vesteesMapper, totalClaimedAmount, totalVestedAmount, address } = normalizeVestingStorage(data)
+
+      setVestingCtxState((prev) => ({
+        ...prev,
+        vesteeIds,
+        vesteesMapper,
+        totalClaimedAmount,
+        totalVestedAmount,
+        address,
+      }))
     },
     onError: (error) => handleApolloError(error, 'GET_VESTING_STORAGE_QUERY'),
   })
 
-  // methods to update context data
-  const updateVestingStorage = (data: GetVestingQueryQuery) => {
-    const { vesteeIds, vesteesMapper, totalClaimedAmount, totalVestedAmount, address } = normalizeVestingStorage(data)
-
-    setVestingCtxState((prev) => ({
-      ...prev,
-      vesteeIds,
-      vesteesMapper,
-      totalClaimedAmount,
-      totalVestedAmount,
-      address,
-    }))
-  }
-
-  //   set what data to subscribe
   const changeVestingSubscriptionsList = (newSkips: Partial<VestingSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
