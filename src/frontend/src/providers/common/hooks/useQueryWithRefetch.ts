@@ -47,9 +47,10 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
   const prevQueryVariables = usePrevious(queryOptions?.variables)
   const currentQueryVariables = queryOptions?.variables
+  const prevUserSkipValue = usePrevious(queryOptions?.skip)
+  const currentUserSkipValue = queryOptions?.skip
 
   const { blocksDiff, refetchQueryVariables } = refetchOptions ?? {}
-  const userQuerySkip = queryOptions?.skip
 
   // Effect to reset isInitialQueryDone, on variables change
   useEffect(() => {
@@ -58,10 +59,12 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         return currentQueryVariables?.[key] !== prevQueryVariables?.[key]
       })
 
-      // if variables are different, we need to reset isInitialQueryDone, to load it's data, without waiting for refetch
-      if (isVarsChanged) setShouldRunUseQuery(true)
+      const isSkipChanged = prevUserSkipValue !== currentUserSkipValue && currentUserSkipValue
+
+      // if variables are different, we need to reset isInitialQueryDone, to load it's data, without waiting for refetch, same for skip
+      if (isVarsChanged || isSkipChanged) setShouldRunUseQuery(true)
     }
-  }, [queryOptions?.variables])
+  }, [queryOptions?.skip, queryOptions.variables])
 
   /**
    * completing 1st query fetch and getting callback to refetch this query later
@@ -73,7 +76,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
    */
   const queryResult = useQuery(query, {
     ...queryOptions,
-    skip: (isInitialQueryDone.current && !shouldRunUseQuery) || userQuerySkip,
+    skip: (isInitialQueryDone.current && !shouldRunUseQuery) || currentUserSkipValue,
     onCompleted: (data) => {
       if (!data) return
       setShouldRunUseQuery(false)
@@ -135,17 +138,24 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   // subscribe to indexer lvl change, and unsibscribe when component unmounts, or query becomes inactive
   useEffect(() => {
     // if query is active subscibe to indexer lvl change, and save id of subscription
-    if (!userQuerySkip && !refetchId.current)
+    if (!currentUserSkipValue && !refetchId.current) {
       refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+    }
 
     // if query is not active and we have id, then unsubscibe from indexer lvl change
-    if (userQuerySkip && refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
+    if (currentUserSkipValue && refetchId.current) {
+      currentIndexerLevelProxy.removeListener(refetchId.current)
+      refetchId.current = null
+    }
 
     return () => {
       // if we have id and hook unmounts, then unsubscibe from indexer lvl change
-      if (refetchId.current) currentIndexerLevelProxy.removeListener(refetchId.current)
+      if (refetchId.current) {
+        currentIndexerLevelProxy.removeListener(refetchId.current)
+        refetchId.current = null
+      }
     }
-  }, [refetchQuery, userQuerySkip])
+  }, [refetchQuery, currentUserSkipValue])
 
   return queryResult
 }
