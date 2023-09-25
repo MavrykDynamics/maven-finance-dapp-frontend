@@ -2,22 +2,20 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import dayjs from 'dayjs'
 
 // types
-import { GetFinRequestsStorageQuery } from 'utils/__generated__/graphql'
 import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
   NullableFinancialRequestsContextStateType,
-} from './financialRequests.types'
+} from './financialRequests.provider.types'
 
 // consts
-import { getFinancialRequestsStorageSubscription } from './queries/financialRequests.queries'
+import { ACTIVE_FINANCIAL_REQUESTS_QUERY, ALL_FINANCIAL_REQUESTS_QUERY } from './queries/financialRequests.queries'
 import {
   ALL_FIN_REQUESTS_SUB,
   DEFAULT_FINANCIAL_REQUESTS_CTX,
   DEFAULT_FIN_REQUESTS_ACTIVE_SUBS,
   FIN_REQUESTS_DATA,
   ONGOING_FIN_REQUESTS_SUB,
-  PAST_FIN_REQUESTS_SUB,
 } from './helpers/financialRequests.consts'
 
 // providers
@@ -54,48 +52,49 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     }
   }, [activeSubs])
 
+  /**
+   * ALL_FINANCIAL_REQUESTS_QUERY -> load all financial requests
+   * ACTIVE_FINANCIAL_REQUESTS_QUERY -> load all active financial requests
+   */
+  useQueryWithRefetch(ALL_FINANCIAL_REQUESTS_QUERY, {
+    skip: activeSubs[FIN_REQUESTS_DATA] !== ALL_FIN_REQUESTS_SUB,
+    onCompleted: (data) => {
+      const { financialRequestsIds, financialRequestMapper, ongoingFrIds, pastFrIds } = normalizeFinancialRequests(data)
+
+      setFinRequestsCtxState((prev) => ({
+        ...prev,
+        financialRequestsMapper: { ...prev.financialRequestsMapper, ...financialRequestMapper },
+        allFinRequestsIds: financialRequestsIds,
+        ongoingFinRequestsIds: ongoingFrIds,
+        pastFinRequestsIds: pastFrIds,
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'ALL_FINANCIAL_REQUESTS_QUERY'),
+  })
+
   useQueryWithRefetch(
-    getFinancialRequestsStorageSubscription({ requestType: activeSubs[FIN_REQUESTS_DATA] }),
+    ACTIVE_FINANCIAL_REQUESTS_QUERY,
     {
-      skip: activeSubs[FIN_REQUESTS_DATA] === null,
+      skip: activeSubs[FIN_REQUESTS_DATA] !== ONGOING_FIN_REQUESTS_SUB,
       onCompleted: (data) => {
-        if (!data) return
-        updateFinRequestsData(data, activeSubs[FIN_REQUESTS_DATA])
+        const { financialRequestsIds, financialRequestMapper, ongoingFrIds } = normalizeFinancialRequests(data)
+
+        setFinRequestsCtxState((prev) => ({
+          ...prev,
+          financialRequestsMapper: { ...prev.financialRequestsMapper, ...financialRequestMapper },
+          allFinRequestsIds: Array.from(new Set([...(prev.allFinRequestsIds ?? []), ...financialRequestsIds])),
+          ongoingFinRequestsIds: ongoingFrIds,
+        }))
       },
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
-      onError: (error) => handleApolloError(error, 'getFinancialRequestsStorageSubscription'),
+      onError: (error) => handleApolloError(error, 'ACTIVE_FINANCIAL_REQUESTS_QUERY'),
     },
     {
       refetchQueryVariables,
     },
   )
-
-  const updateFinRequestsData = (
-    data: GetFinRequestsStorageQuery,
-    type: FinRequestsSubsRecordType[typeof FIN_REQUESTS_DATA],
-  ) => {
-    const isAllFinRequests = type === ALL_FIN_REQUESTS_SUB
-    const isOngoingFinRequests = type === ONGOING_FIN_REQUESTS_SUB
-    const isPastFinRequests = type === PAST_FIN_REQUESTS_SUB
-
-    // based on query type - it will return "all" | "past" | "ongoing" finrequests data
-    // if it's "past" -> financialRequestsIds includes only past fin requests
-    // if it's "ongoing" -> financialRequestsIds includes only ongoing fin requests
-    // if it's "all" -> financialRequestsIds includes all fin requests
-    const { financialRequestsIds, financialRequestMapper, ongoingFrIds, pastFrIds } = normalizeFinancialRequests(data)
-    setFinRequestsCtxState((prev) => ({
-      ...prev,
-      allFinRequestsIds: isAllFinRequests ? financialRequestsIds : prev.allFinRequestsIds,
-      // if query type is "past" set financialRequestsIds(includes only past) - same for "ongoing"
-      // if its all(past & ongoing) set past and ongoing from mapper
-      // else set default ids
-      pastFinRequestsIds: isPastFinRequests || isAllFinRequests ? pastFrIds : prev.pastFinRequestsIds,
-      ongoingFinRequestsIds: isOngoingFinRequests || isAllFinRequests ? ongoingFrIds : prev.ongoingFinRequestsIds,
-      financialRequestsMapper: { ...prev.financialRequestsMapper, ...financialRequestMapper },
-    }))
-  }
 
   const changeFinancialRequestsSubscriptionList = (newSkips: Partial<FinRequestsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))

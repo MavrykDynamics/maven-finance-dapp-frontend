@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 
 // Consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
@@ -65,6 +64,7 @@ import {
   BecomeSatelliteOracleText,
 } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
 import { BecomeSatelliteBanners } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners'
 
 const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
@@ -389,14 +389,14 @@ export const BecomeSatellite = () => {
                       text={
                         <>
                           You are currently delegated to satellite{' '}
-                          <Link to={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`} className="satellite">
+                          <CustomLink to={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`}>
                             <TzAddress
                               tzAddress={satelliteMvkIsDelegatedTo}
                               hasIcon={false}
                               shouldCopy={false}
                               type={SECONDARY_TZ_ADDRESS_COLOR}
                             />
-                          </Link>
+                          </CustomLink>
                           . When becoming a satellite, you will first be undelegated from your current satellite and
                           then registered as a satellite.
                         </>
@@ -410,9 +410,12 @@ export const BecomeSatellite = () => {
                   one may become a Satellite without operating an oracle and take part in Governance. However, they will
                   forgo all of the oracle rewards which are a major source of payments. For information on operating an
                   oracle node for your Satellite, please read more on Gitbook{' '}
-                  <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
+                  <CustomLink
+                    to="https://mavryk.finance/litepaper#the-decentralized-oracle"
+                    styling={{ underline: true }}
+                  >
                     here
-                  </a>
+                  </CustomLink>
                   .
                 </BecomeSatelliteOracleText>
 

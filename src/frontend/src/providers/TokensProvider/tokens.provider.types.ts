@@ -96,4 +96,7 @@ export type TokensContext = {
   updateTokensPrices: (feeds: FullFeedsQueryType | SmallFeedsQueryType) => void
 }
 
-export type TokensContextState = Pick<TokensContext, 'tokensPrices' | 'collateralTokens' | 'tokensMetadata' | 'mTokens'>
+export type TokensContextStateType = Pick<
+  TokensContext,
+  'tokensPrices' | 'collateralTokens' | 'tokensMetadata' | 'mTokens'
+>

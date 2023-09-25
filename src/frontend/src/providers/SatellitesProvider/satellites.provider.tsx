@@ -1,9 +1,13 @@
 import React, { useContext, useMemo, useState } from 'react'
 
 // helpers
-import { getSatelliteDataQuery } from './queries/satellites.query'
+import {
+  ACTIVE_SATELLITES_DATA_QUERY,
+  ALL_SATELLITES_DATA_QUERY,
+  ORACLES_SATELLITES_DATA_QUERY,
+  SATELLITE_DATA_QUERY,
+} from './queries/satellites.query'
 import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
-import { SatelliteDataQueryQuery } from 'utils/__generated__/graphql'
 import { getSatellitesProviderReturnValue } from './helpers/satellites.utils'
 
 // consts
@@ -20,12 +24,7 @@ import {
 import { SATELLITES_METRICS_DATA } from './queries/satellitesMetricsData.query'
 
 // types
-import {
-  SatellitesContext,
-  SatellitesContextState,
-  SatellitesDataDubsType,
-  SatellitesSubsRecordType,
-} from './satellites.provider.types'
+import { SatellitesContext, SatellitesContextState, SatellitesSubsRecordType } from './satellites.provider.types'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
@@ -54,30 +53,13 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<string | null>(null)
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
 
-  useQueryWithRefetch(
-    getSatelliteDataQuery(
-      satelliteAddressToSubsctibe,
-      activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB,
-      activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB,
-    ),
-    {
-      skip:
-        // skip if page is not subscribed to the satellites
-        !activeSubs[SATELLITE_DATA_SUB] ||
-        // skip if page subscribed to the single satellite, but haven't provided address of satellite to subscribe
-        (!satelliteAddressToSubsctibe && activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_SINGLE_SUB),
-      variables: {
-        userAddress: satelliteAddressToSubsctibe ?? '',
-      },
-      onCompleted: (data) => {
-        if (!data) return
-        updateSatellitesContext(data, satelliteAddressToSubsctibe, activeSubs[SATELLITE_DATA_SUB])
-      },
-      onError: (error) => handleApolloError(error, 'getSatelliteDataQuery'),
-    },
-  )
-
-  // Refetch proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
+  /**
+   * SATELLITES_METRICS_DATA -> Refetch proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
+   * SATELLITE_DATA_QUERY -> load satellite by address
+   * ALL_SATELLITES_DATA_QUERY -> load all satellites
+   * ACTIVE_SATELLITES_DATA_QUERY -> load all active satellites
+   * ORACLES_SATELLITES_DATA_QUERY -> load all oracles satellites
+   */
   useQueryWithRefetch(SATELLITES_METRICS_DATA, {
     skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
     onCompleted: (data) => {
@@ -91,34 +73,74 @@ export const SatellitesProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'SATELLITES_METRICS_DATA'),
   })
 
-  // actions
-  const updateSatellitesContext = (
-    storage: SatelliteDataQueryQuery,
-    satelliteAddressToSub: null | string,
-    subType: SatellitesDataDubsType,
-  ) => {
-    if (!subType) return
-    const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(storage)
+  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
+    skip: !satelliteAddressToSubsctibe || activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_SINGLE_SUB,
+    variables: {
+      userAddress: satelliteAddressToSubsctibe ?? '',
+    },
+    onCompleted: (data) => {
+      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
-    const allSatellitesIds = storage.satelliteAddresses.nodes.map(({ user: { address } }) => address)
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        satelliteMapper: satelliteAddressToSubsctibe
+          ? { ...prev.satelliteMapper, ...satelliteMapper }
+          : satelliteMapper,
+        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
+        activeSatellitesIds: Array.from(new Set([...(prev.activeSatellitesIds ?? []), ...activeSatellitesIds])),
+        oraclesIds: Array.from(new Set([...(prev.oraclesIds ?? []), ...oraclesIds])),
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY'),
+  })
 
-    const isAllSatellitesSub = subType === SATELLITES_DATA_ALL_SUB && !satelliteAddressToSub
-    const isLoadingSingleSatellite = subType === SATELLITES_DATA_SINGLE_SUB && satelliteAddressToSub
+  useQueryWithRefetch(ALL_SATELLITES_DATA_QUERY, {
+    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
+    onCompleted: (data) => {
+      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
-    setSatellitesCtxState((prev) => ({
-      ...prev,
-      satelliteMapper: satelliteAddressToSubsctibe ? { ...prev.satelliteMapper, ...satelliteMapper } : satelliteMapper,
-      allSatellitesIds,
-      activeSatellitesIds:
-        !isLoadingSingleSatellite && (isAllSatellitesSub || subType === SATELLITES_DATA_ACTIVE_SUB)
-          ? activeSatellitesIds
-          : prev.activeSatellitesIds,
-      oraclesIds:
-        !isLoadingSingleSatellite && (isAllSatellitesSub || subType === SATELLITES_DATA_ORACLES_SUB)
-          ? oraclesIds
-          : prev.oraclesIds,
-    }))
-  }
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        satelliteMapper,
+        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
+        activeSatellitesIds,
+        oraclesIds,
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'ALL_SATELLITES_DATA_QUERY'),
+  })
+
+  useQueryWithRefetch(ACTIVE_SATELLITES_DATA_QUERY, {
+    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ACTIVE_SUB,
+    onCompleted: (data) => {
+      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        satelliteMapper: { ...prev.satelliteMapper, ...satelliteMapper },
+        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
+        activeSatellitesIds: activeSatellitesIds,
+        oraclesIds: Array.from(new Set([...(prev.oraclesIds ?? []), ...oraclesIds])),
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
+  })
+
+  useQueryWithRefetch(ORACLES_SATELLITES_DATA_QUERY, {
+    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ORACLES_SUB,
+    onCompleted: (data) => {
+      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        satelliteMapper: { ...prev.satelliteMapper, ...satelliteMapper },
+        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
+        oraclesIds,
+        activeSatellitesIds: Array.from(new Set([...(prev.activeSatellitesIds ?? []), ...activeSatellitesIds])),
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
+  })
 
   const changeSatellitesSubscriptionsList = (newSkips: Partial<SatellitesSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))

@@ -4,7 +4,7 @@ import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
-import { SatelliteGovernanceTransfer } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteGovernanceTransfer } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
 
 // Suspend Satellite
 export const suspendSatellite = async (

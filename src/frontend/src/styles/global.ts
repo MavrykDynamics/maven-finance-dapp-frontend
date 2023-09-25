@@ -2,6 +2,8 @@ import { createGlobalStyle } from 'styled-components/macro'
 import { css } from 'styled-components'
 import { MavrykTheme } from './interfaces'
 
+// TODO: remove link styles from here, when all link will be using CustomLink component
+
 export const GlobalStyle = createGlobalStyle<{ theme: MavrykTheme }>`
 * {
   box-sizing: border-box;
@@ -117,6 +119,29 @@ input[type='number'] {
   outline: none;
 }
 
+.info-link {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    svg {
+      opacity: 0.8;
+    }
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: ${({ theme }) => theme.linksAndButtons};
+  }
+}
+
 a {
   color: ${({ theme }) => theme.linksAndButtons};
   text-decoration: none;
@@ -167,28 +192,7 @@ p {
     background-color: ${({ theme }) => theme.scrollBlockColor};
   }
 
-.info-link {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
-  &:hover {
-    svg {
-      opacity: 0.8;
-    }
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-    fill: ${({ theme }) => theme.linksAndButtons};
-  }
-}
   /* spaces */
 
   ${[10, 20, 30].map(
