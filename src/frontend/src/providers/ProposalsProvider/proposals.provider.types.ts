@@ -33,7 +33,6 @@ export type ProposalsContextStateType = {
   currentRoundProposalsIds: Array<number>
   pastProposalsIds: Array<number>
   submissionProposalsIds: Array<number>
-  allProposalsIds: Array<number>
   waitingProposalsIdsToBeExecuted: Array<number>
   waitingProposalsIdsToBePaid: Array<number>
 }

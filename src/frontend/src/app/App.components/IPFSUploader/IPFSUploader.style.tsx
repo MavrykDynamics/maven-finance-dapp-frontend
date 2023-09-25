@@ -22,6 +22,7 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mavr
   height: 107px;
   width: 100%;
   background-color: transparent;
+  background-position: center;
   display: flex;
   border-radius: 10px;
   justify-content: center;
