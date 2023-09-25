@@ -7,7 +7,7 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // helpers
-import { normalizeGovernanceConfig } from './helpers/governanceConfig.normalizer'
+import { normalizeGovernanceConfig, normalizeSmallGovernanceConfig } from './helpers/governanceConfig.normalizer'
 import { getProposalsProviderReturnValue } from './helpers/proposals.utils'
 import { normalizeProposals } from './helpers/proposals.normalizer'
 
@@ -79,72 +79,83 @@ const ProposalsProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(CURRENT_PROPOSALS_QUERY, {
-    skip:
-      !activeSubs[PROPOSALS_DATA_SUB] ||
-      activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_CURRENT_DATA ||
-      !proposalsCtxState.config,
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_CURRENT_DATA,
     variables: {
       timelockProposalId: proposalsCtxState.config?.timelockProposalId ?? -1,
     },
-    onCompleted: (data) => updateProposals(data),
+    onCompleted: (data) => {
+      const govConfigForProposalsNormalization = normalizeSmallGovernanceConfig(data.governance?.[0])
+
+      const {
+        currentRoundProposalsIds,
+        waitingProposalsIdsToBeExecuted,
+        waitingProposalsIdsToBePaid,
+        submissionProposalsIds,
+        proposalsMapper,
+      } = normalizeProposals({
+        indexerData: data,
+        userAddress,
+        governanceConfig: govConfigForProposalsNormalization,
+      })
+
+      setProposalsCtxState((prev) => ({
+        ...prev,
+        currentRoundProposalsIds,
+        waitingProposalsIdsToBeExecuted,
+        waitingProposalsIdsToBePaid,
+        submissionProposalsIds,
+        proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
+      }))
+    },
     onError: (error) => handleApolloError(error, 'CURRENT_PROPOSALS_QUERY'),
   })
 
   useQueryWithRefetch(PAST_PROPOSALS_QUERY, {
-    skip:
-      !activeSubs[PROPOSALS_DATA_SUB] ||
-      activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_PAST_DATA ||
-      !proposalsCtxState.config,
-    onCompleted: (data) => updateProposals(data),
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_PAST_DATA,
+    onCompleted: (data) => {
+      const govConfigForProposalsNormalization = normalizeSmallGovernanceConfig(data.governance?.[0])
+
+      const { pastProposalsIds, proposalsMapper } = normalizeProposals({
+        indexerData: data,
+        userAddress,
+        governanceConfig: govConfigForProposalsNormalization,
+      })
+
+      setProposalsCtxState((prev) => ({
+        ...prev,
+        pastProposalsIds,
+
+        proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
+      }))
+    },
     onError: (error) => handleApolloError(error, 'PAST_PROPOSALS_QUERY'),
   })
 
   useQueryWithRefetch(PROPOSALS_SUBMISSION_QUERY, {
-    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_SUBMISSION_DATA || !userAddress || !proposalsCtxState.config,
+    skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_SUBMISSION_DATA || !userAddress,
     variables: {
       userAddress: userAddress ?? '',
     },
-    onCompleted: (data) => updateProposals(data),
+    onCompleted: (data) => {
+      const govConfigForProposalsNormalization = normalizeSmallGovernanceConfig(data.governance?.[0])
+
+      const { submissionProposalsIds, proposalsMapper, currentRoundProposalsIds } = normalizeProposals({
+        indexerData: data,
+        userAddress,
+        governanceConfig: govConfigForProposalsNormalization,
+      })
+
+      setProposalsCtxState((prev) => ({
+        ...prev,
+        submissionProposalsIds,
+        currentRoundProposalsIds: Array.from(
+          new Set([...(prev.currentRoundProposalsIds ?? []), ...currentRoundProposalsIds]),
+        ),
+        proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
+      }))
+    },
     onError: (error) => handleApolloError(error, 'PROPOSALS_SUBMISSION_QUERY'),
   })
-
-  const updateProposals = (indexerData: ProposalIndexerType) => {
-    if (!proposalsCtxState.config) return
-
-    const {
-      allProposalsIds,
-      pastProposalsIds,
-      currentRoundProposalsIds,
-      waitingProposalsIdsToBeExecuted,
-      waitingProposalsIdsToBePaid,
-      submissionProposalsIds,
-      proposalsMapper,
-    } = normalizeProposals({
-      indexerData,
-      userAddress,
-      governanceConfig: proposalsCtxState.config,
-    })
-
-    const isPastProposalsQuery = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_PAST_DATA
-    const isCurrentProposalsQuery = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_CURRENT_DATA
-    const isSubmissionProposalsQuery = activeSubs[PROPOSALS_DATA_SUB] === PROPOSALS_SUBMISSION_DATA
-
-    setProposalsCtxState((prev) => ({
-      ...prev,
-      allProposalsIds: Array.from(new Set([...(prev.allProposalsIds ?? []), ...allProposalsIds])),
-      pastProposalsIds: isPastProposalsQuery ? pastProposalsIds : prev.pastProposalsIds,
-      currentRoundProposalsIds: isCurrentProposalsQuery ? currentRoundProposalsIds : prev.currentRoundProposalsIds,
-      waitingProposalsIdsToBeExecuted: isCurrentProposalsQuery
-        ? waitingProposalsIdsToBeExecuted
-        : prev.waitingProposalsIdsToBeExecuted,
-      waitingProposalsIdsToBePaid: isCurrentProposalsQuery
-        ? waitingProposalsIdsToBePaid
-        : prev.waitingProposalsIdsToBePaid,
-      submissionProposalsIds:
-        isSubmissionProposalsQuery || isCurrentProposalsQuery ? submissionProposalsIds : prev.submissionProposalsIds,
-      proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
-    }))
-  }
 
   const changeProposalsSubscriptionsList = (newSkips: Partial<ProposalsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))

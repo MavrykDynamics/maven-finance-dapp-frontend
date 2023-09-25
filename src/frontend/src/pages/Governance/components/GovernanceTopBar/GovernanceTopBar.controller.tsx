@@ -13,9 +13,8 @@ export type GovernanceTopBarProps = {
 export const GovernanceTopBar = ({ governancePhase, isWaitingToExecute }: GovernanceTopBarProps) => {
   return (
     <GovernanceTopBarStyled>
-      <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL && !isWaitingToExecute}>
-        Proposal
-      </GovTopBarPhaseText>
+      {/* <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL && !isWaitingToExecute}> */}
+      <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL}>Proposal</GovTopBarPhaseText>
 
       <Icon id="greater-than" />
       <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.VOTING}>Voting</GovTopBarPhaseText>
@@ -23,10 +22,10 @@ export const GovernanceTopBar = ({ governancePhase, isWaitingToExecute }: Govern
       <Icon id="greater-than" />
       <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.TIMELOCK}>Time Lock</GovTopBarPhaseText>
 
-      <Icon id="greater-than" />
+      {/* <Icon id="greater-than" />
       <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL && isWaitingToExecute}>
         Execution
-      </GovTopBarPhaseText>
+      </GovTopBarPhaseText> */}
 
       <div className="action">
         <TimeRemaining />

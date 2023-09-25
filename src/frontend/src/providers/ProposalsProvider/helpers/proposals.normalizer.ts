@@ -1,18 +1,22 @@
+// types
 import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
 import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { ProposalIndexerType, ProposalsContext } from '../proposals.provider.types'
+import { ProposalIndexerType } from '../proposals.provider.types'
+import { GovernanceConfigForProposalsNormalizationType } from './governanceConfig.normalizer'
 import { ProposalRecordType } from './proposals.types'
 
+// utils
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getProposalStatus } from './proposals.utils'
 
+// consts
 import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
 import { MVK_DECIMALS } from 'utils/constants'
 import { GovPhases, ProposalStatus } from './proposals.const'
 
 export const normalizeProposal = (
   item: ProposalsDataQueryQuery['governance_proposal'][number],
-  { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: ProposalsContext['config'],
+  { governancePhase, cycleHighestVotedProposalId, timelockProposalId }: GovernanceConfigForProposalsNormalizationType,
 ) => {
   const proposalConvertedStatus = getProposalStatus(
     item,
@@ -109,12 +113,11 @@ export const normalizeProposals = ({
 }: {
   indexerData: ProposalIndexerType
   userAddress: string | null
-  governanceConfig: ProposalsContext['config']
+  governanceConfig: GovernanceConfigForProposalsNormalizationType
 }) => {
   return indexerData.governance_proposal.reduce<{
     currentRoundProposalsIds: Array<number>
     pastProposalsIds: Array<number>
-    allProposalsIds: Array<number>
     submissionProposalsIds: Array<number>
     waitingProposalsIdsToBeExecuted: Array<number>
     waitingProposalsIdsToBePaid: Array<number>
@@ -125,9 +128,9 @@ export const normalizeProposals = ({
       const isProposalRound = governancePhase === GovPhases.PROPOSAL
 
       const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
-      const { id, executed, status, currentRoundProposal, paymentProcessed, proposerId } = normalizedProposal
+      const { id, executed, status, currentRoundProposal, paymentProcessed, proposerId, proposalPayments } =
+        normalizedProposal
 
-      acc.allProposalsIds.push(normalizedProposal.id)
       acc.proposalsMapper[normalizedProposal.id] = normalizedProposal
 
       const isPastProposal =
@@ -139,7 +142,14 @@ export const normalizeProposals = ({
       }
 
       // Add id of proposal to be paid proposal
-      if (isProposalRound && !executed && timelockProposalId === id && !paymentProcessed && !isPastProposal) {
+      if (
+        isProposalRound &&
+        !executed &&
+        timelockProposalId === id &&
+        !paymentProcessed &&
+        proposalPayments.length > 0 &&
+        !isPastProposal
+      ) {
         acc.waitingProposalsIdsToBePaid.push(id)
       }
 
@@ -149,12 +159,12 @@ export const normalizeProposals = ({
       }
 
       // Add id of current round proposal
-      if (currentRoundProposal) {
+      if (currentRoundProposal && !isPastProposal) {
         acc.currentRoundProposalsIds.push(id)
       }
 
       // Add id of user created live proposal
-      if (currentRoundProposal && proposerId === userAddress) {
+      if (currentRoundProposal && !isPastProposal && proposerId === userAddress) {
         acc.submissionProposalsIds.push(id)
       }
 
@@ -163,7 +173,6 @@ export const normalizeProposals = ({
     {
       currentRoundProposalsIds: [],
       pastProposalsIds: [],
-      allProposalsIds: [],
       submissionProposalsIds: [],
       waitingProposalsIdsToBeExecuted: [],
       waitingProposalsIdsToBePaid: [],

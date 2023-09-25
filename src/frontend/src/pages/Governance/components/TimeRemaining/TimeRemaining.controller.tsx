@@ -92,7 +92,7 @@ export default function TimeRemaining() {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [timerDeadline])
+  }, [showTimer, timerDeadline])
 
   const handleCloseModal = () => setShowModal(false)
 

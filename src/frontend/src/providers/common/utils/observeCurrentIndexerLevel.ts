@@ -13,15 +13,15 @@ const currentIndexerLevel: {
   registerListener: function (listener) {
     const listenerId = generateUniqueId()
     this.listeners.set(listenerId, listener)
-    if (process.env.REACT_APP_ENV === 'dev')
-      console.log({ refetchListeners: this.listeners, registerListenerListenerId: listenerId })
+    // if (process.env.REACT_APP_ENV === 'dev')
+    //   console.log({ refetchListeners: this.listeners, registerListenerListenerId: listenerId })
     return listenerId
   },
   removeListener: function (listenerId) {
     if (this.listeners.has(listenerId)) {
       this.listeners.delete(listenerId)
-      if (process.env.REACT_APP_ENV === 'dev')
-        console.info(`listener with Id: ${listenerId} removed`, { refetchListeners: this.listeners })
+      // if (process.env.REACT_APP_ENV === 'dev')
+      //   console.info(`listener with Id: ${listenerId} removed`, { refetchListeners: this.listeners })
     } else {
       if (process.env.REACT_APP_ENV === 'dev')
         console.error(`listener with Id: ${listenerId} do not present in: ${JSON.stringify(this.listeners)}`)
