@@ -20,7 +20,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // type
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../../app/App.components/Input/Input.constants'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
+import { ALL_TOKEN_TYPES, TokenType } from 'utils/TypesAndInterfaces/General'
 
 // style
 import { SatelliteGovernanceAvailableAction } from './SatelliteGovernance.style'
@@ -33,7 +33,6 @@ import { validateText, validateTzAddress } from 'utils/validatorFunctions'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   SATELLITE_GOVERNANCE_CONTENT_FORM,
-  SATELLITE_GOVERNANCE_TOKEN_TYPES,
   SATELLITE_GOVERNANCE_ACTION_NAMES,
   SATELLITE_GOVERNANCE_INITIAL_DATA,
   SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA,
@@ -54,7 +53,7 @@ type Props = {
 }
 
 export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }: Props) => {
-  const dropDownItems = useMemo(() => SATELLITE_GOVERNANCE_TOKEN_TYPES.map((item) => getDdItem(item.toUpperCase())), [])
+  const dropDownItems = useMemo(() => ALL_TOKEN_TYPES.map((item) => getDdItem(item.toUpperCase())), [])
 
   const [data, setData] = useState(SATELLITE_GOVERNANCE_INITIAL_DATA)
   const [validation, setValidation] = useState(SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA)
@@ -248,7 +247,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
   const handleAddRow = () => {
     setData((prev) => ({
       ...prev,
-      table: prev.table.concat({ to_: '', amount: 0, token: SATELLITE_GOVERNANCE_TOKEN_TYPES[0] }),
+      table: prev.table.concat({ to_: '', amount: 0, token: ALL_TOKEN_TYPES[0] }),
     }))
 
     setValidation((prev) => ({
