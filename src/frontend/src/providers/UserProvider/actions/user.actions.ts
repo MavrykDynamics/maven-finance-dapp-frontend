@@ -40,7 +40,7 @@ export const claimAllRewardsAction = async (
 
               return {
                 kind: OpKind.TRANSACTION,
-                ...farmContractInstance.methods.claim(farmAddress).toTransferParams(),
+                ...farmContractInstance.methods.claim([userAddress]).toTransferParams(),
               }
             })
           }
@@ -57,7 +57,7 @@ export const claimAllRewardsAction = async (
       const doormanContractInstance = await tezos?.wallet.at(doormanAddress)
       batchArr.push({
         kind: OpKind.TRANSACTION,
-        ...doormanContractInstance.methods.compound(userAddress).toTransferParams(),
+        ...doormanContractInstance.methods.compound([userAddress]).toTransferParams(),
       })
     }
 
@@ -76,7 +76,7 @@ export const rewardsCompound = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos?.wallet.at(doormanAddress)
-    const rewardsOperationMetaData = contract?.methods.compound(userAddress)
+    const rewardsOperationMetaData = contract?.methods.compound([userAddress])
 
     return await getEstimationResult(rewardsOperationMetaData)
   } catch (error) {

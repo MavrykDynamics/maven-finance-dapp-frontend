@@ -7,7 +7,7 @@ import { DappConfigContext } from 'providers/DappConfigProvider/dappConfig.provi
 
 // mavryk council forms components
 import { FormSetAllContractsAdminView } from '../BreakGlassCouncilForms/FormSetAllContractsAdmin.view'
-import { FormSetSingleContractAdminView } from '../BreakGlassCouncilForms/FormSetSingleContractAdmin.view'
+import { FormSetSelectedContractsAdminView } from '../BreakGlassCouncilForms/FormSetSelectedContractsAdmin.view'
 import { FormSignActionView } from '../BreakGlassCouncilForms/FormSignAction.view'
 import { FormAddCouncilMemberView } from '../BreakGlassCouncilForms/FormAddCouncilMember.view'
 import { FormChangeCouncilMemberView } from '../BreakGlassCouncilForms/FormChangeCouncilMember.view'
@@ -39,8 +39,8 @@ export const CouncilForms = ({ councilMaxLengths, selectedAction, members }: Pro
     // break glass council forms
     case BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN:
       return <FormSetAllContractsAdminView />
-    case BgCounsilDdForms.SET_SINGLE_CONTRACT_ADMIN:
-      return <FormSetSingleContractAdminView />
+    case BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN:
+      return <FormSetSelectedContractsAdminView />
     case BgCounsilDdForms.SIGN_ACTION:
       return <FormSignActionView />
     case BgCounsilDdForms.ADD_COUNCIL_MEMBER:

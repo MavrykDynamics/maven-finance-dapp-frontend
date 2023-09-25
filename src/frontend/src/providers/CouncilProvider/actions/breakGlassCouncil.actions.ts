@@ -18,16 +18,16 @@ export const setAllContractsAdmin = async (breakGlassAddress: string, newAdminAd
 }
 
 // Set Single Contract Admin
-export const setSingleContractAdmin = async (
+export const setSelectedContractsAdmin = async (
   breakGlassAddress: string,
   newAdminAddress: string,
-  targetContract: string,
+  targetContracts: Array<string>,
 ) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(breakGlassAddress)
-    const setSingleContractAdminMetaData = contract?.methods.setSingleContractAdmin(newAdminAddress, targetContract)
+    const setSingleContractAdminMetaData = contract?.methods.setContractsAdmin(targetContracts, newAdminAddress)
 
     return await getEstimationResult(setSingleContractAdminMetaData)
   } catch (error) {
@@ -171,6 +171,38 @@ export const dropBreakGlass = async (breakGlassActionID: number, breakGlassAddre
     const dropBreakGlassMetaData = contract?.methods.flushAction(breakGlassActionID)
 
     return await getEstimationResult(dropBreakGlassMetaData)
+  } catch (error) {
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
+  }
+}
+
+// TODO: create form and use action, when design will be ready
+// Unpause All Entrypoints
+export const unpauseAllEntrypoints = async (breakGlassAddress: string, contracts: Array<string>) => {
+  try {
+    // prepare and send transaction
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(breakGlassAddress)
+    const setSingleContractAdminMetaData = contract?.methods.unpauseAllEntrypoints(contracts)
+
+    return await getEstimationResult(setSingleContractAdminMetaData)
+  } catch (error) {
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
+  }
+}
+
+// TODO: create form and use action, when design will be ready
+// Remove Break Glass Controll
+export const removeBreakGlassControl = async (breakGlassAddress: string, contracts: Array<string>) => {
+  try {
+    // prepare and send transaction
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(breakGlassAddress)
+    const setSingleContractAdminMetaData = contract?.methods.removeBreakGlassControl(contracts)
+
+    return await getEstimationResult(setSingleContractAdminMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

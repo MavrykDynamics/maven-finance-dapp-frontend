@@ -90,7 +90,7 @@ export const CouncilPending = (props: Props) => {
   const isChangeCouncilMember = actionType === 'changeCouncilMember'
   const isRemoveCouncilMember = actionType === 'removeCouncilMember'
   const isSetAllContractsAdmin = actionType === 'setAllContractsAdmin'
-  const isSetSingleContractAdmin = actionType === 'setSingleContractAdmin'
+  // const isSetSingleContractAdmin = actionType === 'setSingleContractAdmin'
   const isSetBaker = actionType === 'setBaker'
   const isSetContractBaker = actionType === 'setContractBaker'
   const isSignAction = actionType === 'signAction'
@@ -357,52 +357,53 @@ export const CouncilPending = (props: Props) => {
     )
   }
 
+  // TODO: return to use after design will be adjusted
   // 2/3
-  if (isSetSingleContractAdmin) {
-    const newAdminAddress = findActionByName('newAdminAddress', BYTES_ADDRESS_TYPE)
-    const targetContractAddress = findActionByName('targetContractAddress', BYTES_ADDRESS_TYPE)
+  // if (isSetSingleContractAdmin) {
+  //   const newAdminAddress = findActionByName('newAdminAddress', BYTES_ADDRESS_TYPE)
+  //   const targetContractAddress = findActionByName('targetContractAddress', BYTES_ADDRESS_TYPE)
 
-    return (
-      <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-        <span className="number">{cardNumber}</span>
-        <h3>{getSeparateCamelCase(actionType)}</h3>
-        <div className="parameters">
-          <article>
-            <p>New Admin Address</p>
-            <span className="parameters-value content-width">
-              <TzAddress tzAddress={newAdminAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
-            </span>
-          </article>
+  //   return (
+  //     <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
+  //       <span className="number">{cardNumber}</span>
+  //       <h3>{getSeparateCamelCase(actionType)}</h3>
+  //       <div className="parameters">
+  //         <article>
+  //           <p>New Admin Address</p>
+  //           <span className="parameters-value content-width">
+  //             <TzAddress tzAddress={newAdminAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
+  //           </span>
+  //         </article>
 
-          <article className="signed-article">
-            <div>
-              <p>Signed</p>
-              <span className="parameters-value content-width">
-                {signersCount}/{numCouncilMembers}
-              </span>
-            </div>
-          </article>
-        </div>
+  //         <article className="signed-article">
+  //           <div>
+  //             <p>Signed</p>
+  //             <span className="parameters-value content-width">
+  //               {signersCount}/{numCouncilMembers}
+  //             </span>
+  //           </div>
+  //         </article>
+  //       </div>
 
-        <div className="parameters">
-          <article>
-            <div>
-              <p>Target Contract</p>
-              <span className="parameters-value content-width">
-                <TzAddress tzAddress={targetContractAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
-              </span>
-            </div>
-          </article>
-          <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
-              <Icon id="sign" />
-              Sign
-            </NewButton>
-          </div>
-        </div>
-      </CouncilPendingStyled>
-    )
-  }
+  //       <div className="parameters">
+  //         <article>
+  //           <div>
+  //             <p>Target Contract</p>
+  //             <span className="parameters-value content-width">
+  //               <TzAddress tzAddress={targetContractAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
+  //             </span>
+  //           </div>
+  //         </article>
+  //         <div className="sign-action">
+  //           <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
+  //             <Icon id="sign" />
+  //             Sign
+  //           </NewButton>
+  //         </div>
+  //       </div>
+  //     </CouncilPendingStyled>
+  //   )
+  // }
 
   // 2/3
   if (isAddVestee) {

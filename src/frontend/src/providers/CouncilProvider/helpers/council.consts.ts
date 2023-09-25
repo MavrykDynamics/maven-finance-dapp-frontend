@@ -8,7 +8,9 @@ import {
 
 // BG council actions
 export const SET_ALL_CONTRACTS_ADMIN_ACTION = 'setAllContractsAdmin'
-export const SET_SINGLE_CONTRACT_ADMIN_ACTION = 'setSingleContractAdmin'
+export const SET_SELECTED_CONTRACTS_ADMIN_ACTION = 'setContractsAdmin'
+export const REMOVE_BG_CONTROLL_ACTION = 'removeBreakGlassControl'
+export const UNPAUSE_ALL_ENTRYPOINTS_ACTION = 'unpauseAllEntrypoints'
 export const SIGN_BREAK_GLASS_COUNCIL_ACTION = 'signAction'
 export const ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'addCouncilMember'
 export const UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'updateCouncilMember'

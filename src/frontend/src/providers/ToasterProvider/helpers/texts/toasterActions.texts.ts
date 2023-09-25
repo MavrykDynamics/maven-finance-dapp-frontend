@@ -91,7 +91,9 @@ import {
   PROPAGATE_BREAK_GLASS_ACTION,
   REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   SET_ALL_CONTRACTS_ADMIN_ACTION,
-  SET_SINGLE_CONTRACT_ADMIN_ACTION,
+  SET_SELECTED_CONTRACTS_ADMIN_ACTION,
+  UNPAUSE_ALL_ENTRYPOINTS_ACTION,
+  REMOVE_BG_CONTROLL_ACTION,
   SIGN_BREAK_GLASS_COUNCIL_ACTION,
   UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   SIGN_MAVRYK_COUNCIL_ACTION,
@@ -740,7 +742,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [SET_SINGLE_CONTRACT_ADMIN_ACTION]: {
+  [SET_SELECTED_CONTRACTS_ADMIN_ACTION]: {
     start: {
       title: 'Set Single Contract Admin...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -797,6 +799,26 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
     end: {
       title: 'Remove Council Member is done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UNPAUSE_ALL_ENTRYPOINTS_ACTION]: {
+    start: {
+      title: 'Unpausing All Entrypoints...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'All Entrypoints Are Unpaused.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REMOVE_BG_CONTROLL_ACTION]: {
+    start: {
+      title: 'Remove Break Glass Controll...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Break Glass Controll Removed.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

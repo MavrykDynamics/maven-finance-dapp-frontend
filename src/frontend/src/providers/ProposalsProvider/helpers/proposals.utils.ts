@@ -78,7 +78,6 @@ export const getProposalsProviderReturnValue = ({
     proposalsMapper,
     pastProposalsIds,
     currentRoundProposalsIds,
-    allProposalsIds,
     waitingProposalsIdsToBeExecuted,
     waitingProposalsIdsToBePaid,
     submissionProposalsIds,
@@ -99,7 +98,7 @@ export const getProposalsProviderReturnValue = ({
     isGovernanceConfigLoading ||
     isGovernanceCurrentProposalsLoading ||
     isGovernancePastProposalsLoading ||
-    (activeSubs[PROPOSALS_DATA_SUB] !== null && proposalsMapper === null && allProposalsIds === null)
+    (activeSubs[PROPOSALS_DATA_SUB] !== null && proposalsMapper === null)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

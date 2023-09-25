@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { useLocation, Redirect } from 'react-router'
 import QueryString from 'qs'
 
@@ -33,7 +33,7 @@ export const ProposalSubmission = () => {
   } = useProposalsContext()
   const { isLoading: isTreasuryLoading, changeTreasurySubscriptionsList } = useTreasuryContext()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     changeTreasurySubscriptionsList({
       [TREASURY_STORAGE_DATA_SUB]: true,
     })

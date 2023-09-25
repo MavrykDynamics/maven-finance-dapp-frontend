@@ -1,6 +1,6 @@
 import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { GovernanceConfigQueryQuery } from 'utils/__generated__/graphql'
-import { ProposalsContext } from '../proposals.provider.types'
+import { ProposalIndexerType, ProposalsContext } from '../proposals.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { XTZ_DECIMALS, MVK_DECIMALS } from 'utils/constants'
 
@@ -26,6 +26,22 @@ export const normalizeGovernanceConfig = (dataFromIndexer: GovernanceConfigQuery
     timelockProposalId: timelock_proposal_id ?? null,
     cycleHighestVotedProposalId: cycle_highest_voted_proposal_id ?? null,
 
+    governancePhase: calcGovPhase(current_round),
+  }
+}
+
+export type GovernanceConfigForProposalsNormalizationType = Pick<
+  ProposalsContext['config'],
+  'governancePhase' | 'timelockProposalId' | 'cycleHighestVotedProposalId'
+>
+export const normalizeSmallGovernanceConfig = (
+  dataFromIndexer: ProposalIndexerType['governance'][number],
+): GovernanceConfigForProposalsNormalizationType => {
+  const { timelock_proposal_id, cycle_highest_voted_proposal_id, current_round } = dataFromIndexer
+
+  return {
+    timelockProposalId: timelock_proposal_id ?? null,
+    cycleHighestVotedProposalId: cycle_highest_voted_proposal_id ?? null,
     governancePhase: calcGovPhase(current_round),
   }
 }
