@@ -1,6 +1,6 @@
 import qs from 'qs'
 import { useState } from 'react'
-import { useHistory, useLocation } from 'react-router'
+import { useNavigate, useLocation } from 'react-router'
 
 // hooks
 import { useUserContext } from '../user.provider'
@@ -28,7 +28,7 @@ export const useUserHistoryData = () => {
   const { bug } = useToasterContext()
 
   // stuff for handling page out of limims
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search, pathname } = useLocation()
   const { page = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
   const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
@@ -62,7 +62,7 @@ export const useUserHistoryData = () => {
           pathname,
           restQP,
         })
-        history.replace(redirectToFirstPageOfTheList)
+        navigate(redirectToFirstPageOfTheList, { replace: true })
       } else {
         const normalizedUserHistoryData = normalizeUserHistoryData(data.mavryk_user[0].stakes_history_data)
         setUserHistoryData(currentPage, normalizedUserHistoryData, itemsAmount)

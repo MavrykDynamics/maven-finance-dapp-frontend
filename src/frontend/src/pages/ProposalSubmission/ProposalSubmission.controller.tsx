@@ -1,5 +1,5 @@
 import { useLayoutEffect } from 'react'
-import { useLocation, Redirect } from 'react-router'
+import { useLocation, Navigate } from 'react-router'
 import QueryString from 'qs'
 
 // view
@@ -58,9 +58,9 @@ export const ProposalSubmission = () => {
 
   const redirect =
     submissionProposalsIds.length >= 2 && convertedProposalId === DEFAULT_PROPOSAL.id ? (
-      <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: submissionProposalsIds[0] })}`} />
+      <Navigate to={`/submit-proposal?${QueryString.stringify({ proposalId: submissionProposalsIds[0] })}`} />
     ) : convertedProposalId && isValidProposalId ? null : (
-      <Redirect to={`/submit-proposal?${QueryString.stringify({ proposalId: submissionProposalsIds[0] ?? -1 })}`} />
+      <Navigate to={`/submit-proposal?${QueryString.stringify({ proposalId: submissionProposalsIds[0] ?? -1 })}`} />
     )
 
   return (

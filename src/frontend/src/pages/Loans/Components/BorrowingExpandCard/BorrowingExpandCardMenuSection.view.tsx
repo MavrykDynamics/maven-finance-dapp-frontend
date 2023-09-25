@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, useHistory, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
 // styles
@@ -111,7 +111,7 @@ export const BorrowingExpandCardMenuSection = ({
   } = useDappConfigContext()
 
   const { pathname, search } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { page, ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const menuTabs = useMemo(
@@ -135,7 +135,7 @@ export const BorrowingExpandCardMenuSection = ({
   const handleSwitchTab = (setActiveTab: (tab?: SlidingTabButtonType) => void) => (newTabId: number) => {
     // condition to set list page to 1, when change tab
     if (activeMenuTab?.id === loansTabNames.TX_HISTORY && activeMenuTab?.id !== newTabId) {
-      history.replace(`${pathname}${qs.stringify(restQP, { addQueryPrefix: true })}`)
+      navigate(`${pathname}${qs.stringify(restQP, { addQueryPrefix: true })}`, { replace: true })
     }
 
     setActiveTab(menuTabs.find((item) => item.id === newTabId))

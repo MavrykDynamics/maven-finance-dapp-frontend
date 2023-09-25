@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useCallback, useEffect, useMemo } from 'react'
 
 // context
@@ -80,7 +80,7 @@ export const StakeUnstakeView = ({
   inputData,
   setInputData,
 }: StakeUnstakeViewProps) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { userTokensBalances, userAddress, satelliteMvkIsDelegatedTo, isSatellite } = useUserContext()
   const { availableDoormanRewards, availableSatellitesRewards, availableFarmRewards } = useUserRewards()
   const {
@@ -254,7 +254,7 @@ export const StakeUnstakeView = ({
   }
 
   const handleDelegate = () => {
-    history.push(
+    navigate(
       satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
     )
   }

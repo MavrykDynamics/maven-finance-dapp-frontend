@@ -1,4 +1,5 @@
 import { GlobalStyle } from 'styles'
 
-const GlobalStyleProxy: unknown = GlobalStyle
+// TODO fix this type
+const GlobalStyleProxy: any = GlobalStyle
 export default GlobalStyleProxy

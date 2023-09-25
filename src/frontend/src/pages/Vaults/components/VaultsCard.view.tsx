@@ -121,7 +121,7 @@ type Props = {
   vault: VaultType
   isOwner: boolean
   handleMarkForLiquidation: ({}: { vaultId: number; vaultOwner: string }) => void
-  vaultTab: string
+  vaultTab: string | undefined
 }
 
 export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {

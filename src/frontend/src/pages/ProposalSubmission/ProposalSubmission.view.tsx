@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -82,7 +82,7 @@ import {
 import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { bug } = useToasterContext()
   const { apolloClient } = useApolloContext()
@@ -184,9 +184,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const changeActiveProposal = useCallback(
     (proposalId: number) => {
       if (proposalId !== selectedUserProposalId)
-        history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
+        navigate(`/submit-proposal?${QueryString.stringify({ proposalId })}`, { replace: true })
     },
-    [history, selectedUserProposalId],
+    [navigate, selectedUserProposalId],
   )
 
   const updateLocalProposalData = (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -84,7 +84,7 @@ const SatellitesVotingHistory = ({
 }
 
 export const SatelliteDetails = () => {
-  const { satelliteId } = useParams<{ satelliteId: string }>()
+  const { satelliteId = '' } = useParams<{ satelliteId: string }>()
   const { apolloClient } = useApolloContext()
   const { fatal } = useToasterContext()
   const {

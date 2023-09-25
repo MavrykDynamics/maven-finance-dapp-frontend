@@ -62,7 +62,7 @@ export const NavigationLink = ({
 
   const isMainLinkDisabled = useMemo(() => {
     const paths = subPages.reduce((acc, { routeSubPath }) => acc.concat(routeSubPath), [`/${path}`])
-    return paths.find((path) => matchPath(pathname, { path, exact: true, strict: true }))
+    return paths.find((path) => matchPath({ path }, pathname))
   }, [pathname])
 
   useEffect(() => {

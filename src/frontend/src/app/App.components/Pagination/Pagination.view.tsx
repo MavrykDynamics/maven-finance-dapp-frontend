@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
 import { Input } from 'app/App.components/Input/Input.controller'
@@ -18,7 +18,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
   const pagesCount = Math.ceil(itemsCount / LIST_NAMES_MAPPER[listName])
 
   const [inputValue, setInputValue] = useState(currentPage)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const generateNewUrl = (newPage: number) => updatePageInUrl({ page, newPage, listName, pathname, restQP: rest })
 
@@ -38,7 +38,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
           }}
           onKeyDown={(e: React.KeyboardEvent) => {
             if ((!inputValue && e.key === '0') || e.key === '-') e.preventDefault()
-            if (e.key === 'Enter') history.push(generateNewUrl(inputValue))
+            if (e.key === 'Enter') navigate(generateNewUrl(inputValue))
           }}
           onBlur={() => {
             if (!inputValue && !inputValue !== currentPage) setInputValue(currentPage)
@@ -52,7 +52,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
         isDisabled={+currentPage === 1}
         onClick={() => {
           if (currentPage > 1) {
-            history.push(generateNewUrl(currentPage - 1))
+            navigate(generateNewUrl(currentPage - 1))
           }
         }}
       >
@@ -63,7 +63,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
         isRight
         onClick={() => {
           if (currentPage < pagesCount) {
-            history.push(generateNewUrl(+currentPage + 1))
+            navigate(generateNewUrl(+currentPage + 1))
           }
         }}
       >

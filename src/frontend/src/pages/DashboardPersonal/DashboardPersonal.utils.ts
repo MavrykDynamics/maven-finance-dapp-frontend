@@ -19,10 +19,10 @@ export type SecondaryTabId =
   | typeof PORTFOLIO_LENDING_TAB_ID
   | typeof PORTFOLIO_BORROWING_TAB_ID
 
-export const isValidPersonalDashboardTabId = (x: string): x is TabId =>
+export const isValidPersonalDashboardTabId = (x: string | undefined): x is TabId =>
   x === PORTFOLIO_TAB_ID || x === SATELLITE_TAB_ID || x === DELEGATION_TAB_ID || x === VESTING_TAB_ID
 
-export const isValidPersonalDashboardSecondaryTabId = (x: string): x is SecondaryTabId =>
+export const isValidPersonalDashboardSecondaryTabId = (x: string | undefined): x is SecondaryTabId =>
   x === PORTFOLIO_BORROWING_TAB_ID || x === PORTFOLIO_POSITION_TAB_ID || x === PORTFOLIO_LENDING_TAB_ID
 
 export const getDbPersonalUserWalletData = ({

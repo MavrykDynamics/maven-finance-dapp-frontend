@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Redirect, useLocation } from 'react-router'
+import { Navigate, useLocation } from 'react-router'
 import QueryString from 'qs'
 
 // view
@@ -136,7 +136,7 @@ const TabById = ({ activeTab }: { activeTab: TabId }) => {
     case STAKING_TAB_ID:
       return <StakingTab />
     default:
-      return <Redirect to={`/${LENDING_TAB_ID}`} />
+      return <Navigate to={`/${LENDING_TAB_ID}`} />
   }
 }
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // types
 import { ChartPeriodType } from 'types/charts.type'
@@ -77,7 +77,8 @@ const tabsList = [
 
 const DataFeedDetails = () => {
   const { search } = useLocation()
-  const { feedId } = useParams<{ feedId: string }>()
+  const { feedId: originalFeedId } = useParams<{ feedId: string }>()
+  const navigate = useNavigate()
 
   const { feedsMapper } = useDataFeedsContext()
   const {
@@ -93,6 +94,14 @@ const DataFeedDetails = () => {
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
   const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+
+  // TODO fix logic
+  useEffect(() => {
+    if (!originalFeedId) navigate('/')
+  }, [originalFeedId])
+
+  const feedId = originalFeedId as string
+
   const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId, chartPeriod)
 
   useEffect(() => {
