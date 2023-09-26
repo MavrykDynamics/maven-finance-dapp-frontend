@@ -52,10 +52,6 @@ export const AppRoutes = () => {
 
   return (
     <Switch>
-      {/* TODO: remove RenderErrorPage, when api will be ok */}
-      <Route path="*">
-        <RenderErrorPage />
-      </Route>
       <Route exact path="/staking">
         <Doorman />
       </Route>
