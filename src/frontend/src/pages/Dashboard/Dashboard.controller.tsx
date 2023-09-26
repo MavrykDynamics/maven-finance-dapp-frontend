@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Redirect, useLocation } from 'react-router'
+import QueryString from 'qs'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -41,7 +42,7 @@ import { useDappTvl } from 'providers/DappConfigProvider/hooks/useDappTvl'
 
 // utils
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
-import QueryString from 'qs'
+import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
 
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
@@ -88,27 +89,75 @@ export const Dashboard = () => {
             </div>
 
             <div className="dashboard-navigation">
-              <Link to={`/${LENDING_TAB_ID}`} className={activeTab === LENDING_TAB_ID ? 'selected' : ''}>
+              <CustomLink
+                to={`/${LENDING_TAB_ID}`}
+                styling={{
+                  navigationLink: activeTab !== LENDING_TAB_ID,
+                  navigationActiveLink: activeTab === LENDING_TAB_ID,
+                }}
+              >
                 Earn/Borrow
-              </Link>
-              <Link to={`/?tab=${VAULTS_TAB_ID}`} className={activeTab === VAULTS_TAB_ID ? 'selected' : ''}>
+              </CustomLink>
+              <CustomLink
+                to={`/`}
+                queryParams={{ tab: VAULTS_TAB_ID }}
+                styling={{
+                  navigationLink: activeTab !== VAULTS_TAB_ID,
+                  navigationActiveLink: activeTab === VAULTS_TAB_ID,
+                }}
+              >
                 Vaults
-              </Link>
-              <Link to={`/?tab=${STAKING_TAB_ID}`} className={activeTab === STAKING_TAB_ID ? 'selected' : ''}>
+              </CustomLink>
+              <CustomLink
+                to={`/`}
+                queryParams={{ tab: STAKING_TAB_ID }}
+                styling={{
+                  navigationLink: activeTab !== STAKING_TAB_ID,
+                  navigationActiveLink: activeTab === STAKING_TAB_ID,
+                }}
+              >
                 Staking
-              </Link>
-              <Link to={`/?tab=${SATELLITES_TAB_ID}`} className={activeTab === SATELLITES_TAB_ID ? 'selected' : ''}>
+              </CustomLink>
+              <CustomLink
+                to={`/`}
+                queryParams={{ tab: SATELLITES_TAB_ID }}
+                styling={{
+                  navigationLink: activeTab !== SATELLITES_TAB_ID,
+                  navigationActiveLink: activeTab === SATELLITES_TAB_ID,
+                }}
+              >
                 Satellites
-              </Link>
-              <Link to={`/?tab=${TREASURY_TAB_ID}`} className={activeTab === TREASURY_TAB_ID ? 'selected' : ''}>
+              </CustomLink>
+              <CustomLink
+                to={`/`}
+                queryParams={{ tab: TREASURY_TAB_ID }}
+                styling={{
+                  navigationLink: activeTab !== TREASURY_TAB_ID,
+                  navigationActiveLink: activeTab === TREASURY_TAB_ID,
+                }}
+              >
                 Treasury
-              </Link>
-              <Link to={`/?tab=${FARMS_TAB_ID}`} className={activeTab === FARMS_TAB_ID ? 'selected' : ''}>
+              </CustomLink>
+              <CustomLink
+                to={`/`}
+                queryParams={{ tab: FARMS_TAB_ID }}
+                styling={{
+                  navigationLink: activeTab !== FARMS_TAB_ID,
+                  navigationActiveLink: activeTab === FARMS_TAB_ID,
+                }}
+              >
                 Farms
-              </Link>
-              <Link to={`/?tab=${ORACLES_TAB_ID}`} className={activeTab === ORACLES_TAB_ID ? 'selected' : ''}>
+              </CustomLink>
+              <CustomLink
+                to={`/`}
+                queryParams={{ tab: ORACLES_TAB_ID }}
+                styling={{
+                  navigationLink: activeTab !== ORACLES_TAB_ID,
+                  navigationActiveLink: activeTab === ORACLES_TAB_ID,
+                }}
+              >
                 Oracles
-              </Link>
+              </CustomLink>
             </div>
 
             <TabById activeTab={activeTab} />

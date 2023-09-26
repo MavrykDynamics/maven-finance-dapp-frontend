@@ -9,10 +9,11 @@ import { WalletErrorPayload } from 'errors/error.type'
 import { ThemeType } from 'consts/theme.const'
 import { LoansActionsType } from 'providers/LoansProvider/loans.provider.types'
 import { VaultsActionsType } from 'providers/VaultsProvider/vaults.provider.types'
-import { FinancialRequestsActionsTypes } from 'providers/FinancialRequestsProvider/financialRequests.types'
+import { FinancialRequestsActionsTypes } from 'providers/FinancialRequestsProvider/financialRequests.provider.types'
 import { WalletOperationError } from 'errors/error'
 import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { SatellitesGovType } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.types'
+import { EGovProposalActionsType } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider.types'
 
 export type ActionTypes =
   | StakeActionType
@@ -23,6 +24,7 @@ export type ActionTypes =
   | ProposalActionsTypes
   | FinancialRequestsActionsTypes
   | SatellitesGovType
+  | EGovProposalActionsType
 
 export type DappConfigContext = {
   // data

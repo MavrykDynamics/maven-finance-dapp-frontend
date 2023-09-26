@@ -23,12 +23,14 @@ import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider
 import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
+import ProposalsProvider from 'providers/ProposalsProvider/proposals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import VestingProvider from 'providers/VestingProvider/vesting.provider'
 import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
 import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
+import EGovProvider from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -37,6 +39,7 @@ import { FullScreenLoadingApp } from 'app/App.style'
 import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
+// styles
 import { GlobalStyle } from './styles'
 import themeColors from 'styles/colors'
 import './styles/fonts.css'
@@ -84,7 +87,8 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   // use user loading status only on dapp init loading
   const isInitialUserLoading = !isUserRestored ? isUserLoading : false
 
-  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
+  // TODO: reset to comment when api will be ok
+  const isInitialLoading = false //isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 
   return (
     <>
@@ -94,21 +98,25 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
         <FullScreenLoadingApp />
       ) : (
         <ContractStatusesProvider>
-          <SatelliteGovernanceProvider>
+          <ProposalsProvider>
             <DoormanProvider>
               <SatellitesProvider>
                 <LoansProvider>
-                  <VaultsProvider>
-                    <FinancialRequestsProvider>
-                      <TreasuryProvider>
-                        <VestingProvider>{children}</VestingProvider>
-                      </TreasuryProvider>
-                    </FinancialRequestsProvider>
-                  </VaultsProvider>
+                  <EGovProvider>
+                    <SatelliteGovernanceProvider>
+                      <VaultsProvider>
+                        <FinancialRequestsProvider>
+                          <TreasuryProvider>
+                            <VestingProvider>{children}</VestingProvider>
+                          </TreasuryProvider>
+                        </FinancialRequestsProvider>
+                      </VaultsProvider>
+                    </SatelliteGovernanceProvider>
+                  </EGovProvider>
                 </LoansProvider>
               </SatellitesProvider>
             </DoormanProvider>
-          </SatelliteGovernanceProvider>
+          </ProposalsProvider>
         </ContractStatusesProvider>
       )}
     </>

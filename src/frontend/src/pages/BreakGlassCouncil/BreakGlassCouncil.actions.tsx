@@ -204,65 +204,6 @@ export const setAllContractsAdmin = (newAdminAddress: string) => async (dispatch
   }
 }
 
-// Set Single Contract Admin
-export const setSingleContractAdmin =
-  (newAdminAddress: string, targetContract: string) => async (dispatch: AppDispatch, getState: GetState) => {
-    const state: State = getState()
-
-    // check whether we can send transaction
-    if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-
-    try {
-      // prepare and send transaction
-      const tezos = await DAPP_INSTANCE.tezos()
-      const contract = await tezos.wallet.at(state.contractAddresses.breakGlassAddress.address)
-      const transaction = await contract?.methods.setSingleContractAdmin(newAdminAddress, targetContract).send()
-
-      dispatch(toggleActionFullScreenLoader(true))
-      dispatch(toggleActionCompletion(true))
-      dispatch(showToaster(TOASTER_INFO, 'Set Single Contract Admin...', ACTION_START_MESSAGE_TEXT))
-
-      // turn off fs actions loader and start data updating after 5s after operation started
-      setTimeout(async () => {
-        await dispatch(toggleActionFullScreenLoader(false))
-        await dispatch(
-          showToaster(
-            TOASTER_LOADING,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.title,
-            TOASTER_UPDATE_DATA_AFTER_ACTION_DATA.message,
-          ),
-        )
-
-        // @ts-ignore don't have proper type to acees data, type has only methods
-        const currentOperationLevel = transaction?.lastHead?.header?.level
-
-        // refetch data we need
-        await checkIndexerLevelAndRunDataUpdateCallback({
-          callback: async () => {
-            await dispatch(getBreakGlassCouncilPendingActions())
-
-            await dispatch(hideToaster())
-            await dispatch(
-              showToaster(TOASTER_SUCCESS, 'Set Single Contract Admin is done.', ACTION_COMPLETION_MESSAGE_TEXT),
-            )
-            await dispatch(toggleActionCompletion(false))
-          },
-          currentOperationLevel,
-        })
-      }, 5000)
-    } catch (error) {
-      console.error('Set Single Contract Admin error:', error)
-      if (error instanceof Error) {
-        dispatch(showToaster(TOASTER_ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-      dispatch(toggleActionCompletion(false))
-    }
-  }
-
 // Sign Action
 export const signAction = (breakGlassActionID: number) => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()
@@ -574,6 +515,7 @@ export const removeCouncilMember = (memberAddress: string) => async (dispatch: A
   }
 }
 
+// TODO: update to use contracts
 // Propagate Break Glass
 export const propagateBreakGlass = () => async (dispatch: AppDispatch, getState: GetState) => {
   const state: State = getState()

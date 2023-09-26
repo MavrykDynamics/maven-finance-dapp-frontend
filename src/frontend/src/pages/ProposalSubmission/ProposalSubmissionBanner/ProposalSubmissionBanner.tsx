@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 
 // view
@@ -9,7 +8,7 @@ import { Info } from 'app/App.components/Info/Info.view'
 // consts
 import { NEWLY_REGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { MOVE_CYCLE_BANNER_TEXT } from 'texts/banners/proposals.text'
-import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 
 // utils
@@ -23,18 +22,15 @@ import {
 
 // hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-
-// types
-import { State } from 'reducers'
 
 export const ProposalSubmissionBanner = () => {
   const { isNewlyRegisteredSatellite } = useUserContext()
-  const { bug } = useToasterContext()
-
   const {
     config: { currentRoundEndLevel, governancePhase },
-  } = useSelector((state: State) => state.governance)
+  } = useProposalsContext()
+  const { bug } = useToasterContext()
 
   const [needRefreshCycle, setNeedRefreshCycle] = useState(false)
 
@@ -55,8 +51,8 @@ export const ProposalSubmissionBanner = () => {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
           console.error('getting timestamp by lvl error: ', e)
+          bug('Unexpected error happened occured, please reload the page')
         }
-        bug('Unexpected error happened occured, please reload the page')
       }
     })()
 

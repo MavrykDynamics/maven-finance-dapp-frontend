@@ -12,7 +12,6 @@ import {
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { AdminView } from './Admin.view'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import {
   DEFAULT_LOANS_ACTIVE_SUBS,
@@ -44,10 +43,6 @@ export const Admin = () => {
       changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
     }
   }, [])
-
-  useEffect(() => {
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
 
   const handleChangeGovernancePeriod = (chosenPeriod: string) => {
     dispatch(adminChangeGovernancePeriod(chosenPeriod))

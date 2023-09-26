@@ -1,8 +1,10 @@
 import Icon from 'app/App.components/Icon/Icon.view'
-import { GovernancePhaseType, GovPhases } from 'utils/TypesAndInterfaces/Governance'
-
 import TimeRemaining from '../TimeRemaining/TimeRemaining.controller'
 import { GovernanceTopBarStyled, GovTopBarPhaseText } from './GovernanceTopBar.style'
+
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
+
+import { GovernancePhaseType } from 'providers/ProposalsProvider/helpers/proposals.types'
 
 export type GovernanceTopBarProps = {
   governancePhase: GovernancePhaseType
@@ -11,9 +13,8 @@ export type GovernanceTopBarProps = {
 export const GovernanceTopBar = ({ governancePhase, isWaitingToExecute }: GovernanceTopBarProps) => {
   return (
     <GovernanceTopBarStyled>
-      <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL && !isWaitingToExecute}>
-        Proposal
-      </GovTopBarPhaseText>
+      {/* <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL && !isWaitingToExecute}> */}
+      <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL}>Proposal</GovTopBarPhaseText>
 
       <Icon id="greater-than" />
       <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.VOTING}>Voting</GovTopBarPhaseText>
@@ -21,10 +22,10 @@ export const GovernanceTopBar = ({ governancePhase, isWaitingToExecute }: Govern
       <Icon id="greater-than" />
       <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.TIMELOCK}>Time Lock</GovTopBarPhaseText>
 
-      <Icon id="greater-than" />
+      {/* <Icon id="greater-than" />
       <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL && isWaitingToExecute}>
         Execution
-      </GovTopBarPhaseText>
+      </GovTopBarPhaseText> */}
 
       <div className="action">
         <TimeRemaining />

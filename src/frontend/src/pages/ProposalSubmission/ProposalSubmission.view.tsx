@@ -1,7 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
+import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
+
+// context
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // view
 import { PropSubmissionTopBar } from './PropSubmissionTopBar/PropSubmissionTopBar.controller'
@@ -21,19 +30,10 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
-import { State } from 'reducers'
-import { MultyProposalItem, ProposalValidityObj, SubmittedProposalsMapper } from './ProposalSubmission.types'
-import { GovPhases, ProposalRecordType } from 'utils/TypesAndInterfaces/Governance'
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
+import { MultyProposalItem, ProposalValidityObj } from './ProposalSubmission.types'
 
 // consts
-import {
-  DEFAULT_PROPOSAL,
-  DEFAULT_PROPOSAL_VALIDATION,
-  checkStage1Validation,
-  checkStage2Validation,
-  checkStage3Validation,
-  isProposalHasChange,
-} from './ProposalSubmission.helpers'
 import {
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
@@ -42,11 +42,13 @@ import {
 } from 'app/App.components/Button/Button.constants'
 import {
   DROP_PROPOSAL_ACTION,
+  GovPhases,
   LOCK_PROPOSAL_ACTION,
   SUBMIT_PROPOSAL_ACTION,
   UPDATE_PROPOSAL_DATA_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
-
+import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'providers/ProposalsProvider/queries/getLatestUserProposal.query'
+import { DEFAULT_PROPOSAL_VALIDATION, DEFAULT_PROPOSAL } from './helpers/proposalSubmission.const'
 import colors from 'styles/colors'
 import {
   DROP_PROPOSAL_BUTTON_TOOLTIP,
@@ -56,14 +58,13 @@ import {
 } from 'texts/tooltips/governance'
 
 // helpers & actions
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
 import {
   submitProposal,
   updateProposalData,
   lockProposal,
   dropProposal,
 } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
-import { getBytesDiff, getPaymentsDiff } from './ProposalSubmission.helpers'
+import { getBytesDiff, getPaymentsDiff } from './helpers/ProposalSubmissionDiff.utils'
 import { unknownToError } from 'errors/error'
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
@@ -72,41 +73,35 @@ import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import dayjs from 'dayjs'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-
-// providers
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'gql/queries'
+import {
+  isProposalHasChange,
+  checkStage2Validation,
+  checkStage3Validation,
+  checkStage1Validation,
+} from './helpers/proposalSubmissionValidation.utils'
+import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
 
 export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
-  const dispatch = useDispatch()
   const history = useHistory()
+
   const { bug } = useToasterContext()
   const { apolloClient } = useApolloContext()
-
   const { tokensMetadata } = useTokensContext()
   const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
-
-  const {
-    currentRoundProposalsIds,
-    proposalsMapper,
-    config: { fee, governancePhase, currentRoundEndLevel },
-  } = useSelector((state: State) => state.governance)
   const {
     preferences: { themeSelected },
     contractAddresses: { governanceAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
+  const {
+    config: { fee, governancePhase, currentRoundEndLevel },
+    proposalsMapper,
+    submissionProposalsIds,
+  } = useProposalsContext()
 
   const [activeTab, setActiveTab] = useState(1)
   const [isFormDisabled, setIsFormDisabled] = useState(true)
+  const [lastProposalIdFromOperation, setLastProposalIdFromOperation] = useState<null | number>(null)
 
   useEffect(() => {
     if (governancePhase !== GovPhases.PROPOSAL) return
@@ -120,13 +115,20 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
           getTimestampByLevelSchema,
         )
 
-        setIsFormDisabled(dayjs(votingEndTimestamp).diff() <= 0)
+        // TODO: mb show bug in a future
+        if (dayjs(votingEndTimestamp).diff() <= 0) {
+          setIsFormDisabled(true)
+          console.error('current round is over, move to next round, please')
+          return
+        }
+
+        setIsFormDisabled(false)
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
           console.error('getting timestamp by lvl error: ', e)
+          bug('Unexpected error happened occured, please reload the page')
         }
-        bug('Unexpected error happened occured, please reload the page')
       }
     })()
 
@@ -135,53 +137,9 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   // proposals that user has submitted, reduced to object mapper and arr of keys for this object
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
-  const [proposalKeys, mappedProposals, mappedValidation] = useMemo(() => {
-    const { keys, mapper, validityObj } = currentRoundProposalsIds
-      .filter((proposalId) => proposalsMapper[proposalId].proposerId === userAddress)
-      .reduce<SubmittedProposalsMapper>(
-        (acc, proposalId) => {
-          const proposal = proposalsMapper[proposalId]
-          acc.mapper[proposalId] = proposal
-          acc.validityObj[proposalId] = {
-            ...DEFAULT_PROPOSAL_VALIDATION,
-            bytesValidation: proposal.proposalData.map((bytesPair) => ({
-              validBytes: '',
-              validTitle: '',
-              validDescr: '',
-              byteId: bytesPair.id,
-            })),
-            paymentsValidation: proposal.proposalPayments.map((payment) => ({
-              token_amount: '',
-              title: '',
-              to__id: '',
-              paymentId: payment.id,
-            })),
-          }
-          acc.keys.push(proposal.id)
-          return acc
-        },
-        { keys: [], mapper: {}, validityObj: {} },
-      )
-
-    if (keys.length < 2) {
-      return [
-        keys.concat(DEFAULT_PROPOSAL.id),
-        { ...mapper, [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL },
-        { ...validityObj, [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL_VALIDATION },
-      ]
-    }
-    return [keys, mapper, validityObj]
-  }, [userAddress, currentRoundProposalsIds, proposalsMapper])
-
-  // mapping user created proposals to tabs buttons data
-  const usersProposalsToSwitch = useMemo(
-    () =>
-      proposalKeys.map<MultyProposalItem>((id) => ({
-        text: id === DEFAULT_PROPOSAL.id ? 'Create new Proposal' : mappedProposals[id].title,
-        active: id === selectedUserProposalId,
-        value: id,
-      })),
-    [proposalKeys, selectedUserProposalId, mappedProposals],
+  const [proposalKeys, mappedProposals, mappedValidation] = useMemo(
+    () => normalizeProposalsForSubmitProposal({ submissionProposalsIds, proposalsMapper }),
+    [submissionProposalsIds, proposalsMapper],
   )
 
   // Proposals user can swith between and modify, and validation to it
@@ -189,23 +147,44 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const [proposalsValidation, setProposalsValidation] = useState<Record<number, ProposalValidityObj>>(mappedValidation)
 
   // Track proposals update on remote
-  useEffect(() => {
-    // if we have user's proposals on remote set them to view/update, else set default proposal
-    setProposalsState(mappedProposals)
-    // set validation for proposals above
-    setProposalsValidation(mappedValidation)
+  useLayoutEffect(() => {
+    const { proposals, validation } = mergeRemoteProposalsWithClient({
+      mappedProposals,
+      mappedValidation,
+      proposalKeys,
+      proposalState,
+      proposalsValidation,
+      lastProposalIdFromOperation,
+    })
+
+    setProposalsState(proposals)
+    setProposalsValidation(validation)
+    setLastProposalIdFromOperation(null)
   }, [mappedProposals, mappedValidation, proposalKeys])
 
+  // mapping user created proposals to tabs buttons data
+  const usersProposalsToSwitch = useMemo(
+    () =>
+      proposalKeys.concat(proposalKeys.length < 2 ? [DEFAULT_PROPOSAL.id] : []).map<MultyProposalItem>((id) => ({
+        text: id === DEFAULT_PROPOSAL.id ? 'Create new Proposal' : mappedProposals[id].title,
+        active: id === selectedUserProposalId,
+        value: id,
+      })),
+    [proposalKeys, selectedUserProposalId, mappedProposals],
+  )
+
   // Current proposal on client validation to it and current proposal on remote (might not exists if it's create new proposal with id -1)
-  const currentProposal: ProposalRecordType | null = proposalState[selectedUserProposalId] ?? null
-  const currentProposalValidation: ProposalValidityObj | null = proposalsValidation[selectedUserProposalId] ?? null
+  const currentProposal: ProposalRecordType = proposalState[selectedUserProposalId] ?? DEFAULT_PROPOSAL
+  const currentProposalValidation: ProposalValidityObj =
+    proposalsValidation[selectedUserProposalId] ?? DEFAULT_PROPOSAL_VALIDATION
   const currentProposalOnRemote: ProposalRecordType | null = proposalsMapper[selectedUserProposalId] ?? null
 
   // ------ ACTIONS HANDLERDS START ------
   // Change user's vieving proposal
   const changeActiveProposal = useCallback(
     (proposalId: number) => {
-      if (proposalId !== selectedUserProposalId)
+      // redirect if id is different from current and user is on the submit proposal page, cuz redirect occurs after an operation, so user can change the page
+      if (proposalId !== selectedUserProposalId && window.location.pathname.includes('submit-proposal'))
         history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
     },
     [history, selectedUserProposalId],
@@ -234,10 +213,6 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const handleNextStep = (tabId: number) => setActiveTab(tabId)
 
   // actions helper for dapp data update callback read {README} in useContractHook folder --------------------------------
-  const dappCallback = useCallback(() => {
-    // TODO remove when proposal context will be done
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
 
   // drop proposal action --------------------------------------------------------
   const dropActionFn = useCallback(async () => {
@@ -260,9 +235,10 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: DROP_PROPOSAL_ACTION,
       actionFn: dropActionFn,
-      dappCallback,
+      dappActionCallback: () =>
+        changeActiveProposal(submissionProposalsIds.find((id) => id !== selectedUserProposalId) ?? DEFAULT_PROPOSAL.id),
     }),
-    [dappCallback, dropActionFn],
+    [changeActiveProposal, dropActionFn, selectedUserProposalId, submissionProposalsIds],
   )
 
   const { action: handleDropProposal } = useContractAction(dropContractProps)
@@ -285,16 +261,14 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: LOCK_PROPOSAL_ACTION,
       actionFn: lockActionFn,
-      dappCallback,
     }),
-    [dappCallback, lockActionFn],
+    [lockActionFn],
   )
 
   const { action: handleLockProposal } = useContractAction(lockContractProps)
 
   // submit proposal action handler ----------------------------------------------
   // submission callback to update data
-
   const getNewProposalId = useCallback(async () => {
     try {
       const newProposalData = await apolloClient.query({
@@ -304,21 +278,27 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         },
       })
 
-      if (newProposalData.error) {
+      if (newProposalData.error && !isAbortError(newProposalData.error)) {
         console.error('loading new proposal error', newProposalData.error)
         throw new Error(newProposalData.error.message)
       }
 
+      // changeActiveProposal
       if (newProposalData.data.governance_proposal.length) {
         const { id } = newProposalData.data.governance_proposal[0]
         changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
-      }
 
-      // changeActiveProposal
+        if (proposalState[DEFAULT_PROPOSAL.id]) {
+          setProposalsState((prev) => ({
+            ...prev,
+            [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL,
+          }))
+        }
+      }
     } catch (e) {
       bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
     }
-  }, [apolloClient, bug, changeActiveProposal, userAddress])
+  }, [apolloClient, changeActiveProposal, proposalState, userAddress])
 
   const submitActionFn = useCallback(async () => {
     if (!userAddress) {
@@ -359,18 +339,13 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     )
   }, [bug, currentProposal, fee, governanceAddress, tokensMetadata, userAddress])
 
-  const submissionDappCallback = useCallback(async () => {
-    dappCallback() // default cb for dapp actions when redux is still here
-    await getNewProposalId() // update proposal id after successful action
-  }, [dappCallback, getNewProposalId])
-
   const submitContractProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: SUBMIT_PROPOSAL_ACTION,
       actionFn: submitActionFn,
-      dappCallback: submissionDappCallback,
+      dappActionCallback: getNewProposalId,
     }),
-    [submissionDappCallback, submitActionFn],
+    [getNewProposalId, submitActionFn],
   )
 
   const { action: handleProposalSubmit } = useContractAction(submitContractProps)
@@ -398,6 +373,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       tokensMetadata,
     )
 
+    setLastProposalIdFromOperation(selectedUserProposalId)
     return await updateProposalData(governanceAddress, selectedUserProposalId, bytesDiff, paymentsDiff)
   }, [
     bug,
@@ -413,9 +389,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     () => ({
       actionType: UPDATE_PROPOSAL_DATA_ACTION,
       actionFn: updateActionFn,
-      dappCallback,
     }),
-    [dappCallback, updateActionFn],
+    [updateActionFn],
   )
 
   const { action: handleProposalUpdate } = useContractAction(updateContractProps)

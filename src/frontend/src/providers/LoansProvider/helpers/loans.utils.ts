@@ -1,8 +1,8 @@
-import { GetLoansMarketsQueryQuery } from 'utils/__generated__/graphql'
 import {
   LoansContext,
   LoansContextState,
   LoansSubsRecordType,
+  MarketsIndexerDataType,
   NullableLoansContextState,
 } from '../loans.provider.types'
 
@@ -73,7 +73,7 @@ export const calcMarketAvaliableLiquidity = ({
   token_pool_total,
   reserve_ratio,
 }: Pick<
-  GetLoansMarketsQueryQuery['lending_controller'][number]['loan_tokens'][number],
+  MarketsIndexerDataType['lending_controller'][number]['loan_tokens'][number],
   'total_remaining' | 'token_pool_total' | 'reserve_ratio'
 >) => {
   const reserveAmount = token_pool_total * (reserve_ratio / 10000)

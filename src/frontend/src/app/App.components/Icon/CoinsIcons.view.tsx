@@ -53,14 +53,18 @@ export default function CoinsIcons({
   return (
     <FarmCardTokenLogoContainer className={className}>
       <ImageWithPlug
-        imageLink={firstAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${firstAssetLogoSrc}` : null}
+        imageLink={
+          firstAssetLogoSrc ? `${process.env.REACT_APP_TZKT_SERVICE_API}/v1/avatars/${firstAssetLogoSrc}` : null
+        }
         plugSrc={'/images/coin-gold.svg'}
         alt={`${firstAssetLogoSrc ?? 'gold'} - logo`}
         className={'left-top-icon'}
       />
 
       <ImageWithPlug
-        imageLink={secondAssetLogoSrc ? `https://services.tzkt.io/v1/avatars/${secondAssetLogoSrc}` : null}
+        imageLink={
+          secondAssetLogoSrc ? `${process.env.REACT_APP_TZKT_SERVICE_API}/v1/avatars/${secondAssetLogoSrc}` : null
+        }
         plugSrc={'/images/coin-silver.svg'}
         alt={`${secondAssetLogoSrc ?? 'silver'} - logo`}
         className={'right-bottom-icon'}

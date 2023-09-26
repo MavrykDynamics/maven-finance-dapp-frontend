@@ -5,79 +5,79 @@ import type { AppDispatch, GetState } from '../../app/App.controller'
 
 import { OpKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { GET_GOVERNANCE_CONFIG } from 'pages/Governance/actions/GovernanseData.actions'
 import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { VaultsContext } from 'providers/VaultsProvider/vaults.provider.types'
 
 export const adminChangeGovernancePeriod =
   (chosenPeriod: string, accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {
-    const state: State = getState()
+    console.log('implement due to new logic')
+    // const state: State = getState()
 
-    const {
-      governance: { config },
-    } = state
+    // const {
+    //   governance: { config },
+    // } = state
 
-    if (!state.wallet.accountPkh) {
-      dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
-      return
-    }
-    try {
-      // const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
-      // console.log('contract', contract)
-      //startProposalRound
-      // let transaction
-      switch (chosenPeriod) {
-        case 'PROPOSAL':
-          //transaction = await contract?.methods.startProposalRound().send()
-          dispatch({
-            type: GET_GOVERNANCE_CONFIG,
-            config: {
-              ...config,
-              timelockProposalId: 0,
-              governancePhase: 'PROPOSAL',
-            },
-          })
-          break
-        case 'VOTING':
-          // transaction = await contract?.methods.startVotingRound().send()
-          dispatch({
-            type: GET_GOVERNANCE_CONFIG,
-            config: {
-              ...config,
-              governancePhase: 'VOTING',
-            },
-          })
-          break
-        case 'TIME_LOCK':
-        default:
-          //transaction = await contract?.methods.StartTimelockRound().send()
-          dispatch({
-            type: GET_GOVERNANCE_CONFIG,
-            config: {
-              ...config,
-              governancePhase: 'TIME_LOCK',
-            },
-          })
-          break
-      }
+    // if (!state.wallet.accountPkh) {
+    //   dispatch(showToaster(ERROR, 'Please connect your wallet', 'Click Connect in the left menu'))
+    //   return
+    // }
+    // try {
+    //   // const contract = await state.wallet.tezos?.wallet.at(state.contractAddresses.governanceAddress.address)
+    //   // console.log('contract', contract)
+    //   //startProposalRound
+    //   // let transaction
+    //   switch (chosenPeriod) {
+    //     case 'PROPOSAL':
+    //       //transaction = await contract?.methods.startProposalRound().send()
+    //       dispatch({
+    //         type: GET_GOVERNANCE_CONFIG,
+    //         config: {
+    //           ...config,
+    //           timelockProposalId: 0,
+    //           governancePhase: 'PROPOSAL',
+    //         },
+    //       })
+    //       break
+    //     case 'VOTING':
+    //       // transaction = await contract?.methods.startVotingRound().send()
+    //       dispatch({
+    //         type: GET_GOVERNANCE_CONFIG,
+    //         config: {
+    //           ...config,
+    //           governancePhase: 'VOTING',
+    //         },
+    //       })
+    //       break
+    //     case 'TIME_LOCK':
+    //     default:
+    //       //transaction = await contract?.methods.StartTimelockRound().send()
+    //       dispatch({
+    //         type: GET_GOVERNANCE_CONFIG,
+    //         config: {
+    //           ...config,
+    //           governancePhase: 'TIME_LOCK',
+    //         },
+    //       })
+    //       break
+    //   }
 
-      dispatch(toggleActionFullScreenLoader(true))
+    //   dispatch(toggleActionFullScreenLoader(true))
 
-      // dispatch(showToaster(INFO, 'Changing Period...', 'Please wait 30s'))
+    //   // dispatch(showToaster(INFO, 'Changing Period...', 'Please wait 30s'))
 
-      // const done = await transaction?.confirmation()
-      // console.log('done', done)
-      dispatch(showToaster(SUCCESS, 'Changing Governance Period done...', 'All good :)'))
+    //   // const done = await transaction?.confirmation()
+    //   // console.log('done', done)
+    //   dispatch(showToaster(SUCCESS, 'Changing Governance Period done...', 'All good :)'))
 
-      dispatch(toggleActionFullScreenLoader(false))
-      // dispatch(getGovernanceStorage())
-    } catch (error) {
-      if (error instanceof Error) {
-        dispatch(showToaster(ERROR, 'Error', error.message))
-      }
-      dispatch(toggleActionFullScreenLoader(false))
-    }
+    //   dispatch(toggleActionFullScreenLoader(false))
+    //   // dispatch(getGovernanceStorage())
+    // } catch (error) {
+    //   if (error instanceof Error) {
+    //     dispatch(showToaster(ERROR, 'Error', error.message))
+    //   }
+    //   dispatch(toggleActionFullScreenLoader(false))
+    // }
   }
 
 export const createFarm = (accountPkh?: string) => async (dispatch: AppDispatch, getState: GetState) => {

@@ -1,5 +1,5 @@
 import { usePrevious } from 'react-use'
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -12,7 +12,6 @@ import {
   NullableVaultsCtxState,
   VaultsSubsRecordType,
   VaultsDashboardDataType,
-  VaultsIndexerDataType,
 } from './vaults.provider.types'
 
 // consts
@@ -50,6 +49,7 @@ export const VaultsProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
   const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
+  // reset user specific fields on user change
   useEffect(() => {
     if (prevUserAddress !== userAddress) {
       setVaultsCtxState((prev) => ({
@@ -60,12 +60,29 @@ export const VaultsProvider = ({ children }: Props) => {
     }
   }, [userAddress])
 
+  /**
+   * GET_USER_DEPOSITOR_ALL_VAULTS_QUERY -> get vaults where user allowed to deposit
+   * GET_USER_ALL_VAULTS_QUERY -> get vaults created by user
+   * GET_ALL_VAULTS_QUERY -> get all vaults
+   */
   useQueryWithRefetch(GET_USER_DEPOSITOR_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     variables: {
       userAddress: userAddress ?? '',
     },
-    onCompleted: (data) => updateVaultsData(data, VAULTS_USER_DEPOSITOR),
+    onCompleted: (data) => {
+      const { vaultsMapper, allVaultsIds, permissionedVaultsIds } = normalizeVaults({
+        indexerData: data,
+        userAddress,
+      })
+
+      setVaultsCtxState((prev) => ({
+        ...prev,
+        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
+        permissionedVaultsIds,
+      }))
+    },
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
 
@@ -74,35 +91,40 @@ export const VaultsProvider = ({ children }: Props) => {
     variables: {
       userAddress: userAddress ?? '',
     },
-    onCompleted: (data) => updateVaultsData(data, VAULTS_USER_ALL),
+    onCompleted: (data) => {
+      const { vaultsMapper, allVaultsIds, myVaultsIds } = normalizeVaults({
+        indexerData: data,
+        userAddress,
+      })
+
+      setVaultsCtxState((prev) => ({
+        ...prev,
+        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
+        myVaultsIds,
+      }))
+    },
     onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
-    onCompleted: (data) => updateVaultsData(data, VAULTS_ALL),
+    onCompleted: (data) => {
+      const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
+        indexerData: data,
+        userAddress,
+      })
+
+      setVaultsCtxState((prev) => ({
+        ...prev,
+        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+        allVaultsIds,
+        permissionedVaultsIds,
+        myVaultsIds,
+      }))
+    },
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
-
-  const updateVaultsData = (indexerData: VaultsIndexerDataType, subType: VaultsSubsRecordType['vaultsData']) => {
-    const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
-      indexerData,
-      userAddress,
-    })
-
-    const isAllVaultsQuery = subType === VAULTS_ALL
-    const isPermissionedVaultsQuery = subType === VAULTS_USER_DEPOSITOR
-    const isMyVaultsQuery = subType === VAULTS_USER_ALL
-
-    setVaultsCtxState((prev) => ({
-      ...prev,
-      vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
-      allVaultsIds: isAllVaultsQuery ? allVaultsIds : prev.allVaultsIds,
-      permissionedVaultsIds:
-        isAllVaultsQuery || isPermissionedVaultsQuery ? permissionedVaultsIds : prev.permissionedVaultsIds,
-      myVaultsIds: isAllVaultsQuery || isMyVaultsQuery ? myVaultsIds : prev.myVaultsIds,
-    }))
-  }
 
   const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
     setVaultsCtxState((prev) => ({

@@ -66,9 +66,7 @@ export const CouncilMemberView = (props: Props) => {
       <a
         className="icon-send"
         target="_blank"
-        href={`https://${
-          process.env.NODE_ENV === 'development' ? process.env.REACT_APP_NETWORK + '.' : ''
-        }tzkt.io/${userId}/operations/`}
+        href={`${process.env.REACT_APP_TZKT_LINK}/${userId}/operations/`}
         rel="noreferrer"
       >
         {content}

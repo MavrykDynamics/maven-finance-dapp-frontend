@@ -111,7 +111,7 @@ const LinksBlock = ({
     <a target="_blank" rel="noreferrer" href="https://mavryk.finance/">
       Get {`${token1Symbol} - ${token2Symbol}`} <Icon id="send" />
     </a>
-    <a target="_blank" rel="noreferrer" href={`https://tzkt.io/${farmAddress}`}>
+    <a target="_blank" rel="noreferrer" href={`${process.env.REACT_APP_TZKT_LINK}/${farmAddress}`}>
       View Contract <Icon id="send" />
     </a>
   </div>

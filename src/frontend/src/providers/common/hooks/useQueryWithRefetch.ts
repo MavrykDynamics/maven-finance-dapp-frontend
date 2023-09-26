@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePrevious } from 'react-use'
 import { DocumentNode, OperationVariables, QueryHookOptions, TypedDocumentNode, useQuery } from '@apollo/client'
 
-import { isAbortError } from '../../../errors/error'
 import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
+import { isAbortError } from 'errors/error'
 
 /**
  *
@@ -20,6 +20,7 @@ import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
  *    --- variables should consist of primitive values
  *    --- if variable change it will provoke useQuery to work, so we don't need to pass new variables to refetch function, cuz refetch won't work
  *    --- @refetchQueryVariables should be in UseCallback if it depends on data from cmp/hook, or be outside cmp/hook to not provoke useCallback to recreate refetch fn on parent's rerender
+ *    --- on vars change should i forbid refetch call?
  */
 export const useQueryWithRefetch = <TData = unknown, TVariables extends OperationVariables = OperationVariables>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
@@ -108,7 +109,8 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
           if (newIndexerLevel - lastUpdatedBlock.current >= blocksDiff) {
             const refetchData = await queryResult.refetch(newRefetchVariables)
 
-            console.log('%crefetch ', 'color: red', { refetchData, queryName })
+            if (process.env.REACT_APP_ENV === 'dev')
+              console.log('%crefetch result', 'color: green', { refetchData, queryName })
 
             // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
             if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -122,7 +124,8 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
         const refetchData = await queryResult.refetch(newRefetchVariables)
 
-        console.log('%crefetch ', 'color: red', { refetchData, queryName })
+        if (process.env.REACT_APP_ENV === 'dev')
+          console.log('%crefetch result ', 'color: green', { refetchData, queryName })
 
         // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
         if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -139,11 +142,13 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   useEffect(() => {
     // if query is active subscibe to indexer lvl change, and save id of subscription
     if (!currentUserSkipValue && !refetchId.current) {
+      if (process.env.REACT_APP_ENV === 'dev') console.log(`%cregister ${queryName}`, 'color: lime')
       refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
     }
 
     // if query is not active and we have id, then unsubscibe from indexer lvl change
     if (currentUserSkipValue && refetchId.current) {
+      if (process.env.REACT_APP_ENV === 'dev') console.log(`%cunregister in callback ${queryName}`, 'color: orange')
       currentIndexerLevelProxy.removeListener(refetchId.current)
       refetchId.current = null
     }
@@ -151,6 +156,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     return () => {
       // if we have id and hook unmounts, then unsubscibe from indexer lvl change
       if (refetchId.current) {
+        if (process.env.REACT_APP_ENV === 'dev') console.log(`%cunregister in cleanup ${queryName}`, 'color: orange')
         currentIndexerLevelProxy.removeListener(refetchId.current)
         refetchId.current = null
       }

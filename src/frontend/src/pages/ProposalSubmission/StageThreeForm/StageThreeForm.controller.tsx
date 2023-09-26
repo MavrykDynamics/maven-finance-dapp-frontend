@@ -1,15 +1,19 @@
 import React, { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+
+// context
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // types
 import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '../ProposalSubmission.types'
 
 // helpers
-import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
-import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getValidityStageThreeTable } from '../helpers/proposalSubmissionValidation.utils'
+import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -18,6 +22,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 import Button from 'app/App.components/Button/NewButton'
 
 // const
@@ -40,12 +45,6 @@ import {
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 
-// providers
-import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
-
 // NOTE: isLoading is handled in <ProposalSubmission.controller>
 export const StageThreeForm = ({
   proposalId,
@@ -63,9 +62,11 @@ export const StageThreeForm = ({
       governance: { proposalMetadataTitleMaxLength },
     },
   } = useDappConfigContext()
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
-
+  const {
+    config: { governancePhase, fee, successReward },
+  } = useProposalsContext()
   const { treasuryAddresses, treasuryMapper } = useTreasuryContext()
+
   const treasuryTokens = useMemo(
     () => reduceTreasuryAssets(treasuryAddresses, treasuryMapper),
     [treasuryAddresses, treasuryMapper],
@@ -190,7 +191,10 @@ export const StageThreeForm = ({
     )
   }
 
-  const isTableDisabled = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
+  const isTableDisabled = useMemo(
+    () => !isProposalRound || locked || !Object.keys(treasuryTokens)?.[0],
+    [isProposalRound, locked, treasuryTokens],
+  )
 
   return (
     <>

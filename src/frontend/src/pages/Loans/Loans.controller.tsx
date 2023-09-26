@@ -10,16 +10,6 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
-import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
-import colors from 'styles/colors'
-import { Page } from 'styles'
-import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
-import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
-
 import {
   LoansStyled,
   MarketChartsContainer,
@@ -28,20 +18,31 @@ import {
   ThreeLevelListItem,
 } from './Loans.style'
 import { EmptyContainer } from 'app/App.style'
+import { Page } from 'styles'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import Icon from 'app/App.components/Icon/Icon.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
+
+// consts
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
+import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
+import colors from 'styles/colors'
+import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
+import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
+import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
+
+// utils
+import { getChartDataBasedOnLength, getChartSettingsBasedOnChartLength } from './Loans.helpers'
 import { checkWhetherTokenIsM_Token, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
-// providers
+// hooks
+import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import Icon from 'app/App.components/Icon/Icon.view'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -61,7 +62,6 @@ export const Loans = () => {
   })
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { userMTokens } = useUserContext()
   const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
   const { changeVaultsSubscriptionsList, vaultsMapper, allVaultsIds, isLoading: isVaultsLoading } = useVaultsContext()
 

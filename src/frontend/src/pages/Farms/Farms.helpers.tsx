@@ -2,7 +2,7 @@
 import { FarmContractType, FarmGraphQL, Normalizedfarm } from '../../utils/TypesAndInterfaces/Farm'
 
 // helpers
-import { getContractBigmapKeys, network } from 'utils/blockchainApi'
+import { getContractBigmapKeys } from 'utils/blockchainApi'
 import { STAKED } from './Farms.const'
 import { Farm_Account } from 'utils/__generated__/graphql'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
@@ -182,7 +182,7 @@ export async function getFarmMetadata(farmAddress: string) {
 export const getUserBalanceByAddressOld = async (tokenAddress?: string) => {
   if (!tokenAddress) return 0
 
-  return await (await fetch(`https://api.${network}.tzkt.io/v1/accounts/${tokenAddress}/balance`)).json()
+  return await (await fetch(`${process.env.REACT_APP_TZKT_API}/v1/accounts/${tokenAddress}/balance`)).json()
 }
 
 // filters helpers

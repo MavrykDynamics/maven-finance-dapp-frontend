@@ -55,9 +55,10 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
 
           setLiquidationTimestamp(new Date(liquidationTimestamp).getTime())
         } catch (e) {
-          if (!isAbortError(e)) console.error('getting timestamp by lvl error: ', e)
-
-          bug('Unexpected error happened occured, please reload the page')
+          if (!isAbortError(e)) {
+            console.error('getting timestamp by lvl error: ', e)
+            bug('Unexpected error happened occured, please reload the page')
+          }
         }
       })()
 

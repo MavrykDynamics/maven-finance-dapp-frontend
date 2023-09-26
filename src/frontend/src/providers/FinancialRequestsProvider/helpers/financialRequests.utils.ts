@@ -1,22 +1,23 @@
 import { FinRequestVoteType, FinancialRequestRecord } from './financialRequests.types'
-import { GetFinRequestsStorageQuery } from 'utils/__generated__/graphql'
-import { ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 import {
   FinRequestsSubsRecordType,
   FinancialRequestsContext,
+  FinancialRequestsIndexerType,
   FinancialRequestsStateType,
   NullableFinancialRequestsContextStateType,
-} from '../financialRequests.types'
+} from '../financialRequests.provider.types'
+
 import {
   ALL_FIN_REQUESTS_SUB,
   EMPTY_FINANCIAL_REQUESTS_CTX,
   FIN_REQUESTS_DATA,
   ONGOING_FIN_REQUESTS_SUB,
-  PAST_FIN_REQUESTS_SUB,
 } from './financialRequests.consts'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
+
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { finRequestVote } from './financialRequests.schema'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { finRequestVote } from './financialRequests.schema'
 
 /**
  *
@@ -59,7 +60,7 @@ export const distinctRequestsByExecuting = (
  * @returns normalized data for finrequsts provider {past, ongoing, all, mapper}
  */
 export const normalizeFinancialRequests = (storage: {
-  governance_financial_request: GetFinRequestsStorageQuery['governance_financial_request']
+  governance_financial_request: FinancialRequestsIndexerType['governance_financial_request']
 }) => {
   const { financialRequestMapper, frIds } = storage?.governance_financial_request.reduce<{
     financialRequestMapper: Record<number, FinancialRequestRecord>
@@ -151,13 +152,12 @@ export const getFinRequestsProviderReturnValue = ({
   /**
    * 1. If no subs and mapper is null
    * 2. if query type === "all" and no data
-   * 2. if query type === "past" and no data
-   * 2. if query type === "ongoing" and no data
+   * 3. if query type === "ongoing" and no data
    */
   let isLoading =
     (!activeSubs[FIN_REQUESTS_DATA] && financialRequestsMapper === null) ||
-    (activeSubs[FIN_REQUESTS_DATA] === ALL_FIN_REQUESTS_SUB && allFinRequestsIds === null) ||
-    (activeSubs[FIN_REQUESTS_DATA] === PAST_FIN_REQUESTS_SUB && pastFinRequestsIds === null) ||
+    (activeSubs[FIN_REQUESTS_DATA] === ALL_FIN_REQUESTS_SUB &&
+      (allFinRequestsIds === null || pastFinRequestsIds === null || ongoingFinRequestsIds === null)) ||
     (activeSubs[FIN_REQUESTS_DATA] === ONGOING_FIN_REQUESTS_SUB && ongoingFinRequestsIds === null)
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
