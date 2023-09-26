@@ -7,9 +7,8 @@ export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const BecomeSatelliteForm = styled(Card)`
-  padding-bottom: 45px;
   margin-top: 0;
-  padding-top: 28px;
+  padding: 30px 30px 40px 30px;
 
   > h2 {
     margin: 0;
@@ -65,7 +64,7 @@ export const BecomeSatelliteForm = styled(Card)`
     display: flex;
     justify-content: flex-end;
     margin-left: auto;
-    padding-top: 42px;
+    padding-top: 40px;
     column-gap: 20px;
   }
 
@@ -227,7 +226,7 @@ export const SatelliteDetailsContainer = styled.div<{ theme: MavrykTheme }>`
     align-items: center;
     justify-content: space-between;
 
-    margin: 30px 0;
+    margin: 15px 0 30px 0;
 
     .name {
       margin-bottom: 10px;
@@ -237,8 +236,5 @@ export const SatelliteDetailsContainer = styled.div<{ theme: MavrykTheme }>`
       font-size: 22px;
       font-weight: 600;
     }
-  }
-
-  .metrics {
   }
 `

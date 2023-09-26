@@ -5,12 +5,42 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 import { getStatusColorBasedOnOracleType } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { SatelliteDetailsContainer } from '../BecomeSatellite.style'
 import { BlockName } from 'pages/Dashboard/Dashboard.style'
-import { SatelliteMetrics, SatelliteMetricsBlock } from 'pages/SatelliteDetails/SatelliteDetails.style'
+import {
+  SatelliteMetrics,
+  SatelliteMetricsBlock,
+  SatelliteVotingInfoWrapper,
+} from 'pages/SatelliteDetails/SatelliteDetails.style'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import { useSatelliteVotes } from 'providers/SatellitesProvider/hooks/useSatelliteVotes'
+import { SatellitesVotingHistory } from 'pages/SatelliteDetails/SatelliteDetails.controller'
+import Button from 'app/App.components/Button/NewButton'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { AddToAggregatorPopup } from '../popups/AddToAggregatorPopup'
+import { SatelliteMapper } from 'providers/SatellitesProvider/satellites.provider.types'
 
-export const SatelliteDetailsScreen = () => {
+type SatelliteDetailsScreenProps = {
+  satelliteId: string
+  usersSatelliteProfile: SatelliteMapper[0] | null
+}
+export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: SatelliteDetailsScreenProps) => {
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
+  const { satelliteVotes, isLoading: isSatelliteVotesLoading } = useSatelliteVotes(satelliteId)
+  const [showAggregatorPopup, setShowAggregatorPopup] = useState(false)
+
+  const closePopup = useCallback(() => {
+    setShowAggregatorPopup(false)
+  }, [])
+
+  const showPopup = useCallback(() => {
+    setShowAggregatorPopup(true)
+  }, [])
+
   return (
     <SatelliteDetailsContainer>
       <div className="grid-container">
@@ -41,7 +71,7 @@ export const SatelliteDetailsScreen = () => {
           </div>
         </ThreeLevelListItem>
       </div>
-      <SatelliteMetrics>
+      <SatelliteMetrics className="mb-30">
         <div>
           <BlockName>Satellite metrics</BlockName>
           <SatelliteMetricsBlock>
@@ -75,6 +105,28 @@ export const SatelliteDetailsScreen = () => {
           </p>
         </SatelliteMetricsBlock>
       </SatelliteMetrics>
+
+      <SatelliteVotingInfoWrapper>
+        <BlockName>Voting History</BlockName>
+        {isSatelliteVotesLoading ? (
+          <div className="loader">
+            <SpinnerCircleLoaderStyled />
+          </div>
+        ) : (
+          <SatellitesVotingHistory satelliteVotes={satelliteVotes} />
+        )}
+      </SatelliteVotingInfoWrapper>
+      <div className="buttons-wrapper">
+        <Button kind={BUTTON_PRIMARY} disabled={isActionActive} onClick={showPopup}>
+          Register to a Aggregator Pair
+        </Button>
+      </div>
+
+      <AddToAggregatorPopup
+        satellite={usersSatelliteProfile}
+        show={Boolean(usersSatelliteProfile) && showAggregatorPopup}
+        closePopup={closePopup}
+      />
     </SatelliteDetailsContainer>
   )
 }

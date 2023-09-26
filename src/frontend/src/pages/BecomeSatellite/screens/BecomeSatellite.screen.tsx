@@ -55,6 +55,7 @@ import {
   BecomeSatelliteOracleText,
 } from '../BecomeSatellite.style'
 import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
+import { UnregisterPopup } from '../popups/UnregisterPopup'
 
 const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
@@ -69,19 +70,10 @@ const connectWalletMessage = (
 
 type BecomeSatelliteScreenProps = {
   usersSatelliteProfile: SatelliteMapper[0] | null
-  setShowUnregisterPopup: React.Dispatch<React.SetStateAction<boolean>>
-  setIsSatelliteExistanseLoading: React.Dispatch<React.SetStateAction<boolean>>
-  setIsSatelliteExistanseError: React.Dispatch<React.SetStateAction<boolean>>
   userSmvkBalance: number
 }
 
-export const BecomeSatelliteScreen = ({
-  usersSatelliteProfile,
-  setShowUnregisterPopup,
-  setIsSatelliteExistanseLoading,
-  setIsSatelliteExistanseError,
-  userSmvkBalance,
-}: BecomeSatelliteScreenProps) => {
+export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }: BecomeSatelliteScreenProps) => {
   const { userAddress, isSatellite, satelliteMvkIsDelegatedTo } = useUserContext()
 
   const {
@@ -98,6 +90,7 @@ export const BecomeSatelliteScreen = ({
   //   const usersSatelliteProfile = userAddress ? satelliteMapper[userAddress] : null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
+  const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
   const pageText = getFormTextBasedOnUserRole(isSatellite)
   const isUserOracle = Boolean(usersSatelliteProfile?.peerId || usersSatelliteProfile?.publicKey)
   const [isChecked, setIsChecked] = useState(isUserOracle)
@@ -496,6 +489,11 @@ export const BecomeSatelliteScreen = ({
             : 'Become a Satellite'}
         </NewButton>
       </div>
+      <UnregisterPopup
+        show={Boolean(usersSatelliteProfile) && showUnregisterPopup}
+        closePopup={() => setShowUnregisterPopup(false)}
+        satellite={usersSatelliteProfile}
+      />
     </>
   )
 }

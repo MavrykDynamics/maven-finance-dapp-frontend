@@ -45,7 +45,7 @@ import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/que
 // types
 import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
 
-const SatellitesVotingHistory = ({
+export const SatellitesVotingHistory = ({
   satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
 }: {
   satelliteVotes: SatelliteVotesType

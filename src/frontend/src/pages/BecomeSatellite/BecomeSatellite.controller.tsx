@@ -23,7 +23,7 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
-import { UnregisterPopup } from './UnregisterPopup/UnregisterPopup'
+import { UnregisterPopup } from './popups/UnregisterPopup'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -58,7 +58,7 @@ export const BecomeSatellite = () => {
   const { apolloClient } = useApolloContext()
 
   // local states
-  const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
+
   const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
   const [isSatelliteExistanseError, setIsSatelliteExistanseError] = useState(false)
   const [activeTabId, setActiveTabId] = useState(0)
@@ -169,29 +169,22 @@ export const BecomeSatellite = () => {
                   >
                     here
                   </CustomLink>
-                  {activeTabId === 0 && <SatelliteDetailsScreen />}
-                  {activeTabId === 1 && (
-                    <BecomeSatelliteScreen
-                      usersSatelliteProfile={usersSatelliteProfile}
-                      setShowUnregisterPopup={setShowUnregisterPopup}
-                      setIsSatelliteExistanseLoading={setIsSatelliteExistanseLoading}
-                      setIsSatelliteExistanseError={setIsSatelliteExistanseError}
-                      userSmvkBalance={userSmvkBalance}
-                    />
-                  )}
                 </BecomeSatelliteOracleText>
+                {activeTabId === 0 && userAddress && (
+                  <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
+                )}
+                {activeTabId === 1 && (
+                  <BecomeSatelliteScreen
+                    usersSatelliteProfile={usersSatelliteProfile}
+                    userSmvkBalance={userSmvkBalance}
+                  />
+                )}
               </BecomeSatelliteForm>
             )}
           </div>
           <SatellitesSideBar isButton={false} />
         </PageContent>
       </Page>
-
-      <UnregisterPopup
-        show={Boolean(usersSatelliteProfile) && showUnregisterPopup}
-        closePopup={() => setShowUnregisterPopup(false)}
-        satellite={usersSatelliteProfile}
-      />
     </>
   )
 }
