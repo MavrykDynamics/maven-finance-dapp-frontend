@@ -4,8 +4,16 @@ import { ProposalIndexerType, ProposalsContext } from '../proposals.provider.typ
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { XTZ_DECIMALS, MVK_DECIMALS } from 'utils/constants'
 
-const calcGovPhase = (round: number) =>
-  round === 0 ? GovPhases.PROPOSAL : round === 1 ? GovPhases.VOTING : GovPhases.TIMELOCK
+const calcGovPhase = (round: number, hasProposalToExecute?: boolean) => {
+  if (round === 0) {
+    if (hasProposalToExecute) return GovPhases.EXECUTION
+    return GovPhases.PROPOSAL
+  }
+
+  if (round === 1) return GovPhases.VOTING
+
+  return GovPhases.TIMELOCK
+}
 
 export const normalizeGovernanceConfig = (dataFromIndexer: GovernanceConfigQueryQuery): ProposalsContext['config'] => {
   const {
@@ -16,7 +24,10 @@ export const normalizeGovernanceConfig = (dataFromIndexer: GovernanceConfigQuery
     timelock_proposal_id,
     cycle_highest_voted_proposal_id,
     current_round,
+    proposals,
   } = dataFromIndexer.governance[0]
+
+  const hasProposalToExecute = Boolean(proposals.find(({ id }) => id === timelock_proposal_id))
 
   return {
     fee: convertNumberForClient({ number: proposal_submission_fee_mutez, grade: XTZ_DECIMALS }),
@@ -26,7 +37,7 @@ export const normalizeGovernanceConfig = (dataFromIndexer: GovernanceConfigQuery
     timelockProposalId: timelock_proposal_id ?? null,
     cycleHighestVotedProposalId: cycle_highest_voted_proposal_id ?? null,
 
-    governancePhase: calcGovPhase(current_round),
+    governancePhase: calcGovPhase(current_round, hasProposalToExecute),
   }
 }
 

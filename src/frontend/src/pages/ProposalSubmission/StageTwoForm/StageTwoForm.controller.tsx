@@ -29,6 +29,7 @@ import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.
 import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
 import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { PROPOSAL_BYTE } from '../helpers/proposalSubmission.const'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // styles
 import { SubmitProposalBytes, SubmitProposalBytesPair, SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -51,7 +52,7 @@ export const StageTwoForm = ({
     config: { governancePhase, fee, successReward },
   } = useProposalsContext()
 
-  const isProposalPeriod = governancePhase === 'PROPOSAL'
+  const isProposalPeriod = governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION
 
   // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {
