@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.containerColor};
