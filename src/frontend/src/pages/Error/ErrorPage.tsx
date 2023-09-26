@@ -61,12 +61,13 @@ export const ErrorPage = ({
             <Vector2 src={`/images/${themeSelected}/space-cow.svg`} />
             <ErrorMidHeader>{headerText}</ErrorMidHeader>
             <ErrorParagraph>{descText}</ErrorParagraph>
-            {type === ERROR_TYPE_ROUTER && (
+            {/* TODO: remove after api update */}
+            {/* {type === ERROR_TYPE_ROUTER && (
               <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
                 <Icon id="menu-compass" />
                 Go To Dashboard
               </NewButton>
-            )}
+            )} */}
           </ErrorPageInner>
           <ErrorFooter themeSelected={themeSelected} handleRedirect={handleRedirect} />
         </ErrorPageWrapper>
