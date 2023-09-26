@@ -124,15 +124,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         // parsing metadata schema, to have icon and decimals for token
-        // TODO: temp solution to get xtz token, metadata should be provided by back-end
-        const parsedMetadata =
-          tokenType === 'tez'
-            ? {
-                icon: '/public/images/tezos.png',
-                symbol: 'xtz',
-                decimals: '6',
-              }
-            : tokenMetadataSchema.parse(metadata)
+        const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
         const symbolFromIndexer = parsedMetadata.symbol
 
