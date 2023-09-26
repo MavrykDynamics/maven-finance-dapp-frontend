@@ -1,83 +1,45 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 // Consts
-import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
-import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import colors from 'styles/colors'
-import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
-import {
-  BecomeSatelliteFormStateType,
-  DEFAULT_BECOME_SATELLITE_FORM,
-  getFormTextBasedOnUserRole,
-  getInputValidationStatus,
-} from './BecomeSatellite.conts'
+
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
-  REGISTER_SATELLITE_ACTION,
-  UPDATE_SATELLITE_ACTION,
   SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 // providers
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // Actions
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-
-// Types
-import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { RegisterAsSatelliteForm } from '../../utils/TypesAndInterfaces/Forms'
 
 // Views
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Input } from 'app/App.components/Input/NewInput'
-import Icon from 'app/App.components/Icon/Icon.view'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
-import { TextArea } from 'app/App.components/TextArea/TextArea.controller'
-import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
-import NewButton from 'app/App.components/Button/NewButton'
-import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
-import { Info } from 'app/App.components/Info/Info.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { UnregisterPopup } from './UnregisterPopup/UnregisterPopup'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page, PageContent } from 'styles'
-import {
-  BecomeSatelliteForm,
-  BecomeSatelliteFormBalanceCheck,
-  BecomeSatelliteRegisterAsOracle,
-  BecomeSatelliteOracleText,
-} from './BecomeSatellite.style'
+import { BecomeSatelliteForm, BecomeSatelliteOracleText } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
 import { BecomeSatelliteBanners } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners'
-import {
-  PRIMARY_SLIDING_TAB_BUTTONS,
-  SECONDARY_SLIDING_TAB_BUTTONS,
-  SMALL_SLIDING_TAB_BUTTONS,
-} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { SatelliteDetailsScreen } from './screens/SatelliteDetails.screen'
 import { BecomeSatelliteScreen } from './screens/BecomeSatellite.screen'
 
 export const BecomeSatellite = () => {
   const {
-    contractAddresses: { delegationAddress, mvkTokenAddress },
+    contractAddresses: { mvkTokenAddress },
     minimumStakedMvkBalance,
   } = useDappConfigContext()
   const {
@@ -207,7 +169,8 @@ export const BecomeSatellite = () => {
                   >
                     here
                   </CustomLink>
-                  {activeTabId === 0 && (
+                  {activeTabId === 0 && <SatelliteDetailsScreen />}
+                  {activeTabId === 1 && (
                     <BecomeSatelliteScreen
                       usersSatelliteProfile={usersSatelliteProfile}
                       setShowUnregisterPopup={setShowUnregisterPopup}
@@ -216,7 +179,6 @@ export const BecomeSatellite = () => {
                       userSmvkBalance={userSmvkBalance}
                     />
                   )}
-                  {activeTabId === 1 && <SatelliteDetailsScreen />}
                 </BecomeSatelliteOracleText>
               </BecomeSatelliteForm>
             )}

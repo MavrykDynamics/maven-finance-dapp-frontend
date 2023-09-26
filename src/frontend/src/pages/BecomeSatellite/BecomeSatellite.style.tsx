@@ -1,7 +1,6 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
-import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
   background-color: ${({ theme }) => theme.containerColor};
@@ -41,6 +40,10 @@ export const BecomeSatelliteForm = styled(Card)`
     textarea {
       font-size: 14px;
     }
+
+    label {
+      top: -26px;
+    }
   }
 
   #ipfsUploaderContainer {
@@ -52,6 +55,9 @@ export const BecomeSatelliteForm = styled(Card)`
     input {
       font-size: 14px;
       font-weight: 500;
+    }
+    label {
+      top: -26px;
     }
   }
 
