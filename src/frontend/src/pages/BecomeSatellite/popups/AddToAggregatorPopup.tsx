@@ -1,5 +1,4 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { useQuery } from '@apollo/client'
 
 // consts
 import { REGISTER_AGGREGATOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
@@ -35,12 +34,10 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
   const {
     contractAddresses: { governanceSatelliteAddress },
   } = useDappConfigContext()
-  const { feedsAddresses, isLoading: loading } = useDataFeedsContext()
-  console.log(feedsAddresses)
-
+  const { feedsAddresses, feedsMapper, isLoading: loading } = useDataFeedsContext()
   const aggregatorsList = useMemo(
-    () => feedsAddresses.map((address, idx) => ({ content: address, id: idx })) ?? [],
-    [feedsAddresses],
+    () => feedsAddresses.map((address) => ({ content: feedsMapper[address].name, id: address })) ?? [],
+    [feedsAddresses, feedsMapper],
   )
 
   const [selectedAggregator, setSelectedAggregator] = useState(aggregatorsList[0])
@@ -63,12 +60,12 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
       return null
     }
 
-    if (!selectedAggregator.content) {
+    if (!selectedAggregator.id) {
       bug('Wrong selected aggregator address')
       return null
     }
 
-    return await registerAggregator(governanceSatelliteAddress, selectedAggregator.content, userAddress)
+    return await registerAggregator(governanceSatelliteAddress, selectedAggregator.id, userAddress)
   }, [bug, governanceSatelliteAddress, selectedAggregator, userAddress])
 
   const registerAggregatorContratActionProps: HookContractActionArgs = useMemo(
