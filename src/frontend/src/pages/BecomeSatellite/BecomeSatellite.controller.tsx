@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router'
 
 // Consts
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
@@ -8,6 +9,7 @@ import {
   SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
+import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT, tabsPaths } from './BecomeSatellite.conts'
 
 // providers
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
@@ -55,8 +57,9 @@ export const BecomeSatellite = () => {
   } = useUserContext()
   const { apolloClient } = useApolloContext()
 
-  // local states
+  const { hash } = useLocation()
 
+  // local states
   const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
   const [isSatelliteExistanseError, setIsSatelliteExistanseError] = useState(false)
   const [activeTabId, setActiveTabId] = useState(0)
@@ -116,16 +119,41 @@ export const BecomeSatellite = () => {
 
   const tabList = useMemo(
     () => [
-      { text: 'Satellite Details', id: 0, active: true },
-      { text: 'Edit Profile', id: 1, active: false },
+      {
+        text: 'Satellite Details',
+        id: 0,
+        active: activeTabId === 0,
+        path: SATELLITE_TAB_DETAILS,
+      },
+      {
+        text: 'Edit Profile',
+        id: 1,
+        active: activeTabId === 1,
+        path: SATELLITE_TAB_EDIT,
+      },
     ],
-    [],
+    [activeTabId],
   )
 
+  useEffect(() => {
+    const _hash = hash.split('#').pop()
+
+    if (_hash && tabsPaths.includes(_hash)) {
+      setActiveTabId(tabList.find((tab) => tab.path === _hash)?.id ?? 0)
+    }
+  }, [hash, tabList])
+
   // TODO add url handling when page refresh
-  const handleChangeTabs = useCallback((id: number) => {
-    setActiveTabId(id)
-  }, [])
+  const handleChangeTabs = useCallback(
+    (id: number) => {
+      setActiveTabId(id)
+      const tabPath = tabList.find((tab) => tab.id === id)?.path
+      if (tabPath) {
+        window.history.pushState({}, '', `#${tabPath}`)
+      }
+    },
+    [tabList],
+  )
 
   return (
     <>
@@ -168,10 +196,10 @@ export const BecomeSatellite = () => {
                     here
                   </CustomLink>
                 </BecomeSatelliteOracleText>
-                {activeTabId === 0 && userAddress && usersSatelliteProfile && (
+                {activeTabId === 0 && isSatellite && userAddress && usersSatelliteProfile && (
                   <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
                 )}
-                {activeTabId === 1 && (
+                {activeTabId === 1 && isSatellite && (
                   <BecomeSatelliteScreen
                     usersSatelliteProfile={usersSatelliteProfile}
                     userSmvkBalance={userSmvkBalance}
