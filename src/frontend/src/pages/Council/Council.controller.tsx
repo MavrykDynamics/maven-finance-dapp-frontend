@@ -26,6 +26,7 @@ import {
 } from 'providers/CouncilProvider/helpers/council.consts'
 import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/council.consts'
 
+// TODO: validate tab in url?
 export const Council = () => {
   const { tabId } = useParams<{ tabId: string }>()
 

@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router'
 
 // utils
 import { propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { parseCounsilTab } from './helpers/commonCouncil.utils'
+import { isAbortError } from 'errors/error'
 
 // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
@@ -11,6 +12,7 @@ import { useEGovContext } from 'providers/EmergencyGovernanceProvider/emergencyG
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // consts
@@ -25,6 +27,7 @@ import {
 } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { DEFAULT_EGOV_SUBS, EGOV_CONFIG_SUB } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
+import { PROPAGATE_BREAK_GLASS_CONTRACTS_QUERY } from 'providers/CouncilProvider/queries/bgPropagateContracts.query'
 import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/council.consts'
 
 // view
@@ -37,12 +40,15 @@ import { PropagateBreakGlassCouncilCard } from 'pages/Council/Council.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
+// TODO: validate tab in url?
 export const BreakGlassCouncil = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const { bug } = useToasterContext()
+  const { apolloClient } = useApolloContext()
   const {
     contractAddresses: { breakGlassAddress },
+    globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const {
     userAddress,
@@ -82,6 +88,57 @@ export const BreakGlassCouncil = () => {
 
   const selectedTab = useMemo(() => parseCounsilTab(tabId), [tabId])
 
+  const [propagateBgContracts, setPropagateBgContracts] = useState<Array<string>>([])
+  const [propagateBgContractsLoading, setPropagateBgContractsLoading] = useState(true)
+  const [propagateBgContractsError, setPropagateBgContractsError] = useState(false)
+
+  useEffect(() => {
+    if (emergencyGovActive || !isBreakGlassCouncil) {
+      setPropagateBgContractsLoading(false)
+      return
+    }
+
+    setPropagateBgContractsError(false)
+    setPropagateBgContractsLoading(true)
+    const abortController = new AbortController()
+
+    ;(async () => {
+      try {
+        const propagateBgContracts = await apolloClient.query({
+          query: PROPAGATE_BREAK_GLASS_CONTRACTS_QUERY,
+          fetchPolicy: 'no-cache',
+          context: {
+            fetchOptions: {
+              signal: abortController.signal,
+            },
+          },
+        })
+
+        if (propagateBgContracts.data && propagateBgContracts.data.governance[0]?.general_contracts) {
+          setPropagateBgContracts(
+            propagateBgContracts.data.governance[0].general_contracts.map(({ contract_address }) => contract_address),
+          )
+        }
+
+        if (propagateBgContracts.error) {
+          throw propagateBgContracts.error
+        }
+      } catch (e) {
+        if (!isAbortError(e)) {
+          setPropagateBgContractsError(true)
+          console.error('getting propagate break glass contracts error: ', e)
+          bug('Unexpected error happened occured, please reload the page')
+        }
+      } finally {
+        setPropagateBgContractsLoading(false)
+      }
+    })()
+
+    return () => {
+      abortController.abort()
+    }
+  }, [emergencyGovActive])
+
   useEffect(() => {
     const isMyPendingTab = selectedTab === MY_PENDING_COUNSIL_TAB
     const isAllPendingTab = selectedTab === ALL_PENDING_COUNSIL_TAB
@@ -111,8 +168,8 @@ export const BreakGlassCouncil = () => {
       return null
     }
 
-    return await propagateBreakGlass(breakGlassAddress)
-  }, [userAddress, breakGlassAddress, bug])
+    return await propagateBreakGlass(breakGlassAddress, propagateBgContracts)
+  }, [userAddress, breakGlassAddress, bug, propagateBgContracts])
 
   const propagateBreakGlassContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -146,7 +203,13 @@ export const BreakGlassCouncil = () => {
               </div>
 
               {/*  TODO: clarify disabled this field with @CasualJackie & @Sam-M-Israel */}
-              <NewButton kind={BUTTON_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={!emergencyGovActive}>
+              <NewButton
+                kind={BUTTON_PRIMARY}
+                onClick={handleClickPropagateBreakGlass}
+                disabled={
+                  !emergencyGovActive || propagateBgContractsLoading || propagateBgContractsError || isActionActive
+                }
+              >
                 <Icon id="plus" />
                 Propagate Break Glass
               </NewButton>
