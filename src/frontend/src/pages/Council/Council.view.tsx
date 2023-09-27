@@ -262,7 +262,8 @@ export function CouncilView({
             </p>
           </div>
 
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={glassBroken}>
+          {/* TODO: undisable after council live updates, where will be fixed https://www.notion.so/E-Gov-Breakglass-bugs-e6a25684bc994bc5a0296fdf61cecd12 3rd item */}
+          <NewButton kind={BUTTON_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={glassBroken || true}>
             <Icon id="plus" />
             Propagate Break Glass
           </NewButton>
