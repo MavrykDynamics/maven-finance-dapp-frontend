@@ -137,7 +137,7 @@ export const SidebarUserButton = styled.div`
   svg {
     height: 35px;
     width: 35px;
-    fill: ${({ theme }) => theme.textColor};
+    fill: ${({ theme }) => theme.subHeadingText};
 
     img {
       width: 100%;
@@ -157,6 +157,6 @@ export const SidebarUserButton = styled.div`
   }
 
   .name {
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.subHeadingText};
   }
 `
