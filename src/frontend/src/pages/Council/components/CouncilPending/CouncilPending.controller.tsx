@@ -411,7 +411,7 @@ export const CouncilPending = (props: Props) => {
     const vestingInMonths = findActionByName('vestingInMonths')
 
     const totalAllocatedAmount = convertNumberForClient({
-      number: findActionByName('totalAllocatedAmount'),
+      number: Number(findActionByName('totalAllocatedAmount')),
       grade: MVK_DECIMALS,
     })
 
@@ -473,7 +473,7 @@ export const CouncilPending = (props: Props) => {
     const newVestingInMonths = findActionByName('newVestingInMonths')
 
     const newTotalAllocatedAmount = convertNumberForClient({
-      number: findActionByName('newTotalAllocatedAmount'),
+      number: Number(findActionByName('newTotalAllocatedAmount')),
       grade: MVK_DECIMALS,
     })
 
@@ -683,7 +683,7 @@ export const CouncilPending = (props: Props) => {
 
   // 2/3
   if (isRequestMint) {
-    const tokenAmount = convertNumberForClient({ number: findActionByName('tokenAmount'), grade: MVK_DECIMALS })
+    const tokenAmount = convertNumberForClient({ number: Number(findActionByName('tokenAmount')), grade: MVK_DECIMALS })
     const treasuryAddress = findActionByName('treasuryAddress', BYTES_ADDRESS_TYPE)
 
     return (
@@ -789,7 +789,9 @@ export const CouncilPending = (props: Props) => {
       <div className="parameters">
         <div>
           <p className="parameters-name">{getSeparateCamelCase(name)}</p>
-          <span className="parameters-value">{convertedValue}</span>
+          <span className="parameters-value">
+            {typeof convertedValue === 'object' && 'bytes' in convertedValue ? convertedValue?.bytes : convertedValue}
+          </span>
         </div>
         <div>
           <p>Signed</p>

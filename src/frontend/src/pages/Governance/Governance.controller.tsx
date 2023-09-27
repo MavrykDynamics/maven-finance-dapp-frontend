@@ -178,7 +178,10 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
       ...(currentRoundProposalsIds.length
         ? [
             {
-              title: governancePhase === GovPhases.PROPOSAL ? 'Poll for Next round' : 'Ongoing proposal',
+              title:
+                governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
+                  ? 'Poll for Next round'
+                  : 'Ongoing proposal',
               type: 'ongoing',
               proposalsIds: currentRoundProposalsIds,
               listName: ONGOING_PROPOSALS_LIST_NAME,
@@ -215,10 +218,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   return (
     <Page>
       <PageHeader page={'governance'} />
-      <GovernanceTopBar
-        governancePhase={governancePhase}
-        isWaitingToExecute={Boolean(waitingProposalsIdsToBeExecuted.length)}
-      />
+      <GovernanceTopBar governancePhase={governancePhase} />
 
       {isGovernanceLoading ? (
         <DataLoaderWrapper>
@@ -281,7 +281,10 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
               )}
 
               {/* Satellites who has voted for selected proposal */}
-              {!isHistory && governancePhase !== GovPhases.PROPOSAL && selectedProposalVoters.length ? (
+              {!isHistory &&
+              governancePhase !== GovPhases.PROPOSAL &&
+              governancePhase !== GovPhases.EXECUTION &&
+              selectedProposalVoters.length ? (
                 <div className="voters-list">
                   <H2Title>Satellite Voting History</H2Title>
                   {paginatedVotersList.map(({ vote, address, name, avatar, round }) => {

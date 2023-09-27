@@ -30,6 +30,7 @@ import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.c
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -72,7 +73,7 @@ export const StageThreeForm = ({
     [treasuryAddresses, treasuryMapper],
   )
 
-  const isProposalRound = governancePhase === 'PROPOSAL'
+  const isProposalRound = governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION
 
   const allowedTokensForDD = useMemo(() => {
     return Object.keys(treasuryTokens).reduce<Array<DropDownItemType>>((acc, tokenAddress) => {

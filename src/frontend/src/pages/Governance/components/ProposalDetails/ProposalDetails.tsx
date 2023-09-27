@@ -311,7 +311,9 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         handleProposalVote={handleProposalRoundVote}
         selectedProposal={proposal}
         vote={proposal.votes.find(
-          ({ address, round }) => address === userAddress && round === (governancePhase === GovPhases.PROPOSAL ? 0 : 1),
+          ({ address, round }) =>
+            address === userAddress &&
+            round === (governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION ? 0 : 1),
         )}
         isVoteActive={
           proposal.status === ProposalStatus.LOCKED || proposal.status === ProposalStatus.ONGOING

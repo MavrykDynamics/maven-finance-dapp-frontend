@@ -59,15 +59,16 @@ export const CardContentRightSide = styled.div<{ theme: MavrykTheme }>`
   justify-content: flex-end;
   display: flex;
 
-  button {
-    max-width: 250px;
-  }
-
   .connect-wallet {
     align-items: center;
     justify-content: flex-end;
     display: flex;
     margin: 0;
+  }
+
+  .initiateEgovProposal-button {
+    max-width: 250px;
+    width: 100%;
   }
 `
 

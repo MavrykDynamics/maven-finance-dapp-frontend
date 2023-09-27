@@ -141,14 +141,14 @@ export const getVaultStatus = ({
       collateralRatio <= 150 &&
       totalOustanding > 0 &&
       liquidationTimestamp &&
-      dayjs().unix() < dayjs(liquidationTimestamp).unix()
+      dayjs().valueOf() < dayjs(liquidationTimestamp).valueOf()
     )
       return vaultsStatuses.GRACE_PERIOD
     if (
       collateralRatio <= 150 &&
       totalOustanding > 0 &&
       liquidationTimestamp &&
-      dayjs().unix() >= dayjs(liquidationTimestamp).unix()
+      dayjs().valueOf() >= dayjs(liquidationTimestamp).valueOf()
     )
       return vaultsStatuses.LIQUIDATABLE
   } catch (e) {

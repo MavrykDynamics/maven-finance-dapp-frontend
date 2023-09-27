@@ -23,6 +23,7 @@ import { containSpaces } from 'app/App.utils/input'
 // consts
 import { STAGE_1_DESCRIPTION } from 'texts/tooltips/governance'
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 export const StageOneForm = ({
   proposalId,
@@ -42,7 +43,7 @@ export const StageOneForm = ({
   } = useProposalsContext()
 
   const isProposalSubmitted = proposalId >= 0
-  const isProposalPeriod = governancePhase === 'PROPOSAL'
+  const isProposalPeriod = governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION
 
   function handleOnBlur<G extends HTMLInputElement | HTMLTextAreaElement>(e: React.FocusEvent<G>) {
     if (containSpaces(e.target.value)) {

@@ -35,7 +35,7 @@ export const ProposalSubmissionBanner = () => {
   const [needRefreshCycle, setNeedRefreshCycle] = useState(false)
 
   useEffect(() => {
-    if (governancePhase !== GovPhases.PROPOSAL) return
+    if (governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION) return
     const abortController = new AbortController()
 
     ;(async () => {
