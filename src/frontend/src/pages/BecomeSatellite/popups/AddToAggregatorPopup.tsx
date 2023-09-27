@@ -1,19 +1,17 @@
-import { useCallback, useMemo, useState } from 'react'
-
-// types
-import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+import React, { useCallback, useMemo, useState } from 'react'
+import { useQuery } from '@apollo/client'
 
 // consts
+import { REGISTER_AGGREGATOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { UNREGISTER_SATELLITE_ACTION } from 'providers/SatellitesProvider/satellites.const'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 
 // styles
-import { UnregisterSatelliteModalBase } from '../BecomeSatellite.style'
+import { SatelliteUpperTextBlock, UnregisterSatelliteModalBase } from '../BecomeSatellite.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
@@ -23,45 +21,38 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // actions
+import { registerAggregator } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { REGISTER_AGGREGATOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
-import { registerAggregator } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-import { BlockName } from 'pages/Dashboard/Dashboard.style'
 
-// TODO aggregator addresses
-export const aggregatorsList = [
-  { content: 'Aggregator 1', id: '1' },
-  { content: 'Aggregator 2', id: '1' },
-]
+// queries
+import { AGGREGATOR_ADDRESSES_QUERY } from '../queries/aggregatorAddresses.query'
 
-export const AddToAggregatorPopup = ({
-  show,
-  closePopup,
-  satellite,
-}: {
-  show: boolean
-  closePopup: () => void
-  satellite: SatelliteRecordType | null
-}) => {
+const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePopup: () => void }) => {
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
     contractAddresses: { governanceSatelliteAddress },
   } = useDappConfigContext()
 
-  const [chosenDdItem, setChosenDdItem] = useState(aggregatorsList[0])
+  const { data, loading } = useQuery(AGGREGATOR_ADDRESSES_QUERY, {
+    nextFetchPolicy: 'cache-first',
+  })
+
+  const aggregatorsList = useMemo(
+    () => data?.aggregator.map((el, idx) => ({ content: el.address, id: idx })) ?? [],
+    [data],
+  )
+
+  const [selectedAggregator, setSelectedAggregator] = useState(aggregatorsList[0])
 
   const handleOnClickDropdownItem = (itemId: DDItemId) => {
     const chosenItem = aggregatorsList.find((item) => item.id === itemId)
     if (chosenItem) {
-      setChosenDdItem(chosenItem)
+      setSelectedAggregator(chosenItem)
     }
   }
-
-  const selectedAggregatorAddress = ''
 
   //   registerAggregator action ---------------------------------------------------------------------------
   const registerAggregatorActionFn = useCallback(async () => {
@@ -74,13 +65,13 @@ export const AddToAggregatorPopup = ({
       return null
     }
 
-    if (!selectedAggregatorAddress) {
-      bug('Wrong selected data')
+    if (!selectedAggregator.content) {
+      bug('Wrong selected aggregator address')
       return null
     }
 
-    return await registerAggregator(governanceSatelliteAddress, selectedAggregatorAddress, userAddress)
-  }, [bug, governanceSatelliteAddress, selectedAggregatorAddress, userAddress])
+    return await registerAggregator(governanceSatelliteAddress, selectedAggregator.content, userAddress)
+  }, [bug, governanceSatelliteAddress, selectedAggregator, userAddress])
 
   const registerAggregatorContratActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -101,14 +92,18 @@ export const AddToAggregatorPopup = ({
           <div className="descr">
             Text that explains that they have to be voted in to starting to sign for each aggregator
           </div>
-          <div className="ml-11 mb-8">Select Aggregator</div>
+          <SatelliteUpperTextBlock>Select Aggregator</SatelliteUpperTextBlock>
           <DropDown
             placeholder="Choose aggregator"
-            activeItem={chosenDdItem}
+            activeItem={selectedAggregator}
             items={aggregatorsList}
             clickItem={handleOnClickDropdownItem}
+            disabled={loading || !aggregatorsList.length}
           />
           <div className="buttons">
+            <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={closePopup}>
+              <Icon id="navigation-menu_close" /> Cancel
+            </NewButton>
             <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={registerAggregatorAction}>
               <Icon id="doubleCheckmark" />
               Register
@@ -119,3 +114,5 @@ export const AddToAggregatorPopup = ({
     </PopupContainer>
   )
 }
+
+export const AddToAggregatorPopup = React.memo(AddToAggregatorPopupBase)

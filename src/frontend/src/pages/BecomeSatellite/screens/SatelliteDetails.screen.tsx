@@ -122,11 +122,7 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
         </Button>
       </div>
 
-      <AddToAggregatorPopup
-        satellite={usersSatelliteProfile}
-        show={Boolean(usersSatelliteProfile) && showAggregatorPopup}
-        closePopup={closePopup}
-      />
+      <AddToAggregatorPopup show={Boolean(usersSatelliteProfile) && showAggregatorPopup} closePopup={closePopup} />
     </SatelliteDetailsContainer>
   )
 }

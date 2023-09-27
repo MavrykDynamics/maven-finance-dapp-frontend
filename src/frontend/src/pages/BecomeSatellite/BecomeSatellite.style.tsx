@@ -238,3 +238,11 @@ export const SatelliteDetailsContainer = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
+
+export const SatelliteUpperTextBlock = styled.div`
+  font-size: 14px;
+  font-weight: 600;
+
+  margin-left: 11px;
+  margin-bottom: 8px;
+`
