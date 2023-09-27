@@ -23,7 +23,7 @@ const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
   const { chartsData, setLoansChartsData, marketsAddresses } = useLoansContext()
 
   useQueryWithRefetch(GET_LOANS_HISTORY_DATA, {
-    skip: marketsAddresses.length === 0,
+    skip: !marketsAddresses.length,
     onCompleted: (data) => {
       const newChartsData = normalizeLoansCharts({
         indexerData: data,
