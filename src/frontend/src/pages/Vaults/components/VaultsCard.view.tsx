@@ -339,18 +339,16 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     </VaultsCardDropDown>
   )
 
-  const ownerVaultCardView = (
-    <BorrowingExpandCard
-      vault={vault}
-      headerSufix={headerSufix}
-      DAOFee={daoFee}
-      isOwner={isOwner}
-      hideTransactionHistory
-    />
-  )
-
   if (isOwner || vaultTab === vaultTabs.MY) {
-    return ownerVaultCardView
+    return (
+      <BorrowingExpandCard
+        vault={vault}
+        headerSufix={headerSufix}
+        DAOFee={daoFee}
+        isOwner={isOwner}
+        hideTransactionHistory
+      />
+    )
   }
 
   if (vaultTab === vaultTabs.PERMISSIONED) {
