@@ -39,7 +39,7 @@ import {
   EGOV_PROPOSALS_ALL_SUB,
   DEFAULT_EGOV_SUBS,
 } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
   getPageNumber,
   EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME,
@@ -123,44 +123,46 @@ export const EmergencyGovernance = () => {
               Read documentation here
             </a>
           </EmergencyGovernanceCard>
-
-          <EmergencyGovernanceCard>
-            <a
-              className="info-link"
-              href="https://mavryk.finance/litepaper#emergency-governance--break-glass "
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Icon id="question" />
-            </a>
-            <CardContent>
-              <CardContentLeftSide>
-                <h2>Trigger Emergency Governance Vote</h2>
-                <div>Coming Soon…</div>
-              </CardContentLeftSide>
-              <CardContentRightSide>
-                {userAddress ? (
-                  <Button
-                    kind={BUTTON_PRIMARY}
-                    onClick={openInitiatePopup}
-                    // disabled={isGlassBroken || activeItems.length !== 0}
-                    disabled
-                  >
-                    <Icon id="auction" /> Initiate
-                  </Button>
-                ) : (
-                  <ConnectWalletBtn />
-                )}
-              </CardContentRightSide>
-            </CardContent>
-          </EmergencyGovernanceCard>
-
-          {ongoingProposals.length
-            ? ongoingProposals.map((proposalId) => {
-                const proposal = proposalsMapper[proposalId]
-                return <EGovCard key={proposalId} proposal={proposal} />
-              })
-            : null}
+          {ongoingProposals.length ? (
+            ongoingProposals.map((proposalId) => {
+              const proposal = proposalsMapper[proposalId]
+              return <EGovCard key={proposalId} proposal={proposal} />
+            })
+          ) : (
+            <EmergencyGovernanceCard>
+              <a
+                className="info-link"
+                href="https://mavryk.finance/litepaper#emergency-governance--break-glass "
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Icon id="question" />
+              </a>
+              <CardContent>
+                <CardContentLeftSide>
+                  <h2>Trigger Emergency Governance Vote</h2>
+                  <div>Coming Soon…</div>
+                </CardContentLeftSide>
+                <CardContentRightSide>
+                  {userAddress ? (
+                    <div className="initiateEgovProposal-button">
+                      <Button
+                        kind={BUTTON_PRIMARY}
+                        onClick={openInitiatePopup}
+                        form={BUTTON_WIDE}
+                        // disabled={isGlassBroken || activeItems.length !== 0}
+                        disabled
+                      >
+                        <Icon id="auction" /> Initiate
+                      </Button>
+                    </div>
+                  ) : (
+                    <ConnectWalletBtn />
+                  )}
+                </CardContentRightSide>
+              </CardContent>
+            </EmergencyGovernanceCard>
+          )}
 
           <EmergencyGovernHistory>
             <h1>Emergency Governance History</h1>
