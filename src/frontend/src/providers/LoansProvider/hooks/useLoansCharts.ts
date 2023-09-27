@@ -23,8 +23,15 @@ const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
   const { chartsData, setLoansChartsData, marketsAddresses } = useLoansContext()
 
   useQueryWithRefetch(GET_LOANS_HISTORY_DATA, {
+    skip: marketsAddresses.length === 0,
     onCompleted: (data) => {
-      const newChartsData = normalizeLoansCharts({ indexerData: data, chartsToCalc, tokensPrices, tokensMetadata })
+      const newChartsData = normalizeLoansCharts({
+        indexerData: data,
+        chartsToCalc,
+        tokensPrices,
+        tokensMetadata,
+        marketsAddresses: marketsAddresses,
+      })
       setLoansChartsData(newChartsData)
     },
     onError: (error) => handleApolloError(error, 'GET_LOANS_HISTORY_DATA'),
