@@ -10,7 +10,7 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import colors from 'styles/colors'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   BUTTON_WIDE,
   BUTTON_PRIMARY,
@@ -20,7 +20,10 @@ import {
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 // helpers
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import {
+  getSatelliteParticipations,
+  getStatusColorBasedOnOracleType,
+} from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // view
@@ -32,7 +35,7 @@ import Button from 'app/App.components/Button/NewButton'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // types
-import { SatelliteRecordType, SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 //styles
 import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
@@ -66,6 +69,7 @@ import { delegate, undelegate } from 'providers/SatellitesProvider/actions/satel
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 type SatelliteListItemProps = {
   satellite: SatelliteRecordType
@@ -75,22 +79,37 @@ type SatelliteListItemProps = {
   children?: JSX.Element
 }
 
-const renderVotingHistoryItem = (vote: SatelliteVoteType) => {
+const SatelliteLastProposalVote = ({
+  lastVotedProposal,
+}: {
+  lastVotedProposal: SatelliteRecordType['lastVotedProposal']
+}) => {
+  if (!lastVotedProposal)
+    return (
+      <SatelliteCardRow>
+        <div>Has not voted this cycle</div>
+      </SatelliteCardRow>
+    )
+
+  const { vote, proposalId, proposalTitle } = lastVotedProposal
   const voteText = SATELLITE_VOTES_MAPPER[vote]
-  return <span className={`voting-${voteText.toLowerCase()}`}>{voteText.toUpperCase()}</span>
+
+  return (
+    <SatelliteCardRow>
+      <div>
+        Voted <span className={`voting-${voteText.toLowerCase()}`}>{voteText.toUpperCase()}</span> on current Proposal{' '}
+        {proposalId} – {proposalTitle}
+      </div>
+    </SatelliteCardRow>
+  )
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const {
-    userTokensBalances,
-    isSatellite: isUserSatellite,
-    satelliteMvkIsDelegatedTo,
-    userAddress,
-    availableProposalRewards,
-  } = useUserContext()
+  const { userTokensBalances, isSatellite: isUserSatellite, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
+  const { availableProposalRewards } = useUserRewards()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    contractAddresses: { delegationAddress, mvkTokenAddress },
+    contractAddresses: { delegationAddress, mvkTokenAddress, governanceAddress },
     globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -189,8 +208,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    if (!delegationAddress) {
-      bug('Wrong delegation address')
+    if (!governanceAddress) {
+      bug('Wrong governance address')
       return null
     }
 
@@ -201,8 +220,8 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    return await distributeProposalRewards(delegationAddress, satelliteAddressToDistribute, availableProposalRewards)
-  }, [userAddress, delegationAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+    return await distributeProposalRewards(governanceAddress, satelliteAddressToDistribute, availableProposalRewards)
+  }, [userAddress, governanceAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -228,7 +247,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>{satellite.name}</SatelliteMainText>
               <SatelliteSubText>
-                <TzAddress tzAddress={satellite.address} type={BLUE} hasIcon isBold />
+                <TzAddress tzAddress={satellite.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon isBold />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
@@ -267,7 +286,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
                   <CustomTooltip
                     text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
                     iconId="info"
-                    defaultStrokeColor={colors[themeSelected]['textColor']}
+                    defaultStrokeColor={colors[themeSelected].subHeadingText}
                   />
                 </div>
                 <SatelliteSubText>
@@ -289,8 +308,11 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup className="oracle-status">
               <SatelliteMainText>Oracle Status</SatelliteMainText>
               <SatelliteSubText>
-                <SatelliteOracleStatusComponent statusType={oracleStatus}>
-                  {SATELLITE_ORACLE_STATUSES[oracleStatus]}
+                <SatelliteOracleStatusComponent>
+                  <StatusFlag
+                    status={getStatusColorBasedOnOracleType(oracleStatus)}
+                    text={SATELLITE_ORACLE_STATUSES[oracleStatus]}
+                  />
                 </SatelliteOracleStatusComponent>
               </SatelliteSubText>
             </SatelliteTextGroup>
@@ -354,16 +376,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         </SatelliteCardButtons>
       </SatelliteCardInner>
 
-      {children ? (
-        children
-      ) : satellite.lastVotedProposal ? (
-        <SatelliteCardRow>
-          <div>
-            Voted {renderVotingHistoryItem(satellite.lastVotedProposal.vote)} on current Proposal{' '}
-            {satellite.lastVotedProposal.proposalId} - {satellite.lastVotedProposal.proposalTitle}
-          </div>
-        </SatelliteCardRow>
-      ) : null}
+      {children ? children : <SatelliteLastProposalVote lastVotedProposal={satellite.lastVotedProposal} />}
     </SatelliteCard>
   )
 }

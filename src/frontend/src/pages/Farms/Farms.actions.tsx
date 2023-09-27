@@ -46,7 +46,9 @@ export const getFarmStorage =
           const urls = farmLPTokensInfo.reduce<string[]>(
             (acc, item: { lpTokenInfo: { liquidityPairToken: { tokenAddress: string[] } } }) => {
               if (item?.lpTokenInfo?.liquidityPairToken?.tokenAddress?.[0]) {
-                acc.push(`https://api.tzkt.io/v1/contracts/${item?.lpTokenInfo.liquidityPairToken.tokenAddress[0]}`)
+                acc.push(
+                  `${process.env.REACT_APP_TZKT_API}/v1/contracts/${item?.lpTokenInfo.liquidityPairToken.tokenAddress[0]}`,
+                )
               }
               return acc
             },
@@ -100,7 +102,7 @@ export const harvest =
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(farmAddress)
-      const transaction = await contract?.methods.claim(farmAddress).send()
+      const transaction = await contract?.methods.claim([state.wallet.accountPkh]).send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))
@@ -224,7 +226,9 @@ export const withdraw =
       // prepare and send transaction
       const tezos = await DAPP_INSTANCE.tezos()
       const contract = await tezos.wallet.at(farmAddress)
-      const transaction = await contract?.methods.withdraw(convertNumberForContractCall({ number: amount })).send()
+      const transaction = await contract?.methods
+        .withdraw(state.wallet.accountPkh, convertNumberForContractCall({ number: amount }))
+        .send()
 
       dispatch(toggleActionFullScreenLoader(true))
       dispatch(toggleActionCompletion(true))

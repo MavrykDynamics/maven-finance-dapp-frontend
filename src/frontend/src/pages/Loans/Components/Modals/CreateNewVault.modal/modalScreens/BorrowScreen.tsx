@@ -16,7 +16,6 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 import { BorrowScreenWrapper } from '../createNewVault.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -28,7 +27,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 // consts
-import { ERR_MSG_INPUT, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { ERR_MSG_INPUT, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -36,7 +35,6 @@ import { DAO_FEE } from 'texts/tooltips/vault.text'
 
 // utils
 import { checkNan } from 'utils/checkNan'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { sleep } from 'utils/api/sleep'
@@ -49,16 +47,21 @@ import { useBorrowInputData } from '../../hooks/Market/useBorrowInputData'
 
 // types
 import { Settings } from 'app/App.components/Input/newInput.type'
+import { operationBorrow, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 type BorrowScreenProps = {
   setCurrentSymbol: React.Dispatch<React.SetStateAction<string>>
 }
 
+// new vault initial values
+const currentBorrowedAmount = 0
+const currentTotalOutstanding = 0
+const collateralRatio = 0
+
 export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const { apolloClient } = useApolloContext()
   const { userAddress } = useUserContext()
   const { info, bug } = useToasterContext()
-  const { vaultsMapper } = useVaultsContext()
   const {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
@@ -73,17 +76,14 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     collateralsBalance: currentCollateralBalance,
     borrowAPR,
     vaultInputState,
-    updateVaultCreating,
     updateNewVault,
-    newVault,
+    marketAvailableLiquidity,
   } = useCreateVaultContext()
   const {
     config: { daoFee },
   } = useLoansContext()
 
   const { marketTokenAddress: borrowedTokenAddress = '', setCreatedVaultAddress } = data ?? {}
-  const currentBorrowedAmount = 0
-  const collateralRatio = 0
 
   const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData(
     borrowedTokenAddress,
@@ -92,12 +92,18 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const convertedBorrowedAmount = convertNumberForClient({ number: currentBorrowedAmount, grade: decimals })
+
+  const { futureCollateralRatio, futureBorrowCapacity } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: currentTotalOutstanding,
+    vaultCurrentCollateralBalance: currentCollateralBalance,
+    vaultTokenAddress: borrowedTokenAddress,
+    operationType: operationBorrow,
+    inputValue: inputAmount,
+    marketAvailableLiquidity,
+  })
+
   const isDisabledButton =
-    inputData.validationStatus === INPUT_STATUS_ERROR ||
-    inputAmount === 0 ||
-    isActionActive ||
-    isVaultCreating ||
-    !vaultsMapper[newVault?.address ?? '']
+    inputData.validationStatus !== INPUT_STATUS_SUCCESS || inputAmount === 0 || isActionActive || isVaultCreating
 
   // Actions --------------------------------------------------------------------
   const getNewVaultData = useCallback(
@@ -124,7 +130,6 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
             address,
             id,
           })
-          updateVaultCreating(false)
 
           // TODO remove retry after indexer update
 
@@ -145,16 +150,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
         bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
       }
     },
-    [
-      apolloClient,
-      bug,
-      info,
-      setCreatedVaultAddress,
-      updateNewVault,
-      updateVaultCreating,
-      userAddress,
-      vaultInputState.name,
-    ],
+    [apolloClient, bug, info, setCreatedVaultAddress, updateNewVault, userAddress, vaultInputState.name],
   )
 
   useEffect(() => {
@@ -162,24 +158,15 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   }, [setCurrentSymbol, symbol])
 
   useEffect(() => {
-    getNewVaultData()
-  }, [])
+    if (!isVaultCreating) {
+      getNewVaultData()
+    }
+  }, [getNewVaultData, isVaultCreating])
 
   const continueHandler = useCallback(() => {
     setFinalBorrowInputAmount({ amount: Number(inputData.amount), rate, symbol })
     updateScreenToShow(CONFIRMATION_SCREEN_ID)
   }, [inputData.amount, rate, setFinalBorrowInputAmount, symbol, updateScreenToShow])
-
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      currentCollateralBalance,
-      (currentBorrowedAmount + inputAmount) * rate,
-    )
-
-    const futureBorrowCapacity = borrowCapacity - inputAmount * rate
-
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [currentCollateralBalance, currentBorrowedAmount, inputAmount, rate, borrowCapacity])
 
   const newSettings: Settings = useMemo(
     () => ({
@@ -213,7 +200,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
             DAO Fee
             <CustomTooltip
               iconId="info"
-              defaultStrokeColor={colors[themeSelected].textColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
               text={DAO_FEE}
               className="tooltip"
             />
@@ -235,16 +222,14 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
           </InputPinnedTokenInfo>
         </Input>
       </div>
-      <MemoizedComponent returnMemoizedComponent={isDisabledButton}>
-        <BorrowScreenBottomStats
-          inputAmount={inputAmount}
-          assetDecimalsToShow={assetDecimalsToShow}
-          daoFee={daoFee}
-          futureCollateralRatio={futureCollateralRatio}
-          futureBorrowCapacity={futureBorrowCapacity}
-          headerText="New Vault stats"
-        />
-      </MemoizedComponent>
+      <BorrowScreenBottomStats
+        inputAmount={inputAmount}
+        assetDecimalsToShow={assetDecimalsToShow}
+        daoFee={daoFee}
+        futureCollateralRatio={futureCollateralRatio}
+        futureBorrowCapacity={futureBorrowCapacity}
+        headerText="New Vault stats"
+      />
 
       <div className="manage-btn">
         <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={continueHandler} disabled={isDisabledButton}>

@@ -102,6 +102,8 @@ export const normalizeUserLoansData = (
 
         const convertedBorrowedAmount =
           convertNumberForClient({ number: loan_principal_total, grade: vaultTokenDecimals }) * vaultTokenRate
+        const convertedInterestAmount =
+          convertNumberForClient({ number: loan_principal_total, grade: vaultTokenDecimals }) * vaultTokenRate
 
         const collateralAmount = getVaultCollateralBalance(
           collateral_balances.map(
@@ -115,18 +117,21 @@ export const normalizeUserLoansData = (
           tokensMetadata,
           tokensPrices,
         )
-        const isVaultBorrowed = convertedBorrowedAmount > 0
+
+        const isVaultBorrowed = convertedBorrowedAmount > 0 || convertedInterestAmount > 0
 
         if (!acc[borrowedToken.address]) {
           acc[borrowedToken.address] = {
-            borrowedAmount: convertedBorrowedAmount,
-            borrowedVaultsCollateralAmount: isVaultBorrowed ? collateralAmount : 0,
-            allVaultsCollateralAmount: collateralAmount,
+            principle: convertedBorrowedAmount,
+            collateralBalance: collateralAmount,
+            interest: convertedInterestAmount,
+            borrowedVaultsCollateralBalance: isVaultBorrowed ? collateralAmount : 0,
           }
         } else {
-          acc[borrowedToken.address].borrowedAmount += convertedBorrowedAmount
-          acc[borrowedToken.address].borrowedVaultsCollateralAmount += isVaultBorrowed ? collateralAmount : 0
-          acc[borrowedToken.address].allVaultsCollateralAmount += collateralAmount
+          acc[borrowedToken.address].principle += convertedBorrowedAmount
+          acc[borrowedToken.address].collateralBalance += collateralAmount
+          acc[borrowedToken.address].interest += convertedInterestAmount
+          acc[borrowedToken.address].borrowedVaultsCollateralBalance += isVaultBorrowed ? collateralAmount : 0
         }
 
         return acc

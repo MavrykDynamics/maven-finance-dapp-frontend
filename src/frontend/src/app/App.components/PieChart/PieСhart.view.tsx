@@ -1,0 +1,38 @@
+import { PieChart } from 'react-minimal-pie-chart'
+import { SECTOR_STYLES } from './pieChart.const'
+import { PieChartWrap } from './PieChart.style'
+
+// TODO: type this chart data
+export default function PieChartView({ chartData }: { chartData: any }) {
+  return (
+    <PieChartWrap>
+      <PieChart
+        radius={40}
+        paddingAngle={0}
+        lineWidth={30}
+        segmentsTabIndex={1}
+        label={(labelProps) => {
+          const labelPersent = labelProps.dataEntry.percentage
+          const shownPersent =
+            labelPersent !== undefined
+              ? Number(labelPersent.toFixed(2)) < 1
+                ? '< 1%'
+                : `${parseFloat(labelPersent.toFixed(2))}%`
+              : ''
+          return shownPersent
+        }}
+        labelPosition={100 - 30 / 2}
+        labelStyle={() => ({
+          fontSize: '6px',
+          fontFamily: 'sans-serif',
+          fill: '#fff',
+        })}
+        segmentsStyle={(index) => ({
+          ...SECTOR_STYLES,
+          strokeWidth: chartData[index].segmentStroke,
+        })}
+        data={chartData}
+      />
+    </PieChartWrap>
+  )
+}

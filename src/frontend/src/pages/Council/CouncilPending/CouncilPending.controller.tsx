@@ -12,7 +12,7 @@ import { getSeparateCamelCase } from '../../../utils/parse'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { bytesToText, BytesType, BYTES_ADDRESS_TYPE } from 'utils/bytesToString'
 import { convertBytesAddressToAddress } from 'app/App.helpers'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { MVK_DECIMALS } from 'utils/constants'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
@@ -85,7 +85,7 @@ export const CouncilPending = (props: Props) => {
   const isChangeCouncilMember = actionType === 'changeCouncilMember'
   const isRemoveCouncilMember = actionType === 'removeCouncilMember'
   const isSetAllContractsAdmin = actionType === 'setAllContractsAdmin'
-  const isSetSingleContractAdmin = actionType === 'setSingleContractAdmin'
+  // const isSetSingleContractAdmin = actionType === 'setSingleContractAdmin'
   const isSetBaker = actionType === 'setBaker'
   const isSetContractBaker = actionType === 'setContractBaker'
   const isSignAction = actionType === 'signAction'
@@ -139,7 +139,7 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Council Member</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={councilMemberAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={councilMemberAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
             {councilMemberName ? (
@@ -213,7 +213,7 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Council Member</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={newCouncilMemberAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={newCouncilMemberAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
 
@@ -286,13 +286,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p className="without-margin">Council Member to change</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={oldCouncilMemberAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={oldCouncilMemberAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
             <article>
               <p className="without-margin">Council Member Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={newCouncilMemberAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={newCouncilMemberAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
 
@@ -353,51 +353,51 @@ export const CouncilPending = (props: Props) => {
   }
 
   // 2/3
-  if (isSetSingleContractAdmin) {
-    const newAdminAddress = findActionByName('newAdminAddress', BYTES_ADDRESS_TYPE)
-    const targetContractAddress = findActionByName('targetContractAddress', BYTES_ADDRESS_TYPE)
+  // if (isSetSingleContractAdmin) {
+  //   const newAdminAddress = findActionByName('newAdminAddress', BYTES_ADDRESS_TYPE)
+  //   const targetContractAddress = findActionByName('targetContractAddress', BYTES_ADDRESS_TYPE)
 
-    return (
-      <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
-        <span className="number">{cardNumber}</span>
-        <h3>{getSeparateCamelCase(actionType)}</h3>
-        <div className="parameters">
-          <article>
-            <p>New Admin Address</p>
-            <span className="parameters-value content-width">
-              <TzAddress tzAddress={newAdminAddress} type={BLUE} hasIcon />
-            </span>
-          </article>
+  //   return (
+  //     <CouncilPendingStyled className={`${actionType} ${councilPendingActionsLength > 1 ? 'more' : ''}`}>
+  //       <span className="number">{cardNumber}</span>
+  //       <h3>{getSeparateCamelCase(actionType)}</h3>
+  //       <div className="parameters">
+  //         <article>
+  //           <p>New Admin Address</p>
+  //           <span className="parameters-value content-width">
+  //             <TzAddress tzAddress={newAdminAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
+  //           </span>
+  //         </article>
 
-          <article className="signed-article">
-            <div>
-              <p>Signed</p>
-              <span className="parameters-value content-width">
-                {signersCount}/{numCouncilMembers}
-              </span>
-            </div>
-          </article>
-        </div>
+  //         <article className="signed-article">
+  //           <div>
+  //             <p>Signed</p>
+  //             <span className="parameters-value content-width">
+  //               {signersCount}/{numCouncilMembers}
+  //             </span>
+  //           </div>
+  //         </article>
+  //       </div>
 
-        <div className="parameters">
-          <article>
-            <div>
-              <p>Target Contract</p>
-              <span className="parameters-value content-width">
-                <TzAddress tzAddress={targetContractAddress} type={BLUE} hasIcon />
-              </span>
-            </div>
-          </article>
-          <div className="sign-action">
-            <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
-              <Icon id="sign" />
-              Sign
-            </NewButton>
-          </div>
-        </div>
-      </CouncilPendingStyled>
-    )
-  }
+  //       <div className="parameters">
+  //         <article>
+  //           <div>
+  //             <p>Target Contract</p>
+  //             <span className="parameters-value content-width">
+  //               <TzAddress tzAddress={targetContractAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
+  //             </span>
+  //           </div>
+  //         </article>
+  //         <div className="sign-action">
+  //           <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={onClickSign} disabled={isActionActive}>
+  //             <Icon id="sign" />
+  //             Sign
+  //           </NewButton>
+  //         </div>
+  //       </div>
+  //     </CouncilPendingStyled>
+  //   )
+  // }
 
   // 2/3
   if (isAddVestee) {
@@ -419,7 +419,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Vestee Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={vesteeAddress} type={BLUE} hasIcon />
+              <TzAddress tzAddress={vesteeAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </article>
 
@@ -481,7 +481,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Vestee Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={vesteeAddress} type={BLUE} hasIcon />
+              <TzAddress tzAddress={vesteeAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </article>
 
@@ -540,13 +540,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Treasury Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={treasuryAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={treasuryAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
             <article>
               <p>Token Contract Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={tokenContractAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={tokenContractAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
 
@@ -616,13 +616,13 @@ export const CouncilPending = (props: Props) => {
             <article>
               <p>Receiver Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={receiverAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={receiverAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
             <article>
               <p>Token Contract Address</p>
               <span className="parameters-value content-width">
-                <TzAddress tzAddress={tokenContractAddress} type={BLUE} hasIcon />
+                <TzAddress tzAddress={tokenContractAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
               </span>
             </article>
 
@@ -688,7 +688,7 @@ export const CouncilPending = (props: Props) => {
           <article>
             <p>Treasury Address</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={treasuryAddress} type={BLUE} hasIcon />
+              <TzAddress tzAddress={treasuryAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </article>
 
@@ -753,7 +753,7 @@ export const CouncilPending = (props: Props) => {
           <div>
             <p className="parameters-name">{getSeparateCamelCase(name)}</p>
             <span className="parameters-value content-width">
-              <TzAddress tzAddress={address} type={BLUE} hasIcon />
+              <TzAddress tzAddress={address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
             </span>
           </div>
           <div>

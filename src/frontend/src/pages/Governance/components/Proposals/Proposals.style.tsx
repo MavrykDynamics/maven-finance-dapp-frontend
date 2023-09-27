@@ -1,8 +1,6 @@
 import styled, { css } from 'styled-components/macro'
-import { CardHover, boxShadowColor, cyanColor, royalPurpleColor, skyColor } from 'styles'
-
+import { CardHover } from 'styles'
 import { MavrykTheme } from '../../../../styles/interfaces'
-import { ProposalStatus } from '../../../../utils/TypesAndInterfaces/Governance'
 
 export const ProposalListContainer = styled.div<{ theme: MavrykTheme }>`
   margin-bottom: 38px;
@@ -23,8 +21,6 @@ export const ProposalListContainer = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const ProposalListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${royalPurpleColor};
   height: 57px;
   margin: 0;
   width: 100%;
@@ -40,21 +36,19 @@ export const ProposalListItem = styled(CardHover)<{ selected: boolean; theme: Ma
   ${({ selected }) =>
     selected &&
     css`
-      border-color: ${cyanColor};
-      box-shadow: 0px 4px 4px ${boxShadowColor};
+      border-color: ${({ theme }) => theme.linksAndButtons};
+      box-shadow: ${({ theme }) => theme.cardHoverColor};
     `}
 
   .proposal-voted-mvk {
     font-weight: 600;
     font-size: 14px;
-    color: ${skyColor};
+    color: ${({ theme }) => theme.primaryText};
     margin-right: 10px;
   }
 `
 
 export const VoterListItem = styled(CardHover)<{ theme: MavrykTheme }>`
-  background-color: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${royalPurpleColor};
   width: 100%;
   display: flex;
   align-items: center;
@@ -72,7 +66,7 @@ export const VoterListItem = styled(CardHover)<{ theme: MavrykTheme }>`
     svg {
       width: 45px;
       height: 45px;
-      fill: ${({ theme }) => theme.textColor};
+      fill: ${({ theme }) => theme.subHeadingText};
 
       img {
         width: 100%;
@@ -89,20 +83,12 @@ export const VoterListItem = styled(CardHover)<{ theme: MavrykTheme }>`
       row-gap: 5px;
 
       span {
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.subHeadingText};
       }
 
       div {
         font-size: 16px;
-        color: ${({ theme }) => theme.dataColor};
         align-items: flex-start;
-
-        svg {
-          stroke: ${({ theme }) => theme.dataColor};
-          stroke-width: 0.5px;
-          width: 22px;
-          height: 22px;
-        }
       }
     }
   }

@@ -14,10 +14,10 @@ import { VotingBar } from './VotingBar.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import ConnectWalletBtn from '../ConnectWallet/ConnectWalletBtn'
 import Button from '../Button/NewButton'
-import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { Info } from '../Info/Info.view'
 import { INFO_DEFAULT } from '../Info/info.constants'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+import { NEWLY_REGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type VotingType = VotingProps & {
@@ -123,6 +123,7 @@ export const VotingProposalsArea = ({
   if (!selectedProposal.locked) return null
 
   if (!isVoteActive) {
+    // if we have voting round votes
     if (
       selectedProposal.upvoteMvkTotal > 0 ||
       selectedProposal.abstainMvkTotal > 0 ||
@@ -137,6 +138,7 @@ export const VotingProposalsArea = ({
       )
     }
 
+    // if only proposal round votes
     if (selectedProposal.passVoteMvkTotal > 0) {
       return (
         <VotingAreaStyled>
@@ -162,7 +164,7 @@ export const VotingProposalsArea = ({
           <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
           {isNewlyRegisteredSatellite && (
             <div className="banner-area">
-              <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
+              <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
             </div>
           )}
           {userAddress ? (

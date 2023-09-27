@@ -1,25 +1,38 @@
-import { normalizeDoormanChartsData } from './helpers/normalizer'
+import { normalizeDoormanChartsData } from './helpers/doormanCharts.normalizer'
 
-import { MVK_SMVK_HISTORY_SUB, DAPP_MVK_SMVK_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
+import { DAPP_MVK_SMVK_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
+import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
+import { ChartPeriodType } from 'types/charts.type'
 
 export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 export type StakeActionType = typeof STAKE_ACTION | typeof UNSTAKE_ACTION
-export type StakingSubsType = typeof DAPP_MVK_SMVK_STATS_SUB | typeof MVK_SMVK_HISTORY_SUB
+export type StakingSubsType = typeof DAPP_MVK_SMVK_STATS_SUB
+
+// nullable history default state types
+export type NullableMvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvkHistoryData['mvkHistoryData'] | null>
+export type NullableSmvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvkHistoryData['smvkHistoryData'] | null>
 
 export type DoormanContextStateType = {
-  mvkHistoryData: SmvkHistoryData['mvkHistoryData']
-  smvkHistoryData: SmvkHistoryData['smvkHistoryData']
+  mvkHistoryData: NullableMvkHistoryChartsType
+  smvkHistoryData: NullableSmvkHistoryChartsType
+  noChartData: SmvkHistoryData['noChartData']
   totalStakedMvk: number
   totalSupply: number
   maximumTotalSupply: number
 }
 
-export type NullableDoormanContextStateType = DeepNullable<DoormanContextStateType>
+export type NullableDoormanContextStateType = DeepNullable<
+  Omit<DoormanContextStateType, 'mvkHistoryData' | 'smvkHistoryData'>
+> & {
+  mvkHistoryData: NullableMvkHistoryChartsType
+  smvkHistoryData: NullableSmvkHistoryChartsType
+}
 
 export type DoormanContext = DoormanContextStateType & {
   isLoading: boolean
 
   changeStakingSubscriptionsList: (skips: Partial<DoormanSubsRecordType>) => void
+  updateStakeHistoryData: (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => void
 }
 
 export type DoormanActionData = {

@@ -1,18 +1,24 @@
-import { Network, NetworkType } from '@airgap/beacon-sdk'
-import type { BeaconWallet as BeaconWalletType } from '@taquito/beacon-wallet'
+import { NetworkType } from '@airgap/beacon-sdk'
 import { BeaconWallet } from '@taquito/beacon-wallet'
 import { TezosToolkit } from '@taquito/taquito'
-import { RPC_NODE, ecadLabSUrl } from 'providers/DappConfigProvider/helpers/dappConfig.const'
+import type { BeaconWallet as BeaconWalletType } from '@taquito/beacon-wallet'
+
+// consts
+import { RPCNodeType, ecadLabGhostnetRpcNode, rpcNodeSchema } from 'consts/rpcNodes.const'
+import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
+
+// utils
 import { getItemFromStorage } from 'utils/storage'
 
-export const WALLET_NETWORK: Network['type'] = NetworkType.GHOSTNET
+// Need to use as cuz NetworkType is enum and ts don't understand that all types are correct
+const WALLET_NETWORK = process.env.REACT_APP_NETWORK as NetworkType
 const DAPP_METADATA = {
-  name: process.env.REACT_APP_NAME || 'MAVRYK',
+  name: process.env.REACT_APP_NAME,
   preferredNetwork: WALLET_NETWORK,
 }
 
-const getRpcNode = () => {
-  const rpcNode = getItemFromStorage(RPC_NODE) ?? ecadLabSUrl
+const getRpcNode = (): RPCNodeType => {
+  const rpcNode = getItemFromStorage<RPCNodeType>(RPC_NODE, rpcNodeSchema) ?? ecadLabGhostnetRpcNode
   return rpcNode
 }
 

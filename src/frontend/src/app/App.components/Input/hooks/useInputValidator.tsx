@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import {
   ERR_MSG_INPUT,
+  ERR_MSG_NONE,
   ERR_MSG_TOAST,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
@@ -15,9 +16,12 @@ export interface InputValidatorProps<T> {
   originalErrorMessage?: string
   status: InputStatusType
   onChange: (e: React.ChangeEvent<T>) => void
+  onBlur?: (e: React.FocusEvent<T>) => void
   validationFns?: ValidatorFnType[]
   handleMax?: () => void
+  updateInputStatus?: (newInputStatus: InputStatusType) => void
   value?: string | number
+  allowInputAfterError: boolean
 }
 
 // * @param originalErrorMessage - error message passed from props to the Input component
@@ -30,34 +34,39 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
   originalErrorMessage,
   status,
   onChange,
+  onBlur,
   handleMax,
   validationFns,
+  updateInputStatus,
   value,
+  allowInputAfterError,
 }: InputValidatorProps<G>) {
   const { bug } = useToasterContext()
-  const [errorMsg, setErrorMsg] = useState('')
-  const [toastErrMsg, setToastErrMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [toastErrMsg, setToastErrMsg] = useState<string | null>(null)
 
   const internalValidationFn = useCallback(
     (value: string) => {
+      if (errorMsg) setErrorMsg(null)
+      if (toastErrMsg) setToastErrMsg(null)
       const hasError = validationFns?.some(([fn, type, args], idx) => {
-        const errMsg = args ? fn.apply(null, [value, ...args]) : fn(value)
+        const [containsError, errMsg] = args ? fn.apply(null, [value, ...args]) : fn(value)
 
-        // show err message under the input
-        if (errMsg && type === ERR_MSG_INPUT) {
+        // show err message under the input or just make input red if errMessage equals "none" -> (ERR_MSG_NONE)
+        if (containsError && (type === ERR_MSG_INPUT || type === ERR_MSG_NONE)) {
           setErrorMsg(errMsg)
           return true
         }
 
         // show err message with toast
-        if (errMsg && type === ERR_MSG_TOAST) {
+        if (containsError && type === ERR_MSG_TOAST) {
           setToastErrMsg(errMsg)
           // if there is a toast err message, prohibit showing toast
-          if (!toastErrMsg) bug(errMsg, 'Input error')
+          if (!toastErrMsg) bug(errMsg ?? '', 'Input error')
           return true
         }
 
-        if (idx === validationFns.length - 1 && !errMsg) {
+        if (idx === validationFns.length - 1 && !containsError) {
           setErrorMsg(errMsg)
           setToastErrMsg(errMsg)
         }
@@ -67,7 +76,7 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
 
       return hasError
     },
-    [bug, toastErrMsg, validationFns],
+    [bug, errorMsg, toastErrMsg, validationFns],
   )
 
   const handleChange = useCallback(
@@ -76,9 +85,30 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
 
       const hasError = internalValidationFn(value)
 
-      if (!hasError) onChange(e)
+      if (updateInputStatus) updateInputStatus(hasError ? INPUT_STATUS_ERROR : INPUT_STATUS_SUCCESS)
+
+      const _allowInput = allowInputAfterError ? allowInputAfterError : !hasError
+      if (_allowInput) {
+        onChange(e)
+      }
     },
-    [internalValidationFn, onChange],
+    [allowInputAfterError, internalValidationFn, onChange],
+  )
+
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<G>) => {
+      const { value } = e.target
+
+      const hasError = internalValidationFn(value)
+
+      if (!hasError) {
+        setToastErrMsg(null)
+        setErrorMsg(null)
+      }
+
+      onBlur?.(e)
+    },
+    [internalValidationFn, onBlur],
   )
 
   const handleMaxAmount = useCallback(() => {
@@ -88,16 +118,15 @@ export function useInputValidator<G extends HTMLInputElement | HTMLTextAreaEleme
     }
   }, [handleMax, internalValidationFn, value])
 
-  // if status is success - remove errors
-  useEffect(() => {
-    if (status !== INPUT_STATUS_ERROR) {
-      if (errorMsg) setErrorMsg('')
-      if (toastErrMsg) setToastErrMsg('')
-    }
-  }, [errorMsg, status, toastErrMsg])
+  const doNotShowErrorMsg = errorMsg === ERR_MSG_NONE || toastErrMsg === ERR_MSG_NONE
+  const internalErrorMsg = errorMsg !== null ? errorMsg : Boolean(originalErrorMessage) ? originalErrorMessage : null
+  const internalInputStatus = internalErrorMsg !== null ? INPUT_STATUS_ERROR : status
 
-  const internalErrorMsg = Boolean(errorMsg) ? errorMsg : Boolean(originalErrorMessage) ? originalErrorMessage : ''
-  const internalInputStatus = internalErrorMsg ? INPUT_STATUS_ERROR : status
-
-  return { status: internalInputStatus, errorMessage: internalErrorMsg, handleChange, handleMaxAmount }
+  return {
+    status: internalInputStatus,
+    errorMessage: doNotShowErrorMsg ? null : internalErrorMsg,
+    handleChange,
+    handleBlur,
+    handleMaxAmount,
+  }
 }

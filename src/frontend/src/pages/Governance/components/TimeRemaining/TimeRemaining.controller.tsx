@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import dayjs from 'dayjs'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 // Components
 import { Timer } from 'app/App.components/Timer/Timer.controller'
@@ -12,19 +11,21 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { MoveNextRoundModalBase, TimeLeftAreaWrap } from './TimeRemaining.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
+import colors from 'styles/colors'
 
 // Consts
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { GovPhases } from 'utils/TypesAndInterfaces/Governance'
-import { START_NEXT_ROUND_ACTION } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { GovPhases, START_NEXT_ROUND_ACTION } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // providers
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
-// Actions, helpers
+// actions, helpers
 import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
@@ -33,27 +34,64 @@ import {
 import { startNextRound } from 'providers/ProposalsProvider/actions/proposalsGovernanceInteraction.actions'
 import { api } from 'utils/api/api'
 import { isAbortError, unknownToError } from 'errors/error'
-import { getGovernanceStorage } from 'pages/Governance/actions/GovernanseData.actions'
-
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 export default function TimeRemaining() {
-  const dispatch = useDispatch()
-
-  const { currentRoundEndLevel, timelockProposalId, governancePhase } = useSelector(
-    (state: State) => state.governance.config,
-  )
+  const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
+    config: { currentRoundEndLevel, timelockProposalId, governancePhase },
+  } = useProposalsContext()
+  const {
     contractAddresses: { governanceAddress },
+    preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const { bug } = useToasterContext()
+  const intervalRef = useRef<null | any>(null)
+
   const [timerDeadline, setTimerDeadline] = useState(0)
-  const [timerActive, setTimerActive] = useState(false)
+  const [showTimer, setShowTimer] = useState(true)
   const [showModal, setShowModal] = useState(false)
+
+  // TODO: implement this estimation for popup
   const [estimatedValues] = useState({ fee: 0, cost: 0 })
+
+  useEffect(() => {
+    const abortController = new AbortController()
+
+    ;(async () => {
+      try {
+        const { data: duration } = await api(
+          getTimestampByLevelUrl(currentRoundEndLevel),
+          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
+          getTimestampByLevelSchema,
+        )
+        const convertedToTimestamp = new Date(duration).getTime()
+
+        setTimerDeadline(convertedToTimestamp)
+      } catch (e) {
+        // TODO: handle fetch errors when error boundary will be ready
+        if (!isAbortError(e)) {
+          console.error('getting timestamp by lvl error: ', e)
+          bug('Unexpected error happened occured, please reload the page')
+        }
+      }
+    })()
+
+    return () => abortController.abort()
+  }, [currentRoundEndLevel])
+
+  useEffect(() => {
+    if (timerDeadline) {
+      intervalRef.current = setInterval(() => {
+        const isTimerActive = dayjs().isBefore(timerDeadline)
+        setShowTimer(isTimerActive)
+      }, 1000)
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [timerDeadline])
 
   const handleCloseModal = () => setShowModal(false)
 
@@ -74,17 +112,12 @@ export default function TimeRemaining() {
     [bug, governanceAddress, userAddress],
   )
 
-  const dappActionCallback = useCallback(() => {
-    dispatch(getGovernanceStorage())
-  }, [dispatch])
-
   const nextRoundContractProps: HookContractActionArgs<boolean> = useMemo(
     () => ({
       actionType: START_NEXT_ROUND_ACTION,
       actionFn: handleNextRoundActionFn,
-      dappActionCallback,
     }),
-    [dappActionCallback, handleNextRoundActionFn],
+    [handleNextRoundActionFn],
   )
 
   // same action with 2 different boolean values, so need 2 seperate fns to handle it
@@ -95,8 +128,7 @@ export default function TimeRemaining() {
       await handleNextRound(false)
       handleCloseModal()
     } catch (e) {
-      const err = unknownToError(e)
-      bug(err.message)
+      bug(unknownToError(e).message)
     }
   }
 
@@ -105,49 +137,21 @@ export default function TimeRemaining() {
       await handleNextRound(true)
       handleCloseModal()
     } catch (e) {
-      const err = unknownToError(e)
-      bug(err.message)
+      bug(unknownToError(e).message)
     }
   }
 
   const handleMoveNextRound = () => {
-    if (governancePhase === GovPhases.TIMELOCK && timelockProposalId > 0) {
+    if (governancePhase === GovPhases.TIMELOCK && timelockProposalId && timelockProposalId > 0) {
       setShowModal(true)
     } else {
       modalMoveNext()
     }
   }
 
-  useEffect(() => {
-    const abortController = new AbortController()
-
-    ;(async () => {
-      try {
-        const { data: duration } = await api(
-          getTimestampByLevelUrl(currentRoundEndLevel),
-          { signal: abortController.signal, headers: getTimestampByLevelHeaders },
-          getTimestampByLevelSchema,
-        )
-        const convertedToTimestamp = new Date(duration).getTime()
-        const isTimestampValid = convertedToTimestamp > Date.now()
-
-        setTimerActive(isTimestampValid)
-        if (isTimestampValid) setTimerDeadline(convertedToTimestamp)
-      } catch (e) {
-        // TODO: handle fetch errors when error boundary will be ready
-        if (!isAbortError(e)) {
-          console.error('getting timestamp by lvl error: ', e)
-        }
-        bug('Unexpected error happened occured, please reload the page')
-      }
-    })()
-
-    return () => abortController.abort()
-  }, [currentRoundEndLevel])
-
   return (
-    <TimeLeftAreaWrap showBorder={timerActive}>
-      {timerActive ? (
+    <TimeLeftAreaWrap showBorder={showTimer}>
+      {showTimer ? (
         <>
           <Timer
             timestamp={timerDeadline}
@@ -157,7 +161,7 @@ export default function TimeRemaining() {
               timerView: COLON_VIEW,
               showFullDay: false,
               endText: 'remaining',
-              defaultColor: '#77A4F2',
+              defaultColor: colors[themeSelected].primaryText,
             }}
           />
         </>

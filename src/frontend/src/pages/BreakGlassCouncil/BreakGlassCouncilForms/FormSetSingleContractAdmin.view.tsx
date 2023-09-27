@@ -14,7 +14,7 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { FormStyled } from './BreakGlassCouncilForm.style'
 
 // actions
-import { setSingleContractAdmin } from '../BreakGlassCouncil.actions'
+// import { setSingleContractAdmin } from '../BreakGlassCouncil.actions'
 
 // helpers
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
@@ -25,6 +25,7 @@ const INIT_FORM = {
   targetContract: '',
 }
 
+// TODO: update with setContractsAdmin
 export function FormSetSingleContractAdminView() {
   const dispatch = useDispatch()
   const { isActionActive } = useSelector((state: State) => state.loading)
@@ -41,7 +42,7 @@ export function FormSetSingleContractAdminView() {
     e.preventDefault()
 
     try {
-      await dispatch(setSingleContractAdmin(newAdminAddress, targetContract))
+      // await dispatch(setSingleContractAdmin(newAdminAddress, targetContract))
 
       setForm(INIT_FORM)
       setFormInputStatus({

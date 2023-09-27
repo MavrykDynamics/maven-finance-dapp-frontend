@@ -6,12 +6,13 @@ import {
   TokenIndexerMetadataType,
   TokenMetadataType,
   TokensContext,
+  mTokenMetadataSchema,
   tokenMetadataSchema,
 } from '../tokens.provider.types'
 import { TokensMetadataQuery } from 'utils/__generated__/graphql'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { DEFAULT_MIN_COLLATERAL_AMOUNT, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
-import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
+import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 import { TokensGqlSchemaType } from './tokens.schemes'
 
 /**
@@ -49,12 +50,14 @@ const handleMvkToken = ({
 } => {
   const smvkTokenData = getTokenSymbolAndName('smvk')
   const mvkTokenData = getTokenSymbolAndName('mvk')
+
   const collateralData = {
-    indexerName: lending_controller_collateral_tokens[0].token_name,
+    indexerName: lending_controller_collateral_tokens?.[0]?.token_name,
     // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
     isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
-    isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
-    isStaked: lending_controller_collateral_tokens[0].is_staked_token,
+    isScaled: lending_controller_collateral_tokens?.[0]?.is_scaled_token,
+    isStaked: lending_controller_collateral_tokens?.[0]?.is_staked_token,
+    minDepositAmount: DEFAULT_MIN_COLLATERAL_AMOUNT,
   }
 
   const smvkTokenMetadata: TokenMetadataType | null = smvkTokenData
@@ -64,7 +67,7 @@ const handleMvkToken = ({
         type: tokenType,
         decimals: Number(parsedMetadata.decimals),
         address: SMVK_TOKEN_ADDRESS,
-        ...(lending_controller_collateral_tokens[0]?.token_name === 'smvk'
+        ...(lending_controller_collateral_tokens?.[0]?.token_name === 'smvk'
           ? {
               loanData: collateralData,
             }
@@ -183,6 +186,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
               isPausedCollateral: lending_controller_collateral_tokens[0].paused,
               isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
               isStaked: lending_controller_collateral_tokens[0].is_staked_token,
+              minDepositAmount: DEFAULT_MIN_COLLATERAL_AMOUNT,
             },
           }
         }
@@ -194,16 +198,32 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
             loanData: {
               ...tokenMetadata.loanData,
               indexerName: lending_controller_loan_tokens[0].loan_token_name,
+              minDepositAmount: convertNumberForClient({
+                number: lending_controller_loan_tokens[0].min_repayment_amount,
+                grade: tokenMetadata.decimals,
+              }),
             },
           }
         }
 
         // if token is mToken
-        if (m_tokens?.[0]?.address) acc.mTokens.push(token_address)
+        if (m_tokens?.[0]?.address) {
+          const {
+            assets: [{ decimals: interestRateDecimals }],
+          } = mTokenMetadataSchema.parse(m_tokens[0].metadata)
+
+          acc.mTokens.push(token_address)
+          tokenMetadata = {
+            ...tokenMetadata,
+            mToken: {
+              interestRateDecimals: Number(interestRateDecimals),
+            },
+          }
+        }
 
         acc.tokensMetadata[token_address] = { ...acc.tokensMetadata[token_address], ...tokenMetadata }
       } catch (e) {
-        console.error('normalizeTokensMetadata error: ', { e })
+        if (process.env.REACT_APP_ENV === 'dev') console.error('normalizeTokensMetadata error: ', { e })
       } finally {
         return acc
       }

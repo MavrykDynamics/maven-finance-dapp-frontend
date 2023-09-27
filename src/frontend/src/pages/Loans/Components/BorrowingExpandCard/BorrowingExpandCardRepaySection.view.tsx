@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 
@@ -10,7 +10,6 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { TabItem } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // types
 import { State } from 'reducers'
@@ -18,7 +17,6 @@ import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
 // styles
-import { silverColor } from 'styles'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -33,16 +31,16 @@ import {
   loansTabNames,
 } from 'pages/Loans/Loans.const'
 import {
-  ERR_MSG_TOAST,
+  ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   InputStatusType,
-  defaultLargeInputMaxLength,
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 
@@ -50,13 +48,13 @@ import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT 
 import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkNan } from 'utils/checkNan'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 type Props = {
   vaultId: number
@@ -67,8 +65,8 @@ type Props = {
   borrowedAmount: number
   minimumRepay: number
   collateralBalance: number
-  borrowCapacity: number
-  activeRepayTab?: TabItem
+  availableLiquidity: number
+  activeRepayTab?: SlidingTabButtonType
   openConfirmRepayPopup: (inputAmount: number, callback: () => void) => void
   openConfirmRepayFullPopup: (callback: () => void) => void
 }
@@ -90,7 +88,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     borrowedToken,
     collateralBalance,
     borrowedTokenRate,
-    borrowCapacity,
+    availableLiquidity,
     minimumRepay,
     borrowedAmount,
     activeRepayTab,
@@ -119,17 +117,16 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     inputData.amount !== ''
   const isNotRepayInFullWarning = isRepayInFull && totalOutstanding !== inputAmount
 
-  const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
-  const futureTotalOutstanding = totalOutstanding - inputAmount < 0 ? 0 : totalOutstanding - inputAmount
-  const { futureCollateralRatio, futureBorrowCapacity } = useMemo(() => {
-    const futureCollateralRatio = getVaultCollateralRatio(
-      collateralBalance,
-      (totalOutstanding - inputAmount) * borrowedTokenRate,
-    )
+  const { futureBorrowCapacity, futureCollateralRatio, futureTotalOustanding } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: totalOutstanding,
+    vaultCurrentCollateralBalance: collateralBalance,
+    vaultTokenAddress: borrowedToken.address,
+    marketAvailableLiquidity: availableLiquidity,
+    operationType: operationRepay,
+    inputValue: inputAmount,
+  })
 
-    const futureBorrowCapacity = Math.max(borrowCapacity + inputAmount, 0)
-    return { futureCollateralRatio, futureBorrowCapacity }
-  }, [collateralBalance, borrowedAmount, inputAmount, borrowedTokenRate, borrowCapacity])
+  const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
 
   const clearData = () => {
     setInputData({
@@ -232,7 +229,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * borrowedTokenRate,
       inputSize: INPUT_LARGE,
-      validationFns: [[validateInputLength, ERR_MSG_TOAST]],
+      validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     }),
     [
       symbol,
@@ -285,7 +282,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           <RepayTableStats
             futureBorrowedAmount={futureBorrowedAmount}
             collateralBalance={collateralBalance}
-            futureTotalOutstanding={futureTotalOutstanding}
+            futureTotalOutstanding={futureTotalOustanding}
             futureCollateralRatio={futureCollateralRatio}
             futureBorrowCapacity={futureBorrowCapacity}
             fee={fee}
@@ -342,7 +339,7 @@ const RepayTableStats = ({
             Fees Due
             <CustomTooltip
               iconId="info"
-              defaultStrokeColor={colors[themeSelected].textColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
               text={FEES_DUE(fee)}
               className="tooltip"
             />
@@ -362,7 +359,7 @@ const RepayTableStats = ({
       <div className="line">
         <ThreeLevelListItem
           className="collateral-diagram"
-          customColor={getCollateralRationPersent(futureCollateralRatio)}
+          customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
         >
           <div className={`percentage`}>
             Collateral Ratio:
@@ -380,7 +377,7 @@ const RepayTableStats = ({
             Available To Borrow
             <CustomTooltip
               iconId="info"
-              defaultStrokeColor={silverColor}
+              defaultStrokeColor={colors[themeSelected].subHeadingText}
               text={AVALIABLE_TO_BORROW}
               className="tooltip"
             />

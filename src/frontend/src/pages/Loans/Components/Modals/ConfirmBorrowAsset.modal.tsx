@@ -26,7 +26,6 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { borrowVaultAssetAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -36,6 +35,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { operationBorrow, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 export const ConfirmBorrowAsset = ({
   closePopup,
@@ -56,23 +56,31 @@ export const ConfirmBorrowAsset = ({
   } = useDappConfigContext()
 
   useLockBodyScroll(show)
-  const borrowedToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
 
   const {
-    vaultId = 0,
-    borrowCapacity = 0,
-    inputAmount = 0,
-    borrowedAmount = 0,
-    collateralBalance = 0,
-    DAOFee = 0,
-    callback = () => {},
-  } = data ?? {}
+    vaultId,
+    totalOutstanding,
+    inputAmount,
+    availableLiquidity,
+    collateralBalance,
+    DAOFee,
+    tokenAddress: vaultTokenAddress,
+    callback,
+  } = data
+
+  const borrowedToken = getTokenDataByAddress({ tokenAddress: vaultTokenAddress, tokensMetadata, tokensPrices })
+
   const { symbol = '', rate: originalRate } = borrowedToken ?? {}
   const rate = originalRate ?? 0
 
-  const futureCollateralRatio = getVaultCollateralRatio(collateralBalance, (borrowedAmount + inputAmount) * rate)
-
-  const futureBorrowCapacity = borrowCapacity - inputAmount * rate
+  const { futureCollateralRatio, futureBorrowCapacity } = useVaultFutureStats({
+    vaultCurrentTotalOutstanding: totalOutstanding,
+    vaultCurrentCollateralBalance: collateralBalance,
+    vaultTokenAddress,
+    operationType: operationBorrow,
+    inputValue: inputAmount,
+    marketAvailableLiquidity: availableLiquidity,
+  })
 
   // borrow action
   const borrowAction = useCallback(async () => {
@@ -124,7 +132,7 @@ export const ConfirmBorrowAsset = ({
                 Total Amount
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee.`}
                   className="tooltip"
                 />
@@ -144,7 +152,7 @@ export const ConfirmBorrowAsset = ({
                 DAO Fee
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
                   className="tooltip"
                 />
@@ -169,7 +177,7 @@ export const ConfirmBorrowAsset = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(futureCollateralRatio)}
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
@@ -190,7 +198,7 @@ export const ConfirmBorrowAsset = ({
                 Available To Borrow
                 <CustomTooltip
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                   text={AVALIABLE_TO_BORROW}
                   className="tooltip"
                 />

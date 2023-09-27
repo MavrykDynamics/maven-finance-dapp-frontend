@@ -1,19 +1,13 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useLayoutEffect } from 'react'
 import { Redirect, useHistory, useLocation } from 'react-router'
-import { useDispatch, useSelector } from 'react-redux'
 import QueryString from 'qs'
 
 // types
-import { State } from 'reducers'
+import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { ProposalsListType } from './helpers/governanceTypes'
-import { GovPhases, ProposalRecordType, ProposalStatus } from 'utils/TypesAndInterfaces/Governance'
 
-// providers
-
-// actions & cs hooks
-import { useDataLoader } from 'utils/useDataLoader/useDataLoader'
-import { getGovernanceStorage } from './actions/GovernanseData.actions'
-import { getEmergencyGovernanceStorage } from '../EmergencyGovernance/EmergencyGovernance.actions'
+// actions &  hooks
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -25,7 +19,7 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-// actions, helpers, consts
+// helpers, consts
 import {
   calculateSlicePositions,
   getPageNumber,
@@ -36,6 +30,16 @@ import {
   WAITING_PAYMENT_PROPOSALS_LIST_NAME,
 } from 'app/App.components/Pagination/pagination.consts'
 import { generateCyclesDdOptions, NONE_CYCLE_SELECTED_OPTION } from './helpers/governanceView.helpers'
+import {
+  DEFAULT_PROPOSALS_ACTIVE_SUBS,
+  GOVERNANCE_CONFIG_SUB,
+  GovPhases,
+  PROPOSALS_CURRENT_DATA,
+  PROPOSALS_DATA_SUB,
+  PROPOSALS_PAST_DATA,
+  ProposalStatus,
+} from 'providers/ProposalsProvider/helpers/proposals.const'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 // styles
 import { Page } from 'styles'
@@ -55,31 +59,30 @@ import {
 } from 'providers/SatellitesProvider/satellites.const'
 
 export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
-  const dispatch = useDispatch()
   const { search } = useLocation()
   const history = useHistory()
 
   const {
-    isLoaded: isGovernanceLoaded,
+    isLoading: isGovernanceLoading,
     config: { governancePhase, cycle },
     pastProposalsIds,
     currentRoundProposalsIds,
     waitingProposalsIdsToBeExecuted,
     waitingProposalsIdsToBePaid,
     proposalsMapper,
-  } = useSelector((state: State) => state.governance)
-  const { isLoaded: isEgovLoaded } = useSelector((state: State) => state.emergencyGovernance)
+    changeProposalsSubscriptionsList,
+  } = useProposalsContext()
 
-  const { isLoading } = useDataLoader(async (isDepsChanged) => {
-    try {
-      await Promise.all(
-        [
-          (!isGovernanceLoaded || isDepsChanged) && dispatch(getGovernanceStorage()),
-          (!isEgovLoaded || isDepsChanged) && dispatch(getEmergencyGovernanceStorage()),
-        ].filter(Boolean),
-      )
-    } catch (e) {}
-  }, [])
+  useLayoutEffect(() => {
+    changeProposalsSubscriptionsList({
+      [GOVERNANCE_CONFIG_SUB]: true,
+      [PROPOSALS_DATA_SUB]: isHistory ? PROPOSALS_PAST_DATA : PROPOSALS_CURRENT_DATA,
+    })
+
+    return () => {
+      changeProposalsSubscriptionsList(DEFAULT_PROPOSALS_ACTIVE_SUBS)
+    }
+  }, [isHistory])
 
   // handle saving proposal id in query params
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { proposalId: string }
@@ -175,7 +178,10 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
       ...(currentRoundProposalsIds.length
         ? [
             {
-              title: governancePhase === GovPhases.PROPOSAL ? 'Poll for Next round' : 'Ongoing proposal',
+              title:
+                governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
+                  ? 'Poll for Next round'
+                  : 'Ongoing proposal',
               type: 'ongoing',
               proposalsIds: currentRoundProposalsIds,
               listName: ONGOING_PROPOSALS_LIST_NAME,
@@ -196,7 +202,8 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   ])
 
   const selectedProposalVoters = useMemo(
-    () => (rightSideContentId ? proposalsMapper[rightSideContentId]?.votes ?? [] : []),
+    () =>
+      rightSideContentId ? proposalsMapper[rightSideContentId]?.votes?.filter(({ round }) => round === 1) ?? [] : [],
     [proposalsMapper, rightSideContentId],
   )
 
@@ -211,12 +218,9 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
   return (
     <Page>
       <PageHeader page={'governance'} />
-      <GovernanceTopBar
-        governancePhase={governancePhase}
-        isWaitingToExecute={Boolean(waitingProposalsIdsToBeExecuted.length)}
-      />
+      <GovernanceTopBar governancePhase={governancePhase} />
 
-      {isLoading ? (
+      {isGovernanceLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading proposals</div>
@@ -249,7 +253,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
               {proposalsListsToShow.length ? (
                 proposalsListsToShow.map(({ title, proposalsIds, listName, type }) => {
                   return (
-                    <>
+                    <div key={listName}>
                       <Proposals
                         proposalsList={proposalsIds}
                         handleItemSelect={handleItemSelect}
@@ -257,7 +261,6 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                         title={title}
                         type={type}
                         listName={listName}
-                        key={listName}
                       />
 
                       {/* Show this plug when we use cycle dd filter and some of the cycles don't have proposals in it */}
@@ -267,7 +270,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                           <figcaption>{`There is no propoposals on the cycle ${selectedCycle?.id}`}</figcaption>
                         </EmptyContainer>
                       ) : null}
-                    </>
+                    </div>
                   )
                 })
               ) : (
@@ -278,7 +281,10 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
               )}
 
               {/* Satellites who has voted for selected proposal */}
-              {!isHistory && governancePhase !== GovPhases.PROPOSAL && selectedProposalVoters.length ? (
+              {!isHistory &&
+              governancePhase !== GovPhases.PROPOSAL &&
+              governancePhase !== GovPhases.EXECUTION &&
+              selectedProposalVoters.length ? (
                 <div className="voters-list">
                   <H2Title>Satellite Voting History</H2Title>
                   {paginatedVotersList.map(({ vote, address, name, avatar, round }) => {
@@ -296,7 +302,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                           <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
                           <div className="info">
                             <span>{name}</span>
-                            <TzAddress tzAddress={address} />
+                            <TzAddress tzAddress={address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
                           </div>
                         </div>
                         <StatusFlag status={voteColor} text={SATELLITE_VOTES_MAPPER[vote]} />

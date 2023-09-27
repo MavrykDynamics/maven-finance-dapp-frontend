@@ -1,29 +1,35 @@
-import { ApolloError } from '@apollo/client'
 import { usePrevious } from 'react-use'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { GetUserVaultsQueryQuery } from 'utils/__generated__/graphql'
-import { VaultsContext, NullableVaultsCtxState, VaultsSubsRecordType } from './vaults.provider.types'
+import {
+  VaultsContext,
+  NullableVaultsCtxState,
+  VaultsSubsRecordType,
+  VaultsDashboardDataType,
+} from './vaults.provider.types'
 
 // consts
-import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
-import { GET_ALL_VAULTS_QUERY, getUserVaultsQuery } from './queries/vaults.query'
+import {
+  GET_ALL_VAULTS_QUERY,
+  GET_USER_ALL_VAULTS_QUERY,
+  GET_USER_DEPOSITOR_ALL_VAULTS_QUERY,
+} from './queries/vaults.query'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   DEFAULT_VAULTS_CONTEXT,
   VAULTS_ALL,
   VAULTS_DATA,
+  VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
 } from './vaults.provider.consts'
 
-// helpers
+// utils
 import { normalizeVaults } from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 
@@ -36,18 +42,14 @@ type Props = {
 // TODO: if will need implement query that will take vaults where owner === current user and market token === vault loan token
 export const VaultsProvider = ({ children }: Props) => {
   const { userAddress } = useUserContext()
-  const { bug } = useToasterContext()
+  const { handleApolloError } = useApolloContext()
 
   const prevUserAddress = usePrevious(userAddress)
-
-  const handleSubError = (error: ApolloError, subName: string) => {
-    console.error(`${subName} query error: `, error)
-    bug(TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['message'], TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
-  }
 
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
   const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
+  // reset user specific fields on user change
   useEffect(() => {
     if (prevUserAddress !== userAddress) {
       setVaultsCtxState((prev) => ({
@@ -58,48 +60,76 @@ export const VaultsProvider = ({ children }: Props) => {
     }
   }, [userAddress])
 
-  useQueryWithRefetch(getUserVaultsQuery({ userAddress, filters: activeSubs[VAULTS_DATA] }), {
-    skip:
-      activeSubs[VAULTS_DATA] !== 'userIsOwner' &&
-      activeSubs[VAULTS_DATA] !== 'userIsDepositor' &&
-      Boolean(userAddress),
+  /**
+   * GET_USER_DEPOSITOR_ALL_VAULTS_QUERY -> get vaults where user allowed to deposit
+   * GET_USER_ALL_VAULTS_QUERY -> get vaults created by user
+   * GET_ALL_VAULTS_QUERY -> get all vaults
+   */
+  useQueryWithRefetch(GET_USER_DEPOSITOR_ALL_VAULTS_QUERY, {
+    skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     variables: {
       userAddress: userAddress ?? '',
     },
     onCompleted: (data) => {
-      updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
+      const { vaultsMapper, allVaultsIds, permissionedVaultsIds } = normalizeVaults({
+        indexerData: data,
+        userAddress,
+      })
+
+      setVaultsCtxState((prev) => ({
+        ...prev,
+        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
+        permissionedVaultsIds,
+      }))
     },
-    onError: (error) => handleSubError(error, 'getVaultsSubscription'),
+    onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
+  })
+
+  useQueryWithRefetch(GET_USER_ALL_VAULTS_QUERY, {
+    skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
+    variables: {
+      userAddress: userAddress ?? '',
+    },
+    onCompleted: (data) => {
+      const { vaultsMapper, allVaultsIds, myVaultsIds } = normalizeVaults({
+        indexerData: data,
+        userAddress,
+      })
+
+      setVaultsCtxState((prev) => ({
+        ...prev,
+        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
+        myVaultsIds,
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
-    skip: activeSubs[VAULTS_DATA] !== 'allVaults',
+    skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
     onCompleted: (data) => {
-      updateVaultsData(data, userAddress, activeSubs[VAULTS_DATA])
+      const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
+        indexerData: data,
+        userAddress,
+      })
+
+      setVaultsCtxState((prev) => ({
+        ...prev,
+        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+        allVaultsIds,
+        permissionedVaultsIds,
+        myVaultsIds,
+      }))
     },
-    onError: (error) => handleSubError(error, 'SUBSCRIBE_TO_ALL_VAULTS'),
+    onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
 
-  const updateVaultsData = (
-    indexerData: GetUserVaultsQueryQuery,
-    userAddress: string | null,
-    filterType: VaultsSubsRecordType[typeof VAULTS_DATA],
-  ) => {
-    const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
-      indexerData,
-      userAddress,
-    })
-
-    const isAllVaultsQuery = filterType === VAULTS_ALL
-    const isPermissionedVaultsQuery = filterType === VAULTS_USER_DEPOSITOR
-
+  const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
     setVaultsCtxState((prev) => ({
       ...prev,
-      vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
-      allVaultsIds: isAllVaultsQuery ? allVaultsIds : prev.allVaultsIds,
-      permissionedVaultsIds:
-        isAllVaultsQuery || isPermissionedVaultsQuery ? permissionedVaultsIds : prev.permissionedVaultsIds,
-      myVaultsIds: isPermissionedVaultsQuery ? prev.myVaultsIds : myVaultsIds,
+      vaultsDashboardData: newVaultsDashboardData,
     }))
   }
 
@@ -113,6 +143,7 @@ export const VaultsProvider = ({ children }: Props) => {
         vaultsCtxState,
         activeSubs,
         changeVaultsSubscriptionsList,
+        setVaultsDashboardData,
         userAddress,
       }),
     [vaultsCtxState, activeSubs],

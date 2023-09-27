@@ -6,6 +6,7 @@ import Icon from '../Icon/Icon.view'
 import { MenuTopBar } from './MenuTopBar/MenuTopBar.controller'
 import { NavigationLink } from './NavigationLink/NavigationLink.controller'
 import NewButton from '../Button/NewButton'
+import { CustomLink } from '../CustomLink/CustomLink'
 
 // types
 import { MainNavigationRoute } from '../../../utils/TypesAndInterfaces/Navigation'
@@ -21,6 +22,7 @@ import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { LinkWide, LinkWrapper } from '../CustomLink/CustomLink.const'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { getMVKTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
 import { GET_MVK_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
@@ -181,33 +183,19 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             >
               {sidebarOpened ? 'MVK Faucet' : 'mvk'}
             </NewButton>
-            <a
-              // TODO: remove this cond when users will be able to use faucet
-              {...(true
-                ? {
-                    href: '#',
-                  }
-                : {
-                    href: 'https://faucet.marigold.dev/ ',
-                    target: '_blank',
-                    rel: 'noreferrer',
-                  })}
-              className={sidebarOpened ? '' : 'small'}
-            >
+
+            {/* TODO: replace disabled with canGetInitThouthand disabled when users will be able to use faucet */}
+            <CustomLink to="https://faucet.marigold.dev/" disabled kind={sidebarOpened ? LinkWide : LinkWrapper}>
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin disabled>
                 {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
               </NewButton>
-            </a>
-            <a
-              href="https://forms.gle/bwmTfpoLKBhaf7yD6"
-              target="_blank"
-              rel="noreferrer"
-              className={sidebarOpened ? '' : 'small'}
-            >
+            </CustomLink>
+
+            <CustomLink to="https://forms.gle/bwmTfpoLKBhaf7yD" kind={sidebarOpened ? LinkWide : LinkWrapper}>
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
                 {sidebarOpened ? 'Submit Feedback' : 'SF'}
               </NewButton>
-            </a>
+            </CustomLink>
 
             <SocialIcons />
             <span>

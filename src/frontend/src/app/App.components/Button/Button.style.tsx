@@ -21,7 +21,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   &.disabled {
-    opacity: 0.6;
+    opacity: 0.4;
     cursor: not-allowed;
   }
 
@@ -42,8 +42,8 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   &.transparent {
-    color: ${({ theme }) => theme.textColor};
-    background-color: ${({ theme }) => theme.containerColor};
+    color: ${({ theme }) => theme.regularText};
+    background-color: ${({ theme }) => theme.cards};
   }
 
   &.loading {
@@ -79,7 +79,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     padding: 3px 7px;
     position: relative;
     transition: 0.3s all;
-    color: ${({ theme }) => theme.navTitleColor};
+    color: ${({ theme }) => theme.menuButtonText};
     max-width: unset;
 
     &.active,
@@ -93,19 +93,19 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
         content: '';
         width: 30px;
         height: 1px;
-        background-color: ${({ theme }) => theme.navLinkSubTitleActive};
+        background-color: ${({ theme }) => theme.selectedColor};
       }
-      color: ${({ theme }) => theme.navLinkSubTitleActive};
+      color: ${({ theme }) => theme.selectedColor};
     }
   }
 
   &.actionPrimary {
-    color: ${({ theme }) => theme.containerColor};
-    background-color: ${({ theme }) => theme.actionPrimaryBtnColor};
+    color: ${({ theme }) => theme.cards};
+    background-color: ${({ theme }) => theme.linksAndButtons};
 
     &.fill {
       svg {
-        fill: ${({ theme }) => theme.containerColor};
+        fill: ${({ theme }) => theme.cards};
         stroke: none;
       }
     }
@@ -118,9 +118,9 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   &.actionSecondary {
-    color: ${({ theme }) => theme.actionPrimaryBtnColor};
+    color: ${({ theme }) => theme.linksAndButtons};
     background-color: transparent;
-    border: 2px solid ${({ theme }) => theme.actionPrimaryBtnColor};
+    border: 2px solid ${({ theme }) => theme.linksAndButtons};
 
     &.close {
       svg {
@@ -131,7 +131,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     &.fill {
       svg {
         stroke: none;
-        fill: ${({ theme }) => theme.actionPrimaryBtnColor};
+        fill: ${({ theme }) => theme.linksAndButtons};
       }
     }
   }
@@ -152,8 +152,8 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
 
   &.transparentWithBorder {
     background: transparent;
-    border: 1px solid ${({ theme }) => theme.valueColor};
-    color: ${({ theme }) => theme.valueColor};
+    border: 1px solid ${({ theme }) => theme.linksAndButtons};
+    color: ${({ theme }) => theme.linksAndButtons};
     font-weight: 600;
     font-size: 16px;
     display: flex;
@@ -174,8 +174,8 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
 
     svg {
-      stroke: ${({ theme }) => theme.valueColor};
-      fill: ${({ theme }) => theme.valueColor};
+      stroke: ${({ theme }) => theme.linksAndButtons};
+      fill: ${({ theme }) => theme.linksAndButtons};
     }
   }
 
@@ -265,7 +265,7 @@ export const ButtonText = styled.div<{ theme: MavrykTheme }>`
   }
 
   &.transparent {
-    color: ${({ theme }) => theme.primaryColor};
+    color: ${({ theme }) => theme.regularText};
   }
 
   &.votingFor {
@@ -295,7 +295,7 @@ export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number 
   }
 
   &.transparent {
-    stroke: ${({ theme }) => theme.textColor};
+    stroke: ${({ theme }) => theme.regularText};
   }
   &.glassBroken {
     stroke: ${({ theme }) => theme.downColor};
@@ -343,7 +343,7 @@ export const ButtonLoadingIcon = styled.svg<{ theme: MavrykTheme }>`
   }
 
   &.transparent {
-    stroke: ${({ theme }) => theme.textColor};
+    stroke: ${({ theme }) => theme.regularText};
   }
 
   &.actionPrimary {

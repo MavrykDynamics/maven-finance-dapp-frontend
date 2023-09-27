@@ -1,13 +1,15 @@
-import { useSelector } from 'react-redux'
-import { State } from '../../../reducers'
+import { useMemo } from 'react'
 
+// hooks
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+
+// view
 import TimeRemaining from '../../Governance/components/TimeRemaining/TimeRemaining.controller'
 import { SlidingTabButtons } from '../../../app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
-
-import { getSeparateSnakeCase } from '../../../utils/parse'
-
 import { CurrentPhaseContainer, PropSubmissionTopBarStyled } from './PropSubmissionTopBar.style'
-import { useMemo } from 'react'
+
+// utils
+import { getSeparateSnakeCase } from '../../../utils/parse'
 
 export type PropSubmissionTopBarProps = {
   valueCallback: (val: number) => void
@@ -15,7 +17,9 @@ export type PropSubmissionTopBarProps = {
 }
 
 export const PropSubmissionTopBar = ({ valueCallback, activeTab }: PropSubmissionTopBarProps) => {
-  const { governancePhase } = useSelector((state: State) => state.governance.config)
+  const {
+    config: { governancePhase },
+  } = useProposalsContext()
 
   const topBarItems = useMemo(
     () => [

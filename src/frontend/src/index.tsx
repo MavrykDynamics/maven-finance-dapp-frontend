@@ -23,8 +23,14 @@ import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider
 import LoansProvider from 'providers/LoansProvider/loans.provider'
 import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
+import ProposalsProvider from 'providers/ProposalsProvider/proposals.provider'
 import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
+import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
+import VestingProvider from 'providers/VestingProvider/vesting.provider'
+import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
+import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
+import EGovProvider from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -33,6 +39,7 @@ import { FullScreenLoadingApp } from 'app/App.style'
 import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
 
+// styles
 import { GlobalStyle } from './styles'
 import themeColors from 'styles/colors'
 import './styles/fonts.css'
@@ -75,10 +82,10 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   const { isLoading: isDappGeneralLoading } = useDappConfigContext()
   const { isLoading: isTokensLoading } = useTokensContext()
   const { isLoading: isFeedsLoading } = useDataFeedsContext()
-  const { isLoading: isUserLoading, isRunnedInitialConnect } = useUserContext()
+  const { isLoading: isUserLoading, isUserRestored } = useUserContext()
 
   // use user loading status only on dapp init loading
-  const isInitialUserLoading = !isRunnedInitialConnect ? isUserLoading : false
+  const isInitialUserLoading = !isUserRestored ? isUserLoading : false
 
   const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 
@@ -90,13 +97,25 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
         <FullScreenLoadingApp />
       ) : (
         <ContractStatusesProvider>
-          <DoormanProvider>
-            <SatellitesProvider>
-              <LoansProvider>
-                <VaultsProvider>{children}</VaultsProvider>
-              </LoansProvider>
-            </SatellitesProvider>
-          </DoormanProvider>
+          <ProposalsProvider>
+            <DoormanProvider>
+              <SatellitesProvider>
+                <LoansProvider>
+                  <EGovProvider>
+                    <SatelliteGovernanceProvider>
+                      <VaultsProvider>
+                        <FinancialRequestsProvider>
+                          <TreasuryProvider>
+                            <VestingProvider>{children}</VestingProvider>
+                          </TreasuryProvider>
+                        </FinancialRequestsProvider>
+                      </VaultsProvider>
+                    </SatelliteGovernanceProvider>
+                  </EGovProvider>
+                </LoansProvider>
+              </SatellitesProvider>
+            </DoormanProvider>
+          </ProposalsProvider>
         </ContractStatusesProvider>
       )}
     </>

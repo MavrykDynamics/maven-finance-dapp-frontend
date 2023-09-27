@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro'
-import { backdropColor, cyanColor } from 'styles/colors'
 import { MENU_Z_INDEX, Z_INDEX_DEFAULT } from 'styles/constants'
 
 import { MavrykTheme } from '../../../styles/interfaces'
@@ -44,7 +43,7 @@ export const MenuSidebarStyled = styled.div<{ theme: MavrykTheme }>`
     &.menu-expanded {
       max-width: 100vw;
       display: flex;
-      background: ${backdropColor};
+      background: ${({ theme }) => theme.menuBackdropColor};
       z-index: ${MENU_Z_INDEX};
       align-items: flex-start;
 
@@ -89,7 +88,7 @@ export const MenuSidebarContent = styled.div`
   width: 100%;
   max-width: 232px;
   height: 100%;
-  background-color: ${({ theme }) => theme.containerColor};
+  background-color: ${({ theme }) => theme.cards};
   padding-top: 110px;
   transition: 0.6s all;
   height: fit-content;
@@ -139,7 +138,6 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   align-items: center;
   font-size: 11px;
-  color: ${({ theme }) => theme.footerColor};
   font-weight: 600;
   padding: 0 14px;
   row-gap: 20px;
@@ -149,7 +147,7 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
     font-size: 12px;
 
     margin-bottom: 20px;
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 
   > a {
@@ -170,13 +168,13 @@ export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 1px solid ${({ theme }) => theme.valueColor};
+      border: 1px solid ${({ theme }) => theme.linksAndButtons};
       border-radius: 10px;
 
       svg {
         width: 30px;
         height: 30px;
-        fill: ${({ theme }) => theme.valueColor};
+        fill: ${({ theme }) => theme.linksAndButtons};
       }
     }
   }

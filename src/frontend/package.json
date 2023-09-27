@@ -4,24 +4,22 @@
   "scripts": {
     "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
     "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
-    "start-no-lint": "DISABLE_ESLINT_PLUGIN=true PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
-    "start-no-lint:evenlop": "DISABLE_ESLINT_PLUGIN=true export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
     "build": "DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "test": "react-scripts test",
+    "build:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "graphql-compile": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local",
+    "graphql-compile-watch": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local",
+    "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
+    "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
+    "postinstall": "cd ../../ && npx husky install",
     "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'",
-    "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
-    "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
-    "graphql-compile": "graphql-codegen",
-    "graphql-watch": "graphql-codegen -w",
-    "postinstall": "cd ../../ && npx husky install"
+    "test": "react-scripts test",
+    "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
-    "@apollo/client": "^3.7.12",
-    "@graphql-codegen/cli": "^4.0.1",
+    "@apollo/client": "^3.8.3",
     "@microsoft/signalr": "^7.0.7",
     "@taquito/beacon-wallet": "^15.0.1",
     "@taquito/signer": "^15.0.1",
@@ -30,10 +28,8 @@
     "@temple-wallet/dapp": "^6.0.1",
     "@types/react-avatar-editor": "^13.0.0",
     "@wert-io/widget-initializer": "^2.0.0",
-    "axios": "^1.2.1",
     "bignumber.js": "^9.1.0",
     "classnames": "^2.3.2",
-    "coingecko-api": "^1.0.10",
     "dayjs": "^1.11.5",
     "embla-carousel-react": "^6.2.0",
     "graphql": "16.5.0",
@@ -65,10 +61,8 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.9.11",
     "@cypress/instrument-cra": "^1.4.0",
-    "@graphql-codegen/cli": "2.11.6",
-    "@graphql-codegen/client-preset": "^3.0.1",
-    "@graphql-codegen/typescript": "2.7.3",
-    "@types/coingecko-api": "^1.0.10",
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/client-preset": "^4.1.0",
     "@types/node": "^16.10.1",
     "@types/qs": "^6.9.7",
     "@types/react": "^17.0.24",
@@ -88,57 +82,7 @@
     "typescript": "^5.0.4"
   },
   "eslintConfig": {
-    "extends": "react-app",
-    "plugins": [
-      "jsdoc"
-    ],
-    "settings": {
-      "jsdoc": {
-        "mode": "typescript"
-      }
-    },
-    "rules": {
-      "jsdoc/check-alignment": 1,
-      "jsdoc/check-indentation": 1,
-      "jsdoc/check-param-names": 1,
-      "jsdoc/check-tag-names": 1,
-      "jsdoc/check-types": 1,
-      "jsdoc/empty-tags": 1,
-      "jsdoc/multiline-blocks": 1,
-      "jsdoc/no-multi-asterisks": 1,
-      "jsdoc/no-undefined-types": 1,
-      "jsdoc/require-asterisk-prefix": [
-        "error",
-        "always"
-      ],
-      "jsdoc/require-jsdoc": [
-        "error",
-        {
-          "require": {
-            "ClassDeclaration": true,
-            "ClassExpression": true,
-            "MethodDefinition": true,
-            "ArrowFunctionExpression": false,
-            "FunctionDeclaration": false,
-            "FunctionExpression": false
-          },
-          "checkConstructors": false
-        }
-      ],
-      "jsdoc/require-param-description": 1,
-      "jsdoc/require-param-name": 1,
-      "jsdoc/require-param-type": 0,
-      "jsdoc/require-param": 1,
-      "jsdoc/require-property": 1,
-      "jsdoc/require-property-description": 1,
-      "jsdoc/require-property-name": 1,
-      "jsdoc/require-property-type": 1,
-      "jsdoc/require-returns-check": 1,
-      "jsdoc/require-returns-description": 1,
-      "jsdoc/require-returns-type": 0,
-      "jsdoc/require-returns": 1,
-      "jsdoc/require-throws": 1
-    }
+    "extends": "react-app"
   },
   "browserslist": {
     "production": [

@@ -15,6 +15,7 @@ export const DEFAULT_CREATE_VAULT_STATE: CreateVaultModalState = {
   isVaultCreating: false,
   selectedCollaterals: {},
   selectedCollateralsAddresses: [],
+  selectedBaker: null,
   newVault: {
     id: 0,
     address: '',
@@ -54,7 +55,7 @@ export const screenDescriptions = {
 export const stepperItemsObj = {
   [INITIAL_SCREEN_ID]: 'Create Vault',
   [ADD_COLLATERAL_SCREEN_ID]: 'Add Collateral',
-  [CONFIRM_STATS_SCREEN_ID]: 'Confirm stats',
+  [CONFIRM_STATS_SCREEN_ID]: 'Confirm Stats',
   [BORROW_SCREEN_ID]: 'Borrow',
   [CONFIRMATION_SCREEN_ID]: 'Confirm Borrow',
 }

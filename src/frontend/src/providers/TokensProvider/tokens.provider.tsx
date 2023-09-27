@@ -3,15 +3,18 @@ import React, { useContext, useMemo, useRef, useState } from 'react'
 // consts
 import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { QUERY_TOKENS_METADATA } from './queries/tokens.query'
+import { tokensGqlSchema } from './helpers/tokens.schemes'
+
+// hooks
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // helpers
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
 
 // types
-import { TokensContext, TokensContextState } from './tokens.provider.types'
-import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemes'
-import { TokensGqlSchemaType, tokensGqlSchema } from './helpers/tokens.schemes'
+import { TokensContext, TokensContextStateType } from './tokens.provider.types'
+import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -19,11 +22,13 @@ type Props = {
   children: React.ReactNode
 }
 
+// TODO: handle itial loading with null init values
 export const TokensProvider = ({ children }: Props) => {
-  // TODO: replace with null init values
+  const { handleApolloError } = useApolloContext()
+
   const initialLoadingStatus = useRef(true)
 
-  const [tokensCtxState, setTokensCtxState] = useState<TokensContextState>({
+  const [tokensCtxState, setTokensCtxState] = useState<TokensContextStateType>({
     collateralTokens: [],
     mTokens: [],
     tokensMetadata: {},
@@ -40,14 +45,21 @@ export const TokensProvider = ({ children }: Props) => {
 
           initialLoadingStatus.current = false
 
-          updateTokensMetadata(parsedTokens)
+          const { tokensMetadata, mTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
+
+          setTokensCtxState((prev) => ({
+            ...prev,
+            tokensMetadata,
+            collateralTokens,
+            mTokens,
+          }))
         } catch (e) {
           console.error('zod parsing tokens error:', { e })
         }
       },
-      onError: (error) => console.log({ error }),
+      onError: (error) => handleApolloError(error, 'QUERY_TOKENS_METADATA'),
     },
-    { blocksDiff: 100 },
+    { blocksDiff: 2000 },
   )
 
   // update token prices in ctx
@@ -58,18 +70,6 @@ export const TokensProvider = ({ children }: Props) => {
       ...prev,
       tokensPrices: { ...prev.tokensPrices, ...normalizedTokenPrices },
     }))
-  }
-
-  // update tokens metadata in ctx
-  const updateTokensMetadata = (tokensGql: TokensGqlSchemaType) => {
-    const tokensMetadata = normalizeTokensMetadata(tokensGql)
-
-    setTokensCtxState({
-      ...tokensCtxState,
-      tokensMetadata: { ...tokensCtxState.tokensMetadata, ...tokensMetadata.tokensMetadata },
-      collateralTokens: [...tokensCtxState.collateralTokens, ...tokensMetadata.collateralTokens],
-      mTokens: [...tokensCtxState.mTokens, ...tokensMetadata.mTokens],
-    })
   }
 
   const providerValue = useMemo(() => {

@@ -1,14 +1,21 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+// hooks
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// utils
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
+
+// consts
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 
+// view
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { emptyContainer } from './LendingTab.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import PieChartView from 'app/App.components/PieСhart/PieСhart.view'
-
+import PieChartView from 'app/App.components/PieChart/PieСhart.view'
 import {
   Table,
   TableHeader,
@@ -20,32 +27,28 @@ import {
 } from 'app/App.components/Table'
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
-import { TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
+import { EmptyContainer, TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
-import { reduceVaultsAssets } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useVaultsDashboardData } from 'providers/VaultsProvider/hooks/useVaultsDashboardData'
 
-export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
+export const VaultsTab = () => {
+  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const {
+    isLoading: isVaultsTabDataLoading,
+    totalCollateralRatio,
+    averageCollateralRatio,
+    vaultTvl,
+    activeVaults,
+    reducedVaultsCollaterals,
+  } = useVaultsDashboardData()
+
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
-  const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { allVaultsIds, vaultsMapper } = useVaultsContext()
-
-  const { assetsBalances, globalVaultTVL, collateralRatio, avgCollateralRatio, chartData } = useMemo(() => {
-    const { assetsBalances, globalVaultTVL, ...restVaultsStats } = reduceVaultsAssets(
-      allVaultsIds,
-      vaultsMapper,
-      tokensMetadata,
-      tokensPrices,
-    )
-    const chartData = getPieChartData(assetsBalances, globalVaultTVL, hoveredPath, tokensMetadata, tokensPrices)
-
-    return { assetsBalances, globalVaultTVL, chartData, ...restVaultsStats }
-  }, [allVaultsIds, hoveredPath, tokensMetadata, tokensPrices, vaultsMapper])
+  const chartData = useMemo(
+    () => getPieChartData(reducedVaultsCollaterals, vaultTvl, hoveredPath, tokensMetadata, tokensPrices),
+    [hoveredPath, reducedVaultsCollaterals, tokensMetadata, tokensPrices, vaultTvl],
+  )
 
   return (
     <TabWrapperStyled className="vaults">
@@ -55,30 +58,30 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
           <Button text="Vaults" icon="vaults" kind={ACTION_PRIMARY} className="noStroke dashboard-sectionLink" />
         </Link>
       </div>
-      {isLoading ? (
+      {isVaultsTabDataLoading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : assetsBalances.length ? (
+      ) : reducedVaultsCollaterals.length ? (
         <VaultsContentStyled>
           <div className="top">
             <StatBlock>
               <div className="name">Active Vaults</div>
               <div className="value">
-                <CommaNumber value={allVaultsIds.length} />
+                <CommaNumber value={activeVaults} />
               </div>
             </StatBlock>
             <StatBlock>
               <div className="name">Collateral Ratio</div>
               <div className="value">
-                <CommaNumber endingText="%" value={collateralRatio} />
+                <CommaNumber endingText="%" value={totalCollateralRatio} />
               </div>
             </StatBlock>
             <StatBlock>
               <div className="name">Avg. Collateral Ratio</div>
               <div className="value">
-                <CommaNumber endingText="%" value={avgCollateralRatio} />
+                <CommaNumber endingText="%" value={averageCollateralRatio} />
               </div>
             </StatBlock>
           </div>
@@ -98,7 +101,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                   </TableHeader>
 
                   <TableBody className="treasury">
-                    {assetsBalances.map(({ balance, tokenAddress }) => {
+                    {reducedVaultsCollaterals.map(({ tokenAddress, balance }) => {
                       const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
                       if (!token || !token.rate) return null
 
@@ -107,20 +110,20 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
                       const convertedBalance = convertNumberForClient({ number: balance, grade: decimals })
 
                       return (
-                        <TableRow key={symbol} rowHeight={25} borderColor="dataColor" className="add-hover">
+                        <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
                           <TableCell width="33%">{symbol}</TableCell>
                           <TableCell width="33%">
                             <CommaNumber
                               value={convertedBalance}
                               decimalsToShow={Number(decimals)}
-                              useAccurateParsing={balance < 1}
+                              useAccurateParsing={convertedBalance < 1}
                             />
                           </TableCell>
                           <TableCell width="33%" contentPosition="right">
                             <CommaNumber
                               value={convertedBalance * rate}
                               beginningText={rate ? '$' : symbol}
-                              useAccurateParsing={balance < 1}
+                              useAccurateParsing={convertedBalance < 1}
                             />
                           </TableCell>
                         </TableRow>
@@ -133,7 +136,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
               <div className="summary">
                 <div className="name">Vault TVL</div>
                 <div className="value">
-                  <CommaNumber beginningText="$" value={globalVaultTVL} />
+                  <CommaNumber beginningText="$" value={vaultTvl} />
                 </div>
               </div>
             </div>
@@ -141,7 +144,7 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
               <PieChartView chartData={chartData} />
 
               <div className="asset-lables scroll-block">
-                {assetsBalances.map(({ tokenAddress }) => {
+                {reducedVaultsCollaterals.map(({ tokenAddress }) => {
                   const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
                   if (!token || !token.rate) return null
 
@@ -167,7 +170,10 @@ export const VaultsTab = ({ isLoading }: { isLoading: boolean }) => {
           </div>
         </VaultsContentStyled>
       ) : (
-        emptyContainer
+        <EmptyContainer>
+          <img src="/images/not-found.svg" alt=" No collaterals to show" />
+          <figcaption> No collaterals to show</figcaption>
+        </EmptyContainer>
       )}
 
       <div className="descr">

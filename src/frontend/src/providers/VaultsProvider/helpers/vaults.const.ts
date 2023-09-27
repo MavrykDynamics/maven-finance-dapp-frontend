@@ -12,3 +12,5 @@ export const DEPOSIT_COLLATERAL_ACTION = 'depositCollateralsAction'
 export const CHANGE_BAKER_ACTION = 'changeBakerAction'
 export const MANAGE_PERMISSIONS_ACTION = 'managePermissionsAction'
 export const UPDATE_OPERATORS_ACTION = 'updateOperatorsAction'
+
+export const MINIMUN_COLLATERAL_RATIO_PERSENT = 200

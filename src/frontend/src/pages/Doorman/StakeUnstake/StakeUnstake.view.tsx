@@ -15,7 +15,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { InputErrorMessage, InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { InputErrorMessage } from 'app/App.components/Input/Input.style'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
@@ -37,7 +37,6 @@ import {
   INPUT_STATUS_SUCCESS,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
-  defaultLargeInputMaxLength,
   ERR_MSG_TOAST,
 } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
@@ -66,6 +65,7 @@ import {
 import { InputProps } from 'app/App.components/Input/newInput.type'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -81,21 +81,14 @@ export const StakeUnstakeView = ({
   setInputData,
 }: StakeUnstakeViewProps) => {
   const history = useHistory()
-  const {
-    userTokensBalances,
-    userAddress,
-    availableDoormanRewards,
-    availableSatellitesRewards,
-    availableFarmRewards,
-    satelliteMvkIsDelegatedTo,
-    isSatellite,
-  } = useUserContext()
+  const { userTokensBalances, userAddress, satelliteMvkIsDelegatedTo, isSatellite } = useUserContext()
+  const { availableDoormanRewards, availableSatellitesRewards, availableFarmRewards } = useUserRewards()
   const {
     contractAddresses: { mvkTokenAddress, doormanAddress },
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-  const { info, loading, bug } = useToasterContext()
+  const { bug } = useToasterContext()
 
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
 
@@ -341,7 +334,7 @@ export const StakeUnstakeView = ({
                 <CustomTooltip
                   text="Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or compound as doing one of those actions will automatically credit your staked MVK balance with any unclaimed rewards."
                   iconId="info"
-                  defaultStrokeColor={colors[themeSelected].textColor}
+                  defaultStrokeColor={colors[themeSelected].subHeadingText}
                 />
               </h3>
               <CommaNumber value={rewardsToClaim} className="amount" />
@@ -366,7 +359,7 @@ export const StakeUnstakeView = ({
               }
               iconId="info"
               className="tooltip"
-              defaultStrokeColor={colors[themeSelected].textColor}
+              defaultStrokeColor={colors[themeSelected].linksAndButtons}
             />
           </StakeUnstakeRightPart>
         </StakeUnstakeCard>
@@ -388,7 +381,7 @@ export const StakeUnstakeView = ({
             <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
               className={`input-with-rate transparent-child-wrap`}
-              children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
+              children={'MVK'}
               inputProps={inputProps}
               settings={{
                 inputStatus: inputData.validation,

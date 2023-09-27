@@ -1,12 +1,19 @@
 import React, { useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+
+// context
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // types
 import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '../ProposalSubmission.types'
 
 // helpers
-import { getValidityStageThreeTable } from '../ProposalSubmission.helpers'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getValidityStageThreeTable } from '../helpers/proposalSubmissionValidation.utils'
+import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -15,13 +22,15 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 import Button from 'app/App.components/Button/NewButton'
 
 // const
 import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
-import { BLUE } from 'app/App.components/TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // styles
 import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
@@ -36,16 +45,8 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { reduceTreasuryAssets } from 'pages/Treasury/helpers/treasury.utils'
-import { Info } from 'app/App.components/Info/Info.view'
-import { UNREGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
-import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
+// NOTE: isLoading is handled in <ProposalSubmission.controller>
 export const StageThreeForm = ({
   proposalId,
   currentProposal,
@@ -57,18 +58,22 @@ export const StageThreeForm = ({
   const { proposalPayments, locked, title } = currentProposal
 
   const { tokensMetadata } = useTokensContext()
-  const { isNewlyRegisteredSatellite } = useUserContext()
   const {
     maxLengths: {
       governance: { proposalMetadataTitleMaxLength },
     },
   } = useDappConfigContext()
-  const { fee, successReward, governancePhase } = useSelector((state: State) => state.governance.config)
+  const {
+    config: { governancePhase, fee, successReward },
+  } = useProposalsContext()
+  const { treasuryAddresses, treasuryMapper } = useTreasuryContext()
 
-  const { treasuryStorage } = useSelector((state: State) => state.treasury)
-  const treasuryTokens = useMemo(() => reduceTreasuryAssets(treasuryStorage), [treasuryStorage])
+  const treasuryTokens = useMemo(
+    () => reduceTreasuryAssets(treasuryAddresses, treasuryMapper),
+    [treasuryAddresses, treasuryMapper],
+  )
 
-  const isProposalRound = governancePhase === 'PROPOSAL'
+  const isProposalRound = governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION
 
   const allowedTokensForDD = useMemo(() => {
     return Object.keys(treasuryTokens).reduce<Array<DropDownItemType>>((acc, tokenAddress) => {
@@ -187,12 +192,17 @@ export const StageThreeForm = ({
     )
   }
 
-  const isTableDisabled = useMemo(() => !isProposalRound || locked, [isProposalRound, locked])
+  const isTableDisabled = useMemo(
+    () => !isProposalRound || locked || !Object.keys(treasuryTokens)?.[0],
+    [isProposalRound, locked, treasuryTokens],
+  )
 
   return (
     <>
       <div className="stage-descr">{STAGE_3_DESCRIPTION}</div>
-      {isNewlyRegisteredSatellite && <Info text={UNREGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />}
+
+      <ProposalSubmissionBanner />
+
       <SubmitProposalGeneralData>
         <div className="submitted-data">
           <div className="label">1 - Proposal Title</div>
@@ -278,7 +288,7 @@ export const StageThreeForm = ({
                     <TableCell width="25%" className="hide-overflow tz-address-cell-center">
                       {isTableDisabled ? (
                         payment.to__id ? (
-                          <TzAddress tzAddress={String(payment.to__id)} type={BLUE} hasIcon />
+                          <TzAddress tzAddress={String(payment.to__id)} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
                         ) : (
                           '-'
                         )

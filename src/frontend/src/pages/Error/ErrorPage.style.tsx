@@ -2,15 +2,16 @@ import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
 import { hangInSpace } from 'styles/animations'
 import { Z_INDEX_DEFAULT } from 'styles/constants'
+import { ThemeType } from 'consts/theme.const'
 
-export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme }>`
+export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme; themeSelected: ThemeType }>`
   font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   margin: auto;
   width: 100vw;
   position: relative;
   height: 100vh;
   padding-top: 80px;
-  background: url('/images/error-bg.svg');
+  background: ${({ themeSelected }) => `url(/images/${themeSelected}/error-bg.svg)`};
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -37,18 +38,18 @@ export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
   }
 
   button svg {
-    stroke: ${({ theme }) => theme.containerColor};
+    stroke: ${({ theme }) => theme.cards};
   }
 
   & a {
     text-decoration: none;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.regularText};
     font-weight: 900;
   }
 `
 
 export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
   font-size: 18px;
   font-style: normal;
   font-weight: 600;
@@ -57,7 +58,7 @@ export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const ErrorMidHeader = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
   font-size: 25px;
   font-style: normal;
   font-weight: 700;
@@ -65,7 +66,7 @@ export const ErrorMidHeader = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const ErrorParagraph = styled.div<{ theme: MavrykTheme }>`
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
   text-align: center;
   font-size: 14px;
   font-style: normal;
@@ -106,7 +107,7 @@ export const ErrorFooterWrapper = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.mainHeadingText};
 
   & .img-wrapper {
     width: 80px;
@@ -127,7 +128,7 @@ export const ErrorFooterMiddle = styled.div<{ theme: MavrykTheme }>`
 
   a {
     text-decoration: none;
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 `
 
@@ -144,6 +145,7 @@ export const ErrorFooterRight = styled.div<{ theme: MavrykTheme }>`
     font-weight: 400;
     color: inherit;
     line-height: normal;
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 `
 
@@ -155,7 +157,7 @@ export const ErrorMenuTopStyled = styled.div<{ theme: MavrykTheme }>`
   max-width: 100vw;
   height: 80px;
   z-index: 11;
-  background: ${({ theme }) => theme.containerColor};
+  background: ${({ theme }) => theme.cards};
   display: flex;
   align-items: center;
   padding: 0 22px 0 34px;

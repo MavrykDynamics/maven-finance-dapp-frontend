@@ -1,5 +1,4 @@
 import styled from 'styled-components/macro'
-import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const SatellitePaginationStyled = styled.div<{ theme: MavrykTheme }>`
@@ -17,10 +16,9 @@ export const SatellitePaginationStyled = styled.div<{ theme: MavrykTheme }>`
 
   .pagination-link {
     display: flex;
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
     align-items: center;
     min-height: 23px;
-    stroke: ${({ theme }) => theme.valueColor};
     font-weight: 600;
     font-size: 14px;
 
@@ -28,6 +26,7 @@ export const SatellitePaginationStyled = styled.div<{ theme: MavrykTheme }>`
       width: 16px;
       height: 16px;
       margin-right: 8px;
+      stroke: ${({ theme }) => theme.linksAndButtons};
     }
 
     &:hover {

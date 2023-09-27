@@ -1,6 +1,6 @@
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import styled from 'styled-components'
-import { boxShadowColor, Card, cyanColor } from 'styles'
+import { Card } from 'styles'
 import { MavrykTheme } from '../../styles/interfaces'
 
 export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
@@ -23,18 +23,20 @@ export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
     height: 225px;
 
     h3 {
-      font-weight: 500;
-      font-size: 14px;
-      color: ${({ theme }) => theme.textColor};
       display: flex;
       align-items: center;
+      line-height: 21px;
       padding: 2px 0 3px 0;
+
+      & > div {
+        display: inherit;
+      }
     }
 
     h4 {
       font-weight: 500;
       font-size: 14px;
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.regularText};
       padding: 3px 0 4px 0;
       display: flex;
       align-items: center;
@@ -58,8 +60,8 @@ export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
   max-width: 745px;
   height: 100%;
   width: 100%;
-  background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background: ${({ theme }) => theme.cards};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
 
   .top {
@@ -83,7 +85,7 @@ export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
       .name {
         font-weight: 700;
         font-size: 25px;
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.mainHeadingText};
         padding: 2px 0 3px 0;
       }
 
@@ -91,15 +93,9 @@ export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
         font-weight: 600;
         font-size: 12px;
         line-height: 100%;
-        color: ${({ theme }) => theme.textColor};
+        color: ${({ theme }) => theme.mainHeadingText};
         display: flex;
         align-items: center;
-
-        .info-icon {
-          svg {
-            fill: ${({ theme }) => theme.textColor};
-          }
-        }
       }
 
       .img-wrapper,
@@ -108,7 +104,7 @@ export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
         max-width: 45px;
         left: 0;
         font-size: 14px;
-        fill: ${({ theme }) => theme.textColor};
+        fill: ${({ theme }) => theme.mainHeadingText};
 
         img {
           width: 100%;
@@ -131,7 +127,7 @@ export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
       bottom: 0;
       left: 0;
       height: 1px;
-      background-color: ${({ theme }) => theme.cardBorderColor};
+      background-color: ${({ theme }) => theme.divider};
       width: 100%;
     }
   }
@@ -152,8 +148,8 @@ export const ContractDetails = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
   flex-direction: column;
-  background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
+  background: ${({ theme }) => theme.cards};
+  border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
 
   .register-pair-wrapper {
@@ -165,7 +161,7 @@ export const ContractDetails = styled.div<{ theme: MavrykTheme }>`
   .block-name {
     font-weight: 600;
     font-size: 18px;
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.mainHeadingText};
     margin-bottom: 20px;
   }
 
@@ -175,6 +171,10 @@ export const ContractDetails = styled.div<{ theme: MavrykTheme }>`
     justify-content: space-between;
     align-items: center;
     margin: 5px 0;
+
+    h3 {
+      color: ${({ theme }) => theme.mainHeadingText};
+    }
   }
 `
 
@@ -190,7 +190,7 @@ export const DataFeedInfoBlock = styled.div<{ justifyContent?: string; theme: Ma
 export const DataFeedValueText = styled.div<{ fontWeidth?: number; fontSize?: number; theme: MavrykTheme }>`
   font-weight: ${({ fontWeidth }) => fontWeidth || 400};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '12px')};
-  color: ${({ theme }) => theme.dataColor};
+  color: ${({ theme }) => theme.primaryText};
   display: flex;
 
   p {
@@ -212,6 +212,7 @@ export const DataFeedValueText = styled.div<{ fontWeidth?: number; fontSize?: nu
   svg {
     width: 20px;
     height: 20px;
+    fill: ${({ theme }) => theme.primaryText};
   }
 `
 
@@ -231,35 +232,10 @@ export const UsersListCardsWrapper = styled.div<{ theme: MavrykTheme }>`
   overflow: hidden;
 `
 
-export const UserSmallCard = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  align-items: center;
-  background: ${({ theme }) => theme.containerColor};
-  border: 1px solid ${({ theme }) => theme.cardBorderColor};
-  border-radius: 10px;
-  padding: 20px 35px;
-  transition: 0.6s all;
-
-  .img-wrapper {
-    width: 40px;
-    height: 40px;
-    border: 1px solid ${({ theme }) => theme.headerColor};
-    margin-right: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  &:hover {
-    border-color: ${cyanColor};
-    box-shadow: 0px 4px 4px ${boxShadowColor};
-    cursor: pointer;
-  }
-`
-
 export const FeedDetailsChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
-  padding: 30px 12px 14px 20px;
-  height: 415px;
+  padding: 52px 12px 0px 20px;
+  height: 420px;
+  position: relative;
 
   display: flex;
   flex-direction: column;

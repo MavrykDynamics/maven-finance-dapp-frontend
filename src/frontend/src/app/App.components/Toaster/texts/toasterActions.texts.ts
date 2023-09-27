@@ -44,6 +44,8 @@ import {
   UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from 'providers/VaultsProvider/helpers/vaults.const'
+
+// proposals
 import {
   DROP_PROPOSAL_ACTION,
   EXECUTE_PROPOSAL_ACTION,
@@ -58,7 +60,46 @@ import {
   VOTING_ROUND_VOTE_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
 
-export const TOASTER_ACTIONS_TEXTS = {
+// fin requests
+import { FINANCIAL_REQUEST_VOTE_ACTION } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
+
+// sat governance
+import {
+  ADD_ORACLES_AGGREGATOR_ACTION,
+  BAN_SATELLITE_ACTION,
+  DROP_ACTION,
+  FIX_MISTAKEN_TRANSFER_ACTION,
+  REGISTER_AGGREGATOR_ACTION,
+  REMOVE_ORACLES_ACTION,
+  REMOVE_ORACLES_AGGREGATOR_ACTION,
+  RESTORE_SATELLITE_ACTION,
+  SET_AGGREGATOR_MAINTAINER_ACTION,
+  SUSPEND_SATELLITE_ACTION,
+  UNBAN_SATELLITE_ACTION,
+  UNSUSPEND_SATELLITE_ACTION,
+  UPDATE_AGGREGATOR_STATUS_ACTION,
+  VOTE_FOR_ACTION,
+} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+import { ActionTypes } from 'providers/DappConfigProvider/dappConfig.provider.types'
+
+// eGov
+import {
+  SUBMIT_EGOV_PROPOSAL_ACTION,
+  VOTE_FOR_EGOV_PROPOSAL_ACTION,
+} from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
+
+// types
+type ToastMessageContent = {
+  title: string
+  message: string
+}
+
+type ToastMessageFullContent = {
+  start: ToastMessageContent
+  end: ToastMessageContent
+}
+
+export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent> = {
   // doorman actions -------------------------------------
   [STAKE_ACTION]: {
     start: {
@@ -427,6 +468,179 @@ export const TOASTER_ACTIONS_TEXTS = {
     },
     end: {
       title: DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // financial requests actions ------------------------
+  [FINANCIAL_REQUEST_VOTE_ACTION]: {
+    start: {
+      title: 'Voting...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Voting done.',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // satellites governance actions ------------------------------------
+  [SUSPEND_SATELLITE_ACTION]: {
+    start: {
+      title: 'Triggering Suspend Satellite...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Suspend Satellite vote triggered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UNSUSPEND_SATELLITE_ACTION]: {
+    start: {
+      title: 'Triggering Unsuspend Satellite...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Unsuspend Satellite vote triggered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [BAN_SATELLITE_ACTION]: {
+    start: {
+      title: 'Triggering Ban Satellite...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Ban Satellite vote triggered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UNBAN_SATELLITE_ACTION]: {
+    start: {
+      title: 'Triggering Unban Satellite...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Unban Satellite vote triggered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REMOVE_ORACLES_ACTION]: {
+    start: {
+      title: 'Remove all Oracles from Satellite...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Remove all Oracles from Satellite done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REMOVE_ORACLES_AGGREGATOR_ACTION]: {
+    start: {
+      title: 'Removing from aggregator...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Removing from aggregator done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [ADD_ORACLES_AGGREGATOR_ACTION]: {
+    start: {
+      title: 'Adding Oracle to aggregator...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Adding Oracle to Aggregator done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [SET_AGGREGATOR_MAINTAINER_ACTION]: {
+    start: {
+      title: 'Set Aggregator Maintainer...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Set Aggregator Maintainer done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DROP_ACTION]: {
+    start: {
+      title: 'Dropping Action...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Drop Action done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [VOTE_FOR_ACTION]: {
+    start: {
+      title: 'Voting...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Vote registered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [RESTORE_SATELLITE_ACTION]: {
+    start: {
+      title: 'Restoring Satellite...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Restore Satellite vote started',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [UPDATE_AGGREGATOR_STATUS_ACTION]: {
+    start: {
+      title: 'Update Aggregator Status...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Aggregator Status Updated',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [REGISTER_AGGREGATOR_ACTION]: {
+    start: {
+      title: 'Registering Aggregator...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Aggregator Registered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [FIX_MISTAKEN_TRANSFER_ACTION]: {
+    start: {
+      title: 'Fix Mistaken Transfer started...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Fixing Mistaken Transfer triggered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // emergency governance actions ------------------------------------
+  [VOTE_FOR_EGOV_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Voting for emergency proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Emergency Proposal voted',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [SUBMIT_EGOV_PROPOSAL_ACTION]: {
+    start: {
+      title: 'Submitting emergency proposal...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Emergency Proposal Submitted',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

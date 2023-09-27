@@ -4,7 +4,8 @@ export const tokenGqlSchema = z.object({
   token_id: z.number(),
   metadata: z.any(),
   token_address: z.string(),
-  token_standard: z.string(),
+  // For api v2 discuss with back-end
+  token_standard: z.string().or(z.null()),
 
   lending_controller_collateral_tokens: z
     .tuple([
@@ -21,6 +22,7 @@ export const tokenGqlSchema = z.object({
     .tuple([
       z.object({
         loan_token_name: z.string(),
+        min_repayment_amount: z.number(),
       }),
     ])
     .or(z.tuple([])),
@@ -29,6 +31,7 @@ export const tokenGqlSchema = z.object({
     .tuple([
       z.object({
         address: z.string(),
+        metadata: z.any(),
       }),
     ])
     .or(z.tuple([])),

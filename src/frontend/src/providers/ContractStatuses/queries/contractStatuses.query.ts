@@ -116,7 +116,7 @@ import { gql } from 'utils/__generated__'
 
 export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
   query getAllContractStatusesData {
-    farm(where: {admin: {_neq: ""}}) {
+    farm: farm(where: {admin: {_neq: ""}}) {
       name
       address
       claim_paused
@@ -126,7 +126,7 @@ export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
       last_updated_at
     }
 
-    farm_factory(where: {admin: {_neq: ""}}) {
+    farm_factory: farm_factory(where: {admin: {_neq: ""}}) {
       create_farm_paused
       track_farm_paused
       untrack_farm_paused
@@ -135,7 +135,7 @@ export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
       last_updated_at
     }
 
-    delegation(where: {admin: {_neq: ""}}) {
+    delegation: delegation(where: {admin: {_neq: ""}}) {
       delegate_to_satellite_paused
       distribute_reward_paused
       register_as_satellite_paused
@@ -147,7 +147,7 @@ export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
       last_updated_at
     }
 
-    doorman(where: {admin: {_neq: ""}}) {
+    doorman: doorman(where: {admin: {_neq: ""}}) {
       address
       compound_paused
       farm_claim_paused
@@ -156,18 +156,18 @@ export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
       last_updated_at
     }
 
-    treasury(where: {admin: {_neq: ""}}) {
+    treasury: treasury(where: {admin: {_neq: ""}}) {
       name
       mint_mvk_and_transfer_paused
-      stake_mvk_paused
+      stake_tokens_paused
       transfer_paused
       address
-      unstake_mvk_paused
+      unstake_tokens_paused
       admin
       last_updated_at
     }
 
-    treasury_factory(where: {admin: {_neq: ""}}) {
+    treasury_factory: treasury_factory(where: {admin: {_neq: ""}}) {
       create_treasury_paused
       address
       track_treasury_paused
@@ -176,7 +176,7 @@ export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
       last_updated_at
     }
 
-    aggregator(where: {admin: {_neq: ""}}) {
+    aggregator: aggregator(where: {admin: {_neq: ""}}) {
       address
       name
       withdraw_reward_smvk_paused
@@ -185,7 +185,7 @@ export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
       last_updated_at
     }
 
-    aggregator_factory(where: {admin: {_neq: ""}}) {
+    aggregator_factory: aggregator_factory(where: {admin: {_neq: ""}}) {
       address
       untrack_aggregator_paused
       track_aggregator_paused

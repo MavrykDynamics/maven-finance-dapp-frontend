@@ -148,6 +148,9 @@ export type DoubleChartPropsType = {
   tooltipName?: DoubleChartTooltipsTypes
   tooltipAssetFirst: string
   tooltipAssetSecond: string
+  isLoading?: boolean
+  loaderSize?: SpinnerLoaderSizes
+  numberOfItemsToDisplay?: number
 }
 
 // Pie chart types

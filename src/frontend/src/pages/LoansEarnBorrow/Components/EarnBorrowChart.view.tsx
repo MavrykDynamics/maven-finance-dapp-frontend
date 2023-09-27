@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 // components
 import { Chart } from 'app/App.components/Chart/Chart'
@@ -7,12 +7,14 @@ import Icon from 'app/App.components/Icon/Icon.view'
 
 // styles
 import { EarnBorrowChartStyled } from '../LoansEarnBorrow.styles'
+import colors from 'styles/colors'
 
 // helpers
-import { CHART_COLORS, MINI_CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
+import { MINI_CHART_SETTINGS, numberOfItemsToDisplay } from '../LoansEarnBorrow.consts'
 import { BUTTON_THIRD, BUTTON_ROUND } from 'app/App.components/Button/Button.constants'
 import { AREA_CHART_TYPE, HISTOGRAM_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // types
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
@@ -30,8 +32,22 @@ type Props = {
 }
 
 export const EarnBorrowChart = ({ data, isBorrow }: Props) => {
+  const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+
   const [isGraph, setIsGraph] = useState(false)
   const { isChartsLoading } = useLoansEarnBorrowContext()
+
+  const CHART_COLORS = useMemo(
+    () => ({
+      lineColor: colors[themeSelected].primaryChartColor,
+      areaTopColor: colors[themeSelected].primaryChartColor,
+      areaBottomColor: colors[themeSelected].primaryChartBottomColor,
+      textColor: colors[themeSelected].regularText,
+    }),
+    [themeSelected],
+  )
 
   const chartData: ChartDataType = {
     type: isGraph ? HISTOGRAM_CHART_TYPE : AREA_CHART_TYPE,

@@ -4,7 +4,7 @@ import { MavrykTheme } from '../../../styles/interfaces'
 export const FormStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   padding: 40px 20px;
-  border-top: 1px solid ${({ theme }) => theme.cardBorderColor};
+  border-top: 1px solid ${({ theme }) => theme.divider};
 
   &.without-divider {
     border-top: none;
@@ -18,7 +18,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     margin-top: 0;
     margin-bottom: 20px;
 
-    color: ${({ theme }) => theme.textColor};
+    color: ${({ theme }) => theme.primaryText};
   }
 
   input,
@@ -56,7 +56,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 21px;
 
-      color: ${({ theme }) => theme.textColor};
+      color: ${({ theme }) => theme.mainHeadingText};
     }
   }
 

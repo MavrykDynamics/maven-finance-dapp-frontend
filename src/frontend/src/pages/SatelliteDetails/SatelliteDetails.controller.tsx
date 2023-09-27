@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -35,7 +35,6 @@ import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITES_DATA_SINGLE_SUB,
-  SATELLITE_ALL_ADDRESSES_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITE_VOTES_MAPPER,
@@ -72,7 +71,7 @@ const SatellitesVotingHistory = ({
         return (
           <SatelliteVotingHistoryListItem key={`${voteName}_${id}`}>
             <p>{votedItemName}</p>
-            <span className="currentSatellite-voting-history-info">
+            <span className="current satellite-voting-history-info">
               Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
               {timestamp ? `on ${parseDate({ time: timestamp, timeFormat: 'MMM Do, YYYY' })}` : null}
             </span>
@@ -111,11 +110,11 @@ export const SatelliteDetails = () => {
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
-      [SATELLITE_ALL_ADDRESSES_SUB]: true,
     })
 
     return () => {
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      setSatelliteAddressToSubsctibe(null)
     }
   }, [])
 
@@ -154,10 +153,6 @@ export const SatelliteDetails = () => {
 
     return () => setSatelliteAddressToSubsctibe(null)
   }, [satelliteId])
-
-  useEffect(() => {
-    return () => setSatelliteAddressToSubsctibe(null)
-  }, [])
 
   const { satelliteVotes, isLoading: isSatelliteVotesLoading } = useSatelliteVotes(satelliteId)
 

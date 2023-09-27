@@ -24,7 +24,7 @@ export const VotingAreaStyled = styled.article<{ theme: MavrykTheme }>`
   }
 
   .voted-label {
-    color: ${({ theme }) => theme.dataColor};
+    color: ${({ theme }) => theme.primaryText};
     font-weight: 600;
     font-size: 18px;
   }

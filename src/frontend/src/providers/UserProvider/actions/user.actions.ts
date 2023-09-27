@@ -40,7 +40,7 @@ export const claimAllRewardsAction = async (
 
               return {
                 kind: OpKind.TRANSACTION,
-                ...farmContractInstance.methods.claim(farmAddress).toTransferParams(),
+                ...farmContractInstance.methods.claim([userAddress]).toTransferParams(),
               }
             })
           }
@@ -57,7 +57,7 @@ export const claimAllRewardsAction = async (
       const doormanContractInstance = await tezos?.wallet.at(doormanAddress)
       batchArr.push({
         kind: OpKind.TRANSACTION,
-        ...doormanContractInstance.methods.compound(userAddress).toTransferParams(),
+        ...doormanContractInstance.methods.compound([userAddress]).toTransferParams(),
       })
     }
 
@@ -76,7 +76,7 @@ export const rewardsCompound = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos?.wallet.at(doormanAddress)
-    const rewardsOperationMetaData = contract?.methods.compound(userAddress)
+    const rewardsOperationMetaData = contract?.methods.compound([userAddress])
 
     return await getEstimationResult(rewardsOperationMetaData)
   } catch (error) {
@@ -102,14 +102,14 @@ export const getMVKTokensFromFaucet = async (
 }
 
 export const distributeProposalRewards = async (
-  delegationAddress: string,
+  governanceAddress: string,
   satelliteAddress: string,
   proposals: number[],
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(delegationAddress)
+    const contract = await tezos.wallet.at(governanceAddress)
     const distributeProposalsMetaData = await contract?.methods.distributeProposalRewards(satelliteAddress, proposals)
 
     return await getEstimationResult(distributeProposalsMetaData)

@@ -1,8 +1,8 @@
 import { createGlobalStyle } from 'styled-components/macro'
 import { css } from 'styled-components'
-
-import { royalPurpleColor, headerColor, cyanColor } from '../styles/colors'
 import { MavrykTheme } from './interfaces'
+
+// TODO: remove link styles from here, when all link will be using CustomLink component
 
 export const GlobalStyle = createGlobalStyle<{ theme: MavrykTheme }>`
 * {
@@ -15,7 +15,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: ${({ theme }) => theme.backgroundColor};
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.regularText};
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -27,13 +27,18 @@ body {
   }
 }
 
+h1, h2, h3, h4 {
+  color: ${({ theme }) => theme.mainHeadingText};
+  font-weight: normal;
+}
+
 h1, h2 {
   font-weight: bold;
   display: inline-block;
   margin: 30px auto;
-  color: ${({ theme }) => theme.textColor};
-  font-weight: 700;
+
   font-size: 22px;
+  font-weight: 700;
 
   @media (max-width: 700px) {   
     font-size: 30px;
@@ -45,13 +50,29 @@ h1, h2 {
     display: block;
     width: 80px;
     height: 4px;
-    background: ${({ theme }) => theme.textColor};
+    background: ${({ theme }) => theme.mainHeadingText};
     margin: 7px 0 10px 1px;
   }
 }
 
 h2 {
+  display: block;
+  margin: 0;
+
+  font-size: 22px;
   font-weight: 600;
+}
+
+h3 {
+  display: block;
+  margin: 0;
+
+  font-size: 30px;
+}
+
+h4 {
+  margin: 0;
+  font-size: 14px;
 }
 
 fieldset {
@@ -70,47 +91,13 @@ button {
   color: inherit;
 }
 
-h2 {
-  font-size: 22px;
-  display: block;
-  margin: 0;
-}
-
 var {
   font-style: normal;
 }
 
-h3 {
-  font-size: 30px;
-  font-weight: normal;
-  display: block;
-  margin: 0;
-}
-
-h4 {
-  font-size: 14px;
-  font-weight: normal;
-  margin: 0;
-  
-  &.primary {
-    color: ${({ theme }) => theme.textColor};
-  }
-
-  &.secondary {
-    color: ${({ theme }) => theme.subTextColor};
-  }
-
-  &.transparent {
-    color: ${({ theme }) => theme.textColor};
-  }
-  
-  &.bold {
-    font-weight: bold;
-  }
-}
 
 input {
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.placeholders};
   font-size: 14px;
 }
 
@@ -124,7 +111,7 @@ input[type='number'] {
 }
 
 ::placeholder {
-  color:  ${({ theme }) => theme.placeholderColor};
+  color:  ${({ theme }) => theme.placeholders};
   font-size: 14px;
 }
 
@@ -132,15 +119,38 @@ input[type='number'] {
   outline: none;
 }
 
+.info-link {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    svg {
+      opacity: 0.8;
+    }
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: ${({ theme }) => theme.linksAndButtons};
+  }
+}
+
 a {
-  color: ${({ theme }) => theme.textColor};
+  color: ${({ theme }) => theme.linksAndButtons};
   text-decoration: none;
   opacity: 1;
   transition: opacity 0.15s ease-in-out-out;
   will-change: opacity;
 
   &.isCyan {
-    color: ${({ theme }) => theme.valueColor};
+    color: ${({ theme }) => theme.linksAndButtons};
   }
 
   &.underline {
@@ -150,7 +160,7 @@ a {
 
 
 a:hover:not(.full-opacity) {
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 p {
@@ -166,7 +176,8 @@ p {
   {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
-    background-color: ${royalPurpleColor}4d;
+    // TODO: is displayed when there is no scroll, you need to fix or remove
+    /* background-color: ${({ theme }) => theme.scrollBlockColor}4d; */
   }
 .scroll-block::-webkit-scrollbar
   {
@@ -178,31 +189,9 @@ p {
   {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-    background-color: ${royalPurpleColor};
+    background-color: ${({ theme }) => theme.scrollBlockColor};
   }
 
-  .info-link {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    &:hover {
-      svg {
-        opacity: 0.8;
-      }
-    }
-
-    svg {
-      width: 16px;
-      height: 16px;
-      fill: ${({ theme }) => theme.textColor};
-    }
-  }
 
   /* spaces */
 
