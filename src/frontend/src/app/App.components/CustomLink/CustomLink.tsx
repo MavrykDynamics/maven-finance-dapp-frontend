@@ -88,6 +88,7 @@ export const CustomLink = ({
       {...optionalLinkProps}
       onClick={linkClickHandler}
       onContextMenu={disabled ? (e) => e.preventDefault() : undefined}
+      onDoubleClick={disabled ? (e) => e.preventDefault() : undefined}
     >
       {children}
     </LinkStyled>
