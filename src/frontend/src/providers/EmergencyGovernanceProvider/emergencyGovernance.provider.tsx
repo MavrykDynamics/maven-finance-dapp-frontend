@@ -64,21 +64,19 @@ const EGovProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(EGOV_ALL_PROPOSALS, {
     skip: activeSubs[EGOV_PROPOSALS_SUB] !== EGOV_PROPOSALS_ALL_SUB,
-    onCompleted: (data) => updateEGovProposals(data),
+    onCompleted: (data) => {
+      const { pastProposals, proposalsMapper, ongoingProposals, allProposals } = normalizeEGovProposals(data)
+
+      setEGovCtxState((prev) => ({
+        ...prev,
+        proposalsMapper: { ...prev.proposalsMapper, ...proposalsMapper },
+        allProposals,
+        ongoingProposals,
+        pastProposals,
+      }))
+    },
     onError: (error) => handleApolloError(error, 'EGOV_ALL_PROPOSALS'),
   })
-
-  const updateEGovProposals = (indexerData: GetEGovAllProposalsQueryQuery) => {
-    const { pastProposals, proposalsMapper, ongoingProposals, allProposals } = normalizeEGovProposals(indexerData)
-
-    setEGovCtxState((prev) => ({
-      ...prev,
-      proposalsMapper: { ...prev.proposalsMapper, ...proposalsMapper },
-      allProposals,
-      ongoingProposals,
-      pastProposals,
-    }))
-  }
 
   //   set what data to subscribe
   const changeEGovSubscriptionsList = (newSkips: Partial<EGovSubsRecordType>) => {

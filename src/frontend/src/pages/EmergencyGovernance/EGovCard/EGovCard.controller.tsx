@@ -70,7 +70,7 @@ export const EGovCard = ({ proposal }: Props) => {
   const votingStatistic = useMemo(
     () => ({
       forVotesMVKTotal: totalSmvkVotes,
-      unusedVotesMVKTotal: totalStakedMvk,
+      unusedVotesMVKTotal: totalStakedMvk - totalSmvkVotes,
       quorum: smvkPercentageRequired,
     }),
     [smvkPercentageRequired, totalSmvkVotes, totalStakedMvk],
@@ -127,8 +127,8 @@ export const EGovCard = ({ proposal }: Props) => {
         </div>
         <VotingArea
           voteStatistics={votingStatistic}
-          isVotingActive={true}
-          disableVotingButtons={!isUserVoter || userSmvkAmount < minStakedMvkRequiredToVote || isActionActive}
+          isVotingActive
+          disableVotingButtons={Boolean(isUserVoter) || userSmvkAmount < minStakedMvkRequiredToVote || isActionActive}
           handleVote={handleEGovProposalVote}
           buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}
           className="eGov-voting"
