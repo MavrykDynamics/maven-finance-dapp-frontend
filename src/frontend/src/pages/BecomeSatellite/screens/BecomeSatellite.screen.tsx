@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // Consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
@@ -11,32 +11,24 @@ import {
   DEFAULT_BECOME_SATELLITE_FORM,
   getFormTextBasedOnUserRole,
   getInputValidationStatus,
+  IS_GHOSTNET,
 } from '../BecomeSatellite.conts'
-import {
-  DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITE_DATA_SUB,
-  REGISTER_SATELLITE_ACTION,
-  UPDATE_SATELLITE_ACTION,
-  SATELLITES_DATA_SINGLE_SUB,
-} from 'providers/SatellitesProvider/satellites.const'
-import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
+import { REGISTER_SATELLITE_ACTION, UPDATE_SATELLITE_ACTION } from 'providers/SatellitesProvider/satellites.const'
 
 // providers
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // Actions
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
 
 // Types
 import { SatelliteMapper, SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { RegisterAsSatelliteForm } from '../../../utils/TypesAndInterfaces/Forms'
 
 // Views
+import { RegisterAsSatelliteForm } from '../../../utils/TypesAndInterfaces/Forms'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -47,17 +39,15 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { Info } from 'app/App.components/Info/Info.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
+import { UnregisterPopup } from '../popups/UnregisterPopup'
 
+// styles
 import {
-  BecomeSatelliteForm,
   BecomeSatelliteFormBalanceCheck,
   BecomeSatelliteRegisterAsOracle,
   BecomeSatelliteOracleText,
 } from '../BecomeSatellite.style'
-import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
-import { UnregisterPopup } from '../popups/UnregisterPopup'
-
-const isGhostnet = process.env.REACT_APP_NETWORK === 'ghostnet'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -404,7 +394,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
             id="become-satellite-is-oracle"
             onChangeHandler={() => setIsChecked(!isChecked)}
             checked={isChecked}
-            disabled={isGhostnet}
+            disabled={IS_GHOSTNET}
           />
         </div>
 
@@ -433,7 +423,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
                 name: 'oraclePublicKey',
                 onChange: handleChange,
                 required: true,
-                disabled: isGhostnet,
+                disabled: IS_GHOSTNET,
               }}
             />
 
@@ -449,7 +439,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
                 name: 'oraclePeerId',
                 onChange: handleChange,
                 required: true,
-                disabled: isGhostnet,
+                disabled: IS_GHOSTNET,
               }}
             />
           </div>

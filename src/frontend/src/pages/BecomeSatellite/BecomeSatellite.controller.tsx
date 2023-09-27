@@ -2,7 +2,6 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'reac
 
 // Consts
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
@@ -23,7 +22,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
-import { UnregisterPopup } from './popups/UnregisterPopup'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -170,7 +168,7 @@ export const BecomeSatellite = () => {
                     here
                   </CustomLink>
                 </BecomeSatelliteOracleText>
-                {activeTabId === 0 && userAddress && (
+                {activeTabId === 0 && userAddress && usersSatelliteProfile && (
                   <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
                 )}
                 {activeTabId === 1 && (

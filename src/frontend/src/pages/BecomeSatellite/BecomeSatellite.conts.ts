@@ -80,3 +80,5 @@ export const DEFAULT_BECOME_SATELLITE_FORM: BecomeSatelliteFormStateType = {
   oraclePeerId: DEFAULT_FORM_FIELD_VALUE,
   oraclePublicKey: DEFAULT_FORM_FIELD_VALUE,
 }
+
+export const IS_GHOSTNET = process.env.REACT_APP_NETWORK === 'ghostnet'

@@ -220,6 +220,7 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
     line-height: 27px;
   }
 `
+
 export const SatelliteDetailsContainer = styled.div<{ theme: MavrykTheme }>`
   .grid-container {
     display: flex;
