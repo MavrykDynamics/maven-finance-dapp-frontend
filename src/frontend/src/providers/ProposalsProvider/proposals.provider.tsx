@@ -12,12 +12,7 @@ import { getProposalsProviderReturnValue } from './helpers/proposals.utils'
 import { normalizeProposals } from './helpers/proposals.normalizer'
 
 // types
-import {
-  ProposalsContext,
-  NullableProposalsContextState,
-  ProposalsSubsRecordType,
-  ProposalIndexerType,
-} from './proposals.provider.types'
+import { ProposalsContext, NullableProposalsContextState, ProposalsSubsRecordType } from './proposals.provider.types'
 
 // consts
 import {

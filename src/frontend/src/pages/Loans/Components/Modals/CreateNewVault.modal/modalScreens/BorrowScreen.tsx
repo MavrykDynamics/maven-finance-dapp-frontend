@@ -16,7 +16,6 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 import { BorrowScreenWrapper } from '../createNewVault.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -28,7 +27,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 // consts
-import { ERR_MSG_INPUT, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { ERR_MSG_INPUT, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { CONFIRMATION_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -63,7 +62,6 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const { apolloClient } = useApolloContext()
   const { userAddress } = useUserContext()
   const { info, bug } = useToasterContext()
-  const { vaultsMapper } = useVaultsContext()
   const {
     preferences: { themeSelected },
     globalLoadingState: { isActionActive },
@@ -78,9 +76,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     collateralsBalance: currentCollateralBalance,
     borrowAPR,
     vaultInputState,
-    updateVaultCreating,
     updateNewVault,
-    newVault,
     marketAvailableLiquidity,
   } = useCreateVaultContext()
   const {
@@ -107,11 +103,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   })
 
   const isDisabledButton =
-    inputData.validationStatus === INPUT_STATUS_ERROR ||
-    inputAmount === 0 ||
-    isActionActive ||
-    isVaultCreating ||
-    !vaultsMapper[newVault?.address ?? '']
+    inputData.validationStatus !== INPUT_STATUS_SUCCESS || inputAmount === 0 || isActionActive || isVaultCreating
 
   // Actions --------------------------------------------------------------------
   const getNewVaultData = useCallback(

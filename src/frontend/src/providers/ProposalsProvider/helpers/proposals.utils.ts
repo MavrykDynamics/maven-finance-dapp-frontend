@@ -52,7 +52,7 @@ export const getProposalStatus = (
   if (isTimeLockRound && proposal.id === timelockProposalId) return ProposalStatus.TIMELOCK
 
   // 6.if we are in proposal round and proposal is locked/unocked show this in status
-  const isProposalRound = governancePhase === GovPhases.PROPOSAL
+  const isProposalRound = governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
   if (isProposalRound && proposal.locked) return ProposalStatus.LOCKED
   if (isProposalRound && !proposal.locked) return ProposalStatus.UNLOCKED
 

@@ -22,11 +22,7 @@ import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import Expand from 'app/App.components/Expand/Expand.view'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
-import { EGovActiveCardStyled } from './EGovCard.style'
-import {
-  SatelliteGovernanceCardDropDown,
-  SatelliteGovernanceCardTitleTextGroup,
-} from 'pages/SatelliteGovernance/SatelliteGovernanceCard/SatelliteGovernanceCard.style'
+import { EGovActiveCardStyled, EGovPastCardBodyStyled, EGovPastCardTopColumnStyled } from './EGovCard.style'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -62,15 +58,13 @@ export const EGovCard = ({ proposal }: Props) => {
     description,
     expirationTimestamp,
     startTimestamp,
-    executed,
-    executionTimestamp,
     proposerAddress,
   } = proposal
 
   const votingStatistic = useMemo(
     () => ({
       forVotesMVKTotal: totalSmvkVotes,
-      unusedVotesMVKTotal: totalStakedMvk,
+      unusedVotesMVKTotal: totalStakedMvk - totalSmvkVotes,
       quorum: smvkPercentageRequired,
     }),
     [smvkPercentageRequired, totalSmvkVotes, totalStakedMvk],
@@ -127,8 +121,8 @@ export const EGovCard = ({ proposal }: Props) => {
         </div>
         <VotingArea
           voteStatistics={votingStatistic}
-          isVotingActive={true}
-          disableVotingButtons={!isUserVoter || userSmvkAmount < minStakedMvkRequiredToVote || isActionActive}
+          isVotingActive
+          disableVotingButtons={Boolean(isUserVoter) || userSmvkAmount < minStakedMvkRequiredToVote || isActionActive}
           handleVote={handleEGovProposalVote}
           buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}
           className="eGov-voting"
@@ -140,11 +134,13 @@ export const EGovCard = ({ proposal }: Props) => {
       className="expand-egov"
       header={
         <>
-          <SatelliteGovernanceCardTitleTextGroup>
+          <EGovPastCardTopColumnStyled>
             <h3 className="name">Title</h3>
-            <p className="value">{title}</p>
-          </SatelliteGovernanceCardTitleTextGroup>
-          <SatelliteGovernanceCardTitleTextGroup>
+            <p className="value proposal-name" title={title}>
+              {title}
+            </p>
+          </EGovPastCardTopColumnStyled>
+          <EGovPastCardTopColumnStyled>
             <h3 className="name">Date</h3>
             <p className="value capitallize">
               {parseDate({
@@ -152,36 +148,22 @@ export const EGovCard = ({ proposal }: Props) => {
                 timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC',
               })}
             </p>
-          </SatelliteGovernanceCardTitleTextGroup>
-          <SatelliteGovernanceCardTitleTextGroup>
+          </EGovPastCardTopColumnStyled>
+          <EGovPastCardTopColumnStyled>
             <h3 className="name">Proposer</h3>
-            <div className="value">
-              <TzAddress tzAddress={proposerAddress} hasIcon />
-            </div>
-          </SatelliteGovernanceCardTitleTextGroup>
+            <TzAddress tzAddress={proposerAddress} hasIcon className="value" />
+          </EGovPastCardTopColumnStyled>
         </>
       }
       sufix={<StatusFlag className="expand-gov-status" status={status} text={status} />}
     >
-      <SatelliteGovernanceCardDropDown>
-        <div className="left">
+      <EGovPastCardBodyStyled>
+        <div className="text">
           <h3>Description</h3>
           <p>{description}</p>
         </div>
-        <div className="voting-block">
-          <h3>Vote Statistics</h3>
-          <b className="voting-ends">
-            Voting ended on{' '}
-            {parseDate({
-              time: executed ? executionTimestamp : expirationTimestamp,
-              timeFormat: 'MMM DD, HH:mm',
-            })}{' '}
-            CEST
-          </b>
-
-          <VotingArea voteStatistics={votingStatistic} isVotingActive={false} />
-        </div>
-      </SatelliteGovernanceCardDropDown>
+        <VotingArea voteStatistics={votingStatistic} isVotingActive={false} />
+      </EGovPastCardBodyStyled>
     </Expand>
   )
 }

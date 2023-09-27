@@ -38,6 +38,8 @@ export const GovPhases = {
   PROPOSAL: 'PROPOSAL',
   VOTING: 'VOTING',
   TIMELOCK: 'TIMELOCK',
+  // Execution is a fake round on a client, it's proposal round & when we have proposal to execute
+  EXECUTION: 'EXECUTION',
 } as const
 
 // Context consts

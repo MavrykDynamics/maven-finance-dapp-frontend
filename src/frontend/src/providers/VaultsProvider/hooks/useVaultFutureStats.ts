@@ -52,7 +52,7 @@ export const useVaultFutureStats = ({
   const { bug } = useToasterContext()
 
   // if we pass default values, means we don't need to calcs anything
-  if (!collateralTokenAddress || !vaultTokenAddress)
+  if (!vaultTokenAddress)
     return {
       futureTotalOustanding: 0,
       futureCollateralRatio: 0,
@@ -61,7 +61,6 @@ export const useVaultFutureStats = ({
     }
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: vaultTokenAddress, tokensMetadata, tokensPrices })
-  const collateralToken = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
 
   if (!borrowedToken || !borrowedToken.rate)
     throw new Error('useVaultFutureStats error: wrong borrowed token address provided')
@@ -110,6 +109,20 @@ export const useVaultFutureStats = ({
   }
 
   if (operationType === operationRemoveCollateral || operationType === operationAddCollateral) {
+    if (!collateralTokenAddress)
+      return {
+        futureTotalOustanding: 0,
+        futureCollateralRatio: 0,
+        futureBorrowCapacity: 0,
+        futureCollateralBalance: 0,
+      }
+
+    const collateralToken = getTokenDataByAddress({
+      tokenAddress: collateralTokenAddress,
+      tokensMetadata,
+      tokensPrices,
+    })
+
     if (!collateralToken || !collateralToken.rate)
       throw new Error('useVaultFutureStats error: wrong collateral token address provided')
 
