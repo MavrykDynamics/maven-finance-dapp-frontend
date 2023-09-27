@@ -17,6 +17,7 @@ export const EMPTY_CONTRACT_STATUSES_CTX: ContractStatusesContextStateType = {
   config: {
     whitelistDevelopers: [],
     isGlassBroken: false,
+    areContractMethodsPaused: false,
   },
   contractStatuses: [],
 }

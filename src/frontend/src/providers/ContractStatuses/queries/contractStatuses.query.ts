@@ -115,85 +115,106 @@ import { gql } from 'utils/__generated__'
 // `)
 
 export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
-  query getAllContractStatusesData {
-    farm: farm(where: {admin: {_neq: ""}}) {
-      name
-      address
-      claim_paused
-      deposit_paused
-      withdraw_paused
-      admin
-      last_updated_at
-    }
-
-    farm_factory: farm_factory(where: {admin: {_neq: ""}}) {
-      create_farm_paused
-      track_farm_paused
-      untrack_farm_paused
-      address
-      admin
-      last_updated_at
-    }
-
-    delegation: delegation(where: {admin: {_neq: ""}}) {
-      delegate_to_satellite_paused
-      distribute_reward_paused
-      register_as_satellite_paused
-      undelegate_from_satellite_paused
-      unregister_as_satellite_paused
-      update_satellite_record_paused
-      address
-      admin
-      last_updated_at
-    }
-
-    doorman: doorman(where: {admin: {_neq: ""}}) {
-      address
-      compound_paused
-      farm_claim_paused
-      unstake_paused
-      admin
-      last_updated_at
-    }
-
-    treasury: treasury(where: {admin: {_neq: ""}}) {
-      name
-      mint_mvk_and_transfer_paused
-      stake_tokens_paused
-      transfer_paused
-      address
-      unstake_tokens_paused
-      admin
-      last_updated_at
-    }
-
-    treasury_factory: treasury_factory(where: {admin: {_neq: ""}}) {
-      create_treasury_paused
-      address
-      track_treasury_paused
-      untrack_treasury_paused
-      admin
-      last_updated_at
-    }
-
-    aggregator: aggregator(where: {admin: {_neq: ""}}) {
-      address
-      name
-      withdraw_reward_smvk_paused
-      withdraw_reward_xtz_paused
-      admin
-      last_updated_at
-    }
-
-    aggregator_factory: aggregator_factory(where: {admin: {_neq: ""}}) {
-      address
-      untrack_aggregator_paused
-      track_aggregator_paused
-      distribute_reward_xtz_paused
-      distribute_reward_smvk_paused
-      create_aggregator_paused
-      admin
-      last_updated_at
-    }
+query getAllContractStatusesData {
+  farm: farm(where: {admin: {_neq: ""}}) {
+    name
+    address
+    claim_paused
+    deposit_paused
+    withdraw_paused
+    admin
+    last_updated_at
   }
+  farm_factory: farm_factory(where: {admin: {_neq: ""}}) {
+    create_farm_paused
+    track_farm_paused
+    untrack_farm_paused
+    address
+    admin
+    last_updated_at
+  }
+  delegation: delegation(where: {admin: {_neq: ""}}) {
+    delegate_to_satellite_paused
+    distribute_reward_paused
+    register_as_satellite_paused
+    undelegate_from_satellite_paused
+    unregister_as_satellite_paused
+    update_satellite_record_paused
+    address
+    admin
+    last_updated_at
+  }
+  doorman: doorman(where: {admin: {_neq: ""}}) {
+    address
+    compound_paused
+    farm_claim_paused
+    unstake_paused
+    admin
+    last_updated_at
+  }
+  treasury: treasury(where: {admin: {_neq: ""}}) {
+    name
+    mint_mvk_and_transfer_paused
+    stake_tokens_paused
+    transfer_paused
+    address
+    unstake_tokens_paused
+    admin
+    last_updated_at
+  }
+  treasury_factory: treasury_factory(where: {admin: {_neq: ""}}) {
+    create_treasury_paused
+    address
+    track_treasury_paused
+    untrack_treasury_paused
+    admin
+    last_updated_at
+  }
+  aggregator: aggregator(where: {admin: {_neq: ""}}) {
+    address
+    name
+    withdraw_reward_smvk_paused
+    withdraw_reward_xtz_paused
+    admin
+    last_updated_at
+  }
+  aggregator_factory: aggregator_factory(where: {admin: {_neq: ""}}) {
+    address
+    untrack_aggregator_paused
+    track_aggregator_paused
+    distribute_reward_xtz_paused
+    distribute_reward_smvk_paused
+    create_aggregator_paused
+    admin
+    last_updated_at
+  }
+  lending_controller(where: {mock_time: {_eq: false}}) {
+    address
+    admin
+    last_updated_at
+    add_liquidity_paused
+    close_vault_paused
+    liquidate_vault_paused
+    mark_for_liquidation_paused
+    register_deposit_paused
+    register_vault_creation_paused
+    register_withdrawal_paused
+    remove_liquidity_paused
+    repay_paused
+    set_collateral_token_paused
+    set_loan_token_paused
+    vault_deposit_paused
+    vault_deposit_staked_token_paused
+    vault_on_liquidate_paused
+    vault_withdraw_paused
+    vault_withdraw_staked_token_paused
+  }
+  vault_factory {
+    address
+    admin
+    create_vault_paused
+    last_updated_at
+  }
+}
+
 `)
