@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -104,7 +104,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const [lastProposalIdFromOperation, setLastProposalIdFromOperation] = useState<null | number>(null)
 
   useEffect(() => {
-    if (governancePhase !== GovPhases.PROPOSAL) return
+    if (governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION) return
     const abortController = new AbortController()
 
     ;(async () => {
@@ -183,7 +183,8 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // Change user's vieving proposal
   const changeActiveProposal = useCallback(
     (proposalId: number) => {
-      if (proposalId !== selectedUserProposalId)
+      // redirect if id is different from current and user is on the submit proposal page, cuz redirect occurs after an operation, so user can change the page
+      if (proposalId !== selectedUserProposalId && window.location.pathname.includes('submit-proposal'))
         history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
     },
     [history, selectedUserProposalId],
@@ -277,7 +278,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         },
       })
 
-      if (newProposalData.error) {
+      if (newProposalData.error && !isAbortError(newProposalData.error)) {
         console.error('loading new proposal error', newProposalData.error)
         throw new Error(newProposalData.error.message)
       }
@@ -287,7 +288,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         const { id } = newProposalData.data.governance_proposal[0]
         changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
 
-        if (proposalState[DEFAULT_PROPOSAL.id]) proposalState[DEFAULT_PROPOSAL.id] = DEFAULT_PROPOSAL
+        if (proposalState[DEFAULT_PROPOSAL.id]) {
+          setProposalsState((prev) => ({
+            ...prev,
+            [DEFAULT_PROPOSAL.id]: DEFAULT_PROPOSAL,
+          }))
+        }
       }
     } catch (e) {
       bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
@@ -411,7 +417,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   // disabling action buttons
   const isProposalSubmitted = selectedUserProposalId >= 0
-  const isProposalPeriod = governancePhase === 'PROPOSAL'
+  const isProposalPeriod = governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
 
   // Detect whether proposal has smth to save
   const proposalHasChange = useMemo(

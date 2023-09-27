@@ -79,7 +79,7 @@ const getSatelliteOracleEfficiency = (satelliteUser: SatellitesIndexerDataType['
     (acc, { init_epoch, init_round, observations: [lastFeedObservation] }) => {
       const { timestamp, epoch, round } = lastFeedObservation ?? {}
 
-      if (dayjs(timestamp).unix() > acc.latestTimestamp) {
+      if (dayjs(timestamp).valueOf() > acc.latestTimestamp) {
         acc.init_epoch = init_epoch
         acc.init_round = init_round
         acc.epoch = epoch

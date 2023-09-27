@@ -55,7 +55,6 @@ export const AppRoutes = () => {
       <Route exact path="/staking">
         <Doorman />
       </Route>
-
       {/* DASHBOARD */}
       <Route exact path="/">
         <Dashboard />
@@ -63,7 +62,6 @@ export const AppRoutes = () => {
       <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
         <DashboardPersonal />
       </Route>
-
       {/* SATELLITES */}
       <Route exact path="/satellites">
         <Satellites />
@@ -83,7 +81,6 @@ export const AppRoutes = () => {
       <Route exact path="/satellites/feed-details/:feedId">
         <DataFeedDetails />
       </Route>
-
       {/* GOVERNANCE PAGES */}
       <Route exact path="/governance">
         <Governance />
@@ -116,15 +113,12 @@ export const AppRoutes = () => {
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/governance'}
       />
-
       <Route exact path="/treasury">
         <Treasury />
       </Route>
-
       <Route exact path="/yield-farms">
         <Farms />
       </Route>
-
       {/* LEND & BORROW */}
       <Route exact path="/loans/:assetAddress/:tabId">
         <Market />
@@ -144,12 +138,10 @@ export const AppRoutes = () => {
       <Route exact path="/loans/borrow">
         <LoansBorrow />
       </Route>
-
       {/* NOT PROD PAGES */}
       <Route exact path="/admin">
         <Admin />
       </Route>
-
       <Route path="*">
         <RenderErrorPage />
       </Route>

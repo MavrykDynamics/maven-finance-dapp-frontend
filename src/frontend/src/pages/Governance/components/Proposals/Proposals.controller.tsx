@@ -65,7 +65,7 @@ export const Proposals = ({
             listName === HISTORY_PROPOSALS_LIST_NAME
               ? proposal.quorumMvkTotal || proposal.passVoteMvkTotal
               : // if it's alive round proposal and phase is Proposal show proposals round votes
-              governancePhase === GovPhases.PROPOSAL
+              governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
               ? proposal.passVoteMvkTotal
               : // if round is more than proposal show voting round votes
                 proposal.quorumMvkTotal
