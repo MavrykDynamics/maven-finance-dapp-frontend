@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 
 // components
-import { SatellitesVotingHistory } from 'pages/SatelliteDetails/SatelliteDetails.controller'
+import { SatellitesVotingHistory } from 'pages/SatelliteVotingHistory/SatelliteVotingHistory'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import Button from 'app/App.components/Button/NewButton'

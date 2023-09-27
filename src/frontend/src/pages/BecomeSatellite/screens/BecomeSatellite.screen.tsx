@@ -11,9 +11,9 @@ import {
   DEFAULT_BECOME_SATELLITE_FORM,
   getFormTextBasedOnUserRole,
   getInputValidationStatus,
-  IS_GHOSTNET,
 } from '../BecomeSatellite.conts'
 import { REGISTER_SATELLITE_ACTION, UPDATE_SATELLITE_ACTION } from 'providers/SatellitesProvider/satellites.const'
+import { IS_GHOSTNET } from 'consts/global.const'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -77,7 +77,6 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
   const { bug } = useToasterContext()
 
   const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvkBalance
-  //   const usersSatelliteProfile = userAddress ? satelliteMapper[userAddress] : null
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
   const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)

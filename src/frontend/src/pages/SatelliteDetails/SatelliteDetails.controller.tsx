@@ -7,6 +7,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // view
+import { SatellitesVotingHistory } from 'pages/SatelliteVotingHistory/SatelliteVotingHistory'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -23,11 +24,9 @@ import {
   SatelliteMetrics,
   SatelliteMetricsBlock,
   SatelliteVotingInfoWrapper,
-  SatelliteVotingHistoryListItem,
 } from './SatelliteDetails.style'
 
 // helpers
-import { parseDate } from 'utils/time'
 import { useSatelliteVotes } from 'providers/SatellitesProvider/hooks/useSatelliteVotes'
 import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
@@ -37,50 +36,9 @@ import {
   SATELLITES_DATA_SINGLE_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
-  SATELLITE_VOTES_MAPPER,
 } from 'providers/SatellitesProvider/satellites.const'
 import { FatalError } from 'errors/error'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
-
-// types
-import { SatelliteVotesType } from 'providers/SatellitesProvider/satellites.provider.types'
-
-export const SatellitesVotingHistory = ({
-  satelliteVotes: { proposalsVotes, satelliteActionVotes, financialRequestsVotes },
-}: {
-  satelliteVotes: SatelliteVotesType
-}) => {
-  const hasVoted = proposalsVotes.length || satelliteActionVotes.length || financialRequestsVotes.length
-
-  if (!hasVoted)
-    return (
-      <div className="voting-info-list-wrapper scroll-block">
-        <SatelliteVotingHistoryListItem>
-          <p>No voting history available</p>
-        </SatelliteVotingHistoryListItem>
-      </div>
-    )
-
-  const allVotes = [...proposalsVotes, ...satelliteActionVotes, ...financialRequestsVotes]
-  return (
-    <div className="voting-info-list-wrapper scroll-block">
-      {allVotes.map(({ vote, id, voteName, timestamp }) => {
-        const voteText = SATELLITE_VOTES_MAPPER[vote]
-        const votedItemName = voteName.split('_').join(' ').toLowerCase()
-
-        return (
-          <SatelliteVotingHistoryListItem key={`${voteName}_${id}`}>
-            <p>{votedItemName}</p>
-            <span className="current satellite-voting-history-info">
-              Voted <b className={`voting-${voteText.toLowerCase()}`}>{voteText} </b>
-              {timestamp ? `on ${parseDate({ time: timestamp, timeFormat: 'MMM Do, YYYY' })}` : null}
-            </span>
-          </SatelliteVotingHistoryListItem>
-        )
-      })}
-    </div>
-  )
-}
 
 export const SatelliteDetails = () => {
   const { satelliteId } = useParams<{ satelliteId: string }>()

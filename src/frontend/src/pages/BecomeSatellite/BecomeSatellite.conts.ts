@@ -81,8 +81,6 @@ export const DEFAULT_BECOME_SATELLITE_FORM: BecomeSatelliteFormStateType = {
   oraclePublicKey: DEFAULT_FORM_FIELD_VALUE,
 }
 
-export const IS_GHOSTNET = process.env.REACT_APP_NETWORK === 'ghostnet'
-
 // tabs
 export const SATELLITE_TAB_DETAILS = 'details'
 export const SATELLITE_TAB_EDIT = 'edit'

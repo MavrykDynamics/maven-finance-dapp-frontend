@@ -27,7 +27,7 @@ import { registerAggregator } from 'providers/SatellitesGovernanceProvider/actio
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // queries
-import { AGGREGATOR_ADDRESSES_QUERY } from '../queries/aggregatorAddresses.query'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePopup: () => void }) => {
   const { bug } = useToasterContext()
@@ -35,14 +35,12 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
   const {
     contractAddresses: { governanceSatelliteAddress },
   } = useDappConfigContext()
-
-  const { data, loading } = useQuery(AGGREGATOR_ADDRESSES_QUERY, {
-    nextFetchPolicy: 'cache-first',
-  })
+  const { feedsAddresses, isLoading: loading } = useDataFeedsContext()
+  console.log(feedsAddresses)
 
   const aggregatorsList = useMemo(
-    () => data?.aggregator.map((el, idx) => ({ content: el.address, id: idx })) ?? [],
-    [data],
+    () => feedsAddresses.map((address, idx) => ({ content: address, id: idx })) ?? [],
+    [feedsAddresses],
   )
 
   const [selectedAggregator, setSelectedAggregator] = useState(aggregatorsList[0])
