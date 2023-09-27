@@ -789,9 +789,7 @@ export const CouncilPending = (props: Props) => {
       <div className="parameters">
         <div>
           <p className="parameters-name">{getSeparateCamelCase(name)}</p>
-          <span className="parameters-value">
-            {typeof convertedValue === 'object' && 'bytes' in convertedValue ? convertedValue?.bytes : convertedValue}
-          </span>
+          <span className="parameters-value">{convertedValue}</span>
         </div>
         <div>
           <p>Signed</p>
