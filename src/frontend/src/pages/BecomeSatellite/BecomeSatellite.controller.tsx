@@ -36,7 +36,6 @@ import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButt
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { SatelliteDetailsScreen } from './screens/SatelliteDetails.screen'
 import { BecomeSatelliteScreen } from './screens/BecomeSatellite.screen'
-import { BecomeSatelliteTabIds } from './BecomeSatellite.types'
 
 export const BecomeSatellite = () => {
   const {

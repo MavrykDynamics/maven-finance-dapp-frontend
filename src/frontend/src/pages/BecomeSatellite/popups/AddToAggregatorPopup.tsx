@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
 // consts
-import { REGISTER_AGGREGATOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+import { ADD_ORACLES_AGGREGATOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // components
@@ -20,7 +20,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // actions
-import { registerAggregator } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
+import { addOracleToAggregator } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -50,7 +50,7 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
   }
 
   //   registerAggregator action ---------------------------------------------------------------------------
-  const registerAggregatorActionFn = useCallback(async () => {
+  const addOracleToAggregatorActionFn = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
@@ -65,18 +65,18 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
       return null
     }
 
-    return await registerAggregator(governanceSatelliteAddress, selectedAggregator.id, userAddress)
+    return await addOracleToAggregator(governanceSatelliteAddress, selectedAggregator.id, userAddress, '')
   }, [bug, governanceSatelliteAddress, selectedAggregator, userAddress])
 
-  const registerAggregatorContratActionProps: HookContractActionArgs = useMemo(
+  const addOracleToAggregatorContratActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: REGISTER_AGGREGATOR_ACTION,
-      actionFn: registerAggregatorActionFn,
+      actionType: ADD_ORACLES_AGGREGATOR_ACTION,
+      actionFn: addOracleToAggregatorActionFn,
     }),
-    [registerAggregatorActionFn],
+    [addOracleToAggregatorActionFn],
   )
 
-  const { action: registerAggregatorAction } = useContractAction(registerAggregatorContratActionProps)
+  const { action: addOracleToAggregatorAction } = useContractAction(addOracleToAggregatorContratActionProps)
 
   return (
     <PopupContainer onClick={closePopup} show={show}>
@@ -99,7 +99,7 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
             <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={closePopup}>
               <Icon id="navigation-menu_close" /> Cancel
             </NewButton>
-            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={registerAggregatorAction}>
+            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={addOracleToAggregatorAction}>
               <Icon id="doubleCheckmark" />
               Register
             </NewButton>
