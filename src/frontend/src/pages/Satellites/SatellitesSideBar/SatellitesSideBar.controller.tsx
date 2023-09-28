@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // consts
@@ -77,16 +76,18 @@ const SidebarUserEditButton = ({ image, name }: { image: string; name: string })
 }
 
 const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
-  const { userAddress, isSatellite } = useUserContext()
+  const {
+    userAddress,
+    isSatellite,
+    userSatelliteName,
+    userAvatars: { satelliteAvatar },
+  } = useUserContext()
   const {
     contractAddresses: { delegationAddress, feedsFactoryAddress },
   } = useDappConfigContext()
 
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks, averageFeedReward } = useSatelliteStatistics()
   const { feedsAddresses } = useDataFeedsContext()
-  const { satelliteMapper } = useSatellitesContext()
-
-  const userProfile = userAddress ? satelliteMapper[userAddress] : undefined
 
   return (
     <SatelliteSideBarStyled>
@@ -94,8 +95,8 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         {isButton ? (
           <Link to="/become-satellite">
             <Button kind={isSatellite ? BUTTON_SECONDARY : BUTTON_PRIMARY} disabled={!userAddress} form={BUTTON_WIDE}>
-              {isSatellite && userProfile ? (
-                <SidebarUserEditButton name={userProfile.name} image={userProfile.image} />
+              {isSatellite && satelliteAvatar && userSatelliteName ? (
+                <SidebarUserEditButton name={userSatelliteName} image={satelliteAvatar} />
               ) : (
                 <>
                   <Icon id="satellite-stroke" />

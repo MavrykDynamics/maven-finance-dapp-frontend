@@ -109,7 +109,7 @@ export function getLoansTransactionsHistory({
           }
         }
 
-        historyItemsAmount: history_data_aggregate(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}) {
+        historyItemsAmount: history_data_aggregate(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp) {
           aggregate {
             count
           }
