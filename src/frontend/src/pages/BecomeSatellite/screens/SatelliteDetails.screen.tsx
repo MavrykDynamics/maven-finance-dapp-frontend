@@ -71,7 +71,6 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
   }, [])
 
   // calcs
-
   const { sMvkBalance, delegationRatio, totalDelegatedAmount } = usersSatelliteProfile
   const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { useLocation } from 'react-router'
+import { Redirect, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from 'react-router'
 
 // Consts
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
@@ -9,7 +9,7 @@ import {
   SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
-import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT, tabsPaths } from './BecomeSatellite.conts'
+import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT } from './BecomeSatellite.conts'
 
 // providers
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
@@ -36,6 +36,7 @@ import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButt
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { SatelliteDetailsScreen } from './screens/SatelliteDetails.screen'
 import { BecomeSatelliteScreen } from './screens/BecomeSatellite.screen'
+import { BecomeSatelliteTabIds } from './BecomeSatellite.types'
 
 export const BecomeSatellite = () => {
   const {
@@ -57,7 +58,10 @@ export const BecomeSatellite = () => {
   } = useUserContext()
   const { apolloClient } = useApolloContext()
 
-  const { hash } = useLocation()
+  const history = useHistory()
+  const { pathname } = useLocation()
+  const { path } = useRouteMatch()
+  const tabId = useMemo(() => pathname.split('/').pop(), [pathname])
 
   // local states
   const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
@@ -135,25 +139,31 @@ export const BecomeSatellite = () => {
     [activeTabId],
   )
 
-  useEffect(() => {
-    const _hash = hash.split('#').pop()
-
-    if (_hash && tabsPaths.includes(_hash)) {
-      setActiveTabId(tabList.find((tab) => tab.path === _hash)?.id ?? 0)
-    }
-  }, [hash, tabList])
-
-  // TODO add url handling when page refresh
   const handleChangeTabs = useCallback(
     (id: number) => {
       setActiveTabId(id)
-      const tabPath = tabList.find((tab) => tab.id === id)?.path
-      if (tabPath) {
-        window.history.pushState({}, '', `#${tabPath}`)
-      }
+      const foundTab = tabList.find((item) => item.id === id)
+      const currentTabId = tabList.find((item) => item.path === tabId)?.id
+
+      if (!foundTab?.path || currentTabId === id) return
+
+      history.replace(`/become-satellite/${foundTab.path}`)
     },
-    [tabList],
+    [history, tabId, tabList],
   )
+
+  const TabsNavigation = () => {
+    if (!userAddress || !usersSatelliteProfile) return <Redirect to="/" />
+
+    switch (tabId) {
+      case SATELLITE_TAB_DETAILS:
+        return <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
+      case SATELLITE_TAB_EDIT:
+        return <BecomeSatelliteScreen usersSatelliteProfile={usersSatelliteProfile} userSmvkBalance={userSmvkBalance} />
+      default:
+        return <Redirect to={`${path}/${SATELLITE_TAB_DETAILS}`} />
+    }
+  }
 
   return (
     <>
@@ -196,15 +206,15 @@ export const BecomeSatellite = () => {
                     here
                   </CustomLink>
                 </BecomeSatelliteOracleText>
-                {activeTabId === 0 && isSatellite && userAddress && usersSatelliteProfile && (
-                  <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
-                )}
-                {activeTabId === 1 && isSatellite && (
-                  <BecomeSatelliteScreen
-                    usersSatelliteProfile={usersSatelliteProfile}
-                    userSmvkBalance={userSmvkBalance}
-                  />
-                )}
+
+                <Switch>
+                  <Route exact path={path}>
+                    <Redirect to={`${path}/${SATELLITE_TAB_DETAILS}`} />
+                  </Route>
+                  <Route path={`${path}/:tabId`}>
+                    <TabsNavigation />
+                  </Route>
+                </Switch>
               </BecomeSatelliteForm>
             )}
           </div>

@@ -66,7 +66,7 @@ export const AppRoutes = () => {
       <Route exact path="/satellites">
         <Satellites />
       </Route>
-      <Route exact path="/become-satellite">
+      <Route path="/become-satellite">
         <BecomeSatellite />
       </Route>
       <Route exact path="/satellite-nodes">
