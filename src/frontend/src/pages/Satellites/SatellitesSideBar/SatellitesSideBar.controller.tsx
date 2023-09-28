@@ -1,15 +1,20 @@
 import { Link } from 'react-router-dom'
 
+// hooks
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
+// consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
+// view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Button from 'app/App.components/Button/NewButton'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import Icon from 'app/App.components/Icon/Icon.view'
 import {
   SideBarFaq,
@@ -19,9 +24,6 @@ import {
   SideBarItem,
   SidebarUserButton,
 } from './SatelliteSideBar.style'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useMemo } from 'react'
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
@@ -62,7 +64,7 @@ export const SateliteSideBarFAQ = () => (
   </SideBarFaq>
 )
 
-export const SidebarUserEditButton = ({ image, name }: { image: string; name: string }) => {
+const SidebarUserEditButton = ({ image, name }: { image: string; name: string }) => {
   return (
     <SidebarUserButton>
       <ImageWithPlug imageLink={image} alt="my satellite profile avatar" />
@@ -82,14 +84,9 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
 
   const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks, averageFeedReward } = useSatelliteStatistics()
   const { feedsAddresses } = useDataFeedsContext()
-  const { allSatellitesIds, satelliteMapper } = useSatellitesContext()
+  const { satelliteMapper } = useSatellitesContext()
 
-  const userPrifileAddress = useMemo(
-    () => allSatellitesIds.find((item) => satelliteMapper[item].address === userAddress),
-    [allSatellitesIds, satelliteMapper, userAddress],
-  )
-
-  const userProfile = userPrifileAddress ? satelliteMapper[userPrifileAddress] : undefined
+  const userProfile = userAddress ? satelliteMapper[userAddress] : undefined
 
   return (
     <SatelliteSideBarStyled>
