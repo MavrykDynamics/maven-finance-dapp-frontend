@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Redirect, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from 'react-router'
+import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router'
 
 // Consts
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
@@ -60,7 +60,7 @@ export const BecomeSatellite = () => {
 
   const history = useHistory()
   const { pathname } = useLocation()
-  const { path } = useRouteMatch()
+  const { path, url } = useRouteMatch()
   const tabId = useMemo(() => pathname.split('/').pop(), [pathname])
 
   // local states
@@ -206,14 +206,19 @@ export const BecomeSatellite = () => {
                     here
                   </CustomLink>
                 </BecomeSatelliteOracleText>
-
                 <Switch>
-                  <Route exact path={path}>
-                    <Redirect to={`${path}/${SATELLITE_TAB_DETAILS}`} />
-                  </Route>
-                  <Route path={`${path}/:tabId`}>
-                    <TabsNavigation />
-                  </Route>
+                  {isSatellite ? (
+                    <>
+                      <Route exact path={path}>
+                        <Redirect to={`${path}/${SATELLITE_TAB_DETAILS}`} />
+                      </Route>
+                      <Route path={`${path}/:tabId`}>
+                        <TabsNavigation />
+                      </Route>
+                    </>
+                  ) : (
+                    <Redirect to={url} />
+                  )}
                 </Switch>
               </BecomeSatelliteForm>
             )}
