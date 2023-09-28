@@ -84,3 +84,4 @@ export const DEFAULT_BECOME_SATELLITE_FORM: BecomeSatelliteFormStateType = {
 // tabs
 export const SATELLITE_TAB_DETAILS = 'details'
 export const SATELLITE_TAB_EDIT = 'edit'
+export type SatelliteTabType = typeof SATELLITE_TAB_EDIT | typeof SATELLITE_TAB_DETAILS

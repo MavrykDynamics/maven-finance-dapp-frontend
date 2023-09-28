@@ -77,6 +77,12 @@ export const BecomeSatelliteForm = styled(Card)`
   }
 `
 
+export const BecomeSatelliteNavigation = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+`
+
 export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; theme: MavrykTheme }>`
   color: ${({ balanceOk, theme }) => (balanceOk ? theme.upColor : theme.downColor)};
   display: flex;

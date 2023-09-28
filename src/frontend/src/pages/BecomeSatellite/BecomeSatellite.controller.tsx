@@ -1,15 +1,16 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from 'react-router'
+import { useEffect, useLayoutEffect, useState } from 'react'
+import { Redirect, Route, Switch, useParams } from 'react-router'
 
 // Consts
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
-import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT } from './BecomeSatellite.conts'
+import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT, SatelliteTabType } from './BecomeSatellite.conts'
 
 // providers
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
@@ -24,18 +25,22 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
+import ProtectedRoute from 'app/App.components/AppRoutes/ProtectedRoute'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { Page, PageContent } from 'styles'
-import { BecomeSatelliteForm, BecomeSatelliteOracleText } from './BecomeSatellite.style'
+import { BecomeSatelliteForm, BecomeSatelliteNavigation, BecomeSatelliteOracleText } from './BecomeSatellite.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
 import { BecomeSatelliteBanners } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners'
-import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { SatelliteDetailsScreen } from './screens/SatelliteDetails.screen'
 import { BecomeSatelliteScreen } from './screens/BecomeSatellite.screen'
+
+const pageTexts = {
+  [SATELLITE_TAB_DETAILS]: 'Satellite Details',
+  [SATELLITE_TAB_EDIT]: 'Edit Profile',
+}
 
 export const BecomeSatellite = () => {
   const {
@@ -57,15 +62,11 @@ export const BecomeSatellite = () => {
   } = useUserContext()
   const { apolloClient } = useApolloContext()
 
-  const history = useHistory()
-  const { pathname } = useLocation()
-  const { path, url } = useRouteMatch()
-  const tabId = useMemo(() => pathname.split('/').pop(), [pathname])
+  const { tabId } = useParams<{ tabId: SatelliteTabType }>()
 
   // local states
   const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
   const [isSatelliteExistanseError, setIsSatelliteExistanseError] = useState(false)
-  const [activeTabId, setActiveTabId] = useState(0)
 
   // derived states
   const usersSatelliteProfile = userAddress ? satelliteMapper[userAddress] : null
@@ -75,6 +76,7 @@ export const BecomeSatellite = () => {
   useEffect(() => {
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 
     return () => {
@@ -120,50 +122,6 @@ export const BecomeSatellite = () => {
   const isPageLoading =
     (!isSatelliteExistanseError && isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistanseLoading
 
-  const tabList = useMemo(
-    () => [
-      {
-        text: 'Satellite Details',
-        id: 0,
-        active: activeTabId === 0,
-        path: SATELLITE_TAB_DETAILS,
-      },
-      {
-        text: 'Edit Profile',
-        id: 1,
-        active: activeTabId === 1,
-        path: SATELLITE_TAB_EDIT,
-      },
-    ],
-    [activeTabId],
-  )
-
-  const handleChangeTabs = useCallback(
-    (id: number) => {
-      setActiveTabId(id)
-      const foundTab = tabList.find((item) => item.id === id)
-      const currentTabId = tabList.find((item) => item.path === tabId)?.id
-
-      if (!foundTab?.path || currentTabId === id) return
-
-      history.replace(`/become-satellite/${foundTab.path}`)
-    },
-    [history, tabId, tabList],
-  )
-
-  const TabsNavigation = () => {
-    if (!userAddress || !usersSatelliteProfile) return <Redirect to="/" />
-
-    switch (tabId) {
-      case SATELLITE_TAB_DETAILS:
-        return <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
-      case SATELLITE_TAB_EDIT:
-        return <BecomeSatelliteScreen usersSatelliteProfile={usersSatelliteProfile} userSmvkBalance={userSmvkBalance} />
-      default:
-        return <Redirect to={`${path}/${SATELLITE_TAB_DETAILS}`} />
-    }
-  }
-
   return (
     <>
       <Page>
@@ -180,7 +138,28 @@ export const BecomeSatellite = () => {
         ) : null}
 
         {isSatellite && (
-          <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabList} onClick={handleChangeTabs} />
+          <BecomeSatelliteNavigation>
+            <CustomLink
+              to={`/become-satellite/:tabId`}
+              params={{ tabId: SATELLITE_TAB_DETAILS }}
+              styling={{
+                navigationLink: tabId !== SATELLITE_TAB_DETAILS,
+                navigationActiveLink: tabId === SATELLITE_TAB_DETAILS,
+              }}
+            >
+              Satellite Details
+            </CustomLink>
+            <CustomLink
+              to={`/become-satellite/:tabId`}
+              params={{ tabId: SATELLITE_TAB_EDIT }}
+              styling={{
+                navigationLink: tabId !== SATELLITE_TAB_EDIT,
+                navigationActiveLink: tabId === SATELLITE_TAB_EDIT,
+              }}
+            >
+              Edit Profile
+            </CustomLink>
+          </BecomeSatelliteNavigation>
         )}
 
         <PageContent className="mt-30">
@@ -192,7 +171,7 @@ export const BecomeSatellite = () => {
               </DataLoaderWrapper>
             ) : (
               <BecomeSatelliteForm>
-                <H2Title>{tabList[activeTabId]?.text}</H2Title>
+                <H2Title>{pageTexts[tabId] ?? ''}</H2Title>
                 <BecomeSatelliteOracleText>
                   <span>Important Note:</span> Becoming a Satellite offers the operation an oracle node. Technically,
                   one may become a Satellite without operating an oracle and take part in Governance. However, they will
@@ -206,18 +185,26 @@ export const BecomeSatellite = () => {
                   </CustomLink>
                 </BecomeSatelliteOracleText>
                 <Switch>
-                  {isSatellite ? (
-                    <>
-                      <Route exact path={path}>
-                        <Redirect to={`${path}/${SATELLITE_TAB_DETAILS}`} />
-                      </Route>
-                      <Route path={`${path}/:tabId`}>
-                        <TabsNavigation />
-                      </Route>
-                    </>
-                  ) : (
-                    <Redirect to={url} />
-                  )}
+                  <ProtectedRoute
+                    exact
+                    path={`/become-satellite/${SATELLITE_TAB_DETAILS}`}
+                    isAuthorized={Boolean(userAddress)}
+                    hasAccess={Boolean(isSatellite) && Boolean(usersSatelliteProfile)}
+                    redirectPath={`/become-satellite/${SATELLITE_TAB_EDIT}`}
+                    component={() => (
+                      // need this ts off, cuz we check for this params beeing present with isAuthorized & hasAccess inside ProtectedRoute TODO: mb find a solution for this
+                      // @ts-expect-error
+                      <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
+                    )}
+                  />
+                  <Route exact path={`/become-satellite/${SATELLITE_TAB_EDIT}`}>
+                    <BecomeSatelliteScreen
+                      usersSatelliteProfile={usersSatelliteProfile}
+                      userSmvkBalance={userSmvkBalance}
+                    />
+                  </Route>
+
+                  <Redirect to={`/become-satellite/${SATELLITE_TAB_EDIT}`} />
                 </Switch>
               </BecomeSatelliteForm>
             )}
