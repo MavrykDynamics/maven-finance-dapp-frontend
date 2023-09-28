@@ -163,7 +163,7 @@ export const BorrowingExpandCardMenuSection = ({
               form={BUTTON_WIDE}
               isThin
               disabled={
-                collateralTokens.length === 0 || collateralTokens.length === collateralData.length - 1 || isActionActive
+                collateralTokens.length === 0 || collateralTokens.length === collateralData.length || isActionActive
               }
             >
               <Icon id="plus" /> Add Collateral Type
@@ -309,7 +309,11 @@ export const BorrowingExpandCardMenuSection = ({
             <div className="useful-info-line">
               <div className="name">Lending Controller Address</div>
               <div className="value">
-                {lendingControllerAddress ? <TzAddress tzAddress={lendingControllerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} /> : '–'}
+                {lendingControllerAddress ? (
+                  <TzAddress tzAddress={lendingControllerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                ) : (
+                  '–'
+                )}
               </div>
             </div>
           </div>
