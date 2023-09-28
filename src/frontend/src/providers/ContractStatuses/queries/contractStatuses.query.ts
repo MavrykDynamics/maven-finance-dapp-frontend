@@ -125,6 +125,7 @@ query getAllContractStatusesData {
     admin
     last_updated_at
   }
+
   farm_factory: farm_factory(where: {admin: {_neq: ""}}) {
     create_farm_paused
     track_farm_paused
@@ -133,6 +134,7 @@ query getAllContractStatusesData {
     admin
     last_updated_at
   }
+
   delegation: delegation(where: {admin: {_neq: ""}}) {
     delegate_to_satellite_paused
     distribute_reward_paused
@@ -144,6 +146,7 @@ query getAllContractStatusesData {
     admin
     last_updated_at
   }
+
   doorman: doorman(where: {admin: {_neq: ""}}) {
     address
     compound_paused
@@ -152,6 +155,7 @@ query getAllContractStatusesData {
     admin
     last_updated_at
   }
+
   treasury: treasury(where: {admin: {_neq: ""}}) {
     name
     mint_mvk_and_transfer_paused
@@ -162,6 +166,7 @@ query getAllContractStatusesData {
     admin
     last_updated_at
   }
+  
   treasury_factory: treasury_factory(where: {admin: {_neq: ""}}) {
     create_treasury_paused
     address
@@ -170,6 +175,7 @@ query getAllContractStatusesData {
     admin
     last_updated_at
   }
+
   aggregator: aggregator(where: {admin: {_neq: ""}}) {
     address
     name
@@ -178,6 +184,7 @@ query getAllContractStatusesData {
     admin
     last_updated_at
   }
+
   aggregator_factory: aggregator_factory(where: {admin: {_neq: ""}}) {
     address
     untrack_aggregator_paused
@@ -188,6 +195,7 @@ query getAllContractStatusesData {
     admin
     last_updated_at
   }
+
   lending_controller(where: {mock_time: {_eq: false}}) {
     address
     admin
@@ -209,6 +217,7 @@ query getAllContractStatusesData {
     vault_withdraw_paused
     vault_withdraw_staked_token_paused
   }
+  
   vault_factory {
     address
     admin
