@@ -94,7 +94,7 @@ export const getContractMethodsPausedStatus = (
   failPercentage: number,
 ) => {
   // check for correct percantage value
-  const percentage = failPercentage < 100 && failPercentage > 1 ? failPercentage : DEFAULT_FAIL_PERCENTAGE
+  const percentage = failPercentage <= 100 && failPercentage >= 1 ? failPercentage : DEFAULT_FAIL_PERCENTAGE
 
   // get array of booleans which are indicating contract methods statuses
   const contractMethodsPausedStatuses = normalizedContractStatuses.map((c) => Object.values(c.methods)).flat()
