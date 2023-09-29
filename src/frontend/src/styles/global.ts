@@ -159,7 +159,7 @@ a {
 }
 
 
-a:hover:not(.full-opacity) {
+a:hover:not(.full-opacity):not(.disabled) {
   opacity: 0.8;
 }
 

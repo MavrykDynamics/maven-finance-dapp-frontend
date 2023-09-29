@@ -1,10 +1,12 @@
 // utils
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { normalizeContractStatuses } from './normalizeContractStatuses'
 
 // types
 import {
   ContractStatusesContext,
   ContractStatusesContextStateType,
+  ContractStatusesStorage,
   ContractStatusesSubsRecordType,
   NullableContractStatusesContextStateType,
 } from '../contractStatuses.types'
@@ -14,6 +16,7 @@ import { GlasssBrokenStatusAndWhiteListDevsQuery } from 'utils/__generated__/gra
 import {
   CONTRACT_STATUSES_ALL_SUB,
   CONTRACT_STATUSES_CONFIG_SUB,
+  DEFAULT_FAIL_PERCENTAGE,
   EMPTY_CONTRACT_STATUSES_CTX,
 } from './contractStatuses.consts'
 
@@ -75,5 +78,38 @@ export const normalizeContractStatusesConfig = (
   return {
     isGlassBroken,
     whitelistDevelopers,
+    // will be updated in another query, so we return the default value
+    areContractMethodsPaused: false,
   }
+}
+
+/**
+ * Task number: https://memcrab.atlassian.net/browse/MAV-2216
+ * @param normalizedContractStatuses normalized contract statuses from graphql query
+ * @param failPercentage number from 0 to 100 which indicates on which point we should get paused status (if wrong number = default value will be 85)
+ * @returns
+ */
+export const getContractMethodsPausedStatus = (
+  normalizedContractStatuses: ReturnType<typeof normalizeContractStatuses>,
+  failPercentage: number,
+) => {
+  // check for correct percantage value
+  const percentage = failPercentage <= 100 && failPercentage >= 1 ? failPercentage : DEFAULT_FAIL_PERCENTAGE
+
+  // get array of booleans which are indicating contract methods statuses
+  const contractMethodsPausedStatuses = normalizedContractStatuses.map((c) => Object.values(c.methods)).flat()
+  // get pasued and working contract methods data
+  const { paused, working } = contractMethodsPausedStatuses.reduce<{ paused: number; working: number }>(
+    (acc, isPaused) => {
+      if (isPaused === false) acc.working = acc.working + 1
+      else acc.paused = acc.paused + 1
+
+      return acc
+    },
+    { paused: 0, working: 0 },
+  )
+
+  const truePercentage = (paused / working) * 100
+
+  return truePercentage >= percentage
 }
