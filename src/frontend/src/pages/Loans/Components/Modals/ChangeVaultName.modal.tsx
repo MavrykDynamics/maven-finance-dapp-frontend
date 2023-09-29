@@ -41,7 +41,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { validateEmptyInput, validateInputLength } from 'app/App.utils/input/validateInput'
 
 const VAULT_NAME_INPUT: {
   name: string
@@ -150,6 +150,7 @@ export const ChangeVaultName = ({
               validationFns: [
                 [validateInputLength, ERR_MSG_INPUT, [15]],
                 [validateVaultName, ERR_MSG_NONE, [vaultNames]],
+                [validateEmptyInput, ERR_MSG_INPUT],
               ],
               updateInputStatus: (newInputStatus) =>
                 setNewVaultName((prev) => ({ ...prev, validationStatus: newInputStatus })),
