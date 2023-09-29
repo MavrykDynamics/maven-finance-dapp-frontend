@@ -69,7 +69,7 @@ const ContractStatusesProvider = ({ children }: Props) => {
 
       const normalizedContractStatuses = normalizeContractStatuses(data)
 
-      const areContractMethodsPaused = getContractMethodsPausedStatus(normalizedContractStatuses)
+      const areContractMethodsPaused = getContractMethodsPausedStatus(normalizedContractStatuses, 85)
 
       setContractStatusesCtxState((prev) => ({
         ...prev,
