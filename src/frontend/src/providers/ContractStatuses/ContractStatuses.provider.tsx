@@ -12,6 +12,7 @@ import {
   CONTRACT_STATUSES_CONFIG_SUB,
   DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
   DEFAULT_CONTRACT_STATUSES_CTX,
+  EMPTY_CONTRACT_STATUSES_CTX,
 } from './helpers/contractStatuses.consts'
 import { CONTRACT_STATUSES_ALL_DATA_QUERY } from './queries/contractStatuses.query'
 
@@ -25,6 +26,7 @@ import {
 // utils
 import { normalizeContractStatuses } from './helpers/normalizeContractStatuses'
 import {
+  getContractMethodsPausedStatus,
   getContractStatusesProviderReturnValue,
   normalizeContractStatusesConfig,
 } from './helpers/contractStatuses.utils'
@@ -66,8 +68,15 @@ const ContractStatusesProvider = ({ children }: Props) => {
       if (!data) return
 
       const normalizedContractStatuses = normalizeContractStatuses(data)
+
+      const areContractMethodsPaused = getContractMethodsPausedStatus(normalizedContractStatuses)
+
       setContractStatusesCtxState((prev) => ({
         ...prev,
+        config: {
+          ...(prev.config ? prev.config : EMPTY_CONTRACT_STATUSES_CTX.config),
+          areContractMethodsPaused,
+        },
         contractStatuses: normalizedContractStatuses,
       }))
     },

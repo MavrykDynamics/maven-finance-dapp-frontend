@@ -12,6 +12,7 @@ export type ContractStatusesStorage = Array<{
 
 export type ContractStatusesConfigType = {
   isGlassBroken: boolean
+  areContractMethodsPaused: boolean
   whitelistDevelopers: string[]
 }
 

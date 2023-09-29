@@ -160,6 +160,55 @@ export function normalizeContractStatuses(storage: GetAllContractStatusesDataQue
           }),
         ]
       : []),
+    // lending_controller
+    ...(storage?.lending_controller?.length
+      ? [
+          storage.lending_controller.map((item) => {
+            return {
+              title: 'Lending Controller',
+              type: 'Lending',
+              address: item.address,
+              lastUpdated: item.last_updated_at,
+              admin: item.admin,
+              methods: {
+                'add liquidity paused': item.add_liquidity_paused,
+                'close vault paused': item.close_vault_paused,
+                'liquidate vault paused': item.liquidate_vault_paused,
+                'mark for liquidation paused': item.mark_for_liquidation_paused,
+                'register deposit paused': item.register_deposit_paused,
+                'register vault creation paused': item.register_vault_creation_paused,
+                'register withdrawal paused': item.register_withdrawal_paused,
+                'remove liquidity paused': item.remove_liquidity_paused,
+                'repay paused': item.repay_paused,
+                'set collateral token paused': item.set_collateral_token_paused,
+                'set loan token paused': item.set_loan_token_paused,
+                'vault deposit paused': item.vault_deposit_paused,
+                'vault deposit staked token paused': item.vault_deposit_staked_token_paused,
+                'vault on liquidate paused': item.vault_on_liquidate_paused,
+                'vault withdraw paused': item.vault_withdraw_paused,
+                'vault withdraw staked token paused': item.vault_withdraw_staked_token_paused,
+              },
+            }
+          }),
+        ]
+      : []),
+    // vault_factory
+    ...(storage?.vault_factory?.length
+      ? [
+          storage.vault_factory.map((item) => {
+            return {
+              title: 'Vault Factory',
+              type: 'Lending',
+              address: item.address,
+              lastUpdated: item.last_updated_at,
+              admin: item.admin,
+              methods: {
+                'create vault paused': item.create_vault_paused,
+              },
+            }
+          }),
+        ]
+      : []),
   ]
     .flat()
     .filter(Boolean)
