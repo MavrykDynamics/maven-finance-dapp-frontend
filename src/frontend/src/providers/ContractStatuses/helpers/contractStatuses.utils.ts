@@ -85,17 +85,17 @@ export const normalizeContractStatusesConfig = (
 /**
  *
  * @param normalizedContractStatuses normalized contract statuses from graphql query
- * @param percentage number from 0 to 100 which indicates on which point we should get paused status (if wrong number = default value will be 50)
+ * @param percentage number from 0 to 100 which indicates on which point we should get paused status (if wrong number = default value will be 85)
  * @returns
  */
 export const getContractMethodsPausedStatus = (
   normalizedContractStatuses: ReturnType<typeof normalizeContractStatuses>,
-  percentage = 70,
+  percentage = 85,
 ) => {
   // check for correct percantage value
   let _percantage = percentage
   if (_percantage < 1 || _percantage > 100) {
-    _percantage = 70
+    _percantage = 85
   }
 
   // get array of booleans which are indicating contract methods statuses
