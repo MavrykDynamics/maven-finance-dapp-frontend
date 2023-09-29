@@ -87,6 +87,7 @@ export type UserRewardsType = {
 export type UserMetadataType = {
   satelliteMvkIsDelegatedTo: string | null
   isSatellite: boolean
+  userSatelliteName: string | null
   isVestee: boolean
   isNewlyRegisteredSatellite: boolean
   govActionsCount: number

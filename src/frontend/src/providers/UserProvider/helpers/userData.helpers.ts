@@ -34,6 +34,7 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
     },
     isVestee,
     isSatellite,
+    userSatelliteName: satellite?.name ?? null,
     satelliteMvkIsDelegatedTo,
 
     isNewlyRegisteredSatellite: checkWhetherUserNewlyRegisteredSatellite(governance_satellite_snapshots),

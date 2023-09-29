@@ -121,7 +121,7 @@ export const UserProvider = ({ children }: Props) => {
     variables: {
       userAddress: userCtxState.userAddress ?? '',
     },
-    onCompleted: (data) => setUserIndexerData(data),
+    onCompleted: (indexerData) => setUserIndexerData(indexerData),
     onError: (error) => handleApolloError(error, 'USER_DATA_QUERY'),
   })
 
@@ -172,32 +172,35 @@ export const UserProvider = ({ children }: Props) => {
     }))
   }, [])
 
-  const setUserIndexerData = (indexerData: GetUserDataQuery) => {
-    // if user does not exists
-    if (indexerData.mavryk_user.length === 0) {
+  const setUserIndexerData = useCallback(
+    (indexerData: GetUserDataQuery) => {
+      // if user does not exists
+      if (indexerData.mavryk_user.length === 0) {
+        setUserLoading(false)
+        return
+      }
+
+      const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
+        indexerData,
+        tokensMetadata,
+        mvkTokenAddress,
+      })
+
+      const normalizedUserData = normalizeUser({ indexerData })
+      setUserCtxState((prev) => ({
+        ...prev,
+        userTokensBalances: {
+          ...prev.userTokensBalances,
+          ...tokensBalances,
+        },
+        ...normalizedUserData,
+        availableLoansRewards,
+        userMTokens,
+      }))
       setUserLoading(false)
-      return
-    }
-
-    const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
-      indexerData,
-      tokensMetadata,
-      mvkTokenAddress,
-    })
-
-    const normalizedUserData = normalizeUser({ indexerData })
-    setUserCtxState((prev) => ({
-      ...prev,
-      userTokensBalances: {
-        ...prev.userTokensBalances,
-        ...tokensBalances,
-      },
-      ...normalizedUserData,
-      availableLoansRewards,
-      userMTokens,
-    }))
-    setUserLoading(false)
-  }
+    },
+    [mvkTokenAddress, tokensMetadata],
+  )
 
   const providerValue = useMemo(() => {
     const isLoading = isUserLoading || isTzktBalancesLoading
