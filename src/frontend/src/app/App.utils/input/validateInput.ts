@@ -28,6 +28,10 @@ export function validateInputLength(value: string, limit = defaultLargeInputMaxL
     return [true, INPUT_MAX_LIMIT_TOAST_TEXT] as const
   }
 
+  return [false, null] as const
+}
+
+export function validateEmptyInput(value: string) {
   if (value.trim().length === 0) {
     return [true, INPUT_MIN_LIMIT_TOAST_TEXT] as const
   }
