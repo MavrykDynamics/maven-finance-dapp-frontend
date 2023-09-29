@@ -16,6 +16,7 @@ import { GlasssBrokenStatusAndWhiteListDevsQuery } from 'utils/__generated__/gra
 import {
   CONTRACT_STATUSES_ALL_SUB,
   CONTRACT_STATUSES_CONFIG_SUB,
+  DEFAULT_FAIL_PERCENTAGE,
   EMPTY_CONTRACT_STATUSES_CTX,
 } from './contractStatuses.consts'
 
@@ -85,18 +86,15 @@ export const normalizeContractStatusesConfig = (
 /**
  *
  * @param normalizedContractStatuses normalized contract statuses from graphql query
- * @param percentage number from 0 to 100 which indicates on which point we should get paused status (if wrong number = default value will be 85)
+ * @param failPercentage number from 0 to 100 which indicates on which point we should get paused status (if wrong number = default value will be 85)
  * @returns
  */
 export const getContractMethodsPausedStatus = (
   normalizedContractStatuses: ReturnType<typeof normalizeContractStatuses>,
-  percentage = 85,
+  failPercentage: number,
 ) => {
   // check for correct percantage value
-  let _percantage = percentage
-  if (_percantage < 1 || _percantage > 100) {
-    _percantage = 85
-  }
+  const percentage = failPercentage < 100 && failPercentage > 1 ? failPercentage : DEFAULT_FAIL_PERCENTAGE
 
   // get array of booleans which are indicating contract methods statuses
   const contractMethodsPausedStatuses = normalizedContractStatuses.map((c) => Object.values(c.methods)).flat()
@@ -113,5 +111,5 @@ export const getContractMethodsPausedStatus = (
 
   const truePercentage = (paused / working) * 100
 
-  return truePercentage >= _percantage
+  return truePercentage >= percentage
 }

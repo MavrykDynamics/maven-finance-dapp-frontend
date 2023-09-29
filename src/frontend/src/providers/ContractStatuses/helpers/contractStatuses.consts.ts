@@ -21,3 +21,5 @@ export const EMPTY_CONTRACT_STATUSES_CTX: ContractStatusesContextStateType = {
   },
   contractStatuses: [],
 }
+
+export const DEFAULT_FAIL_PERCENTAGE = 85
