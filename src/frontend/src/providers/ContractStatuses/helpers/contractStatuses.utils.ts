@@ -84,7 +84,7 @@ export const normalizeContractStatusesConfig = (
 }
 
 /**
- *
+ * Task number: https://memcrab.atlassian.net/browse/MAV-2216
  * @param normalizedContractStatuses normalized contract statuses from graphql query
  * @param failPercentage number from 0 to 100 which indicates on which point we should get paused status (if wrong number = default value will be 85)
  * @returns
