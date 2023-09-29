@@ -63,7 +63,7 @@ const linkAppearanceStyles = css`
   }
 
   &.useHover {
-    &:hover {
+    &:hover:not(.disabled) {
       opacity: 0.8;
     }
   }
@@ -89,15 +89,11 @@ export const LinkStyled = styled(Link)<{ theme: MavrykTheme }>`
 
   color: ${({ theme }) => theme.textColor};
 
+  ${linkAppearanceStyles}
+  ${linkFormStyles}
+
   &.disabled {
     cursor: not-allowed;
     opacity: 0.4;
-
-    a {
-      pointer-events: none;
-    }
   }
-
-  ${linkAppearanceStyles}
-  ${linkFormStyles}
 `

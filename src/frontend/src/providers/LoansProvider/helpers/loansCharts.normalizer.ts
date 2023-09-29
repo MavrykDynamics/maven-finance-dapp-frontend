@@ -20,6 +20,8 @@ import {
 import { LoansChartsToCalcType } from '../hooks/useLoansCharts'
 import { LoansChartsType } from '../loans.provider.types'
 
+// ------ getting chart plot value
+
 const getLiquidityAmount = (
   type: (typeof LOANS_HISTORY_DATA_TYPES)[keyof typeof LOANS_HISTORY_DATA_TYPES],
   usdAmount: number,
@@ -51,6 +53,7 @@ const getCollateralAmount = (
   return usdAmount
 }
 
+// ------ getting initial data for charts
 const initChartDataForPeriod = (period: number) =>
   Array.from(
     {
@@ -65,6 +68,31 @@ const initChartDataForPeriod = (period: number) =>
       }
     },
   )
+
+const getMarketsChartsDefaultValue = (marketAddresses: Array<string>) =>
+  marketAddresses.reduce<
+    Record<
+      string,
+      {
+        total: {
+          value: number
+          time: UTCTimestamp
+        }[]
+        volume: {
+          value: number
+          time: UTCTimestamp
+        }[]
+      }
+    >
+  >((acc, marketAddress) => {
+    acc[marketAddress] = {
+      total: initChartDataForPeriod(14),
+      volume: initChartDataForPeriod(14),
+    }
+    return acc
+  }, {})
+
+// ------ getting chart plots
 
 // if operation in period, update subperiod where time >= operation time
 const getChartWithOperationInPeriod = ({
@@ -119,11 +147,13 @@ const getChartWithOperationOutOfPeriod = ({
 export const normalizeLoansCharts = ({
   indexerData,
   chartsToCalc,
+  marketsAddresses,
   tokensMetadata,
   tokensPrices,
 }: {
   indexerData: GetLoansHistoryDataQuery
   chartsToCalc: LoansChartsToCalcType
+  marketsAddresses: Array<string>
   tokensPrices: TokensContext['tokensPrices']
   tokensMetadata: TokensContext['tokensMetadata']
 }) => {
@@ -180,13 +210,6 @@ export const normalizeLoansCharts = ({
 
       // getting data for total lending chart per markets
       if (calcMarketLendingChart && LIQUIDITY_HISTORY_DATA_TYPES.includes(type)) {
-        if (!acc.marketLendingChart[tokenAddress]) {
-          acc.marketLendingChart[tokenAddress] = {
-            total: initChartDataForPeriod(14),
-            volume: initChartDataForPeriod(14),
-          }
-        }
-
         // if it's out of the period need to sum this value with values of every day, cuz init value for period is > 0
         if (!isLast14dOperation) {
           acc.marketLendingChart[tokenAddress].total = getChartWithOperationOutOfPeriod({
@@ -235,13 +258,6 @@ export const normalizeLoansCharts = ({
 
       // getting data for total borrowed chart per markets
       if (calcMarketBorrowChart && BORROWING_HISTORY_DATA_TYPES.includes(type)) {
-        if (!acc.marketBorrowChart[tokenAddress]) {
-          acc.marketBorrowChart[tokenAddress] = {
-            total: initChartDataForPeriod(14),
-            volume: initChartDataForPeriod(14),
-          }
-        }
-
         // if it's out of the period need to sum this value with values of every day, cuz init value for period is > 0
         if (!isLast14dOperation) {
           acc.marketBorrowChart[tokenAddress].total = getChartWithOperationOutOfPeriod({
@@ -293,8 +309,8 @@ export const normalizeLoansCharts = ({
       totalLendingChart: initChartDataForPeriod(7),
       totalBorrowingChart: initChartDataForPeriod(7),
       totalCollateralChart: initChartDataForPeriod(7),
-      marketBorrowChart: {},
-      marketLendingChart: {},
+      marketBorrowChart: getMarketsChartsDefaultValue(marketsAddresses),
+      marketLendingChart: getMarketsChartsDefaultValue(marketsAddresses),
     },
   )
 }

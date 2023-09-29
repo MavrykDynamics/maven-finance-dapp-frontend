@@ -82,7 +82,14 @@ export const CustomLink = ({
   const linkClassName = classNames(kind, { ...styling, disabled, useHover: styling.useHover ?? true })
 
   return (
-    <LinkStyled className={linkClassName} {...finalToAttr} {...optionalLinkProps} onClick={linkClickHandler}>
+    <LinkStyled
+      className={linkClassName}
+      {...finalToAttr}
+      {...optionalLinkProps}
+      onClick={linkClickHandler}
+      onContextMenu={disabled ? (e) => e.preventDefault() : undefined}
+      onDoubleClick={disabled ? (e) => e.preventDefault() : undefined}
+    >
       {children}
     </LinkStyled>
   )
