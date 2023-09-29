@@ -1,6 +1,10 @@
 import { validateAsciiInput } from './validateAsciiInput'
 import { INPUT_ASCII_TEXT } from './input.consts'
-import { INPUT_MAX_LIMIT_TOAST_TEXT, defaultLargeInputMaxLength } from 'app/App.components/Input/Input.constants'
+import {
+  INPUT_MAX_LIMIT_TOAST_TEXT,
+  INPUT_MIN_LIMIT_TOAST_TEXT,
+  defaultLargeInputMaxLength,
+} from 'app/App.components/Input/Input.constants'
 
 /**
  *you can extend this function with more validators
@@ -22,6 +26,10 @@ export function validateInput(value: string) {
 export function validateInputLength(value: string, limit = defaultLargeInputMaxLength) {
   if (value.length > limit) {
     return [true, INPUT_MAX_LIMIT_TOAST_TEXT] as const
+  }
+
+  if (value.trim().length === 0) {
+    return [true, INPUT_MIN_LIMIT_TOAST_TEXT] as const
   }
 
   return [false, null] as const

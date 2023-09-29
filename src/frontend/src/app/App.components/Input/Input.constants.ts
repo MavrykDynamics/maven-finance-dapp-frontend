@@ -47,6 +47,7 @@ export const ERR_MSG_NONE = 'none'
 
 // toast messages
 export const INPUT_MAX_LIMIT_TOAST_TEXT = 'Too many characters were provided.'
+export const INPUT_MIN_LIMIT_TOAST_TEXT = 'Text is not provided.'
 
 export const getOnBlurValue = (inputValue: string) => (inputValue === '' ? '0' : inputValue)
 export const getOnFocusValue = (inputValue: string) => (inputValue === '0' ? '' : inputValue)
