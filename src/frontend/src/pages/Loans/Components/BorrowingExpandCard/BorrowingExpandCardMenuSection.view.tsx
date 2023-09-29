@@ -160,7 +160,7 @@ export const BorrowingExpandCardMenuSection = ({
               form={BUTTON_WIDE}
               isThin
               disabled={
-                collateralTokens.length === 0 || collateralTokens.length === collateralData.length - 1 || isActionActive
+                collateralTokens.length === 0 || collateralTokens.length === collateralData.length || isActionActive
               }
             >
               <Icon id="plus" /> Add Collateral Type

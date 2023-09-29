@@ -44,10 +44,11 @@ import {
 const ALL = 'All Contracts'
 const GENERAL = 'General Contracts'
 
+// TODO: validate tab in url?
 export const BreakGlass = () => {
   const {
     isLoading: isContractStatusesLoading,
-    config: { isGlassBroken, whitelistDevelopers },
+    config: { isGlassBroken, whitelistDevelopers, areContractMethodsPaused },
     contractStatuses,
     changeContractStatusesSubscriptionsList,
   } = useContractStatusesContext()
@@ -124,8 +125,8 @@ export const BreakGlass = () => {
                 </div>
                 <div className="status-indicator-wrapper">
                   Pause All:{' '}
-                  <span className={isGlassBroken ? 'color-red' : 'color-green'}>
-                    {isGlassBroken ? 'paused' : 'not paused'}
+                  <span className={areContractMethodsPaused ? 'color-red' : 'color-green'}>
+                    {areContractMethodsPaused ? 'paused' : 'not paused'}
                   </span>
                 </div>
               </BGStatusIndicator>

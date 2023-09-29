@@ -148,12 +148,12 @@ export const removeCouncilMember = async (breakGlassAddress: string, memberAddre
 }
 
 // Propagate Break Glass
-export const propagateBreakGlass = async (breakGlassAddress: string) => {
+export const propagateBreakGlass = async (breakGlassAddress: string, govContracts: Array<string>) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(breakGlassAddress)
-    const propagateBreakGlassMetaData = contract?.methods.propagateBreakGlass()
+    const propagateBreakGlassMetaData = contract?.methods.propagateBreakGlass(govContracts)
 
     return await getEstimationResult(propagateBreakGlassMetaData)
   } catch (error) {

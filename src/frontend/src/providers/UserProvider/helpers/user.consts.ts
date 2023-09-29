@@ -20,6 +20,7 @@ export const DEFAULT_USER: UserContextStateType = {
     breakGlassAvatar: null,
   },
   isNewlyRegisteredSatellite: false,
+  userSatelliteName: null,
   isSatellite: false,
   isVestee: false,
   isMavrykCouncil: false,
