@@ -112,6 +112,13 @@ import {
   DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 
+// farms
+import {
+  DEPOSIT_TO_FARM_ACTION,
+  HARVEST_FARM_REWARDS_ACTION,
+  WITHDRAW_FROM_FARM_ACTION,
+} from 'providers/FarmsProvider/helpers/farms.const'
+
 // eGov
 import {
   SUBMIT_EGOV_PROPOSAL_ACTION,
@@ -652,6 +659,37 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
     end: {
       title: 'Fixing Mistaken Transfer triggered',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  // farms actions ------------------------------------
+  [HARVEST_FARM_REWARDS_ACTION]: {
+    start: {
+      title: 'Harvesting...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Harvesting done',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [DEPOSIT_TO_FARM_ACTION]: {
+    start: {
+      title: 'Depositing...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Depositing done  ',
+      message: ACTION_COMPLETION_MESSAGE_TEXT,
+    },
+  },
+  [WITHDRAW_FROM_FARM_ACTION]: {
+    start: {
+      title: 'Withdrawing...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Withdrawing done',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

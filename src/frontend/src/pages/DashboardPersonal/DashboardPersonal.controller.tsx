@@ -225,10 +225,16 @@ const DashboardPersonal = () => {
               <DashboardPersonalTabStyled>
                 <Switch>
                   <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
-                    <DelegationTab distributeProposalRewards={distributeRewardsCallback} />
+                    <DelegationTab
+                      distributeProposalRewards={distributeRewardsCallback}
+                      availableProposalRewards={availableProposalRewards}
+                    />
                   </Route>
                   <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
-                    <SatelliteTab distributeProposalRewards={distributeRewardsCallback} />
+                    <SatelliteTab
+                      distributeProposalRewards={distributeRewardsCallback}
+                      availableProposalRewards={availableProposalRewards}
+                    />
                   </Route>
                   <Route exact path={`/dashboard-personal/${VESTING_TAB_ID}`}>
                     <VestingTab />

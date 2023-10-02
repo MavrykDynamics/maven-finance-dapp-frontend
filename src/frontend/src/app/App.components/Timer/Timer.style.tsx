@@ -43,6 +43,11 @@ export const TimerStyled = styled.div<{
     &.negative {
       color: ${({ negativeColor }) => negativeColor};
     }
+
+    &:last-child {
+      padding: 0;
+      margin: 0;
+    }
   }
 
   li span {

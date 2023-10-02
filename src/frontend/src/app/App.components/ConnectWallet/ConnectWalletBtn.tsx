@@ -5,12 +5,13 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from '../Button/Button.constants'
 import Button from '../Button/NewButton'
 import Icon from '../Icon/Icon.view'
 import { ConnectWalletBtnWrap } from './ConnectWallet.style'
+import classNames from 'classnames'
 
-const ConnectWalletBtn = () => {
+const ConnectWalletBtn = ({ isWide = false }: { isWide?: boolean }) => {
   const { connect } = useUserContext()
 
   return (
-    <ConnectWalletBtnWrap>
+    <ConnectWalletBtnWrap className={classNames({ isWide })}>
       <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} ignoreLoading onClick={connect}>
         <Icon id="wallet" /> Connect Wallet
       </Button>
