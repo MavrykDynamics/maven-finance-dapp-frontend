@@ -125,7 +125,7 @@ export const normalizeProposals = ({
   }>(
     (acc, indexerProposal) => {
       const { governancePhase, timelockProposalId } = governanceConfig
-      const isProposalRound = governancePhase === GovPhases.PROPOSAL
+      const isProposalRound = governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
 
       const normalizedProposal = normalizeProposal(indexerProposal, governanceConfig)
       const { id, executed, status, currentRoundProposal, paymentProcessed, proposerId, proposalPayments } =

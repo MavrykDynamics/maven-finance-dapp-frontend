@@ -102,7 +102,7 @@ const config: CodegenConfig = {
                   if (node.alias && node?.name?.value && INDEXER_TABLES[node.name.value]) {
                     // update table tabe to use prefix based on env
                     // @ts-expect-error
-                    node.name.value = `${INDEXER_ENV_PREFIXES[process.env.REACT_APP_ENV]}${node.name.value}`
+                    node.name.value = `${INDEXER_ENV_PREFIXES[process.env.REACT_APP_DATA_ENV]}${node.name.value}`
                   }
                   return node
                 },

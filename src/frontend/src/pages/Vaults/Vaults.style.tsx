@@ -18,16 +18,12 @@ import { MavrykTheme } from '../../styles/interfaces'
 export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
   .expand-borrow-tab {
     .expand-header {
-      padding: 23px 30px 13px 30px;
+      padding: 15px 30px 18px 30px;
       align-items: flex-start;
       grid-template-columns: 0.7fr 1fr 0.6fr 0.5fr 0.6fr 0.4fr;
 
       .sufix {
         margin-top: 8px;
-      }
-
-      .arrow-wrap {
-        padding-bottom: 10px;
       }
     }
   }
@@ -95,7 +91,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     }
 
     .left-part {
-      padding-right: 30px;
+      padding-right: 40px;
 
       .group {
         display: flex;
@@ -114,7 +110,7 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
     }
 
     .right-part {
-      padding-left: 30px;
+      padding-left: 40px;
       border-left: 1px solid ${({ theme }) => theme.divider};
 
       h1 {

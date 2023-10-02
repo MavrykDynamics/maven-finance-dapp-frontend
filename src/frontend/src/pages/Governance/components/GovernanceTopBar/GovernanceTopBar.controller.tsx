@@ -8,12 +8,10 @@ import { GovernancePhaseType } from 'providers/ProposalsProvider/helpers/proposa
 
 export type GovernanceTopBarProps = {
   governancePhase: GovernancePhaseType
-  isWaitingToExecute: boolean
 }
-export const GovernanceTopBar = ({ governancePhase, isWaitingToExecute }: GovernanceTopBarProps) => {
+export const GovernanceTopBar = ({ governancePhase }: GovernanceTopBarProps) => {
   return (
     <GovernanceTopBarStyled>
-      {/* <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL && !isWaitingToExecute}> */}
       <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL}>Proposal</GovTopBarPhaseText>
 
       <Icon id="greater-than" />
@@ -22,10 +20,8 @@ export const GovernanceTopBar = ({ governancePhase, isWaitingToExecute }: Govern
       <Icon id="greater-than" />
       <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.TIMELOCK}>Time Lock</GovTopBarPhaseText>
 
-      {/* <Icon id="greater-than" />
-      <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.PROPOSAL && isWaitingToExecute}>
-        Execution
-      </GovTopBarPhaseText> */}
+      <Icon id="greater-than" />
+      <GovTopBarPhaseText isActivePhase={governancePhase === GovPhases.EXECUTION}>Execution</GovTopBarPhaseText>
 
       <div className="action">
         <TimeRemaining />

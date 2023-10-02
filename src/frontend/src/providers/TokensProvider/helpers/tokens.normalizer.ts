@@ -50,12 +50,13 @@ const handleMvkToken = ({
 } => {
   const smvkTokenData = getTokenSymbolAndName('smvk')
   const mvkTokenData = getTokenSymbolAndName('mvk')
+
   const collateralData = {
-    indexerName: lending_controller_collateral_tokens[0].token_name,
+    indexerName: lending_controller_collateral_tokens?.[0]?.token_name,
     // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
     isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
-    isScaled: lending_controller_collateral_tokens[0].is_scaled_token,
-    isStaked: lending_controller_collateral_tokens[0].is_staked_token,
+    isScaled: lending_controller_collateral_tokens?.[0]?.is_scaled_token,
+    isStaked: lending_controller_collateral_tokens?.[0]?.is_staked_token,
     minDepositAmount: DEFAULT_MIN_COLLATERAL_AMOUNT,
   }
 
@@ -66,7 +67,7 @@ const handleMvkToken = ({
         type: tokenType,
         decimals: Number(parsedMetadata.decimals),
         address: SMVK_TOKEN_ADDRESS,
-        ...(lending_controller_collateral_tokens[0]?.token_name === 'smvk'
+        ...(lending_controller_collateral_tokens?.[0]?.token_name === 'smvk'
           ? {
               loanData: collateralData,
             }

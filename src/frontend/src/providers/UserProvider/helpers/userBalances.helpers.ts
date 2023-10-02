@@ -223,7 +223,8 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'dev') console.log('tzktSocket on token_balances msg', { data: msg.data })
+      if (process.env.REACT_APP_ENV === 'dev')
+        console.log('%ctzktSocket on token_balances msg', 'color: aqua', { data: msg.data })
       const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
       handleTokens(tokensBalances)
     } catch (e) {
@@ -236,7 +237,8 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'dev') console.log('tzktSocket on accounts msg', { data: msg.data })
+      if (process.env.REACT_APP_ENV === 'dev')
+        console.log('%ctzktSocket on accounts msg', 'color: aqua', { data: msg.data })
       const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
       handleTokens([
         {

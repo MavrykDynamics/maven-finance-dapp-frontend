@@ -61,3 +61,70 @@ export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     }
   }
 `
+
+export const EGovPastCardTopColumnStyled = styled.div<{ theme: MavrykTheme }>`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  row-gap: 5px;
+
+  .name {
+    font-weight: 600;
+    font-size: 14px;
+    color: ${({ theme }) => theme.subHeadingText};
+  }
+
+  .value {
+    margin-bottom: 0;
+    margin-top: 0;
+    color: ${({ theme }) => theme.primaryText};
+    font-weight: 600;
+    font-size: 16px;
+
+    &.proposal-name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 90%;
+    }
+  }
+`
+
+export const EGovPastCardBodyStyled = styled.div<{ theme: MavrykTheme }>`
+  position: relative;
+  width: 100%;
+  padding: 30px;
+
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+
+  display: flex;
+  justify-content: space-between;
+
+  &::before {
+    content: '';
+    position: absolute;
+    border-top: 1px solid ${({ theme }) => theme.divider};
+    width: 100%;
+    left: 0;
+    top: 1px;
+  }
+
+  h3 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 18px;
+    color: ${({ theme }) => theme.mainHeadingText};
+  }
+
+  article {
+    align-self: center;
+    width: 45%;
+  }
+
+  .text {
+    width: 50%;
+  }
+`

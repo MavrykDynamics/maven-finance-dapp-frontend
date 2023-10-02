@@ -2,6 +2,7 @@ import { NetworkType } from '@airgap/beacon-sdk'
 import { z } from 'zod'
 
 const envVariablesSchema = z.object({
+  REACT_APP_DATA_ENV: z.literal('dev').or(z.literal('prod')),
   REACT_APP_ENV: z.literal('dev').or(z.literal('prod')),
 
   REACT_APP_TZKT_API: z.literal('https://api.ghostnet.tzkt.io').or(z.literal('https://api.tzkt.io')),

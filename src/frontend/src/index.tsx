@@ -87,8 +87,7 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
   // use user loading status only on dapp init loading
   const isInitialUserLoading = !isUserRestored ? isUserLoading : false
 
-  // TODO: reset to comment when api will be ok
-  const isInitialLoading = false //isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
+  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
 
   return (
     <>

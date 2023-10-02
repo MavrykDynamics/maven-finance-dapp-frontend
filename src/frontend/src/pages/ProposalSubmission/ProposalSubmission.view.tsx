@@ -104,7 +104,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   const [lastProposalIdFromOperation, setLastProposalIdFromOperation] = useState<null | number>(null)
 
   useEffect(() => {
-    if (governancePhase !== GovPhases.PROPOSAL) return
+    if (governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION) return
     const abortController = new AbortController()
 
     ;(async () => {
@@ -417,7 +417,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
 
   // disabling action buttons
   const isProposalSubmitted = selectedUserProposalId >= 0
-  const isProposalPeriod = governancePhase === 'PROPOSAL'
+  const isProposalPeriod = governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
 
   // Detect whether proposal has smth to save
   const proposalHasChange = useMemo(

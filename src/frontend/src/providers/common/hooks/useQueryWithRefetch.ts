@@ -110,7 +110,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
             const refetchData = await queryResult.refetch(newRefetchVariables)
 
             if (process.env.REACT_APP_ENV === 'dev')
-              console.log('%crefetch result', 'color: green', { refetchData, queryName })
+              console.log('%crefetch result', 'color: violet', { refetchData, queryName })
 
             // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
             if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -125,7 +125,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         const refetchData = await queryResult.refetch(newRefetchVariables)
 
         if (process.env.REACT_APP_ENV === 'dev')
-          console.log('%crefetch result ', 'color: green', { refetchData, queryName })
+          console.log('%crefetch result ', 'color: violet', { refetchData, queryName })
 
         // if from refetch we have data or error, run onComplete or onError query method, cuz refetch can't do this
         if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
@@ -135,7 +135,8 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         console.error('refetch error:', { e })
       }
     },
-    [blocksDiff, refetchQueryVariables],
+    // TODO: pass additional agrs to refetch as refetchOptions to prevent often registering/unregistering
+    [blocksDiff, refetchQueryVariables, queryOptions?.onCompleted],
   )
 
   // subscribe to indexer lvl change, and unsibscribe when component unmounts, or query becomes inactive
