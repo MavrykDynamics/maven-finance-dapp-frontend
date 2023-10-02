@@ -24,7 +24,7 @@ import { containSpaces } from 'app/App.utils/input'
 
 // hooks
 import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsNames'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
+import { validateEmptyInput, validateInputLength } from 'app/App.utils/input/validateInput'
 
 export const CreateVaultScreen = () => {
   const { vaultNames } = useUserVaultsNames()
@@ -64,6 +64,7 @@ export const CreateVaultScreen = () => {
           validationFns: [
             [validateInputLength, ERR_MSG_INPUT, [15]],
             [validateVaultName, ERR_MSG_NONE, [vaultNames]],
+            [validateEmptyInput, ERR_MSG_INPUT],
           ],
           allowInputAfterError: true,
         }}
