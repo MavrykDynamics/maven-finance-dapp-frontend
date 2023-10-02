@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react'
 // components
 import NewButton from 'app/App.components/Button/NewButton'
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
-import { FormStyled } from './BreakGlassCouncilForm.style'
+import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // types
@@ -105,7 +105,7 @@ export function FormRemoveCouncilMemberView({
   const isButtonDisabled = isActionActive || !chosenDdItem
 
   return (
-    <FormStyled>
+    <BreakGlassCouncilFormStyled>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
@@ -132,6 +132,6 @@ export function FormRemoveCouncilMemberView({
           </NewButton>
         </div>
       </form>
-    </FormStyled>
+    </BreakGlassCouncilFormStyled>
   )
 }

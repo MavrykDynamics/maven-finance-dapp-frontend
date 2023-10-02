@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react'
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
-import { FormStyled } from './BreakGlassCouncilForm.style'
+import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // utils
@@ -20,30 +20,58 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { Multiselect } from 'app/App.components/Multiselect/Multiselect'
+import { CouncilContractsMultiselectOptionType } from '../helpers/council.types'
+import { MULTISELECT_SELECT_ALL_OPTION_VALUE } from 'app/App.components/Multiselect/Multiselect.consts'
 
-const INIT_FORM = {
+const INIT_FORM: { newAdminAddress: string; targetContracts: Array<CouncilContractsMultiselectOptionType> } = {
   newAdminAddress: '',
-  targetContract: '',
+  targetContracts: [],
 }
 
 const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   newAdminAddress: INPUT_STATUS_DEFAULT,
-  targetContract: INPUT_STATUS_DEFAULT,
 }
 
-// TODO: update test after design will be ready
 export function FormSetSelectedContractsAdminView() {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
+    dappContracts,
   } = useDappConfigContext()
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
 
+  const contractsSelectOptions = useMemo<Array<CouncilContractsMultiselectOptionType>>(
+    () =>
+      [
+        {
+          label: 'all',
+          value: MULTISELECT_SELECT_ALL_OPTION_VALUE,
+          address: '',
+        },
+      ].concat(
+        dappContracts.map(({ address, name }) => ({
+          label: name,
+          value: name,
+          address,
+        })),
+      ),
+    [dappContracts],
+  )
+
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
-  const { newAdminAddress, targetContract } = form
+  const { newAdminAddress, targetContracts } = form
+
+  const contractsWhereChangeAdmin = useMemo(
+    () =>
+      targetContracts
+        .filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE)
+        .map(({ address }) => address),
+    [targetContracts],
+  )
 
   const setSelectedContractsAdminContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -59,11 +87,10 @@ export function FormSetSelectedContractsAdminView() {
           return null
         }
 
-        // TODO: implement correct list, when design will be ready
-        return await setSelectedContractsAdmin(breakGlassAddress, newAdminAddress, [targetContract])
+        return await setSelectedContractsAdmin(breakGlassAddress, newAdminAddress, contractsWhereChangeAdmin)
       },
     }),
-    [breakGlassAddress, newAdminAddress, targetContract, userAddress],
+    [breakGlassAddress, newAdminAddress, contractsWhereChangeAdmin, userAddress],
   )
 
   const { action: handleSetSingleContractAdmin } = useContractAction(setSelectedContractsAdminContractActionProps)
@@ -81,6 +108,14 @@ export function FormSetSelectedContractsAdminView() {
     }
   }
 
+  const handleContractSelect = (targetContracts: ReadonlyArray<CouncilContractsMultiselectOptionType>) => {
+    console.log({ targetContracts })
+    // const newContracts = contracts.
+    setForm((prev) => {
+      return { ...prev, targetContracts: [...targetContracts] }
+    })
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setForm((prev) => {
       return { ...prev, [e.target.name]: e.target.value }
@@ -88,9 +123,11 @@ export function FormSetSelectedContractsAdminView() {
   }
 
   const isButtonDisabled =
-    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
+    isActionActive ||
+    contractsWhereChangeAdmin.length === 0 ||
+    Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const { newAdminAddressProps, newAdminAddressSettings, targetContractProps, targetContracSettings } = useMemo(() => {
+  const { newAdminAddressProps, newAdminAddressSettings } = useMemo(() => {
     const validateAddress = validateFormAddress(setFormInputStatus)
 
     const newAdminAddressProps = {
@@ -103,49 +140,43 @@ export function FormSetSelectedContractsAdminView() {
       required: true,
     }
 
-    const targetContractProps = {
-      name: 'targetContract',
-      value: targetContract,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-        handleChange(e)
-        validateAddress(e)
-      },
-      required: true,
-    }
-
     return {
       newAdminAddressProps,
       newAdminAddressSettings: {
         inputStatus: formInputStatus.newAdminAddress,
       },
-      targetContractProps,
-      targetContracSettings: {
-        inputStatus: formInputStatus.targetContract,
-      },
     }
-  }, [formInputStatus.newAdminAddress, formInputStatus.targetContract, newAdminAddress, targetContract])
+  }, [formInputStatus.newAdminAddress, newAdminAddress])
 
   return (
-    <FormStyled>
+    <BreakGlassCouncilFormStyled>
       <h1>Set Single Contract Admin</h1>
       <p>Please enter valid function parameters for setting admin</p>
 
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="form-fields input-size-primary">
-          <label>New Admin Address</label>
-          <Input className="margin-bottom-20" inputProps={newAdminAddressProps} settings={newAdminAddressSettings} />
-
-          <label>Target Contract</label>
-          <Input inputProps={targetContractProps} settings={targetContracSettings} />
+      <form className="form one-column" onSubmit={handleSubmit}>
+        <div className="form-fields">
+          <div className="input-size-primary">
+            <label>New Admin Address</label>
+            <Input className="margin-bottom-20" inputProps={newAdminAddressProps} settings={newAdminAddressSettings} />
+          </div>
+          <div className="input-size-full-width margin-bottom-20">
+            <label>Choose Target Contracts</label>
+            <Multiselect<CouncilContractsMultiselectOptionType>
+              options={contractsSelectOptions}
+              selectedOptions={targetContracts}
+              selectHandler={handleContractSelect}
+              placeholder="Choose target contracts"
+            />
+          </div>
         </div>
 
-        <div className="btn-wrapper">
+        <div className="align-to-right">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="profile" />
             Set Contract Admin
           </NewButton>
         </div>
       </form>
-    </FormStyled>
+    </BreakGlassCouncilFormStyled>
   )
 }

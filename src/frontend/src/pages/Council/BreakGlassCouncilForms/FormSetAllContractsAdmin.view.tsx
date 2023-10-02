@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react'
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
-import { FormStyled } from './BreakGlassCouncilForm.style'
+import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // consts
@@ -108,7 +108,7 @@ export function FormSetAllContractsAdminView() {
     isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
   return (
-    <FormStyled>
+    <BreakGlassCouncilFormStyled>
       <h1>Set All Contracts Admin</h1>
       <p>Please enter valid function parameters for setting admin</p>
 
@@ -126,6 +126,6 @@ export function FormSetAllContractsAdminView() {
           </NewButton>
         </div>
       </form>
-    </FormStyled>
+    </BreakGlassCouncilFormStyled>
   )
 }

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
-import { FormStyled } from './BreakGlassCouncilForm.style'
+import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -167,7 +167,7 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
   ])
 
   return (
-    <FormStyled className="without-divider">
+    <BreakGlassCouncilFormStyled className="without-divider">
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
@@ -214,6 +214,6 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
           </NewButton>
         </div>
       </form>
-    </FormStyled>
+    </BreakGlassCouncilFormStyled>
   )
 }

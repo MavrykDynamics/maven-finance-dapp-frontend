@@ -102,10 +102,6 @@ export function CouncilView({
         content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
         value: item,
         id: index,
-        // TODO: remove after forms will be ready to use
-        disabled: ['UNPAUSE_ALL_ENTRYPOINTS', 'REMOVE_BREAK_GLASS_CONTROLL', 'SET_SELECTED_CONTRACTS_ADMIN'].includes(
-          item,
-        ),
       })),
     }
   }, [isBreakGlassCounsil])
@@ -159,9 +155,10 @@ export function CouncilView({
   const isMyActionsTabs = isMyPastTab || isMyPendingTab
 
   // redirect to review past actions page when member changes or when current user is not council and user is on my request page
-  useEffect(() => {
-    if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
-  }, [userAddress, isUserCouncil])
+  // TODO: uncomment when we will have council to test
+  // useEffect(() => {
+  //   if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
+  // }, [userAddress, isUserCouncil])
 
   // update member popup
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)

@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
 
-export const FormStyled = styled.div<{ theme: MavrykTheme }>`
+export const BreakGlassCouncilFormStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   padding: 40px 20px;
   border-top: 1px solid ${({ theme }) => theme.divider};
@@ -50,6 +50,15 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
+
+    &.one-column {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .form-fields {
+        width: 100%;
+      }
+    }
   }
 
   .form-fields {
@@ -75,6 +84,10 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 21px;
     }
+  }
+
+  .input-size-full-width {
+    width: 100%;
   }
 
   .input-size-primary {
@@ -109,3 +122,7 @@ export const FormStyled = styled.div<{ theme: MavrykTheme }>`
     margin-bottom: -5px;
   }
 `
+
+export const CouncilFormStyled = styled.div<{ theme: MavrykTheme }>``
+
+export const CouncilFormHeaderStyled = styled.div<{ theme: MavrykTheme }>``

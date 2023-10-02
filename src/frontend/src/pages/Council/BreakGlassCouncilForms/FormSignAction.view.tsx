@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react'
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
-import { FormStyled } from './BreakGlassCouncilForm.style'
+import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // hooks
@@ -109,7 +109,7 @@ export function FormSignActionView() {
   }, [breakGlassActionID, formInputStatus.breakGlassActionID])
 
   return (
-    <FormStyled>
+    <BreakGlassCouncilFormStyled>
       <h1>Sign Action</h1>
       <p>Please enter valid function parameters for sign action</p>
 
@@ -127,6 +127,6 @@ export function FormSignActionView() {
           </NewButton>
         </div>
       </form>
-    </FormStyled>
+    </BreakGlassCouncilFormStyled>
   )
 }

@@ -7,7 +7,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { FormStyled } from './BreakGlassCouncilForm.style'
+import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
 
 // types
 import {
@@ -219,7 +219,7 @@ export function FormChangeCouncilMemberView({
   ])
 
   return (
-    <FormStyled>
+    <BreakGlassCouncilFormStyled>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
@@ -276,6 +276,6 @@ export function FormChangeCouncilMemberView({
           </NewButton>
         </div>
       </form>
-    </FormStyled>
+    </BreakGlassCouncilFormStyled>
   )
 }

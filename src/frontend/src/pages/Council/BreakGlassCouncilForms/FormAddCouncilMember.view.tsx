@@ -6,7 +6,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { FormStyled } from './BreakGlassCouncilForm.style'
+import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
 
 // types
 import {
@@ -169,7 +169,7 @@ export function FormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLeng
   ])
 
   return (
-    <FormStyled>
+    <BreakGlassCouncilFormStyled>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
@@ -216,6 +216,6 @@ export function FormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLeng
           </NewButton>
         </div>
       </form>
-    </FormStyled>
+    </BreakGlassCouncilFormStyled>
   )
 }
