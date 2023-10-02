@@ -1,6 +1,10 @@
+// consts
 import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
-import { MainNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
+import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts'
 import { PORTFOLIO_POSITION_TAB_ID, PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
+
+// types
+import { MainNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
 
 export const mainNavigationLinks: MainNavigationRoute[] = [
   {
@@ -98,7 +102,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
       {
         id: 55622,
         subTitle: 'Become a Satellite',
-        subPath: 'become-satellite',
+        subPath: `become-satellite/${SATELLITE_TAB_EDIT}`,
         routeSubPath: '/become-satellite',
         requires: {
           authNotSatellite: true,
@@ -107,7 +111,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
       {
         id: 55614,
         subTitle: 'Edit My Profile',
-        subPath: 'become-satellite',
+        subPath: `become-satellite/${SATELLITE_TAB_DETAILS}`,
         routeSubPath: '/become-satellite',
         requires: {
           isSatellite: true,
