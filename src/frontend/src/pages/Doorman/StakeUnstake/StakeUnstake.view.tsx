@@ -20,7 +20,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { stakingInputValidation } from '../Doorman.converter'
+import { stakingInputValidation } from '../helpers/validators'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // consts

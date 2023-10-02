@@ -30,6 +30,7 @@ import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/finan
 import VestingProvider from 'providers/VestingProvider/vesting.provider'
 import FarmsProvider from 'providers/FarmsProvider/farms.provider'
 import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
+import CouncilProvider from 'providers/CouncilProvider/council.provider'
 import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
 import EGovProvider from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
 
@@ -103,17 +104,19 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
               <SatellitesProvider>
                 <LoansProvider>
                   <VaultsProvider>
-                    <EGovProvider>
-                      <SatelliteGovernanceProvider>
-                        <FarmsProvider>
-                          <FinancialRequestsProvider>
-                            <TreasuryProvider>
-                              <VestingProvider>{children}</VestingProvider>
-                            </TreasuryProvider>
-                          </FinancialRequestsProvider>
-                        </FarmsProvider>
-                      </SatelliteGovernanceProvider>
-                    </EGovProvider>
+                    <CouncilProvider>
+                      <EGovProvider>
+                        <SatelliteGovernanceProvider>
+                          <FarmsProvider>
+                            <FinancialRequestsProvider>
+                              <TreasuryProvider>
+                                <VestingProvider>{children}</VestingProvider>
+                              </TreasuryProvider>
+                            </FinancialRequestsProvider>
+                          </FarmsProvider>
+                        </SatelliteGovernanceProvider>
+                      </EGovProvider>
+                    </CouncilProvider>
                   </VaultsProvider>
                 </LoansProvider>
               </SatellitesProvider>

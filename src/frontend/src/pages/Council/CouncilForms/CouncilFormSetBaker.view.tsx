@@ -1,51 +1,83 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useMemo, useState } from 'react'
 
-// type
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+// consts
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { SET_BAKER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from '../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { setBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { validateFormAddress } from 'utils/validatorFunctions'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-
-// action
-import { setBakerRequest } from '../Council.actions'
-
-// style
 import { CouncilFormStyled } from './CouncilForm.style'
-import { State } from 'reducers'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+const INIT_FORM = {
+  bakerHash: '',
+}
+
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  bakerHash: INPUT_STATUS_DEFAULT,
+}
 
 export const CouncilFormSetBaker = () => {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
-  const [form, setForm] = useState({
-    bakerHash: '',
-  })
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    bakerHash: '',
-  })
+  const [form, setForm] = useState(INIT_FORM)
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { bakerHash } = form
+
+  // set baker council action
+  const setBakerContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: SET_BAKER_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        return await setBakerRequest(bakerHash, councilAddress)
+      },
+    }),
+    [bakerHash, userAddress, councilAddress],
+  )
+
+  const { action: handleSetBaker } = useContractAction(setBakerContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(setBakerRequest(bakerHash))
-      setForm({
-        bakerHash: '',
-      })
-      setFormInputStatus({
-        bakerHash: '',
-      })
+      await handleSetBaker()
+
+      setForm(INIT_FORM)
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormSetBaker', error)
     }
   }
 
@@ -55,22 +87,29 @@ export const CouncilFormSetBaker = () => {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const bakerHashProps = {
-    name: 'bakerHash',
-    value: bakerHash,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
+  const { bakerHashProps, bakerHashSettings } = useMemo(() => {
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
-  const bakerHashSettings = {
-    inputStatus: formInputStatus.bakerHash,
-  }
+    const bakerHashProps = {
+      name: 'bakerHash',
+      value: bakerHash,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
+
+    return {
+      bakerHashProps,
+      bakerHashSettings: {
+        inputStatus: formInputStatus.bakerHash,
+      },
+    }
+  }, [bakerHash, formInputStatus.bakerHash])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -85,7 +124,7 @@ export const CouncilFormSetBaker = () => {
           <Input inputProps={bakerHashProps} settings={bakerHashSettings} />
         </div>
         <div className="button-aligment">
-          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="plus" />
             Set Baker
           </NewButton>

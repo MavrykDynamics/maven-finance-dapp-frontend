@@ -14,6 +14,7 @@ import { WalletOperationError } from 'errors/error'
 import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { SatellitesGovType } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.types'
 import { FarmActionsType } from 'providers/FarmsProvider/farms.provider.types'
+import { BreakGlassCouncilActions, MavrykCouncilActions } from 'providers/CouncilProvider/helpers/council.types'
 import { EGovProposalActionsType } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider.types'
 
 export type ActionTypes =
@@ -26,10 +27,13 @@ export type ActionTypes =
   | FinancialRequestsActionsTypes
   | SatellitesGovType
   | FarmActionsType
+  | BreakGlassCouncilActions
+  | MavrykCouncilActions
   | EGovProposalActionsType
 
 export type DappConfigContext = {
   maxLengths: DappMaxLengths
+  dappContracts: Array<{ name: string; address: string }>
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number
   dappTotalValueLocked: number | null
@@ -61,6 +65,7 @@ export type DappConfigContext = {
 export type DappConfigContextStateType = Pick<
   DappConfigContext,
   | 'maxLengths'
+  | 'dappContracts'
   | 'mvkFaucetAddress'
   | 'xtzBakers'
   | 'minimumStakedMvkBalance'
