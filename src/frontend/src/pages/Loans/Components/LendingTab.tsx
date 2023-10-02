@@ -1,20 +1,22 @@
-import { useSelector } from 'react-redux'
-
-import { State } from 'reducers'
-
+// consts
 import { SECONDARY_TRANSACTION_HISTORY_STYLE } from '../Loans.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
+// view
 import { LendingTabStyled, NoItemsInTabStyled } from './LoansComponents.style'
-
 import { TransactionHistory } from './TransactionHistory'
 import { LendingTabValuesSection } from './LendingTabSections/LendingTabValuesSection'
 import { LendingTabActionsSection } from './LendingTabSections/LendingTabActionsSection'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+
+// types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+
+// hooks
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type LendingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -31,8 +33,9 @@ export const LendingTab = ({
 }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup } = useLoansPopupsContext()
   const { userMTokens, userAddress } = useUserContext()
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const lendingItem = userMTokens[loanMtokenAddress]
 

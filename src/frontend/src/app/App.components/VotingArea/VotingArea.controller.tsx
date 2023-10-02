@@ -1,24 +1,24 @@
-import { useSelector } from 'react-redux'
-
-// types, constants, helpers
-import { State } from 'reducers'
+// types
 import { VotingProposalsProps, VotingProps } from './helpers/voting'
 import { VotingTypes, VoteList } from './helpers/voting.const'
-import { VOTING_AGAINST, BUTTON_PRIMARY, VOTING_FOR, VOTING_PASS, BUTTON_WIDE } from '../Button/Button.constants'
-
-// styles
-import { VotingAreaStyled, VotingButtonsContainer } from './VotingArea.style'
 
 // view
 import { VotingBar } from './VotingBar.controller'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import ConnectWalletBtn from '../ConnectWallet/ConnectWalletBtn'
-import Button from '../Button/NewButton'
-import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { Info } from '../Info/Info.view'
+import { VotingAreaStyled, VotingButtonsContainer } from './VotingArea.style'
+import Button from '../Button/NewButton'
+
+// consts
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
+import { VOTING_AGAINST, BUTTON_PRIMARY, VOTING_FOR, VOTING_PASS, BUTTON_WIDE } from '../Button/Button.constants'
 import { INFO_DEFAULT } from '../Info/info.constants'
 import { NEWLY_REGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
+
+// hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type VotingType = VotingProps & {
   className?: string
@@ -39,7 +39,9 @@ export const VotingArea = ({
   const { forBtn, againsBtn, passBtn } = buttonsToShow ?? { forBtn: {}, againsBtn: {}, passBtn: {} }
 
   const { userAddress, isSatellite, isNewlyRegisteredSatellite } = useUserContext()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const votingButtons = userAddress ? (
     isSatellite && handleVote ? (
@@ -117,7 +119,9 @@ export const VotingProposalsArea = ({
   votingPhaseHandler,
 }: VotingProposalsType) => {
   const { userAddress, isSatellite, isNewlyRegisteredSatellite } = useUserContext()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   // Proposal isn't locked, can't vote
   if (!selectedProposal.locked) return null

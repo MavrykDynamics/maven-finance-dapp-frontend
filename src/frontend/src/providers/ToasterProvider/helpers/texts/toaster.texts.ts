@@ -1,4 +1,4 @@
-import { TOASTER_SUBSCRIPTION_ERROR } from '../Toaster.constants'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
 
 export const TOASTER_TEXTS = {
   [TOASTER_SUBSCRIPTION_ERROR]: {

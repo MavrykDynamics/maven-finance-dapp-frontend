@@ -1,10 +1,15 @@
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+// view
 import Button from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { MyRewardsStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { useSelector } from 'react-redux'
-import { State } from 'reducers'
+
+// consts
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type DashboardPersonalMyRewardsProps = {
   earnedRewards: number
@@ -17,14 +22,16 @@ const DashboardPersonalMyRewards = ({
   rewardsToClaim,
   claimRewardsHandler,
 }: DashboardPersonalMyRewardsProps) => {
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
+  const { userAddress } = useUserContext()
   return (
     <MyRewardsStyled>
       <H2Title>My MVK Earnings</H2Title>
       <div className="claim-rewards">
         <Button
-          disabled={rewardsToClaim === 0 || isActionActive || !accountPkh}
+          disabled={rewardsToClaim === 0 || isActionActive || !userAddress}
           onClick={claimRewardsHandler}
           kind={BUTTON_PRIMARY}
         >

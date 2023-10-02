@@ -13,7 +13,7 @@ import { ApolloContext } from './apollo.provider.types'
 
 // consts
 import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
-import { TOASTER_TEXTS } from 'app/App.components/Toaster/texts/toaster.texts'
+import { TOASTER_TEXTS } from 'providers/ToasterProvider/helpers/texts/toaster.texts'
 import { httpLink, retryLink, splitLink, wsLink } from './apollo.config'
 import { FatalError, isAbortError } from 'errors/error'
 

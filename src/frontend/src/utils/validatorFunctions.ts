@@ -1,11 +1,7 @@
 import { validateAddress, validatePublicKey as taquitoValidatePublicKey } from '@taquito/utils'
-import { showToaster } from '../app/App.components/Toaster/Toaster.actions'
-import { ERROR } from '../app/App.components/Toaster/Toaster.constants'
 import { AllValidFormTypes } from './TypesAndInterfaces/Forms'
-import type { AppDispatch } from '../app/App.controller'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { RpcClient } from '@taquito/rpc'
-import { State } from 'reducers'
 import { PreferencesState } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 const isIPFS = require('is-ipfs')
@@ -72,16 +68,6 @@ export function getFormErrors(form: AllValidFormTypes) {
   })
   errorMessage = errorMessage.substr(0, errorMessage.length - 1)
   return { errors, errorMessage: errorMessage }
-}
-
-export function validateFormAndThrowErrors(dispatch: AppDispatch, validForm: AllValidFormTypes): boolean {
-  const { errors, errorMessage } = getFormErrors(validForm)
-  if (errors.length === 0) return true
-  else {
-    const errorTitle = 'Invalid fields'
-    dispatch(showToaster(ERROR, errorTitle, errorMessage, 3000))
-    return false
-  }
 }
 
 export function mathRoundTwoDigit(digit: string | number | undefined): number | '' {

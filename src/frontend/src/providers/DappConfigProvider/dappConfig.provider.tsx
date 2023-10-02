@@ -14,7 +14,7 @@ import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
 import { DEFAULT_DAPP_CONFIG_CONTEXT, RPC_NODE } from './helpers/dappConfig.const'
 import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
 import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_ACTIONS_TEXTS } from 'providers/ToasterProvider/helpers/texts/toasterActions.texts'
 
 // utils
 import { getXTZBakers } from './bakers/getXtzBakers'
@@ -154,6 +154,17 @@ const DappConfigProvider = ({ children }: Props) => {
   }
 
   // -------- METHODS --------
+  // general
+  const handleCopyText = (textToCopy: string) => {
+    try {
+      if (textToCopy) {
+        navigator.clipboard.writeText(textToCopy)
+        success('Copied to Clipboard', `${textToCopy}`)
+      }
+    } catch (e) {
+      console.error('copy to clipboard error: ', e)
+    }
+  }
 
   // preferences actions
   const toggleTheme = (theme: ThemeType) => {
@@ -226,6 +237,8 @@ const DappConfigProvider = ({ children }: Props) => {
       isLoading: initialConfigLoading || contractAddressesLoading,
       setAction,
       setDappTotalValueLocked,
+      // general
+      handleCopyText,
       // preferences
       toggleTheme,
       toggleRPCNodePopup,
