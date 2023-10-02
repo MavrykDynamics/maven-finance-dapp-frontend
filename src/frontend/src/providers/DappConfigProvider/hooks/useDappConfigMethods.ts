@@ -100,15 +100,12 @@ export const useDappConfigMethods = ({ setDappConfigCtxState }: Props): DappConf
 
   return {
     setDappTotalValueLocked,
-    // general
     handleCopyText,
-    // preferences
     toggleTheme,
     toggleRPCNodePopup,
     selectNewRPCNode,
     setNewRPCNodes,
     toggleSidebarCollapsing,
-    // loading
     toggleActionFullScreenLoader,
     toggleActionCompletion,
     toggleWertLoader,

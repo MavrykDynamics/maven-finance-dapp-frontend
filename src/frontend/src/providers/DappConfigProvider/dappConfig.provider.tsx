@@ -38,15 +38,12 @@ const DappConfigProvider = ({ children }: Props) => {
 
   const {
     setDappTotalValueLocked,
-    // general
     handleCopyText,
-    // preferences
     toggleTheme,
     toggleRPCNodePopup,
     selectNewRPCNode,
     setNewRPCNodes,
     toggleSidebarCollapsing,
-    // loading
     toggleActionFullScreenLoader,
     toggleActionCompletion,
     toggleWertLoader,
