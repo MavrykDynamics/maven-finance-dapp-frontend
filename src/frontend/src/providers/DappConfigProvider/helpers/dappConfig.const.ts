@@ -4,9 +4,7 @@ import { PreferencesState, LoadingState } from '../dappConfig.provider.types'
 import { ThemeType, themeSchema } from 'consts/theme.const'
 import { ecadLabGhostnetRpcNode, marigoldGhostnetRpcNode } from 'consts/rpcNodes.const'
 
-// global loading default state
-
-// default max length
+// ------ default max length
 export const defaultCouncilMemberImageMaxLength = 500
 export const defaultCouncilMemberNameMaxLength = 25
 export const defaultCouncilMemberWebsiteMaxLength = 500
@@ -59,6 +57,7 @@ export const DAPP_DEFAULT_MAX_LENGHTS = {
   },
 }
 
+// ------ default contract addresses
 export const DAPP_DEFAULT_CONTRACT_ADDRESSES = {
   farmsAddress: null,
   farmsFactoryAddress: null,
@@ -81,8 +80,10 @@ export const DAPP_DEFAULT_CONTRACT_ADDRESSES = {
   vaultFactoryAddress: null,
 }
 
+// name on field in LC for rpc node
 export const RPC_NODE = 'selectedRpcNode'
 
+// ------ default dapp preferences
 export const preferencesDefaultState: PreferencesState = {
   themeSelected: getItemFromStorage<ThemeType>('theme', themeSchema) || 'space',
   changeNodePopupOpen: false,
@@ -94,6 +95,7 @@ export const preferencesDefaultState: PreferencesState = {
   REACT_APP_RPC_PROVIDER: ecadLabGhostnetRpcNode,
 }
 
+// ------ default loadings
 export const defaultLoadingState: LoadingState = {
   // isWertLoading – used for wert io payment system initialization
   isWertLoading: false,
@@ -103,6 +105,7 @@ export const defaultLoadingState: LoadingState = {
   isActionActive: false,
 }
 
+// ------ defaults context
 export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
   maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
   dappContracts: [],

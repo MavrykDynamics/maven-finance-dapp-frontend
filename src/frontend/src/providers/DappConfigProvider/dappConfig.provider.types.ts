@@ -18,6 +18,49 @@ import { BreakGlassCouncilActions, MavrykCouncilActions } from 'providers/Counci
 import { EGovProposalActionsType } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider.types'
 import { FeedsActionsType } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
+// ------ context types
+export type DappConfigContextStateType = {
+  maxLengths: DappMaxLengths
+  dappContracts: Array<{ name: string; address: string }>
+  mvkFaucetAddress: string | null
+  minimumStakedMvkBalance: number
+  dappTotalValueLocked: number | null
+  contractAddresses: Record<DappContractAddressesKeysType, string | null>
+  xtzBakers: {
+    dao: XtzBakerType
+    mavrykDynamics: XtzBakerType
+    otherBakers: Array<XtzBakerType>
+  } | null
+  preferences: PreferencesState
+  globalLoadingState: LoadingState
+}
+
+export type DappConfigContextMethods = {
+  // general
+  handleCopyText: (testToCopy: string) => void
+  // setter for dashboard tvl for the whole dapp
+  setDappTotalValueLocked: (tvl: number) => void
+  // preferences actions
+  toggleTheme: (theme: ThemeType) => void
+  toggleRPCNodePopup: (isOpened: boolean) => void
+  selectNewRPCNode: (newRPCNode: string, isRemove?: boolean) => void
+  setNewRPCNodes: (newRPCNodes: Array<RPCNodeType>, isRemove?: boolean) => void
+  toggleSidebarCollapsing: (isOpened?: boolean) => void
+  // loading actions
+  toggleActionCompletion: (v: boolean) => void
+  toggleWertLoader: (v: boolean) => void
+  toggleActionFullScreenLoader: (v: boolean) => void
+}
+
+export type DappConfigContext = DappConfigContextStateType &
+  DappConfigContextMethods & {
+    isLoading: boolean
+
+    // action handlers
+    setAction: (actionName: null | UserActionType) => void
+  }
+
+// ------ dapp actions & action results types
 export type ActionTypes =
   | StakeActionType
   | UserActionsType
@@ -33,52 +76,6 @@ export type ActionTypes =
   | EGovProposalActionsType
   | FeedsActionsType
 
-export type DappConfigContext = {
-  maxLengths: DappMaxLengths
-  dappContracts: Array<{ name: string; address: string }>
-  mvkFaucetAddress: string | null
-  minimumStakedMvkBalance: number
-  dappTotalValueLocked: number | null
-  contractAddresses: Record<DappContractAddressesKeysType, string | null>
-  xtzBakers: {
-    dao: XtzBakerType
-    mavrykDynamics: XtzBakerType
-    otherBakers: Array<XtzBakerType>
-  } | null
-  isLoading: boolean
-  preferences: PreferencesState
-  globalLoadingState: LoadingState
-
-  // general
-  handleCopyText: (testToCopy: string) => void
-  // methods
-  setAction: (actionName: null | UserActionType) => void
-  setDappTotalValueLocked: (tvl: number) => void
-  // preferences actions
-  toggleTheme: (theme: ThemeType) => void
-  toggleRPCNodePopup: (isOpened: boolean) => void
-  selectNewRPCNode: (newRPCNode: string, isRemove?: boolean) => void
-  setNewRPCNodes: (newRPCNodes: Array<RPCNodeType>, isRemove?: boolean) => void
-  toggleSidebarCollapsing: (isOpened?: boolean) => void
-  // loading actions
-  toggleActionCompletion: (v: boolean) => void
-  toggleWertLoader: (v: boolean) => void
-  toggleActionFullScreenLoader: (v: boolean) => void
-}
-
-export type DappConfigContextStateType = Pick<
-  DappConfigContext,
-  | 'maxLengths'
-  | 'dappContracts'
-  | 'mvkFaucetAddress'
-  | 'xtzBakers'
-  | 'minimumStakedMvkBalance'
-  | 'contractAddresses'
-  | 'preferences'
-  | 'globalLoadingState'
-  | 'dappTotalValueLocked'
->
-
 export type UserActionType = {
   actionName: ActionTypes
   toasterId: string | null
@@ -92,11 +89,11 @@ export type ActionSuccessReturnType = {
   operation: TransactionWalletOperation | BatchWalletOperation
 }
 
-// Contract Addresses type
+// ------ contract Addresses type
 export type DappContractAddressesType = ReturnType<typeof normalizeContractAddresses>
 export type DappContractAddressesKeysType = keyof DappContractAddressesType
 
-// MAX LENGHTS TYPES
+// ------ max lenghts type
 export type CouncilMaxLength = {
   councilMemberImageMaxLength: number
   councilMemberNameMaxLength: number
@@ -141,8 +138,7 @@ export type DappMaxLengths = {
   satelliteDelegation: SatelliteDelegationMaxLength
 }
 
-// preferences
-
+// ------ preferences types
 export type RPCNodeType = {
   url: string
   title: string
@@ -158,8 +154,7 @@ export type PreferencesState = {
   sidebarOpened: boolean
 }
 
-// loading state
-
+// ------ loading types
 export type LoadingState = {
   isActiveFullScreenLoader: boolean
   isActionActive: boolean
