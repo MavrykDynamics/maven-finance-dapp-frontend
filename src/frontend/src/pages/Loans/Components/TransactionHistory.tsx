@@ -91,7 +91,7 @@ export const TransactionHistory = ({
                   if (!descr) return null
 
                   return (
-                    <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}`}>
+                    <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}-${symbol}`}>
                       <TableCell width={`30%`} className="vert-middle">
                         <span className="descr">{descr}</span>
                       </TableCell>
