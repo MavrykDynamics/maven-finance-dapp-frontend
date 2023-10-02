@@ -155,7 +155,7 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // -------- METHODS --------
   // general
-  const handleCopy = (textToCopy: string) => {
+  const handleCopyText = (textToCopy: string) => {
     try {
       if (textToCopy) {
         navigator.clipboard.writeText(textToCopy)
@@ -238,7 +238,7 @@ const DappConfigProvider = ({ children }: Props) => {
       setAction,
       setDappTotalValueLocked,
       // general
-      handleCopy,
+      handleCopyText,
       // preferences
       toggleTheme,
       toggleRPCNodePopup,

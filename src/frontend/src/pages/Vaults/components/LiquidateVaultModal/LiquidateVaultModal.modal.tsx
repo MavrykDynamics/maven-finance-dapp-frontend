@@ -48,7 +48,7 @@ type Props = {
 }
 
 // TODO: need to test values here, don't have valid vault for it
-// TODO: test and do this as other loans popups, while testing
+// TODO: test and do this as other loans popups, when we will be able to liq vaults
 export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const { userTokensBalances, userAddress } = useUserContext()
   const { bug } = useToasterContext()

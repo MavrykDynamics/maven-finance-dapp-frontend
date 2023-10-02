@@ -50,7 +50,7 @@ export type DappConfigContext = {
   globalLoadingState: LoadingState
 
   // general
-  handleCopy: (testToCopy: string) => void
+  handleCopyText: (testToCopy: string) => void
   // methods
   setAction: (actionName: null | UserActionType) => void
   setDappTotalValueLocked: (tvl: number) => void

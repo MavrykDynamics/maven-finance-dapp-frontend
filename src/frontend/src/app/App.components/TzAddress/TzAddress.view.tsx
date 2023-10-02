@@ -31,9 +31,9 @@ export const TzAddress = ({
   amountFromStart = 4,
   amountFromEnd = 4,
 }: TzAddressProps) => {
-  const { handleCopy } = useDappConfigContext()
+  const { handleCopyText } = useDappConfigContext()
 
-  const handleTzAddressClick = () => (tzAddress && shouldCopy ? handleCopy(tzAddress) : undefined)
+  const handleTzAddressClick = () => (tzAddress && shouldCopy ? handleCopyText(tzAddress) : undefined)
 
   if (!tzAddress) return <TzAddressContainer className={`${className} tzAddressToClick`}>–</TzAddressContainer>
 
