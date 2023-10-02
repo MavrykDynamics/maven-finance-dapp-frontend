@@ -110,10 +110,12 @@ const DappConfigProvider = ({ children }: Props) => {
       try {
         const parsedConfig = dappConfigSchema.parse(data)
 
-        const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(parsedConfig)
+        const { maxLenghts, minimumStakedMvkBalance, dappContracts, mvkFaucetAddress } =
+          normalizeInitialConfigData(parsedConfig)
         setDappConfigCtxState((prev) => ({
           ...prev,
           maxLenghts,
+          dappContracts,
           minimumStakedMvkBalance,
           mvkFaucetAddress,
         }))
@@ -153,7 +155,7 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // -------- METHODS --------
   // general
-  const handleCopy = (textToCopy: string) => {
+  const handleCopyText = (textToCopy: string) => {
     try {
       if (textToCopy) {
         navigator.clipboard.writeText(textToCopy)
@@ -236,7 +238,7 @@ const DappConfigProvider = ({ children }: Props) => {
       setAction,
       setDappTotalValueLocked,
       // general
-      handleCopy,
+      handleCopyText,
       // preferences
       toggleTheme,
       toggleRPCNodePopup,

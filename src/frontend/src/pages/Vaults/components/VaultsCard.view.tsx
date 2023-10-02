@@ -120,7 +120,7 @@ const findFooterText = ({
 type Props = {
   vault: VaultType
   isOwner: boolean
-  handleMarkForLiquidation: ({}: { vaultId: number; vaultOwner: string }) => void
+  handleMarkForLiquidation: (args: { vaultId: number; vaultOwner: string }) => void
   vaultTab: string
 }
 

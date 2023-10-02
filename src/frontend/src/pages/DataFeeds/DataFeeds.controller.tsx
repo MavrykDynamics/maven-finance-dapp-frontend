@@ -28,8 +28,6 @@ import { Page } from 'styles'
 import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 export const DataFeeds = () => {

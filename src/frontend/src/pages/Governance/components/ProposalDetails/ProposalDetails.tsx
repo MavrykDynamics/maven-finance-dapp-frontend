@@ -76,7 +76,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     preferences: { themeSelected },
     contractAddresses: { governanceAddress },
     globalLoadingState: { isActionActive },
-    handleCopy,
+    handleCopyText,
   } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
 
@@ -403,7 +403,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                     </div>
 
                     <div className={`byte-content`}>
-                      <div className="byte-text" onClick={isByteOpened ? () => handleCopy(byteText) : undefined}>
+                      <div className="byte-text" onClick={isByteOpened ? () => handleCopyText(byteText) : undefined}>
                         {byteText} {isByteOpened ? <Icon id="copyToClipboard" /> : null}
                       </div>
                     </div>
