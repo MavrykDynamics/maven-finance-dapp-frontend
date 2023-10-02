@@ -31,7 +31,6 @@ export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
         // get color of the asset
         if (!treasuryAssetsColors[token_address]) {
           treasuryAssetsColors[token_address] = getDiagramSectionColor(Object.keys(treasuryAssetsColors).length)
-          console.log(treasuryAssetsColors)
         }
 
         // Filter zero balance assets in treasury
