@@ -29,6 +29,7 @@ import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuse
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import VestingProvider from 'providers/VestingProvider/vesting.provider'
 import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
+import CouncilProvider from 'providers/CouncilProvider/council.provider'
 import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
 import EGovProvider from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
 
@@ -101,17 +102,19 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
             <DoormanProvider>
               <SatellitesProvider>
                 <LoansProvider>
-                  <EGovProvider>
-                    <SatelliteGovernanceProvider>
-                      <VaultsProvider>
-                        <FinancialRequestsProvider>
-                          <TreasuryProvider>
-                            <VestingProvider>{children}</VestingProvider>
-                          </TreasuryProvider>
-                        </FinancialRequestsProvider>
-                      </VaultsProvider>
-                    </SatelliteGovernanceProvider>
-                  </EGovProvider>
+                  <VaultsProvider>
+                    <EGovProvider>
+                      <CouncilProvider>
+                        <SatelliteGovernanceProvider>
+                          <FinancialRequestsProvider>
+                            <TreasuryProvider>
+                              <VestingProvider>{children}</VestingProvider>
+                            </TreasuryProvider>
+                          </FinancialRequestsProvider>
+                        </SatelliteGovernanceProvider>
+                      </CouncilProvider>
+                    </EGovProvider>
+                  </VaultsProvider>
                 </LoansProvider>
               </SatellitesProvider>
             </DoormanProvider>

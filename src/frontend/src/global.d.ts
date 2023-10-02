@@ -21,13 +21,11 @@ declare global {
     }
   }
 
-  type DeepNullable<T> = {
-    [P in keyof T]: T[P] | null
-  }
-
-  type DeepNullable<T> = {
-    [P in keyof T]: T[P] | null
-  }
+  type DeepNullable<T> = T extends object
+    ? {
+        [P in keyof T]: DeepDeepNullable<T[P]> | null
+      }
+    : T
 
   type DeepPartial<T> = T extends object
     ? {

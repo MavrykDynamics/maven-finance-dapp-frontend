@@ -10,20 +10,30 @@ export const DAPP_INITIAL_CONFIG_QUERY = gql(`
       request_purpose_max_length
       request_token_name_max_length
     }
+
     governance: governance {
       proposal_description_max_length
       proposal_invoice_max_length
       proposal_metadata_title_max_length
       proposal_source_code_max_length
       proposal_title_max_length
+
+      # all dapp contracts 
+      general_contracts {
+				contract_address
+				contract_name
+			}
     }
+
     emergency_governance: emergency_governance {
       proposal_desc_max_length
       proposal_title_max_length
     }
+
     governance_satellite: governance_satellite {
       gov_purpose_max_length
     }
+    
     delegation: delegation {
       satellite_description_max_length
       satellite_name_max_length

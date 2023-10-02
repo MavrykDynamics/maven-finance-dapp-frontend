@@ -1,54 +1,85 @@
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useMemo, useState } from 'react'
 
-// type
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+// consts
+import { SET_CONTRACT_BAKER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
+} from '../../../app/App.components/Input/Input.constants'
 
 // helpers
+import { setContractBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { validateFormAddress } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-
-// action
-import { setContractBakerRequest } from '../Council.actions'
-
-// style
 import { CouncilFormStyled } from './CouncilForm.style'
-import { State } from 'reducers'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const INIT_FORM = {
   targetContractAddress: '',
   keyHash: '',
 }
 
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
+  targetContractAddress: INPUT_STATUS_DEFAULT,
+  keyHash: INPUT_STATUS_DEFAULT,
+}
+
 export const CouncilFormSetContractBaker = () => {
-  const dispatch = useDispatch()
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const [form, setForm] = useState(INIT_FORM)
-
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    targetContractAddress: '',
-    keyHash: '',
-  })
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { targetContractAddress, keyHash } = form
+
+  // set contract baker council action
+  const setContractBakerContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: SET_CONTRACT_BAKER_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        return await setContractBakerRequest(targetContractAddress, keyHash, councilAddress)
+      },
+    }),
+    [targetContractAddress, keyHash, userAddress, councilAddress],
+  )
+
+  const { action: handleSetContractBaker } = useContractAction(setContractBakerContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await dispatch(setContractBakerRequest(targetContractAddress, keyHash))
+      await handleSetContractBaker()
+
       setForm(INIT_FORM)
-      setFormInputStatus({
-        targetContractAddress: '',
-        keyHash: '',
-      })
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error(error)
+      console.error('CouncilFormSetContractBaker', error)
     }
   }
 
@@ -58,37 +89,43 @@ export const CouncilFormSetContractBaker = () => {
     })
   }
 
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const targetContractAddressProps = {
-    name: 'targetContractAddress',
-    value: targetContractAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+  const { targetContractAddressProps, targetContractAddressSettings, keyHashProps, keyHashSettings } = useMemo(() => {
+    const validateAddress = validateFormAddress(setFormInputStatus)
 
-  const targetContractAddressSettings = {
-    inputStatus: formInputStatus.targetContractAddress,
-  }
+    const targetContractAddressProps = {
+      name: 'targetContractAddress',
+      value: targetContractAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const keyHashProps = {
-    name: 'keyHash',
-    value: keyHash,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlurAddress(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
-  }
+    const keyHashProps = {
+      name: 'keyHash',
+      value: keyHash,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+        validateAddress(e)
+      },
+      required: true,
+    }
 
-  const keyHashSettings = {
-    inputStatus: formInputStatus.keyHash,
-  }
+    return {
+      targetContractAddressProps,
+      targetContractAddressSettings: {
+        inputStatus: formInputStatus.targetContractAddress,
+      },
+      keyHashProps,
+      keyHashSettings: {
+        inputStatus: formInputStatus.keyHash,
+      },
+    }
+  }, [formInputStatus.keyHash, formInputStatus.targetContractAddress, keyHash, targetContractAddress])
 
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
@@ -109,7 +146,7 @@ export const CouncilFormSetContractBaker = () => {
         </div>
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
           <Icon id="plus" />
           Set Contract Baker
         </NewButton>
