@@ -8,7 +8,7 @@ import { GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 export const LEND_BORROW_24H_DIFF = gql(`
 query getLending24hDiff($currentTimestamp: timestamptz) {
   lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
-    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}, timestamp: {_gte: $currentTimestamp}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
+    history_data(where: {type: {_in: ["0", "1", "2", "3"]}, timestamp: {_gte: $currentTimestamp}}, order_by: {timestamp: asc}) {
       type
       amount
       timestamp
@@ -34,7 +34,7 @@ query getLending24hDiff($currentTimestamp: timestamptz) {
 export const GET_LOANS_HISTORY_DATA = gql(`
 query getLoansHistoryData {
   lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
-    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, distinct_on: timestamp, order_by: {timestamp: asc}) {
+    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, order_by: {timestamp: asc}) {
       type
       amount
       timestamp
@@ -80,7 +80,7 @@ export function getLoansTransactionsHistory({
   return apolloGql(`
     query getLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
       lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
-        history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
+        history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
           type
           amount
           timestamp
@@ -109,7 +109,7 @@ export function getLoansTransactionsHistory({
           }
         }
 
-        historyItemsAmount: history_data_aggregate(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, distinct_on: timestamp) {
+        historyItemsAmount: history_data_aggregate(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}) {
           aggregate {
             count
           }
