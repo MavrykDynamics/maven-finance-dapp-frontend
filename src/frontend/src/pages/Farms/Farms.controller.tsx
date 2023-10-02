@@ -101,13 +101,13 @@ export const Farms = () => {
   useEffect(() => {
     const { isLive, isStaked } = farmsFilers
 
-    if (isStaked) {
+    if (isStaked === STAKED) {
       changeFarmsSubscriptionList({
-        [FARMS_DATA_SUB]: isLive ? FARMS_LIVE_STAKED_DATA_SUB : FARMS_FINISHED_STAKED_DATA_SUB,
+        [FARMS_DATA_SUB]: isLive === LIVE_TAB_ID ? FARMS_LIVE_STAKED_DATA_SUB : FARMS_FINISHED_STAKED_DATA_SUB,
       })
     } else {
       changeFarmsSubscriptionList({
-        [FARMS_DATA_SUB]: isLive ? FARMS_ALL_LIVE_DATA_SUB : FARMS_ALL_FINISHED_DATA_SUB,
+        [FARMS_DATA_SUB]: isLive === LIVE_TAB_ID ? FARMS_ALL_LIVE_DATA_SUB : FARMS_ALL_FINISHED_DATA_SUB,
       })
     }
 
