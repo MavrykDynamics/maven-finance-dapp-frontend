@@ -35,12 +35,17 @@ export const useSatelliteStatuses = (
         )
 
         // check whether all feeds are active (diff now and last update should be <= then heartBeat seconds)
-        const isAllSatellitesFeedsActive = currentFeedsWhereSatelliteAdmin.every((feedAddress) => {
-          const { last_completed_data_last_updated_at, heart_beat_seconds } = feedsMapper[feedAddress]
+        const isAllSatellitesFeedsActive = currentFeedsWhereSatelliteAdmin.length
+          ? currentFeedsWhereSatelliteAdmin.every((feedAddress) => {
+              const { last_completed_data_last_updated_at, heart_beat_seconds } = feedsMapper[feedAddress]
 
-          const nowAndLastUpdateDiffInMs = dayjs().subtract(dayjs(last_completed_data_last_updated_at).unix()).unix()
-          return nowAndLastUpdateDiffInMs / 1000 >= heart_beat_seconds
-        })
+              const nowAndLastUpdateDiffInMs = dayjs()
+                .subtract(dayjs(last_completed_data_last_updated_at).valueOf())
+                .valueOf()
+
+              return nowAndLastUpdateDiffInMs / 1000 >= heart_beat_seconds
+            })
+          : false
 
         // if all feeds are not active oracle status is responded, if at least 1 feed is still active, satellite status is awaiting
         setOracleStatus(isAllSatellitesFeedsActive ? RESPONDED_ORACLE_STATUS : AWAITING_ORACLE_STATUS)

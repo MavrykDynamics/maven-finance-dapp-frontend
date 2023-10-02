@@ -52,10 +52,12 @@ const DappConfigProvider = ({ children }: Props) => {
       try {
         const parsedLevelData = indexerLevelSchema.parse(data.dipdup_index)
 
-        // TODO: remove log
-        if (process.env.REACT_APP_ENV === 'dev') console.log('new indexer level: ', parsedLevelData[0].level)
+        if (currentIndexerLevelProxy.currentIndexedLevel < parsedLevelData[0].level) {
+          if (process.env.REACT_APP_ENV === 'dev')
+            console.log(`%cnew indexer level: ${parsedLevelData[0].level}`, 'color: fuchsia')
 
-        currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData[0].level
+          currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData[0].level
+        }
       } catch (e) {
         console.error('zod parsing SUBSCRIPTION_INDEXER_LVL error:', { e })
       }
@@ -78,6 +80,7 @@ const DappConfigProvider = ({ children }: Props) => {
     const parsedLevelData = indexerLevelSchema.safeParse(indexerLevel.dipdup_index)
 
     const currentIndexedLevel = parsedLevelData.success ? parsedLevelData.data[0].level : null
+
     if (!currentIndexedLevel) return
 
     const { actionName, toasterId, operationLvl, callback } = action
@@ -107,10 +110,12 @@ const DappConfigProvider = ({ children }: Props) => {
       try {
         const parsedConfig = dappConfigSchema.parse(data)
 
-        const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(parsedConfig)
+        const { maxLenghts, minimumStakedMvkBalance, dappContracts, mvkFaucetAddress } =
+          normalizeInitialConfigData(parsedConfig)
         setDappConfigCtxState((prev) => ({
           ...prev,
           maxLenghts,
+          dappContracts,
           minimumStakedMvkBalance,
           mvkFaucetAddress,
         }))

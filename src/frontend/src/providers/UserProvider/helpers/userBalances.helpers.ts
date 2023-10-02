@@ -3,12 +3,7 @@ import * as signalR from '@microsoft/signalr'
 // types
 import { UserContext, UserTzktTokensBalancesType } from './../user.provider.types'
 import { GetUserDataQuery } from 'utils/__generated__/graphql'
-import {
-  TokenAddressType,
-  TokensContext,
-  UserMTokenType,
-  mTokenMetadataSchema,
-} from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType, TokensContext, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 
 // helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -24,6 +19,7 @@ import {
 
 // consts
 import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { mTokenMetadataSchema } from 'providers/TokensProvider/helpers/tokens.schemes'
 
 /**
  * function to get token balance of the user
@@ -223,7 +219,8 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'dev') console.log('tzktSocket on token_balances msg', { data: msg.data })
+      if (process.env.REACT_APP_ENV === 'dev')
+        console.log('%ctzktSocket on token_balances msg', 'color: aqua', { data: msg.data })
       const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
       handleTokens(tokensBalances)
     } catch (e) {
@@ -236,7 +233,8 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'dev') console.log('tzktSocket on accounts msg', { data: msg.data })
+      if (process.env.REACT_APP_ENV === 'dev')
+        console.log('%ctzktSocket on accounts msg', 'color: aqua', { data: msg.data })
       const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
       handleTokens([
         {

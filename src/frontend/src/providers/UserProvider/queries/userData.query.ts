@@ -36,12 +36,19 @@ export const USER_DATA_QUERY = gql(`
           address
         }
         image
+        name
       }
       council_council_members{
         image
+        user {
+          address
+        }
       }
       break_glass_council_members {
         image
+        user {
+          address
+        }
       }
       
       # is user active vestee

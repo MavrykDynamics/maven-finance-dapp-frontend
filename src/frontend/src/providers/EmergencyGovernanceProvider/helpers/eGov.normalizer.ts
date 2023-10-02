@@ -8,21 +8,35 @@ import { MVK_DECIMALS } from 'utils/constants'
 import { EGovProposalType } from '../emergencyGovernance.provider.types'
 import { GetEGovAllProposalsQueryQuery } from 'utils/__generated__/graphql'
 
+type eGovProposalVoterType = {
+  voterAddress: string
+  voteAmount: number
+  voteTime: string
+}
+
 export const normalizeEGovProposal = (
   indexerProposal: GetEGovAllProposalsQueryQuery['emergency_governance_record'][number],
 ) => {
-  const isActiveProposal = indexerProposal.executed && dayjs().isBefore(indexerProposal.expiration_timestamp)
+  const isActiveProposal = !indexerProposal.executed && dayjs().isBefore(indexerProposal.expiration_timestamp)
+  const status = isActiveProposal
+    ? ProposalStatus.WAITING
+    : indexerProposal.executed
+    ? ProposalStatus.EXECUTED
+    : ProposalStatus.DEFEATED
+
+  const proposalVoters = indexerProposal.voters.map<eGovProposalVoterType>((voteData) => ({
+    voterAddress: voteData.voter.address,
+    voteAmount: convertNumberForClient({ number: voteData.smvk_amount, grade: MVK_DECIMALS }),
+    voteTime: voteData.timestamp,
+  }))
+
   return {
     id: Number(indexerProposal.id),
     title: indexerProposal.title,
     description: indexerProposal.description,
 
     isActive: isActiveProposal,
-    status: isActiveProposal
-      ? ProposalStatus.WAITING
-      : indexerProposal.executed
-      ? ProposalStatus.EXECUTED
-      : ProposalStatus.DEFEATED,
+    status,
 
     executed: indexerProposal.executed,
     startTimestamp: indexerProposal.start_timestamp ?? null,
@@ -38,15 +52,7 @@ export const normalizeEGovProposal = (
     }),
     totalSmvkVotes: convertNumberForClient({ number: indexerProposal.total_smvk_votes, grade: MVK_DECIMALS }),
 
-    voters: indexerProposal.voters.map<{
-      voterAddress: string
-      voteAmount: number
-      voteTime: string
-    }>((voteData) => ({
-      voterAddress: voteData.voter.address,
-      voteAmount: convertNumberForClient({ number: voteData.smvk_amount, grade: MVK_DECIMALS }),
-      voteTime: voteData.timestamp,
-    })),
+    voters: proposalVoters,
   }
 }
 

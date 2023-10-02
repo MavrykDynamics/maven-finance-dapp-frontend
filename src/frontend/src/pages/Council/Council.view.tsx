@@ -1,27 +1,8 @@
-import { useState, useMemo, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Link, useHistory, useLocation } from 'react-router-dom'
-import { useParams } from 'react-router'
-import qs from 'qs'
 
-// components
-import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
-import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilAction } from 'pages/Council/CouncilActions/CouncilAction.view'
-import Carousel from '../../app/App.components/Carousel/Carousel.view'
-import { CouncilMemberView } from 'pages/Council/CouncilMember/CouncilMember.view'
-import { CouncilPending } from './CouncilPending/CouncilPending.controller'
-import { MyCouncilActions } from './CouncilActions/MyCouncilActions.view'
-import Icon from 'app/App.components/Icon/Icon.view'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { EmptyContainer } from 'app/App.style'
-
-// helpers
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../app/App.components/Button/Button.constants'
-import { getSeparateSnakeCase } from 'utils/parse'
-import { memberIsFirstOfList } from 'pages/Council/Council.helpers'
+// consts
+import { BUTTON_SECONDARY } from '../../app/App.components/Button/Button.constants'
 import {
   COUNCIL_ALL_PAST_ACTIONS_LIST_NAME,
   COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME,
@@ -30,221 +11,190 @@ import {
   calculateSlicePositions,
   getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
-
-// styles
 import {
-  CouncilStyled,
-  ReviewCard,
-  AvaliableActions,
-  PropagateBreakGlassCouncilCard,
-  CounsilPageWrapper,
-} from './Council.style'
+  ALL_PAST_COUNSIL_TAB,
+  ALL_PENDING_COUNSIL_TAB,
+  MY_PAST_COUNSIL_TAB,
+  MY_PENDING_COUNSIL_TAB,
+  councilTabsList,
+  MavrykCounsilDdForms,
+  MavrykCounsilPageTitles,
+  BgCounsilDdForms,
+  BgCounsilPageTitles,
+} from './helpers/council.consts'
+import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // types
-import { CouncilActionType, CouncilMembers } from 'utils/TypesAndInterfaces/Council'
-import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
+import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
+import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
-// actions
-import { propagateBreakGlass } from '../BreakGlassCouncil/BreakGlassCouncil.actions'
+// utils
+import { getSeparateSnakeCase } from 'utils/parse'
 
-export const councilEmptyContainer = (
-  <EmptyContainer>
-    <img src="/images/not-found.svg" alt=" No proposals to show" />
-    <figcaption> No data to show</figcaption>
-  </EmptyContainer>
-)
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
-export const councilTabsList: SlidingTabButtonType[] = [
-  {
-    text: 'My Ongoing Actions',
-    id: 1,
-    active: true,
-  },
-  {
-    text: 'My Past Actions',
-    id: 2,
-    active: false,
-  },
-]
+// view
+import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
+import { CouncilForms } from './components/CouncilForms.controller'
+import NewButton from 'app/App.components/Button/NewButton'
+import { CouncilAction } from 'pages/Council/components/CouncilAction.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
+import { EmptyContainer } from 'app/App.style'
+import { CouncilStyled, AvaliableActions, CounsilPageWrapper } from './Council.style'
+import { CounsilActionsToSign } from './components/CounsilActionsToSign'
+import { UpdateMemberInfoPopup } from './components/UpdateMemberInfoPopup'
+import { CounsilSidebar } from './components/CounsilSidebar'
+import { CouncilOngoingAction } from './components/CouncilOngoingAction.view'
 
 type Props = {
-  pathnameOfPage: string
-  maxLength: CouncilMaxLength
-  glassBroken?: boolean
-  showPropagateBreakGlass?: boolean
-  titles: {
-    membersName: string
-    cardIdName: string
-    allPastActions: string
-  }
+  selectedTab: CouncilTabsType
+  isBreakGlassCounsil?: boolean
 
   allPendingActions: number[]
   notMyPendingActions: number[]
   myPendingActions: number[]
-
   allPastActions: number[]
   myPastActions: number[]
-
   actionsMapper: Record<number, CouncilActionType>
+  members: CouncilMembersType
+}
 
-  members: CouncilMembers
-  dropdowndActions: Record<string, string>
-
-  handleSignAction: (id: number) => void
-  handleDropAction: (id: number) => void
-
-  getFormComponent: () => React.ReactNode
-  getFormUpdateMemberInfo: (maxLength: CouncilMaxLength, callback: () => void) => React.ReactNode
+type ActionsDDItemType = {
+  content: JSX.Element
+  value: string
+  id: number
+  disabled?: boolean
 }
 
 export function CouncilView({
-  pathnameOfPage,
-  maxLength,
-  glassBroken,
-  showPropagateBreakGlass,
-  getFormComponent,
-  getFormUpdateMemberInfo,
-  titles,
+  selectedTab,
+  isBreakGlassCounsil = false,
 
   allPendingActions,
   notMyPendingActions,
   myPendingActions,
-
   allPastActions,
   myPastActions,
-
   actionsMapper,
-
   members,
-  dropdowndActions,
-
-  handleSignAction,
-  handleDropAction,
 }: Props) {
-  const dispatch = useDispatch()
   const history = useHistory()
-  const { search, pathname } = useLocation()
+  const { search } = useLocation()
 
-  const queryParameters = {
-    pathname: pathnameOfPage,
-    pastActions: '/past-actions',
-    pendingActions: '/pending-actions',
-  }
+  const {
+    maxLengths: { council: counsilMaxLenghts },
+  } = useDappConfigContext()
+  const { userAddress, isBreakGlassCouncil, isMavrykCouncil } = useUserContext()
 
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const isUserCouncil = isBreakGlassCounsil ? isBreakGlassCouncil : isMavrykCouncil
 
-  const dropDownItems = useMemo(
-    () =>
-      Object.values(dropdowndActions).map((item, index) => ({
+  const { pagePathname, dropDownItems, titles } = useMemo(() => {
+    return {
+      titles: isBreakGlassCounsil ? BgCounsilPageTitles : MavrykCounsilPageTitles,
+      pagePathname: isBreakGlassCounsil ? '/break-glass-council' : '/mavryk-council',
+      dropDownItems: Object.values(
+        isBreakGlassCounsil ? BgCounsilDdForms : MavrykCounsilDdForms,
+      ).map<ActionsDDItemType>((item, index) => ({
         content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
         value: item,
         id: index,
+        // TODO: remove after forms will be ready to use
+        disabled: ['UNPAUSE_ALL_ENTRYPOINTS', 'REMOVE_BREAK_GLASS_CONTROLL', 'SET_SELECTED_CONTRACTS_ADMIN'].includes(
+          item,
+        ),
       })),
-    [dropdowndActions],
+    }
+  }, [isBreakGlassCounsil])
+
+  const {
+    currentListName,
+    isMyPendingTab,
+    isMyPastTab,
+    isAllPendingTab,
+    isAllPastTab,
+    listItemsAmount,
+    paginatedList,
+  } = useMemo(() => {
+    const isMyPendingTab = selectedTab === MY_PENDING_COUNSIL_TAB
+    const isMyPastTab = selectedTab === MY_PAST_COUNSIL_TAB
+    const isAllPendingTab = selectedTab === ALL_PENDING_COUNSIL_TAB
+    const isAllPastTab = selectedTab === ALL_PAST_COUNSIL_TAB
+
+    const currentListName = isMyPendingTab
+      ? COUNCIL_MY_PENDING_ACTIONS_LIST_NAME
+      : isMyPastTab
+      ? COUNCIL_MY_PAST_ACTIONS_LIST_NAME
+      : isAllPendingTab
+      ? COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME
+      : COUNCIL_ALL_PAST_ACTIONS_LIST_NAME
+
+    const currentPage = getPageNumber(search, currentListName)
+
+    const listToPaginate = isMyPendingTab
+      ? myPendingActions
+      : isMyPastTab
+      ? myPastActions
+      : isAllPendingTab
+      ? allPendingActions
+      : allPastActions
+
+    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_MY_PAST_ACTIONS_LIST_NAME)
+    const paginatedList = listToPaginate.slice(from, to)
+
+    return {
+      currentListName,
+      isMyPendingTab,
+      isMyPastTab,
+      isAllPendingTab,
+      isAllPastTab,
+      paginatedList,
+      listItemsAmount: listToPaginate.length,
+    }
+  }, [selectedTab, search, myPendingActions, myPastActions, allPendingActions, allPastActions])
+
+  const isMyActionsTabs = isMyPastTab || isMyPendingTab
+
+  // redirect to review past actions page when member changes or when current user is not council and user is on my request page
+  useEffect(() => {
+    if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
+  }, [userAddress, isUserCouncil])
+
+  // update member popup
+  const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
+  const openPopup = useCallback(() => setIsUpdateCouncilMemberInfo(true), [])
+  const closePopup = useCallback(() => setIsUpdateCouncilMemberInfo(false), [])
+
+  const displayPendingSignature = Boolean(isMyActionsTabs && isUserCouncil && notMyPendingActions.length)
+
+  const [chosenDdItem, setChosenDdItem] = useState<ActionsDDItemType | undefined>()
+
+  const handleClickDropdownItem = useCallback(
+    (itemId: DDItemId) => {
+      const foundItem = dropDownItems.find((item) => item.id === itemId)
+      if (foundItem) setChosenDdItem(foundItem)
+    },
+    [dropDownItems],
   )
 
-  type DropDownItemType = (typeof dropDownItems)[0]
-
-  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
-  const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
-  const [activeActionTab, setActiveActionTab] = useState(councilTabsList[0].text)
-  const sortedCouncilMembers = memberIsFirstOfList(members, accountPkh)
-
-  const { page, action } = qs.parse(search, { ignoreQueryPrefix: true })
-  const { tabId } = useParams<{ tabId: string }>()
-
-  const isPastActionsTab = tabId === 'past-actions'
-  const isPendingActionsTab = tabId === 'pending-actions'
-  const isMyPendingActionsTab = activeActionTab === councilTabsList[0].text
-
-  const isCouncilMember = Boolean(members.find((item) => item.userId === accountPkh)?.id)
-  const displayPendingSignature = Boolean(!tabId && isCouncilMember && notMyPendingActions.length)
-
-  const handleOpenleModal = () => {
-    setIsUpdateCouncilMemberInfo(true)
-  }
-
-  const handleClickDropdownItem = (itemId: DDItemId) => {
-    const foundItem = dropDownItems.find((item) => item.id === itemId)
-
-    if (!foundItem) return
-
-    const newQueryParams = {
-      page,
-      action: foundItem.value,
-    }
-
-    const newPageLink = pathname + qs.stringify(newQueryParams, { addQueryPrefix: true })
-
-    history.push(newPageLink)
-    setChosenDdItem(foundItem)
-  }
-
-  const closePopup = () => {
-    setIsUpdateCouncilMemberInfo(false)
-  }
-
-  const getCurrentListName = () => {
-    if (isPastActionsTab) {
-      return COUNCIL_ALL_PAST_ACTIONS_LIST_NAME
-    } else if (isPendingActionsTab) {
-      return COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME
-    }
-
-    return isMyPendingActionsTab ? COUNCIL_MY_PENDING_ACTIONS_LIST_NAME : COUNCIL_MY_PAST_ACTIONS_LIST_NAME
-  }
-
-  const currentPage = getPageNumber(search, getCurrentListName())
-
-  const paginatedAllPendingActions = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME)
-    return allPendingActions?.slice(from, to)
-  }, [currentPage, allPendingActions])
-
-  const paginatedAllPastActions = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_ALL_PAST_ACTIONS_LIST_NAME)
-    return allPastActions?.slice(from, to)
-  }, [currentPage, allPastActions])
-
-  const paginatedMyPendingActions = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_MY_PENDING_ACTIONS_LIST_NAME)
-    return myPendingActions?.slice(from, to)
-  }, [currentPage, myPendingActions])
-
-  const paginatedMyPastActions = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, COUNCIL_MY_PAST_ACTIONS_LIST_NAME)
-    return myPastActions?.slice(from, to)
-  }, [currentPage, myPastActions])
-
-  const handleClickPropagateBreakGlass = () => {
-    dispatch(propagateBreakGlass())
-  }
-
-  useEffect(() => {
-    // choose action after reload page
-    const foundAction = dropDownItems.find((item) => item.value === action)
-    setChosenDdItem(foundAction)
-  }, [])
-
-  useEffect(() => {
-    // redirect to review page when member changes
-    if (!accountPkh) {
-      history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
-    }
-  }, [history, queryParameters.pathname, queryParameters.pastActions, accountPkh, isCouncilMember])
-
-  useEffect(() => {
-    // check authorization when clicking on a review or a header in the menu
-    if (!isCouncilMember) {
-      history.replace(`${queryParameters.pathname}${queryParameters.pastActions}`)
-    }
-  }, [history, isCouncilMember, pathname, queryParameters.pathname, queryParameters.pastActions])
+  const handleChangeTabs = useCallback(
+    (tabId?: number) => {
+      history.replace(
+        `${pagePathname}${tabId === 1 ? MY_PENDING_COUNSIL_TAB : `/${MY_PAST_COUNSIL_TAB}`}${
+          search ? `?${search}` : ''
+        }`,
+      )
+    },
+    [pagePathname, search],
+  )
 
   return (
     <CounsilPageWrapper>
-      {tabId && isCouncilMember && (
-        <Link to={queryParameters.pathname}>
+      {(isAllPastTab || isAllPendingTab) && isUserCouncil && (
+        <Link to={pagePathname}>
           <NewButton kind={BUTTON_SECONDARY}>
             <Icon id="full-arrow-left" />
             Back to Member Dashboard
@@ -252,111 +202,20 @@ export function CouncilView({
         </Link>
       )}
 
-      {!tabId && isCouncilMember && showPropagateBreakGlass && (
-        <PropagateBreakGlassCouncilCard>
-          <div>
-            <h1>Propagate Break Glass</h1>
-            <p>
-              This action can only be taken to pause all contracts in the event of a successful emergency governance
-              where a critical flaw has been detected in the Mavryk Smart Contracts.
-            </p>
-          </div>
-
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleClickPropagateBreakGlass} disabled={glassBroken}>
-            <Icon id="plus" />
-            Propagate Break Glass
-          </NewButton>
-        </PropagateBreakGlassCouncilCard>
-      )}
-
       {displayPendingSignature && <h1>Pending Signature</h1>}
 
       <CouncilStyled>
         <div className="left-block">
-          {displayPendingSignature && (
-            <article className="pending">
-              <div className="pending-items">
-                <Carousel itemLength={notMyPendingActions.length}>
-                  {notMyPendingActions.map((item, index) => {
-                    const action = actionsMapper[item]
+          {displayPendingSignature ? (
+            <CounsilActionsToSign
+              isBreakGlassAction={isBreakGlassCounsil}
+              actionstoSign={notMyPendingActions}
+              actionsMapper={actionsMapper}
+              members={members}
+            />
+          ) : null}
 
-                    return (
-                      <CouncilPending
-                        {...action}
-                        key={action.id}
-                        numCouncilMembers={members.length}
-                        councilPendingActionsLength={notMyPendingActions.length}
-                        index={index}
-                        handleSignAction={handleSignAction}
-                      />
-                    )
-                  })}
-                </Carousel>
-              </div>
-            </article>
-          )}
-
-          {tabId ? (
-            <>
-              {isPastActionsTab ? (
-                <>
-                  <h1>{titles.allPastActions}</h1>
-
-                  {paginatedAllPastActions.length ? (
-                    <div>
-                      {paginatedAllPastActions.map((item) => {
-                        const action = actionsMapper[item]
-
-                        return (
-                          <CouncilAction
-                            startDatetime={action.startDatetime}
-                            key={action.id}
-                            actionType={action.actionType}
-                            signersCount={action.signersCount}
-                            numCouncilMembers={action.councilSize}
-                            councilId={action.councilId}
-                          />
-                        )
-                      })}
-                    </div>
-                  ) : (
-                    councilEmptyContainer
-                  )}
-                </>
-              ) : null}
-
-              {!isPastActionsTab ? (
-                <>
-                  <h1>Pending Signature Council Actions</h1>
-                  {paginatedAllPendingActions.length ? (
-                    <div>
-                      {paginatedAllPendingActions.map((item) => {
-                        const action = actionsMapper[item]
-
-                        return (
-                          <CouncilAction
-                            startDatetime={action.startDatetime}
-                            key={action.id}
-                            actionType={action.actionType}
-                            signersCount={action.signersCount}
-                            numCouncilMembers={members.length}
-                            councilId={action.councilId}
-                          />
-                        )
-                      })}
-                    </div>
-                  ) : (
-                    councilEmptyContainer
-                  )}
-                </>
-              ) : null}
-
-              <Pagination
-                itemsCount={isPastActionsTab ? allPastActions.length : allPendingActions.length}
-                listName={isPastActionsTab ? COUNCIL_ALL_PAST_ACTIONS_LIST_NAME : COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME}
-              />
-            </>
-          ) : (
+          {isMyActionsTabs ? (
             <>
               <AvaliableActions>
                 <div className="top-bar">
@@ -372,71 +231,83 @@ export function CouncilView({
                   </div>
                 </div>
 
-                {getFormComponent()}
+                <CouncilForms
+                  selectedAction={chosenDdItem?.value}
+                  councilMaxLengths={counsilMaxLenghts}
+                  members={members}
+                />
               </AvaliableActions>
 
-              <MyCouncilActions
-                myPastCouncilAction={paginatedMyPastActions}
-                myPastCouncilActionLength={myPastActions.length}
-                actionPendingSignature={paginatedMyPendingActions}
-                actionPendingSignatureLength={myPendingActions.length}
-                actionsMapper={actionsMapper}
-                numCouncilMembers={members.length}
-                activeActionTab={activeActionTab}
-                setActiveActionTab={setActiveActionTab}
-                tabsList={councilTabsList}
-                handleDropAction={handleDropAction}
-                listNameMyPastActions={COUNCIL_MY_PAST_ACTIONS_LIST_NAME}
-                listNameMyOngoingActions={COUNCIL_MY_PENDING_ACTIONS_LIST_NAME}
-                cardIdName={titles.cardIdName}
+              <SlidingTabButtons
+                kind={SECONDARY_SLIDING_TAB_BUTTONS}
+                tabItems={councilTabsList}
+                onClick={handleChangeTabs}
               />
             </>
-          )}
-        </div>
-
-        <div className="right-block">
-          {!tabId && (
-            <ReviewCard>
-              <Link to={`${queryParameters.pathname}${queryParameters.pastActions}`}>
-                <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
-                  Review Past Actions
-                </NewButton>
-              </Link>
-
-              <Link to={`${queryParameters.pathname}${queryParameters.pendingActions}`}>
-                <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY}>
-                  Review Pending Actions
-                </NewButton>
-              </Link>
-            </ReviewCard>
+          ) : (
+            <h1>{isAllPastTab ? titles.allPastActions : isAllPendingTab ? titles.allPending : null}</h1>
           )}
 
-          {Boolean(sortedCouncilMembers.length) && (
-            <>
-              <h1>{titles.membersName}</h1>
+          <div>
+            {paginatedList.length ? (
+              paginatedList.map((item) => {
+                const { id, startDatetime, actionType, signersCount, councilSize, counsilAddress, parameters } =
+                  actionsMapper[item]
 
-              <div>
-                {sortedCouncilMembers.map((item) => (
-                  <CouncilMemberView
-                    key={item.id}
-                    image={item.image}
-                    name={item.name}
-                    userId={item.userId}
-                    openModal={handleOpenleModal}
-                    showUpdateInfo={isCouncilMember}
+                if (isMyPendingTab) {
+                  return (
+                    <CouncilOngoingAction
+                      id={id}
+                      key={id}
+                      startDatetime={startDatetime}
+                      actionType={actionType}
+                      signersCount={signersCount}
+                      numCouncilMembers={councilSize}
+                      isBreakGlassCounsil={isBreakGlassCounsil}
+                      cardIdName={titles.cardIdName}
+                      counsilAddress={counsilAddress}
+                      parameters={parameters}
+                    />
+                  )
+                }
+
+                return (
+                  <CouncilAction
+                    key={id}
+                    startDatetime={startDatetime}
+                    actionType={actionType}
+                    signersCount={signersCount}
+                    numCouncilMembers={councilSize}
+                    councilId={counsilAddress}
                   />
-                ))}
-              </div>
-            </>
-          )}
+                )
+              })
+            ) : (
+              <EmptyContainer>
+                <img src="/images/not-found.svg" alt=" No counsil actions to show" />
+                <figcaption> No counsil actions to show</figcaption>
+              </EmptyContainer>
+            )}
+          </div>
+
+          {listItemsAmount ? <Pagination itemsCount={listItemsAmount} listName={currentListName} /> : null}
         </div>
+
+        <CounsilSidebar
+          membersTitle={titles.membersName}
+          counsilMembers={members}
+          openUpdateMemberProfilePopup={openPopup}
+          selectedTab={selectedTab}
+          pagePathname={pagePathname}
+        />
       </CouncilStyled>
 
-      <PopupContainer onClick={closePopup} show={isUpdateCouncilMemberInfo}>
-        <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council">
-          {getFormUpdateMemberInfo(maxLength, closePopup)}
-        </PopupContainerWrapper>
-      </PopupContainer>
+      <UpdateMemberInfoPopup
+        show={isUpdateCouncilMemberInfo}
+        closePopup={closePopup}
+        isBreakGlassCounsil={isBreakGlassCounsil}
+        memberProfile={members.find((item) => item.userId === userAddress)}
+      />
     </CounsilPageWrapper>
   )
 }

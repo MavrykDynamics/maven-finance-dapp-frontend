@@ -1,30 +1,133 @@
 import qs from 'qs'
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
-import { State } from 'reducers'
+// consts
+import {
+  FARMS_DATA_SUB,
+  FARMS_ALL_LIVE_DATA_SUB,
+  DEFAULT_FARMS_ACTIVE_SUBS,
+} from 'providers/FarmsProvider/helpers/farms.const'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-import { calculateAPY } from 'pages/Farms/Farms.helpers'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
+import {
+  FARM_CARD_COINS_LARGE,
+  FARM_CARD_COINS_SMALL,
+} from 'pages/Farms/components/FarmCard/cardParts/FarmCardCoinIcons'
 
+// types
+import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+
+// utils
+import { calculateFarmAPY } from 'providers/FarmsProvider/helpers/farms.utils'
+import { checkWhetherTokenIsFarmToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+
+// view
 import { Button } from 'app/App.components/Button/Button.controller'
-import CoinsIcons from 'app/App.components/Icon/CoinsIcons.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-
 import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
 import { EmptyContainer, FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
+import { FarmCardCoinIcons } from 'pages/Farms/components/FarmCard/cardParts/FarmCardCoinIcons'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
-export const FarmsTab = () => {
-  // TODO: use from context, when context will be here
-  const isFarmsLoading = false
-  const { farms } = useSelector((state: State) => state.farm)
-  // On dashboard farms tab show only live farms
+// hooks
+import { useFarmsContext } from 'providers/FarmsProvider/farms.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
-  const liveFarms = useMemo(() => farms.filter(({ isLive }) => isLive), [farms])
+type DashboardSmallFarmCardDataType = {
+  address: string
+  isMFarm: boolean
+  infinite: boolean
+  name: string
+  farmToken: FarmsTokenMetadataType
+  apy: number
+  creatorAddress: string
+  endsInTime: string
+}
+
+type MostActiveFarmType = {
+  address: string
+  isMFarm: boolean
+  name: string
+  farmToken: FarmsTokenMetadataType
+  totalLiquidityAmount: number
+} | null
+
+export const FarmsTab = () => {
+  const { tokensMetadata } = useTokensContext()
+  const { isLoading: isFarmsLoading, changeFarmsSubscriptionList, farmsMapper, allLiveFarms } = useFarmsContext()
+
+  useEffect(() => {
+    changeFarmsSubscriptionList({
+      [FARMS_DATA_SUB]: FARMS_ALL_LIVE_DATA_SUB,
+    })
+
+    return () => {
+      changeFarmsSubscriptionList(DEFAULT_FARMS_ACTIVE_SUBS)
+    }
+  }, [])
+
+  const { highestAPY, mostActiveFarm, farmsToIterate } = useMemo(
+    () =>
+      allLiveFarms.reduce<{
+        highestAPY: number
+        mostActiveFarm: MostActiveFarmType
+        farmsToIterate: Array<DashboardSmallFarmCardDataType>
+      }>(
+        (acc, farmAddress) => {
+          const farm = farmsMapper[farmAddress]
+          const farmToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: farm?.liquidityTokenAddress })
+
+          if (!farm || !farmToken || !checkWhetherTokenIsFarmToken(farmToken)) return acc
+
+          const { decimals: grade } = farmToken
+          const {
+            liquidityTokenBalance,
+            currentRewardPerBlock,
+            name,
+            address,
+            creatorAddress,
+            isMFarm,
+            endsInTime,
+            infinite,
+          } = farm
+
+          const totalLiquidityAmount = convertNumberForClient({ number: liquidityTokenBalance, grade })
+          const farmApy = calculateFarmAPY(currentRewardPerBlock, totalLiquidityAmount)
+
+          if (acc.highestAPY <= farmApy) acc.highestAPY = farmApy
+
+          if (acc.mostActiveFarm?.totalLiquidityAmount ?? 0 <= totalLiquidityAmount) {
+            acc.mostActiveFarm = {
+              address,
+              farmToken,
+              isMFarm,
+              name,
+              totalLiquidityAmount,
+            }
+          }
+
+          acc.farmsToIterate.push({
+            apy: farmApy,
+            address,
+            name,
+            creatorAddress,
+            endsInTime,
+            farmToken,
+            isMFarm,
+            infinite,
+          })
+
+          return acc
+        },
+        { highestAPY: 0, mostActiveFarm: null, farmsToIterate: [] },
+      ),
+    [allLiveFarms, farmsMapper, tokensMetadata],
+  )
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_farmsTab_bg.png">
@@ -41,47 +144,78 @@ export const FarmsTab = () => {
             <ClockLoader width={150} height={150} />
             <div className="text">Loading farms</div>
           </DataLoaderWrapper>
-        ) : liveFarms.length ? (
-          farms.map((farmCardData) => {
-            const apy = calculateAPY(farmCardData.currentRewardPerBlock, farmCardData.lpBalance)
-            return (
-              <Link
-                to={`/yield-farms?${qs.stringify({ openedFarmsCards: [farmCardData.address] })}`}
-                key={farmCardData.address + farmCardData.name}
-              >
-                <div className="card">
-                  <div className="top">
-                    <div className="name">
-                      <div className="large">{farmCardData.name}</div>
-                      <TzAddress tzAddress={farmCardData.address} hasIcon type={SECONDARY_TZ_ADDRESS_COLOR} />
-                    </div>
+        ) : allLiveFarms.length ? (
+          <>
+            <div className="farms-stats">
+              <div className="collumn">
+                <div className="name">Number of active farms</div>
+                <CommaNumber value={allLiveFarms.length} className="value" />
+              </div>
 
-                    <CoinsIcons
-                      firstAssetLogoSrc={farmCardData.lpToken1.thumbnailUri}
-                      secondAssetLogoSrc={farmCardData.lpToken2.thumbnailUri}
-                    />
-                  </div>
+              <div className="collumn">
+                <div className="name">Highest APY</div>
+                <CommaNumber value={highestAPY} className="value" endingText="%" />
+              </div>
 
-                  <div className="row-info">
-                    <div className="name">APY: </div>
-                    <div className="value">{apy}</div>
-                  </div>
-
-                  <div className="row-info">
-                    <div className="name">Earn: </div>
-                    <div className="value">sMVK + Fees</div>
-                  </div>
-
-                  <div className="row-info">
-                    <div className="name">Ends in: </div>
-                    <div className="value">
-                      <Timer deadline={farmCardData.endsIn} />
-                    </div>
-                  </div>
+              <div className="collumn">
+                <div className="name">Most Active Farm</div>
+                <div className="value">
+                  {mostActiveFarm ? (
+                    <>
+                      <FarmCardCoinIcons
+                        farmToken={mostActiveFarm.farmToken}
+                        isMFarm={mostActiveFarm.isMFarm}
+                        size={FARM_CARD_COINS_SMALL}
+                      />{' '}
+                      {mostActiveFarm.name}
+                    </>
+                  ) : (
+                    '–'
+                  )}
                 </div>
-              </Link>
-            )
-          })
+              </div>
+            </div>
+            <div className="farms-list scroll-block">
+              {farmsToIterate.map((farmData) => {
+                const { address, apy, name, creatorAddress, endsInTime, farmToken, isMFarm, infinite } = farmData
+
+                return (
+                  <Link to={`/yield-farms?${qs.stringify({ openedFarmsCards: [address] })}`} key={address}>
+                    <div className="card">
+                      <div className="top">
+                        <div className="name">
+                          <div className="large">{name}</div>
+                          <TzAddress
+                            tzAddress={creatorAddress}
+                            type={PRIMARY_TZ_ADDRESS_COLOR}
+                            className="creator"
+                            hasIcon={false}
+                          />
+                        </div>
+
+                        <FarmCardCoinIcons farmToken={farmToken} isMFarm={isMFarm} size={FARM_CARD_COINS_LARGE} />
+                      </div>
+
+                      <div className="row-info">
+                        <div className="name">APY: </div>
+                        <CommaNumber value={apy} className="value" endingText="%" />
+                      </div>
+
+                      <div className="row-info">
+                        <div className="name">Earn: </div>
+                        <div className="value">sMVK + Fees</div>
+                      </div>
+
+                      <div className="row-info">
+                        <div className="name">Ends in: </div>
+                        <div className="value">{infinite ? 'Not ending' : <Timer deadline={endsInTime} />}</div>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </>
         ) : (
           <EmptyContainer>
             <img src="/images/not-found.svg" alt=" No live farms to show" />

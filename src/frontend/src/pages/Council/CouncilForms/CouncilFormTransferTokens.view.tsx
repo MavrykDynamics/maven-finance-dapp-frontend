@@ -1,110 +1,117 @@
-import { useState, useMemo, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useState, useMemo } from 'react'
 
-// type
+// consts
+import { TRANSFER_TOKENS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from '../../../app/App.components/Input/Input.constants'
+
+// types
+import type { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import type { InputProps } from 'app/App.components/Input/newInput.type'
+import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
-import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
 
 // helpers
+import { transferTokens } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { DropDown, DropdownItemType } from '../../../app/App.components/DropDown/DropDown.controller'
-
-// action
-import { transferTokens } from '../Council.actions'
-
-// types
-import { InputProps } from 'app/App.components/Input/newInput.type'
-
-// style
 import { CouncilFormStyled } from './CouncilForm.style'
+
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const INIT_FORM = {
   receiverAddress: '',
   tokenContractAddress: '',
   tokenAmount: 0,
-  tokenId: 0,
   purpose: '',
 }
 
-const itemsForDropDown = [
-  {
-    text: 'FA12',
-    value: 'fa12',
-  },
-  {
-    text: 'FA2',
-    value: 'fa2',
-  },
-  {
-    text: 'TEZ',
-    value: 'tez',
-  },
-]
+const INIT_FOR_VALIDATION: Record<string, InputStatusType> = {
+  receiverAddress: INPUT_STATUS_DEFAULT,
+  tokenContractAddress: INPUT_STATUS_DEFAULT,
+  tokenAmount: INPUT_STATUS_DEFAULT,
+  purpose: INPUT_STATUS_DEFAULT,
+}
 
+// TODO: test inputs validation after db will be from api-v1
 export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
-  const dispatch = useDispatch()
-
+  const { userAddress, userTokensBalances } = useUserContext()
+  const { bug } = useToasterContext()
+  const {
+    contractAddresses: { councilAddress },
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
 
-  const { isActionActive } = useSelector((state: State) => state.loading)
-
   const [form, setForm] = useState(INIT_FORM)
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FOR_VALIDATION)
+  const [selectedToken, setSelectedToken] = useState<TokenMetadataType | null>()
 
-  const ddItems = useMemo(() => itemsForDropDown.map(({ text }) => text), [])
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [tokenType, setTokenType] = useState<DropdownItemType | undefined>()
-  const [tokenDecimals, setTokenDecimals] = useState<number | null>(null)
+  const { receiverAddress, tokenContractAddress, tokenAmount, purpose } = form
 
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>({
-    receiverAddress: '',
-    tokenContractAddress: '',
-    tokenAmount: '',
-    tokenId: '',
-    purpose: '',
-  })
+  // transfer tokens council action
+  const transferTokensContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: TRANSFER_TOKENS_ACTION,
+      actionFn: async () => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
 
-  const { receiverAddress, tokenContractAddress, tokenAmount, tokenId, purpose } = form
+        if (!councilAddress) {
+          bug('Wrong council address')
+          return null
+        }
+
+        if (!selectedToken) {
+          bug('Please enter correct token address')
+          return null
+        }
+
+        return await transferTokens(
+          receiverAddress,
+          tokenContractAddress,
+          Number(tokenAmount),
+          selectedToken.type,
+          selectedToken.id,
+          purpose,
+          selectedToken.decimals,
+          councilAddress,
+        )
+      },
+    }),
+    [userAddress, councilAddress, selectedToken, receiverAddress, tokenContractAddress, tokenAmount, purpose],
+  )
+
+  const { action: handleTransferTokens } = useContractAction(transferTokensContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    try {
+      await handleTransferTokens()
 
-    const typeOfToken = tokenType?.value as TokenType | undefined
-    if (!typeOfToken || !tokenDecimals) return
-
-    dispatch(
-      transferTokens(
-        receiverAddress,
-        tokenContractAddress,
-        +tokenAmount,
-        typeOfToken,
-        +tokenId,
-        purpose,
-        tokenDecimals,
-      ),
-    )
-
-    setTokenDecimals(null)
-    setTokenType(undefined)
-    setDdIsOpen(false)
-    setForm(INIT_FORM)
-    setFormInputStatus({
-      receiverAddress: '',
-      tokenContractAddress: '',
-      tokenAmount: '',
-      tokenId: '',
-      purpose: '',
-    })
+      setForm(INIT_FORM)
+      setFormInputStatus(INIT_FOR_VALIDATION)
+    } catch (e) {
+      console.error('CouncilFormTransferTokens', e)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -113,92 +120,128 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
     })
   }
 
-  const handleBlur = validateFormField(setFormInputStatus)
-  const handleBlurAddress = validateFormAddress(setFormInputStatus)
-  const handleBlurTokenAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value: tokenAddress, name } = e.target
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-    const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+  const {
+    validateText,
+    receiverAddressProps,
+    receiverAddressSettings,
+    tokenContractAddressProps,
+    tokenContractAddressSettings,
+    tokenAmountProps,
+    tokenAmountSettings,
+  } = useMemo(() => {
+    const validateText = validateFormField(setFormInputStatus)
+    const validateAddress = validateFormAddress(setFormInputStatus)
+    const validateTokenAmount = (newTokenAmount: number, newTokenAddress?: string) => {
+      const userTokenBalance = getUserTokenBalanceByAddress({
+        userTokensBalances,
+        tokenAddress: newTokenAddress ?? tokenContractAddress,
+      })
+      setFormInputStatus((prev) => ({
+        ...prev,
+        tokenAmount:
+          newTokenAmount > 0 && newTokenAmount <= userTokenBalance ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+      }))
+    }
 
-    setFormInputStatus((prev) => {
-      const isValidAddress = token ? 'success' : 'error'
-      return { ...prev, [name]: isValidAddress }
-    })
+    const receiverAddressProps: InputProps = {
+      name: 'receiverAddress',
+      value: receiverAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
 
-    if (token) setTokenDecimals(token.decimals)
+        // validate value
+        const { value: receiverAddress, name } = e.target
+        if (receiverAddress === userAddress) {
+          setFormInputStatus((prev) => ({ ...prev, [name]: INPUT_STATUS_ERROR }))
+        } else {
+          validateAddress(e)
+        }
+      },
+      required: true,
+    }
+
+    const tokenContractAddressProps: InputProps = {
+      name: 'tokenContractAddress',
+      value: tokenContractAddress,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+
+        // validate value
+        const { value: tokenAddress, name } = e.target
+        const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
+
+        setFormInputStatus((prev) => ({
+          ...prev,
+          [name]: token ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
+
+        setSelectedToken(token)
+
+        // revalidate token amount after token change if it's was entered
+        if (formInputStatus.tokenAmount !== INPUT_STATUS_DEFAULT) {
+          validateTokenAmount(Number(tokenAmount), tokenAddress)
+        }
+      },
+      required: true,
+    }
+
+    const tokenAmountProps: InputProps = {
+      type: 'number',
+      name: 'tokenAmount',
+      value: tokenAmount,
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(e)
+
+        // validate value
+        validateTokenAmount(Number(e.target.value))
+      },
+      required: true,
+    }
+
+    return {
+      validateText,
+      receiverAddressProps,
+      receiverAddressSettings: {
+        inputStatus: formInputStatus.receiverAddress,
+      },
+      tokenContractAddressProps,
+      tokenContractAddressSettings: {
+        inputStatus: formInputStatus.tokenContractAddress,
+      },
+      tokenAmountProps,
+      tokenAmountSettings: {
+        inputStatus: formInputStatus.tokenAmount,
+      },
+    }
+  }, [
+    formInputStatus.receiverAddress,
+    formInputStatus.tokenAmount,
+    formInputStatus.tokenContractAddress,
+    receiverAddress,
+    tokenAmount,
+    tokenContractAddress,
+    tokensMetadata,
+    userAddress,
+    userTokensBalances,
+  ])
+
+  const tokenTypeProps = {
+    name: 'tokenType',
+    value: selectedToken?.type ?? 'No token selected',
+    onChange: () => null,
+    disabled: true,
   }
 
-  const handleClickDropdownItem = useCallback(
-    (e: string) => {
-      const chosenItem = itemsForDropDown.filter((item) => item.text === e)[0]
-      setTokenType(chosenItem)
-      setDdIsOpen(!ddIsOpen)
-    },
-    [ddIsOpen],
-  )
-
-  const receiverAddressProps = {
-    name: 'receiverAddress',
-    value: receiverAddress,
-    onBlur: handleBlurAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurAddress(e)
-    },
-    required: true,
+  const tokenNameProps = {
+    name: 'tokenName',
+    value: selectedToken?.name ?? 'No token selected',
+    onChange: () => null,
+    disabled: true,
   }
 
-  const receiverAddressSettings = {
-    inputStatus: formInputStatus.receiverAddress,
-  }
-
-  const tokenContractAddressProps = {
-    name: 'tokenContractAddress',
-    value: tokenContractAddress,
-    onBlur: handleBlurTokenAddress,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlurTokenAddress(e)
-    },
-    required: true,
-  }
-
-  const tokenContractAddressSettings = {
-    inputStatus: formInputStatus.tokenContractAddress,
-  }
-
-  const tokenAmountProps: InputProps = {
-    type: 'number',
-    name: 'tokenAmount',
-    value: tokenAmount,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
-
-  const tokenAmountSettings = {
-    inputStatus: formInputStatus.tokenAmount,
-  }
-
-  const tokenIdProps: InputProps = {
-    type: 'number',
-    name: 'tokenId',
-    value: tokenId,
-    onBlur: (e: React.ChangeEvent<HTMLInputElement>) => handleBlur(e),
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleChange(e)
-      handleBlur(e)
-    },
-    required: true,
-  }
-
-  const tokenIdSettings = {
-    inputStatus: formInputStatus.tokenId,
-  }
-  // TODO: need to add a sequence of fields
   return (
     <CouncilFormStyled onSubmit={handleSubmit}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
@@ -226,19 +269,12 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
 
         <div>
           <label>Token Type (FA12, FA2, TEZ)</label>
-          <DropDown
-            placeholder={'Choose token type'}
-            isOpen={ddIsOpen}
-            setIsOpen={setDdIsOpen}
-            itemSelected={tokenType?.text}
-            items={ddItems}
-            clickOnItem={handleClickDropdownItem}
-          />
+          <Input inputProps={tokenTypeProps} settings={tokenContractAddressSettings} />
         </div>
 
         <div>
-          <label>Token ID</label>
-          <Input inputProps={tokenIdProps} settings={tokenIdSettings} />
+          <label>Token Name</label>
+          <Input inputProps={tokenNameProps} settings={tokenContractAddressSettings} />
         </div>
       </div>
       <div className="textarea-group">
@@ -249,15 +285,14 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
           name="purpose"
           onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
             handleChange(e)
-            handleBlur(e, maxLength.requestPurposeMaxLength)
+            validateText(e, maxLength.requestPurposeMaxLength)
           }}
-          onBlur={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleBlur(e, maxLength.requestPurposeMaxLength)}
           inputStatus={formInputStatus.purpose}
           textAreaMaxLimit={maxLength.requestPurposeMaxLength}
         />
       </div>
       <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isActionActive}>
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
           <Icon id="transfer_tokens" />
           Transfer Tokens
         </NewButton>

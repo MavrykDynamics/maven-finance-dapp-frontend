@@ -227,7 +227,7 @@ export const DropdownContainer = styled.div<{ theme: MavrykTheme }>`
     line-height: 21px;
     color: ${({ theme }) => theme.regularText};
     flex-shrink: 0;
-    margin-right: 16px;
+    margin-right: 10px;
   }
 `
 

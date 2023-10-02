@@ -78,8 +78,7 @@ export const useLoansTransactionHistory = ({
 
   // always load new txHistory on market | vault address change
   useQueryWithRefetch(getLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
-    skip:
-      (!userAddress && !vaultAddress) || !marketTokenAddress || Boolean(transactionHistoryIndexer.list[currentPage]),
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress,
     variables: {
       marketTokenAddress,
       userAddress,
