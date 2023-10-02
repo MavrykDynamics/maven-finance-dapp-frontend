@@ -105,6 +105,7 @@ export const defaultLoadingState: LoadingState = {
 
 export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
   maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
+  dappContracts: [],
   minimumStakedMvkBalance: 0,
   dappTotalValueLocked: null,
   xtzBakers: null,

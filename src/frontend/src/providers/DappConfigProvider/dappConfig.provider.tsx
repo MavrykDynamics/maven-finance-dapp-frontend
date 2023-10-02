@@ -110,10 +110,12 @@ const DappConfigProvider = ({ children }: Props) => {
       try {
         const parsedConfig = dappConfigSchema.parse(data)
 
-        const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(parsedConfig)
+        const { maxLenghts, minimumStakedMvkBalance, dappContracts, mvkFaucetAddress } =
+          normalizeInitialConfigData(parsedConfig)
         setDappConfigCtxState((prev) => ({
           ...prev,
           maxLenghts,
+          dappContracts,
           minimumStakedMvkBalance,
           mvkFaucetAddress,
         }))

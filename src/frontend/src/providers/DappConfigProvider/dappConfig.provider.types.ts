@@ -32,6 +32,7 @@ export type ActionTypes =
 export type DappConfigContext = {
   // data
   maxLengths: DappMaxLengths
+  dappContracts: Array<{ name: string; address: string }>
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number
   dappTotalValueLocked: number | null
@@ -63,6 +64,7 @@ export type DappConfigContext = {
 export type DappConfigContextStateType = Pick<
   DappConfigContext,
   | 'maxLengths'
+  | 'dappContracts'
   | 'mvkFaucetAddress'
   | 'xtzBakers'
   | 'minimumStakedMvkBalance'
