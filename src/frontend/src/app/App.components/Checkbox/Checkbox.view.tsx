@@ -17,7 +17,7 @@ export default function Checkbox({ id, className = '', checked, onChangeHandler,
   return (
     <CheckboxStyled className={`${className} ${disabled ? 'disabled' : ''}`}>
       <input type="checkbox" id={id} onChange={onChangeHandler} checked={Boolean(checked)} disabled={disabled} />
-      <label htmlFor={id}>
+      <label htmlFor={id} id="checkbox-label">
         <Icon id="check-fill" />
       </label>
       {children ? <div className="children">{children}</div> : null}
