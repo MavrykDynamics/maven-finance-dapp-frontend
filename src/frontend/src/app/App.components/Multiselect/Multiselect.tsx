@@ -9,9 +9,11 @@ import {
   MULTISELECT_ACTION_REMOVE,
   MULTISELECT_ACTION_SELECT,
   MULTISELECT_SELECT_ALL_OPTION_VALUE,
-  getMultiselectStyling,
 } from './Multiselect.consts'
 import colors from 'styles/colors'
+
+// utils
+import { getMultiselectStyling } from './Multiselect.utils'
 
 // types
 import { MultiselectItemType, MultiselectProps } from './Multiselect.types'
@@ -103,16 +105,15 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
         if (isAllOptionClicked) return selectHandler(options, actionMeta)
 
         // if we clicked on option, and it was last non-selected option, select all automatically
-        if (totalOptionsAmount === newSelectedOptionsAmount)
+        if (totalOptionsAmount === newSelectedOptionsAmount) {
+          const optionAll = options.find(({ value }) => value === MULTISELECT_SELECT_ALL_OPTION_VALUE)
+
           return selectHandler(
             // need to use as to keep 'all' option on the 1st place
-            (
-              [options.find(({ value }) => value === MULTISELECT_SELECT_ALL_OPTION_VALUE)].filter(
-                Boolean,
-              ) as readonly ItemType[]
-            ).concat(newSelectedOptions),
+            optionAll ? [optionAll, ...newSelectedOptions] : newSelectedOptions,
             actionMeta,
           )
+        }
       }
 
       // deselect option in dd menu or remove option in control block
@@ -155,8 +156,8 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
       const isOptionSelected = Boolean(multiSelectContext.selectValue.find(({ value }) => value === option.value))
       return (
         <MultiselectMenuOptionStyled>
-          <Checkbox checked={isOptionSelected} onChangeHandler={() => null} id={option.value} />{' '}
-          {option.image ? <ImageWithPlug imageLink={option.image} alt={''} /> : null}{' '}
+          <Checkbox checked={isOptionSelected} onChangeHandler={() => null} id={option.value} />
+          {option.image ? <ImageWithPlug imageLink={option.image} alt={`${option.label} image`} /> : null}
           <div className="option-text">{option.label}</div>
         </MultiselectMenuOptionStyled>
       )
@@ -191,7 +192,6 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
             {selectedOptions.map((option) => {
               return (
                 <MultiselectHeaderOptionStyled onClick={(e) => handleUnselectOption(e, option.value)}>
-                  {option.image ? <ImageWithPlug imageLink={option.image} noImageIconId="no-image" alt={''} /> : null}{' '}
                   <div className="option-text">{option.label}</div>
                   <div className="unselect-option">
                     <Icon id="navigation-menu_close" />

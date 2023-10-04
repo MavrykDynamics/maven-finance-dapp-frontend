@@ -123,6 +123,14 @@ export const BreakGlassCouncilFormStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const CouncilFormStyled = styled.div<{ theme: MavrykTheme }>``
+export const CouncilFormStyled = styled.div<{ theme: MavrykTheme }>`
+  .form-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    column-gap: 20px;
+    row-gap: 38px;
+  }
+`
 
 export const CouncilFormHeaderStyled = styled.div<{ theme: MavrykTheme }>``
