@@ -69,6 +69,7 @@ const ReactSelectReplacedComponents = {
  *
  * NOTE:
  *    - component is generic cuz search might require searching by some other additional fields
+ *    - cuz of generic option type, we need to handle 'all' option outside the multiselect, just add it before all options to the array, OPTION 'all' SHOULD HAVE value: MULTISELECT_SELECT_ALL_OPTION_VALUE, all other fields are as you want
  */
 export const Multiselect = <ItemType extends MultiselectItemType = MultiselectItemType>({
   options,
