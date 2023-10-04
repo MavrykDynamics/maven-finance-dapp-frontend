@@ -65,8 +65,8 @@ export const SateliteSideBarFAQ = () => (
 
 const SidebarUserEditButton = ({ image, name }: { image: string; name: string }) => {
   return (
-    <SidebarUserButton>
-      <ImageWithPlug imageLink={image} alt="my satellite profile avatar" />
+    <SidebarUserButton title={name}>
+      <ImageWithPlug imageLink={image} alt="your satellite profile avatar" />
       <div>
         <div className="name">{name}</div>
         <div className="link">View Satellite Profile</div>
@@ -94,16 +94,14 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
       <SideBarSection>
         {isButton ? (
           <Link to="/become-satellite">
-            <Button kind={isSatellite ? BUTTON_SECONDARY : BUTTON_PRIMARY} disabled={!userAddress} form={BUTTON_WIDE}>
-              {isSatellite && satelliteAvatar && userSatelliteName ? (
-                <SidebarUserEditButton name={userSatelliteName} image={satelliteAvatar} />
-              ) : (
-                <>
-                  <Icon id="satellite-stroke" />
-                  Become a Satellite
-                </>
-              )}
-            </Button>
+            {isSatellite && satelliteAvatar && userSatelliteName ? (
+              <SidebarUserEditButton name={userSatelliteName} image={satelliteAvatar} />
+            ) : (
+              <Button kind={BUTTON_PRIMARY} disabled={!userAddress} form={BUTTON_WIDE}>
+                <Icon id="satellite-stroke" />
+                Become a Satellite
+              </Button>
+            )}
           </Link>
         ) : null}
 
