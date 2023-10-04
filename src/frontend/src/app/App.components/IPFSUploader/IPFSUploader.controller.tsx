@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { create } from 'ipfs-http-client'
 
 // view
@@ -9,6 +9,7 @@ import { isHexadecimalByteString } from '../../../utils/validatorFunctions'
 
 // hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 export type IPFSUploaderTypeFile = 'document' | 'image'
 type IPFSUploaderProps = {
@@ -27,7 +28,7 @@ const projectId = process.env.REACT_APP_IPFS_PROJECT_ID
 const projectSecret = process.env.REACT_APP_IPFS_API_KEY
 const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
 
-const client = create({
+export const ipfsClient = create({
   host: 'ipfs.infura.io',
   port: 5001,
   protocol: 'https',
@@ -48,34 +49,16 @@ export const IPFSUploader = ({
   className,
 }: IPFSUploaderProps) => {
   const { bug } = useToasterContext()
+  const { canUseIpfs } = useDappConfigContext()
 
-  const isKeysChecked = useRef(false)
   const [isUploading, setIsUploading] = useState(false)
   const [imageOk, setImageOk] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(true)
   const inputFile = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    const checkIPFS = async () => {
-      try {
-        // check whether keys are valid, if keys are invalid it will throw 401 status error
-        if (!isKeysChecked.current) await client.version()
-        setIsDisabled(Boolean(disabled))
-      } catch (e) {
-        // disable if keys are invalid
-        setIsDisabled(true)
-        bug('IPFS auth keys are invalid, image selection will be disabled', 'Keys are invalid')
-      } finally {
-        isKeysChecked.current = true
-      }
-    }
-    checkIPFS()
-  }, [disabled])
 
   async function handleUpload(file: File) {
     try {
       setIsUploading(true)
-      const added = await client.add(file)
+      const added = await ipfsClient.add(file)
       const image = `https://cloudflare-ipfs.com/ipfs/${added.path}`
 
       setIpfsImageUrl(image)
@@ -106,7 +89,7 @@ export const IPFSUploader = ({
       typeFile={typeFile}
       className={className}
       title={title}
-      disabled={isDisabled}
+      disabled={disabled || !canUseIpfs}
       listNumber={listNumber}
       imageIpfsUrl={imageIpfsUrl}
       setIpfsImageUrl={setIpfsImageUrl}
