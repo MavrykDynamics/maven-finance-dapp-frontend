@@ -1,8 +1,15 @@
-import { useMemo, useState } from 'react'
-import Select, { ActionMeta, FormatOptionLabelMeta } from 'react-select'
+import { useCallback, useMemo, useState } from 'react'
+import Select, { ActionMeta, FormatOptionLabelMeta, ControlProps, GroupBase } from 'react-select'
+import classNames from 'classnames'
 
 // consts
-import { MULTISELECT_SELECT_ALL_OPTION_VALUE, getMultiselectStyling } from './Multiselect.consts'
+import {
+  MULTISELECT_ACTION_DESELECT,
+  MULTISELECT_ACTION_REMOVE,
+  MULTISELECT_ACTION_SELECT,
+  MULTISELECT_SELECT_ALL_OPTION_VALUE,
+  getMultiselectStyling,
+} from './Multiselect.consts'
 import colors from 'styles/colors'
 
 // types
@@ -13,30 +20,44 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // view
 import Checkbox from '../Checkbox/Checkbox.view'
+import Icon from '../Icon/Icon.view'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
 import {
-  CustomControlComponent,
   MultiselectBackdropStyled,
   MultiselectHeaderStyled,
   MultiselectMenuStyled,
   MultiselectOptionStyled,
   MultiselectOptionTagStyled,
-  // MultiselectOptionsPlaceholderStyled,
+  MultiselectOptionsControlStyled,
   MultiselectStyled,
 } from './Multiselect.style'
-import Icon from '../Icon/Icon.view'
-import classNames from 'classnames'
+import { FilterOptionOption } from 'react-select/dist/declarations/src/filters'
+
+const CustomControlComponent = <ItemType extends MultiselectItemType>({
+  selectProps,
+}: ControlProps<ItemType, true, GroupBase<ItemType>>) => {
+  const inputOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+
+    selectProps.onInputChange(value, {
+      action: 'input-change',
+      prevInputValue: selectProps.inputValue,
+    })
+  }
+  return (
+    <MultiselectOptionsControlStyled>
+      <Icon id="search" />
+      <input type="search" placeholder="Search option" value={selectProps.inputValue} onChange={inputOnChange} />
+    </MultiselectOptionsControlStyled>
+  )
+}
 
 export const Multiselect = <ItemType extends MultiselectItemType = MultiselectItemType>({
   options,
   selectedOptions,
   selectHandler,
-  // selectAllHandler,
   disabled,
   placeholder,
-  // search props
-  withSearch,
-  searchPlaceholder,
   searchHandler,
 }: MultiselectProps<ItemType>) => {
   const {
@@ -44,64 +65,72 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
   } = useDappConfigContext()
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleSelect = (newSelectedOptions: ReadonlyArray<ItemType>, actionMeta: ActionMeta<ItemType>) => {
-    const { action, option, removedValue } = actionMeta
+  const handleSelect = useCallback(
+    (newSelectedOptions: ReadonlyArray<ItemType>, actionMeta: ActionMeta<ItemType>) => {
+      const { action, option, removedValue } = actionMeta
 
-    const isAllClicked =
-      (option && option.value === MULTISELECT_SELECT_ALL_OPTION_VALUE) ||
-      (removedValue && removedValue.value === MULTISELECT_SELECT_ALL_OPTION_VALUE)
+      const isAllOptionClicked =
+        (option && option.value === MULTISELECT_SELECT_ALL_OPTION_VALUE) ||
+        (removedValue && removedValue.value === MULTISELECT_SELECT_ALL_OPTION_VALUE)
 
-    // click on all option
-    if (isAllClicked) {
-      // select all option
-      if (action === 'select-option') {
-        return selectHandler(options, actionMeta)
+      const totalOptionsAmount = options.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE).length
+      const newSelectedOptionsAmount = newSelectedOptions.filter(
+        ({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE,
+      ).length
+
+      // select option in dd menu
+      if (action === MULTISELECT_ACTION_SELECT) {
+        // if we clicked 'all' option -> select all
+        if (isAllOptionClicked) return selectHandler(options, actionMeta)
+
+        // if we clicked on option, and it was last non-selected option, select all automatically
+        if (totalOptionsAmount === newSelectedOptionsAmount)
+          return selectHandler(
+            // need to use as to keep 'all' option on the 1st place
+            (
+              [options.find(({ value }) => value === MULTISELECT_SELECT_ALL_OPTION_VALUE)].filter(
+                Boolean,
+              ) as readonly ItemType[]
+            ).concat(newSelectedOptions),
+            actionMeta,
+          )
       }
-      // deselect all option (remove-value is click on 'x' in header)
-      else if (action === 'deselect-option' || action === 'remove-value') {
-        return selectHandler([], actionMeta)
+
+      // deselect option in dd menu or remove option in control block
+      if (action === MULTISELECT_ACTION_DESELECT || action === MULTISELECT_ACTION_REMOVE) {
+        // if click on all, remove selection from all options
+        if (isAllOptionClicked) return selectHandler([], actionMeta)
+
+        // if we HAD selected all options, and we deselected one, need to deselect all option also
+        // newSelectedOptionsAmount + 1, cuz newSelectedOptionsAmount has already applied deleselect operation
+        if (totalOptionsAmount === newSelectedOptionsAmount + 1)
+          return selectHandler(
+            newSelectedOptions.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE),
+            actionMeta,
+          )
       }
-    }
 
-    // check whether we have selected all options (need to filter out 'all' cuz it's 'fake' option)
-    const isAllOptionsSelected =
-      newSelectedOptions.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE).length +
-        (action === 'select-option' ? 0 : 1) ===
-      options.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE).length
+      // perform regular select handling
+      selectHandler(newSelectedOptions, actionMeta)
+    },
+    [options, selectHandler],
+  )
 
-    console.log({ isAllOptionsSelected, action, newSelectedOptions, options })
-
-    if (isAllOptionsSelected) {
-      // when we selected last non-selected option, we need to mark 'all' as selected too
-      if (action === 'select-option') {
-        return selectHandler(
-          newSelectedOptions.concat(options.find(({ value }) => value === MULTISELECT_SELECT_ALL_OPTION_VALUE) ?? []),
-          actionMeta,
-        )
-      }
-      // if we have selected all options, and we deselect one option, we need to remove selection from 'all'
-      else if (action === 'deselect-option' || action === 'remove-value') {
-        console.log({
-          newSelectedOptions,
-          nnn: newSelectedOptions.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE),
-        })
-        return selectHandler(
-          newSelectedOptions.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE),
-          actionMeta,
-        )
-      }
-    }
-
-    // perform regular select handling
-    selectHandler(newSelectedOptions, actionMeta)
-  }
+  // handling custom search functionality
+  const filterOption = useCallback(
+    (option: FilterOptionOption<ItemType>, inputValue: string) =>
+      searchHandler?.(option.data, inputValue) ?? option.label.toLowerCase().includes(inputValue),
+    [searchHandler],
+  )
 
   // custom checked for selected option state, need it cuz of 'all' option functionality
-  const checkWhetherOptionIsSelected = (option: ItemType) =>
-    Boolean(selectedOptions.find(({ value }) => value === option.value))
+  const checkWhetherOptionIsSelected = useCallback(
+    (option: ItemType) => Boolean(selectedOptions.find(({ value }) => value === option.value)),
+    [selectedOptions],
+  )
 
   // custom components for options
-  const formatOptionLabel = (option: ItemType, multiSelectContext: FormatOptionLabelMeta<ItemType>) => {
+  const formatOptionLabel = useCallback((option: ItemType, multiSelectContext: FormatOptionLabelMeta<ItemType>) => {
     // styled component for option inside menu
     if (multiSelectContext.context === 'menu') {
       const isOptionSelected = Boolean(multiSelectContext.selectValue.find(({ value }) => value === option.value))
@@ -114,35 +143,29 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
       )
     }
 
-    // styled component for selected option (tag) inside header (control)
-    if (multiSelectContext.context === 'value') {
-      return (
-        <MultiselectOptionTagStyled>
-          {option.image ? <ImageWithPlug imageLink={option.image} noImageIconId="no-image" alt={''} /> : null}{' '}
-          <div className="option-text">{option.label}</div>
-        </MultiselectOptionTagStyled>
-      )
-    }
-
     return option.label
-  }
+  }, [])
+
+  const handleClearAll = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      e.stopPropagation()
+      selectHandler([])
+    },
+    [selectHandler],
+  )
+
+  const handleUnselectOption = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>, optionValue: string) => {
+      e.stopPropagation()
+      selectHandler(selectedOptions.filter(({ value }) => value !== optionValue))
+    },
+    [selectHandler, selectedOptions],
+  )
 
   const multiselectStyledStyles = useMemo(() => getMultiselectStyling<ItemType>(colors[themeSelected]), [themeSelected])
 
-  const handleClearAll = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-
-    selectHandler([])
-  }
-
-  const handleUnselectOption = (e: React.MouseEvent<HTMLDivElement>, optionValue: string) => {
-    e.stopPropagation()
-
-    selectHandler(selectedOptions.filter(({ value }) => value !== optionValue))
-  }
-
   return (
-    <MultiselectStyled>
+    <MultiselectStyled className={classNames({ disabled })}>
       <MultiselectHeaderStyled onClick={() => setIsOpen(!isOpen)}>
         {selectedOptions.length > 0 ? (
           <div className="selected-options-list">
@@ -188,6 +211,7 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
               menuIsOpen
               isMulti
               onChange={handleSelect}
+              filterOption={filterOption}
               isOptionSelected={checkWhetherOptionIsSelected}
               formatOptionLabel={formatOptionLabel}
               components={{
@@ -200,28 +224,6 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
           </MultiselectMenuStyled>
         </>
       ) : null}
-
-      {/* <Select
-        value={selectedOptions}
-        onChange={handleSelect}
-        options={options}
-        isOptionSelected={checkWhetherOptionIsSelected}
-        formatOptionLabel={formatOptionLabel}
-        placeholder={placeholder}
-        isDisabled={disabled}
-        isSearchable={withSearch}
-        hideSelectedOptions={false}
-        closeMenuOnSelect={false}
-        menuShouldScrollIntoView
-        openMenuOnClick
-        controlShouldRenderValue
-        styles={multiselectStyledStyles}
-        classNames={{
-          menuList: () => 'scroll-block',
-          dropdownIndicator: (props) => (props.selectProps.menuIsOpen ? 'menu-open' : ''),
-        }}
-        isMulti
-      /> */}
     </MultiselectStyled>
   )
 }

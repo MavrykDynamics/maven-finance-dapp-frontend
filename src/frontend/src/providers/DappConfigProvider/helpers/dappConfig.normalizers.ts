@@ -3,7 +3,7 @@ import { DappMaxLengths } from '../dappConfig.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 import { DappConfigGqlType } from './dappConfig.schemes'
-import { getSeparateCamelCase } from 'utils/parse'
+import { CAPITALIZE_CASE, parseCamelCaseString } from 'utils/parse'
 
 export const normalizerMaxLenghts = (data: DappConfigGqlType): DappMaxLengths => {
   const {
@@ -63,7 +63,7 @@ export const normalizeInitialConfigData = (indexerData: DappConfigGqlType) => {
     dappContracts:
       indexerData.governance[0]?.general_contracts?.map(({ contract_address, contract_name }) => ({
         address: contract_address,
-        name: getSeparateCamelCase(contract_name),
+        name: parseCamelCaseString(contract_name, CAPITALIZE_CASE),
       })) ?? [],
     mvkFaucetAddress: indexerData.mvk_faucet[0]?.address ?? null,
     minimumStakedMvkBalance: convertNumberForClient({

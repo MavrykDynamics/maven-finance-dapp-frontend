@@ -7,30 +7,12 @@ export type MultiselectItemType = {
   image?: string
 }
 
-// Common props type for Multiselect component
-type CommonProps<ItemType extends MultiselectItemType> = {
+// Multiselect props type
+export type MultiselectProps<ItemType extends MultiselectItemType> = {
   options: Array<ItemType>
   selectedOptions: Array<ItemType>
   selectHandler: (item: ReadonlyArray<ItemType>, actionMeta?: ActionMeta<ItemType>) => void
+  searchHandler?: (option: ItemType, searchString: string) => boolean
   disabled?: boolean
   placeholder: string
 }
-
-// Props type for Multiselect without search
-type RegularMultiselect<ItemType extends MultiselectItemType> = CommonProps<ItemType> & {
-  withSearch?: never
-  searchPlaceholder?: never
-  searchHandler?: never
-}
-
-// Props type for Multiselect with search
-type SearchMultiselect<ItemType extends MultiselectItemType> = CommonProps<ItemType> & {
-  withSearch: true
-  searchPlaceholder: string
-  searchHandler: (searchString: string) => void
-}
-
-// Final Multiselect props type
-export type MultiselectProps<ItemType extends MultiselectItemType> =
-  | RegularMultiselect<ItemType>
-  | SearchMultiselect<ItemType>

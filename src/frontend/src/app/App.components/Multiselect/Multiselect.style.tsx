@@ -1,13 +1,17 @@
 import styled from 'styled-components'
-import { ThemeColorsType } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
-import { ControlProps, GroupBase } from 'react-select'
-import Icon from '../Icon/Icon.view'
-import { MultiselectItemType } from './Multiselect.types'
 
 export const MultiselectStyled = styled.div<{ theme: MavrykTheme }>`
   width: 100%;
   position: relative;
+
+  &.disabled {
+    cursor: not-allowed;
+
+    > div {
+      pointer-events: none;
+    }
+  }
 `
 
 export const MultiselectOptionsControlStyled = styled.div<{ theme: MavrykTheme }>`
@@ -56,31 +60,13 @@ export const MultiselectOptionsControlStyled = styled.div<{ theme: MavrykTheme }
   svg {
     width: 20px;
     height: 20px;
+    // TODO: redo search icon in figma
     stroke: ${({ theme }) => theme.strokeForForms};
+    fill: none;
   }
 `
 
-export const CustomControlComponent = <ItemType extends MultiselectItemType>({
-  selectProps,
-}: ControlProps<ItemType, true, GroupBase<ItemType>>) => {
-  console.log({ selectProps })
-  const inputOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target
-
-    selectProps.onInputChange(value, {
-      action: 'input-change',
-      prevInputValue: selectProps.inputValue,
-    })
-  }
-  return (
-    <MultiselectOptionsControlStyled>
-      <Icon id="search" />
-      <input type="search" placeholder="Search option" value={selectProps.inputValue} onChange={inputOnChange} />
-    </MultiselectOptionsControlStyled>
-  )
-}
-
-export const MultiselectOptionStyled = styled.div<{ theme: ThemeColorsType }>`
+export const MultiselectOptionStyled = styled.div<{ theme: MavrykTheme }>`
   cursor: pointer;
   width: 100%;
   column-gap: 10px;
@@ -94,7 +80,6 @@ export const MultiselectOptionStyled = styled.div<{ theme: ThemeColorsType }>`
 
     font-size: 14px;
     font-weight: 500;
-    text-transform: capitalize;
 
     color: ${({ theme }) => theme.placeholders};
   }
@@ -106,7 +91,7 @@ export const MultiselectOptionStyled = styled.div<{ theme: ThemeColorsType }>`
   }
 `
 
-export const MultiselectOptionTagStyled = styled.div<{ theme: ThemeColorsType }>`
+export const MultiselectOptionTagStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
 
@@ -138,7 +123,6 @@ export const MultiselectOptionTagStyled = styled.div<{ theme: ThemeColorsType }>
     font-style: normal;
     font-weight: 500;
     line-height: 24px;
-    text-transform: capitalize;
 
     color: ${({ theme }) => theme.backgroundColor};
   }
@@ -156,7 +140,7 @@ export const MultiselectOptionTagStyled = styled.div<{ theme: ThemeColorsType }>
   }
 `
 
-export const MultiselectHeaderStyled = styled.div<{ theme: ThemeColorsType }>`
+export const MultiselectHeaderStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
 
@@ -249,7 +233,7 @@ export const MultiselectHeaderStyled = styled.div<{ theme: ThemeColorsType }>`
   }
 `
 
-export const MultiselectMenuStyled = styled.div<{ theme: ThemeColorsType }>`
+export const MultiselectMenuStyled = styled.div<{ theme: MavrykTheme }>`
   .space {
     width: 100%;
     height: 5px;
@@ -262,7 +246,7 @@ export const MultiselectMenuStyled = styled.div<{ theme: ThemeColorsType }>`
   z-index: 2;
 `
 
-export const MultiselectBackdropStyled = styled.div<{ theme: ThemeColorsType }>`
+export const MultiselectBackdropStyled = styled.div<{ theme: MavrykTheme }>`
   position: fixed;
   z-index: 1;
 

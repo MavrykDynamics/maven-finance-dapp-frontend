@@ -4,6 +4,10 @@ import { MultiselectItemType } from './Multiselect.types'
 
 export const MULTISELECT_SELECT_ALL_OPTION_VALUE = 'SELECT_ALL'
 
+export const MULTISELECT_ACTION_SELECT = 'select-option'
+export const MULTISELECT_ACTION_REMOVE = 'remove-value'
+export const MULTISELECT_ACTION_DESELECT = 'deselect-option'
+
 export const getMultiselectStyling = <ItemType extends MultiselectItemType>(
   themeColors: ThemeColorsType,
 ): StylesConfig<ItemType, true, GroupBase<ItemType>> => {

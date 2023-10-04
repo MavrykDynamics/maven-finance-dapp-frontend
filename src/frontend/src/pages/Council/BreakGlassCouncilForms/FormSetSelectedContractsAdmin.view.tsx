@@ -1,28 +1,31 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { Multiselect } from 'app/App.components/Multiselect/Multiselect'
 
 // utils
 import { setSelectedContractsAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { handleBgCouncilContractSearch } from '../helpers/commonCouncil.utils'
 import { validateFormAddress } from 'utils/validatorFunctions'
 
 // consts
 import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { MULTISELECT_SELECT_ALL_OPTION_VALUE } from 'app/App.components/Multiselect/Multiselect.consts'
 import { SET_SELECTED_CONTRACTS_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+
+// types
+import { CouncilContractsMultiselectOptionType } from '../helpers/council.types'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { Multiselect } from 'app/App.components/Multiselect/Multiselect'
-import { CouncilContractsMultiselectOptionType } from '../helpers/council.types'
-import { MULTISELECT_SELECT_ALL_OPTION_VALUE } from 'app/App.components/Multiselect/Multiselect.consts'
 
 const INIT_FORM: { newAdminAddress: string; targetContracts: Array<CouncilContractsMultiselectOptionType> } = {
   newAdminAddress: '',
@@ -46,7 +49,7 @@ export function FormSetSelectedContractsAdminView() {
     () =>
       [
         {
-          label: 'all',
+          label: 'All',
           value: MULTISELECT_SELECT_ALL_OPTION_VALUE,
           address: '',
         },
@@ -108,13 +111,11 @@ export function FormSetSelectedContractsAdminView() {
     }
   }
 
-  const handleContractSelect = (targetContracts: ReadonlyArray<CouncilContractsMultiselectOptionType>) => {
-    console.log({ targetContracts })
-    // const newContracts = contracts.
+  const handleContractSelect = useCallback((targetContracts: ReadonlyArray<CouncilContractsMultiselectOptionType>) => {
     setForm((prev) => {
       return { ...prev, targetContracts: [...targetContracts] }
     })
-  }
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setForm((prev) => {
@@ -165,6 +166,7 @@ export function FormSetSelectedContractsAdminView() {
               options={contractsSelectOptions}
               selectedOptions={targetContracts}
               selectHandler={handleContractSelect}
+              searchHandler={handleBgCouncilContractSearch}
               placeholder="Choose target contracts"
             />
           </div>

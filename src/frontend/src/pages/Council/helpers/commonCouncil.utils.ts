@@ -1,3 +1,4 @@
+import { CouncilContractsMultiselectOptionType } from './council.types'
 import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
 import {
   MY_PENDING_COUNSIL_TAB,
@@ -20,3 +21,7 @@ export const parseCounsilTab = (tabId = ''): CouncilTabsType => {
       return null
   }
 }
+
+export const handleBgCouncilContractSearch = (contract: CouncilContractsMultiselectOptionType, searchValue: string) =>
+  contract.label.toLowerCase().includes(searchValue.toLowerCase()) ||
+  contract.address.toLowerCase().includes(searchValue.toLowerCase())
