@@ -3,7 +3,9 @@ import React, { useState, useMemo } from 'react'
 // components
 import NewButton from 'app/App.components/Button/NewButton'
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
-import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { BgCounsilDdForms } from '../helpers/council.consts'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 
 // types
@@ -105,18 +107,19 @@ export function FormRemoveCouncilMemberView({
   const isButtonDisabled = isActionActive || !chosenDdItem
 
   return (
-    <BreakGlassCouncilFormStyled>
+    <CouncilFormStyled formName={BgCounsilDdForms.REMOVE_COUNCIL_MEMBER}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
 
-      <h1>Remove Council Member</h1>
-      <p>Please enter valid function parameters for removing a council member</p>
+      <CouncilFormHeaderStyled>
+        <H2Title>Remove Council Member</H2Title>
+        <div className="descr">Please enter valid function parameters for removing a council member</div>
+      </CouncilFormHeaderStyled>
 
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="form-fields input-size-primary">
+      <form onSubmit={handleSubmit}>
+        <div className="select-council-member">
           <label>Choose Council Member to remove</label>
-
           <DropDown
             placeholder="Choose member"
             activeItem={chosenDdItem}
@@ -125,13 +128,13 @@ export function FormRemoveCouncilMemberView({
           />
         </div>
 
-        <div className="btn-wrapper">
+        <div className="submit-form right">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="minus" />
             Remove Council Member
           </NewButton>
         </div>
       </form>
-    </BreakGlassCouncilFormStyled>
+    </CouncilFormStyled>
   )
 }

@@ -2,8 +2,10 @@ import React, { useMemo, useState } from 'react'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
-import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { BgCounsilDdForms } from '../helpers/council.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // consts
@@ -108,24 +110,26 @@ export function FormSetAllContractsAdminView() {
     isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
   return (
-    <BreakGlassCouncilFormStyled>
-      <h1>Set All Contracts Admin</h1>
-      <p>Please enter valid function parameters for setting admin</p>
+    <CouncilFormStyled formName={BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN}>
+      <CouncilFormHeaderStyled>
+        <H2Title>Set All Contracts Admin</H2Title>
+        <div className="descr">Please enter valid function parameters for setting admin</div>
+      </CouncilFormHeaderStyled>
 
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="form-fields input-size-primary">
+      <form onSubmit={handleSubmit}>
+        <div className="admin-address">
           <label>New Admin Address</label>
 
           <Input inputProps={adminAddressProps} settings={adminAddressSettings} />
         </div>
 
-        <div className="btn-wrapper">
+        <div className="submit-form right">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="profile" />
             Set Contracts Admin
           </NewButton>
         </div>
       </form>
-    </BreakGlassCouncilFormStyled>
+    </CouncilFormStyled>
   )
 }

@@ -1,5 +1,6 @@
-import styled from 'styled-components/macro'
+import styled, { css } from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
+import { CouncilFormsGridMapper, CouncilsFormsNames } from '../helpers/council.consts'
 
 export const BreakGlassCouncilFormStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
@@ -123,14 +124,87 @@ export const BreakGlassCouncilFormStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const CouncilFormStyled = styled.div<{ theme: MavrykTheme }>`
-  .form-body {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+const FORMS_AREAS_NAMES = css`
+  .submit-form {
+    grid-area: submit-form;
+  }
 
-    column-gap: 20px;
-    row-gap: 38px;
+  .admin-address {
+    grid-area: admin-address;
+  }
+
+  .action-id {
+    grid-area: action-id;
+  }
+
+  .select-contracts {
+    grid-area: select-contracts;
+  }
+
+  .select-council-member {
+    grid-area: select-council-member;
   }
 `
 
-export const CouncilFormHeaderStyled = styled.div<{ theme: MavrykTheme }>``
+export const CouncilFormStyled = styled.div<{ theme: MavrykTheme; formName: CouncilsFormsNames }>`
+  position: relative;
+  padding: 30px 20px;
+  border-top: 1px solid ${({ theme }) => theme.divider};
+
+  ${FORMS_AREAS_NAMES}
+
+  form {
+    display: grid;
+    grid-template-columns: ${({ formName }) => CouncilFormsGridMapper[formName].columnsTemplate};
+    grid-template-rows: ${({ formName }) => CouncilFormsGridMapper[formName].rowsTemplate};
+    grid-template-areas: ${({ formName }) => CouncilFormsGridMapper[formName].areaTemplate};
+
+    row-gap: 20px;
+    column-gap: 20px;
+
+    align-items: center;
+
+    > div {
+      position: relative;
+
+      /* compensate space for absolute positioned label, to all cells, exept first, and button */
+      &:not(:nth-child(1)):not(.submit-form) {
+        margin-top: 20px;
+      }
+
+      > label {
+        position: absolute;
+        top: -25px;
+        left: 10px;
+
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 21px;
+
+        color: ${({ theme }) => theme.mainHeadingText};
+      }
+    }
+  }
+
+  .submit-form {
+    &.right {
+      justify-self: flex-end;
+    }
+
+    width: 300px;
+  }
+`
+
+export const CouncilFormHeaderStyled = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 40px;
+
+  .descr {
+    color: ${({ theme }) => theme.regularText};
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+  }
+`

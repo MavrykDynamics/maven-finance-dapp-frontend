@@ -196,7 +196,7 @@ export const MultiselectHeaderStyled = styled.div<{ theme: MavrykTheme }>`
   align-items: center;
 
   padding: 8px 16px;
-  min-height: 35px;
+  min-height: 40px;
 
   background-color: ${({ theme }) => theme.backgroundColor};
   border: 1px solid ${({ theme }) => theme.strokeColor};
@@ -241,8 +241,10 @@ export const MultiselectHeaderStyled = styled.div<{ theme: MavrykTheme }>`
   .controls {
     margin-left: auto;
     height: 100%;
-    align-items: center;
+    width: fit-content;
+
     display: flex;
+    align-items: center;
 
     .open-status {
       display: flex;

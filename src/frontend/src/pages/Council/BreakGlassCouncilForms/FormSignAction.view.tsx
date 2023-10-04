@@ -2,8 +2,10 @@ import React, { useMemo, useState } from 'react'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
+import { BgCounsilDdForms } from '../helpers/council.consts'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
-import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // hooks
@@ -17,7 +19,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components
 import { SIGN_BREAK_GLASS_COUNCIL_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 
-// urils
+// utils
 import { signBreakGlassAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { validateFormField } from 'utils/validatorFunctions'
 
@@ -109,24 +111,26 @@ export function FormSignActionView() {
   }, [breakGlassActionID, formInputStatus.breakGlassActionID])
 
   return (
-    <BreakGlassCouncilFormStyled>
-      <h1>Sign Action</h1>
-      <p>Please enter valid function parameters for sign action</p>
+    <CouncilFormStyled formName={BgCounsilDdForms.SIGN_ACTION}>
+      <CouncilFormHeaderStyled>
+        <H2Title>Sign Action</H2Title>
+        <div className="descr">Please enter valid function parameters for sign action</div>
+      </CouncilFormHeaderStyled>
 
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="form-fields input-size-primary">
+      <form onSubmit={handleSubmit}>
+        <div className="action-id">
           <label>Break Glass Action ID</label>
 
           <Input inputProps={actionIdProps} settings={actionIdSettings} />
         </div>
 
-        <div className="btn-wrapper">
+        <div className="submit-form right">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="sign" />
             Sign Action
           </NewButton>
         </div>
       </form>
-    </BreakGlassCouncilFormStyled>
+    </CouncilFormStyled>
   )
 }

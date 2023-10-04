@@ -22,7 +22,7 @@ export const MavrykCounsilDdForms = {
   DROP_FINANCIAL_REQUEST: 'DROP_FINANCIAL_REQUEST',
   SET_BAKER: 'SET_BAKER',
   SET_CONTRACT_BAKER: 'SET_CONTRACT_BAKER',
-}
+} as const
 
 // break glass council consts
 export const BgCounsilPageTitles = {
@@ -38,10 +38,10 @@ export const BgCounsilDdForms = {
   UNPAUSE_ALL_ENTRYPOINTS: 'UNPAUSE_ALL_ENTRYPOINTS',
   REMOVE_BREAK_GLASS_CONTROLL: 'REMOVE_BREAK_GLASS_CONTROLL',
   SIGN_ACTION: 'SIGN_ACTION',
-  ADD_COUNCIL_MEMBER: 'ADD_COUNCIL_MEMBER',
-  CHANGE_COUNCIL_MEMBER: 'CHANGE_COUNCIL_MEMBER',
-  REMOVE_COUNCIL_MEMBER: 'REMOVE_COUNCIL_MEMBER',
-}
+  ADD_COUNCIL_MEMBER: 'BG_ADD_COUNCIL_MEMBER',
+  CHANGE_COUNCIL_MEMBER: 'BG_CHANGE_COUNCIL_MEMBER',
+  REMOVE_COUNCIL_MEMBER: 'BG_REMOVE_COUNCIL_MEMBER',
+} as const
 
 // common consts for councils
 export const MY_PENDING_COUNSIL_TAB = ''
@@ -61,3 +61,132 @@ export const councilTabsList: SlidingTabButtonType[] = [
     active: false,
   },
 ]
+
+export type CouncilsFormsNames =
+  | (typeof MavrykCounsilDdForms)[keyof typeof MavrykCounsilDdForms]
+  | (typeof BgCounsilDdForms)[keyof typeof BgCounsilDdForms]
+
+export const CouncilFormsGridMapper: Record<
+  CouncilsFormsNames,
+  {
+    columnsTemplate: string
+    rowsTemplate: string
+    areaTemplate: string
+  }
+> = {
+  [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.ADD_VESTEE]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.REMOVE_VESTEE]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.REQUEST_TOKENS]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.SET_BAKER]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.TRANSFER_TOKENS]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.UPDATE_VESTEE]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
+    columnsTemplate: ``,
+    rowsTemplate: '',
+    areaTemplate: '',
+  },
+  [BgCounsilDdForms.ADD_COUNCIL_MEMBER]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [BgCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+  [BgCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
+    columnsTemplate: `380px auto`,
+    rowsTemplate: `auto`,
+    areaTemplate: `
+      "select-council-member submit-form"
+    `,
+  },
+  [BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN]: {
+    columnsTemplate: `380px auto`,
+    rowsTemplate: `auto`,
+    areaTemplate: `
+      "admin-address submit-form"
+    `,
+  },
+  [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {
+    columnsTemplate: `1fr 1fr`,
+    rowsTemplate: `auto auto 50px`,
+    areaTemplate: `
+      "admin-address ."
+      "select-contracts select-contracts"
+      ". submit-form"
+    `,
+  },
+  [BgCounsilDdForms.SIGN_ACTION]: {
+    columnsTemplate: `380px auto`,
+    rowsTemplate: `auto`,
+    areaTemplate: `
+      "action-id submit-form"
+    `,
+  },
+  [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
+    columnsTemplate: ``,
+    rowsTemplate: ``,
+    areaTemplate: ``,
+  },
+}

@@ -2,8 +2,10 @@ import React, { useCallback, useMemo, useState } from 'react'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { BgCounsilDdForms } from '../helpers/council.consts'
 import NewButton from 'app/App.components/Button/NewButton'
-import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Multiselect } from 'app/App.components/Multiselect/Multiselect'
 
@@ -150,35 +152,36 @@ export function FormSetSelectedContractsAdminView() {
   }, [formInputStatus.newAdminAddress, newAdminAddress])
 
   return (
-    <BreakGlassCouncilFormStyled>
-      <h1>Set Single Contract Admin</h1>
-      <p>Please enter valid function parameters for setting admin</p>
+    <CouncilFormStyled formName={BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN}>
+      <CouncilFormHeaderStyled>
+        <H2Title>Set Single Contract Admin</H2Title>
+        <div className="descr">Please enter valid function parameters for setting admin</div>
+      </CouncilFormHeaderStyled>
 
-      <form className="form one-column" onSubmit={handleSubmit}>
-        <div className="form-fields">
-          <div className="input-size-primary">
-            <label>New Admin Address</label>
-            <Input className="margin-bottom-20" inputProps={newAdminAddressProps} settings={newAdminAddressSettings} />
-          </div>
-          <div className="input-size-full-width margin-bottom-20">
-            <label>Choose Target Contracts</label>
-            <Multiselect<CouncilContractsMultiselectOptionType>
-              options={contractsSelectOptions}
-              selectedOptions={targetContracts}
-              selectHandler={handleContractSelect}
-              searchHandler={handleBgCouncilContractSearch}
-              placeholder="Choose target contracts"
-            />
-          </div>
+      <form onSubmit={handleSubmit}>
+        <div className="admin-address">
+          <label>New Admin Address</label>
+          <Input className="margin-bottom-20" inputProps={newAdminAddressProps} settings={newAdminAddressSettings} />
         </div>
 
-        <div className="align-to-right">
+        <div className="select-contracts">
+          <label>Choose Target Contracts</label>
+          <Multiselect<CouncilContractsMultiselectOptionType>
+            options={contractsSelectOptions}
+            selectedOptions={targetContracts}
+            selectHandler={handleContractSelect}
+            searchHandler={handleBgCouncilContractSearch}
+            placeholder="Choose target contracts"
+          />
+        </div>
+
+        <div className="submit-form right">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="profile" />
             Set Contract Admin
           </NewButton>
         </div>
       </form>
-    </BreakGlassCouncilFormStyled>
+    </CouncilFormStyled>
   )
 }
