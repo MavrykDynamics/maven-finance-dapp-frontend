@@ -3,10 +3,12 @@ import React, { useMemo, useState } from 'react'
 // components
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import NewButton from 'app/App.components/Button/NewButton'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { BgCounsilDdForms } from '../helpers/council.consts'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
 
 // types
 import {
@@ -169,53 +171,55 @@ export function FormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLeng
   ])
 
   return (
-    <BreakGlassCouncilFormStyled>
+    <CouncilFormStyled formName={BgCounsilDdForms.ADD_COUNCIL_MEMBER}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
 
-      <h1>Add Council Member</h1>
-      <p>Please enter valid function parameters for adding a council member</p>
+      <CouncilFormHeaderStyled>
+        <H2Title>Add Council Member</H2Title>
+        <div className="descr">Please enter valid function parameters for adding a council member</div>
+      </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-fields in-two-columns">
-          <div className="input-size-secondary margin-bottom-20">
-            <label>Council Member Address</label>
-            <Input inputProps={memberAddressProps} settings={memberAddressSettings} />
-          </div>
-
-          <div className="input-size-tertiary">
-            <label>Council Member Name</label>
-            <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
-          </div>
-
-          <div className="input-size-secondary margin-bottom-20">
-            <label>Council Member Website URL</label>
-            <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
-          </div>
+        <div className="member-address">
+          <label>Council Member Address</label>
+          <Input inputProps={memberAddressProps} settings={memberAddressSettings} />
         </div>
 
-        <IPFSUploader
-          typeFile="image"
-          imageIpfsUrl={newMemberImage}
-          className="form-ipfs"
-          setIpfsImageUrl={(e: string) => {
-            setForm({ ...form, newMemberImage: e })
-            setFormInputStatus({
-              ...formInputStatus,
-              newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-            })
-          }}
-          title={'Upload Profile Pic'}
-        />
+        <div className="member-name">
+          <label>Council Member Name</label>
+          <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
+        </div>
 
-        <div className="align-to-right">
+        <div className="member-url">
+          <label>Council Member Website URL</label>
+          <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
+        </div>
+
+        <div className="member-image">
+          <label>Upload Profile Pic</label>
+          <IPFSUploader
+            typeFile="image"
+            imageIpfsUrl={newMemberImage}
+            className="form-ipfs"
+            setIpfsImageUrl={(e: string) => {
+              setForm({ ...form, newMemberImage: e })
+              setFormInputStatus({
+                ...formInputStatus,
+                newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+              })
+            }}
+          />
+        </div>
+
+        <div className="submit-form right">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="plus" />
             Add Council Member
           </NewButton>
         </div>
       </form>
-    </BreakGlassCouncilFormStyled>
+    </CouncilFormStyled>
   )
 }

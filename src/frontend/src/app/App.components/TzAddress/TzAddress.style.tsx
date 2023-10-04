@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../../styles/interfaces'
-import { SECONDARY_TZ_ADDRESS_COLOR, PRIMARY_TZ_ADDRESS_COLOR } from './TzAddress.constants'
+import { SECONDARY_TZ_ADDRESS_COLOR, PRIMARY_TZ_ADDRESS_COLOR, SUCCESS_TZ_ADDRESS_COLOR } from './TzAddress.constants'
 
 export const TzAddressContainer = styled.div`
   display: flex;
@@ -23,6 +23,10 @@ export const TzAddressStyled = styled.div<{ theme: MavrykTheme }>`
 
   &.${SECONDARY_TZ_ADDRESS_COLOR} {
     color: ${({ theme }) => theme.linksAndButtons};
+  }
+
+  &.${SUCCESS_TZ_ADDRESS_COLOR} {
+    color: ${({ theme }) => theme.upColor};
   }
 
   &.bold {
@@ -52,5 +56,9 @@ export const TzAddressIcon = styled.svg<{ theme: MavrykTheme }>`
 
   &.${SECONDARY_TZ_ADDRESS_COLOR} {
     fill: ${({ theme }) => theme.linksAndButtons};
+  }
+
+  &.${SUCCESS_TZ_ADDRESS_COLOR} {
+    fill: ${({ theme }) => theme.upColor};
   }
 `

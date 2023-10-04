@@ -117,7 +117,7 @@ export function FormSetAllContractsAdminView() {
       </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>
-        <div className="admin-address">
+        <div className="admin-address ">
           <label>New Admin Address</label>
 
           <Input inputProps={adminAddressProps} settings={adminAddressSettings} />

@@ -118,7 +118,7 @@ export function FormSignActionView() {
       </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>
-        <div className="action-id">
+        <div className="action-id ">
           <label>Break Glass Action ID</label>
 
           <Input inputProps={actionIdProps} settings={actionIdSettings} />

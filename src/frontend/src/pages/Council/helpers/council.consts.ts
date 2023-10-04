@@ -43,6 +43,8 @@ export const BgCounsilDdForms = {
   REMOVE_COUNCIL_MEMBER: 'BG_REMOVE_COUNCIL_MEMBER',
 } as const
 
+export const UPDATE_COUNCIL_MEMBER = 'UPDATE_COUNCIL_MEMBER'
+
 // common consts for councils
 export const MY_PENDING_COUNSIL_TAB = ''
 export const MY_PAST_COUNSIL_TAB = 'my-past-actions'
@@ -65,6 +67,7 @@ export const councilTabsList: SlidingTabButtonType[] = [
 export type CouncilsFormsNames =
   | (typeof MavrykCounsilDdForms)[keyof typeof MavrykCounsilDdForms]
   | (typeof BgCounsilDdForms)[keyof typeof BgCounsilDdForms]
+  | typeof UPDATE_COUNCIL_MEMBER
 
 export const CouncilFormsGridMapper: Record<
   CouncilsFormsNames,
@@ -74,6 +77,7 @@ export const CouncilFormsGridMapper: Record<
     areaTemplate: string
   }
 > = {
+  // ------- MAVRYK COUNCIL FORMS
   [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
     columnsTemplate: ``,
     rowsTemplate: ``,
@@ -139,15 +143,27 @@ export const CouncilFormsGridMapper: Record<
     rowsTemplate: '',
     areaTemplate: '',
   },
+  // ------- BREAG GLASS COUNCIL FORMS
   [BgCounsilDdForms.ADD_COUNCIL_MEMBER]: {
-    columnsTemplate: ``,
-    rowsTemplate: ``,
-    areaTemplate: ``,
+    columnsTemplate: `1fr 1fr`,
+    rowsTemplate: `auto auto auto 50px`,
+    areaTemplate: `
+      "member-address member-name"
+      "member-url member-url"
+      "member-image member-image"
+      ". submit-form"
+    `,
   },
   [BgCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
-    columnsTemplate: ``,
-    rowsTemplate: ``,
-    areaTemplate: ``,
+    columnsTemplate: `1fr 1fr`,
+    rowsTemplate: `auto auto auto auto 50px`,
+    areaTemplate: `
+      "select-council-member ."
+      "member-address member-name"
+      "member-url ."
+      "member-image member-image"
+      ". submit-form"
+    `,
   },
   [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
     columnsTemplate: ``,
@@ -188,5 +204,16 @@ export const CouncilFormsGridMapper: Record<
     columnsTemplate: ``,
     rowsTemplate: ``,
     areaTemplate: ``,
+  },
+  // ------- COMMON COUNCIL FORMS
+  [UPDATE_COUNCIL_MEMBER]: {
+    columnsTemplate: `1fr 1fr`,
+    rowsTemplate: `auto auto auto 50px`,
+    areaTemplate: `
+      "member-address member-name"
+      "member-url ."
+      "member-image member-image"
+      ". submit-form"
+    `,
   },
 }

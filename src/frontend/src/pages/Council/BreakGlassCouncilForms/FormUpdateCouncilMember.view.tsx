@@ -3,7 +3,8 @@ import React, { useState, useEffect, useMemo } from 'react'
 // view
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
-import { BreakGlassCouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Icon from '../../../app/App.components/Icon/Icon.view'
@@ -31,6 +32,8 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
 import { UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { UPDATE_COUNCIL_MEMBER } from '../helpers/council.consts'
+import { SUCCESS_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 const INIT_FORM = {
   newMemberWebsite: '',
@@ -167,53 +170,55 @@ export function FormUpdateCouncilMemberView({ councilMaxLengths, callback, membe
   ])
 
   return (
-    <BreakGlassCouncilFormStyled className="without-divider">
+    <CouncilFormStyled className="without-divider" formName={UPDATE_COUNCIL_MEMBER}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
 
-      <h1>Update Council Member Info</h1>
-      <p>Please enter valid function parameters for adding council member info</p>
+      <CouncilFormHeaderStyled>
+        <H2Title>Update Council Member Info</H2Title>
+        <div className="descr">Please enter valid function parameters for adding council member info</div>
+      </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-fields in-two-columns">
-          <div className="input-size-secondary margin-bottom-20">
-            <label>Council Member Address</label>
-            <TzAddress tzAddress={userAddress} className="address" />
-          </div>
-
-          <div className="input-size-tertiary">
-            <label>Council Member Name</label>
-            <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
-          </div>
-
-          <div className="input-size-secondary margin-bottom-20">
-            <label>Council Member Website URL</label>
-            <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
-          </div>
+        <div className="member-address">
+          <label>Council Member Address</label>
+          <TzAddress tzAddress={userAddress} className="userAddress" type={SUCCESS_TZ_ADDRESS_COLOR} />
         </div>
 
-        <IPFSUploader
-          typeFile="image"
-          imageIpfsUrl={newMemberImage}
-          className="form-ipfs"
-          setIpfsImageUrl={(e: string) => {
-            setForm({ ...form, newMemberImage: e })
-            setFormInputStatus({
-              ...formInputStatus,
-              newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-            })
-          }}
-          title={'Upload Profile Pic'}
-        />
+        <div className="member-name">
+          <label>Council Member Name</label>
+          <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
+        </div>
 
-        <div className="align-to-right">
+        <div className="member-url">
+          <label>Council Member Website URL</label>
+          <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
+        </div>
+
+        <div className="member-image">
+          <label>Upload Profile Pic</label>
+          <IPFSUploader
+            typeFile="image"
+            imageIpfsUrl={newMemberImage}
+            className="form-ipfs"
+            setIpfsImageUrl={(e: string) => {
+              setForm({ ...form, newMemberImage: e })
+              setFormInputStatus({
+                ...formInputStatus,
+                newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+              })
+            }}
+          />
+        </div>
+
+        <div className="submit-form right">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="upload" />
             Update Council Member
           </NewButton>
         </div>
       </form>
-    </BreakGlassCouncilFormStyled>
+    </CouncilFormStyled>
   )
 }
