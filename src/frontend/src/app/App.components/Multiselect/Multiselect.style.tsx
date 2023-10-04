@@ -26,7 +26,7 @@ export const MultiselectOptionsControlStyled = styled.div<{ theme: MavrykTheme }
   display: flex;
   align-items: center;
 
-  background-color: ${({ theme }) => theme.backgroundColor};
+  background-color: ${({ theme }) => theme.cards};
   border: 1px solid ${({ theme }) => theme.strokeColor};
 
   border-bottom: none;
@@ -44,6 +44,7 @@ export const MultiselectOptionsControlStyled = styled.div<{ theme: MavrykTheme }
     bottom: 8px;
   }
 
+  // TODO: while input recreating move this styling for search input and use custom input in Multiselect
   input {
     background-color: transparent;
     -webkit-appearance: none;
@@ -52,21 +53,69 @@ export const MultiselectOptionsControlStyled = styled.div<{ theme: MavrykTheme }
     border: none;
     outline: none;
 
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+    color: ${({ theme }) => theme.primaryText};
+
     &::placeholder {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 24px;
       color: ${({ theme }) => theme.placeholders};
+    }
+
+    &::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      cursor: pointer;
+
+      display: inline-block;
+
+      width: 11px;
+      height: 11px;
+      margin-left: 10px;
+
+      background: ${({ theme }) => `linear-gradient(
+          45deg,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0) 43%,
+          ${theme.divider} 47%,
+          ${theme.divider} 53%,
+          rgba(0, 0, 0, 0) 57%,
+          rgba(0, 0, 0, 0) 100%
+        ),
+        linear-gradient(135deg, transparent 0%, transparent 43%, ${theme.divider} 47%, ${theme.divider} 53%, transparent 57%, transparent 100%)`};
+
+      &:hover {
+        background: ${({ theme }) => `linear-gradient(
+          45deg,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0) 43%,
+          ${theme.linksAndButtons} 47%,
+          ${theme.linksAndButtons} 53%,
+          rgba(0, 0, 0, 0) 57%,
+          rgba(0, 0, 0, 0) 100%
+        ),
+        linear-gradient(135deg, transparent 0%, transparent 43%, ${theme.linksAndButtons} 47%, ${theme.linksAndButtons} 53%, transparent 57%, transparent 100%)`};
+      }
     }
   }
 
   svg {
+    transition: 0.3s fill;
     width: 20px;
     height: 20px;
-    // TODO: redo search icon in figma
-    stroke: ${({ theme }) => theme.strokeForForms};
-    fill: none;
+    fill: ${({ theme }) => theme.strokeForForms};
+  }
+
+  &:focus-within {
+    svg {
+      fill: ${({ theme }) => theme.linksAndButtons};
+    }
   }
 `
 
-export const MultiselectOptionStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectMenuOptionStyled = styled.div<{ theme: MavrykTheme }>`
   cursor: pointer;
   width: 100%;
   column-gap: 10px;
@@ -76,22 +125,36 @@ export const MultiselectOptionStyled = styled.div<{ theme: MavrykTheme }>`
   align-items: center;
 
   .option-text {
-    transition: 0.3s color;
-
     font-size: 14px;
+    line-height: 24px;
     font-weight: 500;
 
     color: ${({ theme }) => theme.placeholders};
   }
 
+  .img-wrapper,
+  .img-plug {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    fill: ${({ theme }) => theme.regularText};
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
   &:hover {
-    .option-text {
-      color: ${({ theme }) => theme.linksAndButtons};
+    #checkbox-label {
+      background-color: ${({ theme }) => theme.cards};
     }
   }
 `
 
-export const MultiselectOptionTagStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectHeaderOptionStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   align-items: center;
 
@@ -102,25 +165,14 @@ export const MultiselectOptionTagStyled = styled.div<{ theme: MavrykTheme }>`
   border-radius: 8px;
 
   cursor: pointer;
-  transition: 0.3s background-color;
+  transition: 0.3s opacity;
 
   &:hover {
-    background-color: ${({ theme }) => theme.downBgColor};
-
-    .unselect-option > svg {
-      fill: ${({ theme }) => theme.downColor};
-    }
-
-    .option-text {
-      color: ${({ theme }) => theme.downColor};
-    }
+    opacity: 0.8;
   }
 
   .option-text {
-    transition: 0.3s color;
-
     font-size: 14px;
-    font-style: normal;
     font-weight: 500;
     line-height: 24px;
 
@@ -133,7 +185,6 @@ export const MultiselectOptionTagStyled = styled.div<{ theme: MavrykTheme }>`
 
     svg {
       fill: ${({ theme }) => theme.backgroundColor};
-      transition: 0.3s fill;
       width: 12px;
       height: 12px;
     }
@@ -155,10 +206,13 @@ export const MultiselectHeaderStyled = styled.div<{ theme: MavrykTheme }>`
   position: relative;
   z-index: 4;
 
+  &.isOpen {
+    border: 1px solid ${({ theme }) => theme.linksAndButtons};
+  }
+
   &:before {
     content: '';
-    height: 100%;
-    min-height: 35px;
+    height: calc(100% - 2px);
     width: 1px;
     background-color: ${({ theme }) => theme.divider};
     position: absolute;
@@ -168,7 +222,7 @@ export const MultiselectHeaderStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   &:hover {
-    border: 1px solid ${({ theme }) => theme.linksAndButtons};
+    background-color: ${({ theme }) => theme.cards};
   }
 
   .selected-options-list {

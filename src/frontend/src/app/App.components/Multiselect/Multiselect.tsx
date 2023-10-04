@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 import Select, { ActionMeta, FormatOptionLabelMeta, ControlProps, GroupBase } from 'react-select'
+import { FilterOptionOption } from 'react-select/dist/declarations/src/filters'
 import classNames from 'classnames'
 
 // consts
@@ -26,13 +27,13 @@ import {
   MultiselectBackdropStyled,
   MultiselectHeaderStyled,
   MultiselectMenuStyled,
-  MultiselectOptionStyled,
-  MultiselectOptionTagStyled,
+  MultiselectMenuOptionStyled,
+  MultiselectHeaderOptionStyled,
   MultiselectOptionsControlStyled,
   MultiselectStyled,
 } from './Multiselect.style'
-import { FilterOptionOption } from 'react-select/dist/declarations/src/filters'
 
+// Custom controll (header) for select, shown as search
 const CustomControlComponent = <ItemType extends MultiselectItemType>({
   selectProps,
 }: ControlProps<ItemType, true, GroupBase<ItemType>>) => {
@@ -52,6 +53,23 @@ const CustomControlComponent = <ItemType extends MultiselectItemType>({
   )
 }
 
+const ReactSelectReplacedComponents = {
+  Control: CustomControlComponent,
+}
+
+/**
+ *
+ * @param options -> options that will be shown in menu
+ * @param selectedOptions -> options that are selected, shown in header, and marked ass selected in menu
+ * @param selectHandler -> handler click on option in menu
+ * @param disabled -> is multiselect disabled
+ * @param placeholder -> placeholder for header
+ * @param searchHandler -> how to filter options on typing in search input, by default filtering by label field
+ * @returns multiselect component
+ *
+ * NOTE:
+ *    - component is generic cuz search might require searching by some other additional fields
+ */
 export const Multiselect = <ItemType extends MultiselectItemType = MultiselectItemType>({
   options,
   selectedOptions,
@@ -119,7 +137,7 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
   // handling custom search functionality
   const filterOption = useCallback(
     (option: FilterOptionOption<ItemType>, inputValue: string) =>
-      searchHandler?.(option.data, inputValue) ?? option.label.toLowerCase().includes(inputValue),
+      searchHandler?.(option.data, inputValue) ?? option.label.toLowerCase().includes(inputValue.toLowerCase()),
     [searchHandler],
   )
 
@@ -135,11 +153,11 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
     if (multiSelectContext.context === 'menu') {
       const isOptionSelected = Boolean(multiSelectContext.selectValue.find(({ value }) => value === option.value))
       return (
-        <MultiselectOptionStyled>
+        <MultiselectMenuOptionStyled>
           <Checkbox checked={isOptionSelected} onChangeHandler={() => null} id={option.value} />{' '}
-          {option.image ? <ImageWithPlug imageLink={option.image} noImageIconId="no-image" alt={''} /> : null}{' '}
+          {option.image ? <ImageWithPlug imageLink={option.image} alt={''} /> : null}{' '}
           <div className="option-text">{option.label}</div>
-        </MultiselectOptionStyled>
+        </MultiselectMenuOptionStyled>
       )
     }
 
@@ -166,18 +184,18 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
 
   return (
     <MultiselectStyled className={classNames({ disabled })}>
-      <MultiselectHeaderStyled onClick={() => setIsOpen(!isOpen)}>
+      <MultiselectHeaderStyled onClick={() => setIsOpen(!isOpen)} className={classNames({ isOpen })}>
         {selectedOptions.length > 0 ? (
           <div className="selected-options-list">
             {selectedOptions.map((option) => {
               return (
-                <MultiselectOptionTagStyled onClick={(e) => handleUnselectOption(e, option.value)}>
+                <MultiselectHeaderOptionStyled onClick={(e) => handleUnselectOption(e, option.value)}>
                   {option.image ? <ImageWithPlug imageLink={option.image} noImageIconId="no-image" alt={''} /> : null}{' '}
                   <div className="option-text">{option.label}</div>
                   <div className="unselect-option">
                     <Icon id="navigation-menu_close" />
                   </div>
-                </MultiselectOptionTagStyled>
+                </MultiselectHeaderOptionStyled>
               )
             })}
           </div>
@@ -214,9 +232,7 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
               filterOption={filterOption}
               isOptionSelected={checkWhetherOptionIsSelected}
               formatOptionLabel={formatOptionLabel}
-              components={{
-                Control: CustomControlComponent,
-              }}
+              components={ReactSelectReplacedComponents}
               options={options}
               value={selectedOptions}
               styles={multiselectStyledStyles}

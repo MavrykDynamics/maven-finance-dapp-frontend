@@ -20,7 +20,6 @@ export const CAPITALIZE_CASE = 'CAPITALIZE_CASE'
 export const UPPER_CASE = 'UPPER_CASE'
 type ParsedStringCaseType = typeof LOWER_CASE | typeof CAPITALIZE_CASE | typeof UPPER_CASE | null
 
-const SNAKE_CASE_REG_EX = new RegExp(/(\w*)\s(\w*)/gm)
 const CAMEL_CASE_REG_EX = new RegExp(/([a-z0-9])([A-Z])/g)
 
 const formatStringCase = (stringToFormat: string, preferredCase: ParsedStringCaseType) => {
@@ -61,7 +60,7 @@ export const parseCamelCaseString = (stringToParse: string, preferredCase: Parse
 export const parseSnakeCaseString = (stringToParse: string, preferredCase: ParsedStringCaseType) => {
   if (!stringToParse.length) return ''
 
-  const parsedString = stringToParse.replace(SNAKE_CASE_REG_EX, '$1 $2')
+  const parsedString = stringToParse.replaceAll('_', ' ')
 
   return formatStringCase(parsedString, preferredCase)
 }
