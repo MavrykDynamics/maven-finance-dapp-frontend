@@ -6,7 +6,6 @@ import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider
 // helpers
 import { unknownToError } from 'errors/error'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { sleep } from 'utils/api/sleep'
 
 // types
@@ -21,6 +20,10 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type ActionReturnPayload = Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
+
+const checkIfActionSuccess = (
+  actionResult: ActionErrorReturnType | ActionSuccessReturnType,
+): actionResult is ActionSuccessReturnType => actionResult.actionSuccess === true
 
 export type HookContractActionArgs<G = unknown> = {
   actionType: ActionTypes
