@@ -14,5 +14,6 @@ export type MultiselectProps<ItemType extends MultiselectItemType> = {
   selectHandler: (item: ReadonlyArray<ItemType>, actionMeta?: ActionMeta<ItemType>) => void
   searchHandler?: (option: ItemType, searchString: string) => boolean
   disabled?: boolean
+  isLoading?: boolean
   placeholder: string
 }

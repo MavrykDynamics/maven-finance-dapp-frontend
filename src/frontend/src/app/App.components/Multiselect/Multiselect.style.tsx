@@ -232,6 +232,20 @@ export const MultiselectHeaderStyled = styled.div<{ theme: MavrykTheme }>`
     gap: 4px;
   }
 
+  .loader {
+    display: flex;
+    align-items: center;
+
+    column-gap: 10px;
+
+    color: ${({ theme }) => theme.placeholders};
+
+    /* changed color of loader to match text color */
+    div {
+      color: ${({ theme }) => theme.placeholders};
+    }
+  }
+
   .placeholder {
     font-size: 14px;
     font-weight: 500;

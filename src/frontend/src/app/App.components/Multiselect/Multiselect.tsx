@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
+import classNames from 'classnames'
 import Select, { ActionMeta, FormatOptionLabelMeta, ControlProps, GroupBase } from 'react-select'
 import { FilterOptionOption } from 'react-select/dist/declarations/src/filters'
-import classNames from 'classnames'
 
 // consts
 import {
@@ -25,6 +25,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import Checkbox from '../Checkbox/Checkbox.view'
 import Icon from '../Icon/Icon.view'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
+import { SpinnerCircleLoaderStyled } from '../Loader/Loader.style'
 import {
   MultiselectBackdropStyled,
   MultiselectHeaderStyled,
@@ -78,6 +79,7 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
   selectedOptions,
   selectHandler,
   disabled,
+  isLoading,
   placeholder,
   searchHandler,
 }: MultiselectProps<ItemType>) => {
@@ -187,7 +189,11 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
   return (
     <MultiselectStyled className={classNames({ disabled })}>
       <MultiselectHeaderStyled onClick={() => setIsOpen(!isOpen)} className={classNames({ isOpen })}>
-        {selectedOptions.length > 0 ? (
+        {isLoading ? (
+          <div className="loader">
+            <SpinnerCircleLoaderStyled /> Loading options
+          </div>
+        ) : selectedOptions.length > 0 ? (
           <div className="selected-options-list">
             {selectedOptions.map((option) => {
               return (
