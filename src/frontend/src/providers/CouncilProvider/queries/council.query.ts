@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 
 export const COUNCIL_MEMBERS_QUERY = gql(`
   query GetCouncilMembers {
-    council {
+    council: council {
       members {
         id
         name
@@ -18,7 +18,7 @@ export const COUNCIL_MEMBERS_QUERY = gql(`
 
 export const ALL_PAST_COUNSILS_QUERY = gql(`
   query GetAllPastCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z"){
-    council_action(order_by: {start_datetime: desc}, where: {_or: [{expiration_datetime: {_lt: $currentTimestamp}}, {executed: {_eq: true}}]}) {
+    council_action: council_action(order_by: {start_datetime: desc}, where: {_or: [{expiration_datetime: {_lt: $currentTimestamp}}, {executed: {_eq: true}}]}) {
       action_type
       executed
       council_size_snapshot
@@ -43,7 +43,7 @@ export const ALL_PAST_COUNSILS_QUERY = gql(`
 
 export const ALL_ONGOING_COUNSILS_QUERY = gql(`
   query GetAllOngoingCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z"){
-    council_action(order_by: {start_datetime: desc}, where: {status: {_eq: "0"}, expiration_datetime: {_gt: $currentTimestamp}, executed: {_eq: false}}) {
+    council_action: council_action(order_by: {start_datetime: desc}, where: {status: {_eq: "0"}, expiration_datetime: {_gt: $currentTimestamp}, executed: {_eq: false}}) {
       action_type
       executed
       council_size_snapshot
@@ -68,7 +68,7 @@ export const ALL_ONGOING_COUNSILS_QUERY = gql(`
 
 export const MY_PAST_COUNSILS_QUERY = gql(`
   query GetMyPastCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z", $userAddress: String = ""){
-    council_action(order_by: {start_datetime: desc}, where: {_or: [
+    council_action: council_action(order_by: {start_datetime: desc}, where: {_or: [
       {_and: [
         {_or: [
           {execution_datetime: {
