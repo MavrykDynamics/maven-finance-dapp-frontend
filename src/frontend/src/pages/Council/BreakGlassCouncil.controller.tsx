@@ -36,6 +36,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PropagateBreakGlassCouncilCard } from 'pages/Council/Council.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // TODO: validate tab in url?
 export const BreakGlassCouncil = () => {
@@ -144,7 +145,7 @@ export const BreakGlassCouncil = () => {
           {!tabId && isBreakGlassCouncil && (
             <PropagateBreakGlassCouncilCard>
               <div>
-                <h1>Propagate Break Glass</h1>
+                <H2Title>Propagate Break Glass</H2Title>
                 <p>
                   This action can only be taken to pause all contracts in the event of a successful emergency governance
                   where a critical flaw has been detected in the Mavryk Smart Contracts.

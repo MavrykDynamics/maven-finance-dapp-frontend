@@ -30,10 +30,11 @@ export const CouncilMemberView = (props: Props) => {
   } = useDappConfigContext()
 
   const { image, name, userId, openModal, showUpdateInfo = true } = props
-  const href = `/satellites/satellite-details/${userId}`
 
+  const href = `/satellites/satellite-details/${userId}`
   const isMe = userId === userAddress
-  const content = (
+
+  const memberContent = (
     <CouncilMemberStyled>
       <div className="inner">
         <AvatarStyle>
@@ -60,11 +61,9 @@ export const CouncilMemberView = (props: Props) => {
     </CouncilMemberStyled>
   )
 
-  if (isMe) {
-    return content
-  }
+  if (isMe) return memberContent
 
-  if (!isSatellite) {
+  if (!isSatellite)
     return (
       <a
         className="icon-send"
@@ -72,10 +71,9 @@ export const CouncilMemberView = (props: Props) => {
         href={`${process.env.REACT_APP_TZKT_LINK}/${userId}/operations/`}
         rel="noreferrer"
       >
-        {content}
+        {memberContent}
       </a>
     )
-  }
 
-  return <Link to={href}>{content}</Link>
+  return <Link to={href}>{memberContent}</Link>
 }

@@ -24,8 +24,6 @@ import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress
 // types
 import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 
-// styles
-
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -36,41 +34,34 @@ type Props = CouncilActionType & {
   handleSignAction: (id: number) => void
 }
 
-export const CouncilPending = (props: Props) => {
-  const {
-    id,
-    actionType,
-    signersCount,
-    numCouncilMembers,
-    councilPendingActionsLength,
-    parameters,
-    index,
-    handleSignAction,
-  } = props
-
+export const CouncilPending = ({
+  id,
+  actionType,
+  signersCount,
+  numCouncilMembers,
+  councilPendingActionsLength,
+  parameters,
+  index,
+  handleSignAction,
+}: Props) => {
   const {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
+  const ref = useRef<HTMLDivElement | null>(null)
+
   const [showPopup, setShowPopup] = useState(false)
+
   const { name, value } = parameters?.[0] || {}
   const cardNumber = index + 1
 
-  const ref = useRef<HTMLDivElement | null>(null)
   const showScrollInModal = useMemo(
     () => ref.current?.offsetHeight !== ref.current?.scrollHeight,
     [ref.current?.offsetHeight, ref.current?.scrollWidth],
   )
 
-  const closePopup = () => {
-    setShowPopup(false)
-  }
-
-  const onClickSign = () => {
-    if (id) {
-      handleSignAction(id)
-    }
-  }
+  const closePopup = () => setShowPopup(false)
+  const onClickSign = () => handleSignAction(id)
 
   const findActionByName = useCallback(
     (name: string, type?: BytesType) => {

@@ -17,6 +17,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { ReviewCard } from '../Council.style'
 import { CouncilMemberView } from './CouncilMember/CouncilMember.view'
 import { EmptyContainer } from 'app/App.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type Props = {
   membersTitle: string
@@ -65,7 +66,8 @@ export const CounsilSidebar = ({
         </Link>
       </ReviewCard>
 
-      <h1>{membersTitle}</h1>
+      <H2Title>{membersTitle}</H2Title>
+
       {sortedCounsils.length ? (
         <div>
           {sortedCounsils.map((item) => (
