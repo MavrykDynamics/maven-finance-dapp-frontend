@@ -43,6 +43,7 @@ type Props = {
   parameters: CouncilActionType['parameters']
 }
 
+// TODO: check styles mb restyle
 export function CouncilOngoingAction({
   startDatetime,
   actionType,

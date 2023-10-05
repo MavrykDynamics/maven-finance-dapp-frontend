@@ -16,6 +16,7 @@ type Props = {
   councilId: string
 }
 
+// TODO: check styles mb restyle
 export const CouncilAction = (props: Props) => {
   const { startDatetime, actionType, signersCount, numCouncilMembers, councilId } = props
   const isMoreThanHalf = numCouncilMembers / 2 < signersCount

@@ -74,6 +74,8 @@ export const CounsilActionsToSign = ({
           {actionstoSign.map((item, index) => {
             const action = actionsMapper[item]
 
+            if (!action) return null
+
             return (
               <CouncilPending
                 {...action}
