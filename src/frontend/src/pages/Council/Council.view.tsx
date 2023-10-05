@@ -153,10 +153,9 @@ export function CouncilView({
   const isMyActionsTabs = isMyPastTab || isMyPendingTab
 
   // redirect to review past actions page when member changes or when current user is not council and user is on my request page
-  // TODO: uncomment when we will have council to test
-  // useEffect(() => {
-  //   if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
-  // }, [userAddress, isUserCouncil])
+  useEffect(() => {
+    if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
+  }, [userAddress, isUserCouncil])
 
   // update member popup
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)

@@ -64,6 +64,7 @@ export const councilTabsList: SlidingTabButtonType[] = [
   },
 ]
 
+// mapper for forms names in dd
 export const COUNCIL_FORMS_NAMES_MAPPER = {
   ADD_VESTEE: 'Add Vestee',
   ADD_COUNCIL_MEMBER: 'Add Council Member',
@@ -88,6 +89,7 @@ export const COUNCIL_FORMS_NAMES_MAPPER = {
   BG_REMOVE_COUNCIL_MEMBER: 'Remove Council Member',
 }
 
+// grid setting for council forms
 export type CouncilsFormsNames =
   | (typeof MavrykCounsilDdForms)[keyof typeof MavrykCounsilDdForms]
   | (typeof BgCounsilDdForms)[keyof typeof BgCounsilDdForms]
