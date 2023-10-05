@@ -274,9 +274,11 @@ export const CouncilFormsGridMapper: Record<
 
   // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
   [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
-    columnsTemplate: ``,
-    rowsTemplate: ``,
-    areaTemplate: ``,
+    columnsTemplate: `380px auto`,
+    rowsTemplate: `auto`,
+    areaTemplate: `
+      "select-contracts submit-form"
+    `,
   },
   [BgCounsilDdForms.SIGN_ACTION]: {
     columnsTemplate: `380px auto`,
@@ -286,9 +288,11 @@ export const CouncilFormsGridMapper: Record<
     `,
   },
   [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
-    columnsTemplate: ``,
-    rowsTemplate: ``,
-    areaTemplate: ``,
+    columnsTemplate: `380px auto`,
+    rowsTemplate: `auto`,
+    areaTemplate: `
+      "select-contracts submit-form"
+    `,
   },
 
   // ------- COMMON BREAG GLASS & MAVRYK COUNCIL FORMS

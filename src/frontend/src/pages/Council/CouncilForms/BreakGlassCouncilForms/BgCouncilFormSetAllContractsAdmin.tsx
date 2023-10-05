@@ -31,7 +31,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   newAdminAddress: INPUT_STATUS_DEFAULT,
 }
 
-export function BgCouncilFormSetAllContractsAdminView() {
+export function BgCouncilFormSetAllContractsAdmin() {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },

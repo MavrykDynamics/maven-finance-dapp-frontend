@@ -49,7 +49,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   newMemberImage: INPUT_STATUS_DEFAULT,
 }
 
-export function BgCouncilFormChangeCouncilMemberView({
+export function BgCouncilFormChangeCouncilMember({
   councilMaxLengths,
   breakGlassCouncilMembers,
 }: {

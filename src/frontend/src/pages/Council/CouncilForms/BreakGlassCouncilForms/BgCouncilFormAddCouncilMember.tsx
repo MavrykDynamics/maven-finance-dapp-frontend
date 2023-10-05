@@ -46,7 +46,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   newMemberImage: INPUT_STATUS_DEFAULT,
 }
 
-export function BgCouncilFormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLengths: CouncilMaxLength }) {
+export function BgCouncilFormAddCouncilMember({ councilMaxLengths }: { councilMaxLengths: CouncilMaxLength }) {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },

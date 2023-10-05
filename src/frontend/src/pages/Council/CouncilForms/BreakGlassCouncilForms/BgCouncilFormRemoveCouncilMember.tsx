@@ -31,7 +31,7 @@ type DdItemType = {
   id: number
 }
 
-export function BgCouncilFormRemoveCouncilMemberView({
+export function BgCouncilFormRemoveCouncilMember({
   breakGlassCouncilMembers,
 }: {
   breakGlassCouncilMembers: CouncilContext['breakGlassCouncilMembers']

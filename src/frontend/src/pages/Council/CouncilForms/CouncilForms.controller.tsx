@@ -6,12 +6,12 @@ import { CouncilContext } from 'providers/CouncilProvider/council.provider.types
 import { DappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // mavryk council forms components
-import { BgCouncilFormSetAllContractsAdminView } from './BreakGlassCouncilForms/BgCouncilFormSetAllContractsAdmin'
-import { BgCouncilFormSetSelectedContractsAdminView } from './BreakGlassCouncilForms/BgCouncilFormSetSelectedContractsAdmin'
-import { BgCouncilFormSignActionView } from './BreakGlassCouncilForms/BgCouncilFormSignAction'
-import { BgCouncilFormAddCouncilMemberView } from './BreakGlassCouncilForms/BgCouncilFormAddCouncilMember'
-import { BgCouncilFormChangeCouncilMemberView } from './BreakGlassCouncilForms/BgCouncilFormChangeCouncilMember'
-import { BgCouncilFormRemoveCouncilMemberView } from './BreakGlassCouncilForms/BgCouncilFormRemoveCouncilMember'
+import { BgCouncilFormSetAllContractsAdmin } from './BreakGlassCouncilForms/BgCouncilFormSetAllContractsAdmin'
+import { BgCouncilFormSetSelectedContractsAdmin } from './BreakGlassCouncilForms/BgCouncilFormSetSelectedContractsAdmin'
+import { BgCouncilFormSignAction } from './BreakGlassCouncilForms/BgCouncilFormSignAction'
+import { BgCouncilFormAddCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormAddCouncilMember'
+import { BgCouncilFormChangeCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormChangeCouncilMember'
+import { BgCouncilFormRemoveCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormRemoveCouncilMember'
 
 // mavryk council forms components
 import { MavCouncilFormAddVestee } from './MavrykCouncilForms/MavCouncilFormAddVestee'
@@ -27,6 +27,8 @@ import { MavCouncilFormRequestTokenMint } from './MavrykCouncilForms/MavCouncilF
 import { MavCouncilFormDropFinancialRequest } from './MavrykCouncilForms/MavCouncilFormDropFinancialRequest'
 import { MavCouncilFormSetBaker } from './MavrykCouncilForms/MavCouncilFormSetBaker'
 import { MavCouncilFormSetContractBaker } from './MavrykCouncilForms/MavCouncilFormSetContractBaker'
+import { BgCouncilFormUnpauseAllEntrypoints } from './BreakGlassCouncilForms/BgCouncilFormUnpauseAllEntrypoints'
+import { BgCouncilFormRemoveBreakGlassControl } from './BreakGlassCouncilForms/BgCouncilFormRemoveBreakGlassControl'
 
 type Props = {
   councilMaxLengths: DappConfigContext['maxLengths']['council']
@@ -38,22 +40,23 @@ export const CouncilForms = ({ councilMaxLengths, selectedAction, members }: Pro
   switch (selectedAction) {
     // break glass council forms
     case BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN:
-      return <BgCouncilFormSetAllContractsAdminView />
+      return <BgCouncilFormSetAllContractsAdmin />
     case BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN:
-      return <BgCouncilFormSetSelectedContractsAdminView />
+      return <BgCouncilFormSetSelectedContractsAdmin />
     case BgCounsilDdForms.SIGN_ACTION:
-      return <BgCouncilFormSignActionView />
+      return <BgCouncilFormSignAction />
     case BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER:
-      return <BgCouncilFormAddCouncilMemberView councilMaxLengths={councilMaxLengths} />
+      return <BgCouncilFormAddCouncilMember councilMaxLengths={councilMaxLengths} />
+    case BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER:
+      return <BgCouncilFormRemoveCouncilMember breakGlassCouncilMembers={members} />
+    case BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS:
+      return <BgCouncilFormUnpauseAllEntrypoints />
+    case BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL:
+      return <BgCouncilFormRemoveBreakGlassControl />
     case BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER:
       return (
-        <BgCouncilFormChangeCouncilMemberView
-          councilMaxLengths={councilMaxLengths}
-          breakGlassCouncilMembers={members}
-        />
+        <BgCouncilFormChangeCouncilMember councilMaxLengths={councilMaxLengths} breakGlassCouncilMembers={members} />
       )
-    case BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER:
-      return <BgCouncilFormRemoveCouncilMemberView breakGlassCouncilMembers={members} />
 
     // mavryk council forms
     case MavrykCounsilDdForms.ADD_VESTEE:

@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
 // view
-import { Input } from 'app/App.components/Input/NewInput'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -9,16 +8,14 @@ import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style
 import { Multiselect } from 'app/App.components/Multiselect/Multiselect'
 
 // utils
-import { setSelectedContractsAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { removeBreakGlassControl } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { handleBgCouncilContractSearch } from '../../helpers/commonCouncil.utils'
-import { validateFormAddress } from 'utils/validatorFunctions'
 
 // consts
 import { BgCounsilDdForms } from '../../helpers/council.consts'
-import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
 import { MULTISELECT_SELECT_ALL_OPTION_VALUE } from 'app/App.components/Multiselect/Multiselect.consts'
-import { SET_SELECTED_CONTRACTS_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { UNPAUSE_ALL_ENTRYPOINTS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 // types
 import { CouncilContractsMultiselectOptionType } from '../../helpers/council.types'
@@ -29,16 +26,11 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
-const INIT_FORM: { newAdminAddress: string; targetContracts: Array<CouncilContractsMultiselectOptionType> } = {
-  newAdminAddress: '',
+const INIT_FORM: { targetContracts: Array<CouncilContractsMultiselectOptionType> } = {
   targetContracts: [],
 }
 
-const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
-  newAdminAddress: INPUT_STATUS_DEFAULT,
-}
-
-export function BgCouncilFormSetSelectedContractsAdmin() {
+export function BgCouncilFormRemoveBreakGlassControl() {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
@@ -66,11 +58,10 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
   )
 
   const [form, setForm] = useState(INIT_FORM)
-  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
-  const { newAdminAddress, targetContracts } = form
+  const { targetContracts } = form
 
-  const contractsWhereChangeAdmin = useMemo(
+  const contractsToRemoveBgControl = useMemo(
     () =>
       targetContracts
         .filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE)
@@ -78,9 +69,9 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
     [targetContracts],
   )
 
-  const setSelectedContractsAdminContractActionProps: HookContractActionArgs = useMemo(
+  const removeBreakGlassControlActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: SET_SELECTED_CONTRACTS_ADMIN_ACTION,
+      actionType: UNPAUSE_ALL_ENTRYPOINTS_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -92,24 +83,23 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
           return null
         }
 
-        return await setSelectedContractsAdmin(breakGlassAddress, newAdminAddress, contractsWhereChangeAdmin)
+        return await removeBreakGlassControl(breakGlassAddress, contractsToRemoveBgControl)
       },
     }),
-    [breakGlassAddress, newAdminAddress, contractsWhereChangeAdmin, userAddress],
+    [breakGlassAddress, contractsToRemoveBgControl, userAddress],
   )
 
-  const { action: handleSetSingleContractAdmin } = useContractAction(setSelectedContractsAdminContractActionProps)
+  const { action: handleRemoveBreakGlassControl } = useContractAction(removeBreakGlassControlActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      await handleSetSingleContractAdmin()
+      await handleRemoveBreakGlassControl()
 
       setForm(INIT_FORM)
-      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error('FormSetSingleContractAdminView', error)
+      console.error('BgCouncilFormRemoveBreakGlassControl', error)
     }
   }
 
@@ -119,40 +109,10 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
     })
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
-    setForm((prev) => {
-      return { ...prev, [e.target.name]: e.target.value }
-    })
-  }
-
-  const isButtonDisabled =
-    isActionActive ||
-    contractsWhereChangeAdmin.length === 0 ||
-    Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
-
-  const { newAdminAddressProps, newAdminAddressSettings } = useMemo(() => {
-    const validateAddress = validateFormAddress(setFormInputStatus)
-
-    const newAdminAddressProps = {
-      name: 'newAdminAddress',
-      value: newAdminAddress,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-        handleChange(e)
-        validateAddress(e)
-      },
-      required: true,
-    }
-
-    return {
-      newAdminAddressProps,
-      newAdminAddressSettings: {
-        inputStatus: formInputStatus.newAdminAddress,
-      },
-    }
-  }, [formInputStatus.newAdminAddress, newAdminAddress])
+  const isButtonDisabled = isActionActive || contractsToRemoveBgControl.length === 0
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN}>
+    <CouncilFormStyled formName={BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"
@@ -163,16 +123,11 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
       </a>
 
       <CouncilFormHeaderStyled>
-        <H2Title>Set Multiple Contract Admin</H2Title>
-        <div className="descr">Please enter valid function parameters for setting admin</div>
+        <H2Title>Remove BreakGlass Control</H2Title>
+        <div className="descr">Please enter valid function parameters for removing breakglass control</div>
       </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>
-        <div className="admin-address">
-          <label>New Admin Address</label>
-          <Input className="margin-bottom-20" inputProps={newAdminAddressProps} settings={newAdminAddressSettings} />
-        </div>
-
         <div className="select-contracts">
           <label>Choose Target Contracts</label>
           <Multiselect<CouncilContractsMultiselectOptionType>
@@ -186,8 +141,8 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
 
         <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-            <Icon id="profile" />
-            Set Contract Admin
+            <Icon id="unpause" />
+            Remove BreakGlass Control
           </NewButton>
         </div>
       </form>

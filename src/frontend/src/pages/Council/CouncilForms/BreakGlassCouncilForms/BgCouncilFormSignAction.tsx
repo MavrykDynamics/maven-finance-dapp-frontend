@@ -31,7 +31,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   breakGlassActionID: INPUT_STATUS_DEFAULT,
 }
 
-export function BgCouncilFormSignActionView() {
+export function BgCouncilFormSignAction() {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },

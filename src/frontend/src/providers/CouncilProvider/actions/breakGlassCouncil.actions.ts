@@ -174,7 +174,6 @@ export const dropBreakGlass = async (breakGlassActionID: number, breakGlassAddre
   }
 }
 
-// TODO: create form and use action, when design will be ready
 // Unpause All Entrypoints
 export const unpauseAllEntrypoints = async (breakGlassAddress: string, contracts: Array<string>) => {
   try {
