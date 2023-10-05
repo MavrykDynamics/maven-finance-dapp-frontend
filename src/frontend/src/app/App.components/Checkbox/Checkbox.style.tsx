@@ -12,7 +12,9 @@ export const CheckboxStyled = styled.div`
     font-size: 14px;
   }
 
-  label {
+  label#checkbox-label {
+    padding: 0;
+    margin: 0;
     width: 24px;
     height: 24px;
     border: 1px solid ${({ theme }) => theme.strokeColor};
@@ -22,7 +24,7 @@ export const CheckboxStyled = styled.div`
     justify-content: center;
     transition: 0.15s ease-in-out;
     cursor: pointer;
-    background-color: ${({ theme }) => theme.cards};
+    background-color: ${({ theme }) => theme.backgroundColor};
 
     &:hover {
       background-color: ${({ theme }) => theme.cards};
@@ -44,7 +46,7 @@ export const CheckboxStyled = styled.div`
     z-index: -1;
 
     &:checked {
-      & + label {
+      & + label#checkbox-label {
         background-color: ${({ theme }) => theme.selectedColorSecondary};
         svg {
           opacity: 1;

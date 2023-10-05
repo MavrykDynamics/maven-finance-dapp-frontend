@@ -21,6 +21,7 @@ import {
   MavrykCounsilPageTitles,
   BgCounsilDdForms,
   BgCounsilPageTitles,
+  COUNCIL_FORMS_NAMES_MAPPER,
 } from './helpers/council.consts'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
@@ -29,16 +30,13 @@ import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider
 import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
-// utils
-import { getSeparateSnakeCase } from 'utils/parse'
-
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // view
 import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
-import { CouncilForms } from './components/CouncilForms.controller'
+import { CouncilForms } from './CouncilForms/CouncilForms.controller'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CouncilAction } from 'pages/Council/components/CouncilAction.view'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -46,7 +44,7 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 import { CouncilStyled, AvaliableActions, CounsilPageWrapper } from './Council.style'
 import { CounsilActionsToSign } from './components/CounsilActionsToSign'
-import { UpdateMemberInfoPopup } from './components/UpdateMemberInfoPopup'
+import { UpdateUserCouncilProfileInfoPopup } from './components/UpdateUserCouncilProfileInfoPopup'
 import { CounsilSidebar } from './components/CounsilSidebar'
 import { CouncilOngoingAction } from './components/CouncilOngoingAction.view'
 
@@ -98,14 +96,10 @@ export function CouncilView({
       pagePathname: isBreakGlassCounsil ? '/break-glass-council' : '/mavryk-council',
       dropDownItems: Object.values(
         isBreakGlassCounsil ? BgCounsilDdForms : MavrykCounsilDdForms,
-      ).map<ActionsDDItemType>((item, index) => ({
-        content: <DropdownTruncateOption text={getSeparateSnakeCase(item)} />,
-        value: item,
+      ).map<ActionsDDItemType>((formId, index) => ({
+        content: <DropdownTruncateOption text={COUNCIL_FORMS_NAMES_MAPPER[formId]} />,
+        value: formId,
         id: index,
-        // TODO: remove after forms will be ready to use
-        disabled: ['UNPAUSE_ALL_ENTRYPOINTS', 'REMOVE_BREAK_GLASS_CONTROLL', 'SET_SELECTED_CONTRACTS_ADMIN'].includes(
-          item,
-        ),
       })),
     }
   }, [isBreakGlassCounsil])
@@ -159,9 +153,10 @@ export function CouncilView({
   const isMyActionsTabs = isMyPastTab || isMyPendingTab
 
   // redirect to review past actions page when member changes or when current user is not council and user is on my request page
-  useEffect(() => {
-    if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
-  }, [userAddress, isUserCouncil])
+  // TODO: uncomment when we will have council to test
+  // useEffect(() => {
+  //   if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
+  // }, [userAddress, isUserCouncil])
 
   // update member popup
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
@@ -302,7 +297,7 @@ export function CouncilView({
         />
       </CouncilStyled>
 
-      <UpdateMemberInfoPopup
+      <UpdateUserCouncilProfileInfoPopup
         show={isUpdateCouncilMemberInfo}
         closePopup={closePopup}
         isBreakGlassCounsil={isBreakGlassCounsil}

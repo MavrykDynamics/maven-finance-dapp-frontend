@@ -15,6 +15,7 @@ import { DEFAULT_DAPP_CONFIG_CONTEXT } from './helpers/dappConfig.const'
 import { DAPP_INITIAL_CONFIG_QUERY } from './queries/dappConfig.query'
 import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 import { TOASTER_ACTIONS_TEXTS } from 'providers/ToasterProvider/helpers/texts/toasterActions.texts'
+import { ipfsClient } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
 // utils
 import { getXTZBakers } from './bakers/getXtzBakers'
@@ -32,9 +33,23 @@ type Props = {
 // TODO: handle initial loading with null values
 const DappConfigProvider = ({ children }: Props) => {
   const { handleApolloError } = useApolloContext()
-  const { hideToasterMessage, success } = useToasterContext()
+  const { hideToasterMessage, success, bug } = useToasterContext()
 
   const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>(DEFAULT_DAPP_CONFIG_CONTEXT)
+
+  // check whether keys for ipfs (image selection) are valid
+  useEffect(() => {
+    const checkIPFS = async () => {
+      try {
+        // if keys are invalid it will return error
+        await ipfsClient.version()
+        setDappConfigCtxState((prev) => ({ ...prev, canUseIpfs: true }))
+      } catch (e) {
+        bug('IPFS auth keys are invalid, image selection will be disabled', 'Keys are invalid')
+      }
+    }
+    checkIPFS()
+  }, [])
 
   const {
     setDappTotalValueLocked,
