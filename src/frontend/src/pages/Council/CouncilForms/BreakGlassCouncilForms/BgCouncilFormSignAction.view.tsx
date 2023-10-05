@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from 'react'
 
 // view
+import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style'
 import { Input } from 'app/App.components/Input/NewInput'
-import { BgCounsilDdForms } from '../helpers/council.consts'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // hooks
@@ -15,7 +14,8 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // consts
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BgCounsilDdForms } from '../../helpers/council.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
 import { SIGN_BREAK_GLASS_COUNCIL_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 
@@ -31,7 +31,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   breakGlassActionID: INPUT_STATUS_DEFAULT,
 }
 
-export function FormSignActionView() {
+export function BgCouncilFormSignActionView() {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
@@ -112,6 +112,15 @@ export function FormSignActionView() {
 
   return (
     <CouncilFormStyled formName={BgCounsilDdForms.SIGN_ACTION}>
+      <a
+        className="info-link"
+        href="https://mavryk.finance/litepaper#break-glass-council"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Icon id="question" />
+      </a>
+
       <CouncilFormHeaderStyled>
         <H2Title>Sign Action</H2Title>
         <div className="descr">Please enter valid function parameters for sign action</div>
@@ -124,7 +133,7 @@ export function FormSignActionView() {
           <Input inputProps={actionIdProps} settings={actionIdSettings} />
         </div>
 
-        <div className="submit-form right">
+        <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="sign" />
             Sign Action

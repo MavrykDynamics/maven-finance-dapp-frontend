@@ -1,19 +1,20 @@
 import { useState, useMemo } from 'react'
 
 // consts
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { TRANSFER_TOKENS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-} from '../../../app/App.components/Input/Input.constants'
+} from '../../../../app/App.components/Input/Input.constants'
 
 // types
 import type { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import type { InputProps } from 'app/App.components/Input/newInput.type'
 import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { transferTokens } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -23,10 +24,11 @@ import { validateFormAddress, validateFormField } from 'utils/validatorFunctions
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
-import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import { CouncilFormStyled } from './CouncilForm.style'
+import { TextArea } from '../../../../app/App.components/TextArea/TextArea.controller'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -50,7 +52,7 @@ const INIT_FOR_VALIDATION: Record<string, InputStatusType> = {
 }
 
 // TODO: test inputs validation after db will be from api-v1
-export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
+export const MavCouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
   const { userAddress, userTokensBalances } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -243,60 +245,66 @@ export const CouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
   }
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.TRANSFER_TOKENS}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Transfer Tokens</h1>
-      <p>Please enter valid function parameters for transferring tokens</p>
-      <div className="form-grid">
-        <div>
+
+      <CouncilFormHeaderStyled>
+        <H2Title>Transfer Tokens</H2Title>
+        <div className="descr">Please enter valid function parameters for transferring tokens</div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="receiver-address">
           <label>Receiver’s Address</label>
           <Input inputProps={receiverAddressProps} settings={receiverAddressSettings} />
         </div>
 
         <div />
 
-        <div>
+        <div className="contract-address">
           <label>Token Contract Address</label>
           <Input inputProps={tokenContractAddressProps} settings={tokenContractAddressSettings} />
         </div>
 
-        <div>
+        <div className="token-amount">
           <label>Token Amount to Transfer</label>
           <Input inputProps={tokenAmountProps} settings={tokenAmountSettings} />
         </div>
 
-        <div>
+        <div className="token-type">
           <label>Token Type (FA12, FA2, TEZ)</label>
           <Input inputProps={tokenTypeProps} settings={tokenContractAddressSettings} />
         </div>
 
-        <div>
+        <div className="token-name">
           <label>Token Name</label>
           <Input inputProps={tokenNameProps} settings={tokenContractAddressSettings} />
         </div>
-      </div>
-      <div className="textarea-group">
-        <label>Purpose for Transfer</label>
-        <TextArea
-          required
-          value={purpose}
-          name="purpose"
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            handleChange(e)
-            validateText(e, maxLength.requestPurposeMaxLength)
-          }}
-          inputStatus={formInputStatus.purpose}
-          textAreaMaxLimit={maxLength.requestPurposeMaxLength}
-        />
-      </div>
-      <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-          <Icon id="transfer_tokens" />
-          Transfer Tokens
-        </NewButton>
-      </div>
+
+        <div className="purpose">
+          <label>Purpose for Transfer</label>
+          <TextArea
+            required
+            value={purpose}
+            name="purpose"
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              handleChange(e)
+              validateText(e, maxLength.requestPurposeMaxLength)
+            }}
+            inputStatus={formInputStatus.purpose}
+            textAreaMaxLimit={maxLength.requestPurposeMaxLength}
+          />
+        </div>
+
+        <div className="submit-form">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
+            <Icon id="transfer_tokens" />
+            Transfer Tokens
+          </NewButton>
+        </div>
+      </form>
     </CouncilFormStyled>
   )
 }

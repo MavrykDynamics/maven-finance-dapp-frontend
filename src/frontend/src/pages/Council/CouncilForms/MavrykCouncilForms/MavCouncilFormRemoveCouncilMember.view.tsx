@@ -2,16 +2,18 @@ import { useState, useMemo } from 'react'
 
 // helpers
 import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { getShortTzAddress } from '../../../utils/tzAdress'
+import { getShortTzAddress } from '../../../../utils/tzAdress'
 
 // consts
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { REMOVE_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
 // view
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import { CouncilFormStyled } from './CouncilForm.style'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // types
@@ -29,7 +31,7 @@ type DdItemType = {
   id: number
 }
 
-export const CouncilFormRemoveCouncilMember = ({
+export const MavCouncilFormRemoveCouncilMember = ({
   councilMembers,
 }: {
   councilMembers: CouncilContext['councilMembers']
@@ -101,14 +103,18 @@ export const CouncilFormRemoveCouncilMember = ({
   const isButtonDisabled = isActionActive || !chosenDdItem
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Remove Council Member</h1>
-      <p>Please enter valid function parameters for removing a council member</p>
-      <div className="form-grid form-grid-button-right">
-        <div>
+
+      <CouncilFormHeaderStyled>
+        <H2Title>Remove Council Member</H2Title>
+        <div className="descr">Please enter valid function parameters for removing a council member</div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="select-council-member">
           <label>Choose Council Member to remove</label>
           <DropDown
             placeholder="Choose Member Address"
@@ -117,13 +123,14 @@ export const CouncilFormRemoveCouncilMember = ({
             clickItem={handleClickDropdownItem}
           />
         </div>
-        <div className="button-aligment">
+
+        <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="minus" />
             Remove Council Member
           </NewButton>
         </div>
-      </div>
+      </form>
     </CouncilFormStyled>
   )
 }

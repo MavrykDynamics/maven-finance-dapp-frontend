@@ -1,39 +1,41 @@
 import { useMemo, useState } from 'react'
 
-// helpers
-import { validateFormAddress } from 'utils/validatorFunctions'
-import { removeVesteeRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
-
-// view
-import { Input } from 'app/App.components/Input/NewInput'
-import { CouncilFormStyled } from './CouncilForm.style'
-import NewButton from 'app/App.components/Button/NewButton'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-
-// hooks
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-
 // consts
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { SET_BAKER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
-} from '../../../app/App.components/Input/Input.constants'
-import { REMOVE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+} from '../../../../app/App.components/Input/Input.constants'
+
+// helpers
+import { setBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { validateFormAddress } from 'utils/validatorFunctions'
+
+// view
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { Input } from 'app/App.components/Input/NewInput'
+import NewButton from 'app/App.components/Button/NewButton'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
+
+// hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const INIT_FORM = {
-  vesteeAddress: '',
+  bakerHash: '',
 }
 
 const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
-  vesteeAddress: INPUT_STATUS_DEFAULT,
+  bakerHash: INPUT_STATUS_DEFAULT,
 }
 
-export const CouncilFormRemoveVestee = () => {
+export const MavCouncilFormSetBaker = () => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -44,12 +46,12 @@ export const CouncilFormRemoveVestee = () => {
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
-  const { vesteeAddress } = form
+  const { bakerHash } = form
 
-  // add council member council action
-  const removeVesteeContractActionProps: HookContractActionArgs = useMemo(
+  // set baker council action
+  const setBakerContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: REMOVE_VESTEE_ACTION,
+      actionType: SET_BAKER_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -61,28 +63,23 @@ export const CouncilFormRemoveVestee = () => {
           return null
         }
 
-        if (!vesteeAddress) {
-          bug('Enter vestee address to remove')
-          return null
-        }
-
-        return await removeVesteeRequest(vesteeAddress, councilAddress)
+        return await setBakerRequest(bakerHash, councilAddress)
       },
     }),
-    [vesteeAddress, userAddress, councilAddress],
+    [bakerHash, userAddress, councilAddress],
   )
 
-  const { action: handleRemoveVestee } = useContractAction(removeVesteeContractActionProps)
+  const { action: handleSetBaker } = useContractAction(setBakerContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await handleRemoveVestee()
+      await handleSetBaker()
 
       setForm(INIT_FORM)
       setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error('CouncilFormRemoveVestee', error)
+      console.error('CouncilFormSetBaker', error)
     }
   }
 
@@ -95,12 +92,12 @@ export const CouncilFormRemoveVestee = () => {
   const isButtonDisabled =
     isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
-  const { vesteeAddressProps, vesteeAddressSettings } = useMemo(() => {
+  const { bakerHashProps, bakerHashSettings } = useMemo(() => {
     const validateAddress = validateFormAddress(setFormInputStatus)
 
-    const vesteeAddressProps = {
-      name: 'vesteeAddress',
-      value: vesteeAddress,
+    const bakerHashProps = {
+      name: 'bakerHash',
+      value: bakerHash,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
         validateAddress(e)
@@ -109,32 +106,37 @@ export const CouncilFormRemoveVestee = () => {
     }
 
     return {
-      vesteeAddressProps,
-      vesteeAddressSettings: {
-        inputStatus: formInputStatus.vesteeAddress,
+      bakerHashProps,
+      bakerHashSettings: {
+        inputStatus: formInputStatus.bakerHash,
       },
     }
-  }, [formInputStatus.vesteeAddress, vesteeAddress])
+  }, [bakerHash, formInputStatus.bakerHash])
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.SET_BAKER}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Remove Vestee</h1>
-      <p>Please enter valid function parameters for removing vestee</p>
-      <div className="form-grid form-grid-button-right">
-        <div>
-          <label>Vestee Address</label>
-          <Input inputProps={vesteeAddressProps} settings={vesteeAddressSettings} />
+
+      <CouncilFormHeaderStyled>
+        <H2Title>Set Baker</H2Title>
+        <div className="descr">Please enter valid function parameters for setting a baker</div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="baker-hash">
+          <label>Baker Hash</label>
+          <Input inputProps={bakerHashProps} settings={bakerHashSettings} />
         </div>
-        <div className="button-aligment">
+
+        <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-            <Icon id="minus" />
-            Remove Vestee
+            <Icon id="plus" />
+            Set Baker
           </NewButton>
         </div>
-      </div>
+      </form>
     </CouncilFormStyled>
   )
 }

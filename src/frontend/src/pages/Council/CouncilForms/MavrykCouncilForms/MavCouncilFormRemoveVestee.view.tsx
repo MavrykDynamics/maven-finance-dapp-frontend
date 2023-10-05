@@ -1,39 +1,41 @@
 import { useMemo, useState } from 'react'
 
+// helpers
+import { validateFormAddress } from 'utils/validatorFunctions'
+import { removeVesteeRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+
+// view
+import { Input } from 'app/App.components/Input/NewInput'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
+import NewButton from 'app/App.components/Button/NewButton'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+
+// hooks
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
 // consts
-import { TOGGLE_VESTEE_LOCK_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
-} from '../../../app/App.components/Input/Input.constants'
-
-// helpers
-import { toggleVesteeLock } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
-import { validateFormAddress } from 'utils/validatorFunctions'
-
-// view
-import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilFormStyled } from './CouncilForm.style'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-
-// hooks
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+} from '../../../../app/App.components/Input/Input.constants'
+import { REMOVE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 
 const INIT_FORM = {
   vesteeAddress: '',
 }
 
-const INTI_FORM_VALIDATION: Record<string, InputStatusType> = {
+const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   vesteeAddress: INPUT_STATUS_DEFAULT,
 }
 
-export const CouncilFormToggleVesteeLock = () => {
+export const MavCouncilFormRemoveVestee = () => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -42,14 +44,14 @@ export const CouncilFormToggleVesteeLock = () => {
   } = useDappConfigContext()
 
   const [form, setForm] = useState(INIT_FORM)
-  const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>(INTI_FORM_VALIDATION)
+  const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { vesteeAddress } = form
 
-  // toggle vestee lock council action
-  const toggleVesteeLockContractActionProps: HookContractActionArgs = useMemo(
+  // add council member council action
+  const removeVesteeContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: TOGGLE_VESTEE_LOCK_ACTION,
+      actionType: REMOVE_VESTEE_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -61,23 +63,28 @@ export const CouncilFormToggleVesteeLock = () => {
           return null
         }
 
-        return await toggleVesteeLock(vesteeAddress, councilAddress)
+        if (!vesteeAddress) {
+          bug('Enter vestee address to remove')
+          return null
+        }
+
+        return await removeVesteeRequest(vesteeAddress, councilAddress)
       },
     }),
     [vesteeAddress, userAddress, councilAddress],
   )
 
-  const { action: handleToggleVesteeLock } = useContractAction(toggleVesteeLockContractActionProps)
+  const { action: handleRemoveVestee } = useContractAction(removeVesteeContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await handleToggleVesteeLock()
+      await handleRemoveVestee()
 
       setForm(INIT_FORM)
-      setFormInputStatus(INTI_FORM_VALIDATION)
+      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error('CouncilFormToggleVesteeLock', error)
+      console.error('CouncilFormRemoveVestee', error)
     }
   }
 
@@ -112,24 +119,29 @@ export const CouncilFormToggleVesteeLock = () => {
   }, [formInputStatus.vesteeAddress, vesteeAddress])
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.REMOVE_VESTEE}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Toggle Vestee Lock</h1>
-      <p>Please enter valid function parameters for toggle vestee lock</p>
-      <div className="form-grid form-grid-button-right">
-        <div>
+
+      <CouncilFormHeaderStyled>
+        <H2Title>Remove Vestee</H2Title>
+        <div className="descr">Please enter valid function parameters for removing vestee</div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="vestee-address">
           <label>Vestee Address</label>
           <Input inputProps={vesteeAddressProps} settings={vesteeAddressSettings} />
         </div>
-        <div className="button-aligment">
+
+        <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-            <Icon id="lock" />
-            Toggle Vestee Lock
+            <Icon id="minus" />
+            Remove Vestee
           </NewButton>
         </div>
-      </div>
+      </form>
     </CouncilFormStyled>
   )
 }

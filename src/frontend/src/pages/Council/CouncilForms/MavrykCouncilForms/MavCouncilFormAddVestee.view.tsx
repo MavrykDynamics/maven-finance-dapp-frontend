@@ -1,29 +1,31 @@
 import { useMemo, useState } from 'react'
 
-// consts
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import { UPDATE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS } from '../../../app/App.components/Input/Input.constants'
-
 // helpers
-import { updateVestee } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { addVestee } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
+// consts
+import { ADD_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import { INPUT_STATUS_SUCCESS } from '../../../../app/App.components/Input/Input.constants'
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+
 // view
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilFormStyled } from './CouncilForm.style'
-import Icon from '../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
 
 // types
+import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 import type { InputProps } from 'app/App.components/Input/newInput.type'
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
 
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+// style
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 const INIT_FORM = {
   vesteeAddress: '',
@@ -33,13 +35,13 @@ const INIT_FORM = {
 }
 
 const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
-  vesteeAddress: INPUT_STATUS_DEFAULT,
-  totalAllocated: INPUT_STATUS_DEFAULT,
-  cliffInMonths: INPUT_STATUS_DEFAULT,
-  vestingInMonths: INPUT_STATUS_DEFAULT,
+  vesteeAddress: '',
+  totalAllocated: '',
+  cliffInMonths: '',
+  vestingInMonths: '',
 }
 
-export const CouncilFormUpdateVestee = () => {
+export const MavCouncilFormAddVestee = () => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -52,10 +54,10 @@ export const CouncilFormUpdateVestee = () => {
 
   const { vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths } = form
 
-  // update vestee council action
-  const updateVesteeContractActionProps: HookContractActionArgs = useMemo(
+  // add vestee council action
+  const addVesteeCouncilContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: UPDATE_VESTEE_ACTION,
+      actionType: ADD_VESTEE_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -67,7 +69,7 @@ export const CouncilFormUpdateVestee = () => {
           return null
         }
 
-        return await updateVestee(
+        return await addVestee(
           vesteeAddress,
           Number(totalAllocated),
           Number(cliffInMonths),
@@ -79,17 +81,16 @@ export const CouncilFormUpdateVestee = () => {
     [vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths, userAddress, councilAddress],
   )
 
-  const { action: handleUpdateVestee } = useContractAction(updateVesteeContractActionProps)
+  const { action: handleAddVesteeCouncil } = useContractAction(addVesteeCouncilContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await handleUpdateVestee()
-
+      await handleAddVesteeCouncil()
       setForm(INIT_FORM)
       setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
-      console.error('CouncilFormUpdateVestee', error)
+      console.error('CouncilFormAddVestee', error)
     }
   }
 
@@ -188,43 +189,48 @@ export const CouncilFormUpdateVestee = () => {
   ])
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.ADD_VESTEE}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Update Vestee</h1>
-      <p>Please enter valid function parameters for updating a vestee</p>
-      <div className="form-grid">
-        <div>
+
+      <CouncilFormHeaderStyled>
+        <H2Title>Add Vestee</H2Title>
+        <div className="descr">Please enter valid function parameters for adding a vestee</div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="vestee-address">
           <label>Vestee Address</label>
           <Input inputProps={vesteeAddressProps} settings={vesteeAddressSettings} />
         </div>
 
-        <div>
+        <div className="vestee-allocated-amount">
           <label>Total Allocated Amount</label>
           <Input inputProps={totalAllocatedProps} settings={totalAllocatedSettings} />
         </div>
 
-        <div>
+        <div className="vestee-cliff-period">
           <label>
-            New Cliff Period <small>(in months)</small>
+            Cliff Period <small>(in months)</small>
           </label>
           <Input inputProps={cliffInMonthsProps} settings={cliffInMonthsSettings} />
         </div>
 
-        <div>
+        <div className="vesting-period">
           <label>
-            New Vesting Period <small>(in months)</small>
+            Vesting Period <small>(in months)</small>
           </label>
           <Input inputProps={vestingInMonthsProps} settings={vestingInMonthsSettings} />
         </div>
-      </div>
-      <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-          <Icon id="update" />
-          Update Vestee
-        </NewButton>
-      </div>
+
+        <div className="submit-form">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
+            <Icon id="plus" />
+            Add Vestee
+          </NewButton>
+        </div>
+      </form>
     </CouncilFormStyled>
   )
 }

@@ -1,30 +1,32 @@
 import { useState, useMemo } from 'react'
 
 // consts
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { ADD_COUNSIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-} from '../../../app/App.components/Input/Input.constants'
+} from '../../../../app/App.components/Input/Input.constants'
 
 // types
 import type { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { getShortTzAddress } from '../../../utils/tzAdress'
+import { getShortTzAddress } from '../../../../utils/tzAdress'
 import { changeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import { CouncilFormStyled } from './CouncilForm.style'
-import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
+import { IPFSUploader } from '../../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 
 // hooks
@@ -53,7 +55,7 @@ type DdItemType = {
   id: number
 }
 
-export const CouncilFormChangeCouncilMember = ({
+export const MavCouncilFormChangeCouncilMember = ({
   councilMaxLengths,
   councilMembers,
 }: {
@@ -222,14 +224,18 @@ export const CouncilFormChangeCouncilMember = ({
   ])
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Change Council Member</h1>
-      <p>Please enter valid function parameters for changing a council member</p>
-      <div className="form-grid">
-        <div>
+
+      <CouncilFormHeaderStyled>
+        <H2Title>Change Council Member</H2Title>
+        <div className="descr">Please enter valid function parameters for changing a council member</div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="select-council-member">
           <label>Choose Council Member to change</label>
           <DropDown
             placeholder="Choose Member Address"
@@ -239,38 +245,42 @@ export const CouncilFormChangeCouncilMember = ({
           />
         </div>
         <div />
-        <div>
+        <div className="member-address">
           <label>Council Member Address</label>
           <Input inputProps={newCouncilMemberAddressProps} settings={newCouncilMemberAddressSettings} />
         </div>
-        <div>
+        <div className="member-name">
           <label>Council Member Name</label>
           <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
         </div>
-        <div>
+        <div className="member-url">
           <label>Council Member Website URL</label>
           <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
         </div>
-      </div>
-      <IPFSUploader
-        typeFile="image"
-        imageIpfsUrl={newMemberImage}
-        className="form-ipfs"
-        setIpfsImageUrl={(e: string) => {
-          setForm({ ...form, newMemberImage: e })
-          setFormInputStatus({
-            ...formInputStatus,
-            newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-          })
-        }}
-        title={'Upload Profile Pic'}
-      />
-      <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-          <Icon id="exchange" />
-          Change Council Member
-        </NewButton>
-      </div>
+
+        <div className="member-image">
+          <label>Upload Profile Pic</label>
+          <IPFSUploader
+            typeFile="image"
+            imageIpfsUrl={newMemberImage}
+            className="form-ipfs"
+            setIpfsImageUrl={(e: string) => {
+              setForm({ ...form, newMemberImage: e })
+              setFormInputStatus({
+                ...formInputStatus,
+                newMemberImage: Boolean(e) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+              })
+            }}
+          />
+        </div>
+
+        <div className="submit-form">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
+            <Icon id="exchange" />
+            Change Council Member
+          </NewButton>
+        </div>
+      </form>
     </CouncilFormStyled>
   )
 }

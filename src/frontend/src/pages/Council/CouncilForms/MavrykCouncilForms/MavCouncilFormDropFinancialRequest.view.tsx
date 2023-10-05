@@ -8,13 +8,15 @@ import {
   ONGOING_FIN_REQUESTS_SUB,
 } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
 import { DROP_FIN_REQUEST_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
-import Icon from '../../../app/App.components/Icon/Icon.view'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import { CouncilFormStyled } from './CouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // utils
 import { dropFinancialRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -31,7 +33,7 @@ type DdItemType = {
   id: string
 }
 
-export const CouncilFormDropFinancialRequest = () => {
+export const MavCouncilFormDropFinancialRequest = () => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -114,42 +116,41 @@ export const CouncilFormDropFinancialRequest = () => {
     if (foundItem) setChosenDdItem(foundItem)
   }
 
-  const isButtonDisabled = isActionActive || !chosenDdItem
+  const isButtonDisabled = isActionActive || !chosenDdItem || isFinancialRequestsLoading
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Drop Financial Request</h1>
-      <p>
-        {isFinancialRequestsLoading ? (
-          <>
-            <div className="loading-label">
-              Loading Financial Requests <SpinnerCircleLoaderStyled />
-            </div>
-          </>
-        ) : (
-          'Please enter valid function parameters for dropping a financial request'
-        )}
-      </p>
-      <div className="form-grid form-grid-button-right">
-        <div>
+
+      <CouncilFormHeaderStyled>
+        <H2Title>Drop Financial Request</H2Title>
+        <div className="descr">
+          Please enter valid function parameters for dropping a financial request{' '}
+          {isFinancialRequestsLoading ? <SpinnerCircleLoaderStyled /> : null}
+        </div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="select-contracts">
           <label>Choose Financial Request to drop</label>
           <DropDown
             placeholder="Choose Financial Request"
             activeItem={chosenDdItem}
             items={dropDownItems}
+            disabled={isFinancialRequestsLoading}
             clickItem={handleClickDropdownItem}
           />
         </div>
-        <div className="button-aligment">
+
+        <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="navigation-menu_close" />
             Drop Financial Request
           </NewButton>
         </div>
-      </div>
+      </form>
     </CouncilFormStyled>
   )
 }

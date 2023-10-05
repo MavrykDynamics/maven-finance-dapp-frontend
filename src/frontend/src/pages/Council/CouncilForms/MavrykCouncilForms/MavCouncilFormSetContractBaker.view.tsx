@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react'
 
 // consts
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { SET_CONTRACT_BAKER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
-} from '../../../app/App.components/Input/Input.constants'
+} from '../../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { setContractBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -16,8 +17,9 @@ import { validateFormAddress } from 'utils/validatorFunctions'
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import { CouncilFormStyled } from './CouncilForm.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -35,7 +37,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   keyHash: INPUT_STATUS_DEFAULT,
 }
 
-export const CouncilFormSetContractBaker = () => {
+export const MavCouncilFormSetContractBaker = () => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -128,29 +130,34 @@ export const CouncilFormSetContractBaker = () => {
   }, [formInputStatus.keyHash, formInputStatus.targetContractAddress, keyHash, targetContractAddress])
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.SET_CONTRACT_BAKER}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Set Contract Baker</h1>
-      <p>Please enter valid function parameters for setting a contract baker</p>
-      <div className="form-grid">
-        <div>
+
+      <CouncilFormHeaderStyled>
+        <H2Title>Set Contract Baker</H2Title>
+        <div className="descr">Please enter valid function parameters for setting a contract baker</div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="contract-address">
           <label>Target Contract Address</label>
           <Input inputProps={targetContractAddressProps} settings={targetContractAddressSettings} />
         </div>
 
-        <div>
+        <div className="baker-hash">
           <label>Key Hash</label>
           <Input inputProps={keyHashProps} settings={keyHashSettings} />
         </div>
-      </div>
-      <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-          <Icon id="plus" />
-          Set Contract Baker
-        </NewButton>
-      </div>
+
+        <div className="submit-form">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
+            <Icon id="plus" />
+            Set Contract Baker
+          </NewButton>
+        </div>
+      </form>
     </CouncilFormStyled>
   )
 }

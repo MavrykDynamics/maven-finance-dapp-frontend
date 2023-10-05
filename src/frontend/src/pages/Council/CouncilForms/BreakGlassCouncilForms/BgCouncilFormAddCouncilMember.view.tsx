@@ -1,15 +1,12 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 
-// components
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+// view
 import NewButton from 'app/App.components/Button/NewButton'
-import { Input } from 'app/App.components/Input/NewInput'
-import { IPFSUploader } from '../../../app/App.components/IPFSUploader/IPFSUploader.controller'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import { BgCounsilDdForms } from '../helpers/council.consts'
-import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
+import { Input } from 'app/App.components/Input/NewInput'
+import { IPFSUploader } from '../../../../app/App.components/IPFSUploader/IPFSUploader.controller'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // types
 import {
@@ -18,77 +15,54 @@ import {
   INPUT_STATUS_SUCCESS,
   InputStatusType,
 } from 'app/App.components/Input/Input.constants'
-import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // helpers
-import { changeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { getShortTzAddress } from '../../../utils/tzAdress'
+import { addCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // consts
-import { CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { BgCounsilDdForms } from '../../helpers/council.consts'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
+import { ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 // hooks
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const INIT_FORM = {
-  newCouncilMemberAddress: '',
+  memberAddress: '',
   newMemberWebsite: '',
   newMemberName: '',
   newMemberImage: '',
 }
 
 const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
-  newCouncilMemberAddress: INPUT_STATUS_DEFAULT,
+  memberAddress: INPUT_STATUS_DEFAULT,
   newMemberWebsite: INPUT_STATUS_DEFAULT,
   newMemberName: INPUT_STATUS_DEFAULT,
   newMemberImage: INPUT_STATUS_DEFAULT,
 }
 
-export function FormChangeCouncilMemberView({
-  councilMaxLengths,
-  breakGlassCouncilMembers,
-}: {
-  councilMaxLengths: CouncilMaxLength
-  breakGlassCouncilMembers: CouncilContext['breakGlassCouncilMembers']
-}) {
+export function BgCouncilFormAddCouncilMemberView({ councilMaxLengths }: { councilMaxLengths: CouncilMaxLength }) {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
   } = useDappConfigContext()
-  const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
+  const { bug } = useToasterContext()
 
-  const dropDownItems = useMemo(
-    () =>
-      breakGlassCouncilMembers.map((item, index) => ({
-        content: (
-          <div>
-            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
-          </div>
-        ),
-        tzAddress: item.userId,
-        id: index,
-      })),
-    [breakGlassCouncilMembers],
-  )
-
-  type DropDownItemType = (typeof dropDownItems)[0]
-
-  const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
-  const { newCouncilMemberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
+  const { memberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
 
-  // chnage bg council member action
-  const changeBgCouncilContractContractActionProps: HookContractActionArgs = useMemo(
+  // add bg council member action
+  const signActionContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
+      actionType: ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -100,46 +74,24 @@ export function FormChangeCouncilMemberView({
           return null
         }
 
-        const oldCouncilMemberAddress = chosenDdItem?.tzAddress
-        if (!oldCouncilMemberAddress) return null
-
-        return await changeCouncilMember(
-          breakGlassAddress,
-          oldCouncilMemberAddress,
-          newCouncilMemberAddress,
-          newMemberName,
-          newMemberWebsite,
-          newMemberImage,
-        )
+        return await addCouncilMember(breakGlassAddress, memberAddress, newMemberName, newMemberWebsite, newMemberImage)
       },
     }),
-    [
-      userAddress,
-      breakGlassAddress,
-      chosenDdItem?.tzAddress,
-      newCouncilMemberAddress,
-      newMemberName,
-      newMemberWebsite,
-      newMemberImage,
-    ],
+    [breakGlassAddress, memberAddress, newMemberImage, newMemberName, newMemberWebsite, userAddress],
   )
 
-  const { action: handleChangeCouncilMember } = useContractAction(changeBgCouncilContractContractActionProps)
-
-  const isButtonDisabled =
-    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
+  const { action: handleAddCouncilMember } = useContractAction(signActionContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
-      await handleChangeCouncilMember()
+      await handleAddCouncilMember()
 
       setForm(INIT_FORM)
       setFormInputStatus(INIT_FORM_VALIDATION)
-      setChosenDdItem(undefined)
     } catch (error) {
-      console.error('FormChangeCouncilMemberViewe', error)
+      console.error('FormAddCouncilMemberView', error)
     }
   }
 
@@ -149,12 +101,8 @@ export function FormChangeCouncilMemberView({
     })
   }
 
-  const handleClickDropdownItem = (itemId: DDItemId) => {
-    const foundItem = dropDownItems.find((item) => item.id === itemId)
-
-    if (!foundItem) return
-    setChosenDdItem(foundItem)
-  }
+  const isButtonDisabled =
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
 
   const {
     memberAddressProps,
@@ -168,8 +116,8 @@ export function FormChangeCouncilMemberView({
     const validateAddress = validateFormAddress(setFormInputStatus)
 
     const memberAddressProps = {
-      name: 'newCouncilMemberAddress',
-      value: newCouncilMemberAddress,
+      name: 'memberAddress',
+      value: memberAddress,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
         validateAddress(e)
@@ -186,6 +134,7 @@ export function FormChangeCouncilMemberView({
       },
       required: true,
     }
+
     const newMemberWebsiteProps = {
       name: 'newMemberWebsite',
       value: newMemberWebsite,
@@ -195,10 +144,11 @@ export function FormChangeCouncilMemberView({
       },
       required: true,
     }
+
     return {
       memberAddressProps,
       memberAddressSettings: {
-        inputStatus: formInputStatus.newCouncilMemberAddress,
+        inputStatus: formInputStatus.memberAddress,
       },
       newMemberNameProps,
       newMemberNameSettings: {
@@ -212,36 +162,31 @@ export function FormChangeCouncilMemberView({
   }, [
     councilMaxLengths.councilMemberNameMaxLength,
     councilMaxLengths.councilMemberWebsiteMaxLength,
-    formInputStatus.newCouncilMemberAddress,
+    formInputStatus.memberAddress,
     formInputStatus.newMemberName,
     formInputStatus.newMemberWebsite,
-    newCouncilMemberAddress,
+    memberAddress,
     newMemberName,
     newMemberWebsite,
   ])
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.CHANGE_COUNCIL_MEMBER}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
+    <CouncilFormStyled formName={BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER}>
+      <a
+        className="info-link"
+        href="https://mavryk.finance/litepaper#break-glass-council"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 
       <CouncilFormHeaderStyled>
-        <H2Title>Change Council Member</H2Title>
-        <div className="descr">Please enter valid function parameters for changing a council member</div>
+        <H2Title>Add Council Member</H2Title>
+        <div className="descr">Please enter valid function parameters for adding a council member</div>
       </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>
-        <div className="select-council-member">
-          <label>Choose Council Member to change</label>
-          <DropDown
-            placeholder="Choose member"
-            activeItem={chosenDdItem}
-            items={dropDownItems}
-            clickItem={handleClickDropdownItem}
-          />
-        </div>
-
         <div className="member-address">
           <label>Council Member Address</label>
           <Input inputProps={memberAddressProps} settings={memberAddressSettings} />
@@ -252,14 +197,13 @@ export function FormChangeCouncilMemberView({
           <Input inputProps={newMemberNameProps} settings={newMemberNameSettings} />
         </div>
 
-        <div className="member-url ">
+        <div className="member-url">
           <label>Council Member Website URL</label>
           <Input inputProps={newMemberWebsiteProps} settings={newMemberWebsiteSettings} />
         </div>
 
         <div className="member-image">
           <label>Upload Profile Pic</label>
-
           <IPFSUploader
             typeFile="image"
             imageIpfsUrl={newMemberImage}
@@ -274,10 +218,10 @@ export function FormChangeCouncilMemberView({
           />
         </div>
 
-        <div className="submit-form right">
+        <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-            <Icon id="exchange" />
-            Change Council Member
+            <Icon id="plus" />
+            Add Council Member
           </NewButton>
         </div>
       </form>

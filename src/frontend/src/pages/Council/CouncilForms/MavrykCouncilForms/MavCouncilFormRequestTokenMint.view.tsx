@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 // consts
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { REQUEST_TOKENS_MINT_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { TREASURY_STORAGE_DATA_SUB, DEFAULT_TREASURY_SUBS } from 'providers/TreasuryProvider/helpers/treasury.consts'
@@ -9,7 +10,7 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-} from '../../../app/App.components/Input/Input.constants'
+} from '../../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { requestTokenMint } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -17,15 +18,16 @@ import { validateFormField } from 'utils/validatorFunctions'
 
 // types
 import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
-import Icon from '../../../app/App.components/Icon/Icon.view'
-import { CouncilFormStyled } from './CouncilForm.style'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { TextArea } from '../../../../app/App.components/TextArea/TextArea.controller'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -48,7 +50,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
 }
 
 // TODO: test inputs validation after db will be from api-v1
-export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
+export const MavCouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -119,7 +121,10 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   }
 
   const isButtonDisabled =
-    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
+    isActionActive ||
+    Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS) ||
+    isTreasuryLoading ||
+    isDoormanLoading
 
   const { treasuryAddressProps, treasuryAddressSettings, tokenAmountProps, tokenAmountSettings } = useMemo(() => {
     const treasuryAddressProps = {
@@ -179,57 +184,54 @@ export const CouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const validateText = validateFormField(setFormInputStatus)
 
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.REQUEST_TOKEN_MINT}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Request Token Mint</h1>
 
-      <p>
-        {isTreasuryLoading || isDoormanLoading ? (
-          <>
-            <div className="loading-label">
-              Loading Treasuries & MVK token data <SpinnerCircleLoaderStyled />
-            </div>
-          </>
-        ) : (
-          'Please enter valid function parameters for requesting token mint'
-        )}
-      </p>
+      <CouncilFormHeaderStyled>
+        <H2Title>Request Token Mint</H2Title>
+        <div className="descr">
+          Please enter valid function parameters for requesting token mint{' '}
+          {isTreasuryLoading || isDoormanLoading ? <SpinnerCircleLoaderStyled /> : null}
+        </div>
+      </CouncilFormHeaderStyled>
 
-      <div className="form-grid">
-        <div>
+      <form onSubmit={handleSubmit}>
+        <div className="contract-address">
           <label>Treasury Address</label>
           <Input inputProps={treasuryAddressProps} settings={treasuryAddressSettings} />
         </div>
 
-        <div>
+        <div className="token-amount">
           <label>Token Amount</label>
           <Input className="transparent-child-wrap" inputProps={tokenAmountProps} settings={tokenAmountSettings}>
             <div className="pinned-child">MVK</div>
           </Input>
         </div>
-      </div>
-      <div className="textarea-group">
-        <label>Purpose for Request</label>
-        <TextArea
-          required
-          value={purpose}
-          name="purpose"
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            handleChange(e)
-            validateText(e, maxLength.requestPurposeMaxLength)
-          }}
-          inputStatus={formInputStatus.purpose}
-          textAreaMaxLimit={maxLength.requestPurposeMaxLength}
-        />
-      </div>
-      <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-          <Icon id="loans" />
-          Request Mint
-        </NewButton>
-      </div>
+
+        <div className="purpose">
+          <label>Purpose for Request</label>
+          <TextArea
+            required
+            value={purpose}
+            name="purpose"
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              handleChange(e)
+              validateText(e, maxLength.requestPurposeMaxLength)
+            }}
+            inputStatus={formInputStatus.purpose}
+            textAreaMaxLimit={maxLength.requestPurposeMaxLength}
+          />
+        </div>
+
+        <div className="submit-form">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
+            <Icon id="loans" />
+            Request Mint
+          </NewButton>
+        </div>
+      </form>
     </CouncilFormStyled>
   )
 }

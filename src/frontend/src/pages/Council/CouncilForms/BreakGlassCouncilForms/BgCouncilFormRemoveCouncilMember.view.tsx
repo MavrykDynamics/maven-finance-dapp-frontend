@@ -1,19 +1,18 @@
 import React, { useState, useMemo } from 'react'
 
-// components
+// view
 import NewButton from 'app/App.components/Button/NewButton'
 import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
-import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { BgCounsilDdForms } from '../helpers/council.consts'
-import Icon from '../../../app/App.components/Icon/Icon.view'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style'
 
 // types
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
 // helpers
 import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { getShortTzAddress } from '../../../utils/tzAdress'
+import { getShortTzAddress } from '../../../../utils/tzAdress'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -22,7 +21,8 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
+import { BgCounsilDdForms } from '../../helpers/council.consts'
 import { REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 type DdItemType = {
@@ -31,7 +31,7 @@ type DdItemType = {
   id: number
 }
 
-export function FormRemoveCouncilMemberView({
+export function BgCouncilFormRemoveCouncilMemberView({
   breakGlassCouncilMembers,
 }: {
   breakGlassCouncilMembers: CouncilContext['breakGlassCouncilMembers']
@@ -107,8 +107,13 @@ export function FormRemoveCouncilMemberView({
   const isButtonDisabled = isActionActive || !chosenDdItem
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.REMOVE_COUNCIL_MEMBER}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
+    <CouncilFormStyled formName={BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER}>
+      <a
+        className="info-link"
+        href="https://mavryk.finance/litepaper#break-glass-council"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 
@@ -128,7 +133,7 @@ export function FormRemoveCouncilMemberView({
           />
         </div>
 
-        <div className="submit-form right">
+        <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="minus" />
             Remove Council Member

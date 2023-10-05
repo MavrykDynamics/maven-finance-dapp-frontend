@@ -83,7 +83,6 @@ export const updateBgCouncilMember = async (
   newMemberName: string,
   newMemberWebsite: string,
   newMemberImage: string,
-  callback: () => void,
 ) => {
   try {
     // prepare and send transaction
@@ -95,9 +94,7 @@ export const updateBgCouncilMember = async (
       newMemberImage,
     )
 
-    return await getEstimationResult(updateCouncilMemberMetaData, {
-      callback,
-    })
+    return await getEstimationResult(updateCouncilMemberMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

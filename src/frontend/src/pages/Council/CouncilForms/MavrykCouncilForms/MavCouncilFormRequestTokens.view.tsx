@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 
 // consts
+import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { REQUEST_TOKENS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { TREASURY_STORAGE_DATA_SUB, DEFAULT_TREASURY_SUBS } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
@@ -8,13 +9,13 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-} from '../../../app/App.components/Input/Input.constants'
+} from '../../../../app/App.components/Input/Input.constants'
 
 // types
 import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import type { TreasuryData } from 'providers/TreasuryProvider/helpers/treasury.types'
 import type { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import type { InputStatusType } from '../../../app/App.components/Input/Input.constants'
+import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 import type { InputProps } from 'app/App.components/Input/newInput.type'
 
 // helpers
@@ -26,10 +27,11 @@ import { validateFormField } from 'utils/validatorFunctions'
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
-import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
+import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { TextArea } from '../../../../app/App.components/TextArea/TextArea.controller'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import { CouncilFormStyled } from './CouncilForm.style'
-import Icon from '../../../app/App.components/Icon/Icon.view'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
+import Icon from '../../../../app/App.components/Icon/Icon.view'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -54,7 +56,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
 }
 
 // TODO: test inputs validation after db will be from api-v1
-export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
+export const MavCouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -140,7 +142,9 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   }
 
   const isButtonDisabled =
-    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
+    isActionActive ||
+    Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS) ||
+    isTreasuryLoading
 
   const validateText = validateFormField(setFormInputStatus)
 
@@ -298,71 +302,69 @@ export const CouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     onChange: () => null,
     disabled: true,
   }
+
   return (
-    <CouncilFormStyled onSubmit={handleSubmit}>
+    <CouncilFormStyled formName={MavrykCounsilDdForms.REQUEST_TOKENS}>
       <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
         <Icon id="question" />
       </a>
-      <h1 className="form-h1">Request Tokens</h1>
 
-      <p>
-        {isTreasuryLoading ? (
-          <>
-            <div className="loading-label">
-              Loading Treasuries <SpinnerCircleLoaderStyled />
-            </div>
-          </>
-        ) : (
-          'Please enter valid function parameters for requesting tokens'
-        )}
-      </p>
-      <div className="form-grid">
-        <div>
+      <CouncilFormHeaderStyled>
+        <H2Title>Request Tokens</H2Title>
+        <div className="descr">
+          Please enter valid function parameters for requesting tokens{' '}
+          {isTreasuryLoading ? <SpinnerCircleLoaderStyled /> : null}
+        </div>
+      </CouncilFormHeaderStyled>
+
+      <form onSubmit={handleSubmit}>
+        <div className="admin-address">
           <label>Treasury Address</label>
           <Input inputProps={treasuryAddressProps} settings={treasuryAddressSettings} />
         </div>
 
-        <div>
+        <div className="contract-address">
           <label>Token Contract Address</label>
           <Input inputProps={tokenContractAddressProps} settings={tokenContractAddressSettings} />
         </div>
 
-        <div>
+        <div className="token-name">
           <label>Token Name</label>
           <Input inputProps={tokenNameProps} settings={tokenContractAddressSettings} />
         </div>
 
-        <div>
+        <div className="token-amount">
           <label>Token Amount to Transfer</label>
           <Input inputProps={tokenAmountProps} settings={tokenAmountSettings} />
         </div>
 
-        <div>
+        <div className="token-type">
           <label>Token Type (FA12, FA2, TEZ)</label>
           <Input inputProps={tokenTypeProps} settings={tokenContractAddressSettings} />
         </div>
-      </div>
 
-      <div className="textarea-group">
-        <label>Purpose for Request</label>
-        <TextArea
-          required
-          value={purpose}
-          name="purpose"
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            handleChange(e)
-            validateText(e, maxLength.requestPurposeMaxLength)
-          }}
-          inputStatus={formInputStatus.purpose}
-          textAreaMaxLimit={maxLength.requestPurposeMaxLength}
-        />
-      </div>
-      <div className="btn-group">
-        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
-          <Icon id="request_token" />
-          Request Tokens
-        </NewButton>
-      </div>
+        <div className="purpose">
+          <label>Purpose for Request</label>
+          <TextArea
+            required
+            value={purpose}
+            name="purpose"
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+              handleChange(e)
+              validateText(e, maxLength.requestPurposeMaxLength)
+            }}
+            inputStatus={formInputStatus.purpose}
+            textAreaMaxLimit={maxLength.requestPurposeMaxLength}
+          />
+        </div>
+
+        <div className="submit-form">
+          <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
+            <Icon id="request_token" />
+            Request Tokens
+          </NewButton>
+        </div>
+      </form>
     </CouncilFormStyled>
   )
 }

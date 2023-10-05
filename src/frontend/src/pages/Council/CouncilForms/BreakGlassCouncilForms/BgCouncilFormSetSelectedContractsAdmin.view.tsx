@@ -3,25 +3,25 @@ import React, { useCallback, useMemo, useState } from 'react'
 // view
 import { Input } from 'app/App.components/Input/NewInput'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { BgCounsilDdForms } from '../helpers/council.consts'
 import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilFormHeaderStyled, CouncilFormStyled } from './BreakGlassCouncilForm.style'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style'
 import { Multiselect } from 'app/App.components/Multiselect/Multiselect'
 
 // utils
 import { setSelectedContractsAdmin } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { handleBgCouncilContractSearch } from '../helpers/commonCouncil.utils'
+import { handleBgCouncilContractSearch } from '../../helpers/commonCouncil.utils'
 import { validateFormAddress } from 'utils/validatorFunctions'
 
 // consts
+import { BgCounsilDdForms } from '../../helpers/council.consts'
 import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
-import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
 import { MULTISELECT_SELECT_ALL_OPTION_VALUE } from 'app/App.components/Multiselect/Multiselect.consts'
 import { SET_SELECTED_CONTRACTS_ADMIN_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 // types
-import { CouncilContractsMultiselectOptionType } from '../helpers/council.types'
+import { CouncilContractsMultiselectOptionType } from '../../helpers/council.types'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -38,7 +38,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   newAdminAddress: INPUT_STATUS_DEFAULT,
 }
 
-export function FormSetSelectedContractsAdminView() {
+export function BgCouncilFormSetSelectedContractsAdminView() {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
@@ -153,6 +153,15 @@ export function FormSetSelectedContractsAdminView() {
 
   return (
     <CouncilFormStyled formName={BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN}>
+      <a
+        className="info-link"
+        href="https://mavryk.finance/litepaper#break-glass-council"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Icon id="question" />
+      </a>
+
       <CouncilFormHeaderStyled>
         <H2Title>Set Single Contract Admin</H2Title>
         <div className="descr">Please enter valid function parameters for setting admin</div>
@@ -175,7 +184,7 @@ export function FormSetSelectedContractsAdminView() {
           />
         </div>
 
-        <div className="submit-form right">
+        <div className="submit-form">
           <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} type={SUBMIT} disabled={isButtonDisabled}>
             <Icon id="profile" />
             Set Contract Admin
