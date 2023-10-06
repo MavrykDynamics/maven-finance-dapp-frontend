@@ -13,7 +13,7 @@ import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.t
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
-import { ReviewCard } from '../Council.style'
+import { CouncilSidebarNav } from '../Council.style'
 import { CouncilMemberView } from './CouncilMember/CouncilMember.view'
 import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -52,7 +52,7 @@ export const CounsilSidebar = ({
 
   return (
     <div className="right-block">
-      <ReviewCard>
+      <CouncilSidebarNav>
         <CustomLink
           to={`${pagePathname}/:tabId`}
           params={{ tabId: ALL_PAST_COUNSIL_TAB }}
@@ -72,7 +72,7 @@ export const CounsilSidebar = ({
             Review Pending Actions
           </NewButton>
         </CustomLink>
-      </ReviewCard>
+      </CouncilSidebarNav>
 
       <H2Title>{membersTitle}</H2Title>
 

@@ -66,39 +66,30 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
   }
 `
 
-export const ReviewCard = styled(Card)<{
-  theme: MavrykTheme
-}>`
+export const CouncilSidebarNav = styled(Card)<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  padding: 30px;
+
+  width: 100%;
+
+  row-gap: 20px;
+  padding: 40px 30px;
   margin: 0;
-  height: 201px;
+  margin-bottom: 10px;
 `
 
 export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
   margin: 0;
+  margin-bottom: 10px;
   padding: 0;
 
   .top-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     padding: 0 20px 0 30px;
     height: 75px;
-  }
-
-  .top-bar-title {
-    margin: 0;
-
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 22px;
-
-    &::after {
-      display: none;
-    }
   }
 
   .dropdown {
