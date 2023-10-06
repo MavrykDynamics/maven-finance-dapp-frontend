@@ -239,13 +239,13 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
     }
   }
 
-  &:hover {
-    opacity: 0.8;
-  }
-
   &.disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+
+  &:hover:not(.disabled) {
+    opacity: 0.8;
   }
 
   &.isLoading {
