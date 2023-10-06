@@ -197,6 +197,18 @@ export const Market = () => {
         )
       : 0
 
+  const marketReserveAmount =
+    selectedMarket && loanToken
+      ? Math.max(
+          convertNumberForClient({ number: selectedMarket.totalLended, grade: loanToken.decimals }) -
+            convertNumberForClient({
+              number: selectedMarket.reserveAmount,
+              grade: loanToken.decimals,
+            }),
+          0,
+        )
+      : 0
+
   const marketPagination = (
     <MarketPagination>
       <Button
@@ -342,7 +354,7 @@ export const Market = () => {
               loanMtokenAddress={selectedMarket.loanMTokenAddress}
               loanTokenAddress={selectedMarket.loanTokenAddress}
               lendAPY={selectedMarket.lendingAPY}
-              marketAvailableLiquidity={marketAvailableLiquidity}
+              marketReserveAmount={marketReserveAmount}
             />
           ) : null}
           {tabId === BORROW_TAB_ID ? (

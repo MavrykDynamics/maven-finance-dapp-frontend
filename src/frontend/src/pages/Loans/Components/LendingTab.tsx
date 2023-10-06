@@ -22,14 +22,14 @@ type LendingTabPropsType = {
   loanTokenAddress: TokenAddressType
   loanMtokenAddress: TokenAddressType
   lendAPY: number
-  marketAvailableLiquidity: number
+  marketReserveAmount: number
 }
 
 export const LendingTab = ({
   loanTokenAddress,
   loanMtokenAddress,
   lendAPY,
-  marketAvailableLiquidity,
+  marketReserveAmount,
 }: LendingTabPropsType) => {
   const { openAddLendingAssetPopup } = useLoansPopupsContext()
   const { userMTokens, userAddress } = useUserContext()
@@ -48,7 +48,7 @@ export const LendingTab = ({
             lendingItem={lendingItem}
             loanTokenAddress={loanTokenAddress}
             lendAPY={lendAPY}
-            marketAvailableLiquidity={marketAvailableLiquidity}
+            marketReserveAmount={marketReserveAmount}
           />
         </div>
       ) : (

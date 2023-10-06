@@ -206,6 +206,10 @@ export const LoansActionsSection = styled.div`
     line-height: 22px;
 
     color: ${({ theme }) => theme.regularText};
+
+    &.center {
+      text-align: center;
+    }
   }
 
   .stats {

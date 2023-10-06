@@ -13,12 +13,21 @@ import { LendingItemType } from 'providers/LoansProvider/loans.provider.types'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 
-// consts
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { LENDING_TAB_SLIDING_BUTTONS, loansTabNames } from '../../Loans.const'
+// utils
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { LENDING_TAB_SUPPLY_TEXT, LENDING_TAB_WITHDRAW_TEXT } from 'texts/banners/loan.text'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
+
+// consts
+import colors from 'styles/colors'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { LENDING_TAB_SLIDING_BUTTONS, loansTabNames } from '../../Loans.const'
+import {
+  LENDING_TAB_SUPPLY_TEXT,
+  LENDING_TAB_WITHDRAW_ERROR_TEXT,
+  LENDING_TAB_WITHDRAW_TEXT,
+} from 'texts/banners/loan.text'
+import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import {
   ERR_MSG_INPUT,
@@ -39,23 +48,22 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import colors from 'styles/colors'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { XTZLimitInfoBanner } from '../Modals/components/XTZLimitInfoBanner'
+import { Info } from 'app/App.components/Info/Info.view'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
   loanTokenAddress: TokenAddressType
   lendAPY: number
-  marketAvailableLiquidity: number
+  marketReserveAmount: number
 }
 
 export const LendingTabActionsSection = ({
   lendingItem,
   loanTokenAddress,
   lendAPY,
-  marketAvailableLiquidity,
+  marketReserveAmount,
 }: LendingTabPropsType) => {
   const { openConfirmAddLendingAssetPopup, openConfirmRemoveLendingAssetPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -128,13 +136,13 @@ export const LendingTabActionsSection = ({
   }
 
   const useMaxHandler = () => {
-    const inputMaxAmount = Math.min(lendValue, marketAvailableLiquidity)
+    const inputMaxAmount = Math.min(lendValue, marketReserveAmount)
 
     isSupplyActiveTab ? maxHandlerFromHook(tokenBalance) : maxHandlerFromHook(inputMaxAmount)
   }
 
   const inputOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(lendValue, marketAvailableLiquidity))
+    onChangeHandler(e.target.value, isSupplyActiveTab ? tokenBalance : Math.min(lendValue, marketReserveAmount))
   }
 
   const inputProps: InputProps = {
@@ -156,13 +164,17 @@ export const LendingTabActionsSection = ({
     ...(rate ? { convertedValue: rate * Number(inputData.amount) } : {}),
   }
 
+  const showWarning = !isSupplyActiveTab && inputData.validationStatus === INPUT_STATUS_ERROR
+
   return (
     <LoansActionsSection className="lending-tab">
       <div className="switchers">
         <SlidingTabButtons onClick={handleSwitchTab} tabItems={LENDING_TAB_SLIDING_BUTTONS} className="vault" />
       </div>
 
-      <div className="tab-text">{isSupplyActiveTab ? LENDING_TAB_SUPPLY_TEXT(symbol) : LENDING_TAB_WITHDRAW_TEXT}</div>
+      <div className="tab-text center">
+        {isSupplyActiveTab ? LENDING_TAB_SUPPLY_TEXT(symbol) : LENDING_TAB_WITHDRAW_TEXT}
+      </div>
 
       <div>
         <div className="tab-text">Select Amount to {isSupplyActiveTab ? 'Supply' : 'Withdraw'}</div>
@@ -178,9 +190,15 @@ export const LendingTabActionsSection = ({
         </Input>
       </div>
 
-      <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20" />
+      {showWarning ? (
+        <div className="mt-20">
+          <Info text={LENDING_TAB_WITHDRAW_ERROR_TEXT} type={INFO_ERROR} />{' '}
+        </div>
+      ) : null}
 
-      <div className="mt-25">
+      <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces={!showWarning ? 'mt-20' : ''} />
+
+      <div className={!showWarning && !willExceedXTZTheLimit ? 'mt-25' : ''}>
         <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>
 
         <CardSectionWrapper>
