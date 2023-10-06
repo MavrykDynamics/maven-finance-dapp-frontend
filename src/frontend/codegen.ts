@@ -30,8 +30,10 @@ const INDEXER_TABLES = {
 
   // COUNSIL
   council: true,
+  council_action: true,
   break_glass_council_member: true,
   break_glass: true,
+  break_glass_action: true,
 
   // VAULTS
   vault: true,

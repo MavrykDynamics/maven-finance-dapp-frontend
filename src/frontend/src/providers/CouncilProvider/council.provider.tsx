@@ -101,6 +101,8 @@ const CouncilProvider = ({ children }: Props) => {
     }
   }, [userAddress])
 
+  console.log({ activeSubs, councilCtxState })
+
   /**
    * councils memebers:
    * COUNCIL_MEMBERS_QUERY -> members of mavryk council
@@ -216,6 +218,16 @@ const CouncilProvider = ({ children }: Props) => {
   const updateCouncilActionsData = (data: CounsilActionsQueryType) => {
     const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.council_action, userAddress)
+
+    console.log({
+      myPastActions,
+      myPendingActions,
+      notMyPendingActions,
+      allPastActions,
+      allPendingActions,
+      actionsMapper,
+      data,
+    })
 
     const isAllPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB
     const isMyPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB
