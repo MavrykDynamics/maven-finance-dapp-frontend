@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
 
 // consts
 import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB } from '../helpers/council.consts'
@@ -18,6 +17,7 @@ import { ReviewCard } from '../Council.style'
 import { CouncilMemberView } from './CouncilMember/CouncilMember.view'
 import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
 
 type Props = {
   membersTitle: string
@@ -53,17 +53,25 @@ export const CounsilSidebar = ({
   return (
     <div className="right-block">
       <ReviewCard>
-        <Link to={`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`}>
+        <CustomLink
+          to={`${pagePathname}/:tabId`}
+          params={{ tabId: ALL_PAST_COUNSIL_TAB }}
+          disabled={selectedTab === ALL_PAST_COUNSIL_TAB}
+        >
           <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY} disabled={selectedTab === ALL_PAST_COUNSIL_TAB}>
             Review Past Actions
           </NewButton>
-        </Link>
+        </CustomLink>
 
-        <Link to={`${pagePathname}/${ALL_PENDING_COUNSIL_TAB}`}>
+        <CustomLink
+          to={`${pagePathname}/:tabId`}
+          params={{ tabId: ALL_PENDING_COUNSIL_TAB }}
+          disabled={selectedTab === ALL_PENDING_COUNSIL_TAB}
+        >
           <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY} disabled={selectedTab === ALL_PENDING_COUNSIL_TAB}>
             Review Pending Actions
           </NewButton>
-        </Link>
+        </CustomLink>
       </ReviewCard>
 
       <H2Title>{membersTitle}</H2Title>

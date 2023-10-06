@@ -33,7 +33,14 @@ export const TzAddress = ({
 }: TzAddressProps) => {
   const { handleCopyText } = useDappConfigContext()
 
-  const handleTzAddressClick = () => (tzAddress && shouldCopy ? handleCopyText(tzAddress) : undefined)
+  const handleTzAddressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (tzAddress && shouldCopy) {
+      handleCopyText(tzAddress)
+    }
+  }
 
   if (!tzAddress) return <TzAddressContainer className={`${className} tzAddressToClick`}>–</TzAddressContainer>
 
@@ -42,7 +49,7 @@ export const TzAddress = ({
   return (
     <TzAddressContainer
       className={`${className} tzAddressToClick ${!shouldCopy ? 'notCopy' : ''}`}
-      onClick={handleTzAddressClick}
+      onClick={(e) => handleTzAddressClick(e)}
     >
       {hasIcon && iconToLeft && shouldCopy && (
         <TzAddressIcon className={addrClasses}>

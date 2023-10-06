@@ -49,6 +49,8 @@ import { CounsilActionsToSign } from './components/CounsilActionsToSign'
 import { UpdateUserCouncilProfileInfoPopup } from './components/UpdateUserCouncilProfileInfoPopup'
 import { CounsilSidebar } from './components/CounsilSidebar'
 import { CouncilOngoingAction } from './components/CouncilOngoingAction.view'
+import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
+import { H2SimpleTitle, H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 type Props = {
   selectedTab: CouncilTabsType
@@ -204,33 +206,35 @@ export function CouncilView({
 
   return (
     <CounsilPageWrapper>
-      {(isAllPastTab || isAllPendingTab) && isUserCouncil && (
-        <Link to={pagePathname}>
-          <NewButton kind={BUTTON_SECONDARY}>
-            <Icon id="full-arrow-left" />
-            Back to Member Dashboard
-          </NewButton>
-        </Link>
-      )}
-
-      {displayPendingSignature && <h1>Pending Signature</h1>}
-
       <CouncilStyled>
         <div className="left-block">
+          {(isAllPastTab || isAllPendingTab) && isUserCouncil && (
+            <CustomLink to={pagePathname}>
+              <NewButton kind={BUTTON_SECONDARY}>
+                <Icon id="full-arrow-left" />
+                Go Back
+              </NewButton>
+            </CustomLink>
+          )}
+
           {displayPendingSignature ? (
-            <CounsilActionsToSign
-              isBreakGlassAction={isBreakGlassCounsil}
-              actionstoSign={notMyPendingActions}
-              actionsMapper={actionsMapper}
-              members={members}
-            />
+            <>
+              <H2Title>Pending Signature</H2Title>
+
+              <CounsilActionsToSign
+                isBreakGlassAction={isBreakGlassCounsil}
+                actionstoSign={notMyPendingActions}
+                actionsMapper={actionsMapper}
+                members={members}
+              />
+            </>
           ) : null}
 
           {isMyActionsTabs ? (
             <>
               <AvaliableActions>
                 <div className="top-bar">
-                  <h1 className="top-bar-title">Available Actions</h1>
+                  <H2SimpleTitle>Available Actions</H2SimpleTitle>
 
                   <div className="dropdown">
                     <DropDown
@@ -256,7 +260,7 @@ export function CouncilView({
               />
             </>
           ) : (
-            <h1>{isAllPastTab ? titles.allPastActions : isAllPendingTab ? titles.allPending : null}</h1>
+            <H2Title>{isAllPastTab ? titles.allPastActions : isAllPendingTab ? titles.allPending : null}</H2Title>
           )}
 
           <div>

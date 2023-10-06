@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 // consts
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -10,6 +8,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { AvatarStyle } from '../../../../app/App.components/Avatar/Avatar.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CouncilMemberStyled } from './CouncilMember.style'
+import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -31,7 +30,6 @@ export const CouncilMemberView = (props: Props) => {
 
   const { image, name, userId, openModal, showUpdateInfo = true } = props
 
-  const href = `/satellites/satellite-details/${userId}`
   const isMe = userId === userAddress
 
   const memberContent = (
@@ -49,7 +47,7 @@ export const CouncilMemberView = (props: Props) => {
         </AvatarStyle>
         <figcaption>
           <h4>{name}</h4>
-          {userId ? <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={userId} hasIcon={true} /> : null}
+          {userId ? <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={userId} hasIcon /> : null}
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (
@@ -63,17 +61,11 @@ export const CouncilMemberView = (props: Props) => {
 
   if (isMe) return memberContent
 
-  if (!isSatellite)
-    return (
-      <a
-        className="icon-send"
-        target="_blank"
-        href={`${process.env.REACT_APP_TZKT_LINK}/${userId}/operations/`}
-        rel="noreferrer"
-      >
-        {memberContent}
-      </a>
-    )
-
-  return <Link to={href}>{memberContent}</Link>
+  return isSatellite ? (
+    <CustomLink to={`/satellites/satellite-details/:satelliteId`} params={{ satelliteId: userId }}>
+      {memberContent}
+    </CustomLink>
+  ) : (
+    <CustomLink to={`${process.env.REACT_APP_TZKT_LINK}/${userId}/operations/`}>{memberContent}</CustomLink>
+  )
 }

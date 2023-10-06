@@ -6,29 +6,25 @@ import { MavrykTheme } from '../../styles/interfaces'
 
 export const CounsilPageWrapper = styled.div`
   margin-top: 30px;
-
-  &,
-  .left-block,
-  .right-block {
-    display: flex;
-    flex-direction: column;
-    row-gap: 30px;
-  }
-
-  h1 {
-    margin: 0;
-
-    &::after {
-      margin-bottom: 0;
-    }
-  }
 `
 
 export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
 
+  .left-block,
+  .right-block {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+  }
+
   .left-block {
+    > a {
+      display: block;
+      width: fit-content;
+    }
+
     width: 750px;
 
     .pending {
@@ -62,7 +58,7 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
     font-size: 14px;
     line-height: 24px;
 
-    color: ${({ theme }) => theme.regularText};;
+    color: ${({ theme }) => theme.regularText};
   }
 
   button {
