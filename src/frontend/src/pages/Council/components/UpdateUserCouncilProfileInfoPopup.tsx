@@ -88,9 +88,9 @@ export const UpdateUserCouncilProfileInfoPopup = ({
 
       setFormInputStatus({
         memberAddress: INPUT_STATUS_SUCCESS,
-        newMemberName: INPUT_STATUS_DEFAULT,
-        newMemberWebsite: INPUT_STATUS_DEFAULT,
-        newMemberImage: INPUT_STATUS_DEFAULT,
+        newMemberName: INPUT_STATUS_SUCCESS,
+        newMemberWebsite: INPUT_STATUS_SUCCESS,
+        newMemberImage: INPUT_STATUS_SUCCESS,
       })
     }
   }, [memberProfile])
@@ -166,8 +166,14 @@ export const UpdateUserCouncilProfileInfoPopup = ({
     })
   }
 
+  const formHasChange =
+    memberProfile &&
+    (newMemberName !== memberProfile.name ||
+      newMemberWebsite !== memberProfile.website ||
+      newMemberImage !== memberProfile.image)
+
   const isButtonDisabled =
-    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
+    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS) || !formHasChange
 
   const {
     memberAddressProps,

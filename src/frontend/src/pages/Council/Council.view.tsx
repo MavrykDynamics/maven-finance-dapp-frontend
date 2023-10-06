@@ -98,13 +98,19 @@ export function CouncilView({
     return {
       titles: isBreakGlassCounsil ? BgCounsilPageTitles : MavrykCounsilPageTitles,
       pagePathname: isBreakGlassCounsil ? '/break-glass-council' : '/mavryk-council',
-      dropDownItems: Object.values(
-        isBreakGlassCounsil ? BgCounsilDdForms : MavrykCounsilDdForms,
-      ).map<ActionsDDItemType>((formId, index) => ({
-        content: <DropdownTruncateOption text={COUNCIL_FORMS_NAMES_MAPPER[formId]} />,
-        value: formId,
-        id: index,
-      })),
+      dropDownItems: Object.values(isBreakGlassCounsil ? BgCounsilDdForms : MavrykCounsilDdForms)
+        // TODO: remove when those 3 actions will be working
+        .filter(
+          (formId) =>
+            !['UNPAUSE_ALL_ENTRYPOINTS', 'SET_SELECTED_CONTRACTS_ADMIN', 'REMOVE_BREAK_GLASS_CONTROLL'].includes(
+              formId,
+            ),
+        )
+        .map<ActionsDDItemType>((formId, index) => ({
+          content: <DropdownTruncateOption text={COUNCIL_FORMS_NAMES_MAPPER[formId]} />,
+          value: formId,
+          id: index,
+        })),
     }
   }, [isBreakGlassCounsil])
 
