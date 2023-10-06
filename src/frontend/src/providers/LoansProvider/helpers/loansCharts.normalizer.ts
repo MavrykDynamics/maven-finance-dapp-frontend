@@ -119,7 +119,8 @@ const getChartWithOperationInPeriod = ({
     return chartData.reduce((acc, { value, time }, idx) => {
       if (isVolume ? idx === operationDayIdx : idx >= operationDayIdx) {
         acc[idx] = {
-          value: value + operationValue,
+          // TODO: Math.max value|0 cuz of interest, that requires indexer update, discussed on daily 06.10
+          value: Math.max(value + operationValue, 0),
           time,
         }
       }
@@ -139,7 +140,8 @@ const getChartWithOperationOutOfPeriod = ({
   operationValue: number
 }): Array<SingleValueData> =>
   (chartData = chartData.map(({ time, value }) => ({
-    value: value + operationValue,
+    // TODO: Math.max value|0 cuz of interest, that requires indexer update, discussed on daily 06.10
+    value: Math.max(value + operationValue, 0),
     time,
   })))
 

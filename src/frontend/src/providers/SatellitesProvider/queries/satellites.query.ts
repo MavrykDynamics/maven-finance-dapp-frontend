@@ -97,7 +97,7 @@ export const SATELLITE_DATA_QUERY = gql(`
         }
 
         # satellite total voting power
-        governance_satellite_snapshots(order_by: {cycle: desc}, limit: 1, where: {ready: {_eq: true}}) {
+        governance_satellite_snapshots(where: {latest: {_eq: true}}) {
           total_voting_power
         }
 
