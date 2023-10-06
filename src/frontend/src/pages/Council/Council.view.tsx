@@ -16,7 +16,6 @@ import {
   ALL_PENDING_COUNSIL_TAB,
   MY_PAST_COUNSIL_TAB,
   MY_PENDING_COUNSIL_TAB,
-  councilTabsList,
   MavrykCounsilDdForms,
   MavrykCounsilPageTitles,
   BgCounsilDdForms,
@@ -28,7 +27,10 @@ import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButt
 // types
 import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
 import { CouncilTabsType } from 'providers/CouncilProvider/helpers/council.types'
-import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import {
+  SlidingTabButtonType,
+  SlidingTabButtons,
+} from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -106,6 +108,7 @@ export function CouncilView({
 
   const {
     currentListName,
+    councilTabsList,
     isMyPendingTab,
     isMyPastTab,
     isAllPendingTab,
@@ -117,6 +120,19 @@ export function CouncilView({
     const isMyPastTab = selectedTab === MY_PAST_COUNSIL_TAB
     const isAllPendingTab = selectedTab === ALL_PENDING_COUNSIL_TAB
     const isAllPastTab = selectedTab === ALL_PAST_COUNSIL_TAB
+
+    const councilTabsList: SlidingTabButtonType[] = [
+      {
+        text: 'My Ongoing Actions',
+        id: 1,
+        active: isMyPendingTab,
+      },
+      {
+        text: 'My Past Actions',
+        id: 2,
+        active: isMyPastTab,
+      },
+    ]
 
     const currentListName = isMyPendingTab
       ? COUNCIL_MY_PENDING_ACTIONS_LIST_NAME
@@ -141,6 +157,7 @@ export function CouncilView({
 
     return {
       currentListName,
+      councilTabsList,
       isMyPendingTab,
       isMyPastTab,
       isAllPendingTab,

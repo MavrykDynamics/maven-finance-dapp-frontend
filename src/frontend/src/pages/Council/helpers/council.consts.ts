@@ -51,19 +51,6 @@ export const MY_PAST_COUNSIL_TAB = 'my-past-actions'
 export const ALL_PENDING_COUNSIL_TAB = 'pending-actions'
 export const ALL_PAST_COUNSIL_TAB = 'past-actions'
 
-export const councilTabsList: SlidingTabButtonType[] = [
-  {
-    text: 'My Ongoing Actions',
-    id: 1,
-    active: true,
-  },
-  {
-    text: 'My Past Actions',
-    id: 2,
-    active: false,
-  },
-]
-
 // mapper for forms names in dd
 export const COUNCIL_FORMS_NAMES_MAPPER = {
   ADD_VESTEE: 'Add Vestee',
