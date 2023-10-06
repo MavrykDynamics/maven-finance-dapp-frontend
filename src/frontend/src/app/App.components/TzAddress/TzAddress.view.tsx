@@ -34,10 +34,9 @@ export const TzAddress = ({
   const { handleCopyText } = useDappConfigContext()
 
   const handleTzAddressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-
     if (tzAddress && shouldCopy) {
+      e.preventDefault()
+      e.stopPropagation()
       handleCopyText(tzAddress)
     }
   }
