@@ -52,23 +52,31 @@ export const getCouncilActionsBodiesGridSettings = (
   }
 }
 
+export type CouncilActionsBodyColumnsType = Record<
+  string,
+  {
+    className: string
+    type: 'address' | 'image' | 'url' | 'default'
+  }
+>
+
 // mapper for action params fields, only those are outputted on client only
 // used to check whether client show field for user and getting grid-area classname
-export const COUNCIL_ACTIONS_BODY_COLUMS_MAPPER: Record<string, string> = {
+export const COUNCIL_ACTIONS_BODY_COLUMS_MAPPER: CouncilActionsBodyColumnsType = {
   // addresses
-  councilMemberAddress: 'member-address',
-  newCouncilMemberAddress: 'member-address',
-  oldCouncilMemberAddress: 'old-member-address',
+  councilMemberAddress: { className: 'member-address', type: 'address' },
+  newCouncilMemberAddress: { className: 'member-address', type: 'address' },
+  oldCouncilMemberAddress: { className: 'old-member-address', type: 'address' },
 
   // names
-  newCouncilMemberName: 'member-name',
-  councilMemberName: 'member-name',
+  newCouncilMemberName: { className: 'member-name', type: 'default' },
+  councilMemberName: { className: 'member-name', type: 'default' },
 
   // websites
-  newCouncilMemberWebsite: 'member-url',
-  councilMemberWebsite: 'member-url',
+  newCouncilMemberWebsite: { className: 'member-url', type: 'url' },
+  councilMemberWebsite: { className: 'member-url', type: 'url' },
 
   // images
-  newCouncilMemberImage: 'member-image',
-  councilMemberImage: 'member-image',
+  newCouncilMemberImage: { className: 'member-image', type: 'image' },
+  councilMemberImage: { className: 'member-image', type: 'image' },
 }

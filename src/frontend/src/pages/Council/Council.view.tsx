@@ -54,12 +54,13 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 import { CouncilStyled, AvaliableActions, CounsilPageWrapper } from './Council.style'
-import { CounsilActionsToSign } from './components/CounsilActionsToSign'
+import { CounsilActionsToSignOld } from './components/CounsilActionsToSignOld'
 import { UpdateUserCouncilProfileInfoPopup } from './components/UpdateUserCouncilProfileInfoPopup'
 import { CounsilSidebar } from './components/CounsilSidebar'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { H2SimpleTitle, H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { CouncilAction } from './components/CouncilAction/CouncilAction'
+import { CouncilActionsToSign } from './components/CouncilActionsToSign/CouncilActionsToSign'
 
 type Props = {
   selectedTab: CouncilTabsType
@@ -250,6 +251,8 @@ export function CouncilView({
 
   return (
     <CounsilPageWrapper>
+      {displayPendingSignature ? <H2Title className="pending-signature-title">Pending Signature</H2Title> : null}
+
       <CouncilStyled>
         <div className="left-block">
           {(isAllPastTab || isAllPendingTab) && isUserCouncil && (
@@ -263,10 +266,15 @@ export function CouncilView({
 
           {displayPendingSignature ? (
             <>
-              <H2Title>Pending Signature</H2Title>
-
-              <CounsilActionsToSign
+              {/* <CounsilActionsToSignOld
                 isBreakGlassAction={isBreakGlassCounsil}
+                actionstoSign={notMyPendingActions}
+                actionsMapper={actionsMapper}
+                members={members}
+              /> */}
+
+              <CouncilActionsToSign
+                isBreakGlassCounsil={isBreakGlassCouncil}
                 actionstoSign={notMyPendingActions}
                 actionsMapper={actionsMapper}
                 members={members}

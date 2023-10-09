@@ -4,6 +4,9 @@ import classNames from 'classnames'
 import Expand from 'app/App.components/Expand/Expand.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CouncilActionBodyStyled, CouncilActionStyled } from './CouncilAction.style'
 import { BgCounsilDdForms, MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
 
@@ -20,9 +23,9 @@ import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.
 import { BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE, convertBytes } from 'utils/bytesToString'
 import { COUNCIL_ACTIONS_BODY_COLUMS_MAPPER } from './CouncilAction.consts'
 import { CAPITALIZE_CASE, parseCamelCaseString } from 'utils/parse'
-import CustomLink from 'app/App.components/CustomLink/CustomLink'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type Props = {
   councilAction: CouncilActionType
@@ -31,6 +34,9 @@ type Props = {
 }
 
 export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakGlassCounsil }: Props) => {
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
   const { id, actionName, councilSize, startDatetime, signersCount, parameters } = councilAction
 
   const cardActionId = getClientActionIdByName(actionName)
@@ -62,26 +68,23 @@ export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakG
         }
       >
         <CouncilActionBodyStyled cardActionId={cardActionId}>
-          {bodyCells.map(({ className, value, name }) => {
+          {bodyCells.map(({ className, value, valueContent, name }) => {
             return (
               <div className={classNames('column', className)}>
                 <div className="name">{name}</div>
                 <div className="value" title={value}>
-                  {className === 'member-url' ? (
-                    <CustomLink to={value}>{value}</CustomLink>
-                  ) : className === 'member-address' || className === 'old-member-address' ? (
-                    <TzAddress tzAddress={value} hasIcon />
-                  ) : className === 'member-image' ? (
-                    <ImageWithPlug imageLink={value} alt={name} />
-                  ) : (
-                    value
-                  )}
+                  {valueContent}
                 </div>
               </div>
             )
           })}
           <div className="drop-btn">
-            <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={() => handleDropAction(id)}>
+            <NewButton
+              kind={BUTTON_SECONDARY}
+              form={BUTTON_WIDE}
+              onClick={() => handleDropAction(id)}
+              disabled={isActionActive}
+            >
               <Icon id="navigation-menu_close" />
               Drop Action
             </NewButton>
@@ -92,12 +95,14 @@ export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakG
   )
 }
 
+type CouncilCardBodyCells = Array<{ name: string; className: string; value: string; valueContent: React.ReactNode }>
+
 const getCouncilCardBodyCells = (
   actionParams: CouncilActionType['parameters'],
   cardActionId: CouncilsFormsIds,
   isBreakGlassCounsil: boolean,
   actionId: number,
-): Array<{ className: string; name: string; value: string }> => {
+): CouncilCardBodyCells => {
   // for those action show allowed params
   if (
     cardActionId === MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER ||
@@ -107,19 +112,32 @@ const getCouncilCardBodyCells = (
     cardActionId === BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER ||
     cardActionId === BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER
   ) {
-    return actionParams.reduce<Array<{ className: string; name: string; value: string }>>((acc, actionParam) => {
+    return actionParams.reduce<CouncilCardBodyCells>((acc, actionParam) => {
       const { name, value } = actionParam
       const convertedParamValue = convertBytes(
         value,
         name.toLowerCase().includes('address') ? BYTES_ADDRESS_TYPE : BYTES_STRING_TYPE,
       )
-      const columnClassName = COUNCIL_ACTIONS_BODY_COLUMS_MAPPER[name]
+      const columnData = COUNCIL_ACTIONS_BODY_COLUMS_MAPPER[name]
 
-      if (convertedParamValue && columnClassName) {
+      if (convertedParamValue && columnData) {
+        const { type, className } = columnData
+        const valueContent =
+          type === 'url' ? (
+            <CustomLink to={convertedParamValue}>{convertedParamValue}</CustomLink>
+          ) : type === 'address' ? (
+            <TzAddress tzAddress={convertedParamValue} hasIcon />
+          ) : type === 'image' ? (
+            <ImageWithPlug imageLink={convertedParamValue} alt={name} />
+          ) : (
+            convertedParamValue
+          )
+
         acc.push({
-          className: columnClassName,
-          name: parseCamelCaseString(name, CAPITALIZE_CASE),
+          className,
+          valueContent,
           value: convertedParamValue,
+          name: parseCamelCaseString(name, CAPITALIZE_CASE),
         })
       }
       return acc
@@ -131,6 +149,7 @@ const getCouncilCardBodyCells = (
     {
       className: 'action-meta',
       name: isBreakGlassCounsil ? 'Break Glass Action ID' : 'Council Action ID',
+      valueContent: actionId.toString(),
       value: actionId.toString(),
     },
   ]

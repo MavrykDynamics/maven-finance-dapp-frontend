@@ -6,6 +6,10 @@ import { MavrykTheme } from '../../styles/interfaces'
 
 export const CounsilPageWrapper = styled.div`
   margin-top: 30px;
+
+  .pending-signature-title {
+    margin-bottom: 20px;
+  }
 `
 
 export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
@@ -26,16 +30,6 @@ export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
     }
 
     width: 750px;
-
-    .pending {
-      display: flex;
-      width: 100%;
-      justify-content: space-between;
-    }
-
-    .pending-items {
-      width: 750px;
-    }
 
     .actions-list {
       display: flex;

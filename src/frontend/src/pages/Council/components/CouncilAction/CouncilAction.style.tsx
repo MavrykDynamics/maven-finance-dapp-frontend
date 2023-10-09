@@ -4,9 +4,13 @@ import { MavrykTheme } from 'styles/interfaces'
 import { getCouncilActionsBodiesGridSettings } from './CouncilAction.consts'
 import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
 
-const COUNCIL_COLUMN_STYLES = css`
+export const COUNCIL_COLUMN_STYLES = css`
   .column {
     min-width: 0;
+
+    p {
+      margin: 0;
+    }
 
     .name {
       font-weight: 600;

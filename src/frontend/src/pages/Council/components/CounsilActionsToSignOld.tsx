@@ -21,24 +21,21 @@ import {
   SIGN_MAVRYK_COUNCIL_ACTION,
   SIGN_BREAK_GLASS_COUNCIL_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type PropsType = {
   isBreakGlassAction: boolean
-  counsilAddress?: string
   actionstoSign: number[]
   actionsMapper: Record<number, CouncilActionType>
   members: CouncilMembersType
 }
 
-export const CounsilActionsToSign = ({
-  isBreakGlassAction,
-  counsilAddress,
-  actionstoSign,
-  members,
-  actionsMapper,
-}: PropsType) => {
+export const CounsilActionsToSignOld = ({ isBreakGlassAction, actionstoSign, members, actionsMapper }: PropsType) => {
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
+  const {
+    contractAddresses: { councilAddress, breakGlassAddress },
+  } = useDappConfigContext()
 
   // Sign request action
   const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
@@ -50,19 +47,19 @@ export const CounsilActionsToSign = ({
           return null
         }
 
-        if (!counsilAddress) {
+        if (!councilAddress || !breakGlassAddress) {
           bug('Wrong counsil address')
           return null
         }
 
         if (isBreakGlassAction) {
-          return await signBreakGlassAction(actionId, counsilAddress)
+          return await signBreakGlassAction(actionId, breakGlassAddress)
         } else {
-          return await signMavrykAction(actionId, counsilAddress)
+          return await signMavrykAction(actionId, councilAddress)
         }
       },
     }),
-    [counsilAddress, isBreakGlassAction, userAddress],
+    [councilAddress, breakGlassAddress, isBreakGlassAction, userAddress],
   )
 
   const { actionWithArgs: handleSignAction } = useContractAction(signActionContractActionProps)

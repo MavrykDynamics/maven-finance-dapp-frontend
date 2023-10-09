@@ -13,7 +13,7 @@ export const CarouselStyle = styled.div<{ theme: MavrykTheme }>`
     line-height: 21px;
     color: ${({ theme }) => theme.primaryText};
     right: 16px;
-    top: -54px;
+    top: -46px;
   }
 
   .gradient-left,
