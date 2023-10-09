@@ -139,7 +139,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               <div className="data">
                 <div className="value">{name ? name : symbol}</div>
                 <div className="value">
-                  <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
+                  <TzAddress tzAddress={address} shouldCopy hasIcon />
                 </div>
               </div>
             </ThreeLevelListItem>
