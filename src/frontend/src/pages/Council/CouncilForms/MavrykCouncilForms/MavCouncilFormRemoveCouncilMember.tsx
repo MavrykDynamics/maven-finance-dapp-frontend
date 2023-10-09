@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 
 // helpers
-import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { removeCouncilMember } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { getShortTzAddress } from '../../../../utils/tzAdress'
 
 // consts

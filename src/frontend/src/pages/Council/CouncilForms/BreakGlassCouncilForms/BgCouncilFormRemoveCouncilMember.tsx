@@ -11,7 +11,7 @@ import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
 // helpers
-import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { removeBgCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { getShortTzAddress } from '../../../../utils/tzAdress'
 
 // hooks
@@ -78,7 +78,7 @@ export function BgCouncilFormRemoveCouncilMember({
 
         if (!memberAddress) return null
 
-        return await removeCouncilMember(breakGlassAddress, memberAddress)
+        return await removeBgCouncilMember(breakGlassAddress, memberAddress)
       },
     }),
     [userAddress, breakGlassAddress, chosenDdItem?.tzAddress],

@@ -130,11 +130,11 @@ export const changeBgCouncilMember = async (
 }
 
 // Remove Council Member
-export const removeCouncilMember = async (councilAddress: string, memberAddress: string) => {
+export const removeBgCouncilMember = async (breakGlassAddress: string, memberAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(councilAddress)
+    const contract = await tezos.wallet.at(breakGlassAddress)
     const removeCouncilMemberMetaData = contract?.methods.councilActionRemoveMember(memberAddress)
 
     return await getEstimationResult(removeCouncilMemberMetaData)

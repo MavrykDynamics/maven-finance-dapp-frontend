@@ -1,7 +1,7 @@
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
-import { TzAddressStyles } from './TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR, TzAddressStyles } from './TzAddress.constants'
 import { TzAddressContainer, TzAddressIcon, TzAddressStyled } from './TzAddress.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -18,7 +18,7 @@ type TzAddressProps = {
 export const TzAddress = ({
   tzAddress,
   className = '',
-  type = 'PRIMARY_TZ_ADDRESS_COLOR',
+  type = PRIMARY_TZ_ADDRESS_COLOR,
   hasIcon = true,
   shouldCopy = true,
   isBold,

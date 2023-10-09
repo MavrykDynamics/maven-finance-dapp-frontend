@@ -146,7 +146,7 @@ export const changeMavrykCouncilMember = async (
 }
 
 // Remove Council Member
-export const removeCouncilMember = async (memberAddress: string, counsilAddress: string) => {
+export const removeCouncilMember = async (counsilAddress: string, memberAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
