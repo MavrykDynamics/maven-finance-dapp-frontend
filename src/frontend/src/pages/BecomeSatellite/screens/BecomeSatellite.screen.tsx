@@ -39,7 +39,7 @@ import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import { Info } from 'app/App.components/Info/Info.view'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { UnregisterPopup } from '../popups/UnregisterPopup'
 
 // styles

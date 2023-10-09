@@ -20,9 +20,9 @@ type TzAddressProps = {
 
 // TODO: make classes via classNames lib, check classes usage for styling
 export const TzAddress = ({
-  className,
+  className = '',
+  type = 'PRIMARY_TZ_ADDRESS_COLOR',
   tzAddress,
-  type,
   hasIcon = true,
   iconToLeft,
   isBold,

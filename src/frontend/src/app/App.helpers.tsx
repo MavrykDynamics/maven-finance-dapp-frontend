@@ -20,6 +20,9 @@ const getAddressForDecoding = (address: string) => {
   }
 }
 
+/**
+ * @deprecated
+ */
 export function convertBytesAddressToAddress(addressInBytes: string): string {
   try {
     const addressType: MichelsonType = {

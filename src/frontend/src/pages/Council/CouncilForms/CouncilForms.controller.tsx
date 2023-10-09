@@ -46,7 +46,7 @@ export const CouncilForms = ({ councilMaxLengths, selectedAction, members }: Pro
     case BgCounsilDdForms.SIGN_ACTION:
       return <BgCouncilFormSignAction />
     case BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER:
-      return <BgCouncilFormAddCouncilMember councilMaxLengths={councilMaxLengths} />
+      return <BgCouncilFormAddCouncilMember maxLength={councilMaxLengths} breakGlassCouncilMembers={members} />
     case BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER:
       return <BgCouncilFormRemoveCouncilMember breakGlassCouncilMembers={members} />
     case BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS:
@@ -62,7 +62,7 @@ export const CouncilForms = ({ councilMaxLengths, selectedAction, members }: Pro
     case MavrykCounsilDdForms.ADD_VESTEE:
       return <MavCouncilFormAddVestee />
     case MavrykCounsilDdForms.ADD_COUNCIL_MEMBER:
-      return <MavCouncilFormAddCouncilMember {...councilMaxLengths} />
+      return <MavCouncilFormAddCouncilMember maxLength={councilMaxLengths} councilMembers={members} />
     case MavrykCounsilDdForms.UPDATE_VESTEE:
       return <MavCouncilFormUpdateVestee />
     case MavrykCounsilDdForms.REMOVE_VESTEE:

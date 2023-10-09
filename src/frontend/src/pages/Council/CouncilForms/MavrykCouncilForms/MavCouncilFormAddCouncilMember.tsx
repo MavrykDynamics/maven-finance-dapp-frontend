@@ -10,6 +10,7 @@ import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style
 
 // types
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
 // utils
 import { addCouncilMember } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -46,7 +47,13 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   newMemberImage: INPUT_STATUS_DEFAULT,
 }
 
-export const MavCouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
+export const MavCouncilFormAddCouncilMember = ({
+  maxLength,
+  councilMembers,
+}: {
+  maxLength: CouncilMaxLength
+  councilMembers: CouncilContext['councilMembers']
+}) => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
   const {
@@ -74,10 +81,15 @@ export const MavCouncilFormAddCouncilMember = (maxLength: CouncilMaxLength) => {
           return null
         }
 
+        if (councilMembers.find(({ userId }) => userId === newMemberAddress)) {
+          bug('User is already council')
+          return null
+        }
+
         return await addCouncilMember(newMemberAddress, newMemberName, newMemberWebsite, newMemberImage, councilAddress)
       },
     }),
-    [newMemberAddress, newMemberName, newMemberWebsite, newMemberImage, userAddress, councilAddress],
+    [newMemberAddress, newMemberName, councilMembers, newMemberWebsite, newMemberImage, userAddress, councilAddress],
   )
 
   const { action: handleAddCouncilMember } = useContractAction(addCouncilMemberContractActionProps)

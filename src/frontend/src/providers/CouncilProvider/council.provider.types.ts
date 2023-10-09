@@ -22,16 +22,20 @@ import {
 
 // ----- normalizer types
 export type CouncilActionType = {
+  id: number
+  actionName: string
+  /**
+   * @deprecated
+   */
   actionType: string
   executed: boolean
-  id: number
   initiatorAddress: string
   signersCount: number
   startDatetime: string | null
   expirationTime: string | null
-  parameters: Array<{ id: number; name: string; value: string }>
   councilSize: number
   counsilAddress: string
+  parameters: Array<{ id: number; name: string; value: string }>
 }
 export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
 export type CouncilActionsType = ReturnType<typeof normalizeCouncilActions>

@@ -17,7 +17,7 @@ import type { InputStatusType } from '../../../../app/App.components/Input/Input
 
 // helpers
 import { getShortTzAddress } from '../../../../utils/tzAdress'
-import { changeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { changeMavrykCouncilMember } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // view
@@ -101,12 +101,12 @@ export const MavCouncilFormChangeCouncilMember = ({
           return null
         }
 
-        if (!oldCouncilMemberAddress) {
-          bug('Wrong old council address')
+        if (!oldCouncilMemberAddress || councilMembers.find(({ userId }) => userId === newCouncilMemberAddress)) {
+          bug('Wrong council address')
           return null
         }
 
-        return await changeCouncilMember(
+        return await changeMavrykCouncilMember(
           oldCouncilMemberAddress,
           newCouncilMemberAddress,
           newMemberName,
@@ -119,6 +119,7 @@ export const MavCouncilFormChangeCouncilMember = ({
     [
       oldCouncilMemberAddress,
       newCouncilMemberAddress,
+      councilMembers,
       newMemberName,
       newMemberWebsite,
       newMemberImage,

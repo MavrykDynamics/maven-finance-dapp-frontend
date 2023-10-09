@@ -102,7 +102,7 @@ export const updateBgCouncilMember = async (
 }
 
 // Change Council Member
-export const changeCouncilMember = async (
+export const changeBgCouncilMember = async (
   breakGlassAddress: string,
   oldCouncilMemberAddress: string,
   newCouncilMemberAddress: string,
@@ -130,12 +130,12 @@ export const changeCouncilMember = async (
 }
 
 // Remove Council Member
-export const removeCouncilMember = async (breakGlassAddress: string, memberAddress: string) => {
+export const removeCouncilMember = async (councilAddress: string, memberAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(breakGlassAddress)
-    const removeCouncilMemberMetaData = contract?.methods.removeCouncilMember(memberAddress)
+    const contract = await tezos.wallet.at(councilAddress)
+    const removeCouncilMemberMetaData = contract?.methods.councilActionRemoveMember(memberAddress)
 
     return await getEstimationResult(removeCouncilMemberMetaData)
   } catch (error) {
@@ -160,7 +160,7 @@ export const propagateBreakGlass = async (breakGlassAddress: string, govContract
 }
 
 // Drop Action
-export const dropBreakGlass = async (breakGlassActionID: number, breakGlassAddress: string) => {
+export const dropBreakGlassCouncilAction = async (breakGlassActionID: number, breakGlassAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()

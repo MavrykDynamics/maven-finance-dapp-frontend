@@ -75,7 +75,7 @@ export const MavCouncilFormRemoveCouncilMember = ({
           return null
         }
 
-        return await removeCouncilMember(chosenDdItem.tzAddress, councilAddress)
+        return await removeCouncilMember(councilAddress, chosenDdItem.tzAddress)
       },
     }),
     [chosenDdItem, userAddress, councilAddress],

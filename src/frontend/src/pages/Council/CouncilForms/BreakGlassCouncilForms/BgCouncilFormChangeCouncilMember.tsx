@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react'
 import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { IPFSUploader } from '../../../../app/App.components/IPFSUploader/IPFSUploader.controller'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import Icon from '../../../../app/App.components/Icon/Icon.view'
 import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style'
@@ -20,7 +20,7 @@ import { CouncilContext } from 'providers/CouncilProvider/council.provider.types
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // helpers
-import { changeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { changeBgCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
 import { getShortTzAddress } from '../../../../utils/tzAdress'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
@@ -49,6 +49,12 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   newMemberImage: INPUT_STATUS_DEFAULT,
 }
 
+type DdItemType = {
+  content: React.ReactNode
+  tzAddress: string
+  id: number
+}
+
 export function BgCouncilFormChangeCouncilMember({
   councilMaxLengths,
   breakGlassCouncilMembers,
@@ -65,12 +71,8 @@ export function BgCouncilFormChangeCouncilMember({
 
   const dropDownItems = useMemo(
     () =>
-      breakGlassCouncilMembers.map((item, index) => ({
-        content: (
-          <div>
-            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
-          </div>
-        ),
+      breakGlassCouncilMembers.map<DdItemType>((item, index) => ({
+        content: <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`} />,
         tzAddress: item.userId,
         id: index,
       })),
@@ -84,6 +86,8 @@ export function BgCouncilFormChangeCouncilMember({
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
   const { newCouncilMemberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
+
+  const oldCouncilMemberAddress = chosenDdItem?.tzAddress
 
   // chnage bg council member action
   const changeBgCouncilContractContractActionProps: HookContractActionArgs = useMemo(
@@ -100,10 +104,15 @@ export function BgCouncilFormChangeCouncilMember({
           return null
         }
 
-        const oldCouncilMemberAddress = chosenDdItem?.tzAddress
-        if (!oldCouncilMemberAddress) return null
+        if (
+          !oldCouncilMemberAddress ||
+          breakGlassCouncilMembers.find(({ userId }) => userId === newCouncilMemberAddress)
+        ) {
+          bug('Wrong council address')
+          return null
+        }
 
-        return await changeCouncilMember(
+        return await changeBgCouncilMember(
           breakGlassAddress,
           oldCouncilMemberAddress,
           newCouncilMemberAddress,
@@ -116,7 +125,8 @@ export function BgCouncilFormChangeCouncilMember({
     [
       userAddress,
       breakGlassAddress,
-      chosenDdItem?.tzAddress,
+      oldCouncilMemberAddress,
+      breakGlassCouncilMembers,
       newCouncilMemberAddress,
       newMemberName,
       newMemberWebsite,
