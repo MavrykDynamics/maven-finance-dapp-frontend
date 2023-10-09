@@ -54,7 +54,7 @@ const prefix = '050a'
 const publicKeyLength = '000000160000'
 const keyHashPrefixLength = 18
 
-// TODO: it is not the best way, but it will work for tz address (by @CasualJackie)
+// TODO: it's not the best way, but it works for tz address (by @CasualJackie)
 const getAddressForDecoding = (addressInBytes: string) => {
   switch (addressInBytes.length) {
     case 58:
