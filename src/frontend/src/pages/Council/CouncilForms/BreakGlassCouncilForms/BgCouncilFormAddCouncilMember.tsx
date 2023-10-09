@@ -67,7 +67,7 @@ export function BgCouncilFormAddCouncilMember({
   const { memberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
 
   // add bg council member action
-  const signActionContractActionProps: HookContractActionArgs = useMemo(
+  const addBgCouncilActionContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
       actionFn: async () => {
@@ -100,7 +100,7 @@ export function BgCouncilFormAddCouncilMember({
     ],
   )
 
-  const { action: handleAddCouncilMember } = useContractAction(signActionContractActionProps)
+  const { action: handleAddCouncilMember } = useContractAction(addBgCouncilActionContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
