@@ -3,6 +3,8 @@ import dayjs from 'dayjs'
 // types
 import { GetBreakGlassCouncilMembersQuery, GetCouncilMembersQuery } from 'utils/__generated__/graphql'
 import { BgCounsilActionsQueryType, CouncilActionType, CounsilActionsQueryType } from '../council.provider.types'
+
+// utils
 import { parseCamelCaseString, CAPITALIZE_CASE } from 'utils/parse'
 
 type MavrykCounsilIndexerItemType = CounsilActionsQueryType['council_action'][number]
@@ -17,10 +19,9 @@ const checkWhetherMavrykCounsilAction = (
 export const normalizeCouncilAction = (
   indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
 ) => {
-  const actionName = parseCamelCaseString(indexerAction.action_type, CAPITALIZE_CASE)
   const actionCommonDataBetweenCollections = {
     actionType: indexerAction.action_type,
-    actionName,
+    actionName: parseCamelCaseString(indexerAction.action_type, CAPITALIZE_CASE),
     executed: indexerAction.executed,
     id: indexerAction.id,
     initiatorAddress: indexerAction.initiator.address,

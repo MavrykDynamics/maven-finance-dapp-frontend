@@ -9,8 +9,6 @@ import {
   COUNCIL_FORMS_NAMES_MAPPER,
   MavrykCounsilDdForms,
 } from './council.consts'
-import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
-import { BYTES_ADDRESS_TYPE, BytesType, convertBytes } from 'utils/bytesToString'
 
 export const parseCounsilTab = (tabId = ''): CouncilTabsType => {
   switch (tabId) {
@@ -31,24 +29,13 @@ export const handleBgCouncilContractSearch = (contract: CouncilContractsMultisel
   contract.label.toLowerCase().includes(searchValue.toLowerCase()) ||
   contract.address.toLowerCase().includes(searchValue.toLowerCase())
 
-export const convertCouncilActionParamValue = (
-  fieldValue: CouncilActionType['parameters'][number]['value'],
-  bytesType: BytesType = BYTES_ADDRESS_TYPE,
-) => {
-  return convertBytes(fieldValue, bytesType)
-  // const foundField = actionParams.find((item) => item.name === fieldName)
-
-  // if (!foundField) {
-  //   console.log(`field with name: "${fieldName}" is not present in action params`, actionParams)
-  //   throw new Error(`field with name: "${fieldName}" is not present in action params`)
-  // }
-
-  // return bytesType === BYTES_ADDRESS_TYPE
-  //   ? convertBytesAddressToAddress(foundField.value)
-  //   : bytesToText(foundField.value)
-}
-
-export const getActionIdByName = (actionName: string): CouncilsFormsIds | null => {
+/**
+ * helper to get action id on client and then use this id for getting grid styles for output, etc
+ *
+ * @param actionName action name from indexer
+ * @returns action id on client
+ */
+export const getClientActionIdByName = (actionName: string): CouncilsFormsIds | null => {
   switch (actionName) {
     // ------- MAVRYK COUNCIL MEMBERS FORMS
     case COUNCIL_FORMS_NAMES_MAPPER[MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]:

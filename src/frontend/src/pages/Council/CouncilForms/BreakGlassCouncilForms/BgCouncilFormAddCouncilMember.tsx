@@ -82,7 +82,7 @@ export function BgCouncilFormAddCouncilMember({
         }
 
         if (breakGlassCouncilMembers.find(({ userId }) => userId === memberAddress)) {
-          bug('User is already council')
+          bug('User is already council member')
           return null
         }
 

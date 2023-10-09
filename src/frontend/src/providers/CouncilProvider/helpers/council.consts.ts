@@ -35,7 +35,7 @@ export const DROP_FIN_REQUEST_ACTION = 'dropFinReq'
 export const REMOVE_VESTEE_ACTION = 'removeVestee'
 export const SET_BAKER_ACTION = 'setBaker'
 export const SET_CONTRACT_BAKER_ACTION = 'setContractBaker'
-export const DROP_MAVRYK_COUNCIL_REQUEST_ACTION = 'daropRequest'
+export const DROP_MAVRYK_COUNCIL_REQUEST_ACTION = 'dropMavrykCouncilAction'
 
 // subs
 export const BG_COUNCIL_ACTIONS_DATA = 'BG_COUNCIL_ACTIONS_DATA'

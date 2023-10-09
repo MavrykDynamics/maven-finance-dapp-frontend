@@ -108,7 +108,7 @@ export function BgCouncilFormChangeCouncilMember({
           !oldCouncilMemberAddress ||
           breakGlassCouncilMembers.find(({ userId }) => userId === newCouncilMemberAddress)
         ) {
-          bug('Wrong council address')
+          bug('User is already council member')
           return null
         }
 

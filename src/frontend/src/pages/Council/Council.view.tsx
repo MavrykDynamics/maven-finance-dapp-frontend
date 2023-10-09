@@ -23,6 +23,10 @@ import {
   COUNCIL_FORMS_NAMES_MAPPER,
 } from './helpers/council.consts'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import {
+  DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION,
+  DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
+} from 'providers/CouncilProvider/helpers/council.consts'
 
 // types
 import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
@@ -35,6 +39,12 @@ import {
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// utils
+import { dropBreakGlassCouncilAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { dropMavrykCouncilAction } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 
 // view
 import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
@@ -50,14 +60,6 @@ import { CounsilSidebar } from './components/CounsilSidebar'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { H2SimpleTitle, H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { CouncilAction } from './components/CouncilAction/CouncilAction'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import {
-  DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION,
-  DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
-} from 'providers/CouncilProvider/helpers/council.consts'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { dropBreakGlassCouncilAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { dropMavrykCouncilAction } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 
 type Props = {
   selectedTab: CouncilTabsType
@@ -168,8 +170,6 @@ export function CouncilView({
       : isAllPendingTab
       ? allPendingActions
       : allPastActions
-
-    // const listToPaginate = allPastActions
 
     const [from, to] = calculateSlicePositions(currentPage, COUNCIL_MY_PAST_ACTIONS_LIST_NAME)
     const paginatedList = listToPaginate.slice(from, to)

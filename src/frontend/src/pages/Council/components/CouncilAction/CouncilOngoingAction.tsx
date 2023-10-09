@@ -12,7 +12,7 @@ import { CouncilActionType } from 'providers/CouncilProvider/council.provider.ty
 
 // utils
 import { parseDate } from 'utils/time'
-import { getActionIdByName } from 'pages/Council/helpers/commonCouncil.utils'
+import { getClientActionIdByName } from 'pages/Council/helpers/commonCouncil.utils'
 
 // consts
 import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
@@ -33,7 +33,7 @@ type Props = {
 export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakGlassCounsil }: Props) => {
   const { id, actionName, councilSize, startDatetime, signersCount, parameters } = councilAction
 
-  const cardActionId = getActionIdByName(actionName)
+  const cardActionId = getClientActionIdByName(actionName)
   if (!cardActionId) return null
 
   const bodyCells = getCouncilCardBodyCells(parameters, cardActionId, isBreakGlassCounsil, id)
