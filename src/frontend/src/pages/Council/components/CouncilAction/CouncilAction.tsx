@@ -37,7 +37,7 @@ export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCou
 
   const isUserActiveAction = !executed && dayjs().isBefore(expirationTime) && userAddress === initiatorAddress
 
-  // view for user's created action
+  // view for user's created active action
   if (isUserActiveAction) {
     return (
       <CouncilOngoingAction
@@ -63,7 +63,8 @@ export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCou
 
         <div className="column">
           <div className="name">Multisig Approval</div>
-          <div className={`value ${councilSize / 2 < signersCount ? 'is-green' : 'is-red'}`}>
+          {/* if signed more than half of members show green */}
+          <div className={`value ${signersCount > councilSize / 2 ? 'is-green' : 'is-red'}`}>
             {signersCount}/{councilSize}
           </div>
         </div>

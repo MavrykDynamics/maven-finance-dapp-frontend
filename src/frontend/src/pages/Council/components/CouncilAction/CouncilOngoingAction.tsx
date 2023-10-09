@@ -98,6 +98,7 @@ const getCouncilCardBodyCells = (
   isBreakGlassCounsil: boolean,
   actionId: number,
 ): Array<{ className: string; name: string; value: string }> => {
+  // for those action show allowed params
   if (
     cardActionId === MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER ||
     cardActionId === BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER ||
@@ -125,6 +126,7 @@ const getCouncilCardBodyCells = (
     }, [])
   }
 
+  // for all other actions show their id only
   return [
     {
       className: 'action-meta',

@@ -20,7 +20,6 @@ const COUNCIL_COLUMN_STYLES = css`
       font-weight: 600;
       font-size: 16px;
       line-height: 22px;
-      /* min-width: 0; */
 
       color: ${({ theme }) => theme.primaryText};
 
@@ -43,9 +42,11 @@ const COUNCIL_COLUMN_STYLES = css`
         overflow: hidden;
       }
 
-      .img-wrapper {
+      .img-wrapper,
+      .img-plug {
         height: 35px;
         width: 35px;
+        fill: ${({ theme }) => theme.subHeadingText};
 
         img {
           width: 100%;

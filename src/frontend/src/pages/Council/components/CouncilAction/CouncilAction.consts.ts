@@ -52,6 +52,8 @@ export const getCouncilActionsBodiesGridSettings = (
   }
 }
 
+// mapper for action params fields, only those are outputted on client only
+// used to check whether client show field for user and getting grid-area classname
 export const COUNCIL_ACTIONS_BODY_COLUMS_MAPPER: Record<string, string> = {
   // addresses
   councilMemberAddress: 'member-address',

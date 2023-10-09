@@ -34,6 +34,9 @@ export const handleBgCouncilContractSearch = (contract: CouncilContractsMultisel
  *
  * @param actionName action name from indexer
  * @returns action id on client
+ *
+ * NOTE: if action name will change on back-end it will lead to returning null from switch, so need to keep up to back-end
+ * TODO: get all action id's from back-end and if actionId is not exists on names mapper don't normalize this action
  */
 export const getClientActionIdByName = (actionName: string): CouncilsFormsIds | null => {
   switch (actionName) {
