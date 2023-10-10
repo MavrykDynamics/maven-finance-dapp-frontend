@@ -51,7 +51,7 @@ const Satellites = () => {
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
-  const { userTokensBalances, isSatellite } = useUserContext()
+  const { userTokensBalances, isSatellite, userAddress } = useUserContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
@@ -81,7 +81,9 @@ const Satellites = () => {
   return (
     <Page>
       <PageHeader page={'satellites'} />
-      {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
+      {!isSatellite &&
+      getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 &&
+      userAddress ? (
         <NotStakingBannerStyled>
           <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>
             <div className="link-btn">
