@@ -10,6 +10,7 @@ import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // utils
@@ -24,21 +25,17 @@ import {
 
 type PropsType = {
   isBreakGlassAction: boolean
-  counsilAddress?: string
   actionstoSign: number[]
   actionsMapper: Record<number, CouncilActionType>
   members: CouncilMembersType
 }
 
-export const CounsilActionsToSign = ({
-  isBreakGlassAction,
-  counsilAddress,
-  actionstoSign,
-  members,
-  actionsMapper,
-}: PropsType) => {
+export const CounsilActionsToSign = ({ isBreakGlassAction, actionstoSign, members, actionsMapper }: PropsType) => {
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
+  const {
+    contractAddresses: { councilAddress, breakGlassAddress },
+  } = useDappConfigContext()
 
   // Sign request action
   const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
@@ -50,19 +47,19 @@ export const CounsilActionsToSign = ({
           return null
         }
 
-        if (!counsilAddress) {
+        if (!councilAddress || !breakGlassAddress) {
           bug('Wrong counsil address')
           return null
         }
 
         if (isBreakGlassAction) {
-          return await signBreakGlassAction(actionId, counsilAddress)
+          return await signBreakGlassAction(actionId, breakGlassAddress)
         } else {
-          return await signMavrykAction(actionId, counsilAddress)
+          return await signMavrykAction(actionId, councilAddress)
         }
       },
     }),
-    [counsilAddress, isBreakGlassAction, userAddress],
+    [councilAddress, isBreakGlassAction, userAddress],
   )
 
   const { actionWithArgs: handleSignAction } = useContractAction(signActionContractActionProps)
