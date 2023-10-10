@@ -2,7 +2,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
-import { PRIMARY_TZ_ADDRESS_COLOR } from '../TzAddress/TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR, SECONDARY_TZ_ADDRESS_COLOR } from '../TzAddress/TzAddress.constants'
 import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 
 import Icon from '../Icon/Icon.view'
@@ -65,7 +65,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         onMouseLeave={closeDetailsHandler}
       >
         <Icon id="wallet" className="wallet" />
-        <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} />
+        <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} type={SECONDARY_TZ_ADDRESS_COLOR} />
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
@@ -244,7 +244,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
     <MobileWalletDetailsStyled>
       <WalletDetailsVisiblePart isShown={detailsShown} onClick={clickHander}>
         <Icon id="wallet" className="wallet" />
-        <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} />
+        <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} type={SECONDARY_TZ_ADDRESS_COLOR} />
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
