@@ -103,7 +103,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         id: 55622,
         subTitle: 'Become a Satellite',
         subPath: `become-satellite/${SATELLITE_TAB_EDIT}`,
-        routeSubPath: '/become-satellite',
+        routeSubPath: '/become-satellite/:tabId',
         requires: {
           authNotSatellite: true,
         },
@@ -112,7 +112,7 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
         id: 55614,
         subTitle: 'Edit My Profile',
         subPath: `become-satellite/${SATELLITE_TAB_DETAILS}`,
-        routeSubPath: '/become-satellite',
+        routeSubPath: '/become-satellite/:tabId',
         requires: {
           isSatellite: true,
         },
