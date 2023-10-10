@@ -68,13 +68,11 @@ export const CouncilActionsToSignGridMapper: Record<
 > = {
   // ------- MAVRYK COUNCIL MEMBERS FORMS
   [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto auto 50px`,
+    columnsTemplate: `auto auto 180px`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "member-address member-name"
-      "member-url member-url"
-      "member-image member-image"
-      ". submit-form"
+      "member-address member-name signed-amount"
+      "member-image member-url sign-btn"
     `,
   },
   [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
@@ -89,17 +87,18 @@ export const CouncilActionsToSignGridMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
+    columnsTemplate: `auto auto`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "select-council-member submit-form"
+      "member-address signed-amount"
+      "sign-btn sign-btn"
     `,
   },
 
   // ------- MAVRYK COUNCIL VESTEES FORMS
   [MavrykCounsilDdForms.ADD_VESTEE]: {
     columnsTemplate: `auto auto 180px`, // ready
-    rowsTemplate: `auto 50px`,
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address vestee-allocated-amount signed-amount"
       "vestee-cliff-period vesting-period sign-btn"
@@ -122,10 +121,11 @@ export const CouncilActionsToSignGridMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.REMOVE_VESTEE]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
+    columnsTemplate: `auto auto`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "vestee-address submit-form"
+      "vestee-address signed-amount"
+      "sign-btn sign-btn"
     `,
   },
 

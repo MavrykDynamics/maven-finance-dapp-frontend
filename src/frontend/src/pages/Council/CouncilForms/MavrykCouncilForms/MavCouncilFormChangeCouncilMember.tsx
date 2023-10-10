@@ -72,8 +72,10 @@ export const MavCouncilFormChangeCouncilMember = ({
   const dropDownItems = useMemo(
     () =>
       councilMembers.map<DdItemType>((item, index) => ({
-        content: <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`} />,
-        tzAddress: item.userId,
+        content: (
+          <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.memberAddress })}`} />
+        ),
+        tzAddress: item.memberAddress,
         id: index,
       })),
     [councilMembers],
@@ -101,7 +103,10 @@ export const MavCouncilFormChangeCouncilMember = ({
           return null
         }
 
-        if (!oldCouncilMemberAddress || councilMembers.find(({ userId }) => userId === newCouncilMemberAddress)) {
+        if (
+          !oldCouncilMemberAddress ||
+          councilMembers.find(({ memberAddress }) => memberAddress === newCouncilMemberAddress)
+        ) {
           bug('User is already council member')
           return null
         }

@@ -79,3 +79,7 @@ export type CouncilsFormsIds =
   | (typeof MavrykCounsilDdForms)[keyof typeof MavrykCounsilDdForms]
   | (typeof BgCounsilDdForms)[keyof typeof BgCounsilDdForms]
   | typeof UPDATE_USER_COUNCIL_PROFILE_FORM
+
+export type CouncilsActionsIds =
+  | (typeof MavrykCounsilDdForms)[keyof typeof MavrykCounsilDdForms]
+  | (typeof BgCounsilDdForms)[keyof typeof BgCounsilDdForms]

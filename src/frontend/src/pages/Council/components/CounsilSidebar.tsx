@@ -37,12 +37,14 @@ export const CounsilSidebar = ({
   const { userAddress } = useUserContext()
 
   const { sortedCounsils, isUserCounsil } = useMemo(() => {
-    const indexOfMember = counsilMembers.findIndex((item) => item.userId === userAddress)
+    const indexOfMember = counsilMembers.findIndex((item) => item.memberAddress === userAddress)
 
     const sortedCounsils =
       indexOfMember === -1
         ? counsilMembers
-        : [counsilMembers[indexOfMember]].concat(counsilMembers.filter(({ userId }) => userId !== userAddress))
+        : [counsilMembers[indexOfMember]].concat(
+            counsilMembers.filter(({ memberAddress }) => memberAddress !== userAddress),
+          )
 
     return {
       isUserCounsil: indexOfMember !== -1,
@@ -83,7 +85,7 @@ export const CounsilSidebar = ({
               key={item.id}
               image={item.image}
               name={item.name}
-              userId={item.userId}
+              memberAddress={item.memberAddress}
               openModal={openUpdateMemberProfilePopup}
               showUpdateInfo={isUserCounsil}
             />

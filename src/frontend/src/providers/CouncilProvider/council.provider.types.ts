@@ -19,10 +19,12 @@ import {
   GetBgMyPastCouncilActionsQuery,
   GetMyPastCouncilActionsQuery,
 } from 'utils/__generated__/graphql'
+import { CouncilsActionsIds } from './helpers/council.types'
 
 // ----- normalizer types
 export type CouncilActionType = {
   id: number
+  actionClientId: CouncilsActionsIds
   actionName: string
   /**
    * @deprecated

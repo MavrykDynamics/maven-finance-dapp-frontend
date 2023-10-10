@@ -15,7 +15,6 @@ import { CouncilActionType } from 'providers/CouncilProvider/council.provider.ty
 
 // utils
 import { parseDate } from 'utils/time'
-import { getClientActionIdByName } from 'pages/Council/helpers/commonCouncil.utils'
 
 // consts
 import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
@@ -37,12 +36,9 @@ export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakG
   const {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-  const { id, actionName, councilSize, startDatetime, signersCount, parameters } = councilAction
+  const { id, actionName, actionClientId, councilSize, startDatetime, signersCount, parameters } = councilAction
 
-  const cardActionId = getClientActionIdByName(actionName)
-  if (!cardActionId) return null
-
-  const bodyCells = getCouncilCardBodyCells(parameters, cardActionId, isBreakGlassCounsil, id)
+  const bodyCells = getCouncilCardBodyCells(parameters, actionClientId, isBreakGlassCounsil, id)
 
   return (
     <CouncilActionStyled>
@@ -67,7 +63,7 @@ export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakG
           </div>
         }
       >
-        <CouncilActionBodyStyled cardActionId={cardActionId}>
+        <CouncilActionBodyStyled cardActionId={actionClientId}>
           {bodyCells.map(({ className, value, valueContent, name }) => {
             return (
               <div className={classNames('column', className)}>
@@ -108,8 +104,8 @@ const getCouncilCardBodyCells = (
     cardActionId === MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER ||
     cardActionId === BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER ||
     cardActionId === MavrykCounsilDdForms.ADD_COUNCIL_MEMBER ||
-    cardActionId === MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER ||
     cardActionId === BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER ||
+    cardActionId === MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER ||
     cardActionId === BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER
   ) {
     return actionParams.reduce<CouncilCardBodyCells>((acc, actionParam) => {

@@ -8,6 +8,8 @@ import {
   CouncilSubsRecordType,
   NullableCouncilContextStateType,
 } from '../council.provider.types'
+
+// consts
 import {
   ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
@@ -21,6 +23,8 @@ import {
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './council.consts'
+import { BgCounsilDdForms, MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
+import { CouncilsActionsIds } from './council.types'
 
 type CouncilContextReturnValueArgs = {
   councilCtxState: NullableCouncilContextStateType
@@ -87,5 +91,77 @@ export const getCouncilProviderReturnValue = ({
     isLoading: false,
     ...commonToReturn,
     ...nonNullableProviderValue,
+  }
+}
+
+/**
+ * helper to get action id on client and then use this id for getting grid styles for output, etc
+ *
+ * @param actionName action name from indexer
+ * @returns action id on client
+ *
+ * NOTE: if action name will change on back-end it will lead to returning null from switch, so need to keep up to date with back-end
+ */
+export const getClientActionIdByIndexerActionType = (
+  actionType: string,
+  isBreakGlassCouncil: boolean,
+): CouncilsActionsIds | null => {
+  switch (actionType) {
+    // ------- COUNCIL MEMBERS ACTIONS
+    case 'addCouncilMember':
+      return isBreakGlassCouncil ? BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER : MavrykCounsilDdForms.ADD_COUNCIL_MEMBER
+    case 'changeCouncilMember':
+      return isBreakGlassCouncil
+        ? BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER
+        : MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER
+    case 'removeCouncilMember':
+      return isBreakGlassCouncil
+        ? BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER
+        : MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER
+
+    // ------- MAVRYK COUNCIL VESTEES FORMS
+    case 'addVestee':
+      return MavrykCounsilDdForms.ADD_VESTEE
+    case 'updateVestee':
+      return MavrykCounsilDdForms.UPDATE_VESTEE
+    case 'toggleVesteeLock':
+      return MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK
+    case 'removeCounsilMember':
+      return MavrykCounsilDdForms.REMOVE_VESTEE
+
+    // ------- MAVRYK COUNCIL TOKENS FORMS
+    case 'requestTokens':
+      return MavrykCounsilDdForms.REQUEST_TOKENS
+    case 'requestTokenMint':
+      return MavrykCounsilDdForms.REQUEST_TOKEN_MINT
+    case 'transferTokens':
+      return MavrykCounsilDdForms.TRANSFER_TOKENS
+
+    // ------- MAVRYK COUNCIL BAKERS FORMS
+    case 'setBaker':
+      return MavrykCounsilDdForms.SET_BAKER
+    case 'setContractBaker':
+      return MavrykCounsilDdForms.SET_CONTRACT_BAKER
+
+    // ------- MAVRYK COUNCIL OTHER FORMS
+    case 'dropFinancialRequest':
+      return MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST
+
+    // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
+    case 'setAllContractsAdmin':
+      return BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN
+    case 'setContractsAdmin':
+      return BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN
+
+    // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
+    case 'removeBreakGlassControll':
+      return BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL
+    case 'signAction':
+      return BgCounsilDdForms.SIGN_ACTION
+    case 'unpauseAllEntrypoints':
+      return BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS
+
+    default:
+      return null
   }
 }

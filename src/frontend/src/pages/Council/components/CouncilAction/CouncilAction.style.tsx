@@ -8,6 +8,10 @@ export const COUNCIL_COLUMN_STYLES = css`
   .column {
     min-width: 0;
 
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
     p {
       margin: 0;
     }
@@ -109,14 +113,14 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   .header {
     padding: 15px 30px;
     max-height: 75px;
-    column-gap: 75px;
+    column-gap: 30px;
 
     display: grid;
     align-items: center;
-    grid-template-columns: 0.8fr 1fr 120px 16px;
+    grid-template-columns: 0.6fr 1fr 120px 16px;
 
     &.my-ongoing {
-      grid-template-columns: 0.8fr 1.2fr auto;
+      grid-template-columns: 0.6fr 1.2fr auto;
     }
 
     .open-action {

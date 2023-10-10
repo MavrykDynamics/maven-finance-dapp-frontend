@@ -80,7 +80,7 @@ export const UpdateUserCouncilProfileInfoPopup = ({
   useEffect(() => {
     if (memberProfile) {
       setForm({
-        memberAddress: memberProfile.userId,
+        memberAddress: memberProfile.memberAddress,
         newMemberName: memberProfile.name,
         newMemberWebsite: memberProfile.website,
         newMemberImage: memberProfile.image,

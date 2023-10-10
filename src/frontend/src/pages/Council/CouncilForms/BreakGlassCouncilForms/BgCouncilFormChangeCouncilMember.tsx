@@ -72,8 +72,10 @@ export function BgCouncilFormChangeCouncilMember({
   const dropDownItems = useMemo(
     () =>
       breakGlassCouncilMembers.map<DdItemType>((item, index) => ({
-        content: <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`} />,
-        tzAddress: item.userId,
+        content: (
+          <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.memberAddress })}`} />
+        ),
+        tzAddress: item.memberAddress,
         id: index,
       })),
     [breakGlassCouncilMembers],
@@ -106,7 +108,7 @@ export function BgCouncilFormChangeCouncilMember({
 
         if (
           !oldCouncilMemberAddress ||
-          breakGlassCouncilMembers.find(({ userId }) => userId === newCouncilMemberAddress)
+          breakGlassCouncilMembers.find(({ memberAddress }) => memberAddress === newCouncilMemberAddress)
         ) {
           bug('User is already council member')
           return null

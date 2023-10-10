@@ -355,7 +355,7 @@ export function CouncilView({
         show={isUpdateCouncilMemberInfo}
         closePopup={closePopup}
         isBreakGlassCounsil={isBreakGlassCounsil}
-        memberProfile={members.find((item) => item.userId === userAddress)}
+        memberProfile={members.find((item) => item.memberAddress === userAddress)}
       />
     </CounsilPageWrapper>
   )

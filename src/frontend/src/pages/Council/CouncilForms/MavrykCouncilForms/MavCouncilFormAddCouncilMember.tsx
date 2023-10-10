@@ -81,7 +81,7 @@ export const MavCouncilFormAddCouncilMember = ({
           return null
         }
 
-        if (councilMembers.find(({ userId }) => userId === newMemberAddress)) {
+        if (councilMembers.find(({ memberAddress }) => memberAddress === newMemberAddress)) {
           bug('User is already council member')
           return null
         }

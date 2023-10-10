@@ -3,6 +3,7 @@ import classNames from 'classnames'
 
 // types
 import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
+import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
@@ -11,21 +12,19 @@ import { CouncilActionPurposePopupContent } from 'app/App.components/popup/bases
 import { H2SimpleTitle, H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-
-// consts
-import { BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-
-// hooks
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { getClientActionIdByName } from 'pages/Council/helpers/commonCouncil.utils'
-import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
-import { COUNCIL_ACTIONS_TO_SIGN_COLUMS_MAPPER, CouncilActionsToSignColumnsType } from './CouncilActionsToSign.consts'
-import { convertBytes, BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE } from 'utils/bytesToString'
-import { CAPITALIZE_CASE, parseCamelCaseString } from 'utils/parse'
-import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
+
+// consts
+import { BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { CAPITALIZE_CASE, parseCamelCaseString } from 'utils/parse'
+import { convertBytes, BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE } from 'utils/bytesToString'
+import { COUNCIL_ACTIONS_TO_SIGN_COLUMS_MAPPER } from './CouncilActionsToSign.consts'
+
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type Props = {
   action: CouncilActionType
@@ -61,11 +60,8 @@ export const CouncilActionToSign = ({
   const [popupPurose, setPopupPurose] = useState<null | string>(null)
   const closePopup = () => setPopupPurose(null)
 
-  const { actionName, id } = action
+  const { actionName, actionClientId, id } = action
   const handleSignAction = () => signActionHandler(id)
-
-  const actionId = getClientActionIdByName(actionName)
-  if (!actionId) return null
 
   return (
     <CouncilActionToSignStyled className={classNames({ isLast: actionsToSignAmount - 1 === actionIndex })}>
@@ -73,7 +69,7 @@ export const CouncilActionToSign = ({
       <CouncilActionToSignBody
         handleSignAction={handleSignAction}
         action={action}
-        actionId={actionId}
+        actionId={actionClientId}
         councilMembersAmount={councilMembersAmount}
       />
 
@@ -90,7 +86,7 @@ const CouncilActionToSignBody = ({
 }: {
   handleSignAction: () => void
   action: CouncilActionType
-  actionId: CouncilsFormsIds
+  actionId: CouncilsActionsIds
   councilMembersAmount: number
 }) => {
   const {
@@ -105,7 +101,7 @@ const CouncilActionToSignBody = ({
     <CouncilActionToSignBodyStyled actionId={actionId}>
       {gridCells.map(({ className, value, valueContent, name }) => {
         return (
-          <div className={classNames('column', className)}>
+          <div className={classNames('column', className)} key={name}>
             <div className="name">{name}</div>
             <div className="value" title={value}>
               {valueContent}

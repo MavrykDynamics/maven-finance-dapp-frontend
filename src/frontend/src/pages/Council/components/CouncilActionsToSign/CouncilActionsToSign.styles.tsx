@@ -24,6 +24,22 @@ export const CouncilActionToSignStyled = styled(Card)`
 
   height: 200px;
   min-width: 247px;
+  max-width: 100%;
+
+  flex: 0 0 100%;
+  flex-basis: fit-content;
+
+  &.small {
+    flex: 0 0 100%;
+  }
+
+  &.medium {
+    flex: 0 0 100%;
+  }
+
+  &.large {
+    flex: 0 0 100%;
+  }
 
   margin: 0;
   padding: 25px;
@@ -36,8 +52,8 @@ export const CouncilActionToSignStyled = styled(Card)`
     counter-increment: cardIndex 1;
     content: counter(cardIndex);
     position: absolute;
-    right: 20px;
-    top: 15px;
+    right: 12px;
+    top: 10px;
 
     font-weight: 700;
     font-size: 14px;
@@ -138,12 +154,20 @@ export const CouncilActionToSignBodyStyled = styled.div<{ theme: MavrykTheme; ac
 
   align-items: center;
 
+  height: calc(100% - 30px);
+
   margin-top: 15px;
   row-gap: 15px;
   column-gap: 25px;
 
   .signed-amount {
     width: fit-content;
+    margin: 0 auto;
+  }
+
+  .sign-btn {
+    max-width: 180px;
+    width: 100%;
     margin: 0 auto;
   }
 

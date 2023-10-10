@@ -1,3 +1,5 @@
+import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
+
 // mavryk council consts
 export const MavrykCounsilPageTitles = {
   membersName: 'Council Members',
@@ -48,7 +50,7 @@ export const ALL_PAST_COUNSIL_TAB = 'past-actions'
 export const UPDATE_USER_COUNCIL_PROFILE_FORM = 'UPDATE_USER_COUNCIL_PROFILE_FORM'
 
 // mapper for forms names in dd
-export const COUNCIL_FORMS_NAMES_MAPPER = {
+export const COUNCIL_FORMS_NAMES_MAPPER: Record<CouncilsActionsIds, string> = {
   ADD_VESTEE: 'Add Vestee',
   ADD_COUNCIL_MEMBER: 'Add Council Member',
   UPDATE_VESTEE: 'Update Vestee',

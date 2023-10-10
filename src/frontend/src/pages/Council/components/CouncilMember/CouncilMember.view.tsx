@@ -17,7 +17,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 type Props = {
   image: string
   name: string
-  userId: string
+  memberAddress: string
   openModal: () => void
   showUpdateInfo?: boolean
 }
@@ -28,9 +28,9 @@ export const CouncilMemberView = (props: Props) => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { image, name, userId, openModal, showUpdateInfo = true } = props
+  const { image, name, memberAddress, openModal, showUpdateInfo = true } = props
 
-  const isMe = userId === userAddress
+  const isMe = memberAddress === userAddress
 
   const memberContent = (
     <CouncilMemberStyled>
@@ -47,7 +47,7 @@ export const CouncilMemberView = (props: Props) => {
         </AvatarStyle>
         <figcaption>
           <h4>{name}</h4>
-          {userId ? <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={userId} hasIcon /> : null}
+          {memberAddress ? <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={memberAddress} hasIcon /> : null}
         </figcaption>
       </div>
       {isMe && showUpdateInfo ? (
@@ -62,10 +62,10 @@ export const CouncilMemberView = (props: Props) => {
   if (isMe) return memberContent
 
   return isSatellite ? (
-    <CustomLink to={`/satellites/satellite-details/:satelliteId`} params={{ satelliteId: userId }}>
+    <CustomLink to={`/satellites/satellite-details/:satelliteId`} params={{ satelliteId: memberAddress }}>
       {memberContent}
     </CustomLink>
   ) : (
-    <CustomLink to={`${process.env.REACT_APP_TZKT_LINK}/${userId}/operations/`}>{memberContent}</CustomLink>
+    <CustomLink to={`${process.env.REACT_APP_TZKT_LINK}/${memberAddress}/operations/`}>{memberContent}</CustomLink>
   )
 }
