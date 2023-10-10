@@ -118,7 +118,7 @@ export const toggleVesteeLock = async (vesteeAddress: string, counsilAddress: st
 }
 
 // Change Council Member
-export const changeCouncilMember = async (
+export const changeMavrykCouncilMember = async (
   oldCouncilMemberAddress: string,
   newCouncilMemberAddress: string,
   newMemberName: string,
@@ -146,7 +146,7 @@ export const changeCouncilMember = async (
 }
 
 // Remove Council Member
-export const removeCouncilMember = async (memberAddress: string, counsilAddress: string) => {
+export const removeCouncilMember = async (counsilAddress: string, memberAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -344,7 +344,7 @@ export const setContractBakerRequest = async (
 }
 
 // Drop Request
-export const dropRequest = async (actionID: number, counsilAddress: string) => {
+export const dropMavrykCouncilAction = async (actionID: number, counsilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()

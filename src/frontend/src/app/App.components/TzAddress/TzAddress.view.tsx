@@ -1,7 +1,7 @@
 // helpers
 import { getShortTzAddress } from '../../../utils/tzAdress'
 
-import { TzAddressStyles } from './TzAddress.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR, TzAddressStyles } from './TzAddress.constants'
 import { TzAddressContainer, TzAddressIcon, TzAddressStyled } from './TzAddress.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -9,27 +9,19 @@ type TzAddressProps = {
   tzAddress?: string | null
   type?: TzAddressStyles
   hasIcon?: boolean
-  iconToLeft?: boolean | undefined
   isBold?: boolean
-  isLargeIcon?: boolean
   shouldCopy?: boolean
   className?: string
-  amountFromStart?: number
-  amountFromEnd?: number
 }
 
 // TODO: make classes via classNames lib, check classes usage for styling
 export const TzAddress = ({
-  className,
   tzAddress,
-  type,
+  className = '',
+  type = PRIMARY_TZ_ADDRESS_COLOR,
   hasIcon = true,
-  iconToLeft,
-  isBold,
-  isLargeIcon,
   shouldCopy = true,
-  amountFromStart = 4,
-  amountFromEnd = 4,
+  isBold,
 }: TzAddressProps) => {
   const { handleCopyText } = useDappConfigContext()
 
@@ -43,22 +35,15 @@ export const TzAddress = ({
 
   if (!tzAddress) return <TzAddressContainer className={`${className} tzAddressToClick`}>–</TzAddressContainer>
 
-  const addrClasses = `${type} ${isBold ? 'bold' : ''}  ${isLargeIcon ? 'largeIcon' : ''} copyIcon`
+  const addrClasses = `${type} ${isBold ? 'bold' : ''}  copyIcon`
 
   return (
     <TzAddressContainer
       className={`${className} tzAddressToClick ${!shouldCopy ? 'notCopy' : ''}`}
       onClick={(e) => handleTzAddressClick(e)}
     >
-      {hasIcon && iconToLeft && shouldCopy && (
-        <TzAddressIcon className={addrClasses}>
-          <use xlinkHref="/icons/sprites.svg#copyToClipboard" />
-        </TzAddressIcon>
-      )}
-      <TzAddressStyled className={addrClasses}>
-        {getShortTzAddress({ tzAddress, amountFromEnd, amountFromStart })}
-      </TzAddressStyled>
-      {hasIcon && !iconToLeft && shouldCopy && (
+      <TzAddressStyled className={addrClasses}>{getShortTzAddress({ tzAddress })}</TzAddressStyled>
+      {hasIcon && shouldCopy && (
         <TzAddressIcon className={addrClasses}>
           <use xlinkHref="/icons/sprites.svg#copyToClipboard" />
         </TzAddressIcon>

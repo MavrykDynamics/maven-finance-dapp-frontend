@@ -1,6 +1,7 @@
+import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
 import styled, { css } from 'styled-components/macro'
 import { MavrykTheme } from 'styles/interfaces'
-import { CouncilsFormsNames, CouncilFormsGridMapper } from '../helpers/council.consts'
+import { CouncilFormsGridMapper } from './CouncilForms.consts'
 
 const FORMS_AREAS_NAMES = css`
   /* ------- common */
@@ -91,7 +92,7 @@ const FORMS_AREAS_NAMES = css`
   }
 `
 
-export const CouncilFormStyled = styled.div<{ theme: MavrykTheme; formName: CouncilsFormsNames }>`
+export const CouncilFormStyled = styled.div<{ theme: MavrykTheme; formName: CouncilsFormsIds }>`
   position: relative;
   padding: 30px 20px;
   border-top: 1px solid ${({ theme }) => theme.divider};

@@ -15,6 +15,7 @@ import {
   INPUT_STATUS_SUCCESS,
   InputStatusType,
 } from 'app/App.components/Input/Input.constants'
+import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // helpers
@@ -46,7 +47,13 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
   newMemberImage: INPUT_STATUS_DEFAULT,
 }
 
-export function BgCouncilFormAddCouncilMember({ councilMaxLengths }: { councilMaxLengths: CouncilMaxLength }) {
+export function BgCouncilFormAddCouncilMember({
+  maxLength,
+  breakGlassCouncilMembers,
+}: {
+  maxLength: CouncilMaxLength
+  breakGlassCouncilMembers: CouncilContext['breakGlassCouncilMembers']
+}) {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
@@ -60,7 +67,7 @@ export function BgCouncilFormAddCouncilMember({ councilMaxLengths }: { councilMa
   const { memberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
 
   // add bg council member action
-  const signActionContractActionProps: HookContractActionArgs = useMemo(
+  const addBgCouncilActionContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
       actionFn: async () => {
@@ -74,13 +81,26 @@ export function BgCouncilFormAddCouncilMember({ councilMaxLengths }: { councilMa
           return null
         }
 
+        if (breakGlassCouncilMembers.find(({ userId }) => userId === memberAddress)) {
+          bug('User is already council member')
+          return null
+        }
+
         return await addCouncilMember(breakGlassAddress, memberAddress, newMemberName, newMemberWebsite, newMemberImage)
       },
     }),
-    [breakGlassAddress, memberAddress, newMemberImage, newMemberName, newMemberWebsite, userAddress],
+    [
+      breakGlassAddress,
+      memberAddress,
+      breakGlassCouncilMembers,
+      newMemberImage,
+      newMemberName,
+      newMemberWebsite,
+      userAddress,
+    ],
   )
 
-  const { action: handleAddCouncilMember } = useContractAction(signActionContractActionProps)
+  const { action: handleAddCouncilMember } = useContractAction(addBgCouncilActionContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -130,7 +150,7 @@ export function BgCouncilFormAddCouncilMember({ councilMaxLengths }: { councilMa
       value: newMemberName,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateLenght(e, councilMaxLengths.councilMemberNameMaxLength)
+        validateLenght(e, maxLength.councilMemberNameMaxLength)
       },
       required: true,
     }
@@ -140,7 +160,7 @@ export function BgCouncilFormAddCouncilMember({ councilMaxLengths }: { councilMa
       value: newMemberWebsite,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateLenght(e, councilMaxLengths.councilMemberWebsiteMaxLength)
+        validateLenght(e, maxLength.councilMemberWebsiteMaxLength)
       },
       required: true,
     }
@@ -160,8 +180,8 @@ export function BgCouncilFormAddCouncilMember({ councilMaxLengths }: { councilMa
       },
     }
   }, [
-    councilMaxLengths.councilMemberNameMaxLength,
-    councilMaxLengths.councilMemberWebsiteMaxLength,
+    maxLength.councilMemberNameMaxLength,
+    maxLength.councilMemberWebsiteMaxLength,
     formInputStatus.memberAddress,
     formInputStatus.newMemberName,
     formInputStatus.newMemberWebsite,

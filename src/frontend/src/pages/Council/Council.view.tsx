@@ -23,6 +23,10 @@ import {
   COUNCIL_FORMS_NAMES_MAPPER,
 } from './helpers/council.consts'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
+import {
+  DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION,
+  DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
+} from 'providers/CouncilProvider/helpers/council.consts'
 
 // types
 import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
@@ -35,12 +39,17 @@ import {
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+
+// utils
+import { dropBreakGlassCouncilAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { dropMavrykCouncilAction } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 
 // view
 import { DropDown, DDItemId, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 import { CouncilForms } from './CouncilForms/CouncilForms.controller'
 import NewButton from 'app/App.components/Button/NewButton'
-import { CouncilAction } from 'pages/Council/components/CouncilAction.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
@@ -48,9 +57,9 @@ import { CouncilStyled, AvaliableActions, CounsilPageWrapper } from './Council.s
 import { CounsilActionsToSign } from './components/CounsilActionsToSign'
 import { UpdateUserCouncilProfileInfoPopup } from './components/UpdateUserCouncilProfileInfoPopup'
 import { CounsilSidebar } from './components/CounsilSidebar'
-import { CouncilOngoingAction } from './components/CouncilOngoingAction.view'
-import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { H2SimpleTitle, H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { CouncilAction } from './components/CouncilAction/CouncilAction'
 
 type Props = {
   selectedTab: CouncilTabsType
@@ -89,7 +98,9 @@ export function CouncilView({
 
   const {
     maxLengths: { council: counsilMaxLenghts },
+    contractAddresses: { councilAddress, breakGlassAddress },
   } = useDappConfigContext()
+  const { bug } = useToasterContext()
   const { userAddress, isBreakGlassCouncil, isMavrykCouncil } = useUserContext()
 
   const isUserCouncil = isBreakGlassCounsil ? isBreakGlassCouncil : isMavrykCouncil
@@ -210,6 +221,33 @@ export function CouncilView({
     [pagePathname, search],
   )
 
+  // drop action
+  const dropActionProps: HookContractActionArgs<number> = useMemo(
+    () => ({
+      actionType: isBreakGlassCounsil ? DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION : DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
+      actionFn: async (actionId: number) => {
+        if (!userAddress) {
+          bug('Click Connect in the left menu', 'Please connect your wallet')
+          return null
+        }
+
+        if (!councilAddress || !breakGlassAddress) {
+          bug('Wrong counsil address')
+          return null
+        }
+
+        if (isBreakGlassCounsil) {
+          return await dropBreakGlassCouncilAction(actionId, breakGlassAddress)
+        } else {
+          return await dropMavrykCouncilAction(actionId, councilAddress)
+        }
+      },
+    }),
+    [councilAddress, breakGlassAddress, isBreakGlassCounsil, userAddress],
+  )
+
+  const { actionWithArgs: handleDropAction } = useContractAction(dropActionProps)
+
   return (
     <CounsilPageWrapper>
       <CouncilStyled>
@@ -269,37 +307,19 @@ export function CouncilView({
             <H2Title>{isAllPastTab ? titles.allPastActions : isAllPendingTab ? titles.allPending : null}</H2Title>
           )}
 
-          <div>
+          <div className="actions-list">
             {paginatedList.length ? (
               paginatedList.map((item) => {
-                const { id, startDatetime, actionType, signersCount, councilSize, counsilAddress, parameters } =
-                  actionsMapper[item]
+                const councilAction = actionsMapper[item]
 
-                if (isMyPendingTab) {
-                  return (
-                    <CouncilOngoingAction
-                      id={id}
-                      key={id}
-                      startDatetime={startDatetime}
-                      actionType={actionType}
-                      signersCount={signersCount}
-                      numCouncilMembers={councilSize}
-                      isBreakGlassCounsil={isBreakGlassCounsil}
-                      cardIdName={titles.cardIdName}
-                      counsilAddress={counsilAddress}
-                      parameters={parameters}
-                    />
-                  )
-                }
+                if (!councilAction) return null
 
                 return (
                   <CouncilAction
-                    key={id}
-                    startDatetime={startDatetime}
-                    actionType={actionType}
-                    signersCount={signersCount}
-                    numCouncilMembers={councilSize}
-                    councilId={counsilAddress}
+                    key={councilAction.id}
+                    isBreakGlassCounsil={isBreakGlassCounsil}
+                    handleDropAction={handleDropAction}
+                    councilAction={councilAction}
                   />
                 )
               })

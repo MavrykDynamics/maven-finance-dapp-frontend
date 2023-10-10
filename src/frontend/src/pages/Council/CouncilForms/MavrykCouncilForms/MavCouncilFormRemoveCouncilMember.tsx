@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 
 // helpers
-import { removeCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import { removeCouncilMember } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 import { getShortTzAddress } from '../../../../utils/tzAdress'
 
 // consts
@@ -75,7 +75,7 @@ export const MavCouncilFormRemoveCouncilMember = ({
           return null
         }
 
-        return await removeCouncilMember(chosenDdItem.tzAddress, councilAddress)
+        return await removeCouncilMember(councilAddress, chosenDdItem.tzAddress)
       },
     }),
     [chosenDdItem, userAddress, councilAddress],

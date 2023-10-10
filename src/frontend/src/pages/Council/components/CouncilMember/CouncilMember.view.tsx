@@ -8,7 +8,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { AvatarStyle } from '../../../../app/App.components/Avatar/Avatar.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CouncilMemberStyled } from './CouncilMember.style'
-import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'

@@ -6,7 +6,7 @@ import Icon from '../Icon/Icon.view'
 import { MenuTopBar } from './MenuTopBar/MenuTopBar.controller'
 import { NavigationLink } from './NavigationLink/NavigationLink.controller'
 import NewButton from '../Button/NewButton'
-import { CustomLink } from '../CustomLink/CustomLink'
+import CustomLink from '../CustomLink/CustomLink'
 
 // types
 import { MainNavigationRoute } from '../../../utils/TypesAndInterfaces/Navigation'

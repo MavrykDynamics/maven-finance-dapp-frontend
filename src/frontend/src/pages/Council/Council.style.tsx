@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { Card, CardHover } from 'styles'
+import { Card } from 'styles'
 
 // types
 import { MavrykTheme } from '../../styles/interfaces'
@@ -35,6 +35,14 @@ export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
 
     .pending-items {
       width: 750px;
+    }
+
+    .actions-list {
+      display: flex;
+      flex-direction: column;
+
+      width: 100%;
+      row-gap: 10px;
     }
   }
 
@@ -95,122 +103,5 @@ export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
   .dropdown {
     width: 440px;
     text-transform: capitalize;
-  }
-`
-
-export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
-  width: 751px;
-  padding: 0;
-  margin-top: 0;
-  margin-bottom: 10px;
-
-  .top {
-    padding: 15px 30px;
-    height: 75px;
-  }
-
-  .bottom {
-    padding: 20px 30px;
-    border-top: 1px solid ${({ theme }) => theme.divider};
-  }
-
-  .row {
-    display: grid;
-    grid-template-columns: 145px 205px 250px;
-    grid-column-gap: 45px;
-
-    &:nth-child(2) {
-      margin-top: 20px;
-    }
-  }
-
-  .top-row {
-    grid-template-columns: 145px 245px 145px 20px;
-  }
-
-  .two-columns {
-    grid-template-columns: auto 250px;
-  }
-
-  .column {
-    .column-name {
-      font-weight: 600;
-      font-size: 14px;
-      line-height: 21px;
-
-      text-transform: capitalize;
-      color: ${({ theme }) => theme.subHeadingText};
-    }
-
-    .column-value {
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 22px;
-
-      color: ${({ theme }) => theme.primaryText};
-      text-transform: capitalize;
-      text-overflow: ellipsis;
-      max-width: inherit;
-      overflow: hidden;
-    }
-
-    .column-image {
-      height: 50px;
-      width: 50px;
-      object-fit: cover;
-      border-radius: 50%;
-    }
-
-    .column-link {
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 24px;
-
-      color: ${({ theme }) => theme.linksAndButtons};
-      text-decoration: underline;
-      text-overflow: ellipsis;
-      max-width: inherit;
-      overflow: hidden;
-
-      cursor: pointer;
-    }
-
-    .column-address {
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 22px;
-    }
-
-    .is-green {
-      color: ${({ theme }) => theme.upColor};
-    }
-
-    .is-red {
-      color: ${({ theme }) => theme.downColor};
-    }
-  }
-
-  figure {
-    margin: 0;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    .icon-send {
-      svg {
-        fill: ${({ theme }) => theme.linksAndButtons};
-      }
-
-      &:hover {
-        svg {
-          opacity: 0.8;
-        }
-      }
-    }
   }
 `

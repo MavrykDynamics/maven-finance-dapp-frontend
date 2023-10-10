@@ -17,7 +17,7 @@ export const UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'updateCouncilMember'
 export const CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'changeCouncilMember'
 export const REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'removeCouncilMember'
 export const PROPAGATE_BREAK_GLASS_ACTION = 'propagateBreakGlass'
-export const DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION = 'dropBreakGlass'
+export const DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION = 'dropBreakGlassCouncilAction'
 
 // Mav council actions
 export const SIGN_MAVRYK_COUNCIL_ACTION = 'counsilSignAction'
@@ -35,7 +35,7 @@ export const DROP_FIN_REQUEST_ACTION = 'dropFinReq'
 export const REMOVE_VESTEE_ACTION = 'removeVestee'
 export const SET_BAKER_ACTION = 'setBaker'
 export const SET_CONTRACT_BAKER_ACTION = 'setContractBaker'
-export const DROP_MAVRYK_COUNCIL_REQUEST_ACTION = 'daropRequest'
+export const DROP_MAVRYK_COUNCIL_REQUEST_ACTION = 'dropMavrykCouncilAction'
 
 // subs
 export const BG_COUNCIL_ACTIONS_DATA = 'BG_COUNCIL_ACTIONS_DATA'

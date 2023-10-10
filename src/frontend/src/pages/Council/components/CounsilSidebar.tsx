@@ -17,7 +17,7 @@ import { CouncilSidebarNav } from '../Council.style'
 import { CouncilMemberView } from './CouncilMember/CouncilMember.view'
 import { EmptyContainer } from 'app/App.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { CustomLink } from 'app/App.components/CustomLink/CustomLink'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 type Props = {
   membersTitle: string

@@ -46,7 +46,7 @@ type Props = LinkProps & {
  *    - if DAPP will support languages, add lang parametr support
  *    - for internal links, or links that can have active state, consider using NavLink, no need for now
  */
-export const CustomLink = ({
+const CustomLink = ({
   children,
   to,
   onClick,
@@ -94,3 +94,5 @@ export const CustomLink = ({
     </LinkStyled>
   )
 }
+
+export default CustomLink

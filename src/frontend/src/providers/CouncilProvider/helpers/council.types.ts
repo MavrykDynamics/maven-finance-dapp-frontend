@@ -3,6 +3,9 @@ import {
   MY_PAST_COUNSIL_TAB,
   ALL_PENDING_COUNSIL_TAB,
   ALL_PAST_COUNSIL_TAB,
+  BgCounsilDdForms,
+  MavrykCounsilDdForms,
+  UPDATE_USER_COUNCIL_PROFILE_FORM,
 } from 'pages/Council/helpers/council.consts'
 import {
   ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
@@ -71,3 +74,8 @@ export type CouncilTabsType =
   | typeof ALL_PENDING_COUNSIL_TAB
   | typeof ALL_PAST_COUNSIL_TAB
   | null
+
+export type CouncilsFormsIds =
+  | (typeof MavrykCounsilDdForms)[keyof typeof MavrykCounsilDdForms]
+  | (typeof BgCounsilDdForms)[keyof typeof BgCounsilDdForms]
+  | typeof UPDATE_USER_COUNCIL_PROFILE_FORM

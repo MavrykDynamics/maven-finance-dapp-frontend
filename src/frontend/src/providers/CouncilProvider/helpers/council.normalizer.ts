@@ -4,6 +4,9 @@ import dayjs from 'dayjs'
 import { GetBreakGlassCouncilMembersQuery, GetCouncilMembersQuery } from 'utils/__generated__/graphql'
 import { BgCounsilActionsQueryType, CouncilActionType, CounsilActionsQueryType } from '../council.provider.types'
 
+// utils
+import { parseCamelCaseString, CAPITALIZE_CASE } from 'utils/parse'
+
 type MavrykCounsilIndexerItemType = CounsilActionsQueryType['council_action'][number]
 type BreakGlassCounsilIndexerItemType = BgCounsilActionsQueryType['break_glass_action'][number]
 
@@ -18,6 +21,7 @@ export const normalizeCouncilAction = (
 ) => {
   const actionCommonDataBetweenCollections = {
     actionType: indexerAction.action_type,
+    actionName: parseCamelCaseString(indexerAction.action_type, CAPITALIZE_CASE),
     executed: indexerAction.executed,
     id: indexerAction.id,
     initiatorAddress: indexerAction.initiator.address,
