@@ -66,7 +66,7 @@ export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakG
         <CouncilActionBodyStyled cardActionId={actionClientId}>
           {bodyCells.map(({ className, value, valueContent, name }) => {
             return (
-              <div className={classNames('column', className)}>
+              <div className={classNames('column', className)} key={name}>
                 <div className="name">{name}</div>
                 <div className="value" title={value}>
                   {valueContent}

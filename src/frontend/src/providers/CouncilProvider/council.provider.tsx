@@ -82,26 +82,24 @@ const CouncilProvider = ({ children }: Props) => {
       setCouncilCtxState((prev) => ({
         ...prev,
         breakGlassCouncilActions: {
-          allPendingActions: prev.breakGlassCouncilActions?.allPendingActions ?? null,
-          notMyPendingActions: prev.breakGlassCouncilActions?.notMyPendingActions ?? null,
-          allPastActions: prev.breakGlassCouncilActions?.allPastActions ?? null,
           actionsMapper: prev.breakGlassCouncilActions?.actionsMapper ?? null,
+          allPendingActions: prev.breakGlassCouncilActions?.allPendingActions ?? null,
+          allPastActions: prev.breakGlassCouncilActions?.allPastActions ?? null,
+          notMyPendingActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.notMyPendingActions ?? null,
           myPastActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.myPastActions ?? null,
           myPendingActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.myPendingActions ?? null,
         },
         councilActions: {
-          allPendingActions: prev.councilActions?.allPendingActions ?? null,
-          notMyPendingActions: prev.councilActions?.notMyPendingActions ?? null,
-          allPastActions: prev.councilActions?.allPastActions ?? null,
           actionsMapper: prev.councilActions?.actionsMapper ?? null,
+          allPendingActions: prev.councilActions?.allPendingActions ?? null,
+          allPastActions: prev.councilActions?.allPastActions ?? null,
+          notMyPendingActions: DEFAULT_COUNCIL_CTX.councilActions?.notMyPendingActions ?? null,
           myPastActions: DEFAULT_COUNCIL_CTX.councilActions?.myPastActions ?? null,
           myPendingActions: DEFAULT_COUNCIL_CTX.councilActions?.myPendingActions ?? null,
         },
       }))
     }
   }, [userAddress])
-
-  console.log({ activeSubs, councilCtxState })
 
   /**
    * councils memebers:
@@ -218,16 +216,6 @@ const CouncilProvider = ({ children }: Props) => {
   const updateCouncilActionsData = (data: CounsilActionsQueryType) => {
     const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.council_action, userAddress)
-
-    console.log({
-      myPastActions,
-      myPendingActions,
-      notMyPendingActions,
-      allPastActions,
-      allPendingActions,
-      actionsMapper,
-      data,
-    })
 
     const isAllPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB
     const isMyPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB

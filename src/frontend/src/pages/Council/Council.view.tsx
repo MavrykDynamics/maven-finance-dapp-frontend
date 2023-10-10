@@ -102,7 +102,7 @@ export function CouncilView({
     contractAddresses: { councilAddress, breakGlassAddress },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
-  const { userAddress, isBreakGlassCouncil, isMavrykCouncil } = useUserContext()
+  const { userAddress, isBreakGlassCouncil, isMavrykCouncil, isLoading: isUserLoading } = useUserContext()
 
   const isUserCouncil = isBreakGlassCounsil ? isBreakGlassCouncil : isMavrykCouncil
 
@@ -191,8 +191,9 @@ export function CouncilView({
 
   // redirect to review past actions page when member changes or when current user is not council and user is on my request page
   useEffect(() => {
-    if (isMyActionsTabs && (!userAddress || !isUserCouncil)) history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
-  }, [userAddress, isUserCouncil])
+    if (isMyActionsTabs && !isUserLoading && (!userAddress || !isUserCouncil))
+      history.replace(`${pagePathname}/${ALL_PAST_COUNSIL_TAB}`)
+  }, [userAddress, isUserCouncil, isUserLoading, isMyActionsTabs])
 
   // update member popup
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)

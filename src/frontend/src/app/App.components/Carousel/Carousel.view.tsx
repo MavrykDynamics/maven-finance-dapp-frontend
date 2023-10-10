@@ -37,22 +37,25 @@ const Carousel = ({ children, itemLength }: Props) => {
 
   const scrollPrev = useCallback(() => embla && embla.scrollPrev(), [embla])
   const scrollNext = useCallback(() => embla && embla.scrollNext(), [embla])
-  const onSelect = useCallback(() => {
-    if (!embla) return
-    setPrevBtnEnabled(embla.canScrollPrev())
-    setNextBtnEnabled(embla.canScrollNext())
-    setSelectedIndex(embla.selectedScrollSnap())
-  }, [children, embla, selectedIndex])
 
+  // set initial values on carousel init
   useEffect(() => {
-    if (!embla) return
-    embla.on('select', onSelect)
-    onSelect()
-  }, [embla, onSelect])
+    if (embla) {
+      embla.on('select', () => {
+        setPrevBtnEnabled(embla.canScrollPrev())
+        setNextBtnEnabled(embla.canScrollNext())
+        setSelectedIndex(embla.selectedScrollSnap())
+      })
 
+      setPrevBtnEnabled(embla.canScrollPrev())
+      setNextBtnEnabled(embla.canScrollNext())
+      setSelectedIndex(embla.selectedScrollSnap())
+    }
+  }, [embla])
+
+  // on children change reinit carousel
   useEffect(() => {
-    if (!embla) return
-    embla.reInit(options)
+    if (embla) embla.reInit(options)
   }, [children])
 
   return (

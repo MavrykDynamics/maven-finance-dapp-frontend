@@ -152,9 +152,6 @@ export const UpdateUserCouncilProfileInfoPopup = ({
       } else {
         await handleUpdateMavrykCouncilUserProfile()
       }
-
-      setForm(INIT_FORM)
-      setFormInputStatus(INIT_FORM_VALIDATION)
     } catch (error) {
       console.error('UpdateUserCouncilProfileInfoPopup', error)
     }
