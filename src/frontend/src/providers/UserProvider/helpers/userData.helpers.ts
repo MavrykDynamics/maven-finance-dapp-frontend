@@ -30,8 +30,9 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
   const satelliteMvkIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
   const isSatellite = satellite?.status === 0 && satellite?.currently_registered
   const isVestee = vestee?.end_vesting_timestamp && dayjs().diff(vestee.end_vesting_timestamp) <= 0
-  const isMavrykCouncil = Boolean(counsilMember?.user?.address)
-  const isBreakGlassCouncil = Boolean(bgCounsilMember?.user?.address)
+  // TODO: uncomment to return council validation
+  const isMavrykCouncil = true //Boolean(counsilMember?.user?.address)
+  const isBreakGlassCouncil = true //Boolean(bgCounsilMember?.user?.address)
 
   return {
     userAvatars: {
