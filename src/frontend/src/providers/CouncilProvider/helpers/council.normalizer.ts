@@ -5,7 +5,7 @@ import { GetBreakGlassCouncilMembersQuery, GetCouncilMembersQuery } from 'utils/
 import { BgCounsilActionsQueryType, CouncilActionType, CounsilActionsQueryType } from '../council.provider.types'
 
 // utils
-import { getClientActionIdByIndexerActionType } from './council.utils'
+import { checkWhetherActionParamValid, getClientActionIdByIndexerActionType } from './council.utils'
 
 // consts
 import { COUNCIL_FORMS_NAMES_MAPPER } from 'pages/Council/helpers/council.consts'
@@ -27,7 +27,9 @@ export const normalizeCouncilAction = (
 
   // check whether action is handled on client, if not skip it and show log
   if (!actionClientId) {
-    console.error(`wrong action_type, received: ${indexerAction.action_type}`)
+    console.error(
+      `wrong action_type, received: ${indexerAction.action_type}, check avaliable action_type's in getClientActionIdByIndexerActionType fn`,
+    )
     return null
   }
 
@@ -43,7 +45,18 @@ export const normalizeCouncilAction = (
     signersCount: indexerAction.signers_count,
     startDatetime: indexerAction.start_datetime ?? null,
     expirationTime: indexerAction.expiration_datetime ?? null,
-    parameters: indexerAction.parameters,
+    // @ts-ignore
+    parameters: indexerAction.parameters.reduce<CouncilActionType['parameters']>((acc, { name, value, id }) => {
+      if (checkWhetherActionParamValid(name)) {
+        acc.push({
+          name,
+          value,
+          id,
+        })
+      }
+
+      return acc
+    }, []),
     councilSize: indexerAction.council_size_snapshot,
   }
 

@@ -36,6 +36,18 @@ export const COUNCIL_COLUMN_STYLES = css`
       text-overflow: ellipsis;
       overflow: hidden;
 
+      width: fit-content;
+
+      &.open-purpose {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 24px;
+
+        color: ${({ theme }) => theme.linksAndButtons};
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
       a {
         font-weight: 500;
         font-size: 14px;

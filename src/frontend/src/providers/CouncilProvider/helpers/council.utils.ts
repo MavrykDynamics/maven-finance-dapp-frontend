@@ -18,13 +18,14 @@ import {
   BG_COUNCIL_ACTIONS_DATA,
   BG_COUNCIL_MEMBERS_SUB,
   COUNCIL_ACTIONS_DATA,
+  COUNCIL_ACTIONS_PARAMS_MAPPER,
   COUNCIL_MEMBERS_SUB,
   EMPTY_COUNCIL_CTX,
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './council.consts'
 import { BgCounsilDdForms, MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
-import { CouncilsActionsIds } from './council.types'
+import { CouncilActionParamsNames } from './council.types'
 
 type CouncilContextReturnValueArgs = {
   councilCtxState: NullableCouncilContextStateType
@@ -53,7 +54,11 @@ export const getCouncilProviderReturnValue = ({
   const isMavCounsilPastActionsLoading =
     activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB && councilActions?.allPastActions === null
   const isMavCounsilMyPastActionsLoading =
-    activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB && councilActions?.myPastActions === null
+    activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB &&
+    (councilActions?.myPastActions === null || councilActions?.notMyPendingActions === null)
+  const isMavCounsilMyOngoingActionsLoading =
+    activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB &&
+    (councilActions?.myPendingActions === null || councilActions?.notMyPendingActions === null)
 
   // break glass council loadings
   const isBgCounsilPendingActionsLoading =
@@ -64,17 +69,22 @@ export const getCouncilProviderReturnValue = ({
     breakGlassCouncilActions?.allPastActions === null
   const isBgCounsilMyPastActionsLoading =
     activeSubs[BG_COUNCIL_ACTIONS_DATA] === MY_BG_PAST_COUNCIL_ACTIONS_SUB &&
-    breakGlassCouncilActions?.myPastActions === null
+    (breakGlassCouncilActions?.myPastActions === null || breakGlassCouncilActions?.notMyPendingActions === null)
+  const isBgCounsilMyOngoingActionsLoading =
+    activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB &&
+    (breakGlassCouncilActions?.myPendingActions === null || breakGlassCouncilActions?.notMyPendingActions === null)
 
   const isLoading =
     isBgCounsilMembersLoading ||
     isBgCounsilPendingActionsLoading ||
     isBgCounsilPastActionsLoading ||
     isBgCounsilMyPastActionsLoading ||
+    isBgCounsilMyOngoingActionsLoading ||
     isMavCounsilMembersLoading ||
     isMavCounsilPendingActionsLoading ||
     isMavCounsilPastActionsLoading ||
-    isMavCounsilMyPastActionsLoading
+    isMavCounsilMyPastActionsLoading ||
+    isMavCounsilMyOngoingActionsLoading
 
   if (isLoading) {
     return {
@@ -102,10 +112,7 @@ export const getCouncilProviderReturnValue = ({
  *
  * NOTE: if action name will change on back-end it will lead to returning null from switch, so need to keep up to date with back-end
  */
-export const getClientActionIdByIndexerActionType = (
-  actionType: string,
-  isBreakGlassCouncil: boolean,
-): CouncilsActionsIds | null => {
+export const getClientActionIdByIndexerActionType = (actionType: string, isBreakGlassCouncil: boolean) => {
   switch (actionType) {
     // ------- COUNCIL MEMBERS ACTIONS
     case 'addCouncilMember':
@@ -132,7 +139,7 @@ export const getClientActionIdByIndexerActionType = (
     // ------- MAVRYK COUNCIL TOKENS FORMS
     case 'requestTokens':
       return MavrykCounsilDdForms.REQUEST_TOKENS
-    case 'requestTokenMint':
+    case 'requestMint':
       return MavrykCounsilDdForms.REQUEST_TOKEN_MINT
     case 'transferTokens':
       return MavrykCounsilDdForms.TRANSFER_TOKENS
@@ -165,3 +172,6 @@ export const getClientActionIdByIndexerActionType = (
       return null
   }
 }
+
+export const checkWhetherActionParamValid = (actionParamName: string): actionParamName is CouncilActionParamsNames =>
+  Boolean(COUNCIL_ACTIONS_PARAMS_MAPPER[actionParamName as CouncilActionParamsNames])

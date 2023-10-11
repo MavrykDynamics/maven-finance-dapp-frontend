@@ -17,38 +17,30 @@ export const CouncilFormPopupsContent = styled(PopupContentWrapperBase)`
 
 // TODO: review
 export const CouncilActionPurposePopupContent = styled(PopupContentWrapperBase)`
-  p {
+  padding: 30px 50px 30px 50px;
+
+  .purpose {
+    position: relative;
+    margin-top: 30px;
+
     max-height: 460px;
-    overflow-y: auto;
+    overflow: auto;
 
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 27px;
+    p {
+      margin: 0;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 27px;
 
-    color: ${({ theme }) => theme.subHeadingText};
-
-    &::-webkit-scrollbar {
-      position: relative;
-      width: 15px;
-      background-color: transparent;
-      left: 10px;
+      color: ${({ theme }) => theme.subHeadingText};
     }
 
-    &::-webkit-scrollbar-thumb {
-      background-clip: padding-box;
-      border-left: 5px solid rgba(0, 0, 0, 0);
-      border-right: 5px solid rgba(0, 0, 0, 0);
-      border-radius: 6px;
-      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-      background-color: ${({ theme }) => theme.scrollBlockColor};
+    .shadow {
+      position: fixed;
+      bottom: 30px;
+      height: 50px;
+      width: calc(100% - 105px);
+      background: ${({ theme }) => `linear-gradient(to bottom, transparent 20%, ${theme.cards} 100%)`};
     }
-  }
-
-  .shadow {
-    position: absolute;
-    bottom: 25px;
-    height: 50px;
-    width: 85%;
-    background: ${({ theme }) => `linear-gradient(to bottom, transparent 0%, ${theme.cards} 60%)`};
   }
 `

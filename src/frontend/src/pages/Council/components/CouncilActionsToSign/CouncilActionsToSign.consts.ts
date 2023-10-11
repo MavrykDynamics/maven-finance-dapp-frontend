@@ -1,65 +1,122 @@
-import {
-  MavrykCounsilDdForms,
-  BgCounsilDdForms,
-  UPDATE_USER_COUNCIL_PROFILE_FORM,
-} from 'pages/Council/helpers/council.consts'
-import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
+import { MavrykCounsilDdForms, BgCounsilDdForms } from 'pages/Council/helpers/council.consts'
+import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
+import { CouncilActionParamsNames, CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 
 export type CouncilActionsToSignColumnsType = Record<
-  string,
-  {
-    className: string
-    sufix?: string
-    type: 'number' | 'address' | 'image' | 'url' | 'default'
-  }
+  CouncilsActionsIds,
+  Partial<
+    Record<
+      CouncilActionParamsNames,
+      {
+        className: string
+        cellName: string
+        type: 'number' | 'address' | 'image' | 'url' | 'default'
+        sufix?: string
+      }
+    >
+  >
 >
-// mapper for action params fields, only those are outputted on client only
-// used to check whether client show field for user and getting grid-area classname
-export const COUNCIL_ACTIONS_TO_SIGN_COLUMS_MAPPER: CouncilActionsToSignColumnsType = {
-  // addresses
-  councilMemberAddress: { className: 'member-address', type: 'address' },
-  newCouncilMemberAddress: { className: 'member-address', type: 'address' },
-  oldCouncilMemberAddress: { className: 'old-member-address', type: 'address' },
-  newAdminAddress: { className: 'admin-address', type: 'address' },
 
-  // names
-  newCouncilMemberName: { className: 'member-name', type: 'default' },
-  councilMemberName: { className: 'member-name', type: 'default' },
+// mapper for showing only allowed cells on sign action card
+export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsType = {
+  // ------- MAVRYK COUNCIL MEMBERS FORMS
+  [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
+      className: 'member-address',
+      type: 'address',
+      cellName: 'Council Member Address',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberName]: {
+      className: 'member-name',
+      type: 'default',
+      cellName: 'Council Member Name',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberWebsite]: {
+      className: 'member-url',
+      type: 'url',
+      cellName: 'Council Member Website',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberImage]: {
+      className: 'member-image',
+      type: 'image',
+      cellName: 'Council Member Image',
+    },
+  },
+  [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {},
+  [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
+      className: 'member-address',
+      type: 'address',
+      cellName: 'Council Member Address',
+    },
+  },
 
-  // websites
-  newCouncilMemberWebsite: { className: 'member-url', type: 'url' },
-  councilMemberWebsite: { className: 'member-url', type: 'url' },
+  // ------- MAVRYK COUNCIL VESTEES FORMS
+  [MavrykCounsilDdForms.ADD_VESTEE]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.vesteeAddress]: {
+      className: 'vestee-address',
+      type: 'address',
+      cellName: 'Vestee Address',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.cliffInMonths]: {
+      className: 'vestee-cliff-period',
+      type: 'number',
+      sufix: 'month',
+      cellName: 'Cliff Period',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.vestingInMonths]: {
+      className: 'vesting-period',
+      type: 'number',
+      sufix: 'month',
+      cellName: 'Vesting Period',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.totalAllocatedAmount]: {
+      className: 'vestee-allocated-amount',
+      type: 'number',
+      sufix: 'MVK',
+      cellName: 'Total Allocated Amount',
+    },
+  },
+  [MavrykCounsilDdForms.UPDATE_VESTEE]: {},
+  [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {},
+  [MavrykCounsilDdForms.REMOVE_VESTEE]: {
+    vesteeAddress: { className: 'vestee-address', type: 'address', cellName: 'Vestee Address' },
+  },
 
-  // images
-  newCouncilMemberImage: { className: 'member-image', type: 'image' },
-  councilMemberImage: { className: 'member-image', type: 'image' },
+  // ------- MAVRYK COUNCIL TOKENS FORMS
+  [MavrykCounsilDdForms.REQUEST_TOKENS]: {},
+  [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
+    treasuryAddress: { className: 'treasury-address', type: 'address', cellName: 'Treasury Address' },
+    tokenAmount: { className: 'token-amount', type: 'number', sufix: 'MVK', cellName: 'Token Amount' },
+    purpose: { className: 'purpose', type: 'default', cellName: 'Purpose for Request' },
+  },
+  [MavrykCounsilDdForms.TRANSFER_TOKENS]: {},
 
-  // vesting
-  vesteeAddress: { className: 'vestee-address', type: 'address' },
-  cliffInMonths: { className: 'vestee-cliff-period', type: 'number', sufix: 'month' },
-  newCliffInMonths: { className: 'vestee-cliff-period', type: 'number', sufix: 'month' },
-  vestingInMonths: { className: 'vesting-period', type: 'number', sufix: 'month' },
-  newVestingInMonths: { className: 'vesting-period', type: 'number', sufix: 'month' },
-  totalAllocatedAmount: { className: 'vestee-allocated-amount', type: 'number', sufix: 'MVK' },
-  newTotalAllocatedAmount: { className: 'vestee-allocated-amount', type: 'number', sufix: 'MVK' },
+  // ------- MAVRYK COUNCIL BAKERS FORMS
+  [MavrykCounsilDdForms.SET_BAKER]: {},
+  [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {},
 
-  // tokens requests
-  receiverAddress: { className: 'receiver-address', type: 'address' },
-  treasuryAddress: { className: 'treasury-address', type: 'address' },
-  tokenAmount: { className: 'token-amount', type: 'number' },
-  tokenContractAddress: { className: 'token-address', type: 'address' },
-  tokenType: { className: 'token-type', type: 'default' },
-  tokenId: { className: 'token-id', type: 'default' },
+  // ------- MAVRYK COUNCIL OTHER FORMS
+  [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {},
 
-  // other
-  purpose: { className: 'purpose', type: 'default' },
-  keyHash: { className: 'key-hash', type: 'address' },
-  targetContractAddress: { className: 'target-contract-addresses', type: 'address' },
+  // ------- BREAG GLASS COUNCIL MEMBERS FORMS
+  [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {},
+  [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {},
+  [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {},
+
+  // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
+  [BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN]: {},
+  [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {},
+
+  // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
+  [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {},
+  [BgCounsilDdForms.SIGN_ACTION]: {},
+  [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {},
 }
 
 // grid setting for council sign cards
-export const CouncilActionsToSignGridMapper: Record<
-  CouncilsFormsIds,
+export const CouncilActionsToSignGridSettingsMapper: Record<
+  CouncilsActionsIds,
   {
     columnsTemplate: string
     rowsTemplate: string
@@ -68,7 +125,8 @@ export const CouncilActionsToSignGridMapper: Record<
 > = {
   // ------- MAVRYK COUNCIL MEMBERS FORMS
   [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto 180px`, // ready
+    // ready
+    columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "member-address member-name signed-amount"
@@ -97,7 +155,8 @@ export const CouncilActionsToSignGridMapper: Record<
 
   // ------- MAVRYK COUNCIL VESTEES FORMS
   [MavrykCounsilDdForms.ADD_VESTEE]: {
-    columnsTemplate: `auto auto 180px`, // ready
+    // ready
+    columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address vestee-allocated-amount signed-amount"
@@ -121,7 +180,8 @@ export const CouncilActionsToSignGridMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.REMOVE_VESTEE]: {
-    columnsTemplate: `auto auto`, // ready
+    // ready
+    columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address signed-amount"
@@ -142,12 +202,12 @@ export const CouncilActionsToSignGridMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto 60px`,
+    // ready
+    columnsTemplate: `auto auto 180px`,
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "contract-address token-amount"
-      "purpose purpose"
-      ". submit-form"
+      "treasury-address token-amount signed-amount"
+      "purpose . sign-btn"
     `,
   },
   [MavrykCounsilDdForms.TRANSFER_TOKENS]: {
@@ -256,18 +316,6 @@ export const CouncilActionsToSignGridMapper: Record<
     rowsTemplate: `auto`,
     areaTemplate: `
       "select-contracts submit-form"
-    `,
-  },
-
-  // ------- COMMON BREAG GLASS & MAVRYK COUNCIL FORMS
-  [UPDATE_USER_COUNCIL_PROFILE_FORM]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto auto 50px`,
-    areaTemplate: `
-      "member-address member-name"
-      "member-url member-url"
-      "member-image member-image"
-      ". submit-form"
     `,
   },
 }

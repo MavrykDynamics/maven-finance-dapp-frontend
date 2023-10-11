@@ -28,10 +28,9 @@ type Props = {
   isBreakGlassCounsil: boolean
   actionstoSign: number[]
   actionsMapper: Record<number, CouncilActionType>
-  members: CouncilMembersType
 }
 
-export const CouncilActionsToSign = ({ isBreakGlassCounsil, actionstoSign, actionsMapper, members }: Props) => {
+export const CouncilActionsToSign = ({ isBreakGlassCounsil, actionstoSign, actionsMapper }: Props) => {
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
@@ -78,7 +77,6 @@ export const CouncilActionsToSign = ({ isBreakGlassCounsil, actionstoSign, actio
             <CouncilActionToSign
               action={action}
               key={action.id}
-              councilMembersAmount={members.length}
               actionsToSignAmount={actionsToSignAmount}
               actionIndex={index}
               signActionHandler={handleSignAction}

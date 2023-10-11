@@ -19,7 +19,7 @@ import {
   GetBgMyPastCouncilActionsQuery,
   GetMyPastCouncilActionsQuery,
 } from 'utils/__generated__/graphql'
-import { CouncilsActionsIds } from './helpers/council.types'
+import { CouncilActionParamsNames, CouncilsActionsIds } from './helpers/council.types'
 
 // ----- normalizer types
 export type CouncilActionType = {
@@ -37,7 +37,7 @@ export type CouncilActionType = {
   expirationTime: string | null
   councilSize: number
   counsilAddress: string
-  parameters: Array<{ id: number; name: string; value: string }>
+  parameters: Array<{ id: number; name: CouncilActionParamsNames; value: string }>
 }
 export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
 export type CouncilActionsType = ReturnType<typeof normalizeCouncilActions>

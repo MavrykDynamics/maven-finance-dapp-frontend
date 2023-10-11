@@ -1,8 +1,8 @@
-import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
+import { CouncilsActionsIds, CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
 import styled, { css } from 'styled-components'
 import { Card } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
-import { CouncilActionsToSignGridMapper } from './CouncilActionsToSign.consts'
+import { CouncilActionsToSignGridSettingsMapper } from './CouncilActionsToSign.consts'
 import { COUNCIL_COLUMN_STYLES } from '../CouncilAction/CouncilAction.style'
 
 export const CouncilActionsToSignStyled = styled.div<{ theme: MavrykTheme }>`
@@ -146,11 +146,11 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
   }
 `
 
-export const CouncilActionToSignBodyStyled = styled.div<{ theme: MavrykTheme; actionId: CouncilsFormsIds }>`
+export const CouncilActionToSignBodyStyled = styled.div<{ theme: MavrykTheme; actionId: CouncilsActionsIds }>`
   display: grid;
-  grid-template-columns: ${({ actionId }) => CouncilActionsToSignGridMapper[actionId].columnsTemplate};
-  grid-template-rows: ${({ actionId }) => CouncilActionsToSignGridMapper[actionId].rowsTemplate};
-  grid-template-areas: ${({ actionId }) => CouncilActionsToSignGridMapper[actionId].areaTemplate};
+  grid-template-columns: ${({ actionId }) => CouncilActionsToSignGridSettingsMapper[actionId].columnsTemplate};
+  grid-template-rows: ${({ actionId }) => CouncilActionsToSignGridSettingsMapper[actionId].rowsTemplate};
+  grid-template-areas: ${({ actionId }) => CouncilActionsToSignGridSettingsMapper[actionId].areaTemplate};
 
   align-items: center;
 
