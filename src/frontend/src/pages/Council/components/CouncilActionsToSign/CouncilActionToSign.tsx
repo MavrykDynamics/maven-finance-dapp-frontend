@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import classNames from 'classnames'
 
 // types
 import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
-import { CouncilActionParamsNames, CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
+import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
+import { CouncilActionParamCellType } from 'pages/Council/helpers/council.types'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
@@ -12,26 +15,22 @@ import { CouncilActionPurposePopupContent } from 'app/App.components/popup/bases
 import { H2SimpleTitle, H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 // consts
 import { BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { convertBytes, BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE } from 'utils/bytesToString'
-import { CouncilActionsToSignGridCellsMapper, CouncilActionsToSignColumnsType } from './CouncilActionsToSign.consts'
+import { CouncilActionsToSignGridCellsMapper } from './CouncilActionsToSign.consts'
+import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
+import { MVK_DECIMALS } from 'utils/constants'
+import { MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
+
+// utils
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCouncil.utils'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { createPortal } from 'react-dom'
-import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
 
 type Props = {
   action: CouncilActionType
@@ -151,14 +150,6 @@ const CouncilActionToSignBody = ({
   )
 }
 
-type CardToSignBodyCelsType = Array<{
-  paramName: string
-  cellName: string
-  className: string
-  value: string
-  valueContent: React.ReactNode
-}>
-
 /**
  *
  * @param actionParams action parameters
@@ -170,7 +161,7 @@ const getCardToSignBodyCels = (
   actionParams: CouncilActionType['parameters'],
   actionId: CouncilsActionsIds,
   tokensMetadata: TokensContext['tokensMetadata'],
-): CardToSignBodyCelsType => {
+): CouncilActionParamCellType => {
   const actionParamsCells = CouncilActionsToSignGridCellsMapper[actionId]
 
   // for actions add vestee, update vestee, request tokens mint we need to convert mvk tokens amount (totalAllocatedAmount | tokenAmount fields)
@@ -179,7 +170,7 @@ const getCardToSignBodyCels = (
     actionId === MavrykCounsilDdForms.UPDATE_VESTEE ||
     actionId === MavrykCounsilDdForms.REQUEST_TOKEN_MINT
   ) {
-    return actionParams.reduce<CardToSignBodyCelsType>((acc, actionParam) => {
+    return actionParams.reduce<CouncilActionParamCellType>((acc, actionParam) => {
       const { name, parsedValue, columnData } = getCellData(actionParam, actionParamsCells)
 
       if (parsedValue && columnData) {
@@ -209,7 +200,7 @@ const getCardToSignBodyCels = (
       tokensMetadata,
     })
 
-    return actionParams.reduce<CardToSignBodyCelsType>((acc, actionParam) => {
+    return actionParams.reduce<CouncilActionParamCellType>((acc, actionParam) => {
       const { name, parsedValue, columnData } = getCellData(actionParam, actionParamsCells)
 
       if (parsedValue && columnData) {
@@ -261,7 +252,7 @@ const getCardToSignBodyCels = (
   }
 
   // converting all other forms
-  return actionParams.reduce<CardToSignBodyCelsType>((acc, actionParam) => {
+  return actionParams.reduce<CouncilActionParamCellType>((acc, actionParam) => {
     const { parsedValue, columnData } = getCellData(actionParam, actionParamsCells)
 
     if (parsedValue && columnData) {
@@ -278,58 +269,58 @@ const getCardToSignBodyCels = (
   }, [])
 }
 
-/**
- *
- * @param columnData type of value see CouncilActionsToSignColumnsType[CouncilsActionsIds]['type'] and sufix in case we need to add token name after it's amount
- * @param convertedParamValue unpacked param value bytes, if need converted to client format
- * @param name name of the parameter
- * @returns ReactNode to output to user
- */
-const getCellValueContent = (
-  columnData: NonNullable<CouncilActionsToSignColumnsType[CouncilsActionsIds][CouncilActionParamsNames]>,
-  convertedParamValue: string,
-) => {
-  const { type, sufix, cellName } = columnData
+// /**
+//  *
+//  * @param columnData type of value see CouncilActionsToSignColumnsType[CouncilsActionsIds]['type'] and sufix in case we need to add token name after it's amount
+//  * @param convertedParamValue unpacked param value bytes, if need converted to client format
+//  * @param name name of the parameter
+//  * @returns ReactNode to output to user
+//  */
+// const getCellValueContent = (
+//   columnData: NonNullable<CouncilActionsToSignColumnsType[CouncilsActionsIds][CouncilActionParamsNames]>,
+//   convertedParamValue: string,
+// ) => {
+//   const { type, sufix, cellName } = columnData
 
-  return type === 'number' ? (
-    <CommaNumber value={parseFloat(convertedParamValue)} endingText={sufix} />
-  ) : type === 'url' ? (
-    <CustomLink to={convertedParamValue}>{convertedParamValue}</CustomLink>
-  ) : type === 'address' ? (
-    <TzAddress tzAddress={convertedParamValue} hasIcon />
-  ) : type === 'image' ? (
-    <ImageWithPlug imageLink={convertedParamValue} alt={`${cellName} image`} />
-  ) : (
-    convertedParamValue
-  )
-}
+//   return type === 'number' ? (
+//     <CommaNumber value={parseFloat(convertedParamValue)} endingText={sufix} />
+//   ) : type === 'url' ? (
+//     <CustomLink to={convertedParamValue}>{convertedParamValue}</CustomLink>
+//   ) : type === 'address' ? (
+//     <TzAddress tzAddress={convertedParamValue} hasIcon />
+//   ) : type === 'image' ? (
+//     <ImageWithPlug imageLink={convertedParamValue} alt={`${cellName} image`} />
+//   ) : (
+//     convertedParamValue
+//   )
+// }
 
-/**
- *
- * @param actionParam parameters of action from back-end
- * @returns unpacked bytes value, param name and param parsed name, and column data (grid-area classname, value type)
- */
-const getCellData = (
-  actionParam: CouncilActionType['parameters'][number],
-  actionParamsCells: CouncilActionsToSignColumnsType[CouncilsActionsIds],
-) => {
-  const { name, value } = actionParam
+// /**
+//  *
+//  * @param actionParam parameters of action from back-end
+//  * @returns unpacked bytes value, param name and param parsed name, and column data (grid-area classname, value type)
+//  */
+// const getCellData = (
+//   actionParam: CouncilActionType['parameters'][number],
+//   actionParamsCells: CouncilActionsToSignColumnsType[CouncilsActionsIds],
+// ) => {
+//   const { name, value } = actionParam
 
-  const bytesType =
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.keyHash ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.newAdminAddress ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.vesteeAddress ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.receiverAddress ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenContractAddress ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.targetContractAddress ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberAddress ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress ||
-    name === COUNCIL_ACTIONS_PARAMS_MAPPER.treasuryAddress
-      ? BYTES_ADDRESS_TYPE
-      : BYTES_STRING_TYPE
+//   const bytesType =
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.keyHash ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.newAdminAddress ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.vesteeAddress ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.receiverAddress ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenContractAddress ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.targetContractAddress ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberAddress ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress ||
+//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.treasuryAddress
+//       ? BYTES_ADDRESS_TYPE
+//       : BYTES_STRING_TYPE
 
-  const parsedValue = convertBytes(value, bytesType)
+//   const parsedValue = convertBytes(value, bytesType)
 
-  return { parsedValue, name, columnData: actionParamsCells[name] }
-}
+//   return { parsedValue, name, columnData: actionParamsCells[name] }
+// }

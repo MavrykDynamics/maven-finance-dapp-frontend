@@ -57,7 +57,7 @@ export const getCouncilProviderReturnValue = ({
     activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB &&
     (councilActions?.myPastActions === null || councilActions?.notMyPendingActions === null)
   const isMavCounsilMyOngoingActionsLoading =
-    activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB &&
+    activeSubs[COUNCIL_ACTIONS_DATA] === ALL_ONGOING_COUNCIL_ACTIONS_SUB &&
     (councilActions?.myPendingActions === null || councilActions?.notMyPendingActions === null)
 
   // break glass council loadings
@@ -71,7 +71,7 @@ export const getCouncilProviderReturnValue = ({
     activeSubs[BG_COUNCIL_ACTIONS_DATA] === MY_BG_PAST_COUNCIL_ACTIONS_SUB &&
     (breakGlassCouncilActions?.myPastActions === null || breakGlassCouncilActions?.notMyPendingActions === null)
   const isBgCounsilMyOngoingActionsLoading =
-    activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB &&
+    activeSubs[BG_COUNCIL_ACTIONS_DATA] === ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB &&
     (breakGlassCouncilActions?.myPendingActions === null || breakGlassCouncilActions?.notMyPendingActions === null)
 
   const isLoading =

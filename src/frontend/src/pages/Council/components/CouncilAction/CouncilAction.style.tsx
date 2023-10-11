@@ -129,10 +129,10 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
 
     display: grid;
     align-items: center;
-    grid-template-columns: 0.6fr 1fr 120px 16px;
+    grid-template-columns: 25% 1fr 120px 16px;
 
     &.my-ongoing {
-      grid-template-columns: 0.6fr 1.2fr auto;
+      grid-template-columns: 25% 1.2fr auto;
     }
 
     .open-action {

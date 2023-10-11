@@ -17,14 +17,14 @@ import { CouncilActionType } from 'providers/CouncilProvider/council.provider.ty
 import { parseDate } from 'utils/time'
 
 // consts
-import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
+import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE, convertBytes } from 'utils/bytesToString'
-import { COUNCIL_ACTIONS_BODY_COLUMS_MAPPER } from './CouncilAction.consts'
-import { CAPITALIZE_CASE, parseCamelCaseString } from 'utils/parse'
+import { CouncilUserOngoingActionGridCellsMapper } from './CouncilAction.consts'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { CouncilActionParamCellType } from 'pages/Council/helpers/council.types'
+import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCouncil.utils'
 
 type Props = {
   councilAction: CouncilActionType
@@ -64,10 +64,10 @@ export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakG
         }
       >
         <CouncilActionBodyStyled cardActionId={actionClientId}>
-          {bodyCells.map(({ className, value, valueContent, name }) => {
+          {bodyCells.map(({ className, value, valueContent, cellName, paramName }) => {
             return (
-              <div className={classNames('column', className)} key={name}>
-                <div className="name">{name}</div>
+              <div className={classNames('column', className)} key={paramName}>
+                <div className="name">{cellName}</div>
                 <div className="value" title={value}>
                   {valueContent}
                 </div>
@@ -91,49 +91,26 @@ export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakG
   )
 }
 
-type CouncilCardBodyCells = Array<{ name: string; className: string; value: string; valueContent: React.ReactNode }>
-
 const getCouncilCardBodyCells = (
   actionParams: CouncilActionType['parameters'],
-  cardActionId: CouncilsFormsIds,
+  cardActionId: CouncilsActionsIds,
   isBreakGlassCounsil: boolean,
   actionId: number,
-): CouncilCardBodyCells => {
-  // for those action show allowed params
-  if (
-    cardActionId === MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER ||
-    cardActionId === BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER ||
-    cardActionId === MavrykCounsilDdForms.ADD_COUNCIL_MEMBER ||
-    cardActionId === BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER ||
-    cardActionId === MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER ||
-    cardActionId === BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER
-  ) {
-    return actionParams.reduce<CouncilCardBodyCells>((acc, actionParam) => {
-      const { name, value } = actionParam
-      const convertedParamValue = convertBytes(
-        value,
-        name.toLowerCase().includes('address') ? BYTES_ADDRESS_TYPE : BYTES_STRING_TYPE,
-      )
-      const columnData = COUNCIL_ACTIONS_BODY_COLUMS_MAPPER[name]
+): CouncilActionParamCellType => {
+  const actionParamsCells = CouncilUserOngoingActionGridCellsMapper[cardActionId]
 
-      if (convertedParamValue && columnData) {
-        const { type, className } = columnData
-        const valueContent =
-          type === 'url' ? (
-            <CustomLink to={convertedParamValue}>{convertedParamValue}</CustomLink>
-          ) : type === 'address' ? (
-            <TzAddress tzAddress={convertedParamValue} hasIcon />
-          ) : type === 'image' ? (
-            <ImageWithPlug imageLink={convertedParamValue} alt={name} />
-          ) : (
-            convertedParamValue
-          )
+  // if action has params to show show params
+  if (actionParamsCells) {
+    return actionParams.reduce<CouncilActionParamCellType>((acc, actionParam) => {
+      const { parsedValue, columnData } = getCellData(actionParam, actionParamsCells)
 
+      if (parsedValue && columnData) {
         acc.push({
-          className,
-          valueContent,
-          value: convertedParamValue,
-          name: parseCamelCaseString(name, CAPITALIZE_CASE),
+          valueContent: getCellValueContent(columnData, parsedValue),
+          className: columnData.className,
+          value: parsedValue,
+          paramName: actionParam.name,
+          cellName: columnData.cellName,
         })
       }
       return acc
@@ -144,7 +121,8 @@ const getCouncilCardBodyCells = (
   return [
     {
       className: 'action-meta',
-      name: isBreakGlassCounsil ? 'Break Glass Action ID' : 'Council Action ID',
+      cellName: isBreakGlassCounsil ? 'Break Glass Action ID' : 'Council Action ID',
+      paramName: 'actionId',
       valueContent: actionId.toString(),
       value: actionId.toString(),
     },

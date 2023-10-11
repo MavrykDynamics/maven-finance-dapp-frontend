@@ -18,10 +18,11 @@ import { parseDate } from 'utils/time'
 type Props = {
   councilAction: CouncilActionType
   isBreakGlassCounsil: boolean
+  isMyActionsTabs: boolean
   handleDropAction: (actionId: number) => void
 }
 
-export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCounsil }: Props) => {
+export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCounsil, isMyActionsTabs }: Props) => {
   const { userAddress } = useUserContext()
 
   const {
@@ -35,7 +36,8 @@ export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCou
     initiatorAddress,
   } = councilAction
 
-  const isUserActiveAction = !executed && dayjs().isBefore(expirationTime) && userAddress === initiatorAddress
+  const isUserActiveAction =
+    !executed && dayjs().isBefore(expirationTime) && userAddress === initiatorAddress && isMyActionsTabs
 
   // view for user's created active action
   if (isUserActiveAction) {

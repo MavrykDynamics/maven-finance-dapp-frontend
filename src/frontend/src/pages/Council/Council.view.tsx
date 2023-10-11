@@ -330,6 +330,7 @@ export function CouncilView({
                     isBreakGlassCounsil={isBreakGlassCounsil}
                     handleDropAction={handleDropAction}
                     councilAction={councilAction}
+                    isMyActionsTabs={isMyActionsTabs}
                   />
                 )
               })

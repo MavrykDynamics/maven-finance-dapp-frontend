@@ -211,7 +211,7 @@ const CouncilProvider = ({ children }: Props) => {
     },
     { refetchQueryVariables },
   )
-
+  console.log({ councilCtxState, activeSubs })
   // mavryk council actions update
   const updateCouncilActionsData = (data: CounsilActionsQueryType) => {
     const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
@@ -220,6 +220,16 @@ const CouncilProvider = ({ children }: Props) => {
     const isAllPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB
     const isMyPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB
     const isPendingActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_ONGOING_COUNCIL_ACTIONS_SUB
+    console.log({
+      isMyPastActionsSubActive,
+      council_action: data.council_action,
+      myPastActions,
+      myPendingActions,
+      notMyPendingActions,
+      allPastActions,
+      allPendingActions,
+      actionsMapper,
+    })
 
     setCouncilCtxState((prev) => ({
       ...prev,
@@ -232,9 +242,10 @@ const CouncilProvider = ({ children }: Props) => {
         allPendingActions: isPendingActionsSubActive
           ? allPendingActions
           : prev.councilActions?.allPendingActions ?? null,
-        notMyPendingActions: isPendingActionsSubActive
-          ? notMyPendingActions
-          : prev.councilActions?.notMyPendingActions ?? null,
+        notMyPendingActions:
+          isPendingActionsSubActive || isMyPastActionsSubActive
+            ? notMyPendingActions
+            : prev.councilActions?.notMyPendingActions ?? null,
         myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.councilActions?.myPendingActions ?? null,
         actionsMapper: { ...prev.councilActions?.actionsMapper, ...actionsMapper },
       },
@@ -263,9 +274,10 @@ const CouncilProvider = ({ children }: Props) => {
         allPendingActions: isPendingActionsSubActive
           ? allPendingActions
           : prev.breakGlassCouncilActions?.allPendingActions ?? null,
-        notMyPendingActions: isPendingActionsSubActive
-          ? notMyPendingActions
-          : prev.breakGlassCouncilActions?.notMyPendingActions ?? null,
+        notMyPendingActions:
+          isPendingActionsSubActive || isMyPastActionsSubActive
+            ? notMyPendingActions
+            : prev.breakGlassCouncilActions?.notMyPendingActions ?? null,
         myPendingActions: isPendingActionsSubActive
           ? myPendingActions
           : prev.breakGlassCouncilActions?.myPendingActions ?? null,
