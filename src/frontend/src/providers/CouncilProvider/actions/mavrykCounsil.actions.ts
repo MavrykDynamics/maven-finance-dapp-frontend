@@ -255,6 +255,7 @@ export const requestTokens = async (
 // Request Token Mint
 export const requestTokenMint = async (
   treasuryAddress: string,
+  receiverAddress: string,
   tokenAmount: number,
   purpose: string,
   counsilAddress: string,
@@ -263,13 +264,14 @@ export const requestTokenMint = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(counsilAddress)
-    const setSingleContractAdminMetaData = contract?.methods.councilActionRequestMint(
+    const requestMintMetaData = contract?.methods.councilActionRequestMint(
       treasuryAddress,
+      receiverAddress,
       convertNumberForContractCall({ number: tokenAmount, grade: MVK_DECIMALS }),
       purpose,
     )
 
-    return await getEstimationResult(setSingleContractAdminMetaData)
+    return await getEstimationResult(requestMintMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

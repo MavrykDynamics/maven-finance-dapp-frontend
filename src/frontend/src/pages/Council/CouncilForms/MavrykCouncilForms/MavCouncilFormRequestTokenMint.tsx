@@ -94,7 +94,7 @@ export const MavCouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
           return null
         }
 
-        return await requestTokenMint(treasuryAddress, Number(tokenAmount), purpose, councilAddress)
+        return await requestTokenMint(treasuryAddress, userAddress, Number(tokenAmount), purpose, councilAddress)
       },
     }),
     [userAddress, councilAddress, treasuryAddress, tokenAmount, purpose],
@@ -137,7 +137,7 @@ export const MavCouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
         // validate treasury address
         setFormInputStatus((prev) => ({
           ...prev,
-          tokenAmount: treasuryMapper[e.target.value] ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          treasuryAddress: treasuryMapper[e.target.value] ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
         }))
       },
       required: true,

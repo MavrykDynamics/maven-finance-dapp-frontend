@@ -35,7 +35,9 @@ import {
   DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
   REMOVE_BG_CONTROLL_ACTION,
   UNPAUSE_ALL_ENTRYPOINTS_ACTION,
+  COUNCIL_ACTIONS_PARAMS_MAPPER,
 } from './council.consts'
+import { getClientActionIdByIndexerActionType } from './council.utils'
 
 export type BreakGlassCouncilActions =
   | typeof SET_ALL_CONTRACTS_ADMIN_ACTION
@@ -79,3 +81,9 @@ export type CouncilsFormsIds =
   | (typeof MavrykCounsilDdForms)[keyof typeof MavrykCounsilDdForms]
   | (typeof BgCounsilDdForms)[keyof typeof BgCounsilDdForms]
   | typeof UPDATE_USER_COUNCIL_PROFILE_FORM
+
+// NonNullable cuz we filter null actions in normalizer
+export type CouncilsActionsIds = NonNullable<ReturnType<typeof getClientActionIdByIndexerActionType>>
+
+export type CouncilActionParamsNames =
+  (typeof COUNCIL_ACTIONS_PARAMS_MAPPER)[keyof typeof COUNCIL_ACTIONS_PARAMS_MAPPER]

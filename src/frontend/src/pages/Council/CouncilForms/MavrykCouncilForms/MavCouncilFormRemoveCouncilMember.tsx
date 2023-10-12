@@ -48,8 +48,10 @@ export const MavCouncilFormRemoveCouncilMember = ({
   const dropDownItems = useMemo(
     () =>
       councilMembers.map<DdItemType>((item, index) => ({
-        content: <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.userId })}`} />,
-        tzAddress: item.userId,
+        content: (
+          <DropdownTruncateOption text={`${item.name} - ${getShortTzAddress({ tzAddress: item.memberAddress })}`} />
+        ),
+        tzAddress: item.memberAddress,
         id: index,
       })),
     [councilMembers],

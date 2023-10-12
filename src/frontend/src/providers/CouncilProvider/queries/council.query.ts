@@ -71,15 +71,12 @@ export const MY_PAST_COUNSILS_QUERY = gql(`
     council_action: council_action(order_by: {start_datetime: desc}, where: {_or: [
       {_and: [
         {_or: [
-          {execution_datetime: {
+          {expiration_datetime: {
             _lt: $currentTimestamp
-          }
-          }, 
-          {
-            executed: {
-              _eq: true
-            }
-          }
+          }}, 
+          {executed: {
+            _eq: true
+          }}
         ]},
         {
           initiator: {address: {_eq: $userAddress}}
@@ -87,20 +84,18 @@ export const MY_PAST_COUNSILS_QUERY = gql(`
       ]},
       {_and: [
         {_and: [
-          {execution_datetime: {
+          {expiration_datetime: {
             _gt: $currentTimestamp
-          }
-          }, 
-          {
-            executed: {
-              _eq: false
-            }
-          }
+          }}, 
+          {executed: {
+            _eq: false
+          }}
         ]},
         {
           initiator: {address: {_neq: $userAddress}}
         }
-      ]}]}) {
+      ]}
+    ]}) {
       action_type
       executed
       council_size_snapshot

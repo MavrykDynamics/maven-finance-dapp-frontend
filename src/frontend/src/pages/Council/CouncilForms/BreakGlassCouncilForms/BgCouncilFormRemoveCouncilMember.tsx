@@ -48,10 +48,10 @@ export function BgCouncilFormRemoveCouncilMember({
       breakGlassCouncilMembers.map<DdItemType>((item, index) => ({
         content: (
           <div>
-            {item.name} - {getShortTzAddress({ tzAddress: item.userId })}
+            {item.name} - {getShortTzAddress({ tzAddress: item.memberAddress })}
           </div>
         ),
-        tzAddress: item.userId,
+        tzAddress: item.memberAddress,
         id: index,
       })),
     [breakGlassCouncilMembers],

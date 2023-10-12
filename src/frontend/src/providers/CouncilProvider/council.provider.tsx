@@ -232,9 +232,10 @@ const CouncilProvider = ({ children }: Props) => {
         allPendingActions: isPendingActionsSubActive
           ? allPendingActions
           : prev.councilActions?.allPendingActions ?? null,
-        notMyPendingActions: isPendingActionsSubActive
-          ? notMyPendingActions
-          : prev.councilActions?.notMyPendingActions ?? null,
+        notMyPendingActions:
+          isPendingActionsSubActive || isMyPastActionsSubActive
+            ? notMyPendingActions
+            : prev.councilActions?.notMyPendingActions ?? null,
         myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.councilActions?.myPendingActions ?? null,
         actionsMapper: { ...prev.councilActions?.actionsMapper, ...actionsMapper },
       },
@@ -263,9 +264,10 @@ const CouncilProvider = ({ children }: Props) => {
         allPendingActions: isPendingActionsSubActive
           ? allPendingActions
           : prev.breakGlassCouncilActions?.allPendingActions ?? null,
-        notMyPendingActions: isPendingActionsSubActive
-          ? notMyPendingActions
-          : prev.breakGlassCouncilActions?.notMyPendingActions ?? null,
+        notMyPendingActions:
+          isPendingActionsSubActive || isMyPastActionsSubActive
+            ? notMyPendingActions
+            : prev.breakGlassCouncilActions?.notMyPendingActions ?? null,
         myPendingActions: isPendingActionsSubActive
           ? myPendingActions
           : prev.breakGlassCouncilActions?.myPendingActions ?? null,

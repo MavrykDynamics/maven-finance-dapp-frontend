@@ -7,35 +7,35 @@ import {
 } from '../council.provider.types'
 
 // BG council actions
-export const SET_ALL_CONTRACTS_ADMIN_ACTION = 'setAllContractsAdmin'
-export const SET_SELECTED_CONTRACTS_ADMIN_ACTION = 'setContractsAdmin'
+export const SET_ALL_CONTRACTS_ADMIN_ACTION = 'setAllContractsAdminAction'
+export const SET_SELECTED_CONTRACTS_ADMIN_ACTION = 'setContractsAdminAction'
 export const REMOVE_BG_CONTROLL_ACTION = 'removeBreakGlassControl'
-export const UNPAUSE_ALL_ENTRYPOINTS_ACTION = 'unpauseAllEntrypoints'
-export const SIGN_BREAK_GLASS_COUNCIL_ACTION = 'signAction'
-export const ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'addCouncilMember'
-export const UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'updateCouncilMember'
-export const CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'changeCouncilMember'
-export const REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'removeCouncilMember'
-export const PROPAGATE_BREAK_GLASS_ACTION = 'propagateBreakGlass'
+export const UNPAUSE_ALL_ENTRYPOINTS_ACTION = 'unpauseAllEntrypointsAction'
+export const SIGN_BREAK_GLASS_COUNCIL_ACTION = 'signBgActionAction'
+export const ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'addBgCouncilMemberAction'
+export const UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'updateBgCouncilMemberAction'
+export const CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'changeBgCouncilMemberAction'
+export const REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION = 'removeBgCouncilMemberAction'
+export const PROPAGATE_BREAK_GLASS_ACTION = 'propagateBreakGlassAction'
 export const DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION = 'dropBreakGlassCouncilAction'
 
 // Mav council actions
-export const SIGN_MAVRYK_COUNCIL_ACTION = 'counsilSignAction'
-export const ADD_VESTEE_ACTION = 'addVestee'
-export const ADD_COUNSIL_MEMBER_ACTION = 'addCounsilMember'
-export const UPDATE_VESTEE_ACTION = 'updateVestee'
-export const TOGGLE_VESTEE_LOCK_ACTION = 'toggleVesteeLock'
-export const CHANGE_COUNCIL_MEMBER_ACTION = 'changeCounsilMember'
-export const REMOVE_COUNCIL_MEMBER_ACTION = 'removeCounsilMember'
-export const UPDATE_COUNSIL_MEMBER_INFO_ACTION = 'updateCounsilMemberData'
-export const TRANSFER_TOKENS_ACTION = 'transferTokens'
-export const REQUEST_TOKENS_ACTION = 'requestTokens'
-export const REQUEST_TOKENS_MINT_ACTION = 'requestTokenMint'
-export const DROP_FIN_REQUEST_ACTION = 'dropFinReq'
-export const REMOVE_VESTEE_ACTION = 'removeVestee'
-export const SET_BAKER_ACTION = 'setBaker'
-export const SET_CONTRACT_BAKER_ACTION = 'setContractBaker'
-export const DROP_MAVRYK_COUNCIL_REQUEST_ACTION = 'dropMavrykCouncilAction'
+export const SIGN_MAVRYK_COUNCIL_ACTION = 'councilSignActionAction'
+export const ADD_VESTEE_ACTION = 'addVesteeAction'
+export const ADD_COUNSIL_MEMBER_ACTION = 'addCouncilMemberAction'
+export const UPDATE_VESTEE_ACTION = 'updateVesteeAction'
+export const TOGGLE_VESTEE_LOCK_ACTION = 'toggleVesteeLockAction'
+export const CHANGE_COUNCIL_MEMBER_ACTION = 'changeCouncilMemberAction'
+export const REMOVE_COUNCIL_MEMBER_ACTION = 'removeCouncilMemberAction'
+export const UPDATE_COUNSIL_MEMBER_INFO_ACTION = 'updateCouncilMemberAction'
+export const TRANSFER_TOKENS_ACTION = 'transferTokensAction'
+export const REQUEST_TOKENS_ACTION = 'requestTokensAction'
+export const REQUEST_TOKENS_MINT_ACTION = 'requestTokenMintAction'
+export const DROP_FIN_REQUEST_ACTION = 'dropFinancialRequestAction'
+export const REMOVE_VESTEE_ACTION = 'removeVesteeAction'
+export const SET_BAKER_ACTION = 'setBakerAction'
+export const SET_CONTRACT_BAKER_ACTION = 'setContractBakerAction'
+export const DROP_MAVRYK_COUNCIL_REQUEST_ACTION = 'dropMavrykCouncilActionAction'
 
 // subs
 export const BG_COUNCIL_ACTIONS_DATA = 'BG_COUNCIL_ACTIONS_DATA'
@@ -93,3 +93,33 @@ export const EMPTY_COUNCIL_CTX: CouncilStateType = {
   councilActions: EMPTY_COUNCIL_ACTIONS_DATA,
   breakGlassCouncilActions: EMPTY_COUNCIL_ACTIONS_DATA,
 }
+
+// action params names
+export const COUNCIL_ACTIONS_PARAMS_MAPPER = {
+  councilMemberAddress: 'councilMemberAddress',
+  newCouncilMemberAddress: 'newCouncilMemberAddress',
+  oldCouncilMemberAddress: 'oldCouncilMemberAddress',
+  newAdminAddress: 'newAdminAddress',
+  newCouncilMemberName: 'newCouncilMemberName',
+  councilMemberName: 'councilMemberName',
+  newCouncilMemberWebsite: 'newCouncilMemberWebsite',
+  councilMemberWebsite: 'councilMemberWebsite',
+  newCouncilMemberImage: 'newCouncilMemberImage',
+  councilMemberImage: 'councilMemberImage',
+  vesteeAddress: 'vesteeAddress',
+  cliffInMonths: 'cliffInMonths',
+  newCliffInMonths: 'newCliffInMonths',
+  vestingInMonths: 'vestingInMonths',
+  newVestingInMonths: 'newVestingInMonths',
+  totalAllocatedAmount: 'totalAllocatedAmount',
+  newTotalAllocatedAmount: 'newTotalAllocatedAmount',
+  receiverAddress: 'receiverAddress',
+  treasuryAddress: 'treasuryAddress',
+  tokenAmount: 'tokenAmount',
+  tokenContractAddress: 'tokenContractAddress',
+  tokenType: 'tokenType',
+  tokenId: 'tokenId',
+  purpose: 'purpose',
+  keyHash: 'keyHash',
+  targetContractAddress: 'targetContractAddress',
+} as const

@@ -34,14 +34,14 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const INIT_FORM = {
-  memberAddress: '',
+  newMemberAddress: '',
   newMemberWebsite: '',
   newMemberName: '',
   newMemberImage: '',
 }
 
 const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
-  memberAddress: INPUT_STATUS_DEFAULT,
+  newMemberAddress: INPUT_STATUS_DEFAULT,
   newMemberWebsite: INPUT_STATUS_DEFAULT,
   newMemberName: INPUT_STATUS_DEFAULT,
   newMemberImage: INPUT_STATUS_DEFAULT,
@@ -64,7 +64,7 @@ export function BgCouncilFormAddCouncilMember({
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
 
-  const { memberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
+  const { newMemberAddress, newMemberWebsite, newMemberName, newMemberImage } = form
 
   // add bg council member action
   const addBgCouncilActionContractActionProps: HookContractActionArgs = useMemo(
@@ -81,17 +81,23 @@ export function BgCouncilFormAddCouncilMember({
           return null
         }
 
-        if (breakGlassCouncilMembers.find(({ userId }) => userId === memberAddress)) {
+        if (breakGlassCouncilMembers.find(({ memberAddress }) => memberAddress === newMemberAddress)) {
           bug('User is already council member')
           return null
         }
 
-        return await addCouncilMember(breakGlassAddress, memberAddress, newMemberName, newMemberWebsite, newMemberImage)
+        return await addCouncilMember(
+          breakGlassAddress,
+          newMemberAddress,
+          newMemberName,
+          newMemberWebsite,
+          newMemberImage,
+        )
       },
     }),
     [
       breakGlassAddress,
-      memberAddress,
+      newMemberAddress,
       breakGlassCouncilMembers,
       newMemberImage,
       newMemberName,
@@ -136,8 +142,8 @@ export function BgCouncilFormAddCouncilMember({
     const validateAddress = validateFormAddress(setFormInputStatus)
 
     const memberAddressProps = {
-      name: 'memberAddress',
-      value: memberAddress,
+      name: 'newMemberAddress',
+      value: newMemberAddress,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
         validateAddress(e)
@@ -185,7 +191,7 @@ export function BgCouncilFormAddCouncilMember({
     formInputStatus.memberAddress,
     formInputStatus.newMemberName,
     formInputStatus.newMemberWebsite,
-    memberAddress,
+    newMemberAddress,
     newMemberName,
     newMemberWebsite,
   ])

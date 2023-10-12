@@ -5,10 +5,14 @@ import { GetBreakGlassCouncilMembersQuery, GetCouncilMembersQuery } from 'utils/
 import { BgCounsilActionsQueryType, CouncilActionType, CounsilActionsQueryType } from '../council.provider.types'
 
 // utils
-import { parseCamelCaseString, CAPITALIZE_CASE } from 'utils/parse'
+import { checkWhetherActionParamValid, getClientActionIdByIndexerActionType } from './council.utils'
+
+// consts
+import { COUNCIL_FORMS_NAMES_MAPPER } from 'pages/Council/helpers/council.consts'
 
 type MavrykCounsilIndexerItemType = CounsilActionsQueryType['council_action'][number]
 type BreakGlassCounsilIndexerItemType = BgCounsilActionsQueryType['break_glass_action'][number]
+type CouncilActionParametersType = Array<{ id: number; name: string; value: string }>
 
 const checkWhetherMavrykCounsilAction = (
   indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
@@ -19,20 +23,45 @@ const checkWhetherMavrykCounsilAction = (
 export const normalizeCouncilAction = (
   indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
 ) => {
+  const isMavrykCouncilAction = checkWhetherMavrykCounsilAction(indexerAction)
+  const actionClientId = getClientActionIdByIndexerActionType(indexerAction.action_type, !isMavrykCouncilAction)
+
+  // check whether action is handled on client, if not skip it and show log
+  if (!actionClientId) {
+    console.error(
+      `wrong action_type, received: ${indexerAction.action_type}, check avaliable action_type's in getClientActionIdByIndexerActionType fn`,
+    )
+    return null
+  }
+
+  const actionName = COUNCIL_FORMS_NAMES_MAPPER[actionClientId]
+  const actionParams: CouncilActionParametersType = indexerAction.parameters
+
   const actionCommonDataBetweenCollections = {
-    actionType: indexerAction.action_type,
-    actionName: parseCamelCaseString(indexerAction.action_type, CAPITALIZE_CASE),
-    executed: indexerAction.executed,
     id: indexerAction.id,
+    actionClientId,
+    actionName,
+    actionType: indexerAction.action_type,
+    executed: indexerAction.executed,
     initiatorAddress: indexerAction.initiator.address,
     signersCount: indexerAction.signers_count,
     startDatetime: indexerAction.start_datetime ?? null,
     expirationTime: indexerAction.expiration_datetime ?? null,
-    parameters: indexerAction.parameters,
+    parameters: actionParams.reduce<CouncilActionType['parameters']>((acc, { name, value, id }) => {
+      if (checkWhetherActionParamValid(name)) {
+        acc.push({
+          name,
+          value,
+          id,
+        })
+      }
+
+      return acc
+    }, []),
     councilSize: indexerAction.council_size_snapshot,
   }
 
-  if (checkWhetherMavrykCounsilAction(indexerAction)) {
+  if (isMavrykCouncilAction) {
     return {
       ...actionCommonDataBetweenCollections,
       counsilAddress: indexerAction.council.address,
@@ -61,6 +90,9 @@ export const normalizeCouncilActions = (
   }>(
     (acc, indexerAction) => {
       const normalizedAction = normalizeCouncilAction(indexerAction)
+
+      if (!normalizedAction) return acc
+
       const { id: actionId, initiatorAddress, executed, expirationTime } = normalizedAction
 
       const isUserAction = initiatorAddress === userAddress
@@ -102,7 +134,7 @@ export function normalizeCouncilMembers(
       id: item.id,
       name: item.name,
       image: item.image,
-      userId: item.user.address,
+      memberAddress: item.user.address,
       website: item.website,
     }
   })

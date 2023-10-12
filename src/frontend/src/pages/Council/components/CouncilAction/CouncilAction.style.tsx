@@ -4,9 +4,13 @@ import { MavrykTheme } from 'styles/interfaces'
 import { getCouncilActionsBodiesGridSettings } from './CouncilAction.consts'
 import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
 
-const COUNCIL_COLUMN_STYLES = css`
+export const COUNCIL_COLUMN_STYLES = css`
   .column {
     min-width: 0;
+
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
     .name {
       font-weight: 600;
@@ -28,6 +32,18 @@ const COUNCIL_COLUMN_STYLES = css`
       text-overflow: ellipsis;
       overflow: hidden;
 
+      width: fit-content;
+
+      &.open-purpose {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 24px;
+
+        color: ${({ theme }) => theme.linksAndButtons};
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
       a {
         font-weight: 500;
         font-size: 14px;
@@ -40,6 +56,10 @@ const COUNCIL_COLUMN_STYLES = css`
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+      }
+
+      p {
+        margin: 0;
       }
 
       .img-wrapper,
@@ -105,14 +125,14 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   .header {
     padding: 15px 30px;
     max-height: 75px;
-    column-gap: 75px;
+    column-gap: 30px;
 
     display: grid;
     align-items: center;
-    grid-template-columns: 0.8fr 1fr 120px 16px;
+    grid-template-columns: 140px 1fr 120px 16px;
 
     &.my-ongoing {
-      grid-template-columns: 0.8fr 1.2fr auto;
+      grid-template-columns: 140px 1fr auto;
     }
 
     .open-action {
