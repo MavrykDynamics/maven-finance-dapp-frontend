@@ -231,14 +231,15 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
             <GovernanceLeftContainer className={!proposalsListsToShow.length ? 'full-width' : ''}>
               {isHistory && proposalsListsToShow.length ? (
                 <>
-                  <Checkbox
-                    id="dropped-proposals"
-                    onChangeHandler={() => setShowActive(!showActive)}
-                    checked={showActive}
-                    className={'proposal-history-checkbox'}
-                  >
-                    <span>Hide dropped proposals</span>
-                  </Checkbox>
+                  <div className="proposal-history-checkbox-wrapper">
+                    <Checkbox
+                      id="dropped-proposals"
+                      onChangeHandler={() => setShowActive(!showActive)}
+                      checked={showActive}
+                    >
+                      Hide dropped proposals
+                    </Checkbox>
+                  </div>
 
                   <DropDown
                     className="cycle-dropdown"

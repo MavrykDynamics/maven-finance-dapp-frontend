@@ -99,9 +99,8 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
             id="borrowing-tab-zero-filter"
             onChangeHandler={() => setShowZeroVaults(!showZeroVaults)}
             checked={showZeroVaults}
-            className="checkbox"
           >
-            <span>Hide vaults with a loan balance of 0</span>
+            Hide vaults with a loan balance of 0
           </Checkbox>
 
           <VaultsList>

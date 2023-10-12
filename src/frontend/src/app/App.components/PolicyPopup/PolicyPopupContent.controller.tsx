@@ -40,7 +40,7 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
       </ol>
 
       <Checkbox id="policy" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox}>
-        <span>I understand that Mavryk Finance is in Beta and want to have some fun.</span>
+        I understand that Mavryk Finance is in Beta and want to have some fun.
       </Checkbox>
 
       <div className="procced-btn">
