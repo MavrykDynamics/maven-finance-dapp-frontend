@@ -52,7 +52,7 @@ export const StageTwoForm = ({
     config: { governancePhase, fee, successReward },
   } = useProposalsContext()
 
-  const isProposalPeriod = governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION
+  const isProposalPeriod = governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
 
   // is no bytes pair on proposal change add empty pair on client
   useEffect(() => {

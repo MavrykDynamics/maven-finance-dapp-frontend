@@ -73,7 +73,7 @@ export const StageThreeForm = ({
     [treasuryAddresses, treasuryMapper],
   )
 
-  const isProposalRound = governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION
+  const isProposalRound = governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
 
   const allowedTokensForDD = useMemo(() => {
     return Object.keys(treasuryTokens).reduce<Array<DropDownItemType>>((acc, tokenAddress) => {

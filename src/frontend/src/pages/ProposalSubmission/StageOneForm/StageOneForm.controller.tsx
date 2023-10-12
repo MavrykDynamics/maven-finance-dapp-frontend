@@ -43,7 +43,7 @@ export const StageOneForm = ({
   } = useProposalsContext()
 
   const isProposalSubmitted = proposalId >= 0
-  const isProposalPeriod = governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION
+  const isProposalPeriod = governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
 
   function handleOnBlur<G extends HTMLInputElement | HTMLTextAreaElement>(e: React.FocusEvent<G>) {
     if (containSpaces(e.target.value)) {
