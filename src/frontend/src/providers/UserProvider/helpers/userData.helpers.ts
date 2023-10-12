@@ -25,6 +25,10 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
   const isSatellite = satellite?.status === 0 && satellite?.currently_registered
   const isVestee = vestee?.end_vesting_timestamp && dayjs().diff(vestee.end_vesting_timestamp) <= 0
 
+  console.log({
+    isNewlyRegisteredSatellite: checkWhetherUserNewlyRegisteredSatellite(governance_satellite_snapshots),
+  })
+
   return {
     userAvatars: {
       mainAvatar: satelliteAvatar ?? counsilAvatar ?? breakGlassAvatar ?? DEFAULT_USER_AVATAR,
@@ -147,8 +151,20 @@ export const normalizeUserHistoryData = (
 const checkWhetherUserNewlyRegisteredSatellite = (
   userSatelliteSnapshots: GetUserDataQuery['mavryk_user'][number]['governance_satellite_snapshots'],
 ) => {
-  const lastRegisteredSnapshot = userSatelliteSnapshots.find(({ ready }) => ready === true)
+  const lastNotReadySnapshot = userSatelliteSnapshots.find(({ ready }) => ready === false)
 
-  if (lastRegisteredSnapshot && lastRegisteredSnapshot.cycle === lastRegisteredSnapshot.governance.cycle_id) return true
+  if (lastNotReadySnapshot) {
+    const firstReadyAfterNotReadySnapshot = userSatelliteSnapshots.find(
+      ({ cycle, ready }) => ready === true && cycle === lastNotReadySnapshot.next_snapshot_cycle_id,
+    )
+
+    // if first ready snapsot after not ready cycle === current gov cycle satellite is newly registered
+    if (
+      firstReadyAfterNotReadySnapshot &&
+      firstReadyAfterNotReadySnapshot.cycle === firstReadyAfterNotReadySnapshot.governance.cycle_id
+    )
+      return true
+  }
+
   return false
 }
