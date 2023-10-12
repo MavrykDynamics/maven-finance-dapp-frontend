@@ -142,35 +142,13 @@ export const normalizeUserHistoryData = (
 
 /**
  * @param snapshots satellite snapshots for cycle data
- * @param currentCycle current active cycle
- * @returns boolean value for newly registered satellite
- * TODO: @AlexBelz123 add more detailed docs here
+ * @returns boolean value for newly registered satellite (newly registered is satellite who registered on current cycle)
  */
 const checkWhetherUserNewlyRegisteredSatellite = (
   userSatelliteSnapshots: GetUserDataQuery['mavryk_user'][number]['governance_satellite_snapshots'],
 ) => {
-  // If highest cycle one is false then not registered/ineligable as a satellite
-  if (userSatelliteSnapshots.length < 2 && userSatelliteSnapshots.length > 0) {
-    const {
-      cycle,
-      ready,
-      governance: { cycle_id: currentCycle },
-    } = userSatelliteSnapshots[0]
-    return !ready || cycle === currentCycle
-  } else if (userSatelliteSnapshots.length >= 2) {
-    const { ready: r1 } = userSatelliteSnapshots[0]
-    const { ready: r2 } = userSatelliteSnapshots[1]
+  const lastRegisteredSnapshot = userSatelliteSnapshots.find(({ ready }) => ready === true)
 
-    if (!r1) return true
-
-    // Check those 2 objects, if both are true -> not newly registered.
-    if (r1 && r2) {
-      return false
-    }
-    // If lowest cycle one is false and hgihest cycle one is true then newly registered.
-    if (!r2 && r1) {
-      return true
-    }
-  }
+  if (lastRegisteredSnapshot && lastRegisteredSnapshot.cycle === lastRegisteredSnapshot.governance.cycle_id) return true
   return false
 }

@@ -157,7 +157,7 @@ export const VotingProposalsArea = ({
   }
 
   // Proposal is locked and phase is proposal, (phase we can only vote yes, and most voted go to the next phase)
-  if (selectedProposal.locked && govPhase === GovPhases.PROPOSAL) {
+  if (selectedProposal.locked && (govPhase === GovPhases.PROPOSAL || govPhase === GovPhases.EXECUTION)) {
     return (
       <VotingAreaStyled>
         <div className="voted-block">
