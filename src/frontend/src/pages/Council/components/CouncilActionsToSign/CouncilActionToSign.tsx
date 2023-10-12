@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
 import classNames from 'classnames'
 
 // types
@@ -10,9 +9,7 @@ import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { CouncilActionPurposePopupContent } from 'app/App.components/popup/bases/CouncilPopup.style'
-import { H2SimpleTitle, H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -31,50 +28,13 @@ import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCo
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { ActionPurposePopup } from '../popups/CouncilActionPurposePopup'
 
 type Props = {
   action: CouncilActionType
   actionsToSignAmount: number
   actionIndex: number
   signActionHandler: (id: number) => void
-}
-
-const ActionPurposePopup = ({ closePopup, purpose }: { closePopup: () => void; purpose: string | null }) => {
-  return createPortal(
-    <PopupContainer onClick={closePopup} show={Boolean(purpose)}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="council__request-purpose">
-        <CouncilActionPurposePopupContent>
-          <button onClick={closePopup} className="close-modal" />
-          <H2Title>Purpose for Request</H2Title>
-          {/* <p>{purpose}</p> */}
-          <div className="purpose scroll-block">
-            <p>
-              Lorem ipsum dolor sit amet. Sed dignissimos iure ex esse voluptatem eum autem earum! Ut voluptates
-              eligendi quo repudiandae consequuntur sit recusandae omnis et dolore esse a voluptate sunt hic nulla velit
-              quo architecto ullam. Non nostrum labore qui officiis internos et adipisci vero id saepe officiis est
-              voluptatem galisum. Qui exercitationem dolorem id modi nulla qui soluta quos. Vel enim assumenda ex
-              blanditiis laudantium aut velit consequatur? Ex provident repudiandae non voluptatibus culpa At reiciendis
-              magni aut dignissimos corrupti est suscipit veritatis et vero voluptatem! Et enim omnis sit voluptatem
-              magnam sit dolorem ipsum. Rem repellat sint et numquam cupiditate hic libero autem aut architecto omnis.
-              Cum quia sint est ipsum ullam sed unde sequi est ipsam incidunt ut praesentium ipsa. Non dolorem saepe ut
-              nulla repellat sed sunt sint. Lorem ipsum dolor sit amet. Sed dignissimos iure ex esse voluptatem eum
-              autem earum! Ut voluptates eligendi quo repudiandae consequuntur sit recusandae omnis et dolore esse a
-              voluptate sunt hic nulla velit quo architecto ullam. Non nostrum labore qui officiis internos et adipisci
-              vero id saepe officiis est voluptatem galisum. Qui exercitationem dolorem id modi nulla qui soluta quos.
-              Vel enim assumenda ex blanditiis laudantium aut velit consequatur? Ex provident repudiandae non
-              voluptatibus culpa At reiciendis magni aut dignissimos corrupti est suscipit veritatis et vero voluptatem!
-              Et enim omnis sit voluptatem magnam sit dolorem ipsum. Rem repellat sint et numquam cupiditate hic libero
-              autem aut architecto omnis. Cum quia sint est ipsum ullam sed unde sequi est ipsam incidunt ut praesentium
-              ipsa. Non dolorem saepe ut nulla repellat sed sunt sint.
-            </p>
-            {/* TODO: hide if full scrolled (check this https://codesandbox.io/s/react-detect-scroll-to-bottom-ik9g4) */}
-            <div className="shadow" />
-          </div>
-        </CouncilActionPurposePopupContent>
-      </PopupContainerWrapper>
-    </PopupContainer>,
-    document.body,
-  )
 }
 
 export const CouncilActionToSign = ({ action, actionsToSignAmount, actionIndex, signActionHandler }: Props) => {
@@ -268,59 +228,3 @@ const getCardToSignBodyCels = (
     return acc
   }, [])
 }
-
-// /**
-//  *
-//  * @param columnData type of value see CouncilActionsToSignColumnsType[CouncilsActionsIds]['type'] and sufix in case we need to add token name after it's amount
-//  * @param convertedParamValue unpacked param value bytes, if need converted to client format
-//  * @param name name of the parameter
-//  * @returns ReactNode to output to user
-//  */
-// const getCellValueContent = (
-//   columnData: NonNullable<CouncilActionsToSignColumnsType[CouncilsActionsIds][CouncilActionParamsNames]>,
-//   convertedParamValue: string,
-// ) => {
-//   const { type, sufix, cellName } = columnData
-
-//   return type === 'number' ? (
-//     <CommaNumber value={parseFloat(convertedParamValue)} endingText={sufix} />
-//   ) : type === 'url' ? (
-//     <CustomLink to={convertedParamValue}>{convertedParamValue}</CustomLink>
-//   ) : type === 'address' ? (
-//     <TzAddress tzAddress={convertedParamValue} hasIcon />
-//   ) : type === 'image' ? (
-//     <ImageWithPlug imageLink={convertedParamValue} alt={`${cellName} image`} />
-//   ) : (
-//     convertedParamValue
-//   )
-// }
-
-// /**
-//  *
-//  * @param actionParam parameters of action from back-end
-//  * @returns unpacked bytes value, param name and param parsed name, and column data (grid-area classname, value type)
-//  */
-// const getCellData = (
-//   actionParam: CouncilActionType['parameters'][number],
-//   actionParamsCells: CouncilActionsToSignColumnsType[CouncilsActionsIds],
-// ) => {
-//   const { name, value } = actionParam
-
-//   const bytesType =
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.keyHash ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.newAdminAddress ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.vesteeAddress ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.receiverAddress ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenContractAddress ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.targetContractAddress ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberAddress ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress ||
-//     name === COUNCIL_ACTIONS_PARAMS_MAPPER.treasuryAddress
-//       ? BYTES_ADDRESS_TYPE
-//       : BYTES_STRING_TYPE
-
-//   const parsedValue = convertBytes(value, bytesType)
-
-//   return { parsedValue, name, columnData: actionParamsCells[name] }
-// }

@@ -69,7 +69,7 @@ export const MY_BG_PAST_COUNSILS_QUERY = gql(`
     break_glass_action: break_glass_action(order_by: {start_datetime: desc}, where: {_or: [
       {_and: [
         {_or: [
-          {execution_datetime: {
+          {expiration_datetime: {
             _lt: $currentTimestamp
           }
           }, 
@@ -85,7 +85,7 @@ export const MY_BG_PAST_COUNSILS_QUERY = gql(`
       ]},
       {_and: [
         {_and: [
-          {execution_datetime: {
+          {expiration_datetime: {
             _gt: $currentTimestamp
           }
           }, 
@@ -98,7 +98,8 @@ export const MY_BG_PAST_COUNSILS_QUERY = gql(`
         {
           initiator: {address: {_neq: $userAddress}}
         }
-      ]}]}) {
+      ]}
+    ]}) {
       action_type
       signers_count
       start_datetime

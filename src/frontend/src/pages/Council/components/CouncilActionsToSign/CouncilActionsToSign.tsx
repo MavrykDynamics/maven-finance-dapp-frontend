@@ -11,7 +11,7 @@ import { signBreakGlassAction } from 'providers/CouncilProvider/actions/breakGla
 import { signMavrykAction } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 
 // types
-import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider/council.provider.types'
+import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 
 // consts
 import {

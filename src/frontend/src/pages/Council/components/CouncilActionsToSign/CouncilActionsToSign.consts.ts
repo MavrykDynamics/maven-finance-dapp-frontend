@@ -18,6 +18,7 @@ export type CouncilActionsToSignColumnsType = Record<
 >
 
 // mapper for showing only allowed cells on sign action card
+// TODO: fill other cards when data for testing will be avaliable
 export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsType = {
   // ------- MAVRYK COUNCIL MEMBERS FORMS
   [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
@@ -100,9 +101,36 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
   [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {},
 
   // ------- BREAG GLASS COUNCIL MEMBERS FORMS
-  [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {},
+  [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
+      className: 'member-address',
+      type: 'address',
+      cellName: 'Council Member Address',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberName]: {
+      className: 'member-name',
+      type: 'default',
+      cellName: 'Council Member Name',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberWebsite]: {
+      className: 'member-url',
+      type: 'url',
+      cellName: 'Council Member Website',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberImage]: {
+      className: 'member-image',
+      type: 'image',
+      cellName: 'Council Member Image',
+    },
+  },
   [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {},
-  [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {},
+  [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
+      className: 'member-address',
+      type: 'address',
+      cellName: 'Council Member Address',
+    },
+  },
 
   // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
   [BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN]: {},
@@ -115,6 +143,7 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
 }
 
 // grid setting for council sign cards
+// TODO: fill other cards when data for testing will be avaliable
 export const CouncilActionsToSignGridSettingsMapper: Record<
   CouncilsActionsIds,
   {

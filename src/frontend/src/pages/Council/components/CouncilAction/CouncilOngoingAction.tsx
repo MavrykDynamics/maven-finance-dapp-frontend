@@ -4,17 +4,15 @@ import classNames from 'classnames'
 import Expand from 'app/App.components/Expand/Expand.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import CustomLink from 'app/App.components/CustomLink/CustomLink'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CouncilActionBodyStyled, CouncilActionStyled } from './CouncilAction.style'
-import { BgCounsilDdForms, MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
 
 // types
 import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
+import { CouncilActionParamCellType } from 'pages/Council/helpers/council.types'
 
 // utils
 import { parseDate } from 'utils/time'
+import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCouncil.utils'
 
 // consts
 import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
@@ -23,8 +21,6 @@ import { CouncilUserOngoingActionGridCellsMapper } from './CouncilAction.consts'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { CouncilActionParamCellType } from 'pages/Council/helpers/council.types'
-import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCouncil.utils'
 
 type Props = {
   councilAction: CouncilActionType

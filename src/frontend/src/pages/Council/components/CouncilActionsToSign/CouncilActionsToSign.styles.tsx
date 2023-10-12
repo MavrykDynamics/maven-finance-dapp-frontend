@@ -1,7 +1,11 @@
-import { CouncilsActionsIds, CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
 import styled, { css } from 'styled-components'
 import { Card } from 'styles'
+
+// types
 import { MavrykTheme } from 'styles/interfaces'
+import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
+
+// consts
 import { CouncilActionsToSignGridSettingsMapper } from './CouncilActionsToSign.consts'
 import { COUNCIL_COLUMN_STYLES } from '../CouncilAction/CouncilAction.style'
 

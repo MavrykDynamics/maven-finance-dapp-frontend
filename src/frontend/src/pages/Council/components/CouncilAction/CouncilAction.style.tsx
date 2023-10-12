@@ -12,10 +12,6 @@ export const COUNCIL_COLUMN_STYLES = css`
     display: flex;
     flex-direction: column;
 
-    p {
-      margin: 0;
-    }
-
     .name {
       font-weight: 600;
       font-size: 14px;
@@ -60,6 +56,10 @@ export const COUNCIL_COLUMN_STYLES = css`
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+      }
+
+      p {
+        margin: 0;
       }
 
       .img-wrapper,
@@ -129,10 +129,10 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
 
     display: grid;
     align-items: center;
-    grid-template-columns: 25% 1fr 120px 16px;
+    grid-template-columns: 140px 1fr 120px 16px;
 
     &.my-ongoing {
-      grid-template-columns: 25% 1.2fr auto;
+      grid-template-columns: 140px 1fr auto;
     }
 
     .open-action {

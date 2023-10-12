@@ -55,7 +55,7 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 import { CouncilStyled, AvaliableActions, CounsilPageWrapper } from './Council.style'
 import { CounsilActionsToSignOld } from './components/CounsilActionsToSignOld'
-import { UpdateUserCouncilProfileInfoPopup } from './components/UpdateUserCouncilProfileInfoPopup'
+import { UpdateUserCouncilProfileInfoPopup } from './components/popups/UpdateUserCouncilProfileInfoPopup'
 import { CounsilSidebar } from './components/CounsilSidebar'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { H2SimpleTitle, H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -268,19 +268,19 @@ export function CouncilView({
 
           {displayPendingSignature ? (
             <>
-              {/* <CounsilActionsToSignOld
+              <CounsilActionsToSignOld
                 isBreakGlassAction={isBreakGlassCounsil}
                 actionstoSign={notMyPendingActions}
                 actionsMapper={actionsMapper}
                 members={members}
-              /> */}
+              />
 
-              <CouncilActionsToSign
+              {/* <CouncilActionsToSign
                 isBreakGlassCounsil={isBreakGlassCouncil}
                 // TODO: actionstoSign={notMyPendingActions}
                 actionstoSign={[...myPendingActions, ...notMyPendingActions]}
                 actionsMapper={actionsMapper}
-              />
+              /> */}
             </>
           ) : null}
 

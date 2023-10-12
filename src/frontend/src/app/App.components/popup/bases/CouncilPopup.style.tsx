@@ -1,9 +1,11 @@
 import styled from 'styled-components'
 import { PopupContentWrapperBase } from '../PopupMain.style'
 
-export const CouncilFormPopupsContent = styled(PopupContentWrapperBase)`
-  width: 750px;
-  height: 555px;
+export const CouncilUpdateMemberPopupContent = styled(PopupContentWrapperBase)`
+  width: 100%;
+  max-width: 750px;
+  height: 100%;
+  max-height: 555px;
 
   row-gap: 5px;
   padding: 40px 30px;
@@ -15,9 +17,13 @@ export const CouncilFormPopupsContent = styled(PopupContentWrapperBase)`
   }
 `
 
-// TODO: review
 export const CouncilActionPurposePopupContent = styled(PopupContentWrapperBase)`
   padding: 30px 50px 30px 50px;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 586px;
 
   .purpose {
     position: relative;
@@ -41,6 +47,11 @@ export const CouncilActionPurposePopupContent = styled(PopupContentWrapperBase)`
       height: 50px;
       width: calc(100% - 105px);
       background: ${({ theme }) => `linear-gradient(to bottom, transparent 20%, ${theme.cards} 100%)`};
+      transition: 0.5s opacity;
+
+      &.removeShadow {
+        opacity: 0;
+      }
     }
   }
 `

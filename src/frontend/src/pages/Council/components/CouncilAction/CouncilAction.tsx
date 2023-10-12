@@ -36,11 +36,10 @@ export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCou
     initiatorAddress,
   } = councilAction
 
-  const isUserActiveAction =
-    !executed && dayjs().isBefore(expirationTime) && userAddress === initiatorAddress && isMyActionsTabs
+  const isUserActiveAction = !executed && dayjs().isBefore(expirationTime) && userAddress === initiatorAddress
 
   // view for user's created active action
-  if (isUserActiveAction) {
+  if (isUserActiveAction && isMyActionsTabs) {
     return (
       <CouncilOngoingAction
         councilAction={councilAction}
