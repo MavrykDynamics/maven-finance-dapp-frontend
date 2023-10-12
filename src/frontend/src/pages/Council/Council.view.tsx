@@ -268,19 +268,19 @@ export function CouncilView({
 
           {displayPendingSignature ? (
             <>
-              <CounsilActionsToSignOld
+              {/* <CounsilActionsToSignOld
                 isBreakGlassAction={isBreakGlassCounsil}
                 actionstoSign={notMyPendingActions}
                 actionsMapper={actionsMapper}
                 members={members}
-              />
+              /> */}
 
-              {/* <CouncilActionsToSign
+              <CouncilActionsToSign
                 isBreakGlassCounsil={isBreakGlassCouncil}
                 // TODO: actionstoSign={notMyPendingActions}
                 actionstoSign={[...myPendingActions, ...notMyPendingActions]}
                 actionsMapper={actionsMapper}
-              /> */}
+              />
             </>
           ) : null}
 

@@ -116,6 +116,10 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
     grid-area: treasury-address;
   }
 
+  .token-contract-address {
+    grid-area: token-contract-address;
+  }
+
   .receiver-address {
     grid-area: receiver-address;
   }

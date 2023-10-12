@@ -10,6 +10,7 @@ import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
+import { ActionPurposePopup } from '../popups/CouncilActionPurposePopup'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -28,7 +29,6 @@ import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCo
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { ActionPurposePopup } from '../popups/CouncilActionPurposePopup'
 
 type Props = {
   action: CouncilActionType
@@ -38,75 +38,60 @@ type Props = {
 }
 
 export const CouncilActionToSign = ({ action, actionsToSignAmount, actionIndex, signActionHandler }: Props) => {
-  // action purpose popup
-  const [popupPurose, setPopupPurose] = useState<null | string>(null)
-  const closePopup = () => setPopupPurose(null)
-  const openPopup = (purposeText: string) => setPopupPurose(purposeText)
-
-  const { actionName, id } = action
-  const handleSignAction = () => signActionHandler(id)
-
-  return (
-    <CouncilActionToSignStyled className={classNames({ isLast: actionsToSignAmount - 1 === actionIndex })}>
-      <H2SimpleTitle>{actionName}</H2SimpleTitle>
-      <CouncilActionToSignBody handleSignAction={handleSignAction} handleOpenPurposePopup={openPopup} action={action} />
-
-      <ActionPurposePopup closePopup={closePopup} purpose={popupPurose} />
-    </CouncilActionToSignStyled>
-  )
-}
-
-const CouncilActionToSignBody = ({
-  handleSignAction,
-  handleOpenPurposePopup,
-  action,
-}: {
-  handleSignAction: () => void
-  handleOpenPurposePopup: (purposeText: string) => void
-  action: CouncilActionType
-}) => {
   const {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
 
-  const { parameters, councilSize, signersCount, actionClientId } = action
+  // action purpose popup
+  const [popupPurose, setPopupPurose] = useState<null | string>(null)
+  const closePopup = () => setPopupPurose(null)
+  const openPopup = (purposeText: string) => setPopupPurose(purposeText)
 
+  const { actionName, id, parameters, councilSize, signersCount, actionClientId } = action
   const gridCells = getCardToSignBodyCels(parameters, actionClientId, tokensMetadata)
 
+  const handleSignAction = () => signActionHandler(id)
+
   return (
-    <CouncilActionToSignBodyStyled actionId={actionClientId}>
-      {gridCells.map(({ className, value, valueContent, cellName, paramName }) => {
-        return (
-          <div className={classNames('column', className)} key={paramName}>
-            <div className="name">{cellName}</div>
-            {paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose ? (
-              <div className="value open-purpose" onClick={() => handleOpenPurposePopup(value)}>
-                Read Request
-              </div>
-            ) : (
-              <div className="value" title={value}>
-                {valueContent}
-              </div>
-            )}
-          </div>
-        )
-      })}
+    <CouncilActionToSignStyled className={classNames({ isLast: actionsToSignAmount - 1 === actionIndex })}>
+      <H2SimpleTitle>{actionName}</H2SimpleTitle>
 
-      <div className="column signed-amount">
-        <div className="name">Signed</div>
-        <div
-          className={`value ${councilSize / 2 < signersCount ? 'is-green' : 'is-red'}`}
-        >{`${signersCount}/${councilSize}`}</div>
-      </div>
+      <CouncilActionToSignBodyStyled actionId={actionClientId}>
+        {gridCells.map(({ className, value, valueContent, cellName, paramName }) => {
+          return (
+            <div className={classNames('column', className)} key={paramName}>
+              <div className="name">{cellName}</div>
+              {paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose ? (
+                <div className="value open-purpose" onClick={() => openPopup(value)}>
+                  Read Request
+                </div>
+              ) : (
+                <div className="value" title={value}>
+                  {valueContent}
+                </div>
+              )}
+            </div>
+          )
+        })}
 
-      <div className="sign-btn">
-        <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={handleSignAction} disabled={isActionActive}>
-          <Icon id="sign" />
-          Sign
-        </NewButton>
-      </div>
-    </CouncilActionToSignBodyStyled>
+        <div className="column signed-amount">
+          <div className="name">Signed</div>
+          <div
+            className={`value ${councilSize / 2 < signersCount ? 'is-green' : 'is-red'}`}
+          >{`${signersCount}/${councilSize}`}</div>
+        </div>
+
+        <div className="sign-btn">
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={handleSignAction} disabled={isActionActive}>
+            <Icon id="sign" />
+            Sign
+          </NewButton>
+        </div>
+      </CouncilActionToSignBodyStyled>
+
+      <ActionPurposePopup closePopup={closePopup} purpose={popupPurose} />
+    </CouncilActionToSignStyled>
   )
 }
 
