@@ -75,6 +75,14 @@ export const CheckboxStyled = styled.div`
       }
     }
 
+    input:checked {
+      & + label#checkbox-icon:hover {
+        & + .checkbox-text {
+          opacity: 0.8;
+        }
+      }
+    }
+
     .checkbox-text:hover {
       opacity: 0.8;
     }
