@@ -7,7 +7,8 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // consts
-import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts'
 
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -93,7 +94,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     <SatelliteSideBarStyled>
       <SideBarSection>
         {isButton ? (
-          <Link to="/become-satellite">
+          <Link to={`/become-satellite/${SATELLITE_TAB_EDIT}}`}>
             {isSatellite && satelliteAvatar && userSatelliteName ? (
               <SidebarUserEditButton name={userSatelliteName} image={satelliteAvatar} />
             ) : (

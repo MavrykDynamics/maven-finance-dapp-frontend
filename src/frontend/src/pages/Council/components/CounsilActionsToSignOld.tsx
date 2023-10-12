@@ -10,6 +10,7 @@ import { CouncilActionType, CouncilMembersType } from 'providers/CouncilProvider
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // utils
@@ -21,7 +22,6 @@ import {
   SIGN_MAVRYK_COUNCIL_ACTION,
   SIGN_BREAK_GLASS_COUNCIL_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type PropsType = {
   isBreakGlassAction: boolean
