@@ -33,15 +33,11 @@ export const GovernanceLeftContainer = styled.div<{ theme: MavrykTheme }>`
     margin: 0;
   }
 
-  .proposal-history-checkbox {
+  .proposal-history-checkbox-wrapper {
     position: absolute;
     top: 50px;
     left: 0;
     z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
-
-    span {
-      color: ${({ theme }) => theme.mainHeadingText};
-    }
   }
 `
 

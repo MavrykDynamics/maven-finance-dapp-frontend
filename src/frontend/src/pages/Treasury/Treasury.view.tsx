@@ -103,14 +103,15 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
           {!isGlobal && treasury.balances.length ? (
             <>
-              <Checkbox
-                id={'treasury-zero-filter'}
-                onChangeHandler={() => setShowZeroTreasuries(!showZeroTreasuries)}
-                checked={showZeroTreasuries}
-                className={'treasury-checkbox'}
-              >
-                <span>Hide assets with a balance of 0</span>
-              </Checkbox>
+              <div className="treasury-checkbox-wrapper">
+                <Checkbox
+                  id="treasury-zero-filter"
+                  onChangeHandler={() => setShowZeroTreasuries(!showZeroTreasuries)}
+                  checked={showZeroTreasuries}
+                >
+                  Hide assets with a balance of 0
+                </Checkbox>
+              </div>
             </>
           ) : null}
 

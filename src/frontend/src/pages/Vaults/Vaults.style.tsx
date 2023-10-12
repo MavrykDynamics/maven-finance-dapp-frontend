@@ -30,7 +30,7 @@ export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const VaultsSearchFilterWrapper = styled.div`
-  .checkbox {
+  .checkbox-wrapper {
     margin: 20px 0;
   }
 `

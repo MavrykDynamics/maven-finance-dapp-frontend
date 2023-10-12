@@ -2,41 +2,48 @@ import styled from 'styled-components/macro'
 
 export const CheckboxStyled = styled.div`
   position: relative;
+
   display: flex;
-  column-gap: 10px;
   align-items: center;
 
-  .children {
-    color: ${({ theme }) => theme.regularText};
-    font-weight: 600;
+  width: fit-content;
+  column-gap: 10px;
+
+  .checkbox-text {
+    font-weight: 500;
     font-size: 14px;
+    color: ${({ theme }) => theme.mainHeadingText};
+    transition: 0.15s ease-in-out;
   }
 
-  label#checkbox-label {
+  label#checkbox-icon {
     padding: 0;
     margin: 0;
+
     width: 24px;
     height: 24px;
+
+    transition: 0.15s ease-in-out;
     border: 1px solid ${({ theme }) => theme.strokeColor};
     border-radius: 5px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: 0.15s ease-in-out;
-    cursor: pointer;
+
     background-color: ${({ theme }) => theme.backgroundColor};
 
-    &:hover {
+    &.isLabelTextHovered {
       background-color: ${({ theme }) => theme.cards};
     }
-  }
 
-  svg {
-    fill: ${({ theme }) => theme.backgroundColor};
-    width: 13px;
-    height: 13px;
-    opacity: 0;
-    transition: 0.15s ease-in-out;
+    svg {
+      width: 13px;
+      height: 13px;
+      opacity: 0;
+      transition: 0.15s ease-in-out;
+      fill: ${({ theme }) => theme.backgroundColor};
+    }
   }
 
   input {
@@ -46,20 +53,40 @@ export const CheckboxStyled = styled.div`
     z-index: -1;
 
     &:checked {
-      & + label#checkbox-label {
+      & + label#checkbox-icon {
         background-color: ${({ theme }) => theme.selectedColorSecondary};
+
         svg {
           opacity: 1;
-        }
-
-        &:hover {
-          background-color: ${({ theme }) => theme.selectedColorSecondary};
         }
       }
     }
   }
 
+  /* add hovers only if checkbox is active */
+  &:not(.disabled) {
+    input:not(:checked) {
+      & + label#checkbox-icon:hover {
+        background-color: ${({ theme }) => theme.cards};
+
+        & + .checkbox-text {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .checkbox-text:hover {
+      opacity: 0.8;
+    }
+  }
+
+  * {
+    cursor: pointer;
+  }
+
   &.disabled {
+    opacity: 0.6;
+
     * {
       cursor: not-allowed;
     }
