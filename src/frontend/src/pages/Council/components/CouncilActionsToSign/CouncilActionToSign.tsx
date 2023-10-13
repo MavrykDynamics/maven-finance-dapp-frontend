@@ -129,6 +129,7 @@ const getCardToSignBodyCels = (
       if (parsedValue && columnData) {
         const columnValue =
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.totalAllocatedAmount ||
+          name === COUNCIL_ACTIONS_PARAMS_MAPPER.newTotalAllocatedAmount ||
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenAmount
             ? String(convertNumberForClient({ number: parseFloat(parsedValue), grade: MVK_DECIMALS }))
             : parsedValue

@@ -121,19 +121,19 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       className: 'vestee-cliff-period',
       type: 'number',
       sufix: 'month',
-      cellName: 'Cliff Period',
+      cellName: 'New Cliff Period',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newVestingInMonths]: {
       className: 'vesting-period',
       type: 'number',
       sufix: 'month',
-      cellName: 'Vesting Period',
+      cellName: 'New Vesting Period',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newTotalAllocatedAmount]: {
       className: 'vestee-allocated-amount',
       type: 'number',
       sufix: 'MVK',
-      cellName: 'Total Allocated Amount',
+      cellName: 'New Total Allocated Amount',
     },
   },
   [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {
@@ -378,19 +378,19 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.UPDATE_VESTEE]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto 50px`,
+    columnsTemplate: `auto auto 180px`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "vestee-address vestee-allocated-amount"
-      "vestee-cliff-period vesting-period"
-      ". submit-form"
+      "vestee-address vestee-allocated-amount signed-amount"
+      "vestee-cliff-period vesting-period sign-btn"
     `,
   },
   [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {
-    columnsTemplate: `380px auto`, // ready, but need to test on real data
-    rowsTemplate: `auto`,
+    columnsTemplate: `auto auto`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "vestee-address sign-btn"
+      "vestee-address signed-amount"
+      "sign-btn sign-btn"
     `,
   },
   [MavrykCounsilDdForms.REMOVE_VESTEE]: {
@@ -405,7 +405,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
   // ------- MAVRYK COUNCIL TOKENS FORMS
   [MavrykCounsilDdForms.REQUEST_TOKENS]: {
     columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto auto auto 60px`,
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "admin-address ."
       "contract-address token-name"
@@ -424,7 +424,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
   },
   [MavrykCounsilDdForms.TRANSFER_TOKENS]: {
     columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto auto auto 60px`,
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "receiver-address ."
       "contract-address token-amount"
@@ -454,10 +454,11 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- MAVRYK COUNCIL OTHER FORMS
   [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
+    columnsTemplate: `auto auto`,
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "select-contracts submit-form"
+      "contract-address signed-amount"
+      "sign-btn sign-btn"
     `,
   },
 
@@ -489,10 +490,11 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
   [BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
+    columnsTemplate: `auto auto`,
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "admin-address submit-form"
+      "admin-address signed-amount"
+      "sign-btn sign-btn"
     `,
   },
   [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {

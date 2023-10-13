@@ -133,7 +133,7 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
       return MavrykCounsilDdForms.UPDATE_VESTEE
     case 'toggleVesteeLock':
       return MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK
-    case 'removeCounsilMember':
+    case 'removeVestee':
       return MavrykCounsilDdForms.REMOVE_VESTEE
 
     // ------- MAVRYK COUNCIL TOKENS FORMS
