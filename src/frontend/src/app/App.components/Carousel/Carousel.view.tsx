@@ -46,16 +46,17 @@ const Carousel = ({ children, itemLength }: Props) => {
         setNextBtnEnabled(embla.canScrollNext())
         setSelectedIndex(embla.selectedScrollSnap())
       })
-
-      setPrevBtnEnabled(embla.canScrollPrev())
-      setNextBtnEnabled(embla.canScrollNext())
-      setSelectedIndex(embla.selectedScrollSnap())
     }
   }, [embla])
 
   // on children change reinit carousel
   useEffect(() => {
-    if (embla) embla.reInit(options)
+    if (embla) {
+      embla.reInit(options)
+      setPrevBtnEnabled(embla.canScrollPrev())
+      setNextBtnEnabled(embla.canScrollNext())
+      setSelectedIndex(embla.selectedScrollSnap())
+    }
   }, [children])
 
   return (

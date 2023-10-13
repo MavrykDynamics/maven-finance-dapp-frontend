@@ -64,7 +64,7 @@ export const getCellValueContent = (
   ) : type === 'image' ? (
     <ImageWithPlug imageLink={convertedParamValue} alt={`${cellName} image`} />
   ) : (
-    convertedParamValue
+    <div className="text">{convertedParamValue}</div>
   )
 }
 

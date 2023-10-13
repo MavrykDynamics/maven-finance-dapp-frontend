@@ -30,6 +30,11 @@ export const ALL_BG_PAST_COUNSILS_QUERY = gql(`
       break_glass {
         address
       }
+      signers {
+        signer {
+          address
+        }
+      }
       parameters {
         id
         name
@@ -54,6 +59,11 @@ export const ALL_BG_ONGOING_COUNSILS_QUERY = gql(`
       }
       break_glass {
         address
+      }
+      signers {
+        signer {
+          address
+        }
       }
       parameters {
         id
@@ -112,6 +122,11 @@ export const MY_BG_PAST_COUNSILS_QUERY = gql(`
       }
       break_glass {
         address
+      }
+      signers {
+        signer {
+          address
+        }
       }
       parameters {
         id

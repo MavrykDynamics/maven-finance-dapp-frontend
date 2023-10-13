@@ -27,12 +27,11 @@ export const COUNCIL_COLUMN_STYLES = css`
 
       color: ${({ theme }) => theme.primaryText};
 
-      /* truncate */
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+      display: flex;
+      align-items: center;
 
-      width: fit-content;
+      height: 100%;
+      width: 100%;
 
       &.open-purpose {
         font-weight: 500;
@@ -44,6 +43,15 @@ export const COUNCIL_COLUMN_STYLES = css`
         cursor: pointer;
       }
 
+      .text {
+        /* truncate */
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        width: 100%;
+      }
+
       a {
         font-weight: 500;
         font-size: 14px;
@@ -51,6 +59,7 @@ export const COUNCIL_COLUMN_STYLES = css`
 
         color: ${({ theme }) => theme.linksAndButtons};
         text-decoration: underline;
+        width: 100%;
 
         /* truncate */
         white-space: nowrap;

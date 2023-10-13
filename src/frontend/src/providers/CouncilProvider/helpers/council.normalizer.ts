@@ -13,6 +13,7 @@ import { COUNCIL_FORMS_NAMES_MAPPER } from 'pages/Council/helpers/council.consts
 type MavrykCounsilIndexerItemType = CounsilActionsQueryType['council_action'][number]
 type BreakGlassCounsilIndexerItemType = BgCounsilActionsQueryType['break_glass_action'][number]
 type CouncilActionParametersType = Array<{ id: number; name: string; value: string }>
+type CouncilActionSignersType = Array<{ signer: { address: string } }>
 
 const checkWhetherMavrykCounsilAction = (
   indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
@@ -36,6 +37,7 @@ export const normalizeCouncilAction = (
 
   const actionName = COUNCIL_FORMS_NAMES_MAPPER[actionClientId]
   const actionParams: CouncilActionParametersType = indexerAction.parameters
+  const actionSigners: CouncilActionSignersType = indexerAction.signers
 
   const actionCommonDataBetweenCollections = {
     id: indexerAction.id,
@@ -47,6 +49,7 @@ export const normalizeCouncilAction = (
     signersCount: indexerAction.signers_count,
     startDatetime: indexerAction.start_datetime ?? null,
     expirationTime: indexerAction.expiration_datetime ?? null,
+    signers: actionSigners.reduce<Array<string>>((acc, { signer: { address } }) => [...acc, address], []),
     parameters: actionParams.reduce<CouncilActionType['parameters']>((acc, { name, value, id }) => {
       if (checkWhetherActionParamValid(name)) {
         acc.push({

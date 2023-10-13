@@ -18,7 +18,7 @@ export type CouncilActionsToSignColumnsType = Record<
 >
 
 // mapper for showing only allowed cells on sign action card
-// TODO: fill other cards when data for testing will be avaliable
+// TODO: fill other cards when data for testing will be avaliable, clarify new texts with Sam
 export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsType = {
   // MAVRYK COUNCIL MEMBERS FORMS
   // ------------------------------------------------------------------------------------
@@ -48,27 +48,32 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     [COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress]: {
       className: 'old-member-address',
       type: 'address',
-      cellName: 'Council Member To Change',
+      // cellName: 'Council Member To Change',
+      cellName: 'Member To Change',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberAddress]: {
       className: 'member-address',
       type: 'address',
-      cellName: 'Council Member Address',
+      // cellName: 'Council Member Address',
+      cellName: 'New Member Address',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberName]: {
       className: 'member-name',
       type: 'default',
-      cellName: 'Council Member Name',
+      // cellName: 'Council Member Name',
+      cellName: 'Member Name',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberWebsite]: {
       className: 'member-url',
       type: 'url',
-      cellName: 'Council Member Website',
+      // cellName: 'Council Member Website',
+      cellName: 'Member Website',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberImage]: {
       className: 'member-image',
       type: 'image',
-      cellName: 'Council Member Image',
+      // cellName: 'Council Member Image',
+      cellName: 'Member Image',
     },
   },
   [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
@@ -228,6 +233,7 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       cellName: 'New Baker Address',
     },
   },
+  // TODO: contract address ????
   [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.keyHash]: {
       className: 'admin-address',
@@ -268,27 +274,32 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     [COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress]: {
       className: 'old-member-address',
       type: 'address',
-      cellName: 'Council Member To Change',
+      // cellName: 'Council Member To Change',
+      cellName: 'Member To Change',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberAddress]: {
       className: 'member-address',
       type: 'address',
-      cellName: 'Council Member Address',
+      // cellName: 'Council Member Address',
+      cellName: 'New Member Address',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberName]: {
       className: 'member-name',
       type: 'default',
-      cellName: 'Council Member Name',
+      // cellName: 'Council Member Name',
+      cellName: 'Member Name',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberWebsite]: {
       className: 'member-url',
       type: 'url',
-      cellName: 'Council Member Website',
+      // cellName: 'Council Member Website',
+      cellName: 'Member Website',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberImage]: {
       className: 'member-image',
       type: 'image',
-      cellName: 'Council Member Image',
+      // cellName: 'Council Member Image',
+      cellName: 'Member Image',
     },
   },
   [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
@@ -329,8 +340,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 > = {
   // ------- MAVRYK COUNCIL MEMBERS FORMS
   [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
-    // ready
-    columnsTemplate: `auto auto 180px`,
+    columnsTemplate: `auto auto 180px`, // ready
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "member-address member-name signed-amount"
@@ -338,14 +348,11 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto auto auto 50px`,
+    columnsTemplate: `auto auto auto 150px`, // ready, need to clarify new header text with Sam
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "select-council-member ."
-      "member-address member-name"
-      "member-url member-url"
-      "member-image member-image"
-      ". submit-form"
+      "old-member-address member-address member-name signed-amount"
+      "member-image member-url member-url sign-btn"
     `,
   },
   [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
@@ -359,8 +366,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- MAVRYK COUNCIL VESTEES FORMS
   [MavrykCounsilDdForms.ADD_VESTEE]: {
-    // ready
-    columnsTemplate: `auto auto 180px`,
+    columnsTemplate: `auto auto 180px`, // ready
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address vestee-allocated-amount signed-amount"
@@ -377,15 +383,14 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {
-    columnsTemplate: `380px auto`,
+    columnsTemplate: `380px auto`, // ready, but need to test on real data
     rowsTemplate: `auto`,
     areaTemplate: `
-      "vestee-address submit-form"
+      "vestee-address sign-btn"
     `,
   },
   [MavrykCounsilDdForms.REMOVE_VESTEE]: {
-    // ready
-    columnsTemplate: `auto auto`,
+    columnsTemplate: `auto auto`, // ready
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address signed-amount"
@@ -406,8 +411,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
-    // ready
-    columnsTemplate: `auto auto 180px`,
+    columnsTemplate: `auto auto 180px`, // ready
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "treasury-address token-amount signed-amount"
@@ -428,18 +432,19 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- MAVRYK COUNCIL BAKERS FORMS
   [MavrykCounsilDdForms.SET_BAKER]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
+    columnsTemplate: `1fr 1fr`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "baker-hash submit-form"
+      "admin-address signed-amount"
+      "sign-btn sign-btn"
     `,
   },
   [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto 50px`,
+    columnsTemplate: `1fr 1fr`, // ready, but need to test on real data
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "contract-address baker-hash"
-      ". submit-form"
+      "admin-address signed-amount"
+      "contract-address sign-btn"
     `,
   },
 
@@ -454,31 +459,27 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- BREAG GLASS COUNCIL MEMBERS FORMS
   [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto auto 50px`,
+    columnsTemplate: `auto auto 180px`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "member-address member-name"
-      "member-url member-url"
-      "member-image member-image"
-      ". submit-form"
+      "member-address member-name signed-amount"
+      "member-image member-url sign-btn"
     `,
   },
   [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto auto auto 50px`,
+    columnsTemplate: `auto auto auto 150px`, // ready, need to clarify new header text with Sam
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "select-council-member ."
-      "member-address member-name"
-      "member-url member-url"
-      "member-image member-image"
-      ". submit-form"
+      "old-member-address member-address member-name signed-amount"
+      "member-image member-url member-url sign-btn"
     `,
   },
   [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
+    columnsTemplate: `auto auto`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "select-council-member submit-form"
+      "member-address signed-amount"
+      "sign-btn sign-btn"
     `,
   },
 

@@ -29,6 +29,7 @@ import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCo
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type Props = {
   action: CouncilActionType
@@ -42,16 +43,18 @@ export const CouncilActionToSign = ({ action, actionsToSignAmount, actionIndex, 
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
+  const { userAddress } = useUserContext()
 
   // action purpose popup
   const [popupPurose, setPopupPurose] = useState<null | string>(null)
   const closePopup = () => setPopupPurose(null)
   const openPopup = (purposeText: string) => setPopupPurose(purposeText)
 
-  const { actionName, id, parameters, councilSize, signersCount, actionClientId } = action
+  const { actionName, id, parameters, councilSize, signersCount, actionClientId, signers } = action
   const gridCells = getCardToSignBodyCels(parameters, actionClientId, tokensMetadata)
 
   const handleSignAction = () => signActionHandler(id)
+  const hasUserSignedAction = signers.includes(userAddress ?? '')
 
   return (
     <CouncilActionToSignStyled className={classNames({ isLast: actionsToSignAmount - 1 === actionIndex })}>
@@ -83,7 +86,12 @@ export const CouncilActionToSign = ({ action, actionsToSignAmount, actionIndex, 
         </div>
 
         <div className="sign-btn">
-          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={handleSignAction} disabled={isActionActive}>
+          <NewButton
+            form={BUTTON_WIDE}
+            kind={BUTTON_PRIMARY}
+            onClick={handleSignAction}
+            disabled={isActionActive || hasUserSignedAction}
+          >
             <Icon id="sign" />
             Sign
           </NewButton>

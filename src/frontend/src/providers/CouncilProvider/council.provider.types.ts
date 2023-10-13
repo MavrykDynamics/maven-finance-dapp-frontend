@@ -27,6 +27,7 @@ export type CouncilActionType = {
   actionClientId: CouncilsActionsIds
   actionName: string
   /**
+   * remove when actions pending component will be removed (after carousel update)
    * @deprecated
    */
   actionType: string
@@ -37,6 +38,7 @@ export type CouncilActionType = {
   expirationTime: string | null
   councilSize: number
   counsilAddress: string
+  signers: Array<string>
   parameters: Array<{ id: number; name: CouncilActionParamsNames; value: string }>
 }
 export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
