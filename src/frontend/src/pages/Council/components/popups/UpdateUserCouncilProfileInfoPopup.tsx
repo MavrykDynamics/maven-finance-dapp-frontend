@@ -40,7 +40,7 @@ import {
 import Portal from 'app/App.components/popup/Portal'
 
 type PropsType = {
-  isBreakGlassCounsil: boolean
+  isBreakGlassCouncil: boolean
   closePopup: () => void
   memberProfile?: CouncilMembersType[number]
   show: boolean
@@ -63,7 +63,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
 export const UpdateUserCouncilProfileInfoPopup = ({
   closePopup,
   show,
-  isBreakGlassCounsil,
+  isBreakGlassCouncil,
   memberProfile,
 }: PropsType) => {
   const {
@@ -148,7 +148,7 @@ export const UpdateUserCouncilProfileInfoPopup = ({
     e.preventDefault()
 
     try {
-      if (isBreakGlassCounsil) {
+      if (isBreakGlassCouncil) {
         await handleUpdateBreakGlassCouncilUserProfile()
       } else {
         await handleUpdateMavrykCouncilUserProfile()

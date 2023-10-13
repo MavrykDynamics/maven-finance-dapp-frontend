@@ -25,12 +25,12 @@ import { CouncilActionsToSignStyled } from './CouncilActionsToSign.styles'
 import { CouncilActionToSign } from './CouncilActionToSign'
 
 type Props = {
-  isBreakGlassCounsil: boolean
+  isBreakGlassCouncil: boolean
   actionstoSign: number[]
   actionsMapper: Record<number, CouncilActionType>
 }
 
-export const CouncilActionsToSign = ({ isBreakGlassCounsil, actionstoSign, actionsMapper }: Props) => {
+export const CouncilActionsToSign = ({ isBreakGlassCouncil, actionstoSign, actionsMapper }: Props) => {
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
@@ -40,7 +40,7 @@ export const CouncilActionsToSign = ({ isBreakGlassCounsil, actionstoSign, actio
   // Sign request action
   const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
     () => ({
-      actionType: isBreakGlassCounsil ? SIGN_BREAK_GLASS_COUNCIL_ACTION : SIGN_MAVRYK_COUNCIL_ACTION,
+      actionType: isBreakGlassCouncil ? SIGN_BREAK_GLASS_COUNCIL_ACTION : SIGN_MAVRYK_COUNCIL_ACTION,
       actionFn: async (actionId: number) => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -52,14 +52,14 @@ export const CouncilActionsToSign = ({ isBreakGlassCounsil, actionstoSign, actio
           return null
         }
 
-        if (isBreakGlassCounsil) {
+        if (isBreakGlassCouncil) {
           return await signBreakGlassAction(actionId, breakGlassAddress)
         } else {
           return await signMavrykAction(actionId, councilAddress)
         }
       },
     }),
-    [councilAddress, breakGlassAddress, isBreakGlassCounsil, userAddress],
+    [councilAddress, breakGlassAddress, isBreakGlassCouncil, userAddress],
   )
 
   const { actionWithArgs: handleSignAction } = useContractAction(signActionContractActionProps)

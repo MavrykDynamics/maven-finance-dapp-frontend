@@ -12,9 +12,9 @@ export const signMavrykAction = async (actionID: number, counsilAddress: string)
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(counsilAddress)
-    const setSingleContractAdminMetaData = contract?.methods.signAction(actionID)
+    const signActionAdminMetaData = contract?.methods.signAction(actionID)
 
-    return await getEstimationResult(setSingleContractAdminMetaData)
+    return await getEstimationResult(signActionAdminMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
@@ -35,14 +35,14 @@ export const addVestee = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(counsilAddress)
-    const setSingleContractAdminMetaData = contract?.methods.councilActionAddVestee(
+    const addVesteeMetaData = contract?.methods.councilActionAddVestee(
       vesteeAddress,
       convertedTotalAllocatedAmount,
       cliffInMonths,
       vestingInMonths,
     )
 
-    return await getEstimationResult(setSingleContractAdminMetaData)
+    return await getEstimationResult(addVesteeMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
@@ -61,14 +61,14 @@ export const addCouncilMember = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(counsilAddress)
-    const setSingleContractAdminMetaData = contract?.methods.councilActionAddMember(
+    const addCouncilMemberMetaData = contract?.methods.councilActionAddMember(
       newMemberAddress,
       newMemberName,
       newMemberWebsite,
       newMemberImage,
     )
 
-    return await getEstimationResult(setSingleContractAdminMetaData)
+    return await getEstimationResult(addCouncilMemberMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

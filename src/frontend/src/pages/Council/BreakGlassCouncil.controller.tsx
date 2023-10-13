@@ -164,7 +164,7 @@ export const BreakGlassCouncil = () => {
             </PropagateBreakGlassCouncilCard>
           )}
           <CouncilView
-            isBreakGlassCounsil
+            isBreakGlassCouncil
             allPendingActions={allPendingActions}
             notMyPendingActions={notMyPendingActions}
             myPendingActions={myPendingActions}
