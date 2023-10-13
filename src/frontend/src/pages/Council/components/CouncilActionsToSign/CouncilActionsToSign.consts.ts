@@ -233,12 +233,16 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       cellName: 'New Baker Address',
     },
   },
-  // TODO: contract address ????
   [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.keyHash]: {
       className: 'admin-address',
       type: 'address',
       cellName: 'New Baker Address',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.targetContractAddress]: {
+      className: 'contract-address',
+      type: 'address',
+      cellName: 'Target Contract Address',
     },
   },
 
@@ -440,7 +444,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
-    columnsTemplate: `1fr 1fr`, // ready, but need to test on real data
+    columnsTemplate: `1fr 150px`, // ready
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "admin-address signed-amount"

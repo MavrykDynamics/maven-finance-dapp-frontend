@@ -278,8 +278,8 @@ export function CouncilView({
               <CouncilActionsToSign
                 isBreakGlassCounsil={isBreakGlassCouncil}
                 // TODO: actionstoSign={notMyPendingActions}
-                // actionstoSign={[...myPendingActions, ...notMyPendingActions]}
-                actionstoSign={notMyPendingActions}
+                actionstoSign={[...myPendingActions, ...notMyPendingActions]}
+                // actionstoSign={notMyPendingActions}
                 actionsMapper={actionsMapper}
               />
             </>
