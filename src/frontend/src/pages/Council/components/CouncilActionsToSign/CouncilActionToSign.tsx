@@ -5,6 +5,11 @@ import { CouncilActionType } from 'providers/CouncilProvider/council.provider.ty
 import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 import { CouncilActionParamCellType } from 'pages/Council/helpers/council.types'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import {
+  ACTION_READ_MORE_CONTRACTS_LIST,
+  ACTION_READ_MORE_PURPOSE,
+  ActionReadMorePopupDataType,
+} from '../popups/CouncilActionReadMorePopupPopup'
 
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
@@ -34,8 +39,7 @@ type Props = {
   actionsToSignAmount: number
   actionIndex: number
   signActionHandler: (id: number) => void
-  // TODO: if need expand it with content type and content properties for contracts list
-  openReadMorePopup: (purpose: string) => void
+  openReadMorePopup: (popupContentData: ActionReadMorePopupDataType) => void
 }
 
 export const CouncilActionToSign = ({
@@ -67,7 +71,15 @@ export const CouncilActionToSign = ({
             <div className={classNames('column', className)} key={paramName}>
               <div className="name">{cellName}</div>
               {paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose ? (
-                <div className="value open-purpose" onClick={() => openReadMorePopup(value)}>
+                <div
+                  className="value open-purpose"
+                  onClick={() =>
+                    openReadMorePopup({
+                      contentType: ACTION_READ_MORE_PURPOSE,
+                      purposeText: value,
+                    })
+                  }
+                >
                   Read Request
                 </div>
               ) : (
