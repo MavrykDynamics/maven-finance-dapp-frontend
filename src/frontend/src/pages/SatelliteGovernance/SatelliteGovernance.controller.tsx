@@ -41,7 +41,6 @@ import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
 import colors from 'styles/colors'
 
 // helpers
-import { convertBytesAddressToAddress } from '../../app/App.helpers'
 import { calculateSlicePositions, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
@@ -58,6 +57,7 @@ import {
   SlidingTabButtons,
   SlidingTabButtonType,
 } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
+import { BYTES_ADDRESS_TYPE, convertBytes } from 'utils/convertBytes'
 
 const getCurrentListNameById = (tabId: string) => {
   switch (tabId) {
@@ -275,7 +275,7 @@ export const SatelliteGovernance = () => {
                       <SatelliteGovernanceCard
                         key={`${action.id}`}
                         id={action.id}
-                        satelliteId={convertBytesAddressToAddress(action.parameters[0].value)}
+                        satelliteId={convertBytes(action.parameters[0].value, BYTES_ADDRESS_TYPE)}
                         initiatorId={action.initiatorId}
                         actionExpirationDate={action.expirationDatetime}
                         actionDroppedDate={action.droppedTime}

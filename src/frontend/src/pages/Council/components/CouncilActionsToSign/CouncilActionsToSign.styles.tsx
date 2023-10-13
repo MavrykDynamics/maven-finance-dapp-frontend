@@ -73,6 +73,10 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
     grid-area: admin-address;
   }
 
+  .request-id {
+    grid-area: request-id;
+  }
+
   /* ------- members */
   .old-member-address {
     grid-area: old-member-address;

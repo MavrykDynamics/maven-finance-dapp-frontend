@@ -54,7 +54,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 import { CouncilStyled, AvaliableActions, CounsilPageWrapper } from './Council.style'
-import { CounsilActionsToSignOld } from './components/CounsilActionsToSignOld'
 import { UpdateUserCouncilProfileInfoPopup } from './components/popups/UpdateUserCouncilProfileInfoPopup'
 import { CounsilSidebar } from './components/CounsilSidebar'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
@@ -273,18 +272,11 @@ export function CouncilView({
 
           {displayPendingSignature ? (
             <>
-              {/* <CounsilActionsToSignOld
-                isBreakGlassAction={isBreakGlassCouncil}
-                actionstoSign={notMyPendingActions}
-                actionsMapper={actionsMapper}
-                members={members}
-              /> */}
-
               <CouncilActionsToSign
                 isBreakGlassCouncil={isBreakGlassCouncil}
-                // TODO: actionstoSign={notMyPendingActions}
-                actionstoSign={[...myPendingActions, ...notMyPendingActions]}
-                // actionstoSign={notMyPendingActions}
+                // TODO: for testing remove before merge
+                // actionstoSign={[...myPendingActions, ...notMyPendingActions]}
+                actionstoSign={notMyPendingActions}
                 actionsMapper={actionsMapper}
               />
             </>

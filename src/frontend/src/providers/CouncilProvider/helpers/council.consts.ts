@@ -121,5 +121,6 @@ export const COUNCIL_ACTIONS_PARAMS_MAPPER = {
   tokenId: 'tokenId',
   purpose: 'purpose',
   keyHash: 'keyHash',
+  requestId: 'requestId',
   targetContractAddress: 'targetContractAddress',
 } as const

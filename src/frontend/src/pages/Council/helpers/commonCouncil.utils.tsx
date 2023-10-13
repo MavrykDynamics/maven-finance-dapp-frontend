@@ -15,7 +15,7 @@ import {
   ALL_PAST_COUNSIL_TAB,
 } from './council.consts'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
-import { BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE, convertBytes } from 'utils/bytesToString'
+import { BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE, convertBytes } from 'utils/convertBytes'
 
 // view
 import CustomLink from 'app/App.components/CustomLink/CustomLink'

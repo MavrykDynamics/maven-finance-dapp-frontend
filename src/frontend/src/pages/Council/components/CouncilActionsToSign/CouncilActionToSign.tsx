@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import classNames from 'classnames'
 
 // types
@@ -10,7 +9,6 @@ import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
-import { ActionPurposePopup } from '../popups/CouncilActionPurposePopup'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -36,19 +34,22 @@ type Props = {
   actionsToSignAmount: number
   actionIndex: number
   signActionHandler: (id: number) => void
+  // TODO: if need expand it with content type and content properties for contracts list
+  openReadMorePopup: (purpose: string) => void
 }
 
-export const CouncilActionToSign = ({ action, actionsToSignAmount, actionIndex, signActionHandler }: Props) => {
+export const CouncilActionToSign = ({
+  action,
+  actionsToSignAmount,
+  actionIndex,
+  signActionHandler,
+  openReadMorePopup,
+}: Props) => {
   const {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
   const { userAddress } = useUserContext()
-
-  // action purpose popup
-  const [popupPurose, setPopupPurose] = useState<null | string>(null)
-  const closePopup = () => setPopupPurose(null)
-  const openPopup = (purposeText: string) => setPopupPurose(purposeText)
 
   const { actionName, id, parameters, councilSize, signersCount, actionClientId, signers } = action
   const gridCells = getCardToSignBodyCels(parameters, actionClientId, tokensMetadata)
@@ -66,7 +67,7 @@ export const CouncilActionToSign = ({ action, actionsToSignAmount, actionIndex, 
             <div className={classNames('column', className)} key={paramName}>
               <div className="name">{cellName}</div>
               {paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose ? (
-                <div className="value open-purpose" onClick={() => openPopup(value)}>
+                <div className="value open-purpose" onClick={() => openReadMorePopup(value)}>
                   Read Request
                 </div>
               ) : (
@@ -97,8 +98,6 @@ export const CouncilActionToSign = ({ action, actionsToSignAmount, actionIndex, 
           </NewButton>
         </div>
       </CouncilActionToSignBodyStyled>
-
-      <ActionPurposePopup closePopup={closePopup} purpose={popupPurose} />
     </CouncilActionToSignStyled>
   )
 }

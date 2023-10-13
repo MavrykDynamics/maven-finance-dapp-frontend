@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -23,6 +23,7 @@ import {
 import Carousel from 'app/App.components/Carousel/Carousel.view'
 import { CouncilActionsToSignStyled } from './CouncilActionsToSign.styles'
 import { CouncilActionToSign } from './CouncilActionToSign'
+import { ActionPurposePopup } from '../popups/CouncilActionPurposePopup'
 
 type Props = {
   isBreakGlassCouncil: boolean
@@ -36,6 +37,11 @@ export const CouncilActionsToSign = ({ isBreakGlassCouncil, actionstoSign, actio
   const {
     contractAddresses: { councilAddress, breakGlassAddress },
   } = useDappConfigContext()
+
+  // TODO: if need expand it with content type and content properties for contracts list
+  const [popupPurose, setPopupPurose] = useState<null | string>(null)
+  const closePopup = () => setPopupPurose(null)
+  const openReadMorePopup = (purposeText: string) => setPopupPurose(purposeText)
 
   // Sign request action
   const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
@@ -80,10 +86,12 @@ export const CouncilActionsToSign = ({ isBreakGlassCouncil, actionstoSign, actio
               actionsToSignAmount={actionsToSignAmount}
               actionIndex={index}
               signActionHandler={handleSignAction}
+              openReadMorePopup={openReadMorePopup}
             />
           )
         })}
       </Carousel>
+      <ActionPurposePopup closePopup={closePopup} purpose={popupPurose} />
     </CouncilActionsToSignStyled>
   )
 }

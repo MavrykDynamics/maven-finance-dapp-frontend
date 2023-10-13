@@ -7,7 +7,11 @@ import {
   FIN_REQUESTS_DATA,
   ONGOING_FIN_REQUESTS_SUB,
 } from 'providers/FinancialRequestsProvider/helpers/financialRequests.consts'
-import { DROP_FIN_REQUEST_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import {
+  COUNCIL_ACTIONS_PARAMS_MAPPER,
+  DROP_FIN_REQUEST_ACTION,
+} from 'providers/CouncilProvider/helpers/council.consts'
+import { BYTES_STRING_TYPE, convertBytes } from 'utils/convertBytes'
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 
 // view
@@ -27,6 +31,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
 
 type DdItemType = {
   content: React.ReactNode
@@ -46,6 +51,9 @@ export const MavCouncilFormDropFinancialRequest = () => {
     isLoading: isFinancialRequestsLoading,
     changeFinancialRequestsSubscriptionList,
   } = useFinancialRequestsContext()
+  const {
+    councilActions: { actionsMapper, allPendingActions },
+  } = useCouncilContext()
 
   useEffect(() => {
     changeFinancialRequestsSubscriptionList({
@@ -59,17 +67,35 @@ export const MavCouncilFormDropFinancialRequest = () => {
 
   const [chosenDdItem, setChosenDdItem] = useState<DdItemType | undefined>()
 
-  const dropDownItems = useMemo(
-    () =>
-      ongoingFinRequestsIds.map<DdItemType>((frId) => {
+  const dropDownItems = useMemo(() => {
+    // map all fin requests that are dropping to exclude them from list "fin requests to drop"
+    const droppingFinRequestsMapper = allPendingActions.reduce<Record<string, boolean>>((acc, actionId) => {
+      const dropFinReqActionParams =
+        actionsMapper[actionId].actionClientId === MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST
+          ? actionsMapper[actionId].parameters
+          : null
+      const dropFinReqActionFinReqIdInBytes =
+        dropFinReqActionParams?.find(({ name }) => name === COUNCIL_ACTIONS_PARAMS_MAPPER.requestId)?.value ?? null
+      const dropFinReqActionFinReqIdInConverted = dropFinReqActionFinReqIdInBytes
+        ? convertBytes(dropFinReqActionFinReqIdInBytes, BYTES_STRING_TYPE)
+        : null
+
+      if (dropFinReqActionFinReqIdInConverted) acc[dropFinReqActionFinReqIdInConverted] = true
+      return acc
+    }, {})
+
+    return ongoingFinRequestsIds.reduce<Array<DdItemType>>((acc, frId) => {
+      if (!droppingFinRequestsMapper[frId]) {
         const fr = financialRequestsMapper[frId]
-        return {
+        acc.push({
           content: <DropdownTruncateOption text={`${fr.type} ${fr.purpose}`} />,
+
           id: frId,
-        }
-      }),
-    [ongoingFinRequestsIds, financialRequestsMapper],
-  )
+        })
+      }
+      return acc
+    }, [])
+  }, [ongoingFinRequestsIds, financialRequestsMapper, allPendingActions, actionsMapper])
 
   // drop financial request council action
   const dropFinReqContractActionProps: HookContractActionArgs = useMemo(

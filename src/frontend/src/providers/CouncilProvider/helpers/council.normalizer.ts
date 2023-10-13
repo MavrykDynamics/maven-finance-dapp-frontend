@@ -43,7 +43,6 @@ export const normalizeCouncilAction = (
     id: indexerAction.id,
     actionClientId,
     actionName,
-    actionType: indexerAction.action_type,
     executed: indexerAction.executed,
     initiatorAddress: indexerAction.initiator.address,
     signersCount: indexerAction.signers_count,

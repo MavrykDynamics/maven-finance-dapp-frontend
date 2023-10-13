@@ -26,11 +26,6 @@ export type CouncilActionType = {
   id: number
   actionClientId: CouncilsActionsIds
   actionName: string
-  /**
-   * remove when actions pending component will be removed (after carousel update)
-   * @deprecated
-   */
-  actionType: string
   executed: boolean
   initiatorAddress: string
   signersCount: number

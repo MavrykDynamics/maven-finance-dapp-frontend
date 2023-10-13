@@ -1,36 +1,6 @@
 import { MichelsonType, unpackDataBytes } from '@taquito/michel-codec'
 import { z } from 'zod'
 
-/**
- * @deprecated
- */
-export const bytesToText = (bytes: string) => {
-  try {
-    const data = unpackDataBytes({ bytes }, stringType)
-
-    const parseBytesData = byteSchema.safeParse(data)
-    const parseIntData = intSchema.safeParse(data)
-
-    if (parseBytesData.success) {
-      return parseBytesData.data[0].bytes
-    }
-
-    if (parseIntData.success) {
-      return parseIntData.data.int
-    }
-
-    if (parseBytesData.error || parseIntData.error) {
-      console.error('parsing bytes to text error:', parseBytesData.error || parseIntData.error)
-      return ''
-    }
-
-    return ''
-  } catch (e) {
-    console.log('bytesToText', e)
-    return ''
-  }
-}
-
 // bytes types
 export const BYTES_ADDRESS_TYPE = 'ADDRESS'
 export const BYTES_STRING_TYPE = 'STRING'

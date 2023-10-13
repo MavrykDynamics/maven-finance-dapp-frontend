@@ -248,7 +248,13 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
 
   // MAVRYK COUNCIL OTHER FORMS
   // ------------------------------------------------------------------------------------
-  [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {},
+  [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.requestId]: {
+      className: 'request-id',
+      type: 'default',
+      cellName: 'Financial Request Id',
+    },
+  },
 
   // BREAG GLASS COUNCIL MEMBERS FORMS
   // ------------------------------------------------------------------------------------
@@ -457,7 +463,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "contract-address signed-amount"
+      "request-id signed-amount"
       "sign-btn sign-btn"
     `,
   },
