@@ -55,12 +55,6 @@ export const BorrowingTabStyled = styled.div`
     display: grid;
     grid-template-columns: auto 250px;
   }
-
-  .checkbox {
-    span {
-      color: ${({ theme }) => theme.mainHeadingText};
-    }
-  }
 `
 
 export const VaultsList = styled.div<{ theme: MavrykTheme }>`

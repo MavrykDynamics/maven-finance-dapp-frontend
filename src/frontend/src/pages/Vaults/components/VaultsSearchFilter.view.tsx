@@ -324,14 +324,15 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
           </div>
         </VaultsFilters>
       </VaultsSearchFilterStyled>
-      <Checkbox
-        id="vaults-zero-filter"
-        onChangeHandler={handleClickCheckbox}
-        checked={chosenDdItem[vaultsFilters.ZERO] === 'checked'}
-        className="checkbox"
-      >
-        <span>Hide vaults with a loan balance of 0</span>
-      </Checkbox>
+      <div className="checkbox-wrapper">
+        <Checkbox
+          id="vaults-zero-filter"
+          onChangeHandler={handleClickCheckbox}
+          checked={chosenDdItem[vaultsFilters.ZERO] === 'checked'}
+        >
+          Hide vaults with a loan balance of 0
+        </Checkbox>
+      </div>
     </VaultsSearchFilterWrapper>
   )
 }

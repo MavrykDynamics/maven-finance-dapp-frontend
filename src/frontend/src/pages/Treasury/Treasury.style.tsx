@@ -12,13 +12,9 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
   .content-wrapper {
     max-width: 480px;
 
-    .treasury-checkbox {
+    .treasury-checkbox-wrapper {
       margin-top: 25px;
       margin-bottom: -15px;
-
-      span {
-        color: ${({ theme }) => theme.mainHeadingText};
-      }
     }
 
     .no-treasury-table-data {

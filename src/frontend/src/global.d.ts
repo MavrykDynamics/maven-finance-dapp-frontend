@@ -23,8 +23,7 @@ declare global {
 
   type DeepNullable<T> = T extends object
     ? {
-        // TODO: DeepDeepNullable -> DeepNullable requires fixing ts errors
-        [P in keyof T]: DeepDeepNullable<T[P]> | null
+        [P in keyof T]: T extends Array<any> ? T[P] : DeepNullable<T[P]> | null
       }
     : T
 

@@ -60,9 +60,7 @@ export const USER_DATA_QUERY = gql(`
       governance_satellite_snapshots(order_by: {cycle: desc}) {
         cycle
         ready
-        user {
-          address
-        }
+        next_snapshot_cycle_id
         governance {
           cycle_id
         }

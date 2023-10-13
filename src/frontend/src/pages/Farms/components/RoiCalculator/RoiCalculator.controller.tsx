@@ -313,7 +313,6 @@ export default function RoiCalculator({
             <h4>Compounding Every</h4>
             <div className="compounding-every">
               <Checkbox
-                className="compounding-checkbox"
                 id="compounding-checkbox"
                 checked={compoundEverythingActive}
                 onChangeHandler={() => toggleCompoundEverything(!compoundEverythingActive)}

@@ -64,7 +64,9 @@ export type VaultsCtxState = {
   vaultsDashboardData: null | VaultsDashboardDataType
 }
 
-export type NullableVaultsCtxState = DeepNullable<VaultsCtxState>
+export type NullableVaultsCtxState = DeepNullable<Omit<VaultsCtxState, 'vaultsDashboardData'>> & {
+  vaultsDashboardData: VaultsCtxState['vaultsDashboardData']
+}
 
 type VaultsSubType = typeof VAULTS_ALL | typeof VAULTS_USER_ALL | typeof VAULTS_USER_DEPOSITOR
 export type VaultsSubsRecordType = {

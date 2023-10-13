@@ -1,6 +1,6 @@
 import { UTCTimestamp } from 'lightweight-charts'
 import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { DataFeedsContext, Feed } from '../dataFeeds.provider.types'
+import { DataFeedsContext, Feed, NullableDataFeedsContextStateType } from '../dataFeeds.provider.types'
 import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
@@ -69,8 +69,11 @@ export function normalizeFeeds(feeds: FullFeedsQueryType, promotionAddresses?: A
 }
 
 // Normalizer for small feeds query, that updates
-export function normalizeFeedsPrices(feedsFromCtx: DataFeedsContext['feedsMapper'], smallFeeds: SmallFeedsQueryType) {
-  return smallFeeds.reduce<DataFeedsContext['feedsMapper']>((acc, smallFeedGql) => {
+export function normalizeFeedsPrices(
+  feedsFromCtx: NonNullable<NullableDataFeedsContextStateType['feedsMapper']>,
+  smallFeeds: SmallFeedsQueryType,
+) {
+  return smallFeeds.reduce<NonNullable<NullableDataFeedsContextStateType['feedsMapper']>>((acc, smallFeedGql) => {
     const { address, last_completed_data_pct_oracle_resp, last_completed_data, last_completed_data_last_updated_at } =
       smallFeedGql
     const feedFromCtx = feedsFromCtx[address]

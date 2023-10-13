@@ -79,25 +79,53 @@ const CouncilProvider = ({ children }: Props) => {
   // reset user specific fields on user change
   useEffect(() => {
     if (prevUserAddress !== userAddress) {
-      setCouncilCtxState((prev) => ({
-        ...prev,
-        breakGlassCouncilActions: {
-          actionsMapper: prev.breakGlassCouncilActions?.actionsMapper ?? null,
-          allPendingActions: prev.breakGlassCouncilActions?.allPendingActions ?? null,
-          allPastActions: prev.breakGlassCouncilActions?.allPastActions ?? null,
-          notMyPendingActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.notMyPendingActions ?? null,
-          myPastActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.myPastActions ?? null,
-          myPendingActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.myPendingActions ?? null,
-        },
-        councilActions: {
-          actionsMapper: prev.councilActions?.actionsMapper ?? null,
-          allPendingActions: prev.councilActions?.allPendingActions ?? null,
-          allPastActions: prev.councilActions?.allPastActions ?? null,
-          notMyPendingActions: DEFAULT_COUNCIL_CTX.councilActions?.notMyPendingActions ?? null,
-          myPastActions: DEFAULT_COUNCIL_CTX.councilActions?.myPastActions ?? null,
-          myPendingActions: DEFAULT_COUNCIL_CTX.councilActions?.myPendingActions ?? null,
-        },
-      }))
+      setCouncilCtxState((prev) => {
+        const newBgCouncilUserPendingActions = prev.breakGlassCouncilActions?.allPendingActions?.filter(
+          (actionId) =>
+            actionId &&
+            prev.breakGlassCouncilActions?.actionsMapper &&
+            prev.breakGlassCouncilActions?.actionsMapper[actionId]?.initiatorAddress === userAddress,
+        )
+        const newBgCouncilNotUserPendingActions = prev.breakGlassCouncilActions?.allPendingActions?.filter(
+          (actionId) =>
+            actionId &&
+            prev.breakGlassCouncilActions?.actionsMapper &&
+            prev.breakGlassCouncilActions?.actionsMapper[actionId]?.initiatorAddress !== userAddress,
+        )
+
+        const newMavCouncilUserPendingActions = prev.councilActions?.allPendingActions?.filter(
+          (actionId) =>
+            actionId &&
+            prev.councilActions?.actionsMapper &&
+            prev.councilActions?.actionsMapper[actionId]?.initiatorAddress === userAddress,
+        )
+        const newMavCouncilNotUserPendingActions = prev.councilActions?.allPendingActions?.filter(
+          (actionId) =>
+            actionId &&
+            prev.councilActions?.actionsMapper &&
+            prev.councilActions?.actionsMapper[actionId]?.initiatorAddress !== userAddress,
+        )
+
+        return {
+          ...prev,
+          breakGlassCouncilActions: {
+            actionsMapper: prev.breakGlassCouncilActions?.actionsMapper ?? null,
+            allPendingActions: prev.breakGlassCouncilActions?.allPendingActions ?? null,
+            allPastActions: prev.breakGlassCouncilActions?.allPastActions ?? null,
+            myPastActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.myPastActions ?? null,
+            notMyPendingActions: newBgCouncilNotUserPendingActions ?? null,
+            myPendingActions: newBgCouncilUserPendingActions ?? null,
+          },
+          councilActions: {
+            actionsMapper: prev.councilActions?.actionsMapper ?? null,
+            allPendingActions: prev.councilActions?.allPendingActions ?? null,
+            allPastActions: prev.councilActions?.allPastActions ?? null,
+            myPastActions: DEFAULT_COUNCIL_CTX.councilActions?.myPastActions ?? null,
+            notMyPendingActions: newMavCouncilNotUserPendingActions ?? null,
+            myPendingActions: newMavCouncilUserPendingActions ?? null,
+          },
+        }
+      })
     }
   }, [userAddress])
 
@@ -144,7 +172,7 @@ const CouncilProvider = ({ children }: Props) => {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== MY_PAST_COUNCIL_ACTIONS_SUB,
       variables: {
         currentTimestamp: currentTimeRef.current,
-        userAddress,
+        userAddress: userAddress ?? '',
       },
       onCompleted: (data) => updateCouncilActionsData(data),
       onError: (error) => handleApolloError(error, 'MY_PAST_COUNSILS_QUERY'),
@@ -191,7 +219,7 @@ const CouncilProvider = ({ children }: Props) => {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== MY_BG_PAST_COUNCIL_ACTIONS_SUB,
       variables: {
         currentTimestamp: currentTimeRef.current,
-        userAddress,
+        userAddress: userAddress ?? '',
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
       onError: (error) => handleApolloError(error, 'MY_BG_PAST_COUNSILS_QUERY'),
