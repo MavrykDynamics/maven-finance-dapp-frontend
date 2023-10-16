@@ -189,13 +189,6 @@ export const CouncilFormsGridMapper: Record<
       "select-contracts submit-form"
     `,
   },
-  [BgCounsilDdForms.SIGN_ACTION]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
-    areaTemplate: `
-      "action-id submit-form"
-    `,
-  },
   [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,

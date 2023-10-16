@@ -8,7 +8,6 @@ import { DappConfigContext } from 'providers/DappConfigProvider/dappConfig.provi
 // mavryk council forms components
 import { BgCouncilFormSetAllContractsAdmin } from './BreakGlassCouncilForms/BgCouncilFormSetAllContractsAdmin'
 import { BgCouncilFormSetSelectedContractsAdmin } from './BreakGlassCouncilForms/BgCouncilFormSetSelectedContractsAdmin'
-import { BgCouncilFormSignAction } from './BreakGlassCouncilForms/BgCouncilFormSignAction'
 import { BgCouncilFormAddCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormAddCouncilMember'
 import { BgCouncilFormChangeCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormChangeCouncilMember'
 import { BgCouncilFormRemoveCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormRemoveCouncilMember'
@@ -43,8 +42,6 @@ export const CouncilForms = ({ councilMaxLengths, selectedAction, members }: Pro
       return <BgCouncilFormSetAllContractsAdmin />
     case BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN:
       return <BgCouncilFormSetSelectedContractsAdmin />
-    case BgCounsilDdForms.SIGN_ACTION:
-      return <BgCouncilFormSignAction />
     case BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER:
       return <BgCouncilFormAddCouncilMember maxLength={councilMaxLengths} breakGlassCouncilMembers={members} />
     case BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER:

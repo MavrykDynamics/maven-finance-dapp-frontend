@@ -334,7 +334,6 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
   // BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
   // ------------------------------------------------------------------------------------
   [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {},
-  [BgCounsilDdForms.SIGN_ACTION]: {},
   [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {},
 }
 
@@ -519,13 +518,6 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     rowsTemplate: `auto`,
     areaTemplate: `
       "select-contracts submit-form"
-    `,
-  },
-  [BgCounsilDdForms.SIGN_ACTION]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
-    areaTemplate: `
-      "action-id submit-form"
     `,
   },
   [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {

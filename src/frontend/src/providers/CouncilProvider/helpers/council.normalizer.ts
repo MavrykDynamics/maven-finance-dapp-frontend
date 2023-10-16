@@ -84,7 +84,7 @@ export const normalizeCouncilActions = (
 
   return convertedStorageForTs.reduce<{
     allPendingActions: Array<number>
-    notMyPendingActions: Array<number>
+    actionsToSign: Array<number>
     myPendingActions: Array<number>
     allPastActions: Array<number>
     myPastActions: Array<number>
@@ -95,7 +95,7 @@ export const normalizeCouncilActions = (
 
       if (!normalizedAction) return acc
 
-      const { id: actionId, initiatorAddress, executed, expirationTime } = normalizedAction
+      const { id: actionId, initiatorAddress, executed, expirationTime, signers } = normalizedAction
 
       const isUserAction = initiatorAddress === userAddress
       const isPastAction = executed || (expirationTime && dayjs().isAfter(dayjs(expirationTime)))
@@ -108,14 +108,14 @@ export const normalizeCouncilActions = (
       // user created active actions
       if (!isPastAction && isUserAction) acc.myPendingActions.push(actionId)
       // active actions by other user, current user can vote on
-      if (!isPastAction && !isUserAction) acc.notMyPendingActions.push(actionId)
+      if (!isPastAction && userAddress && !signers.includes(userAddress)) acc.actionsToSign.push(actionId)
 
       acc.actionsMapper[actionId] = normalizedAction
       return acc
     },
     {
       allPendingActions: [],
-      notMyPendingActions: [],
+      actionsToSign: [],
       myPendingActions: [],
       allPastActions: [],
       myPastActions: [],

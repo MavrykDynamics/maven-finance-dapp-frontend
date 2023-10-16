@@ -59,7 +59,7 @@ export const BreakGlassCouncil = () => {
     breakGlassCouncilMembers,
     breakGlassCouncilActions: {
       allPendingActions,
-      notMyPendingActions,
+      actionsToSign,
       myPendingActions,
       allPastActions,
       myPastActions,
@@ -166,7 +166,7 @@ export const BreakGlassCouncil = () => {
           <CouncilView
             isBreakGlassCouncil
             allPendingActions={allPendingActions}
-            notMyPendingActions={notMyPendingActions}
+            actionsToSign={actionsToSign}
             myPendingActions={myPendingActions}
             allPastActions={allPastActions}
             myPastActions={myPastActions}

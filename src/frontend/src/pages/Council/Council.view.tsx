@@ -66,7 +66,7 @@ type Props = {
   isBreakGlassCouncil?: boolean
 
   allPendingActions: number[]
-  notMyPendingActions: number[]
+  actionsToSign: number[]
   myPendingActions: number[]
   allPastActions: number[]
   myPastActions: number[]
@@ -86,7 +86,7 @@ export function CouncilView({
   isBreakGlassCouncil = false,
 
   allPendingActions,
-  notMyPendingActions,
+  actionsToSign,
   myPendingActions,
   allPastActions,
   myPastActions,
@@ -205,7 +205,7 @@ export function CouncilView({
   const openPopup = useCallback(() => setIsUpdateCouncilMemberInfo(true), [])
   const closePopup = useCallback(() => setIsUpdateCouncilMemberInfo(false), [])
 
-  const displayPendingSignature = Boolean(isMyActionsTabs && isUserCouncil && notMyPendingActions.length)
+  const displayPendingSignature = Boolean(isMyActionsTabs && isUserCouncil && actionsToSign.length)
 
   const [chosenDdItem, setChosenDdItem] = useState<ActionsDDItemType | undefined>()
 
@@ -275,8 +275,8 @@ export function CouncilView({
               <CouncilActionsToSign
                 isBreakGlassCouncil={isBreakGlassCouncil}
                 // TODO: for testing remove before merge
-                // actionstoSign={[...myPendingActions, ...notMyPendingActions]}
-                actionstoSign={notMyPendingActions}
+                // actionstoSign={[...myPendingActions, ...actionsToSign]}
+                actionstoSign={actionsToSign}
                 actionsMapper={actionsMapper}
               />
             </>

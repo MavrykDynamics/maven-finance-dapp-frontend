@@ -70,7 +70,7 @@ export type CouncilSubsRecordType = {
 // ----- counsils context types
 export type CouncilActionsRecordType = {
   allPendingActions: CouncilActionsType['allPendingActions']
-  notMyPendingActions: CouncilActionsType['notMyPendingActions']
+  actionsToSign: CouncilActionsType['actionsToSign']
   myPendingActions: CouncilActionsType['myPendingActions']
   allPastActions: CouncilActionsType['allPastActions']
   myPastActions: CouncilActionsType['myPastActions']

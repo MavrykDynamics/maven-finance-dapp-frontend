@@ -65,7 +65,7 @@ export const DEFAULT_COUNCIL_ACTIVE_SUBS: CouncilSubsRecordType = {
 const NULLABLE_COUNCIL_ACTIONS_DATA: NullableCouncilActionsRecordType = {
   allPendingActions: null,
   myPendingActions: null,
-  notMyPendingActions: null,
+  actionsToSign: null,
   allPastActions: null,
   myPastActions: null,
   actionsMapper: null,
@@ -74,7 +74,7 @@ const NULLABLE_COUNCIL_ACTIONS_DATA: NullableCouncilActionsRecordType = {
 const EMPTY_COUNCIL_ACTIONS_DATA: CouncilActionsRecordType = {
   allPendingActions: [],
   myPendingActions: [],
-  notMyPendingActions: [],
+  actionsToSign: [],
   allPastActions: [],
   myPastActions: [],
   actionsMapper: {},

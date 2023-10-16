@@ -55,10 +55,10 @@ export const getCouncilProviderReturnValue = ({
     activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB && councilActions?.allPastActions === null
   const isMavCounsilMyPastActionsLoading =
     activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB &&
-    (councilActions?.myPastActions === null || councilActions?.notMyPendingActions === null)
+    (councilActions?.myPastActions === null || councilActions?.actionsToSign === null)
   const isMavCounsilMyOngoingActionsLoading =
     activeSubs[COUNCIL_ACTIONS_DATA] === ALL_ONGOING_COUNCIL_ACTIONS_SUB &&
-    (councilActions?.myPendingActions === null || councilActions?.notMyPendingActions === null)
+    (councilActions?.myPendingActions === null || councilActions?.actionsToSign === null)
 
   // break glass council loadings
   const isBgCounsilPendingActionsLoading =
@@ -69,10 +69,10 @@ export const getCouncilProviderReturnValue = ({
     breakGlassCouncilActions?.allPastActions === null
   const isBgCounsilMyPastActionsLoading =
     activeSubs[BG_COUNCIL_ACTIONS_DATA] === MY_BG_PAST_COUNCIL_ACTIONS_SUB &&
-    (breakGlassCouncilActions?.myPastActions === null || breakGlassCouncilActions?.notMyPendingActions === null)
+    (breakGlassCouncilActions?.myPastActions === null || breakGlassCouncilActions?.actionsToSign === null)
   const isBgCounsilMyOngoingActionsLoading =
     activeSubs[BG_COUNCIL_ACTIONS_DATA] === ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB &&
-    (breakGlassCouncilActions?.myPendingActions === null || breakGlassCouncilActions?.notMyPendingActions === null)
+    (breakGlassCouncilActions?.myPendingActions === null || breakGlassCouncilActions?.actionsToSign === null)
 
   const isLoading =
     isBgCounsilMembersLoading ||
@@ -163,8 +163,6 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
     // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
     case 'removeBreakGlassControll':
       return BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL
-    case 'signAction':
-      return BgCounsilDdForms.SIGN_ACTION
     case 'unpauseAllEntrypoints':
       return BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS
 
