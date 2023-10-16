@@ -42,27 +42,23 @@ export const CouncilActionReadMorePopupContent = styled(PopupContentWrapperBase)
     color: ${({ theme }) => theme.subHeadingText};
   }
 
-  .contracts-list {
-    display: flex;
-    flex-direction: column;
+  .contracts-grid {
+    display: grid;
+    grid-template-columns: max-content auto;
+    grid-template-rows: auto;
     row-gap: 3px;
 
-    /* TODO: add styling when contracts will be ready */
-    .contract-item {
-      display: flex;
-      justify-content: space-between;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
 
-      width: 80%;
+    color: ${({ theme }) => theme.subHeadingText};
 
-      font-weight: 600;
-      font-size: 18px;
-      line-height: 27px;
-
-      color: ${({ theme }) => theme.subHeadingText};
-
-      &:hover {
-        opacity: 0.8;
-      }
+    .contract-name {
+      margin-left: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 
@@ -73,9 +69,11 @@ export const CouncilActionReadMorePopupContent = styled(PopupContentWrapperBase)
     width: calc(100% - 105px);
     background: ${({ theme }) => `linear-gradient(to bottom, transparent 20%, ${theme.cards} 100%)`};
     transition: 0.5s opacity;
+    visibility: visible;
 
     &.removeShadow {
       opacity: 0;
+      visibility: hidden;
     }
   }
 `

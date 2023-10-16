@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLockBodyScroll, useScroll } from 'react-use'
 
 // view
@@ -8,6 +8,9 @@ import { PopupContainer } from 'app/App.components/popup/PopupMain.style'
 import { CouncilActionReadMorePopupContent } from 'app/App.components/popup/bases/CouncilPopup.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+
+// hooks
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
 
 export const ACTION_READ_MORE_PURPOSE = 'ACTION_READ_MORE_PURPOSE'
 export const ACTION_READ_MORE_CONTRACTS_LIST = 'ACTION_READ_MORE_CONTRACTS_LIST'
@@ -29,7 +32,11 @@ type Props = {
   popupContentData: ActionReadMorePopupDataType | null
 }
 
+/**
+ * NOTE: contractStatuses should be subscribed in the page file
+ */
 export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => {
+  const { contractStatuses } = useContractStatusesContext()
   const scrollRef = useRef<null | HTMLDivElement>(null)
   const { y: scrolledY } = useScroll(scrollRef)
   const [removeShadow, setRemoveShadow] = useState(false)
@@ -37,6 +44,15 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
   useLockBodyScroll(Boolean(popupContentData))
 
   const isPopupShown = Boolean(popupContentData)
+
+  const mapperContractAddresses = useMemo(
+    () =>
+      contractStatuses.reduce<Record<string, string>>((acc, { address: contractAddress, title: contractName }) => {
+        acc[contractAddress] = contractName
+        return acc
+      }, {}),
+    [contractStatuses],
+  )
 
   useEffect(() => {
     setRemoveShadow(
@@ -62,15 +78,17 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
           <div className="content-wrapper scroll-block" ref={scrollRef}>
             {popupContentData?.contentType === ACTION_READ_MORE_PURPOSE ? <p>{popupContentData.purposeText}</p> : null}
             {popupContentData?.contentType === ACTION_READ_MORE_CONTRACTS_LIST ? (
-              <div className="contracts-list">
+              <div className="contracts-grid">
                 {popupContentData.constractsList.map((contractAddress) => {
+                  const contractName = mapperContractAddresses[contractAddress]
+                  if (!contractName) return null
                   return (
-                    <div className="contract-item">
+                    <>
                       <div className="contract-address">
                         <TzAddress tzAddress={contractAddress} hasIcon />
                       </div>
-                      – <div className="contract-name">{contractAddress}</div>
-                    </div>
+                      <div className="contract-name">– {contractName}</div>
+                    </>
                   )
                 })}
               </div>
