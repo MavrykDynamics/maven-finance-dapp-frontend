@@ -7,11 +7,11 @@ import { parseCounsilTab } from './helpers/commonCouncil.utils'
 
 // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
-import { useEGovContext } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
 
 // consts
 import {
@@ -24,8 +24,17 @@ import {
   PROPAGATE_BREAK_GLASS_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { DEFAULT_EGOV_SUBS, EGOV_CONFIG_SUB } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
-import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/council.consts'
+import {
+  ALL_PAST_COUNSIL_TAB,
+  ALL_PENDING_COUNSIL_TAB,
+  MY_PENDING_COUNSIL_TAB,
+  PROPAGATE_BREAK_GLASS_ACTION_FORM,
+} from './helpers/council.consts'
+import {
+  CONTRACT_STATUSES_ALL_SUB,
+  CONTRACT_STATUSES_CONFIG_SUB,
+  DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
+} from 'providers/ContractStatuses/helpers/contractStatuses.consts'
 
 // view
 import { Page } from 'styles'
@@ -46,7 +55,6 @@ export const BreakGlassCouncil = () => {
   const {
     contractAddresses: { breakGlassAddress },
     globalLoadingState: { isActionActive },
-    dappContracts,
   } = useDappConfigContext()
   const {
     userAddress,
@@ -66,21 +74,22 @@ export const BreakGlassCouncil = () => {
       actionsMapper,
     },
   } = useCouncilContext()
-
   const {
-    changeEGovSubscriptionsList,
-    config: { emergencyGovActive },
-    isLoading: isEGovLoading,
-  } = useEGovContext()
+    isLoading: isContractStatusesLoading,
+    contractStatuses,
+    config: { isGlassBroken },
+    changeContractStatusesSubscriptionsList,
+  } = useContractStatusesContext()
 
   useEffect(() => {
-    changeEGovSubscriptionsList({
-      [EGOV_CONFIG_SUB]: true,
+    changeContractStatusesSubscriptionsList({
+      [CONTRACT_STATUSES_ALL_SUB]: true,
+      [CONTRACT_STATUSES_CONFIG_SUB]: true,
     })
 
     return () => {
       changeCouncilSubscriptionList(DEFAULT_COUNCIL_ACTIVE_SUBS)
-      changeEGovSubscriptionsList(DEFAULT_EGOV_SUBS)
+      changeContractStatusesSubscriptionsList(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
     }
   }, [])
 
@@ -117,9 +126,9 @@ export const BreakGlassCouncil = () => {
 
     return await propagateBreakGlass(
       breakGlassAddress,
-      dappContracts.map(({ address }) => address),
+      contractStatuses.filter(({ admin }) => admin !== breakGlassAddress).map(({ address }) => address),
     )
-  }, [userAddress, breakGlassAddress, bug, dappContracts])
+  }, [userAddress, breakGlassAddress, bug, contractStatuses])
 
   const propagateBreakGlassContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -131,11 +140,15 @@ export const BreakGlassCouncil = () => {
 
   const { action: handleClickPropagateBreakGlass } = useContractAction(propagateBreakGlassContractActionProps)
 
+  const isPropagateActionActive = Boolean(
+    allPendingActions.find((actionId) => actionsMapper[actionId].actionClientId === PROPAGATE_BREAK_GLASS_ACTION_FORM),
+  )
+
   return (
     <Page>
       <PageHeader page={'break glass council'} avatar={breakGlassAvatar} />
 
-      {isBreakGlassCounsilLoading || isEGovLoading ? (
+      {isBreakGlassCounsilLoading || isContractStatusesLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading Break Glass Counsil Data</div>
@@ -152,11 +165,10 @@ export const BreakGlassCouncil = () => {
                 </p>
               </div>
 
-              {/*  TODO: clarify disabled this field with @CasualJackie & @Sam-M-Israel */}
               <NewButton
                 kind={BUTTON_PRIMARY}
                 onClick={handleClickPropagateBreakGlass}
-                disabled={!emergencyGovActive || isActionActive}
+                disabled={!isGlassBroken || isActionActive || isPropagateActionActive}
               >
                 <Icon id="plus" />
                 Propagate Break Glass

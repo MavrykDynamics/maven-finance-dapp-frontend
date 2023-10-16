@@ -25,7 +25,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed, EmptyContainer } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 
 export const OraclesTab = () => {
   const { feedsAddresses, feedsMapper, isLoading: isFeedsLoading } = useDataFeedsContext()

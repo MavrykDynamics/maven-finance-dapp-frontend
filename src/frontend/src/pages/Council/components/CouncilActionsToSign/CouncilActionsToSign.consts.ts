@@ -1,4 +1,8 @@
-import { MavrykCounsilDdForms, BgCounsilDdForms } from 'pages/Council/helpers/council.consts'
+import {
+  MavrykCounsilDdForms,
+  BgCounsilDdForms,
+  PROPAGATE_BREAK_GLASS_ACTION_FORM,
+} from 'pages/Council/helpers/council.consts'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
 import { CouncilActionParamsNames, CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 
@@ -284,31 +288,26 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     [COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress]: {
       className: 'old-member-address',
       type: 'address',
-      // cellName: 'Council Member To Change',
       cellName: 'Member To Change',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberAddress]: {
       className: 'member-address',
       type: 'address',
-      // cellName: 'Council Member Address',
       cellName: 'New Member Address',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberName]: {
       className: 'member-name',
       type: 'default',
-      // cellName: 'Council Member Name',
       cellName: 'Member Name',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberWebsite]: {
       className: 'member-url',
       type: 'url',
-      // cellName: 'Council Member Website',
       cellName: 'Member Website',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberImage]: {
       className: 'member-image',
       type: 'image',
-      // cellName: 'Council Member Image',
       cellName: 'Member Image',
     },
   },
@@ -329,12 +328,42 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       cellName: 'New Admin Address',
     },
   },
-  [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {},
+  [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.newAdminAddress]: {
+      className: 'admin-address',
+      type: 'address',
+      cellName: 'New Admin Address',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet]: {
+      className: 'list-of-contracts',
+      type: 'default',
+      cellName: 'Contract Addresses',
+    },
+  },
 
   // BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
   // ------------------------------------------------------------------------------------
-  [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {},
-  [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {},
+  [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet]: {
+      className: 'list-of-contracts',
+      type: 'default',
+      cellName: 'Contract Addresses',
+    },
+  },
+  [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet]: {
+      className: 'list-of-contracts',
+      type: 'default',
+      cellName: 'Contract Addresses',
+    },
+  },
+  [PROPAGATE_BREAK_GLASS_ACTION_FORM]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet]: {
+      className: 'list-of-contracts',
+      type: 'default',
+      cellName: 'Contract Addresses',
+    },
+  },
 }
 
 // grid setting for council sign cards
@@ -357,7 +386,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto auto 150px`, // ready, need to clarify new header text with Sam
+    columnsTemplate: `auto auto auto 150px`, // ready
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "old-member-address member-address member-name signed-amount"
@@ -477,7 +506,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto auto 150px`, // ready, need to clarify new header text with Sam
+    columnsTemplate: `auto auto auto 150px`, // ready
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "old-member-address member-address member-name signed-amount"
@@ -514,17 +543,27 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
   [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
+    columnsTemplate: `auto auto`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "select-contracts submit-form"
+      "list-of-contracts signed-amount"
+      "sign-btn sign-btn"
     `,
   },
   [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
+    columnsTemplate: `auto auto`, // ready
+    rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "select-contracts submit-form"
+      "list-of-contracts signed-amount"
+      "sign-btn sign-btn"
+    `,
+  },
+  [PROPAGATE_BREAK_GLASS_ACTION_FORM]: {
+    columnsTemplate: `auto auto`, // ready
+    rowsTemplate: `1fr 1fr`,
+    areaTemplate: `
+      "list-of-contracts signed-amount"
+      "sign-btn sign-btn"
     `,
   },
 }

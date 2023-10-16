@@ -13,6 +13,7 @@ import {
 } from 'providers/CouncilProvider/helpers/council.consts'
 import { BYTES_STRING_TYPE, convertBytes } from 'utils/convertBytes'
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -23,6 +24,7 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // utils
+import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
 import { dropFinancialRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
 
 // hooks
@@ -85,11 +87,10 @@ export const MavCouncilFormDropFinancialRequest = () => {
     }, {})
 
     return ongoingFinRequestsIds.reduce<Array<DdItemType>>((acc, frId) => {
-      if (!droppingFinRequestsMapper[frId]) {
-        const fr = financialRequestsMapper[frId]
+      const fr = financialRequestsMapper[frId]
+      if (!droppingFinRequestsMapper[frId] && getRequestStatus(fr) === ProposalStatus.ONGOING) {
         acc.push({
           content: <DropdownTruncateOption text={`${fr.type} ${fr.purpose}`} />,
-
           id: frId,
         })
       }

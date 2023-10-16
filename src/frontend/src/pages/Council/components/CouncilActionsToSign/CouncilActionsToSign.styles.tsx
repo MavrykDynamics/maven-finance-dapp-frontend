@@ -156,6 +156,10 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
   .signed-amount {
     grid-area: signed-amount;
   }
+
+  .list-of-contracts {
+    grid-area: list-of-contracts;
+  }
 `
 
 export const CouncilActionToSignBodyStyled = styled.div<{ theme: MavrykTheme; actionId: CouncilsActionsIds }>`

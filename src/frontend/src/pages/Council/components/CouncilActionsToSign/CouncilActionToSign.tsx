@@ -67,20 +67,28 @@ export const CouncilActionToSign = ({
 
       <CouncilActionToSignBodyStyled actionId={actionClientId}>
         {gridCells.map(({ className, value, valueContent, cellName, paramName }) => {
+          const isPurposeParam = paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose
+          const isContractsSetParams = paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet
+
+          const handleOpenReadMore = isPurposeParam
+            ? () =>
+                openReadMorePopup({
+                  contentType: ACTION_READ_MORE_PURPOSE,
+                  purposeText: value,
+                })
+            : isContractsSetParams
+            ? () =>
+                openReadMorePopup({
+                  contentType: ACTION_READ_MORE_CONTRACTS_LIST,
+                  constractsList: value.split(', '),
+                })
+            : undefined
           return (
             <div className={classNames('column', className)} key={paramName}>
               <div className="name">{cellName}</div>
-              {paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose ? (
-                <div
-                  className="value open-purpose"
-                  onClick={() =>
-                    openReadMorePopup({
-                      contentType: ACTION_READ_MORE_PURPOSE,
-                      purposeText: value,
-                    })
-                  }
-                >
-                  Read Request
+              {isPurposeParam || isContractsSetParams ? (
+                <div className="value open-readmore" onClick={handleOpenReadMore}>
+                  {isPurposeParam ? 'Read Request' : 'Look Contracts'}
                 </div>
               ) : (
                 <div className="value" title={value}>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // consts
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
@@ -6,6 +6,7 @@ import { SET_CONTRACT_BAKER_ACTION } from 'providers/CouncilProvider/helpers/cou
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
 } from '../../../../app/App.components/Input/Input.constants'
@@ -26,6 +27,12 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
+import {
+  CONTRACT_STATUSES_ALL_SUB,
+  DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
+} from 'providers/ContractStatuses/helpers/contractStatuses.consts'
 
 const INIT_FORM = {
   targetContractAddress: '',
@@ -44,6 +51,21 @@ export const MavCouncilFormSetContractBaker = () => {
     contractAddresses: { councilAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
+  const {
+    isLoading: isContractStatusesLoading,
+    contractStatuses,
+    changeContractStatusesSubscriptionsList,
+  } = useContractStatusesContext()
+
+  useEffect(() => {
+    changeContractStatusesSubscriptionsList({
+      [CONTRACT_STATUSES_ALL_SUB]: true,
+    })
+
+    return () => {
+      changeContractStatusesSubscriptionsList(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
+    }
+  }, [])
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
@@ -102,7 +124,14 @@ export const MavCouncilFormSetContractBaker = () => {
       value: targetContractAddress,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateAddress(e)
+
+        // contract address should be one from contracts from contract status page
+        setFormInputStatus((prev) => ({
+          ...prev,
+          [e.target.name]: contractStatuses.find(({ address }) => address === e.target.value)
+            ? INPUT_STATUS_SUCCESS
+            : INPUT_STATUS_ERROR,
+        }))
       },
       required: true,
     }
@@ -137,7 +166,10 @@ export const MavCouncilFormSetContractBaker = () => {
 
       <CouncilFormHeaderStyled>
         <H2Title>Set Contract Baker</H2Title>
-        <div className="descr">Please enter valid function parameters for setting a contract baker</div>
+        <div className="descr">
+          Please enter valid function parameters for setting a contract baker{' '}
+          {isContractStatusesLoading ? <SpinnerCircleLoaderStyled /> : null}
+        </div>
       </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>
@@ -147,7 +179,7 @@ export const MavCouncilFormSetContractBaker = () => {
         </div>
 
         <div className="baker-hash">
-          <label>Key Hash</label>
+          <label>Baker Address</label>
           <Input inputProps={keyHashProps} settings={keyHashSettings} />
         </div>
 

@@ -34,7 +34,7 @@ import {
 // styles
 import colors from 'styles/colors'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { EmptyContainer, TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'

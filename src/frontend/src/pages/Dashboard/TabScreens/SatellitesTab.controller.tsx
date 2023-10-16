@@ -16,7 +16,7 @@ import { SatellitesContext } from 'providers/SatellitesProvider/satellites.provi
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { StatBlock } from '../Dashboard.style'
 import { EmptyContainer, SatellitesContentStyled, TabWrapperStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'

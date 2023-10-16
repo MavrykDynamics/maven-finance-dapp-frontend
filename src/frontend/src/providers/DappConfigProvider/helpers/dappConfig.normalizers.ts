@@ -60,11 +60,6 @@ export const normalizerMaxLenghts = (data: DappConfigGqlType): DappMaxLengths =>
 export const normalizeInitialConfigData = (indexerData: DappConfigGqlType) => {
   return {
     maxLenghts: normalizerMaxLenghts(indexerData),
-    dappContracts:
-      indexerData.governance[0]?.general_contracts?.map(({ contract_address, contract_name }) => ({
-        address: contract_address,
-        name: parseCamelCaseString(contract_name, CAPITALIZE_CASE),
-      })) ?? [],
     mvkFaucetAddress: indexerData.mvk_faucet[0]?.address ?? null,
     minimumStakedMvkBalance: convertNumberForClient({
       number: indexerData.delegation[0].minimum_smvk_balance,

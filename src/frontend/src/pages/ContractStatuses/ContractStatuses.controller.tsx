@@ -31,7 +31,7 @@ import {
   BGPrimaryTitle,
   BGTop,
   BGWhitelist,
-} from './BreakGlass.style'
+} from './ContractStatuses.style'
 import { Page } from 'styles'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
@@ -45,7 +45,7 @@ const ALL = 'All Contracts'
 const GENERAL = 'General Contracts'
 
 // TODO: validate tab in url?
-export const BreakGlass = () => {
+export const ContractStatuses = () => {
   const {
     isLoading: isContractStatusesLoading,
     config: { isGlassBroken, whitelistDevelopers, areContractMethodsPaused },

@@ -43,46 +43,34 @@ const ContractStatusesProvider = ({ children }: Props) => {
     useState<NullableContractStatusesContextStateType>(DEFAULT_CONTRACT_STATUSES_CTX)
   const [activeSubs, setActiveSubs] = useState<ContractStatusesSubsRecordType>(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
 
-  useQueryWithRefetch(
-    CONTRACT_STATUSES_CONFIG_QUERY,
-    {
-      skip: !activeSubs[CONTRACT_STATUSES_CONFIG_SUB],
-      onCompleted: (data) => {
-        setContractStatusesCtxState((prev) => ({
-          ...prev,
-          config: normalizeContractStatusesConfig(data),
-        }))
-      },
-      onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_CONFIG_QUERY'),
+  useQueryWithRefetch(CONTRACT_STATUSES_CONFIG_QUERY, {
+    skip: !activeSubs[CONTRACT_STATUSES_CONFIG_SUB],
+    onCompleted: (data) => {
+      setContractStatusesCtxState((prev) => ({
+        ...prev,
+        config: normalizeContractStatusesConfig(data),
+      }))
     },
-    {
-      blocksDiff: 2000,
-    },
-  )
+    onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_CONFIG_QUERY'),
+  })
 
-  useQueryWithRefetch(
-    CONTRACT_STATUSES_ALL_DATA_QUERY,
-    {
-      skip: !activeSubs[CONTRACT_STATUSES_ALL_SUB],
-      onCompleted: (data) => {
-        const normalizedContractStatuses = normalizeContractStatuses(data)
-        const areContractMethodsPaused = getContractMethodsPausedStatus(normalizedContractStatuses, 85)
+  useQueryWithRefetch(CONTRACT_STATUSES_ALL_DATA_QUERY, {
+    skip: !activeSubs[CONTRACT_STATUSES_ALL_SUB],
+    onCompleted: (data) => {
+      const normalizedContractStatuses = normalizeContractStatuses(data)
+      const areContractMethodsPaused = getContractMethodsPausedStatus(normalizedContractStatuses, 85)
 
-        setContractStatusesCtxState((prev) => ({
-          ...prev,
-          config: {
-            ...(prev.config ?? EMPTY_CONTRACT_STATUSES_CTX.config),
-            areContractMethodsPaused,
-          },
-          contractStatuses: normalizedContractStatuses,
-        }))
-      },
-      onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_ALL_DATA_QUERY'),
+      setContractStatusesCtxState((prev) => ({
+        ...prev,
+        config: {
+          ...(prev.config ?? EMPTY_CONTRACT_STATUSES_CTX.config),
+          areContractMethodsPaused,
+        },
+        contractStatuses: normalizedContractStatuses,
+      }))
     },
-    {
-      blocksDiff: 2000,
-    },
-  )
+    onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_ALL_DATA_QUERY'),
+  })
 
   const changeContractStatusesSubscriptionsList = (newSkips: Partial<ContractStatusesSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))

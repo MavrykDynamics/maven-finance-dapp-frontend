@@ -24,7 +24,11 @@ import {
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './council.consts'
-import { BgCounsilDdForms, MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
+import {
+  BgCounsilDdForms,
+  MavrykCounsilDdForms,
+  PROPAGATE_BREAK_GLASS_ACTION_FORM,
+} from 'pages/Council/helpers/council.consts'
 import { CouncilActionParamsNames } from './council.types'
 
 type CouncilContextReturnValueArgs = {
@@ -161,10 +165,12 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
       return BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN
 
     // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
-    case 'removeBreakGlassControll':
+    case 'removeBreakGlassControl':
       return BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL
     case 'unpauseAllEntrypoints':
       return BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS
+    case 'propagateBreakGlass':
+      return PROPAGATE_BREAK_GLASS_ACTION_FORM
 
     default:
       return null

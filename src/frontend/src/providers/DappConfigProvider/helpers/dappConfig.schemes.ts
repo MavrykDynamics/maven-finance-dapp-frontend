@@ -19,13 +19,6 @@ export const dappConfigSchema = z.object({
       proposal_metadata_title_max_length: z.number(),
       proposal_source_code_max_length: z.number(),
       proposal_title_max_length: z.number(),
-
-      general_contracts: z.array(
-        z.object({
-          contract_address: z.string(),
-          contract_name: z.string(),
-        }),
-      ),
     }),
   ]),
   emergency_governance: z.tuple([

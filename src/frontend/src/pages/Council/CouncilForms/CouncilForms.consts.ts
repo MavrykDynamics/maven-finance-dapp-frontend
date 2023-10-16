@@ -173,10 +173,9 @@ export const CouncilFormsGridMapper: Record<
   },
   [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {
     columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto 50px`,
+    rowsTemplate: `auto 50px`,
     areaTemplate: `
-      "admin-address ."
-      "select-contracts select-contracts"
+      "admin-address select-contracts"
       ". submit-form"
     `,
   },

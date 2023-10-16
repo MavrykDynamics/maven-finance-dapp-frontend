@@ -25,6 +25,8 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
+import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
 
 const INIT_FORM: { targetContracts: Array<CouncilContractsMultiselectOptionType> } = {
   targetContracts: [],
@@ -34,28 +36,38 @@ export function BgCouncilFormUnpauseAllEntrypoints() {
   const {
     globalLoadingState: { isActionActive },
     contractAddresses: { breakGlassAddress },
-    dappContracts,
   } = useDappConfigContext()
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
+  const {
+    breakGlassCouncilActions: { actionsMapper, allPendingActions },
+  } = useCouncilContext()
+  const {
+    contractStatuses,
+    config: { isGlassBroken },
+  } = useContractStatusesContext()
 
-  const contractsSelectOptions = useMemo<Array<CouncilContractsMultiselectOptionType>>(
-    () =>
-      [
-        {
-          label: 'All',
-          value: MULTISELECT_SELECT_ALL_OPTION_VALUE,
-          address: '',
-        },
-      ].concat(
-        dappContracts.map(({ address, name }) => ({
-          label: name,
-          value: name,
-          address,
-        })),
-      ),
-    [dappContracts],
-  )
+  const contractsSelectOptions = useMemo<Array<CouncilContractsMultiselectOptionType>>(() => {
+    const contractsThatHasPausedMethods = contractStatuses.filter(({ methods }) =>
+      Object.values(methods).some((methodStatus) => methodStatus),
+    )
+
+    return contractsThatHasPausedMethods.length
+      ? [
+          {
+            label: 'All',
+            value: MULTISELECT_SELECT_ALL_OPTION_VALUE,
+            address: '',
+          },
+        ].concat(
+          contractsThatHasPausedMethods.map(({ address, title }) => ({
+            label: title,
+            value: title,
+            address,
+          })),
+        )
+      : []
+  }, [contractStatuses])
 
   const [form, setForm] = useState(INIT_FORM)
 
@@ -109,7 +121,15 @@ export function BgCouncilFormUnpauseAllEntrypoints() {
     })
   }, [])
 
-  const isButtonDisabled = isActionActive || contractsToUnpause.length === 0
+  const isButtonDisabled =
+    isActionActive ||
+    !isGlassBroken ||
+    contractsToUnpause.length === 0 ||
+    Boolean(
+      allPendingActions.find(
+        (actionId) => actionsMapper[actionId].actionClientId === BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS,
+      ),
+    )
 
   return (
     <CouncilFormStyled formName={BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS}>

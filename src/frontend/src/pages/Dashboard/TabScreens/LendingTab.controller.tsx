@@ -15,7 +15,7 @@ import { Impact } from 'app/App.components/Impact/Impact'
 // styles
 import { StatBlock } from '../Dashboard.style'
 import { LendingContentStyled, TabWrapperStyled } from './DashboardTabs.style'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
 // utils

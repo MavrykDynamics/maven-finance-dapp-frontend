@@ -22,6 +22,8 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
+import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
 
 const INIT_FORM = {
   newAdminAddress: '',
@@ -38,6 +40,12 @@ export function BgCouncilFormSetAllContractsAdmin() {
   } = useDappConfigContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
+  const {
+    breakGlassCouncilActions: { actionsMapper, allPendingActions },
+  } = useCouncilContext()
+  const {
+    config: { isGlassBroken },
+  } = useContractStatusesContext()
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
@@ -107,7 +115,14 @@ export function BgCouncilFormSetAllContractsAdmin() {
   }, [formInputStatus.newAdminAddress, newAdminAddress])
 
   const isButtonDisabled =
-    isActionActive || Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS)
+    isActionActive ||
+    !isGlassBroken ||
+    Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS) ||
+    Boolean(
+      allPendingActions.find(
+        (actionId) => actionsMapper[actionId].actionClientId === BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN,
+      ),
+    )
 
   return (
     <CouncilFormStyled formName={BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN}>
