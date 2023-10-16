@@ -142,7 +142,7 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
     Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS) ||
     Boolean(
       allPendingActions.find(
-        (actionId) => actionsMapper[actionId].actionClientId === BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN,
+        (actionId) => actionsMapper[actionId].actionClientId === BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN,
       ),
     )
 
@@ -168,7 +168,7 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
   }, [formInputStatus.newAdminAddress, newAdminAddress])
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN}>
+    <CouncilFormStyled formName={BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

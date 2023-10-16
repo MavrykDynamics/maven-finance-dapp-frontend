@@ -163,20 +163,13 @@ export const CouncilFormsGridMapper: Record<
     `,
   },
 
-  // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
-  [BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN]: {
-    columnsTemplate: `380px auto`,
-    rowsTemplate: `auto`,
-    areaTemplate: `
-      "admin-address submit-form"
-    `,
-  },
-  [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {
+  // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORM
+  [BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto 50px`,
     areaTemplate: `
-      "admin-address select-contracts"
-      ". submit-form"
+      "admin-address submit-form"
+      "select-contracts submit-form"
     `,
   },
 

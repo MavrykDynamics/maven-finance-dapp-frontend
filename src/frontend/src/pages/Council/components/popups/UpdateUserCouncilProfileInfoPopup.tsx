@@ -38,6 +38,7 @@ import {
   UPDATE_COUNSIL_MEMBER_INFO_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 import Portal from 'app/App.components/popup/Portal'
+import { useLockBodyScroll } from 'react-use'
 
 type PropsType = {
   isBreakGlassCouncil: boolean
@@ -73,6 +74,8 @@ export const UpdateUserCouncilProfileInfoPopup = ({
   } = useDappConfigContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
+
+  useLockBodyScroll(show)
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)

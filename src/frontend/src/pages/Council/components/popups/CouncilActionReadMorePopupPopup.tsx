@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
-import { useScroll } from 'react-use'
+import { useLockBodyScroll, useScroll } from 'react-use'
 
 // view
 import Portal from 'app/App.components/popup/Portal'
@@ -33,6 +33,8 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
   const scrollRef = useRef<null | HTMLDivElement>(null)
   const { y: scrolledY } = useScroll(scrollRef)
   const [removeShadow, setRemoveShadow] = useState(false)
+
+  useLockBodyScroll(Boolean(popupContentData))
 
   const isPopupShown = Boolean(popupContentData)
 

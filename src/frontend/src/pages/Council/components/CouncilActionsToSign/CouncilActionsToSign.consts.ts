@@ -22,7 +22,6 @@ export type CouncilActionsToSignColumnsType = Record<
 >
 
 // mapper for showing only allowed cells on sign action card
-// TODO: fill other cards when data for testing will be avaliable, clarify new texts with Sam
 export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsType = {
   // MAVRYK COUNCIL MEMBERS FORMS
   // ------------------------------------------------------------------------------------
@@ -319,16 +318,9 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     },
   },
 
-  // BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
+  // BREAG GLASS COUNCIL CONTRACTS ADMIN FORM
   // ------------------------------------------------------------------------------------
-  [BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN]: {
-    [COUNCIL_ACTIONS_PARAMS_MAPPER.newAdminAddress]: {
-      className: 'admin-address',
-      type: 'address',
-      cellName: 'New Admin Address',
-    },
-  },
-  [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {
+  [BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newAdminAddress]: {
       className: 'admin-address',
       type: 'address',
@@ -367,7 +359,6 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
 }
 
 // grid setting for council sign cards
-// TODO: fill other cards grid settings when data for testing will be avaliable
 export const CouncilActionsToSignGridSettingsMapper: Record<
   CouncilsActionsIds,
   {
@@ -378,7 +369,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 > = {
   // ------- MAVRYK COUNCIL MEMBERS FORMS
   [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto 180px`, // ready
+    columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "member-address member-name signed-amount"
@@ -386,7 +377,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto auto 150px`, // ready
+    columnsTemplate: `auto auto auto 150px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "old-member-address member-address member-name signed-amount"
@@ -394,7 +385,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto`, // ready
+    columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "member-address signed-amount"
@@ -404,7 +395,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- MAVRYK COUNCIL VESTEES FORMS
   [MavrykCounsilDdForms.ADD_VESTEE]: {
-    columnsTemplate: `auto auto 180px`, // ready
+    columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address vestee-allocated-amount signed-amount"
@@ -412,7 +403,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.UPDATE_VESTEE]: {
-    columnsTemplate: `auto auto 180px`, // ready
+    columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address vestee-allocated-amount signed-amount"
@@ -420,7 +411,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {
-    columnsTemplate: `auto auto`, // ready
+    columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address signed-amount"
@@ -428,7 +419,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.REMOVE_VESTEE]: {
-    columnsTemplate: `auto auto`, // ready
+    columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "vestee-address signed-amount"
@@ -437,6 +428,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
   },
 
   // ------- MAVRYK COUNCIL TOKENS FORMS
+  // TODO: not working, can't create and action, after action is created adjust grid setting
   [MavrykCounsilDdForms.REQUEST_TOKENS]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `1fr 1fr`,
@@ -449,13 +441,14 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
-    columnsTemplate: `auto auto 180px`, // ready
+    columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "treasury-address token-amount signed-amount"
-      "purpose . sign-btn"
+    "treasury-address token-amount signed-amount"
+    "purpose . sign-btn"
     `,
   },
+  // TODO: not working, can't create and action, after action is created adjust grid setting
   [MavrykCounsilDdForms.TRANSFER_TOKENS]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `1fr 1fr`,
@@ -470,7 +463,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- MAVRYK COUNCIL BAKERS FORMS
   [MavrykCounsilDdForms.SET_BAKER]: {
-    columnsTemplate: `1fr 1fr`, // ready
+    columnsTemplate: `1fr 1fr`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "admin-address signed-amount"
@@ -478,7 +471,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
-    columnsTemplate: `1fr 150px`, // ready
+    columnsTemplate: `1fr 150px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "admin-address signed-amount"
@@ -498,7 +491,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
 
   // ------- BREAG GLASS COUNCIL MEMBERS FORMS
   [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto 180px`, // ready
+    columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "member-address member-name signed-amount"
@@ -506,7 +499,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto auto 150px`, // ready
+    columnsTemplate: `auto auto auto 150px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "old-member-address member-address member-name signed-amount"
@@ -514,7 +507,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
-    columnsTemplate: `auto auto`, // ready
+    columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "member-address signed-amount"
@@ -522,28 +515,19 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
 
-  // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
-  [BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN]: {
-    columnsTemplate: `auto auto`,
+  // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORM
+  [BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
+    columnsTemplate: `auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "admin-address signed-amount"
-      "sign-btn sign-btn"
-    `,
-  },
-  [BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN]: {
-    columnsTemplate: `1fr 1fr`,
-    rowsTemplate: `auto auto 50px`,
-    areaTemplate: `
-      "admin-address ."
-      "select-contracts select-contracts"
-      ". submit-form"
+      "list-of-contracts sign-btn"
     `,
   },
 
   // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
   [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
-    columnsTemplate: `auto auto`, // ready
+    columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "list-of-contracts signed-amount"
@@ -551,7 +535,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
-    columnsTemplate: `auto auto`, // ready
+    columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "list-of-contracts signed-amount"
@@ -559,7 +543,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
   [PROPAGATE_BREAK_GLASS_ACTION_FORM]: {
-    columnsTemplate: `auto auto`, // ready
+    columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "list-of-contracts signed-amount"

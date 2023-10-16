@@ -7,7 +7,6 @@ import {
 } from '../council.provider.types'
 
 // BG council actions
-export const SET_ALL_CONTRACTS_ADMIN_ACTION = 'setAllContractsAdminAction'
 export const SET_SELECTED_CONTRACTS_ADMIN_ACTION = 'setContractsAdminAction'
 export const REMOVE_BG_CONTROLL_ACTION = 'removeBreakGlassControl'
 export const UNPAUSE_ALL_ENTRYPOINTS_ACTION = 'unpauseAllEntrypointsAction'

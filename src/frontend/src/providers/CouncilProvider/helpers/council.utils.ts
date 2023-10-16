@@ -158,11 +158,9 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
     case 'dropFinancialRequest':
       return MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST
 
-    // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
-    case 'setAllContractsAdmin':
-      return BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN
+    // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORM
     case 'setContractsAdmin':
-      return BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN
+      return BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN
 
     // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
     case 'removeBreakGlassControl':

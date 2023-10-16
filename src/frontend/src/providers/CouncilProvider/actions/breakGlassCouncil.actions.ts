@@ -2,21 +2,6 @@ import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
-// Set All Contracts Admin
-export const setAllContractsAdmin = async (breakGlassAddress: string, newAdminAddress: string) => {
-  try {
-    // prepare and send transaction
-    const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(breakGlassAddress)
-    const setAllContractsAdminMetaData = contract?.methods.setAllContractsAdmin(newAdminAddress)
-
-    return await getEstimationResult(setAllContractsAdminMetaData)
-  } catch (error) {
-    const e = unknownToError(error)
-    return { actionSuccess: false, error: new WalletOperationError(e) }
-  }
-}
-
 // Set Single Contract Admin
 export const setSelectedContractsAdmin = async (
   breakGlassAddress: string,
