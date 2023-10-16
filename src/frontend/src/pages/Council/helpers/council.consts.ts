@@ -28,7 +28,7 @@ export const BgCounsilPageTitles = {
   membersName: 'Break Glass Council',
   allPastActions: 'Past Break Glass Council Actions',
   allPending: 'Pending Signature Council Actions',
-}
+} as const
 
 export const BgCounsilDdForms = {
   BG_ADD_COUNCIL_MEMBER: 'BG_ADD_COUNCIL_MEMBER',
@@ -40,10 +40,10 @@ export const BgCounsilDdForms = {
 } as const
 
 // common consts for councils
-export const MY_PENDING_COUNSIL_TAB = ''
-export const MY_PAST_COUNSIL_TAB = 'my-past-actions'
-export const ALL_PENDING_COUNSIL_TAB = 'pending-actions'
-export const ALL_PAST_COUNSIL_TAB = 'past-actions'
+export const MY_PENDING_COUNSIL_TAB = '' as const
+export const MY_PAST_COUNSIL_TAB = 'my-past-actions' as const
+export const ALL_PENDING_COUNSIL_TAB = 'pending-actions' as const
+export const ALL_PAST_COUNSIL_TAB = 'past-actions' as const
 
 export const UPDATE_USER_COUNCIL_PROFILE_FORM = 'UPDATE_USER_COUNCIL_PROFILE_FORM' as const
 export const PROPAGATE_BREAK_GLASS_ACTION_FORM = 'PROPAGATE_BREAK_GLASS_ACTION_FORM' as const
@@ -70,4 +70,4 @@ export const COUNCIL_FORMS_NAMES_MAPPER: Record<CouncilsActionsIds, string> = {
   BG_CHANGE_COUNCIL_MEMBER: 'Change Council Member',
   BG_REMOVE_COUNCIL_MEMBER: 'Remove Council Member',
   PROPAGATE_BREAK_GLASS_ACTION_FORM: 'Propagate Break Glass',
-}
+} as const

@@ -6,7 +6,6 @@ import { normalizeContractStatuses } from './normalizeContractStatuses'
 import {
   ContractStatusesContext,
   ContractStatusesContextStateType,
-  ContractStatusesStorage,
   ContractStatusesSubsRecordType,
   NullableContractStatusesContextStateType,
 } from '../contractStatuses.provider.types'

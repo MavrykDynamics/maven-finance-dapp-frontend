@@ -32,7 +32,6 @@ import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCo
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type Props = {
   action: CouncilActionType
@@ -53,13 +52,11 @@ export const CouncilActionToSign = ({
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
-  const { userAddress } = useUserContext()
 
-  const { actionName, id, parameters, councilSize, signersCount, actionClientId, signers } = action
+  const { actionName, id, parameters, councilSize, signersCount, actionClientId } = action
   const gridCells = getCardToSignBodyCels(parameters, actionClientId, tokensMetadata)
 
   const handleSignAction = () => signActionHandler(id)
-  const hasUserSignedAction = signers.includes(userAddress ?? '')
 
   return (
     <CouncilActionToSignStyled className={classNames({ isLast: actionsToSignAmount - 1 === actionIndex })}>
@@ -107,12 +104,7 @@ export const CouncilActionToSign = ({
         </div>
 
         <div className="sign-btn">
-          <NewButton
-            form={BUTTON_WIDE}
-            kind={BUTTON_PRIMARY}
-            onClick={handleSignAction}
-            disabled={isActionActive || hasUserSignedAction}
-          >
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={handleSignAction} disabled={isActionActive}>
             <Icon id="sign" />
             Sign
           </NewButton>

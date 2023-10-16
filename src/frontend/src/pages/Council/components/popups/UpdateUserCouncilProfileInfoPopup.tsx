@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useLockBodyScroll } from 'react-use'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -38,7 +39,6 @@ import {
   UPDATE_COUNSIL_MEMBER_INFO_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 import Portal from 'app/App.components/popup/Portal'
-import { useLockBodyScroll } from 'react-use'
 
 type PropsType = {
   isBreakGlassCouncil: boolean

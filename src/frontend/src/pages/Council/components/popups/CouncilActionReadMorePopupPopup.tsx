@@ -41,11 +41,11 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
   const { y: scrolledY } = useScroll(scrollRef)
   const [removeShadow, setRemoveShadow] = useState(false)
 
-  useLockBodyScroll(Boolean(popupContentData))
-
   const isPopupShown = Boolean(popupContentData)
 
-  const mapperContractAddresses = useMemo(
+  useLockBodyScroll(isPopupShown)
+
+  const mappedContractAddresses = useMemo(
     () =>
       contractStatuses.reduce<Record<string, string>>((acc, { address: contractAddress, title: contractName }) => {
         acc[contractAddress] = contractName
@@ -80,7 +80,7 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
             {popupContentData?.contentType === ACTION_READ_MORE_CONTRACTS_LIST ? (
               <div className="contracts-grid">
                 {popupContentData.constractsList.map((contractAddress) => {
-                  const contractName = mapperContractAddresses[contractAddress]
+                  const contractName = mappedContractAddresses[contractAddress]
                   if (!contractName) return null
                   return (
                     <>

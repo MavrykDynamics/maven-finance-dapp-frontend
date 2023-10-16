@@ -88,6 +88,7 @@ export const MavCouncilFormDropFinancialRequest = () => {
 
     return ongoingFinRequestsIds.reduce<Array<DdItemType>>((acc, frId) => {
       const fr = financialRequestsMapper[frId]
+      // show in dd ongoing fin req, that are not in drop process
       if (!droppingFinRequestsMapper[frId] && getRequestStatus(fr) === ProposalStatus.ONGOING) {
         acc.push({
           content: <DropdownTruncateOption text={`${fr.type} ${fr.purpose}`} />,

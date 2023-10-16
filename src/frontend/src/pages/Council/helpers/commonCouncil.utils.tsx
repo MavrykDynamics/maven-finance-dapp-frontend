@@ -93,10 +93,10 @@ export const getCellData = (
       ? BYTES_ADDRESS_TYPE
       : BYTES_STRING_TYPE
 
-  // TODO: remove const, when i will be able to parse bytes correct
+  // TODO: remove const string (for testing purposes), when i will be able to parse bytes correct
   const parsedValue =
     name === COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet
-      ? 'KT1AfwRu3nnJssadd3Kt1QCaiWegzAtbV5nt, KT1SvwgLduScCvQNnh5tDZdbcaDwvj8EXtBK, KT1DXcoFzHTLbYc25t14BxAu5qu14c5KVpwS, KT1NHiQPdsMJTxLTYSXwutw4aqyZTLRtipav'
+      ? 'KT1CvnSqj4KshdaY82x1zzeyA3Ev4TRz43PN, KT1LdeHnNGfmQNZAECwcS9FdNeQ9JgueVqhE, KT1LD3oMphstZmri9V3hekg2j1bmK5RZD75S, KT1CvnSqj4KshdaY82x1zzeyA3Ev4TRz43PN, KT1LD3oMphstZmri9V3hekg2j1bmK5RZD75S, KT1LdeHnNGfmQNZAECwcS9FdNeQ9JgueVqhE'
       : convertBytes(value, bytesType)
 
   return { parsedValue, name, columnData: actionParamsCells[name] }
