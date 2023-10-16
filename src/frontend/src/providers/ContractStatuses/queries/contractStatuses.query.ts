@@ -196,7 +196,7 @@ query getAllContractStatusesData {
     last_updated_at
   }
 
-  lending_controller(where: {mock_time: {_eq: false}}) {
+  lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
     address
     admin
     last_updated_at
@@ -218,7 +218,7 @@ query getAllContractStatusesData {
     vault_withdraw_staked_token_paused
   }
   
-  vault_factory {
+  vault_factory: vault_factory {
     address
     admin
     create_vault_paused
