@@ -1,4 +1,3 @@
-import { useQuery } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
 // hooks
