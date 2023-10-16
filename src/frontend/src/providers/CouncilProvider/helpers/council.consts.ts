@@ -7,7 +7,6 @@ import {
 } from '../council.provider.types'
 
 // BG council actions
-export const SET_ALL_CONTRACTS_ADMIN_ACTION = 'setAllContractsAdminAction'
 export const SET_SELECTED_CONTRACTS_ADMIN_ACTION = 'setContractsAdminAction'
 export const REMOVE_BG_CONTROLL_ACTION = 'removeBreakGlassControl'
 export const UNPAUSE_ALL_ENTRYPOINTS_ACTION = 'unpauseAllEntrypointsAction'
@@ -65,7 +64,7 @@ export const DEFAULT_COUNCIL_ACTIVE_SUBS: CouncilSubsRecordType = {
 const NULLABLE_COUNCIL_ACTIONS_DATA: NullableCouncilActionsRecordType = {
   allPendingActions: null,
   myPendingActions: null,
-  notMyPendingActions: null,
+  actionsToSign: null,
   allPastActions: null,
   myPastActions: null,
   actionsMapper: null,
@@ -74,7 +73,7 @@ const NULLABLE_COUNCIL_ACTIONS_DATA: NullableCouncilActionsRecordType = {
 const EMPTY_COUNCIL_ACTIONS_DATA: CouncilActionsRecordType = {
   allPendingActions: [],
   myPendingActions: [],
-  notMyPendingActions: [],
+  actionsToSign: [],
   allPastActions: [],
   myPastActions: [],
   actionsMapper: {},
@@ -121,5 +120,7 @@ export const COUNCIL_ACTIONS_PARAMS_MAPPER = {
   tokenId: 'tokenId',
   purpose: 'purpose',
   keyHash: 'keyHash',
+  requestId: 'requestId',
   targetContractAddress: 'targetContractAddress',
+  contractAddressSet: 'contractAddressSet',
 } as const

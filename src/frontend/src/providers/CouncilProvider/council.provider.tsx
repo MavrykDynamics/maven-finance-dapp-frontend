@@ -113,7 +113,7 @@ const CouncilProvider = ({ children }: Props) => {
             allPendingActions: prev.breakGlassCouncilActions?.allPendingActions ?? null,
             allPastActions: prev.breakGlassCouncilActions?.allPastActions ?? null,
             myPastActions: DEFAULT_COUNCIL_CTX.breakGlassCouncilActions?.myPastActions ?? null,
-            notMyPendingActions: newBgCouncilNotUserPendingActions ?? null,
+            actionsToSign: newBgCouncilNotUserPendingActions ?? null,
             myPendingActions: newBgCouncilUserPendingActions ?? null,
           },
           councilActions: {
@@ -121,7 +121,7 @@ const CouncilProvider = ({ children }: Props) => {
             allPendingActions: prev.councilActions?.allPendingActions ?? null,
             allPastActions: prev.councilActions?.allPastActions ?? null,
             myPastActions: DEFAULT_COUNCIL_CTX.councilActions?.myPastActions ?? null,
-            notMyPendingActions: newMavCouncilNotUserPendingActions ?? null,
+            actionsToSign: newMavCouncilNotUserPendingActions ?? null,
             myPendingActions: newMavCouncilUserPendingActions ?? null,
           },
         }
@@ -242,7 +242,7 @@ const CouncilProvider = ({ children }: Props) => {
 
   // mavryk council actions update
   const updateCouncilActionsData = (data: CounsilActionsQueryType) => {
-    const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
+    const { myPastActions, myPendingActions, actionsToSign, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.council_action, userAddress)
 
     const isAllPastActionsSubActive = activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB
@@ -260,10 +260,10 @@ const CouncilProvider = ({ children }: Props) => {
         allPendingActions: isPendingActionsSubActive
           ? allPendingActions
           : prev.councilActions?.allPendingActions ?? null,
-        notMyPendingActions:
+        actionsToSign:
           isPendingActionsSubActive || isMyPastActionsSubActive
-            ? notMyPendingActions
-            : prev.councilActions?.notMyPendingActions ?? null,
+            ? actionsToSign
+            : prev.councilActions?.actionsToSign ?? null,
         myPendingActions: isPendingActionsSubActive ? myPendingActions : prev.councilActions?.myPendingActions ?? null,
         actionsMapper: { ...prev.councilActions?.actionsMapper, ...actionsMapper },
       },
@@ -272,7 +272,7 @@ const CouncilProvider = ({ children }: Props) => {
 
   // break glass council actions update
   const updateBreakGlassCouncilActionsData = (data: BgCounsilActionsQueryType) => {
-    const { myPastActions, myPendingActions, notMyPendingActions, allPastActions, allPendingActions, actionsMapper } =
+    const { myPastActions, myPendingActions, actionsToSign, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.break_glass_action, userAddress)
 
     const isAllPastActionsSubActive = activeSubs[BG_COUNCIL_ACTIONS_DATA] === ALL_BG_PAST_COUNCIL_ACTIONS_SUB
@@ -292,10 +292,10 @@ const CouncilProvider = ({ children }: Props) => {
         allPendingActions: isPendingActionsSubActive
           ? allPendingActions
           : prev.breakGlassCouncilActions?.allPendingActions ?? null,
-        notMyPendingActions:
+        actionsToSign:
           isPendingActionsSubActive || isMyPastActionsSubActive
-            ? notMyPendingActions
-            : prev.breakGlassCouncilActions?.notMyPendingActions ?? null,
+            ? actionsToSign
+            : prev.breakGlassCouncilActions?.actionsToSign ?? null,
         myPendingActions: isPendingActionsSubActive
           ? myPendingActions
           : prev.breakGlassCouncilActions?.myPendingActions ?? null,

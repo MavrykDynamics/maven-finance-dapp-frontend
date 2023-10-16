@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { CardHover } from 'styles'
 import { MavrykTheme } from 'styles/interfaces'
 import { getCouncilActionsBodiesGridSettings } from './CouncilAction.consts'
-import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
+import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 
 export const COUNCIL_COLUMN_STYLES = css`
   .column {
@@ -27,14 +27,13 @@ export const COUNCIL_COLUMN_STYLES = css`
 
       color: ${({ theme }) => theme.primaryText};
 
-      /* truncate */
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+      display: flex;
+      align-items: center;
 
-      width: fit-content;
+      height: 100%;
+      width: 100%;
 
-      &.open-purpose {
+      &.open-readmore {
         font-weight: 500;
         font-size: 14px;
         line-height: 24px;
@@ -44,6 +43,15 @@ export const COUNCIL_COLUMN_STYLES = css`
         cursor: pointer;
       }
 
+      .text {
+        /* truncate */
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
+        width: 100%;
+      }
+
       a {
         font-weight: 500;
         font-size: 14px;
@@ -51,6 +59,7 @@ export const COUNCIL_COLUMN_STYLES = css`
 
         color: ${({ theme }) => theme.linksAndButtons};
         text-decoration: underline;
+        width: 100%;
 
         /* truncate */
         white-space: nowrap;
@@ -151,7 +160,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   ${COUNCIL_CARD_BODY_AREA_NAMES}
 `
 
-export const CouncilActionBodyStyled = styled.div<{ theme: MavrykTheme; cardActionId: CouncilsFormsIds | null }>`
+export const CouncilActionBodyStyled = styled.div<{ theme: MavrykTheme; cardActionId: CouncilsActionsIds | null }>`
   display: grid;
 
   align-items: center;

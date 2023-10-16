@@ -54,7 +54,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 import { CouncilStyled, AvaliableActions, CounsilPageWrapper } from './Council.style'
-import { CounsilActionsToSignOld } from './components/CounsilActionsToSignOld'
 import { UpdateUserCouncilProfileInfoPopup } from './components/popups/UpdateUserCouncilProfileInfoPopup'
 import { CounsilSidebar } from './components/CounsilSidebar'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
@@ -64,10 +63,10 @@ import { CouncilActionsToSign } from './components/CouncilActionsToSign/CouncilA
 
 type Props = {
   selectedTab: CouncilTabsType
-  isBreakGlassCounsil?: boolean
+  isBreakGlassCouncil?: boolean
 
   allPendingActions: number[]
-  notMyPendingActions: number[]
+  actionsToSign: number[]
   myPendingActions: number[]
   allPastActions: number[]
   myPastActions: number[]
@@ -84,10 +83,10 @@ type ActionsDDItemType = {
 
 export function CouncilView({
   selectedTab,
-  isBreakGlassCounsil = false,
+  isBreakGlassCouncil = false,
 
   allPendingActions,
-  notMyPendingActions,
+  actionsToSign,
   myPendingActions,
   allPastActions,
   myPastActions,
@@ -102,29 +101,28 @@ export function CouncilView({
     contractAddresses: { councilAddress, breakGlassAddress },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
-  const { userAddress, isBreakGlassCouncil, isMavrykCouncil, isLoading: isUserLoading } = useUserContext()
+  const {
+    userAddress,
+    isBreakGlassCouncil: isUserBreakGlassCouncilMember,
+    isMavrykCouncil: isUserMavrykCouncilMember,
+    isLoading: isUserLoading,
+  } = useUserContext()
 
-  const isUserCouncil = isBreakGlassCounsil ? isBreakGlassCouncil : isMavrykCouncil
+  const isUserCouncil = isBreakGlassCouncil ? isUserBreakGlassCouncilMember : isUserMavrykCouncilMember
 
   const { pagePathname, dropDownItems, titles } = useMemo(() => {
     return {
-      titles: isBreakGlassCounsil ? BgCounsilPageTitles : MavrykCounsilPageTitles,
-      pagePathname: isBreakGlassCounsil ? '/break-glass-council' : '/mavryk-council',
-      dropDownItems: Object.values(isBreakGlassCounsil ? BgCounsilDdForms : MavrykCounsilDdForms)
-        // TODO: remove when those 3 actions will be working
-        .filter(
-          (formId) =>
-            !['UNPAUSE_ALL_ENTRYPOINTS', 'SET_SELECTED_CONTRACTS_ADMIN', 'REMOVE_BREAK_GLASS_CONTROLL'].includes(
-              formId,
-            ),
-        )
-        .map<ActionsDDItemType>((formId, index) => ({
-          content: <DropdownTruncateOption text={COUNCIL_FORMS_NAMES_MAPPER[formId]} />,
-          value: formId,
-          id: index,
-        })),
+      titles: isBreakGlassCouncil ? BgCounsilPageTitles : MavrykCounsilPageTitles,
+      pagePathname: isBreakGlassCouncil ? '/break-glass-council' : '/mavryk-council',
+      dropDownItems: Object.values(
+        isBreakGlassCouncil ? BgCounsilDdForms : MavrykCounsilDdForms,
+      ).map<ActionsDDItemType>((formId, index) => ({
+        content: <DropdownTruncateOption text={COUNCIL_FORMS_NAMES_MAPPER[formId]} />,
+        value: formId,
+        id: index,
+      })),
     }
-  }, [isBreakGlassCounsil])
+  }, [isBreakGlassCouncil])
 
   const {
     currentListName,
@@ -201,7 +199,7 @@ export function CouncilView({
   const openPopup = useCallback(() => setIsUpdateCouncilMemberInfo(true), [])
   const closePopup = useCallback(() => setIsUpdateCouncilMemberInfo(false), [])
 
-  const displayPendingSignature = Boolean(isMyActionsTabs && isUserCouncil && notMyPendingActions.length)
+  const displayPendingSignature = Boolean(isMyActionsTabs && isUserCouncil && actionsToSign.length)
 
   const [chosenDdItem, setChosenDdItem] = useState<ActionsDDItemType | undefined>()
 
@@ -227,7 +225,7 @@ export function CouncilView({
   // drop action
   const dropActionProps: HookContractActionArgs<number> = useMemo(
     () => ({
-      actionType: isBreakGlassCounsil ? DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION : DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
+      actionType: isBreakGlassCouncil ? DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION : DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
       actionFn: async (actionId: number) => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -239,14 +237,14 @@ export function CouncilView({
           return null
         }
 
-        if (isBreakGlassCounsil) {
+        if (isBreakGlassCouncil) {
           return await dropBreakGlassCouncilAction(actionId, breakGlassAddress)
         } else {
           return await dropMavrykCouncilAction(actionId, councilAddress)
         }
       },
     }),
-    [councilAddress, breakGlassAddress, isBreakGlassCounsil, userAddress],
+    [councilAddress, breakGlassAddress, isBreakGlassCouncil, userAddress],
   )
 
   const { actionWithArgs: handleDropAction } = useContractAction(dropActionProps)
@@ -268,19 +266,13 @@ export function CouncilView({
 
           {displayPendingSignature ? (
             <>
-              <CounsilActionsToSignOld
-                isBreakGlassAction={isBreakGlassCounsil}
-                actionstoSign={notMyPendingActions}
+              <CouncilActionsToSign
+                isBreakGlassCouncil={isBreakGlassCouncil}
+                // TODO: for testing remove before merge
+                // actionstoSign={[...myPendingActions, ...actionsToSign]}
+                actionstoSign={actionsToSign}
                 actionsMapper={actionsMapper}
-                members={members}
               />
-
-              {/* <CouncilActionsToSign
-                isBreakGlassCounsil={isBreakGlassCouncil}
-                // TODO: actionstoSign={notMyPendingActions}
-                actionstoSign={[...myPendingActions, ...notMyPendingActions]}
-                actionsMapper={actionsMapper}
-              /> */}
             </>
           ) : null}
 
@@ -327,7 +319,7 @@ export function CouncilView({
                 return (
                   <CouncilAction
                     key={councilAction.id}
-                    isBreakGlassCounsil={isBreakGlassCounsil}
+                    isBreakGlassCouncil={isBreakGlassCouncil}
                     handleDropAction={handleDropAction}
                     councilAction={councilAction}
                     isMyActionsTabs={isMyActionsTabs}
@@ -357,7 +349,7 @@ export function CouncilView({
       <UpdateUserCouncilProfileInfoPopup
         show={isUpdateCouncilMemberInfo}
         closePopup={closePopup}
-        isBreakGlassCounsil={isBreakGlassCounsil}
+        isBreakGlassCouncil={isBreakGlassCouncil}
         memberProfile={members.find((item) => item.memberAddress === userAddress)}
       />
     </CounsilPageWrapper>

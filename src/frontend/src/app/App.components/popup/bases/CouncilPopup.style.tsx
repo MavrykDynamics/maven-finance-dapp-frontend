@@ -17,7 +17,7 @@ export const CouncilUpdateMemberPopupContent = styled(PopupContentWrapperBase)`
   }
 `
 
-export const CouncilActionPurposePopupContent = styled(PopupContentWrapperBase)`
+export const CouncilActionReadMorePopupContent = styled(PopupContentWrapperBase)`
   padding: 30px 50px 30px 50px;
 
   display: flex;
@@ -25,33 +25,55 @@ export const CouncilActionPurposePopupContent = styled(PopupContentWrapperBase)`
   width: 100%;
   max-width: 586px;
 
-  .purpose {
-    position: relative;
+  .content-wrapper {
     margin-top: 30px;
-
     max-height: 460px;
+
+    position: relative;
     overflow: auto;
+  }
 
-    p {
-      margin: 0;
-      font-weight: 600;
-      font-size: 18px;
-      line-height: 27px;
+  p {
+    margin: 0;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 27px;
 
-      color: ${({ theme }) => theme.subHeadingText};
+    color: ${({ theme }) => theme.subHeadingText};
+  }
+
+  .contracts-grid {
+    display: grid;
+    grid-template-columns: max-content auto;
+    grid-template-rows: auto;
+    row-gap: 3px;
+
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+
+    color: ${({ theme }) => theme.subHeadingText};
+
+    .contract-name {
+      margin-left: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
+  }
 
-    .shadow {
-      position: fixed;
-      bottom: 30px;
-      height: 50px;
-      width: calc(100% - 105px);
-      background: ${({ theme }) => `linear-gradient(to bottom, transparent 20%, ${theme.cards} 100%)`};
-      transition: 0.5s opacity;
+  .shadow {
+    position: fixed;
+    bottom: 25px;
+    height: 50px;
+    width: calc(100% - 105px);
+    background: ${({ theme }) => `linear-gradient(to bottom, transparent 20%, ${theme.cards} 100%)`};
+    transition: 0.5s opacity;
+    visibility: visible;
 
-      &.removeShadow {
-        opacity: 0;
-      }
+    &.removeShadow {
+      opacity: 0;
+      visibility: hidden;
     }
   }
 `

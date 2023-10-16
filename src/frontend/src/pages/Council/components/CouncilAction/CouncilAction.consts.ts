@@ -1,11 +1,11 @@
 import { MavrykCounsilDdForms, BgCounsilDdForms } from 'pages/Council/helpers/council.consts'
 import { CouncilActionsParamsColumnsType } from 'pages/Council/helpers/council.types'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
-import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
+import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 
 // grid setting for council card bodies
 export const getCouncilActionsBodiesGridSettings = (
-  formId: CouncilsFormsIds | null,
+  formId: CouncilsActionsIds | null,
 ): {
   columnsTemplate: string
   rowsTemplate: string

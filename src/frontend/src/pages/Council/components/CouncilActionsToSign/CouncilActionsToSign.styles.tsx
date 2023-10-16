@@ -73,6 +73,10 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
     grid-area: admin-address;
   }
 
+  .request-id {
+    grid-area: request-id;
+  }
+
   /* ------- members */
   .old-member-address {
     grid-area: old-member-address;
@@ -116,6 +120,10 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
     grid-area: treasury-address;
   }
 
+  .token-contract-address {
+    grid-area: token-contract-address;
+  }
+
   .receiver-address {
     grid-area: receiver-address;
   }
@@ -147,6 +155,10 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
 
   .signed-amount {
     grid-area: signed-amount;
+  }
+
+  .list-of-contracts {
+    grid-area: list-of-contracts;
   }
 `
 

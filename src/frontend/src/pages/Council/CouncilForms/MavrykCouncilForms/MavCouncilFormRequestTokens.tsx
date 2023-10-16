@@ -106,13 +106,11 @@ export const MavCouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
 
         return await requestTokens(
           treasuryAddress,
+          userAddress,
           tokenContractAddress,
-          selectedToken.name,
+          selectedToken,
           Number(tokenAmount),
-          selectedToken.type,
-          selectedToken.id,
           purpose,
-          selectedToken.decimals,
           councilAddress,
         )
       },

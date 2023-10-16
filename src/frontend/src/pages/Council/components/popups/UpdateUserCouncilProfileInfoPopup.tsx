@@ -38,9 +38,10 @@ import {
   UPDATE_COUNSIL_MEMBER_INFO_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 import Portal from 'app/App.components/popup/Portal'
+import { useLockBodyScroll } from 'react-use'
 
 type PropsType = {
-  isBreakGlassCounsil: boolean
+  isBreakGlassCouncil: boolean
   closePopup: () => void
   memberProfile?: CouncilMembersType[number]
   show: boolean
@@ -63,7 +64,7 @@ const INIT_FORM_VALIDATION: Record<string, InputStatusType> = {
 export const UpdateUserCouncilProfileInfoPopup = ({
   closePopup,
   show,
-  isBreakGlassCounsil,
+  isBreakGlassCouncil,
   memberProfile,
 }: PropsType) => {
   const {
@@ -73,6 +74,8 @@ export const UpdateUserCouncilProfileInfoPopup = ({
   } = useDappConfigContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
+
+  useLockBodyScroll(show)
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
@@ -148,7 +151,7 @@ export const UpdateUserCouncilProfileInfoPopup = ({
     e.preventDefault()
 
     try {
-      if (isBreakGlassCounsil) {
+      if (isBreakGlassCouncil) {
         await handleUpdateBreakGlassCouncilUserProfile()
       } else {
         await handleUpdateMavrykCouncilUserProfile()

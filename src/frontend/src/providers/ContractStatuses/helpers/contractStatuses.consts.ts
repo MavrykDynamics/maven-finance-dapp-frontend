@@ -1,4 +1,7 @@
-import { ContractStatusesContextStateType, NullableContractStatusesContextStateType } from '../contractStatuses.types'
+import {
+  ContractStatusesContextStateType,
+  NullableContractStatusesContextStateType,
+} from '../contractStatuses.provider.types'
 
 // PROVIDER DEFAULT CONSTS
 export const CONTRACT_STATUSES_CONFIG_SUB = 'CONTRACT_STATUSES_CONFIG'

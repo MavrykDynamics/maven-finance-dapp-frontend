@@ -24,17 +24,17 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 type Props = {
   councilAction: CouncilActionType
-  isBreakGlassCounsil: boolean
+  isBreakGlassCouncil: boolean
   handleDropAction: (actionId: number) => void
 }
 
-export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakGlassCounsil }: Props) => {
+export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakGlassCouncil }: Props) => {
   const {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { id, actionName, actionClientId, councilSize, startDatetime, signersCount, parameters } = councilAction
 
-  const bodyCells = getCouncilCardBodyCells(parameters, actionClientId, isBreakGlassCounsil, id)
+  const bodyCells = getCouncilCardBodyCells(parameters, actionClientId, isBreakGlassCouncil, id)
 
   return (
     <CouncilActionStyled>
@@ -90,7 +90,7 @@ export const CouncilOngoingAction = ({ councilAction, handleDropAction, isBreakG
 const getCouncilCardBodyCells = (
   actionParams: CouncilActionType['parameters'],
   cardActionId: CouncilsActionsIds,
-  isBreakGlassCounsil: boolean,
+  isBreakGlassCouncil: boolean,
   actionId: number,
 ): CouncilActionParamCellType => {
   const actionParamsCells = CouncilUserOngoingActionGridCellsMapper[cardActionId]
@@ -117,7 +117,7 @@ const getCouncilCardBodyCells = (
   return [
     {
       className: 'action-meta',
-      cellName: isBreakGlassCounsil ? 'Break Glass Action ID' : 'Council Action ID',
+      cellName: isBreakGlassCouncil ? 'Break Glass Action ID' : 'Council Action ID',
       paramName: 'actionId',
       valueContent: actionId.toString(),
       value: actionId.toString(),

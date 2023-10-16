@@ -26,10 +26,6 @@ export type CouncilActionType = {
   id: number
   actionClientId: CouncilsActionsIds
   actionName: string
-  /**
-   * @deprecated
-   */
-  actionType: string
   executed: boolean
   initiatorAddress: string
   signersCount: number
@@ -37,6 +33,7 @@ export type CouncilActionType = {
   expirationTime: string | null
   councilSize: number
   counsilAddress: string
+  signers: Array<string>
   parameters: Array<{ id: number; name: CouncilActionParamsNames; value: string }>
 }
 export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
@@ -73,7 +70,7 @@ export type CouncilSubsRecordType = {
 // ----- counsils context types
 export type CouncilActionsRecordType = {
   allPendingActions: CouncilActionsType['allPendingActions']
-  notMyPendingActions: CouncilActionsType['notMyPendingActions']
+  actionsToSign: CouncilActionsType['actionsToSign']
   myPendingActions: CouncilActionsType['myPendingActions']
   allPastActions: CouncilActionsType['allPastActions']
   myPastActions: CouncilActionsType['myPastActions']

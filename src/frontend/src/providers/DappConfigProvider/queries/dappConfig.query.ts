@@ -17,12 +17,6 @@ export const DAPP_INITIAL_CONFIG_QUERY = gql(`
       proposal_metadata_title_max_length
       proposal_source_code_max_length
       proposal_title_max_length
-
-      # all dapp contracts 
-      general_contracts {
-				contract_address
-				contract_name
-			}
     }
 
     emergency_governance: emergency_governance {

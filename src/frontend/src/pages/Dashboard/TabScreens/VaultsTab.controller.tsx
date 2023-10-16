@@ -25,7 +25,7 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { EmptyContainer, TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'

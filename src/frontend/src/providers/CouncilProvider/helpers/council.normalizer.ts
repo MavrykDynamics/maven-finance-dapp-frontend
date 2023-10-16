@@ -13,6 +13,7 @@ import { COUNCIL_FORMS_NAMES_MAPPER } from 'pages/Council/helpers/council.consts
 type MavrykCounsilIndexerItemType = CounsilActionsQueryType['council_action'][number]
 type BreakGlassCounsilIndexerItemType = BgCounsilActionsQueryType['break_glass_action'][number]
 type CouncilActionParametersType = Array<{ id: number; name: string; value: string }>
+type CouncilActionSignersType = Array<{ signer: { address: string } }>
 
 const checkWhetherMavrykCounsilAction = (
   indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
@@ -36,17 +37,18 @@ export const normalizeCouncilAction = (
 
   const actionName = COUNCIL_FORMS_NAMES_MAPPER[actionClientId]
   const actionParams: CouncilActionParametersType = indexerAction.parameters
+  const actionSigners: CouncilActionSignersType = indexerAction.signers
 
   const actionCommonDataBetweenCollections = {
     id: indexerAction.id,
     actionClientId,
     actionName,
-    actionType: indexerAction.action_type,
     executed: indexerAction.executed,
     initiatorAddress: indexerAction.initiator.address,
     signersCount: indexerAction.signers_count,
     startDatetime: indexerAction.start_datetime ?? null,
     expirationTime: indexerAction.expiration_datetime ?? null,
+    signers: actionSigners.reduce<Array<string>>((acc, { signer: { address } }) => [...acc, address], []),
     parameters: actionParams.reduce<CouncilActionType['parameters']>((acc, { name, value, id }) => {
       if (checkWhetherActionParamValid(name)) {
         acc.push({
@@ -82,7 +84,7 @@ export const normalizeCouncilActions = (
 
   return convertedStorageForTs.reduce<{
     allPendingActions: Array<number>
-    notMyPendingActions: Array<number>
+    actionsToSign: Array<number>
     myPendingActions: Array<number>
     allPastActions: Array<number>
     myPastActions: Array<number>
@@ -93,7 +95,7 @@ export const normalizeCouncilActions = (
 
       if (!normalizedAction) return acc
 
-      const { id: actionId, initiatorAddress, executed, expirationTime } = normalizedAction
+      const { id: actionId, initiatorAddress, executed, expirationTime, signers } = normalizedAction
 
       const isUserAction = initiatorAddress === userAddress
       const isPastAction = executed || (expirationTime && dayjs().isAfter(dayjs(expirationTime)))
@@ -106,14 +108,14 @@ export const normalizeCouncilActions = (
       // user created active actions
       if (!isPastAction && isUserAction) acc.myPendingActions.push(actionId)
       // active actions by other user, current user can vote on
-      if (!isPastAction && !isUserAction) acc.notMyPendingActions.push(actionId)
+      if (!isPastAction && userAddress && !signers.includes(userAddress)) acc.actionsToSign.push(actionId)
 
       acc.actionsMapper[actionId] = normalizedAction
       return acc
     },
     {
       allPendingActions: [],
-      notMyPendingActions: [],
+      actionsToSign: [],
       myPendingActions: [],
       allPastActions: [],
       myPastActions: [],

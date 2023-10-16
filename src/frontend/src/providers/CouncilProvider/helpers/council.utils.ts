@@ -24,7 +24,11 @@ import {
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './council.consts'
-import { BgCounsilDdForms, MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
+import {
+  BgCounsilDdForms,
+  MavrykCounsilDdForms,
+  PROPAGATE_BREAK_GLASS_ACTION_FORM,
+} from 'pages/Council/helpers/council.consts'
 import { CouncilActionParamsNames } from './council.types'
 
 type CouncilContextReturnValueArgs = {
@@ -55,10 +59,10 @@ export const getCouncilProviderReturnValue = ({
     activeSubs[COUNCIL_ACTIONS_DATA] === ALL_PAST_COUNCIL_ACTIONS_SUB && councilActions?.allPastActions === null
   const isMavCounsilMyPastActionsLoading =
     activeSubs[COUNCIL_ACTIONS_DATA] === MY_PAST_COUNCIL_ACTIONS_SUB &&
-    (councilActions?.myPastActions === null || councilActions?.notMyPendingActions === null)
+    (councilActions?.myPastActions === null || councilActions?.actionsToSign === null)
   const isMavCounsilMyOngoingActionsLoading =
     activeSubs[COUNCIL_ACTIONS_DATA] === ALL_ONGOING_COUNCIL_ACTIONS_SUB &&
-    (councilActions?.myPendingActions === null || councilActions?.notMyPendingActions === null)
+    (councilActions?.myPendingActions === null || councilActions?.actionsToSign === null)
 
   // break glass council loadings
   const isBgCounsilPendingActionsLoading =
@@ -69,10 +73,10 @@ export const getCouncilProviderReturnValue = ({
     breakGlassCouncilActions?.allPastActions === null
   const isBgCounsilMyPastActionsLoading =
     activeSubs[BG_COUNCIL_ACTIONS_DATA] === MY_BG_PAST_COUNCIL_ACTIONS_SUB &&
-    (breakGlassCouncilActions?.myPastActions === null || breakGlassCouncilActions?.notMyPendingActions === null)
+    (breakGlassCouncilActions?.myPastActions === null || breakGlassCouncilActions?.actionsToSign === null)
   const isBgCounsilMyOngoingActionsLoading =
     activeSubs[BG_COUNCIL_ACTIONS_DATA] === ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB &&
-    (breakGlassCouncilActions?.myPendingActions === null || breakGlassCouncilActions?.notMyPendingActions === null)
+    (breakGlassCouncilActions?.myPendingActions === null || breakGlassCouncilActions?.actionsToSign === null)
 
   const isLoading =
     isBgCounsilMembersLoading ||
@@ -133,7 +137,7 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
       return MavrykCounsilDdForms.UPDATE_VESTEE
     case 'toggleVesteeLock':
       return MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK
-    case 'removeCounsilMember':
+    case 'removeVestee':
       return MavrykCounsilDdForms.REMOVE_VESTEE
 
     // ------- MAVRYK COUNCIL TOKENS FORMS
@@ -154,19 +158,17 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
     case 'dropFinancialRequest':
       return MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST
 
-    // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORMS
-    case 'setAllContractsAdmin':
-      return BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN
+    // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORM
     case 'setContractsAdmin':
-      return BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN
+      return BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN
 
     // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
-    case 'removeBreakGlassControll':
+    case 'removeBreakGlassControl':
       return BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL
-    case 'signAction':
-      return BgCounsilDdForms.SIGN_ACTION
     case 'unpauseAllEntrypoints':
       return BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS
+    case 'propagateBreakGlass':
+      return PROPAGATE_BREAK_GLASS_ACTION_FORM
 
     default:
       return null

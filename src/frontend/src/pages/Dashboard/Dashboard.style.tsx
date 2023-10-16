@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { MavrykTheme } from '../../styles/interfaces'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
 
 export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`

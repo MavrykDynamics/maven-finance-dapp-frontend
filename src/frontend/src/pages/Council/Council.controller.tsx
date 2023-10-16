@@ -39,7 +39,7 @@ export const Council = () => {
     isLoading: isCounsilLoading,
     councilActions: {
       allPendingActions,
-      notMyPendingActions,
+      actionsToSign,
       myPendingActions,
       allPastActions,
       myPastActions,
@@ -84,7 +84,7 @@ export const Council = () => {
       ) : (
         <CouncilView
           allPendingActions={allPendingActions}
-          notMyPendingActions={notMyPendingActions}
+          actionsToSign={actionsToSign}
           myPendingActions={myPendingActions}
           allPastActions={allPastActions}
           myPastActions={myPastActions}

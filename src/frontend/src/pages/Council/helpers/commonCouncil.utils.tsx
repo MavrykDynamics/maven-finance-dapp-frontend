@@ -15,7 +15,7 @@ import {
   ALL_PAST_COUNSIL_TAB,
 } from './council.consts'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
-import { BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE, convertBytes } from 'utils/bytesToString'
+import { BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE, convertBytes } from 'utils/convertBytes'
 
 // view
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
@@ -64,7 +64,7 @@ export const getCellValueContent = (
   ) : type === 'image' ? (
     <ImageWithPlug imageLink={convertedParamValue} alt={`${cellName} image`} />
   ) : (
-    convertedParamValue
+    <div className="text">{convertedParamValue}</div>
   )
 }
 
@@ -93,7 +93,11 @@ export const getCellData = (
       ? BYTES_ADDRESS_TYPE
       : BYTES_STRING_TYPE
 
-  const parsedValue = convertBytes(value, bytesType)
+  // TODO: remove const, when i will be able to parse bytes correct
+  const parsedValue =
+    name === COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet
+      ? 'KT1AfwRu3nnJssadd3Kt1QCaiWegzAtbV5nt, KT1SvwgLduScCvQNnh5tDZdbcaDwvj8EXtBK, KT1DXcoFzHTLbYc25t14BxAu5qu14c5KVpwS, KT1NHiQPdsMJTxLTYSXwutw4aqyZTLRtipav'
+      : convertBytes(value, bytesType)
 
   return { parsedValue, name, columnData: actionParamsCells[name] }
 }

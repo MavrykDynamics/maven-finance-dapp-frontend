@@ -21,7 +21,6 @@ import { FeedsActionsType } from 'providers/DataFeedsProvider/dataFeeds.provider
 // ------ context types
 export type DappConfigContextStateType = {
   maxLengths: DappMaxLengths
-  dappContracts: Array<{ name: string; address: string }>
   canUseIpfs: boolean
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number

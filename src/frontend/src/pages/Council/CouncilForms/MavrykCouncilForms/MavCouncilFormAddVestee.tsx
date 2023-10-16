@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react'
 
 // helpers
 import { addVestee } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
+import { validateFormAddress } from 'utils/validatorFunctions'
 
 // consts
 import { ADD_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import { INPUT_STATUS_SUCCESS } from '../../../../app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../../../../app/App.components/Input/Input.constants'
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 
 // view
@@ -113,7 +113,6 @@ export const MavCouncilFormAddVestee = () => {
     vestingInMonthsProps,
     vestingInMonthsSettings,
   } = useMemo(() => {
-    const validateText = validateFormField(setFormInputStatus)
     const validateAddress = validateFormAddress(setFormInputStatus)
 
     const vesteeAddressProps = {
@@ -132,7 +131,14 @@ export const MavCouncilFormAddVestee = () => {
       value: totalAllocated,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateText(e)
+
+        // validation
+        const parsedTotalAllocated = Number(e.target.value)
+        const isTotalAllocatedValid = parsedTotalAllocated > 0
+        setFormInputStatus((prev) => ({
+          ...prev,
+          [e.target.name]: isTotalAllocatedValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
       },
       required: true,
     }
@@ -143,7 +149,16 @@ export const MavCouncilFormAddVestee = () => {
       value: cliffInMonths,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateText(e)
+
+        // validation
+        const parsedCliffPeriod = Number(e.target.value)
+        const parsedVestingPeriod = Number(vestingInMonths)
+        const isCliffValueValid = parsedCliffPeriod > 0 && parsedCliffPeriod < Number(vestingInMonths)
+        const isVestingValueValid = parsedVestingPeriod > 0 && parsedVestingPeriod <= 120
+        setFormInputStatus((prev) => ({
+          ...prev,
+          [e.target.name]: isVestingValueValid && isCliffValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
       },
       required: true,
     }
@@ -154,7 +169,17 @@ export const MavCouncilFormAddVestee = () => {
       value: vestingInMonths,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
-        validateText(e)
+
+        // validation
+        const parsedVestingPeriod = Number(e.target.value)
+        const parsedCliffPeriod = Number(cliffInMonths)
+        const isVestingValueValid = parsedVestingPeriod > 0 && parsedVestingPeriod <= 120
+        const isCliffValueValid = parsedCliffPeriod > 0 && parsedCliffPeriod < parsedVestingPeriod
+        setFormInputStatus((prev) => ({
+          ...prev,
+          [e.target.name]: isVestingValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          cliffInMonths: isCliffValueValid && isVestingValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+        }))
       },
       required: true,
     }

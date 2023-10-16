@@ -50,6 +50,7 @@ const INDEXER_TABLES = {
   governance_financial_request: true,
   governance_financial_request_aggregate: true,
   emergency_governance: true,
+  emergency_governance_record: true,
   governance_proxy: true,
   whitelist_developer: true,
 

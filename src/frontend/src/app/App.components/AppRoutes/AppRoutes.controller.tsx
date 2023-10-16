@@ -7,7 +7,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 // pages
 import { Admin } from '../../../pages/Admin/Admin.controller'
 import { BecomeSatellite } from '../../../pages/BecomeSatellite/BecomeSatellite.controller'
-import { BreakGlass } from '../../../pages/BreakGlass/BreakGlass.controller'
+import { ContractStatuses } from '../../../pages/ContractStatuses/ContractStatuses.controller'
 import { Council } from '../../../pages/Council/Council.controller'
 import { BreakGlassCouncil } from 'pages/Council/BreakGlassCouncil.controller'
 import { Dashboard } from '../../../pages/Dashboard/Dashboard.controller'
@@ -92,7 +92,7 @@ export const AppRoutes = () => {
         <Governance isHistory />
       </Route>
       <Route exact path="/contract-status">
-        <BreakGlass />
+        <ContractStatuses />
       </Route>
       <Route exact path="/financial-requests">
         <FinancialRequests />

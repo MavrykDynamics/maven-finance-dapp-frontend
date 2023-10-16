@@ -32,6 +32,11 @@ export const ALL_PAST_COUNSILS_QUERY = gql(`
       initiator {
         address
       }
+      signers {
+        signer {
+          address
+        }
+      }
       parameters {
         id
         name
@@ -56,6 +61,11 @@ export const ALL_ONGOING_COUNSILS_QUERY = gql(`
       }
       initiator {
         address
+      }
+      signers {
+        signer {
+          address
+        }
       }
       parameters {
         id
@@ -108,6 +118,11 @@ export const MY_PAST_COUNSILS_QUERY = gql(`
       }
       initiator {
         address
+      }
+      signers {
+        signer {
+          address
+        }
       }
       parameters {
         id

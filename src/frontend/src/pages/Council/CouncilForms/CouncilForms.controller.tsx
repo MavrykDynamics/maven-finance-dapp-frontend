@@ -5,13 +5,13 @@ import { MavrykCounsilDdForms, BgCounsilDdForms } from '../helpers/council.const
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 import { DappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
-// mavryk council forms components
-import { BgCouncilFormSetAllContractsAdmin } from './BreakGlassCouncilForms/BgCouncilFormSetAllContractsAdmin'
+// break glass council forms components
 import { BgCouncilFormSetSelectedContractsAdmin } from './BreakGlassCouncilForms/BgCouncilFormSetSelectedContractsAdmin'
-import { BgCouncilFormSignAction } from './BreakGlassCouncilForms/BgCouncilFormSignAction'
 import { BgCouncilFormAddCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormAddCouncilMember'
 import { BgCouncilFormChangeCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormChangeCouncilMember'
 import { BgCouncilFormRemoveCouncilMember } from './BreakGlassCouncilForms/BgCouncilFormRemoveCouncilMember'
+import { BgCouncilFormUnpauseAllEntrypoints } from './BreakGlassCouncilForms/BgCouncilFormUnpauseAllEntrypoints'
+import { BgCouncilFormRemoveBreakGlassControl } from './BreakGlassCouncilForms/BgCouncilFormRemoveBreakGlassControl'
 
 // mavryk council forms components
 import { MavCouncilFormAddVestee } from './MavrykCouncilForms/MavCouncilFormAddVestee'
@@ -27,8 +27,6 @@ import { MavCouncilFormRequestTokenMint } from './MavrykCouncilForms/MavCouncilF
 import { MavCouncilFormDropFinancialRequest } from './MavrykCouncilForms/MavCouncilFormDropFinancialRequest'
 import { MavCouncilFormSetBaker } from './MavrykCouncilForms/MavCouncilFormSetBaker'
 import { MavCouncilFormSetContractBaker } from './MavrykCouncilForms/MavCouncilFormSetContractBaker'
-import { BgCouncilFormUnpauseAllEntrypoints } from './BreakGlassCouncilForms/BgCouncilFormUnpauseAllEntrypoints'
-import { BgCouncilFormRemoveBreakGlassControl } from './BreakGlassCouncilForms/BgCouncilFormRemoveBreakGlassControl'
 
 type Props = {
   councilMaxLengths: DappConfigContext['maxLengths']['council']
@@ -39,12 +37,8 @@ type Props = {
 export const CouncilForms = ({ councilMaxLengths, selectedAction, members }: Props) => {
   switch (selectedAction) {
     // break glass council forms
-    case BgCounsilDdForms.SET_ALL_CONTRACTS_ADMIN:
-      return <BgCouncilFormSetAllContractsAdmin />
-    case BgCounsilDdForms.SET_SELECTED_CONTRACTS_ADMIN:
+    case BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN:
       return <BgCouncilFormSetSelectedContractsAdmin />
-    case BgCounsilDdForms.SIGN_ACTION:
-      return <BgCouncilFormSignAction />
     case BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER:
       return <BgCouncilFormAddCouncilMember maxLength={councilMaxLengths} breakGlassCouncilMembers={members} />
     case BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER:

@@ -90,7 +90,6 @@ import {
   DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION,
   PROPAGATE_BREAK_GLASS_ACTION,
   REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-  SET_ALL_CONTRACTS_ADMIN_ACTION,
   SET_SELECTED_CONTRACTS_ADMIN_ACTION,
   UNPAUSE_ALL_ENTRYPOINTS_ACTION,
   REMOVE_BG_CONTROLL_ACTION,
@@ -732,16 +731,6 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
   },
 
   // break glass council actions -------------------------------------------------
-  [SET_ALL_CONTRACTS_ADMIN_ACTION]: {
-    start: {
-      title: 'Set All Contracts Admin...',
-      message: ACTION_START_MESSAGE_TEXT,
-    },
-    end: {
-      title: 'Set All Contracts Admin is done.',
-      message: ACTION_COMPLETION_MESSAGE_TEXT,
-    },
-  },
   [SET_SELECTED_CONTRACTS_ADMIN_ACTION]: {
     start: {
       title: 'Set Single Contract Admin...',

@@ -34,11 +34,9 @@ export const BgCounsilDdForms = {
   BG_ADD_COUNCIL_MEMBER: 'BG_ADD_COUNCIL_MEMBER',
   BG_CHANGE_COUNCIL_MEMBER: 'BG_CHANGE_COUNCIL_MEMBER',
   BG_REMOVE_COUNCIL_MEMBER: 'BG_REMOVE_COUNCIL_MEMBER',
-  SIGN_ACTION: 'SIGN_ACTION',
   UNPAUSE_ALL_ENTRYPOINTS: 'UNPAUSE_ALL_ENTRYPOINTS',
-  SET_SELECTED_CONTRACTS_ADMIN: 'SET_SELECTED_CONTRACTS_ADMIN',
+  SET_MULTIPLE_CONTRACTS_ADMIN: 'SET_MULTIPLE_CONTRACTS_ADMIN',
   REMOVE_BREAK_GLASS_CONTROLL: 'REMOVE_BREAK_GLASS_CONTROLL',
-  SET_ALL_CONTRACTS_ADMIN: 'SET_ALL_CONTRACTS_ADMIN',
 } as const
 
 // common consts for councils
@@ -47,7 +45,8 @@ export const MY_PAST_COUNSIL_TAB = 'my-past-actions'
 export const ALL_PENDING_COUNSIL_TAB = 'pending-actions'
 export const ALL_PAST_COUNSIL_TAB = 'past-actions'
 
-export const UPDATE_USER_COUNCIL_PROFILE_FORM = 'UPDATE_USER_COUNCIL_PROFILE_FORM'
+export const UPDATE_USER_COUNCIL_PROFILE_FORM = 'UPDATE_USER_COUNCIL_PROFILE_FORM' as const
+export const PROPAGATE_BREAK_GLASS_ACTION_FORM = 'PROPAGATE_BREAK_GLASS_ACTION_FORM' as const
 
 // mapper for forms names in dd
 export const COUNCIL_FORMS_NAMES_MAPPER: Record<CouncilsActionsIds, string> = {
@@ -64,12 +63,11 @@ export const COUNCIL_FORMS_NAMES_MAPPER: Record<CouncilsActionsIds, string> = {
   DROP_FINANCIAL_REQUEST: 'Drop Financial Request',
   SET_BAKER: 'Set Baker',
   SET_CONTRACT_BAKER: 'Set Contract Baker',
-  SET_ALL_CONTRACTS_ADMIN: 'Set All Contracts Admin',
-  SET_SELECTED_CONTRACTS_ADMIN: 'Set Selected Contracts Admin',
+  SET_MULTIPLE_CONTRACTS_ADMIN: 'Set Multiple Contracts Admin',
   UNPAUSE_ALL_ENTRYPOINTS: 'Unpause All Entrypoints',
-  REMOVE_BREAK_GLASS_CONTROLL: 'Remove Break Glass Controll',
-  SIGN_ACTION: 'Sign Action',
+  REMOVE_BREAK_GLASS_CONTROLL: 'Remove Break Glass Control',
   BG_ADD_COUNCIL_MEMBER: 'Add Council Member',
   BG_CHANGE_COUNCIL_MEMBER: 'Change Council Member',
   BG_REMOVE_COUNCIL_MEMBER: 'Remove Council Member',
+  PROPAGATE_BREAK_GLASS_ACTION_FORM: 'Propagate Break Glass',
 }

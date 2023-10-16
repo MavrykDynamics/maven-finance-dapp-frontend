@@ -126,7 +126,7 @@ export const MavCouncilFormSetBaker = () => {
 
       <form onSubmit={handleSubmit}>
         <div className="baker-hash">
-          <label>Baker Hash</label>
+          <label>Baker Address</label>
           <Input inputProps={bakerHashProps} settings={bakerHashSettings} />
         </div>
 

@@ -1,5 +1,6 @@
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
@@ -11,9 +12,9 @@ export const signMavrykAction = async (actionID: number, counsilAddress: string)
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(counsilAddress)
-    const setSingleContractAdminMetaData = contract?.methods.signAction(actionID)
+    const signActionAdminMetaData = contract?.methods.signAction(actionID)
 
-    return await getEstimationResult(setSingleContractAdminMetaData)
+    return await getEstimationResult(signActionAdminMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
@@ -34,14 +35,14 @@ export const addVestee = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(counsilAddress)
-    const setSingleContractAdminMetaData = contract?.methods.councilActionAddVestee(
+    const addVesteeMetaData = contract?.methods.councilActionAddVestee(
       vesteeAddress,
       convertedTotalAllocatedAmount,
       cliffInMonths,
       vestingInMonths,
     )
 
-    return await getEstimationResult(setSingleContractAdminMetaData)
+    return await getEstimationResult(addVesteeMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
@@ -60,14 +61,14 @@ export const addCouncilMember = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(counsilAddress)
-    const setSingleContractAdminMetaData = contract?.methods.councilActionAddMember(
+    const addCouncilMemberMetaData = contract?.methods.councilActionAddMember(
       newMemberAddress,
       newMemberName,
       newMemberWebsite,
       newMemberImage,
     )
 
-    return await getEstimationResult(setSingleContractAdminMetaData)
+    return await getEstimationResult(addCouncilMemberMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
@@ -220,16 +221,15 @@ export const transferTokens = async (
 // Request Tokens
 export const requestTokens = async (
   treasuryAddress: string,
+  receiverAddress: string,
   tokenContractAddress: string,
-  tokenName: string,
+  tokenToRequest: TokenMetadataType,
   tokenAmount: number,
-  tokenType: TokenType,
-  tokenId: number,
   purpose: string,
-  decimals: number,
   counsilAddress: string,
 ) => {
   try {
+    const { decimals, name, type, id } = tokenToRequest
     const convertedTokensAmount = convertNumberForContractCall({ number: tokenAmount, grade: decimals })
 
     // prepare and send transaction
@@ -237,11 +237,12 @@ export const requestTokens = async (
     const contract = await tezos.wallet.at(counsilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionRequestTokens(
       treasuryAddress,
+      receiverAddress,
       tokenContractAddress,
-      tokenName,
+      name,
       convertedTokensAmount,
-      tokenType,
-      tokenId,
+      type,
+      id,
       purpose,
     )
 

@@ -53,7 +53,6 @@ export const EmergencyGovernance = () => {
   const { changeStakingSubscriptionsList, isLoading: isDoormanLoading } = useDoormanContext()
   const {
     isLoading: isContractStatusConfigLoading,
-    // TODO: clarify isGlassBroken usage
     config: { isGlassBroken },
     changeContractStatusesSubscriptionsList,
   } = useContractStatusesContext()
@@ -150,8 +149,7 @@ export const EmergencyGovernance = () => {
                         kind={BUTTON_PRIMARY}
                         onClick={openInitiatePopup}
                         form={BUTTON_WIDE}
-                        // disabled={isGlassBroken || activeItems.length !== 0}
-                        disabled
+                        disabled={isGlassBroken || process.env.REACT_APP_ENV === 'prod'}
                       >
                         <Icon id="auction" /> Initiate
                       </Button>

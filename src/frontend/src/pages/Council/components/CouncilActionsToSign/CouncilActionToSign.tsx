@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import classNames from 'classnames'
 
 // types
@@ -6,6 +5,11 @@ import { CouncilActionType } from 'providers/CouncilProvider/council.provider.ty
 import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 import { CouncilActionParamCellType } from 'pages/Council/helpers/council.types'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import {
+  ACTION_READ_MORE_CONTRACTS_LIST,
+  ACTION_READ_MORE_PURPOSE,
+  ActionReadMorePopupDataType,
+} from '../popups/CouncilActionReadMorePopupPopup'
 
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
@@ -28,85 +32,93 @@ import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCo
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { ActionPurposePopup } from '../popups/CouncilActionPurposePopup'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type Props = {
   action: CouncilActionType
   actionsToSignAmount: number
   actionIndex: number
   signActionHandler: (id: number) => void
+  openReadMorePopup: (popupContentData: ActionReadMorePopupDataType) => void
 }
 
-export const CouncilActionToSign = ({ action, actionsToSignAmount, actionIndex, signActionHandler }: Props) => {
-  // action purpose popup
-  const [popupPurose, setPopupPurose] = useState<null | string>(null)
-  const closePopup = () => setPopupPurose(null)
-  const openPopup = (purposeText: string) => setPopupPurose(purposeText)
-
-  const { actionName, id } = action
-  const handleSignAction = () => signActionHandler(id)
-
-  return (
-    <CouncilActionToSignStyled className={classNames({ isLast: actionsToSignAmount - 1 === actionIndex })}>
-      <H2SimpleTitle>{actionName}</H2SimpleTitle>
-      <CouncilActionToSignBody handleSignAction={handleSignAction} handleOpenPurposePopup={openPopup} action={action} />
-
-      <ActionPurposePopup closePopup={closePopup} purpose={popupPurose} />
-    </CouncilActionToSignStyled>
-  )
-}
-
-const CouncilActionToSignBody = ({
-  handleSignAction,
-  handleOpenPurposePopup,
+export const CouncilActionToSign = ({
   action,
-}: {
-  handleSignAction: () => void
-  handleOpenPurposePopup: (purposeText: string) => void
-  action: CouncilActionType
-}) => {
+  actionsToSignAmount,
+  actionIndex,
+  signActionHandler,
+  openReadMorePopup,
+}: Props) => {
   const {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { tokensMetadata } = useTokensContext()
+  const { userAddress } = useUserContext()
 
-  const { parameters, councilSize, signersCount, actionClientId } = action
-
+  const { actionName, id, parameters, councilSize, signersCount, actionClientId, signers } = action
   const gridCells = getCardToSignBodyCels(parameters, actionClientId, tokensMetadata)
 
+  const handleSignAction = () => signActionHandler(id)
+  const hasUserSignedAction = signers.includes(userAddress ?? '')
+
   return (
-    <CouncilActionToSignBodyStyled actionId={actionClientId}>
-      {gridCells.map(({ className, value, valueContent, cellName, paramName }) => {
-        return (
-          <div className={classNames('column', className)} key={paramName}>
-            <div className="name">{cellName}</div>
-            {paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose ? (
-              <div className="value open-purpose" onClick={() => handleOpenPurposePopup(value)}>
-                Read Request
-              </div>
-            ) : (
-              <div className="value" title={value}>
-                {valueContent}
-              </div>
-            )}
-          </div>
-        )
-      })}
+    <CouncilActionToSignStyled className={classNames({ isLast: actionsToSignAmount - 1 === actionIndex })}>
+      <H2SimpleTitle>{actionName}</H2SimpleTitle>
 
-      <div className="column signed-amount">
-        <div className="name">Signed</div>
-        <div
-          className={`value ${councilSize / 2 < signersCount ? 'is-green' : 'is-red'}`}
-        >{`${signersCount}/${councilSize}`}</div>
-      </div>
+      <CouncilActionToSignBodyStyled actionId={actionClientId}>
+        {gridCells.map(({ className, value, valueContent, cellName, paramName }) => {
+          const isPurposeParam = paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose
+          const isContractsSetParams = paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet
 
-      <div className="sign-btn">
-        <NewButton form={BUTTON_WIDE} kind={BUTTON_PRIMARY} onClick={handleSignAction} disabled={isActionActive}>
-          <Icon id="sign" />
-          Sign
-        </NewButton>
-      </div>
-    </CouncilActionToSignBodyStyled>
+          const handleOpenReadMore = isPurposeParam
+            ? () =>
+                openReadMorePopup({
+                  contentType: ACTION_READ_MORE_PURPOSE,
+                  purposeText: value,
+                })
+            : isContractsSetParams
+            ? () =>
+                openReadMorePopup({
+                  contentType: ACTION_READ_MORE_CONTRACTS_LIST,
+                  constractsList: value.split(', '),
+                })
+            : undefined
+          return (
+            <div className={classNames('column', className)} key={paramName}>
+              <div className="name">{cellName}</div>
+              {isPurposeParam || isContractsSetParams ? (
+                <div className="value open-readmore" onClick={handleOpenReadMore}>
+                  {isPurposeParam ? 'Read Request' : 'Look Contracts'}
+                </div>
+              ) : (
+                <div className="value" title={value}>
+                  {valueContent}
+                </div>
+              )}
+            </div>
+          )
+        })}
+
+        <div className="column signed-amount">
+          <div className="name">Signed</div>
+          <div
+            className={`value ${councilSize / 2 < signersCount ? 'is-green' : 'is-red'}`}
+          >{`${signersCount}/${councilSize}`}</div>
+        </div>
+
+        <div className="sign-btn">
+          <NewButton
+            form={BUTTON_WIDE}
+            kind={BUTTON_PRIMARY}
+            onClick={handleSignAction}
+            disabled={isActionActive || hasUserSignedAction}
+          >
+            <Icon id="sign" />
+            Sign
+          </NewButton>
+        </div>
+      </CouncilActionToSignBodyStyled>
+    </CouncilActionToSignStyled>
   )
 }
 
@@ -136,6 +148,7 @@ const getCardToSignBodyCels = (
       if (parsedValue && columnData) {
         const columnValue =
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.totalAllocatedAmount ||
+          name === COUNCIL_ACTIONS_PARAMS_MAPPER.newTotalAllocatedAmount ||
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenAmount
             ? String(convertNumberForClient({ number: parseFloat(parsedValue), grade: MVK_DECIMALS }))
             : parsedValue
