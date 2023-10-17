@@ -84,10 +84,12 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
                   if (!contractName) return null
                   return (
                     <>
-                      <div className="contract-address">
+                      <div className="contract-address" key={`${contractAddress}-address`}>
                         <TzAddress tzAddress={contractAddress} hasIcon />
                       </div>
-                      <div className="contract-name">– {contractName}</div>
+                      <div className="contract-name" key={`${contractAddress}-name`}>
+                        – {contractName}
+                      </div>
                     </>
                   )
                 })}
