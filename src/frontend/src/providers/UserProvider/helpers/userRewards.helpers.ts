@@ -82,8 +82,8 @@ export function getUsersFarmRewards({
     })
 
     if (userReward) {
-      if (acc[farmAddress]) acc[farmAddress] += userReward
-      else acc[farmAddress] = userReward
+      if (acc[farmAddress]) acc[farmAddress] += Math.max(0, userReward)
+      else acc[farmAddress] = Math.max(0, userReward)
     }
     return acc
   }, {})
