@@ -22,6 +22,10 @@ const FarmCardHarvestStyled = styled(Card)`
   .info {
     display: flex;
     flex-direction: column;
+
+    .name {
+      line-height: 24px;
+    }
   }
 `
 

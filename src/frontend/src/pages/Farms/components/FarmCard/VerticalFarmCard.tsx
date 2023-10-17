@@ -81,9 +81,9 @@ export const VerticalFarmCard = ({
           <div className="value">
             <CommaNumber value={farmApy} endingText="%" />
             {/* TODO: add open ROI calc handler */}
-            <Button kind={BUTTON_SIMPLE} disabled>
+            {/* <Button kind={BUTTON_SIMPLE} disabled>
               <Icon id="calculator" />
-            </Button>
+            </Button> */}
           </div>
         </div>
 

@@ -88,6 +88,10 @@ export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Ma
 
   .double-rewards-tag {
     border-radius: 4px;
+
+    &.isTransparent {
+      opacity: 0;
+    }
   }
 
   .farm-card-header {

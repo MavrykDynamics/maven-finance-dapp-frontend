@@ -9,8 +9,9 @@ import { FARM_CARD_COINS_LARGE, FARM_CARD_COINS_MEDUIM, FarmCardCoinIcons } from
 
 // types
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { MavrykTheme } from 'styles/interfaces'
 
-const FarmCardHeaderStyled = styled.div`
+const FarmCardHeaderStyled = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
   column-gap: 15px;
@@ -30,6 +31,8 @@ const FarmCardHeaderStyled = styled.div`
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+
+      color: ${({ theme }) => theme.mainHeadingText};
     }
 
     .creator {
