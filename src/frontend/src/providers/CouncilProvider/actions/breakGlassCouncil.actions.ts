@@ -48,7 +48,7 @@ export const addCouncilMember = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(breakGlassAddress)
-    const addCouncilMemberMetaData = contract?.methods.addCouncilMember(
+    const addCouncilMemberMetaData = contract?.methods.councilActionAddMember(
       memberAddress,
       newMemberName,
       newMemberWebsite,
@@ -99,7 +99,7 @@ export const changeBgCouncilMember = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(breakGlassAddress)
-    const changeCouncilMemberMetaData = contract?.methods.changeCouncilMember(
+    const changeCouncilMemberMetaData = contract?.methods.councilActionChangeMember(
       oldCouncilMemberAddress,
       newCouncilMemberAddress,
       newMemberName,
