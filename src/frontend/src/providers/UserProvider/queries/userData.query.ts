@@ -134,6 +134,7 @@ export const USER_REWARDS_DATA_QUERY = gql(`
   
       # user farms rewards
       farm_accounts {
+        claimed_rewards
         deposited_amount
         participation_rewards_per_share
         farm {

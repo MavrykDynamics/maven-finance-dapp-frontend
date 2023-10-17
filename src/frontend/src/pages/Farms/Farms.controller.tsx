@@ -70,7 +70,7 @@ export const Farms = () => {
     allFinishedFarms,
     finishedStakedFarms,
   } = useFarmsContext()
-  const { isLoading: isUserRewardsLoading, farmAccounts } = useUserRewards()
+  const { isLoading: isUserRewardsLoading, availableFarmRewards } = useUserRewards()
 
   // Farms filter from top bar
   const farmsFilers: FarmsFiltersStateType = useMemo(() => {
@@ -222,7 +222,7 @@ export const Farms = () => {
                   return (
                     <FarmCard
                       farm={farm}
-                      userFarmRewards={farmAccounts}
+                      userFarmRewards={availableFarmRewards}
                       key={farm.address}
                       isVertical={isVerticalView}
                       expandCallback={openFarmCallback}

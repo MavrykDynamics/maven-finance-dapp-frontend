@@ -85,6 +85,7 @@ export const CounsilSidebar = ({
               key={item.id}
               image={item.image}
               name={item.name}
+              isMemberSatellite={item.isMemberSatellite}
               memberAddress={item.memberAddress}
               openModal={openUpdateMemberProfilePopup}
               showUpdateInfo={isUserCounsil}

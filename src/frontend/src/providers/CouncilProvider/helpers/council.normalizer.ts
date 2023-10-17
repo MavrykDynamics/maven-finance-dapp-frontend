@@ -138,6 +138,7 @@ export function normalizeCouncilMembers(
       image: item.image,
       memberAddress: item.user.address,
       website: item.website,
+      isMemberSatellite: item.user.satellites[0]?.currently_registered && item.user.satellites[0]?.status === 0,
     }
   })
 }

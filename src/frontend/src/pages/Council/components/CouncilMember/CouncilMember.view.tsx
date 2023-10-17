@@ -18,17 +18,18 @@ type Props = {
   image: string
   name: string
   memberAddress: string
+  isMemberSatellite: boolean
   openModal: () => void
   showUpdateInfo?: boolean
 }
 
 export const CouncilMemberView = (props: Props) => {
-  const { userAddress, isSatellite } = useUserContext()
+  const { userAddress } = useUserContext()
   const {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { image, name, memberAddress, openModal, showUpdateInfo = true } = props
+  const { image, name, memberAddress, isMemberSatellite, openModal, showUpdateInfo = true } = props
 
   const isMe = memberAddress === userAddress
 
@@ -61,7 +62,7 @@ export const CouncilMemberView = (props: Props) => {
 
   if (isMe) return memberContent
 
-  return isSatellite ? (
+  return isMemberSatellite ? (
     <CustomLink to={`/satellites/satellite-details/:satelliteId`} params={{ satelliteId: memberAddress }}>
       {memberContent}
     </CustomLink>

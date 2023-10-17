@@ -6,11 +6,12 @@ import { UserMetadataType, UserRewardsType } from '../user.provider.types'
 
 // utils
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getUserDoomanRewards, getUserSatelliteRewards } from './userRewards.helpers'
+import { getUserDoomanRewards, getUserSatelliteRewards, getUsersFarmRewards } from './userRewards.helpers'
 
 // consts
 import { MVK_DECIMALS } from 'utils/constants'
 import { DEFAULT_USER_AVATAR } from './user.consts'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }): UserMetadataType => {
   const {
@@ -84,9 +85,16 @@ export const normalizeUserRewards = ({
       number: doorman_stake_accounts[0]?.total_satellite_rewards_claimed ?? 0,
       grade: MVK_DECIMALS,
     }),
-    // TODO: add farm rewards, when farms will be available to test
-    gatheredFarmRewards: 0,
-    availableFarmRewards: {},
+    gatheredFarmRewards: farm_accounts.reduce((acc, { claimed_rewards }) => {
+      return (acc += convertNumberForClient({
+        number: claimed_rewards,
+        grade: MVK_DECIMALS,
+      }))
+    }, 0),
+    availableFarmRewards: getUsersFarmRewards({
+      userFarmsRewardsDataFromIndexer: farm_accounts,
+      currentLvl: currentIndexerLevelProxy.currentIndexedLevel,
+    }),
     availableSatellitesRewards,
     availableDoormanRewards,
     availableProposalRewards,

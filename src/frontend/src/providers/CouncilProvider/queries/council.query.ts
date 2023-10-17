@@ -10,6 +10,10 @@ export const COUNCIL_MEMBERS_QUERY = gql(`
         website
         user {
           address
+          satellites {
+            status
+            currently_registered
+          }
         }
       }
     }

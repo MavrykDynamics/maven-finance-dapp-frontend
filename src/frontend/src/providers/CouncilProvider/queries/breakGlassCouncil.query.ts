@@ -9,6 +9,10 @@ export const BREAK_GLASS_COUNCIL_MEMBERS_QUERY = gql(`
       id
       user {
         address
+        satellites {
+          status
+          currently_registered
+        }
       }
     }
   }

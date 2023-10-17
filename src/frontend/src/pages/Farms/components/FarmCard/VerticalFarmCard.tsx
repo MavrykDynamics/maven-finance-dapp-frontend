@@ -17,12 +17,10 @@ import { FarmCardActions } from './cardParts/FarmCardActions'
 
 // consts
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
-import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 // utils
 import { calculateFarmAPY, getFarmUserDepositedAmount } from 'providers/FarmsProvider/helpers/farms.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getUsersFarmRewards } from 'providers/UserProvider/helpers/userRewards.helpers'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -33,7 +31,7 @@ type VerticalFarmCardPropsType = {
   isCardOpened: boolean
   harvestRewards: () => void
   expandCallback: () => void
-  userFarmRewards: NonNullable<UserContext['rewards']>['farmAccounts']
+  userFarmRewards: NonNullable<UserContext['rewards']>['availableFarmRewards']
 }
 
 export const VerticalFarmCard = ({
@@ -46,11 +44,7 @@ export const VerticalFarmCard = ({
 }: VerticalFarmCardPropsType) => {
   const { userAddress } = useUserContext()
 
-  const userReward =
-    getUsersFarmRewards({
-      userFarmsRewardsDataFromIndexer: userFarmRewards.filter(({ farm: { address } }) => farm.address === address),
-      currentLvl: currentIndexerLevelProxy.currentIndexedLevel,
-    })[farm.address] ?? 0
+  const userReward = userFarmRewards[farm.address] ?? 0
 
   const tokenName = farm.isMFarm
     ? farmToken.symbol

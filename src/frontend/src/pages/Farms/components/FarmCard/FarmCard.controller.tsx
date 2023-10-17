@@ -26,7 +26,7 @@ type FarmCardProps = {
   isVertical: boolean
   isOpenedCard: boolean
   expandCallback: () => void
-  userFarmRewards: NonNullable<UserContext['rewards']>['farmAccounts']
+  userFarmRewards: NonNullable<UserContext['rewards']>['availableFarmRewards']
 }
 
 export const FarmCard = ({ farm, isVertical, isOpenedCard, userFarmRewards, expandCallback }: FarmCardProps) => {

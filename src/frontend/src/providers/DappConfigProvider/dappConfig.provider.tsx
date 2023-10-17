@@ -135,7 +135,6 @@ const DappConfigProvider = ({ children }: Props) => {
     onCompleted: (data) => {
       try {
         const parsedConfig = dappConfigSchema.parse(data)
-
         const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(parsedConfig)
         setDappConfigCtxState((prev) => ({
           ...prev,
@@ -143,6 +142,12 @@ const DappConfigProvider = ({ children }: Props) => {
           minimumStakedMvkBalance,
           mvkFaucetAddress,
         }))
+
+        // Load lvl on dapp init, and then update it with subscription
+        const parsedLevelData = indexerLevelSchema.safeParse(data.dipdup_index)
+        if (currentIndexerLevelProxy.currentIndexedLevel === 0 && parsedLevelData.success) {
+          currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData.data[0].level
+        }
       } catch (e) {
         console.error('zod parsing DAPP_INITIAL_CONFIG_QUERY error:', { e })
       }

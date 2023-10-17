@@ -41,5 +41,10 @@ export const DAPP_INITIAL_CONFIG_QUERY = gql(`
 		mvk_faucet: mvk_faucet{
 			address
 		}
+
+    # dapp indexed lvl
+    dipdup_index: dipdup_index(where: {name: {_eq: "mavryk_finance"}}) {
+			level
+		}
 	}
 `)
