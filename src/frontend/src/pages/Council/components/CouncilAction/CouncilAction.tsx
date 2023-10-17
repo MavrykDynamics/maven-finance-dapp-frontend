@@ -14,7 +14,6 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // utils
 import { parseDate } from 'utils/time'
-import { DROP_COUNCIL_ACTION_FORM } from 'pages/Council/helpers/council.consts'
 
 type Props = {
   councilAction: CouncilActionType
@@ -49,9 +48,6 @@ export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCou
       />
     )
   }
-
-  // if it's drop action, and it's not user's ongoing, ignore it, do not show
-  if (councilAction.actionClientId === DROP_COUNCIL_ACTION_FORM) return null
 
   // default view for action
   return (

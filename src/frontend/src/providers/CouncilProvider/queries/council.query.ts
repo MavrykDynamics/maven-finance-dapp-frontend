@@ -22,11 +22,12 @@ export const COUNCIL_MEMBERS_QUERY = gql(`
 
 export const ALL_PAST_COUNSILS_QUERY = gql(`
   query GetAllPastCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z"){
-    council_action: council_action(order_by: {start_datetime: desc}, where: {_or: [{expiration_datetime: {_lt: $currentTimestamp}}, {executed: {_eq: true}}]}) {
+    council_action: council_action(order_by: {start_datetime: desc}, where: {_or: [{expiration_datetime: {_lt: $currentTimestamp}}, {status: {_in: ["1", "2"]}}]}) {
       action_type
       executed
       council_size_snapshot
       id
+      status
       signers_count
       start_datetime
       expiration_datetime
@@ -52,11 +53,12 @@ export const ALL_PAST_COUNSILS_QUERY = gql(`
 
 export const ALL_ONGOING_COUNSILS_QUERY = gql(`
   query GetAllOngoingCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z"){
-    council_action: council_action(order_by: {start_datetime: desc}, where: {status: {_eq: "0"}, expiration_datetime: {_gt: $currentTimestamp}, executed: {_eq: false}}) {
+    council_action: council_action(order_by: {start_datetime: desc}, where: {status: {_eq: "0"}, expiration_datetime: {_gt: $currentTimestamp}}) {
       action_type
       executed
       council_size_snapshot
       id
+      status
       signers_count
       start_datetime
       expiration_datetime
@@ -88,9 +90,7 @@ export const MY_PAST_COUNSILS_QUERY = gql(`
           {expiration_datetime: {
             _lt: $currentTimestamp
           }}, 
-          {executed: {
-            _eq: true
-          }}
+          {status: {_in: ["1", "2"]}}
         ]},
         {
           initiator: {address: {_eq: $userAddress}}
@@ -101,9 +101,7 @@ export const MY_PAST_COUNSILS_QUERY = gql(`
           {expiration_datetime: {
             _gt: $currentTimestamp
           }}, 
-          {executed: {
-            _eq: false
-          }}
+          {status: {_eq: "0"}}
         ]},
         {
           initiator: {address: {_neq: $userAddress}}
@@ -114,6 +112,7 @@ export const MY_PAST_COUNSILS_QUERY = gql(`
       executed
       council_size_snapshot
       id
+      status
       signers_count
       start_datetime
       expiration_datetime

@@ -29,6 +29,10 @@ export type CouncilActionType = {
   executed: boolean
   initiatorAddress: string
   signersCount: number
+  /**
+   * status is 0 - pending, 1 - executed, 2 - flushed (dropped)
+   */
+  status: 0 | 1 | 2
   startDatetime: string | null
   expirationTime: string | null
   councilSize: number

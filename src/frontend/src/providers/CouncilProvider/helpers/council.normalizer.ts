@@ -8,7 +8,7 @@ import { BgCounsilActionsQueryType, CouncilActionType, CounsilActionsQueryType }
 import { checkWhetherActionParamValid, getClientActionIdByIndexerActionType } from './council.utils'
 
 // consts
-import { COUNCIL_FORMS_NAMES_MAPPER } from 'pages/Council/helpers/council.consts'
+import { COUNCIL_FORMS_NAMES_MAPPER, DROP_COUNCIL_ACTION_FORM } from 'pages/Council/helpers/council.consts'
 
 type MavrykCounsilIndexerItemType = CounsilActionsQueryType['council_action'][number]
 type BreakGlassCounsilIndexerItemType = BgCounsilActionsQueryType['break_glass_action'][number]
@@ -23,7 +23,7 @@ const checkWhetherMavrykCounsilAction = (
 
 export const normalizeCouncilAction = (
   indexerAction: BreakGlassCounsilIndexerItemType | MavrykCounsilIndexerItemType,
-) => {
+): CouncilActionType | null => {
   const isMavrykCouncilAction = checkWhetherMavrykCounsilAction(indexerAction)
   const actionClientId = getClientActionIdByIndexerActionType(indexerAction.action_type, !isMavrykCouncilAction)
 
@@ -43,6 +43,7 @@ export const normalizeCouncilAction = (
     id: indexerAction.id,
     actionClientId,
     actionName,
+    status: indexerAction.status,
     executed: indexerAction.executed,
     initiatorAddress: indexerAction.initiator.address,
     signersCount: indexerAction.signers_count,
@@ -95,16 +96,17 @@ export const normalizeCouncilActions = (
 
       if (!normalizedAction) return acc
 
-      const { id: actionId, initiatorAddress, executed, expirationTime, signers } = normalizedAction
+      const { id: actionId, initiatorAddress, expirationTime, signers, actionClientId, status } = normalizedAction
 
       const isUserAction = initiatorAddress === userAddress
-      const isPastAction = executed || (expirationTime && dayjs().isAfter(dayjs(expirationTime)))
+      const isPastAction = (expirationTime && dayjs().isAfter(dayjs(expirationTime))) || status === 1 || status === 2
+      const isDropAction = actionClientId === DROP_COUNCIL_ACTION_FORM
 
-      if (isPastAction) acc.allPastActions.push(actionId)
+      if (isPastAction && !isDropAction) acc.allPastActions.push(actionId)
       // user created past action
-      if (isPastAction && isUserAction) acc.myPastActions.push(actionId)
+      if (isPastAction && isUserAction && !isDropAction) acc.myPastActions.push(actionId)
 
-      if (!isPastAction) acc.allPendingActions.push(actionId)
+      if (!isPastAction && !isDropAction) acc.allPendingActions.push(actionId)
       // user created active actions
       if (!isPastAction && isUserAction) acc.myPendingActions.push(actionId)
       // active actions by other user, current user can vote on
