@@ -57,6 +57,8 @@ export const MavCouncilFormRemoveCouncilMember = ({
     [councilMembers],
   )
 
+  const memberToRemoveAddress = chosenDdItem?.tzAddress
+
   // remove council member council action
   const removeCouncilMemberContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -72,15 +74,15 @@ export const MavCouncilFormRemoveCouncilMember = ({
           return null
         }
 
-        if (!chosenDdItem) {
+        if (!memberToRemoveAddress) {
           bug('Select member to remove')
           return null
         }
 
-        return await removeCouncilMember(councilAddress, chosenDdItem.tzAddress)
+        return await removeCouncilMember(councilAddress, memberToRemoveAddress)
       },
     }),
-    [chosenDdItem, userAddress, councilAddress],
+    [memberToRemoveAddress, userAddress, councilAddress],
   )
 
   const { action: handleRemoveCouncilMember } = useContractAction(removeCouncilMemberContractActionProps)

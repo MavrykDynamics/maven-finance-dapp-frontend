@@ -106,11 +106,13 @@ export function BgCouncilFormChangeCouncilMember({
           return null
         }
 
-        if (
-          !oldCouncilMemberAddress ||
-          breakGlassCouncilMembers.find(({ memberAddress }) => memberAddress === newCouncilMemberAddress)
-        ) {
-          bug('User is already council member')
+        if (!oldCouncilMemberAddress) {
+          bug('Select member to change')
+          return null
+        }
+
+        if (breakGlassCouncilMembers.find(({ memberAddress }) => memberAddress === newCouncilMemberAddress)) {
+          bug('New user is already council member')
           return null
         }
 
