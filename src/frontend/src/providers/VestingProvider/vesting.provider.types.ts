@@ -11,7 +11,7 @@ export type VestingContextStateType = {
   totalVestedAmount: number
   totalClaimedAmount: number
 
-  vesteeIds: (keyof VestingNormalizedData['vesteesMapper'])[]
+  vesteesAddresses: (keyof VestingNormalizedData['vesteesMapper'])[]
   vesteesMapper: VestingNormalizedData['vesteesMapper']
 }
 

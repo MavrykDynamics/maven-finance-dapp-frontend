@@ -16,12 +16,12 @@ export const getVestingProviderReturnValue = ({
   changeVestingSubscriptionsList: VestingContext['changeVestingSubscriptionsList']
   activeSubs: VestingSubsRecordType
 }) => {
-  const { address, vesteesMapper, vesteeIds } = vestingCtxState
+  const { address, vesteesMapper, vesteesAddresses } = vestingCtxState
   const commonToReturn = {
     changeVestingSubscriptionsList,
   }
 
-  const isVestingEmpty = vesteesMapper === null || vesteeIds === null || address === null
+  const isVestingEmpty = vesteesMapper === null || vesteesAddresses === null || address === null
   const isLoading =
     (activeSubs[VESTING_STORAGE_DATA_SUB] && isVestingEmpty) ||
     (!activeSubs[VESTING_STORAGE_DATA_SUB] && isVestingEmpty)

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // consts
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
@@ -9,6 +9,7 @@ import {
   INPUT_STATUS_SUCCESS,
   InputStatusType,
 } from '../../../../app/App.components/Input/Input.constants'
+import { VESTING_STORAGE_DATA_SUB, DEFAULT_VESTING_SUBS } from 'providers/VestingProvider/helpers/vesting.consts'
 
 // helpers
 import { toggleVesteeLock } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -19,6 +20,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import Icon from '../../../../app/App.components/Icon/Icon.view'
 
 // hooks
@@ -26,6 +28,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 
 const INIT_FORM = {
   vesteeAddress: '',
@@ -42,6 +45,17 @@ export const MavCouncilFormToggleVesteeLock = () => {
     contractAddresses: { councilAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
+  const { vesteesAddresses, isLoading: isVesteesLoading, changeVestingSubscriptionsList } = useVestingContext()
+
+  useEffect(() => {
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
+    }
+  }, [])
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState<Record<string, InputStatusType>>(INTI_FORM_VALIDATION)
@@ -63,10 +77,15 @@ export const MavCouncilFormToggleVesteeLock = () => {
           return null
         }
 
+        if (!vesteesAddresses.includes(vesteeAddress)) {
+          bug('Vestee does not exists')
+          return null
+        }
+
         return await toggleVesteeLock(vesteeAddress, councilAddress)
       },
     }),
-    [vesteeAddress, userAddress, councilAddress],
+    [userAddress, councilAddress, vesteesAddresses, vesteeAddress],
   )
 
   const { action: handleToggleVesteeLock } = useContractAction(toggleVesteeLockContractActionProps)
@@ -98,8 +117,11 @@ export const MavCouncilFormToggleVesteeLock = () => {
     const vesteeAddressProps = {
       name: 'vesteeAddress',
       value: vesteeAddress,
+      disabled: isVesteesLoading,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
+
+        // validation
         validateAddress(e)
       },
       required: true,
@@ -111,7 +133,7 @@ export const MavCouncilFormToggleVesteeLock = () => {
         inputStatus: formInputStatus.vesteeAddress,
       },
     }
-  }, [formInputStatus.vesteeAddress, vesteeAddress])
+  }, [formInputStatus.vesteeAddress, vesteeAddress, isVesteesLoading])
 
   return (
     <CouncilFormStyled formName={MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK}>
@@ -121,7 +143,10 @@ export const MavCouncilFormToggleVesteeLock = () => {
 
       <CouncilFormHeaderStyled>
         <H2Title>Toggle Vestee Lock</H2Title>
-        <div className="descr">Please enter valid function parameters for toggle vestee lock</div>
+        <div className="descr">
+          Please enter valid function parameters for toggle vestee lock{' '}
+          {isVesteesLoading ? <SpinnerCircleLoaderStyled /> : null}
+        </div>
       </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>

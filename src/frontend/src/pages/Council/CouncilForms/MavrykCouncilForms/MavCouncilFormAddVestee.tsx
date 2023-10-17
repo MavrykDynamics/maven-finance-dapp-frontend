@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // helpers
 import { addVestee } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -9,6 +9,7 @@ import { ADD_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.con
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../../../../app/App.components/Input/Input.constants'
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { VESTING_STORAGE_DATA_SUB, DEFAULT_VESTING_SUBS } from 'providers/VestingProvider/helpers/vesting.consts'
 
 // view
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -16,16 +17,18 @@ import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 import Icon from '../../../../app/App.components/Icon/Icon.view'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 
 // types
 import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 import type { InputProps } from 'app/App.components/Input/newInput.type'
 
-// style
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 
 const INIT_FORM = {
   vesteeAddress: '',
@@ -48,6 +51,17 @@ export const MavCouncilFormAddVestee = () => {
     contractAddresses: { councilAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
+  const { vesteesAddresses, isLoading: isVesteesLoading, changeVestingSubscriptionsList } = useVestingContext()
+
+  useEffect(() => {
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
+    }
+  }, [])
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
@@ -69,6 +83,11 @@ export const MavCouncilFormAddVestee = () => {
           return null
         }
 
+        if (vesteesAddresses.includes(vesteeAddress)) {
+          bug('Vestee already exists')
+          return null
+        }
+
         return await addVestee(
           vesteeAddress,
           Number(totalAllocated),
@@ -78,7 +97,7 @@ export const MavCouncilFormAddVestee = () => {
         )
       },
     }),
-    [vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths, userAddress, councilAddress],
+    [vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths, userAddress, councilAddress, vesteesAddresses],
   )
 
   const { action: handleAddVesteeCouncil } = useContractAction(addVesteeCouncilContractActionProps)
@@ -118,8 +137,11 @@ export const MavCouncilFormAddVestee = () => {
     const vesteeAddressProps = {
       name: 'vesteeAddress',
       value: vesteeAddress,
+      disabled: isVesteesLoading,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
+
+        // validation
         validateAddress(e)
       },
       required: true,
@@ -211,6 +233,7 @@ export const MavCouncilFormAddVestee = () => {
     totalAllocated,
     vesteeAddress,
     vestingInMonths,
+    isVesteesLoading,
   ])
 
   return (
@@ -221,7 +244,10 @@ export const MavCouncilFormAddVestee = () => {
 
       <CouncilFormHeaderStyled>
         <H2Title>Add Vestee</H2Title>
-        <div className="descr">Please enter valid function parameters for adding a vestee</div>
+        <div className="descr">
+          Please enter valid function parameters for adding a vestee{' '}
+          {isVesteesLoading ? <SpinnerCircleLoaderStyled /> : null}
+        </div>
       </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>

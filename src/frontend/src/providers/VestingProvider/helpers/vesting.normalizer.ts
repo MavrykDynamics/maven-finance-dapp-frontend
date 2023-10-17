@@ -7,13 +7,13 @@ import { MVK_DECIMALS } from 'utils/constants'
 export function normalizeVestingStorage(storage: GetVestingQueryQuery) {
   const vesteeRecord = storage.vesting[0]
 
-  const { vesteesMapper = {}, vesteeIds = [] } =
+  const { vesteesMapper = {}, vesteesAddresses = [] } =
     vesteeRecord?.vestees.reduce<{
       vesteesMapper: Record<Vesting_Vestee['vestee']['address'], VestingRecord>
-      vesteeIds: Array<string>
+      vesteesAddresses: Array<string>
     }>(
       (acc, vestee) => {
-        acc.vesteeIds.push(vestee.vestee.address)
+        acc.vesteesAddresses.push(vestee.vestee.address)
         acc.vesteesMapper[vestee.vestee.address] = {
           address: vestee.vestee.address,
           totalRemainded: convertNumberForClient({ number: vestee.total_remainder, grade: MVK_DECIMALS }),
@@ -30,7 +30,7 @@ export function normalizeVestingStorage(storage: GetVestingQueryQuery) {
       },
       {
         vesteesMapper: {},
-        vesteeIds: [],
+        vesteesAddresses: [],
       },
     ) ?? {}
 
@@ -39,6 +39,6 @@ export function normalizeVestingStorage(storage: GetVestingQueryQuery) {
     totalVestedAmount: vesteeRecord?.total_vested_amount ?? 0,
     totalClaimedAmount: vesteeRecord?.vestees_aggregate?.aggregate?.sum?.total_claimed ?? 0,
     vesteesMapper,
-    vesteeIds,
+    vesteesAddresses,
   }
 }

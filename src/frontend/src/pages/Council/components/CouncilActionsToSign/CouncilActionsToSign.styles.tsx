@@ -68,13 +68,24 @@ export const CouncilActionToSignStyled = styled(Card)`
 `
 
 const ACTION_TO_SIGN_AREAS_NAMES = css`
-  /* ------- common */
   .admin-address {
     grid-area: admin-address;
   }
 
   .request-id {
     grid-area: request-id;
+  }
+
+  .sign-btn {
+    grid-area: sign-btn;
+  }
+
+  .signed-amount {
+    grid-area: signed-amount;
+  }
+
+  .list-of-contracts {
+    grid-area: list-of-contracts;
   }
 
   /* ------- members */
@@ -146,19 +157,6 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
 
   .purpose {
     grid-area: purpose;
-  }
-
-  /* ------- other */
-  .sign-btn {
-    grid-area: sign-btn;
-  }
-
-  .signed-amount {
-    grid-area: signed-amount;
-  }
-
-  .list-of-contracts {
-    grid-area: list-of-contracts;
   }
 `
 

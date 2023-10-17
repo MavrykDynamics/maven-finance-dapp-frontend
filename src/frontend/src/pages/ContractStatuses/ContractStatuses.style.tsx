@@ -8,7 +8,6 @@ export const BGStyled = styled.div<{ theme: MavrykTheme }>`
   font-family: 'Metropolis';
   display: grid;
   column-gap: calc((100% - (31.5% * 3)) / 2);
-  row-gap: 25px;
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: 65px auto;
 `
@@ -18,7 +17,6 @@ export const BGTop = styled.div<{ theme: MavrykTheme }>`
   flex-direction: column;
   row-gap: 25px;
   height: fit-content;
-  padding-top: 30px;
   grid-column-start: 3;
   grid-column-end: 4;
 `
@@ -70,7 +68,6 @@ export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavrykTheme 
 export const BGMiddleWrapper = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
   height: 40px;
   grid-column-start: 1;
   grid-column-end: 3;
@@ -79,6 +76,7 @@ export const BGMiddleWrapper = styled.div<{ theme: MavrykTheme }>`
 
   .buttons-selector {
     display: flex;
+    align-items: center;
     column-gap: 20px;
   }
 `
@@ -121,7 +119,6 @@ export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
 export const BGCardsWrapper = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   flex-direction: column;
-  margin-top: 23px;
   grid-column-start: 1;
   grid-column-end: 3;
   grid-row-start: 2;
