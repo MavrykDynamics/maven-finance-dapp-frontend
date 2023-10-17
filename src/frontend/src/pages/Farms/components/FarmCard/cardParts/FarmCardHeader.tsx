@@ -30,7 +30,6 @@ const FarmCardHeaderStyled = styled.div`
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      text-align: right;
     }
 
     .creator {
@@ -38,6 +37,7 @@ const FarmCardHeaderStyled = styled.div`
       font-weight: 400;
 
       // TODO: remove when address will be in indexer
+      display: none;
       visibility: hidden;
     }
   }

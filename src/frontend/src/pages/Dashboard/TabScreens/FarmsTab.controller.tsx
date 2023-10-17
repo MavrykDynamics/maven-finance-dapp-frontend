@@ -101,7 +101,7 @@ export const FarmsTab = () => {
 
           if (acc.highestAPY <= farmApy) acc.highestAPY = farmApy
 
-          if (acc.mostActiveFarm?.totalLiquidityAmount ?? 0 <= totalLiquidityAmount) {
+          if ((acc.mostActiveFarm?.totalLiquidityAmount ?? 0) <= totalLiquidityAmount) {
             acc.mostActiveFarm = {
               address,
               farmToken,

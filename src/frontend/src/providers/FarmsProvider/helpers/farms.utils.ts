@@ -1,10 +1,18 @@
+// utils
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
+
+// types
 import {
   FarmCtxStateType,
   FarmRecordType,
   FarmsProviderSubsType,
   NullableFarmCtxStateType,
 } from '../farms.provider.types'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+
+// consts
 import {
   EMPTY_FARMS_CTX,
   FARMS_DATA_SUB,
@@ -13,9 +21,6 @@ import {
   FARMS_ALL_LIVE_DATA_SUB,
   FARMS_LIVE_STAKED_DATA_SUB,
 } from './farms.const'
-import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
 
 // get provider value
 export const getFarmsReturnValue = ({
@@ -69,10 +74,10 @@ export const getFarmsReturnValue = ({
 const BLOCKS_PER_YEAR = 1051200
 
 export const calculateFarmAPY = (currentRewardPerBlock: number, lpTokenBalance: number) =>
-  lpTokenBalance > 0 ? ((currentRewardPerBlock * BLOCKS_PER_YEAR) / lpTokenBalance) * 100 : 0
+  getNumberInBounds(0, 100, lpTokenBalance > 0 ? ((currentRewardPerBlock * BLOCKS_PER_YEAR) / lpTokenBalance) * 100 : 0)
 
 export const calculateFarmAPR = (currentRewardPerBlock: number, blocksAmount: number, lpTokenBalance: number) =>
-  lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0
+  getNumberInBounds(0, 100, lpTokenBalance > 0 ? ((currentRewardPerBlock * blocksAmount) / lpTokenBalance) * 100 : 0)
 
 // get amount of tokens user've deposited to farm
 export const getFarmUserDepositedAmount = ({

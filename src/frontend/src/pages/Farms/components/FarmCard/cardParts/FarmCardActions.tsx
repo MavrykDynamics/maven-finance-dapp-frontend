@@ -102,7 +102,7 @@ export const FarmCardActions = ({
                   kind={BUTTON_SECONDARY}
                   form={BUTTON_WIDE}
                   onClick={openWithdrawModal}
-                  disabled={!isFarmLive || isFarmHasWithdrawDisabled}
+                  disabled={!isFarmLive || isFarmHasWithdrawDisabled || userDepositedAmount === 0}
                 >
                   <Icon id="out" /> UnStake LP
                 </Button>
@@ -115,7 +115,7 @@ export const FarmCardActions = ({
                   kind={BUTTON_SECONDARY}
                   form={BUTTON_WIDE}
                   onClick={openWithdrawModal}
-                  disabled={!isFarmLive || isFarmHasWithdrawDisabled}
+                  disabled={!isFarmLive || isFarmHasWithdrawDisabled || userDepositedAmount === 0}
                 >
                   <Icon id="out" /> UnStake LP
                 </Button>
