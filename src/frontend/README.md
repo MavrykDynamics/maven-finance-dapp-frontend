@@ -2,27 +2,25 @@
 
 - clone the repo
 - cd src/frontend
-- run command
+- ensure you have correct envs and env file inside /frontend folder and named .env.local
+- run commands below
 
 ```
 yarn install
+yarn graphql-compile
 ```
 
-Macos
+Macos/Linux/Windows
 
 ```
 yarn start
 ```
 
-Linux
+If you are getting evenlope error run command with sufix ":evenlope"
 
 ```
 yarn start:evenlop
 ```
-
-Windows
-
-- not supported (you can create seperate command like `start:win`)
 
 # Husky hooks & GTM (git time metric)
 

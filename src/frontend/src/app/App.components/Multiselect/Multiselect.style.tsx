@@ -132,6 +132,11 @@ export const MultiselectMenuOptionStyled = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.placeholders};
   }
 
+  /* setting z-index to -1, cuz we only need checkbox to show state, not his functionality */
+  .checkbox {
+    z-index: -1;
+  }
+
   .img-wrapper,
   .img-plug {
     width: 18px;
@@ -148,7 +153,7 @@ export const MultiselectMenuOptionStyled = styled.div<{ theme: MavrykTheme }>`
   }
 
   &:hover {
-    #checkbox-label {
+    #checkbox-icon {
       background-color: ${({ theme }) => theme.cards};
     }
   }

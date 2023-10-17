@@ -179,9 +179,25 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
   const handleUnselectOption = useCallback(
     (e: React.MouseEvent<HTMLDivElement>, optionValue: string) => {
       e.stopPropagation()
-      selectHandler(selectedOptions.filter(({ value }) => value !== optionValue))
+      const isAllSelected =
+        options.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE).length ===
+        selectedOptions.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE).length
+
+      // if "all" option pressed
+      if (optionValue === MULTISELECT_SELECT_ALL_OPTION_VALUE) {
+        selectHandler([])
+      } else {
+        selectHandler(
+          selectedOptions.filter(({ value }) =>
+            // If selected all options and we removing one, remove "all" option also
+            isAllSelected
+              ? value !== optionValue && value !== MULTISELECT_SELECT_ALL_OPTION_VALUE
+              : value !== optionValue,
+          ),
+        )
+      }
     },
-    [selectHandler, selectedOptions],
+    [options, selectHandler, selectedOptions],
   )
 
   const multiselectStyledStyles = useMemo(() => getMultiselectStyling<ItemType>(colors[themeSelected]), [themeSelected])
@@ -197,7 +213,10 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
           <div className="selected-options-list">
             {selectedOptions.map((option) => {
               return (
-                <MultiselectHeaderOptionStyled onClick={(e) => handleUnselectOption(e, option.value)}>
+                <MultiselectHeaderOptionStyled
+                  onClick={(e) => handleUnselectOption(e, option.value)}
+                  key={option.value}
+                >
                   <div className="option-text">{option.label}</div>
                   <div className="unselect-option">
                     <Icon id="navigation-menu_close" />
