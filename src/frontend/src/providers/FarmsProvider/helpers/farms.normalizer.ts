@@ -32,10 +32,6 @@ export const normalizeFarm = (indexerFarm: FarmsIndexerDataType['farm'][number])
         address: farmDepositor.user.address,
         participationRewardsPerShare: farmDepositor.participation_rewards_per_share,
         depositedAmount: farmDepositor.deposited_amount,
-        rewardsToClaim: convertNumberForClient({
-          number: farmDepositor.unclaimed_rewards,
-          grade: MVK_DECIMALS,
-        }),
       }
       return acc
     }, {}),

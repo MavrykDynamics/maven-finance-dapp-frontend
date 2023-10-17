@@ -19,15 +19,17 @@ import { HARVEST_FARM_REWARDS_ACTION } from 'providers/FarmsProvider/helpers/far
 
 // types
 import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
+import { UserContext } from 'providers/UserProvider/user.provider.types'
 
 type FarmCardProps = {
   farm: FarmRecordType
   isVertical: boolean
   isOpenedCard: boolean
   expandCallback: () => void
+  userFarmRewards: NonNullable<UserContext['rewards']>['farmAccounts']
 }
 
-export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: FarmCardProps) => {
+export const FarmCard = ({ farm, isVertical, isOpenedCard, userFarmRewards, expandCallback }: FarmCardProps) => {
   const { tokensMetadata } = useTokensContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -66,6 +68,7 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
         isCardOpened={isOpenedCard}
         harvestRewards={handleHarvestRewards}
         expandCallback={expandCallback}
+        userFarmRewards={userFarmRewards}
       />
     )
   }
@@ -77,6 +80,7 @@ export const FarmCard = ({ farm, isVertical, isOpenedCard, expandCallback }: Far
       isCardOpened={isOpenedCard}
       harvestRewards={handleHarvestRewards}
       expandCallback={expandCallback}
+      userFarmRewards={userFarmRewards}
     />
   )
 }

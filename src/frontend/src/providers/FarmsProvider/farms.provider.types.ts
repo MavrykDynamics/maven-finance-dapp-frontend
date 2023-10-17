@@ -28,7 +28,6 @@ export type FarmDepositorType = {
   address: string
   participationRewardsPerShare: number
   depositedAmount: number
-  rewardsToClaim: number
 }
 export type FarmRecordType = ReturnType<typeof normalizeFarm>
 export type FarmsIndexerDataType =

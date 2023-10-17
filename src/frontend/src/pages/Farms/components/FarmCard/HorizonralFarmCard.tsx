@@ -13,16 +13,19 @@ import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 // utils
 import { calculateFarmAPY, getFarmUserDepositedAmount } from 'providers/FarmsProvider/helpers/farms.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getUsersFarmRewards } from 'providers/UserProvider/helpers/userRewards.helpers'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 // types
 import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { UserContext } from 'providers/UserProvider/user.provider.types'
 
 type HorizontalFarmCardPropsType = {
   farm: FarmRecordType
@@ -30,6 +33,7 @@ type HorizontalFarmCardPropsType = {
   isCardOpened: boolean
   harvestRewards: () => void
   expandCallback: () => void
+  userFarmRewards: NonNullable<UserContext['rewards']>['farmAccounts']
 }
 
 export const HorizontalFarmCard = ({
@@ -38,10 +42,15 @@ export const HorizontalFarmCard = ({
   isCardOpened,
   harvestRewards,
   expandCallback,
+  userFarmRewards,
 }: HorizontalFarmCardPropsType) => {
   const { userAddress } = useUserContext()
 
-  const userReward = userAddress ? farm.farmDepositors[userAddress]?.rewardsToClaim : 0
+  const userReward =
+    getUsersFarmRewards({
+      userFarmsRewardsDataFromIndexer: userFarmRewards.filter(({ farm: { address } }) => farm.address === address),
+      currentLvl: currentIndexerLevelProxy.currentIndexedLevel,
+    })[farm.address] ?? 0
 
   const tokenName = farm.isMFarm
     ? farmToken.symbol

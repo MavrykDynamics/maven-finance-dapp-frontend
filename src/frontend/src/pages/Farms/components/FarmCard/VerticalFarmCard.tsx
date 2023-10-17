@@ -3,6 +3,7 @@ import classNames from 'classnames'
 // types
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
+import { UserContext } from 'providers/UserProvider/user.provider.types'
 
 // view
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -16,10 +17,12 @@ import { FarmCardActions } from './cardParts/FarmCardActions'
 
 // consts
 import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 // utils
 import { calculateFarmAPY, getFarmUserDepositedAmount } from 'providers/FarmsProvider/helpers/farms.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getUsersFarmRewards } from 'providers/UserProvider/helpers/userRewards.helpers'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -30,6 +33,7 @@ type VerticalFarmCardPropsType = {
   isCardOpened: boolean
   harvestRewards: () => void
   expandCallback: () => void
+  userFarmRewards: NonNullable<UserContext['rewards']>['farmAccounts']
 }
 
 export const VerticalFarmCard = ({
@@ -38,10 +42,15 @@ export const VerticalFarmCard = ({
   isCardOpened,
   harvestRewards,
   expandCallback,
+  userFarmRewards,
 }: VerticalFarmCardPropsType) => {
   const { userAddress } = useUserContext()
 
-  const userReward = userAddress ? farm.farmDepositors[userAddress]?.rewardsToClaim : 0
+  const userReward =
+    getUsersFarmRewards({
+      userFarmsRewardsDataFromIndexer: userFarmRewards.filter(({ farm: { address } }) => farm.address === address),
+      currentLvl: currentIndexerLevelProxy.currentIndexedLevel,
+    })[farm.address] ?? 0
 
   const tokenName = farm.isMFarm
     ? farmToken.symbol
