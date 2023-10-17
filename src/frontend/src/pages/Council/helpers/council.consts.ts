@@ -47,6 +47,7 @@ export const ALL_PAST_COUNSIL_TAB = 'past-actions' as const
 
 export const UPDATE_USER_COUNCIL_PROFILE_FORM = 'UPDATE_USER_COUNCIL_PROFILE_FORM' as const
 export const PROPAGATE_BREAK_GLASS_ACTION_FORM = 'PROPAGATE_BREAK_GLASS_ACTION_FORM' as const
+export const DROP_COUNCIL_ACTION_FORM = 'DROP_COUNCIL_ACTION_FORM' as const
 
 // mapper for forms names in dd
 export const COUNCIL_FORMS_NAMES_MAPPER: Record<CouncilsActionsIds, string> = {
@@ -70,4 +71,5 @@ export const COUNCIL_FORMS_NAMES_MAPPER: Record<CouncilsActionsIds, string> = {
   BG_CHANGE_COUNCIL_MEMBER: 'Change Council Member',
   BG_REMOVE_COUNCIL_MEMBER: 'Remove Council Member',
   PROPAGATE_BREAK_GLASS_ACTION_FORM: 'Propagate Break Glass',
+  DROP_COUNCIL_ACTION_FORM: 'Drop Council Action',
 } as const

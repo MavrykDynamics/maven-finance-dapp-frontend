@@ -2,6 +2,7 @@ import {
   MavrykCounsilDdForms,
   BgCounsilDdForms,
   PROPAGATE_BREAK_GLASS_ACTION_FORM,
+  DROP_COUNCIL_ACTION_FORM,
 } from 'pages/Council/helpers/council.consts'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
 import { CouncilActionParamsNames, CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
@@ -351,6 +352,13 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       cellName: 'Contract Addresses',
     },
   },
+  [DROP_COUNCIL_ACTION_FORM]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.actionId]: {
+      className: 'action-id',
+      type: 'default',
+      cellName: 'Action Id',
+    },
+  },
 }
 
 // grid setting for council sign cards
@@ -534,6 +542,14 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
       "list-of-contracts signed-amount"
+      "sign-btn sign-btn"
+    `,
+  },
+  [DROP_COUNCIL_ACTION_FORM]: {
+    columnsTemplate: `auto auto`,
+    rowsTemplate: `1fr 1fr`,
+    areaTemplate: `
+      "action-id signed-amount"
       "sign-btn sign-btn"
     `,
   },

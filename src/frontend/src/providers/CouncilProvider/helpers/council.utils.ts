@@ -26,6 +26,7 @@ import {
 } from './council.consts'
 import {
   BgCounsilDdForms,
+  DROP_COUNCIL_ACTION_FORM,
   MavrykCounsilDdForms,
   PROPAGATE_BREAK_GLASS_ACTION_FORM,
 } from 'pages/Council/helpers/council.consts'
@@ -169,6 +170,9 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
       return BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS
     case 'propagateBreakGlass':
       return PROPAGATE_BREAK_GLASS_ACTION_FORM
+
+    case 'flushAction':
+      return DROP_COUNCIL_ACTION_FORM
 
     default:
       return null
