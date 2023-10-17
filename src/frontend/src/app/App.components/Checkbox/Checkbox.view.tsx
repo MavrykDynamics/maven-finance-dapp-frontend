@@ -9,7 +9,7 @@ type Props = {
   id: string
   checked: boolean
   disabled?: boolean
-  onChangeHandler: () => void
+  onChangeHandler?: () => void
   children?: React.ReactNode
 }
 
@@ -22,7 +22,7 @@ export default function Checkbox({ id, checked, onChangeHandler, children, disab
 
   const [hoverableLabelText, isLabelTextHovered] = useHover(checkboxLabelText)
   return (
-    <CheckboxStyled className={classNames({ disabled })}>
+    <CheckboxStyled className={classNames('checkbox', { disabled })}>
       <input type="checkbox" id={id} onChange={onChangeHandler} checked={checked} disabled={disabled} />
       <label
         htmlFor={id}

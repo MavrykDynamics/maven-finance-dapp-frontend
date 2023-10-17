@@ -132,6 +132,10 @@ export const MultiselectMenuOptionStyled = styled.div<{ theme: MavrykTheme }>`
     color: ${({ theme }) => theme.placeholders};
   }
 
+  .checkbox {
+    z-index: -1;
+  }
+
   .img-wrapper,
   .img-plug {
     width: 18px;

@@ -158,7 +158,7 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
       const isOptionSelected = Boolean(multiSelectContext.selectValue.find(({ value }) => value === option.value))
       return (
         <MultiselectMenuOptionStyled>
-          <Checkbox checked={isOptionSelected} onChangeHandler={() => null} id={option.value} />
+          <Checkbox checked={isOptionSelected} id={option.value} />
           {option.image ? <ImageWithPlug imageLink={option.image} alt={`${option.label} image`} /> : null}
           <div className="option-text">{option.label}</div>
         </MultiselectMenuOptionStyled>
@@ -179,9 +179,25 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
   const handleUnselectOption = useCallback(
     (e: React.MouseEvent<HTMLDivElement>, optionValue: string) => {
       e.stopPropagation()
-      selectHandler(selectedOptions.filter(({ value }) => value !== optionValue))
+      const isAllSelected =
+        options.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE).length ===
+        selectedOptions.filter(({ value }) => value !== MULTISELECT_SELECT_ALL_OPTION_VALUE).length
+
+      // if "all" option pressed
+      if (optionValue === MULTISELECT_SELECT_ALL_OPTION_VALUE) {
+        selectHandler([])
+      } else {
+        selectHandler(
+          selectedOptions.filter(({ value }) =>
+            // If selected all options and we removing one, remove "all" option also
+            isAllSelected
+              ? value !== optionValue && value !== MULTISELECT_SELECT_ALL_OPTION_VALUE
+              : value !== optionValue,
+          ),
+        )
+      }
     },
-    [selectHandler, selectedOptions],
+    [options, selectHandler, selectedOptions],
   )
 
   const multiselectStyledStyles = useMemo(() => getMultiselectStyling<ItemType>(colors[themeSelected]), [themeSelected])
