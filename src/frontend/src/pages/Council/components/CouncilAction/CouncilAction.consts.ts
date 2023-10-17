@@ -113,4 +113,60 @@ export const CouncilUserOngoingActionGridCellsMapper: CouncilActionsParamsColumn
       cellName: 'Council Member Address',
     },
   },
+  [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
+      className: 'member-address',
+      type: 'address',
+      cellName: 'Council Member Address',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberName]: {
+      className: 'member-name',
+      type: 'default',
+      cellName: 'Council Member Name',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberWebsite]: {
+      className: 'member-url',
+      type: 'url',
+      cellName: 'Council Member Website',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberImage]: {
+      className: 'member-image',
+      type: 'image',
+      cellName: 'Council Member Image',
+    },
+  },
+  [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberAddress]: {
+      className: 'member-address',
+      type: 'address',
+      cellName: 'New Council Member Address',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress]: {
+      className: 'old-member-address',
+      type: 'address',
+      cellName: 'Old Council Member Address',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberName]: {
+      className: 'member-name',
+      type: 'default',
+      cellName: 'Council Member Name',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberWebsite]: {
+      className: 'member-url',
+      type: 'url',
+      cellName: 'Council Member Website',
+    },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberImage]: {
+      className: 'member-image',
+      type: 'image',
+      cellName: 'Council Member Image',
+    },
+  },
+  [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
+      className: 'member-address',
+      type: 'address',
+      cellName: 'Council Member Address',
+    },
+  },
 }
