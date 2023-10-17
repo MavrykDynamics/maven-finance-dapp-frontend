@@ -185,12 +185,12 @@ export const FarmsTab = () => {
                       <div className="top">
                         <div className="name">
                           <div className="large">{name}</div>
-                          <TzAddress
+                          {/* <TzAddress
                             tzAddress={creatorAddress}
                             type={PRIMARY_TZ_ADDRESS_COLOR}
                             className="creator"
                             hasIcon={false}
-                          />
+                          /> */}
                         </div>
 
                         <FarmCardCoinIcons farmToken={farmToken} isMFarm={isMFarm} size={FARM_CARD_COINS_LARGE} />

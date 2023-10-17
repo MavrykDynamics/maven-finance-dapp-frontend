@@ -584,9 +584,11 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
             font-weight: 600;
             font-size: 18px;
             width: 100%;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
+
+            overflow-y: clip;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
           }
 
           .creator {

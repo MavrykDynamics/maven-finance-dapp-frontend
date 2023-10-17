@@ -117,6 +117,8 @@ export const LendingTab = () => {
             </div>
           </div>
 
+          <div className="spacer" />
+
           <div className="right">
             <StatBlock className="large">
               <div className="name">Total Borrowed</div>

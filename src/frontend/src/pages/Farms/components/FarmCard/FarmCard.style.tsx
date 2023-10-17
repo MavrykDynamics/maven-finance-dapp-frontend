@@ -80,10 +80,14 @@ export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Ma
   border: none;
 
   .expand-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 30px;
+    display: grid;
     align-items: center;
+
+    grid-template-rows: auto;
+    grid-template-columns: 320px 20px auto auto auto max-content max-content;
+
+    column-gap: 30px;
+    padding: 0 30px;
   }
 
   .double-rewards-tag {
@@ -95,7 +99,6 @@ export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Ma
   }
 
   .farm-card-header {
-    min-width: 225px;
     height: 48px;
     align-items: center;
     padding: 0;
@@ -192,6 +195,10 @@ export const VerticalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Mavr
 
     .info {
       width: calc(100% - 58px - 15px);
+    }
+
+    .name {
+      text-align: right;
     }
   }
 
