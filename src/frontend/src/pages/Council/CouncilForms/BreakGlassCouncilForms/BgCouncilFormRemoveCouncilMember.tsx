@@ -59,6 +59,8 @@ export function BgCouncilFormRemoveCouncilMember({
 
   const [chosenDdItem, setChosenDdItem] = useState<DdItemType | undefined>()
 
+  const memberToRemoveAddress = chosenDdItem?.tzAddress
+
   // remove bg council action
   const removeBgCouncilContractContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -74,14 +76,15 @@ export function BgCouncilFormRemoveCouncilMember({
           return null
         }
 
-        const memberAddress = chosenDdItem?.tzAddress
+        if (!memberToRemoveAddress) {
+          bug('Select member to remove')
+          return null
+        }
 
-        if (!memberAddress) return null
-
-        return await removeBgCouncilMember(breakGlassAddress, memberAddress)
+        return await removeBgCouncilMember(breakGlassAddress, memberToRemoveAddress)
       },
     }),
-    [userAddress, breakGlassAddress, chosenDdItem?.tzAddress],
+    [userAddress, breakGlassAddress, memberToRemoveAddress],
   )
 
   const { action: handleRemoveCouncilMember } = useContractAction(removeBgCouncilContractContractActionProps)

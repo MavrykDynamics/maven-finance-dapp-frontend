@@ -9,10 +9,6 @@ const FORMS_AREAS_NAMES = css`
     grid-area: admin-address;
   }
 
-  .action-id {
-    grid-area: action-id;
-  }
-
   .contract-address {
     grid-area: contract-address;
   }

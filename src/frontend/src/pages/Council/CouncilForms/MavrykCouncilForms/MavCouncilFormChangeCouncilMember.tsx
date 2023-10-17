@@ -103,11 +103,13 @@ export const MavCouncilFormChangeCouncilMember = ({
           return null
         }
 
-        if (
-          !oldCouncilMemberAddress ||
-          councilMembers.find(({ memberAddress }) => memberAddress === newCouncilMemberAddress)
-        ) {
-          bug('User is already council member')
+        if (!oldCouncilMemberAddress) {
+          bug('Select member to change')
+          return null
+        }
+
+        if (councilMembers.find(({ memberAddress }) => memberAddress === newCouncilMemberAddress)) {
+          bug('New user is already council member')
           return null
         }
 

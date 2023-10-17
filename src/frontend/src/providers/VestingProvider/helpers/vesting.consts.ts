@@ -15,7 +15,7 @@ export const DEFAULT_VESTING_CTX: NullableVestingContextStateType = {
   totalVestedAmount: null,
   totalClaimedAmount: null,
 
-  vesteeIds: null,
+  vesteesAddresses: null,
   vesteesMapper: null,
 } as const
 
@@ -24,6 +24,6 @@ export const EMPTY_VESTING_CTX: VestingContextStateType = {
   totalVestedAmount: 0,
   totalClaimedAmount: 0,
 
-  vesteeIds: [],
+  vesteesAddresses: [],
   vesteesMapper: {},
 }

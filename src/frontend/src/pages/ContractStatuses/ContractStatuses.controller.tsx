@@ -113,7 +113,7 @@ export const ContractStatuses = () => {
           <div className="text">Loading contracts statuses</div>
         </DataLoaderWrapper>
       ) : (
-        <BGStyled className={'breakGlassContainer'}>
+        <BGStyled>
           <BGTop>
             <BGInfo>
               <BGStatusIndicator>

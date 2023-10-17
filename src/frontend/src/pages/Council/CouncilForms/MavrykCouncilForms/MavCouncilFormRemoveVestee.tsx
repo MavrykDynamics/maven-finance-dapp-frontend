@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // helpers
 import { validateFormAddress } from 'utils/validatorFunctions'
@@ -10,12 +10,14 @@ import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from '../../../../app/App.components/Icon/Icon.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
@@ -26,6 +28,7 @@ import {
 } from '../../../../app/App.components/Input/Input.constants'
 import { REMOVE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 const INIT_FORM = {
   vesteeAddress: '',
@@ -42,6 +45,17 @@ export const MavCouncilFormRemoveVestee = () => {
     contractAddresses: { councilAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
+  const { vesteesAddresses, isLoading: isVesteesLoading, changeVestingSubscriptionsList } = useVestingContext()
+
+  useEffect(() => {
+    changeVestingSubscriptionsList({
+      [VESTING_STORAGE_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeVestingSubscriptionsList(DEFAULT_VESTING_SUBS)
+    }
+  }, [])
 
   const [form, setForm] = useState(INIT_FORM)
   const [formInputStatus, setFormInputStatus] = useState(INIT_FORM_VALIDATION)
@@ -63,15 +77,15 @@ export const MavCouncilFormRemoveVestee = () => {
           return null
         }
 
-        if (!vesteeAddress) {
-          bug('Enter vestee address to remove')
+        if (!vesteesAddresses.includes(vesteeAddress)) {
+          bug('Vestee does not exists')
           return null
         }
 
         return await removeVesteeRequest(vesteeAddress, councilAddress)
       },
     }),
-    [vesteeAddress, userAddress, councilAddress],
+    [userAddress, councilAddress, vesteesAddresses, vesteeAddress],
   )
 
   const { action: handleRemoveVestee } = useContractAction(removeVesteeContractActionProps)
@@ -103,8 +117,11 @@ export const MavCouncilFormRemoveVestee = () => {
     const vesteeAddressProps = {
       name: 'vesteeAddress',
       value: vesteeAddress,
+      disabled: isVesteesLoading,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
+
+        // validation
         validateAddress(e)
       },
       required: true,
@@ -116,7 +133,7 @@ export const MavCouncilFormRemoveVestee = () => {
         inputStatus: formInputStatus.vesteeAddress,
       },
     }
-  }, [formInputStatus.vesteeAddress, vesteeAddress])
+  }, [formInputStatus.vesteeAddress, vesteeAddress, isVesteesLoading])
 
   return (
     <CouncilFormStyled formName={MavrykCounsilDdForms.REMOVE_VESTEE}>
@@ -126,7 +143,10 @@ export const MavCouncilFormRemoveVestee = () => {
 
       <CouncilFormHeaderStyled>
         <H2Title>Remove Vestee</H2Title>
-        <div className="descr">Please enter valid function parameters for removing vestee</div>
+        <div className="descr">
+          Please enter valid function parameters for removing vestee{' '}
+          {isVesteesLoading ? <SpinnerCircleLoaderStyled /> : null}
+        </div>
       </CouncilFormHeaderStyled>
 
       <form onSubmit={handleSubmit}>
