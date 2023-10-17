@@ -145,7 +145,7 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
       return MavrykCounsilDdForms.REQUEST_TOKENS
     case 'requestMint':
       return MavrykCounsilDdForms.REQUEST_TOKEN_MINT
-    case 'transferTokens':
+    case 'transfer':
       return MavrykCounsilDdForms.TRANSFER_TOKENS
 
     // ------- MAVRYK COUNCIL BAKERS FORMS

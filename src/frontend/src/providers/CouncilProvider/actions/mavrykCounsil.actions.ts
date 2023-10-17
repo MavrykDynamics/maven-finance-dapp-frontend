@@ -190,13 +190,12 @@ export const transferTokens = async (
   receiverAddress: string,
   tokenContractAddress: string,
   tokenAmount: number,
-  tokenType: TokenType,
-  tokenId: number,
+  tokenToTransfer: TokenMetadataType,
   purpose: string,
-  decimals: number,
   counsilAddress: string,
 ) => {
   try {
+    const { decimals, type, id } = tokenToTransfer
     const convertedTokensAmount = convertNumberForContractCall({ number: tokenAmount, grade: decimals })
 
     // prepare and send transaction
@@ -206,8 +205,9 @@ export const transferTokens = async (
       receiverAddress,
       tokenContractAddress,
       convertedTokensAmount,
-      tokenType,
-      tokenId,
+      // (NOTE) uppercase due to this subtask https://memcrab.atlassian.net/browse/MAV-2281
+      type.toUpperCase(),
+      id,
       purpose,
     )
 
@@ -241,7 +241,8 @@ export const requestTokens = async (
       tokenContractAddress,
       name,
       convertedTokensAmount,
-      type,
+      // (NOTE) uppercase due to this subtask https://memcrab.atlassian.net/browse/MAV-2281
+      type.toUpperCase(),
       id,
       purpose,
     )

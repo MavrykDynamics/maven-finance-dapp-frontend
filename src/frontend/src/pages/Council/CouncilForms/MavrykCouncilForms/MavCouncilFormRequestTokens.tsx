@@ -289,14 +289,14 @@ export const MavCouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
 
   const tokenTypeProps = {
     name: 'tokenType',
-    value: selectedToken?.type ?? 'No token selected',
+    value: selectedToken?.type.toUpperCase() ?? 'No token selected',
     onChange: () => null,
     disabled: true,
   }
 
   const tokenNameProps = {
     name: 'tokenName',
-    value: selectedToken?.name ?? 'No token selected',
+    value: selectedToken?.symbol ?? 'No token selected',
     onChange: () => null,
     disabled: true,
   }

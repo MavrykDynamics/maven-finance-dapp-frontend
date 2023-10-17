@@ -28,6 +28,7 @@ import { MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getCellData, getCellValueContent } from 'pages/Council/helpers/commonCouncil.utils'
+import { BYTES_ADDRESS_TYPE, convertBytes } from 'utils/convertBytes'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -161,7 +162,10 @@ const getCardToSignBodyCels = (
   // for actions transfer tokens & request tokens we need to convert tokens amount (tokenAmount field)
   if (actionId === MavrykCounsilDdForms.TRANSFER_TOKENS || actionId === MavrykCounsilDdForms.REQUEST_TOKENS) {
     const tokenUsedInAction = getTokenDataByAddress({
-      tokenAddress: actionParams.find(({ name }) => name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenContractAddress)?.value,
+      tokenAddress: convertBytes(
+        actionParams.find(({ name }) => name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenContractAddress)?.value ?? '',
+        BYTES_ADDRESS_TYPE,
+      ),
       tokensMetadata,
     })
 
