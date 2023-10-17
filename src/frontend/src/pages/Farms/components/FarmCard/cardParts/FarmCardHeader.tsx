@@ -28,9 +28,10 @@ const FarmCardHeaderStyled = styled.div<{ theme: MavrykTheme }>`
       width: 100%;
       font-size: 22px;
       font-weight: 600;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
+      overflow-y: clip;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
 
       color: ${({ theme }) => theme.mainHeadingText};
     }
