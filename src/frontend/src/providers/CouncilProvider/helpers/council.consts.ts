@@ -117,6 +117,7 @@ export const COUNCIL_ACTIONS_PARAMS_MAPPER = {
   tokenAmount: 'tokenAmount',
   tokenContractAddress: 'tokenContractAddress',
   tokenType: 'tokenType',
+  tokenName: 'tokenName',
   tokenId: 'tokenId',
   purpose: 'purpose',
   keyHash: 'keyHash',

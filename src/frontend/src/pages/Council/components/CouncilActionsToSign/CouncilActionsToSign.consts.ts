@@ -170,17 +170,17 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     [COUNCIL_ACTIONS_PARAMS_MAPPER.tokenContractAddress]: {
       className: 'token-contract-address',
       type: 'address',
-      cellName: 'Token Contract Address',
+      cellName: 'Token Address',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.tokenType]: {
       className: 'token-type',
       type: 'default',
       cellName: 'Token Type',
     },
-    [COUNCIL_ACTIONS_PARAMS_MAPPER.tokenId]: {
-      className: 'token-id',
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.tokenName]: {
+      className: 'token-name',
       type: 'default',
-      cellName: 'Token ID',
+      cellName: 'Token Name',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.purpose]: { className: 'purpose', type: 'default', cellName: 'Purpose for Request' },
   },
@@ -212,17 +212,12 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     [COUNCIL_ACTIONS_PARAMS_MAPPER.tokenContractAddress]: {
       className: 'token-contract-address',
       type: 'address',
-      cellName: 'Token Contract Address',
+      cellName: 'Token Address',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.tokenType]: {
       className: 'token-type',
       type: 'default',
       cellName: 'Token Type',
-    },
-    [COUNCIL_ACTIONS_PARAMS_MAPPER.tokenId]: {
-      className: 'token-id',
-      type: 'default',
-      cellName: 'Token ID',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.purpose]: { className: 'purpose', type: 'default', cellName: 'Purpose for Request' },
   },
@@ -428,16 +423,12 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
   },
 
   // ------- MAVRYK COUNCIL TOKENS FORMS
-  // TODO: not working, can't create and action, after action is created adjust grid setting
   [MavrykCounsilDdForms.REQUEST_TOKENS]: {
-    columnsTemplate: `1fr 1fr`,
+    columnsTemplate: `auto auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "admin-address ."
-      "contract-address token-name"
-      "token-amount token-type"
-      "purpose purpose"
-      ". submit-form"
+      "treasury-address token-contract-address token-amount signed-amount"
+      "purpose token-type token-name sign-btn"
     `,
   },
   [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
@@ -448,16 +439,12 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     "purpose . sign-btn"
     `,
   },
-  // TODO: not working, can't create and action, after action is created adjust grid setting
   [MavrykCounsilDdForms.TRANSFER_TOKENS]: {
-    columnsTemplate: `1fr 1fr`,
+    columnsTemplate: `auto auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
-      "receiver-address ."
-      "contract-address token-amount"
-      "token-type token-name"
-      "purpose purpose"
-      ". submit-form"
+      "receiver-address token-contract-address token-amount signed-amount"
+      "purpose token-type . sign-btn"
     `,
   },
 
