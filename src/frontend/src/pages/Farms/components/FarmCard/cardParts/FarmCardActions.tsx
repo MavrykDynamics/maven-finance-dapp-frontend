@@ -36,6 +36,13 @@ const FarmCardActionsStyled = styled(Card)`
       font-weight: 600;
     }
   }
+
+  .info {
+    .name {
+      line-height: 24px;
+      white-space: nowrap;
+    }
+  }
 `
 
 export const FarmCardActions = ({
@@ -104,7 +111,7 @@ export const FarmCardActions = ({
                   onClick={openWithdrawModal}
                   disabled={!isFarmLive || isFarmHasWithdrawDisabled || userDepositedAmount === 0}
                 >
-                  <Icon id="out" /> UnStake LP
+                  <Icon id="out" /> Unstake LP
                 </Button>
               </div>
             </>
@@ -117,7 +124,7 @@ export const FarmCardActions = ({
                   onClick={openWithdrawModal}
                   disabled={!isFarmLive || isFarmHasWithdrawDisabled || userDepositedAmount === 0}
                 >
-                  <Icon id="out" /> UnStake LP
+                  <Icon id="out" /> Unstake LP
                 </Button>
               </div>
 

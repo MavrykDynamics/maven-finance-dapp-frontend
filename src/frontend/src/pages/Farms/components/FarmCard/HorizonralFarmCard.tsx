@@ -85,9 +85,9 @@ export const HorizontalFarmCard = ({
               <div className="value">
                 <CommaNumber value={farmApy} endingText="%" />
                 {/* TODO: add open ROI calc handler */}
-                <Button kind={BUTTON_SIMPLE} disabled>
+                {/* <Button kind={BUTTON_SIMPLE} disabled>
                   <Icon id="calculator" />
-                </Button>
+                </Button> */}
               </div>
             </div>
 
@@ -97,11 +97,9 @@ export const HorizontalFarmCard = ({
               <CommaNumber value={totalLiquidityAmount} className="value" />
             </div>
 
-            {farm.isMFarm ? (
-              <div className="double-rewards-tag">
-                <Icon id={'loans'} /> Double Rewards
-              </div>
-            ) : null}
+            <div className={classNames('double-rewards-tag', { isTransparent: !farm.isMFarm })}>
+              <Icon id={'loans'} /> Double Rewards
+            </div>
           </>
         }
       >
