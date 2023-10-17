@@ -81,12 +81,13 @@ export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Ma
 
   .expand-header {
     display: grid;
+    align-items: center;
+
     grid-template-rows: auto;
     grid-template-columns: 320px 20px auto auto auto max-content max-content;
+
     column-gap: 30px;
-    /* justify-content: space-between; */
     padding: 0 30px;
-    align-items: center;
   }
 
   .double-rewards-tag {
