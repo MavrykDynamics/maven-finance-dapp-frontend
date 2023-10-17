@@ -9,7 +9,7 @@ type Props = {
   id: string
   checked: boolean
   disabled?: boolean
-  onChangeHandler?: () => void
+  onChangeHandler: () => void
   children?: React.ReactNode
 }
 

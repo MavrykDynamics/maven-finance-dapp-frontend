@@ -158,7 +158,7 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
       const isOptionSelected = Boolean(multiSelectContext.selectValue.find(({ value }) => value === option.value))
       return (
         <MultiselectMenuOptionStyled>
-          <Checkbox checked={isOptionSelected} id={option.value} />
+          <Checkbox checked={isOptionSelected} onChangeHandler={() => null} id={option.value} />
           {option.image ? <ImageWithPlug imageLink={option.image} alt={`${option.label} image`} /> : null}
           <div className="option-text">{option.label}</div>
         </MultiselectMenuOptionStyled>
@@ -213,7 +213,10 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
           <div className="selected-options-list">
             {selectedOptions.map((option) => {
               return (
-                <MultiselectHeaderOptionStyled onClick={(e) => handleUnselectOption(e, option.value)}>
+                <MultiselectHeaderOptionStyled
+                  onClick={(e) => handleUnselectOption(e, option.value)}
+                  key={option.value}
+                >
                   <div className="option-text">{option.label}</div>
                   <div className="unselect-option">
                     <Icon id="navigation-menu_close" />
