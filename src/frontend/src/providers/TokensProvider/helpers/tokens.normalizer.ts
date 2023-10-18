@@ -108,15 +108,15 @@ const parseFarmLiquidityToken = (lpTokenMetadata: any) => {
   if (liquidityPairTokenParsed.success)
     return {
       tokenAddress: liquidityPairTokenParsed.data.liquidityPairToken.tokenAddress[0],
-      // symbol: liquidityPairTokenParsed.data.liquidityPairToken.symbol[0],
-      symbol: liquidityPairTokenParsed.data.liquidityPairToken.origin[0],
+      symbol: liquidityPairTokenParsed.data.liquidityPairToken.symbol[0],
+      // symbol: liquidityPairTokenParsed.data.liquidityPairToken.origin[0],
     }
 
   if (liquidityTokenParsed.success)
     return {
       tokenAddress: liquidityTokenParsed.data.liquidityToken.tokenAddress[0],
-      // symbol: liquidityTokenParsed.data.liquidityToken.symbol[0],
-      symbol: liquidityTokenParsed.data.liquidityToken.origin[0],
+      symbol: liquidityTokenParsed.data.liquidityToken.symbol[0],
+      // symbol: liquidityTokenParsed.data.liquidityToken.origin[0],
     }
 
   throw new Error('parsing lp token metadata error')
@@ -143,7 +143,7 @@ const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMeta
     const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
     // parsing liquidity pair token metadata schema, to have symbol and address for token
-    const { symbol, tokenAddress } = parseFarmLiquidityToken(farmLpToken.metadata)
+    const { symbol } = parseFarmLiquidityToken(farmLpToken.metadata)
 
     const tokenMetadata: TokenMetadataType = {
       id: token_id,

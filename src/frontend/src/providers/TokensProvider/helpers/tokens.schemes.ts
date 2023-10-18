@@ -89,8 +89,8 @@ export const mTokenMetadataSchema = z.object({
 export const farmLiquidityPairTokenMetadataSchema = z.object({
   liquidityPairToken: z.object({
     // TODO: clarify symbol for token
-    // symbol: z.tuple([z.string()]),
-    origin: z.tuple([z.string()]),
+    symbol: z.tuple([z.string()]),
+    // origin: z.tuple([z.string()]),
     tokenAddress: z.tuple([z.string()]),
   }),
 })
@@ -98,8 +98,8 @@ export const farmLiquidityPairTokenMetadataSchema = z.object({
 export const farmLiquidityTokenMetadataSchema = z.object({
   liquidityToken: z.object({
     // TODO: clarify symbol for token
-    // symbol: z.tuple([z.string()]),
-    origin: z.tuple([z.string()]),
+    symbol: z.tuple([z.string()]),
+    // origin: z.tuple([z.string()]),
     tokenAddress: z.tuple([z.string()]),
   }),
 })
