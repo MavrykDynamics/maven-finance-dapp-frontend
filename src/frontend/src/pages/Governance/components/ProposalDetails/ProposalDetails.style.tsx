@@ -34,6 +34,14 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
       right: 0px;
       top: -17px;
     }
+
+    /* TODO remove after changing Tooltip logic to place text depending on screen | block width */
+    .tooltip > .text {
+      @media (max-width: 1600px) {
+        left: 0;
+        transform: translateX(-91%);
+      }
+    }
   }
 
   .voting-ends {
