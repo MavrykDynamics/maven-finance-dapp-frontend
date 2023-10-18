@@ -3,6 +3,7 @@ import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
+import { UserContext } from 'providers/UserProvider/user.provider.types'
 import { RegisterAsSatelliteForm } from 'utils/TypesAndInterfaces/Forms'
 
 export const delegate = async (
@@ -25,16 +26,33 @@ export const delegate = async (
 
 export const undelegate = async (
   accountPkh: string,
+  userProposalRewards: NonNullable<UserContext['rewards']>['availableProposalRewards'],
   delegateToAddress: string,
   delegationAddress: string,
+  governanceAddress: string,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(delegationAddress)
-    const unDelegateMetaData = await contract?.methods.undelegateFromSatellite(accountPkh, delegateToAddress)
 
-    return await getEstimationResult(unDelegateMetaData)
+    const batchArr: (TransferParams & { kind: OpKind.TRANSACTION })[] = []
+
+    if (userProposalRewards.length) {
+      const govContract = await tezos.wallet.at(governanceAddress)
+
+      batchArr.push({
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...govContract?.methods.distributeProposalRewards(delegateToAddress, userProposalRewards).toTransferParams(),
+      })
+    }
+
+    batchArr.push({
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...contract?.methods.undelegateFromSatellite(accountPkh, delegateToAddress).toTransferParams(),
+    })
+
+    return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
@@ -111,16 +129,33 @@ export const updateSatellite = async (
 
 export const unregisterSatellite = async (
   accountPkh: string,
+  userProposalRewards: NonNullable<UserContext['rewards']>['availableProposalRewards'],
   delegationAddress: string,
+  governanceAddress: string,
   callback: () => void,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(delegationAddress)
-    const unregisterSatelliteMetaData = await contract?.methods.unregisterAsSatellite(accountPkh)
 
-    return await getEstimationResult(unregisterSatelliteMetaData, { callback })
+    const batchArr: (TransferParams & { kind: OpKind.TRANSACTION })[] = []
+
+    if (userProposalRewards.length) {
+      const govContract = await tezos.wallet.at(governanceAddress)
+
+      batchArr.push({
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...govContract?.methods.distributeProposalRewards(accountPkh, userProposalRewards).toTransferParams(),
+      })
+    }
+
+    batchArr.push({
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...contract?.methods.unregisterAsSatellite(accountPkh).toTransferParams(),
+    })
+
+    return await getEstimationBatchResult(tezos, batchArr, callback)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

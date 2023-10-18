@@ -8,9 +8,11 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { SatelliteGovernanceTransfer } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
+import { UserContext } from 'providers/UserProvider/user.provider.types'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // consts
 import {
@@ -44,9 +46,10 @@ import {
 
 export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: string, purpose: string) => {
   const {
-    contractAddresses: { governanceSatelliteAddress },
+    contractAddresses: { governanceSatelliteAddress, governanceAddress },
   } = useDappConfigContext()
   const { userAddress } = useUserContext()
+  const { availableProposalRewards } = useUserRewards()
   const { bug } = useToasterContext()
 
   //   action helpers for actions with same parameters -----------------------------------------
@@ -63,7 +66,7 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
         return null
       }
       if (!governanceSatelliteAddress) {
-        bug('Click Connect in the left menu', 'Please connect your wallet')
+        bug('Wrong Contract Address')
         return null
       }
 
@@ -75,6 +78,49 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
       return await actionFn(governanceSatelliteAddress, satelliteAddress, purpose)
     },
     [bug, governanceSatelliteAddress, purpose, satelliteAddress, userAddress],
+  )
+
+  const invokeActionWithSatellitAddressAndPurposeAndDistribute = useCallback(
+    async (
+      actionFn: (
+        governanceSatelliteAddress: string,
+        satelliteAddress: string,
+        purpose: string,
+        userProposalRewards: NonNullable<UserContext['rewards']>['availableProposalRewards'],
+        governanceAddress: string,
+      ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>,
+    ) => {
+      if (!userAddress) {
+        bug('Click Connect in the left menu', 'Please connect your wallet')
+        return null
+      }
+      if (!governanceSatelliteAddress || !governanceAddress) {
+        bug('Wrong Contract Address')
+        return null
+      }
+
+      if (!satelliteAddress || !purpose) {
+        bug('Wrong selected data')
+        return null
+      }
+
+      return await actionFn(
+        governanceSatelliteAddress,
+        satelliteAddress,
+        purpose,
+        availableProposalRewards,
+        governanceAddress,
+      )
+    },
+    [
+      availableProposalRewards,
+      bug,
+      governanceAddress,
+      governanceSatelliteAddress,
+      purpose,
+      satelliteAddress,
+      userAddress,
+    ],
   )
 
   const invokeActionWithOracle = useCallback(
@@ -92,7 +138,7 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
       }
 
       if (!governanceSatelliteAddress) {
-        bug('Wrong governance address')
+        bug('Wrong Contract Address')
         return null
       }
 
@@ -112,9 +158,9 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
   const suspendSatelliteContratActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: SUSPEND_SATELLITE_ACTION,
-      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, suspendSatellite),
+      actionFn: invokeActionWithSatellitAddressAndPurposeAndDistribute.bind(null, suspendSatellite),
     }),
-    [invokeActionWithSatellitAddressAndPurpose],
+    [invokeActionWithSatellitAddressAndPurposeAndDistribute],
   )
 
   const { action: suspendSatelliteAction } = useContractAction(suspendSatelliteContratActionProps)
@@ -135,9 +181,9 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
   const banSatelliteContratActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: BAN_SATELLITE_ACTION,
-      actionFn: invokeActionWithSatellitAddressAndPurpose.bind(null, banSatellite),
+      actionFn: invokeActionWithSatellitAddressAndPurposeAndDistribute.bind(null, banSatellite),
     }),
-    [invokeActionWithSatellitAddressAndPurpose],
+    [invokeActionWithSatellitAddressAndPurposeAndDistribute],
   )
 
   const { action: banSatelliteAction } = useContractAction(banSatelliteContratActionProps)
