@@ -159,7 +159,11 @@ export const FarmWithdrawModal = ({
             balance: userTokenBalance,
             balanceAsset: tokenName,
             useMaxHandler: () =>
-              setInputData({ ...inputData, amount: String(depositedAmountByUser), validation: INPUT_STATUS_SUCCESS }),
+              setInputData({
+                ...inputData,
+                amount: String(depositedAmountByUser),
+                validation: depositedAmountByUser === 0 ? INPUT_STATUS_DEFAULT : INPUT_STATUS_SUCCESS,
+              }),
             inputStatus: inputData.validation,
             inputSize: INPUT_LARGE,
           }}

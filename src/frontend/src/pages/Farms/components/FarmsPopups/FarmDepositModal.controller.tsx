@@ -152,7 +152,11 @@ export const FarmDepositModal = ({
             balance: userTokenBalance,
             balanceAsset: tokenName,
             useMaxHandler: () =>
-              setInputData({ ...inputData, amount: String(userTokenBalance), validation: INPUT_STATUS_SUCCESS }),
+              setInputData({
+                ...inputData,
+                amount: String(userTokenBalance),
+                validation: userTokenBalance === 0 ? INPUT_STATUS_DEFAULT : INPUT_STATUS_SUCCESS,
+              }),
             inputStatus: inputData.validation,
             inputSize: INPUT_LARGE,
           }}
