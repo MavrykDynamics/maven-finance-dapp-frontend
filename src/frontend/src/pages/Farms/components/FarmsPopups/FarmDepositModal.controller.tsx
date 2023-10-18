@@ -107,7 +107,7 @@ export const FarmDepositModal = ({
     }
 
     return await depositToFarm(selectedFarmAddress, userAddress, Number(inputData.amount), selectedFarmToken)
-  }, [selectedFarmAddress, userAddress, inputData.amount])
+  }, [selectedFarmAddress, userAddress, inputData.amount, selectedFarmToken])
 
   const depositToFarmContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -115,7 +115,7 @@ export const FarmDepositModal = ({
       actionFn: depositToFarmAction,
       afterActionCallback: closeHandler,
     }),
-    [depositToFarmAction],
+    [closeHandler, depositToFarmAction],
   )
 
   const { action: handleDepositToFarm } = useContractAction(depositToFarmContractActionProps)
@@ -151,7 +151,8 @@ export const FarmDepositModal = ({
           settings={{
             balance: userTokenBalance,
             balanceAsset: tokenName,
-            useMaxHandler: () => setInputData({ ...inputData, amount: String(userTokenBalance) }),
+            useMaxHandler: () =>
+              setInputData({ ...inputData, amount: String(userTokenBalance), validation: INPUT_STATUS_SUCCESS }),
             inputStatus: inputData.validation,
             inputSize: INPUT_LARGE,
           }}

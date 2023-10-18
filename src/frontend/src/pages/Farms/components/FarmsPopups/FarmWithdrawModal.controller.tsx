@@ -114,7 +114,7 @@ export const FarmWithdrawModal = ({
     }
 
     return await withdrawFromFarm(selectedFarmAddress, Number(inputData.amount), selectedFarmToken)
-  }, [selectedFarmAddress, userAddress, inputData.amount])
+  }, [selectedFarmAddress, userAddress, inputData.amount, selectedFarmToken])
 
   const withdrawFromFarmContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -122,7 +122,7 @@ export const FarmWithdrawModal = ({
       actionFn: withdrawFromFarmAction,
       afterActionCallback: closeHandler,
     }),
-    [withdrawFromFarmAction],
+    [withdrawFromFarmAction, closeHandler],
   )
 
   const { action: handleWithdrawFromFarm } = useContractAction(withdrawFromFarmContractActionProps)
@@ -158,7 +158,8 @@ export const FarmWithdrawModal = ({
           settings={{
             balance: userTokenBalance,
             balanceAsset: tokenName,
-            useMaxHandler: () => setInputData({ ...inputData, amount: String(userTokenBalance) }),
+            useMaxHandler: () =>
+              setInputData({ ...inputData, amount: String(depositedAmountByUser), validation: INPUT_STATUS_SUCCESS }),
             inputStatus: inputData.validation,
             inputSize: INPUT_LARGE,
           }}

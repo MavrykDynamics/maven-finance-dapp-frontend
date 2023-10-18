@@ -125,7 +125,7 @@ export const Farms = () => {
     const isLiveFarmsSelected = isLive === LIVE_TAB_ID
     const isStakedFarmsSelected = isStaked === STAKED
 
-    const farmsIds = isStakedFarmsSelected
+    let farmsIds = isStakedFarmsSelected
       ? isLiveFarmsSelected
         ? liveStakedFarms
         : finishedStakedFarms
@@ -134,11 +134,11 @@ export const Farms = () => {
       : allFinishedFarms
 
     if (searchValue !== undefined) {
-      return filterBySearch(farmsIds, farmsMapper, searchValue)
+      farmsIds = filterBySearch(farmsIds, farmsMapper, searchValue)
     }
 
     if (sortBy !== undefined) {
-      return sortFarms({ farmsIds, farmsMapper, sortBy, userAddress })
+      farmsIds = sortFarms({ farmsIds, farmsMapper, sortBy, userAddress })
     }
 
     return farmsIds

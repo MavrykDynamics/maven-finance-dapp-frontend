@@ -39,46 +39,37 @@ export const sortFarms = ({
   [...farmsIds].sort((farmA_address, farmB_address) => {
     const farmA = farmsMapper[farmA_address]
     const farmB = farmsMapper[farmB_address]
-    let res = 0
     switch (sortBy) {
       case 'active':
-        res = Number(farmA.open) - Number(farmB.open)
-        break
+        return Number(farmA.open) - Number(farmB.open)
       case 'highestAPY':
-        res =
-          calculateFarmAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) <
+        return calculateFarmAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) <
           calculateFarmAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
-            ? 1
-            : -1
-        break
+          ? 1
+          : -1
       case 'lowestAPY':
-        res =
-          calculateFarmAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) >
+        return calculateFarmAPY(farmA.currentRewardPerBlock, farmA.liquidityTokenBalance) >
           calculateFarmAPY(farmB.currentRewardPerBlock, farmB.liquidityTokenBalance)
-            ? 1
-            : -1
-        break
+          ? 1
+          : -1
       case 'highestLiquidity':
-        res = farmA.liquidityTokenBalance < farmB.liquidityTokenBalance ? 1 : -1
-        break
+        return farmA.liquidityTokenBalance < farmB.liquidityTokenBalance ? 1 : -1
       case 'lowestLiquidity':
-        res = farmA.liquidityTokenBalance > farmB.liquidityTokenBalance ? 1 : -1
-        break
+        return farmA.liquidityTokenBalance > farmB.liquidityTokenBalance ? 1 : -1
       case 'yourLargestStake':
-        res =
-          getFarmUserDepositedAmount({ farmDepositors: farmA.farmDepositors, userAddress, withoutConvertation: true }) <
+        return getFarmUserDepositedAmount({
+          farmDepositors: farmA.farmDepositors,
+          userAddress,
+          withoutConvertation: true,
+        }) <
           getFarmUserDepositedAmount({ farmDepositors: farmB.farmDepositors, userAddress, withoutConvertation: true })
-            ? 1
-            : -1
-        break
+          ? 1
+          : -1
       case 'rewardsPerBlock':
-        res = farmA.currentRewardPerBlock < farmB.currentRewardPerBlock ? 1 : -1
-        break
+        return farmA.currentRewardPerBlock < farmB.currentRewardPerBlock ? 1 : -1
       default:
-        res = 1
-        break
+        return 1
     }
-    return res
   })
 
 // generate new array of opened farms, to store in url
