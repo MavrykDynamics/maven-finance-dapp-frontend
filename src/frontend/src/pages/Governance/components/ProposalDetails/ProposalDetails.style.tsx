@@ -112,6 +112,7 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     .proposal-data-block-name {
       font-weight: 500;
       font-size: 14px;
+      color: ${({ theme }) => theme.regularText};
     }
   }
 
