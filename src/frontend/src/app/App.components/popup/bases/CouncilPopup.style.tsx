@@ -39,6 +39,9 @@ export const CouncilActionReadMorePopupContent = styled(PopupContentWrapperBase)
     font-size: 18px;
     line-height: 27px;
 
+    overflow-wrap: break-word;
+    text-align: justify;
+
     color: ${({ theme }) => theme.subHeadingText};
   }
 

@@ -68,19 +68,31 @@ export const CouncilActionToSign = ({
           const isPurposeParam = paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.purpose
           const isContractsSetParams = paramName === COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet
 
-          const handleOpenReadMore = isPurposeParam
-            ? () =>
-                openReadMorePopup({
-                  contentType: ACTION_READ_MORE_PURPOSE,
-                  purposeText: value,
-                })
-            : isContractsSetParams
-            ? () =>
-                openReadMorePopup({
-                  contentType: ACTION_READ_MORE_CONTRACTS_LIST,
-                  constractsList: value.split(', '),
-                })
-            : undefined
+          // TODO: use this when contractAddressesSet will be parsed from bytes
+          // const handleOpenReadMore = isPurposeParam
+          //   ? () =>
+          //       openReadMorePopup({
+          //         contentType: ACTION_READ_MORE_PURPOSE,
+          //         purposeText: value,
+          //       })
+          //   : isContractsSetParams
+          //   ? () =>
+          //       openReadMorePopup({
+          //         contentType: ACTION_READ_MORE_CONTRACTS_LIST,
+          //         constractsList: value.split(', '),
+          //       })
+          //   : undefined
+
+          // TODO: remove this when contractAddressesSet will be parsed from bytes
+          const handleOpenReadMore =
+            isPurposeParam || isContractsSetParams
+              ? () =>
+                  openReadMorePopup({
+                    contentType: ACTION_READ_MORE_PURPOSE,
+                    purposeText: value,
+                  })
+              : undefined
+
           return (
             <div className={classNames('column', className)} key={paramName}>
               <div className="name">{cellName}</div>
