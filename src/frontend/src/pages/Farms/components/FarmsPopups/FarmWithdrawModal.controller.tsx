@@ -94,11 +94,16 @@ export const FarmWithdrawModal = ({
   )
   const handleChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-      const validationStatus = +value <= depositedAmountByUser && +value > 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      const numberOfDecimalPlaces = value.match(/\.(\d+)/)?.[1].length ?? 0
+      const isValidDecimalsAmount = selectedFarmToken ? numberOfDecimalPlaces <= selectedFarmToken?.decimals : false
+      const validationStatus =
+        isValidDecimalsAmount && +value <= depositedAmountByUser && +value > 0
+          ? INPUT_STATUS_SUCCESS
+          : INPUT_STATUS_ERROR
 
       setInputData({ ...inputData, amount: value, validation: validationStatus })
     },
-    [inputData, depositedAmountByUser],
+    [selectedFarmToken, depositedAmountByUser, inputData],
   )
 
   // harvest rewards action ---------------------------

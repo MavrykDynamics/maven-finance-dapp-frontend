@@ -87,11 +87,14 @@ export const FarmDepositModal = ({
   )
   const handleChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-      const validationStatus = +value <= userTokenBalance && +value > 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
+      const numberOfDecimalPlaces = value.match(/\.(\d+)/)?.[1].length ?? 0
+      const isValidDecimalsAmount = selectedFarmToken ? numberOfDecimalPlaces <= selectedFarmToken?.decimals : false
+      const validationStatus =
+        isValidDecimalsAmount && +value <= userTokenBalance && +value > 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
       setInputData({ ...inputData, amount: value, validation: validationStatus })
     },
-    [inputData, userTokenBalance],
+    [inputData, selectedFarmToken, userTokenBalance],
   )
 
   // harvest rewards action ---------------------------

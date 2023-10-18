@@ -535,6 +535,7 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
 
     a {
       cursor: pointer;
+      width: fit-contentb;
       position: relative;
 
       &::before {
@@ -545,6 +546,7 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
         height: 100%;
         content: '';
         background-color: ${({ theme }) => theme.divider};
+        pointer-events: none;
       }
 
       &:last-child {
@@ -552,15 +554,19 @@ export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
           display: none;
         }
       }
+
+      &:hover {
+        opacity: 1;
+      }
     }
 
     .card {
       opacity: 1;
       width: 250px;
-      transition: 0.7s all;
+      transition: 0.3s all;
 
       &:hover {
-        opacity: 0.8;
+        opacity: 0.7;
       }
 
       p {
