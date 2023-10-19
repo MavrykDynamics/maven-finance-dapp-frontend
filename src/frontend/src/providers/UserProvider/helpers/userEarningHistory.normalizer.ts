@@ -38,6 +38,13 @@ const getChartWithOperationSpliitedByDays = ({
   return chartData.concat({ value: (chartData.at(-1)?.value ?? 0) + operationValue, time: operationTime })
 }
 
+/**
+ *
+ * @param indexerData user rewards (doorman, satellite farms)
+ * @returns data for chart, where all rewards claiming splitted by days, and added 2 extra plots:
+ * 1. to the end - current time and current rewards claimed amount
+ * 2. to the start - when started claiming with 0 rewards amount
+ */
 export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDataQuery) => {
   const { stakes_history_data, farm_accounts } = indexerData.mavryk_user?.[0]
 
@@ -76,8 +83,17 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
     )
   }, [])
 
-  return earningHistorySplittedByDays.concat({
-    value: earningHistorySplittedByDays.at(-1)?.value ?? 0,
-    time: dayjs().valueOf() as UTCTimestamp,
-  })
+  return [
+    {
+      value: 0,
+      time: dayjs(
+        getDateStart(Number(earningHistorySplittedByDays.at(0)?.time ?? dayjs().valueOf())),
+      ).valueOf() as UTCTimestamp,
+    },
+    ...earningHistorySplittedByDays,
+    {
+      value: earningHistorySplittedByDays.at(-1)?.value ?? 0,
+      time: dayjs().valueOf() as UTCTimestamp,
+    },
+  ]
 }

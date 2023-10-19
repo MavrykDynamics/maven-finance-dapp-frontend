@@ -79,6 +79,12 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
                 areaBottomColor: colors[themeSelected].primaryChartBottomColor,
               }}
               tooltipAsset={'MVK'}
+              settings={{
+                priceMargins: {
+                  top: 0.2,
+                  bottom: 0.05,
+                },
+              }}
             />
           )}
         </div>
