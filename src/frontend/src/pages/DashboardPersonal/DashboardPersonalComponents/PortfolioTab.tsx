@@ -22,7 +22,9 @@ import { LendBorrowPosition } from './LendBorrowPosition'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { PortfolioChartStyled, PortfolioWalletStyled } from './DashboardPersonalComponents.style'
 import Button from 'app/App.components/Button/NewButton'
+import { Plug } from 'app/App.components/Chart/Chart.style'
 import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 // hooks
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
@@ -64,7 +66,15 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
       <PortfolioChartStyled>
         <H2Title>MVK Earning History</H2Title>
         <div className="content">
-          {isUserEarhingHistoryLoading ? (
+          {!userAddress ? (
+            <Plug>
+              <div>
+                <Icon id="stars" className="icon-stars" />
+                <Icon id="cow" className="icon-cow" />
+              </div>
+              <p className="text">No data available</p>
+            </Plug>
+          ) : isUserEarhingHistoryLoading ? (
             <DataLoaderWrapper margin="0">
               <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
               <div className="text">Loading your earning history data</div>
@@ -72,7 +82,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
           ) : (
             <Chart
               numberOfItemsToDisplay={2}
-              data={{ type: AREA_CHART_TYPE, plots: earningHistory }}
+              data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }}
               colors={{
                 lineColor: colors[themeSelected].primaryChartColor,
                 areaTopColor: colors[themeSelected].primaryChartColor,

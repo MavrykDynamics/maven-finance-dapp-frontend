@@ -62,6 +62,11 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
     justify-content: center;
     align-items: center;
     height: calc(100% - 45px);
+
+    .no-data {
+      font-size: 18px;
+      font-weight: 500;
+    }
   }
 `
 
