@@ -35,6 +35,7 @@ export const useDappTvl = () => {
       skip: !doormanAddress,
       variables: {
         doormanContractAddress: doormanAddress ?? '',
+        isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
       },
       onCompleted: (data) => setIndexerData(data),
       onError: (error) => handleApolloError(error, 'GET_DAPP_TVL'),

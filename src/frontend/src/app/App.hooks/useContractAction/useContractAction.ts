@@ -1,12 +1,11 @@
 // consts
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_ACTIONS_TEXTS } from 'providers/ToasterProvider/helpers/texts/toasterActions.texts'
 import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
 import { TOASTER_UPDATE_DATA_AFTER_ACTION_DATA } from 'providers/ToasterProvider/toaster.provider.const'
 
 // helpers
 import { unknownToError } from 'errors/error'
 import { isContractErrorPayload } from 'errors/helpers/walletError.helper'
-import { checkIfActionSuccess } from 'providers/DappConfigProvider/helpers/dappAction.helpers'
 import { sleep } from 'utils/api/sleep'
 
 // types
@@ -21,6 +20,10 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type ActionReturnPayload = Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
+
+const checkIfActionSuccess = (
+  actionResult: ActionErrorReturnType | ActionSuccessReturnType,
+): actionResult is ActionSuccessReturnType => actionResult.actionSuccess === true
 
 export type HookContractActionArgs<G = unknown> = {
   actionType: ActionTypes

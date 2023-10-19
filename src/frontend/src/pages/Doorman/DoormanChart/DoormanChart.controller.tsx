@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { SingleValueData, Time } from 'lightweight-charts'
 
 // components

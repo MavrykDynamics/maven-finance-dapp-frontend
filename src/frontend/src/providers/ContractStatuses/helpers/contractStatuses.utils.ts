@@ -6,10 +6,9 @@ import { normalizeContractStatuses } from './normalizeContractStatuses'
 import {
   ContractStatusesContext,
   ContractStatusesContextStateType,
-  ContractStatusesStorage,
   ContractStatusesSubsRecordType,
   NullableContractStatusesContextStateType,
-} from '../contractStatuses.types'
+} from '../contractStatuses.provider.types'
 import { GlasssBrokenStatusAndWhiteListDevsQuery } from 'utils/__generated__/graphql'
 
 // consts

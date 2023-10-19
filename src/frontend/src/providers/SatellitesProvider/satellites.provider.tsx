@@ -54,7 +54,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
 
   /**
-   * SATELLITES_METRICS_DATA -> Refetch proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
+   * SATELLITES_METRICS_DATA -> load proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
    * SATELLITE_DATA_QUERY -> load satellite by address
    * ALL_SATELLITES_DATA_QUERY -> load all satellites
    * ACTIVE_SATELLITES_DATA_QUERY -> load all active satellites

@@ -1,12 +1,17 @@
+import { useState } from 'react'
+
+// view
 import { MobileWalletDetails } from 'app/App.components/ConnectWallet/ConnectedWalletInfo'
-import React, { useState } from 'react'
 import { SocialIcons } from '../../Menu.view'
-import { ABOUT_LINKS, BLOG_LINKS, DOCS_LINKS, PRODUCTS_LINKS } from '../MenuTopBar.controller'
 import { MobileTopBarStyled } from '../MenuTopBar.style'
 import { TopBarLinks } from './TopBarLinks.controller'
-import { State } from 'reducers'
-import { useSelector } from 'react-redux'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
+
+// consts
+import { ABOUT_LINKS, BLOG_LINKS, DOCS_LINKS, PRODUCTS_LINKS } from '../MenuTopBar.controller'
+
+// hooks
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 export const MobileTopBar = ({
   show,
@@ -17,11 +22,12 @@ export const MobileTopBar = ({
   closeMobileMenu: () => void
   mountWertWiget: (commodity: string) => void
 }) => {
-  const { accountPkh } = useSelector((state: State) => state.wallet)
+  const { userAddress } = useUserContext()
+
   const [selectedLinksBlock, setSelectedLinksBlock] = useState<null | string>(null)
   return (
     <MobileTopBarStyled show={show}>
-      {accountPkh ? (
+      {userAddress ? (
         <MobileWalletDetails mountWertWiget={mountWertWiget} closeMobileMenu={closeMobileMenu} />
       ) : (
         <div className="connect-wallet">

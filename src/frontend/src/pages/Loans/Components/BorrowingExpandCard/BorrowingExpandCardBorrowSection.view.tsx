@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 
 // consts
@@ -25,7 +24,6 @@ import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // types
-import { State } from 'reducers'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { Settings } from 'app/App.components/Input/newInput.type'
 
@@ -56,7 +54,9 @@ type Props = {
 }
 
 export const BorrowingExpandCardBorrowSection = (props: Props) => {
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const {
     borrowedAssetAddress,

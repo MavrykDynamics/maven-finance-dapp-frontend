@@ -20,7 +20,7 @@ import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
-import { stakingInputValidation } from '../Doorman.converter'
+import { stakingInputValidation } from '../helpers/validators'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // consts
@@ -105,6 +105,7 @@ export const StakeUnstakeView = ({
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
+  // TODO: @Sam-M-Israel check whether include farms & satellite rewards, cuz compound btn claims only doorman rewards here
   const rewardsToClaim =
     availableDoormanRewards +
     availableSatellitesRewards +
@@ -407,11 +408,21 @@ export const StakeUnstakeView = ({
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE} disabled={isActionActive}>
+          <NewButton
+            kind={BUTTON_PRIMARY}
+            onClick={handleStake}
+            form={BUTTON_WIDE}
+            disabled={isActionActive || Number(inputData.amount) > myMvkTokenBalance}
+          >
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={BUTTON_SECONDARY} onClick={openExitFeePopup} form={BUTTON_WIDE} disabled={isActionActive}>
+          <NewButton
+            kind={BUTTON_SECONDARY}
+            onClick={openExitFeePopup}
+            form={BUTTON_WIDE}
+            disabled={isActionActive || Number(inputData.amount) > mySMvkTokenBalance}
+          >
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>

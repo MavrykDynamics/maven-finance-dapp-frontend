@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import Icon from './Icon.view'
+import classnames from 'classnames'
 
 export const ImageWithPlug = ({
   imageLink = null,
@@ -29,5 +30,5 @@ export const ImageWithPlug = ({
     )
   }
 
-  return <Icon id={noImageIconId} className={className} />
+  return <Icon id={noImageIconId} className={classnames(className, 'img-plug')} />
 }

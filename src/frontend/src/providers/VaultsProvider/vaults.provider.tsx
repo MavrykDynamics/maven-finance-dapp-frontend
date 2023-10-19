@@ -69,6 +69,7 @@ export const VaultsProvider = ({ children }: Props) => {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     variables: {
       userAddress: userAddress ?? '',
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
     },
     onCompleted: (data) => {
       const { vaultsMapper, allVaultsIds, permissionedVaultsIds } = normalizeVaults({
@@ -90,6 +91,7 @@ export const VaultsProvider = ({ children }: Props) => {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     variables: {
       userAddress: userAddress ?? '',
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
     },
     onCompleted: (data) => {
       const { vaultsMapper, allVaultsIds, myVaultsIds } = normalizeVaults({
@@ -109,6 +111,9 @@ export const VaultsProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
+    variables: {
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
+    },
     onCompleted: (data) => {
       const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
         indexerData: data,

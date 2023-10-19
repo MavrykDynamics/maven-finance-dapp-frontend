@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 import classNames from 'classnames'
-import { State } from 'reducers'
 
 import { StatusMessage } from '../StatusMessage.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -80,14 +78,13 @@ export const BorrowingExpandCard = ({
     createVaultPopup,
   } = useLoansPopupsContext()
   const { marketsMapper } = useLoansContext()
-
-  const history = useHistory()
-  const location = useLocation()
   const {
+    globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const history = useHistory()
+  const location = useLocation()
 
   const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)

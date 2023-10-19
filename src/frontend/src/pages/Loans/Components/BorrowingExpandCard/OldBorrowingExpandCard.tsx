@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useClickAway } from 'react-use'
 import { useHistory, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
 
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from '../../Loans.const'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
@@ -24,21 +24,19 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 import { ThreeLevelListItem } from '../../Loans.style'
 import { BorrowingExpandedCard } from '../LoansComponents.style'
 
-import { State } from 'reducers'
 import { getCollateralRatioByPersentage } from '../../Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
-import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 
-// providers
+// hooks
+import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
+import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -52,11 +50,10 @@ type BorrowingExpandCardPropsType = {
 export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: BorrowingExpandCardPropsType) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openAddExistingCollateralPopup, addExistingCollateralPopup } = useLoansPopupsContext()
-
   const {
+    globalLoadingState: { isActionActive },
     preferences: { themeSelected },
   } = useDappConfigContext()
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
@@ -142,7 +139,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               <div className="data">
                 <div className="value">{name ? name : symbol}</div>
                 <div className="value">
-                  <TzAddress tzAddress={address} shouldCopy hasIcon amountFromStart={4} amountFromEnd={4} />
+                  <TzAddress tzAddress={address} shouldCopy hasIcon />
                 </div>
               </div>
             </ThreeLevelListItem>

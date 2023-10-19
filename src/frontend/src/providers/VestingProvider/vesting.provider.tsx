@@ -32,11 +32,12 @@ const VestingProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_VESTING_STORAGE_QUERY, {
     skip: !activeSubs[VESTING_STORAGE_DATA_SUB],
     onCompleted: (data) => {
-      const { vesteeIds, vesteesMapper, totalClaimedAmount, totalVestedAmount, address } = normalizeVestingStorage(data)
+      const { vesteesAddresses, vesteesMapper, totalClaimedAmount, totalVestedAmount, address } =
+        normalizeVestingStorage(data)
 
       setVestingCtxState((prev) => ({
         ...prev,
-        vesteeIds,
+        vesteesAddresses,
         vesteesMapper,
         totalClaimedAmount,
         totalVestedAmount,

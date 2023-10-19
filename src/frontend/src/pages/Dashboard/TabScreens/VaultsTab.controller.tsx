@@ -25,7 +25,7 @@ import {
   TableCell,
   TableScrollable,
 } from 'app/App.components/Table'
-import { BGPrimaryTitle } from 'pages/BreakGlass/BreakGlass.style'
+import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { StatBlock, BlockName } from '../Dashboard.style'
 import { EmptyContainer, TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -45,10 +45,24 @@ export const VaultsTab = () => {
 
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
 
-  const chartData = useMemo(
-    () => getPieChartData(reducedVaultsCollaterals, vaultTvl, hoveredPath, tokensMetadata, tokensPrices),
-    [hoveredPath, reducedVaultsCollaterals, tokensMetadata, tokensPrices, vaultTvl],
-  )
+  const chartData = useMemo(() => {
+    const reducedCollateralsIntoChart = getPieChartData(
+      reducedVaultsCollaterals,
+      vaultTvl,
+      hoveredPath,
+      tokensMetadata,
+      tokensPrices,
+    )
+    const isEmptyChart = reducedCollateralsIntoChart.length === 1 && reducedCollateralsIntoChart[0].value === 0
+    return isEmptyChart
+      ? [
+          {
+            ...reducedCollateralsIntoChart[0],
+            value: 1,
+          },
+        ]
+      : reducedCollateralsIntoChart
+  }, [hoveredPath, reducedVaultsCollaterals, tokensMetadata, tokensPrices, vaultTvl])
 
   return (
     <TabWrapperStyled className="vaults">

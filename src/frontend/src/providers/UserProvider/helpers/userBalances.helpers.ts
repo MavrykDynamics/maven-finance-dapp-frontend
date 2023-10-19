@@ -3,12 +3,7 @@ import * as signalR from '@microsoft/signalr'
 // types
 import { UserContext, UserTzktTokensBalancesType } from './../user.provider.types'
 import { GetUserDataQuery } from 'utils/__generated__/graphql'
-import {
-  TokenAddressType,
-  TokensContext,
-  UserMTokenType,
-  mTokenMetadataSchema,
-} from 'providers/TokensProvider/tokens.provider.types'
+import { TokenAddressType, TokensContext, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 
 // helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -24,6 +19,7 @@ import {
 
 // consts
 import { MVK_DECIMALS, SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { mTokenMetadataSchema } from 'providers/TokensProvider/helpers/tokens.schemes'
 
 /**
  * function to get token balance of the user

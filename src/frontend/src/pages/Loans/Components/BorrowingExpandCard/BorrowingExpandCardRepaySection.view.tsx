@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
 import classNames from 'classnames'
 
 // components
@@ -12,7 +11,6 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // types
-import { State } from 'reducers'
 import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
@@ -78,8 +76,9 @@ type InputDataType = {
 
 export const BorrowingExpandCardRepaySection = (props: Props) => {
   const { userTokensBalances } = useUserContext()
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
 
   const {
     vaultId,

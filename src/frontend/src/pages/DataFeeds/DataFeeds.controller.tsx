@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { State } from 'reducers'
+import { useLocation } from 'react-router'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -12,7 +11,6 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 // const, actions
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { INFO } from 'app/App.components/Toaster/Toaster.constants'
 import {
   calculateSlicePositions,
   FEEDS_ALL_LIST_NAME,
@@ -20,28 +18,26 @@ import {
   PAGINATION_SIDE_RIGHT,
 } from 'app/App.components/Pagination/pagination.consts'
 
-// types, actions
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
+// hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
-// styles
+// view
 import { Page } from 'styles'
 import { DataFeedsSearchFilter, DataFeedsStyled } from './DataFeeds.styles'
 import { EmptyContainer } from 'app/App.style'
 import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
-import { useLocation } from 'react-router'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 export const DataFeeds = () => {
   const { feedsAddresses, feedsMapper, feedsCategories } = useDataFeedsContext()
-  const { totalOracleNetworks, isLoading: isOraclesDataLoading } = useSatelliteStatistics()
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
+  const { info } = useToasterContext()
 
-  const dispatch = useDispatch()
   const { search } = useLocation()
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const ddItems = useMemo(() => ['All', ...feedsCategories], [feedsCategories])
 
@@ -114,7 +110,7 @@ export const DataFeeds = () => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={() => {
-            dispatch(showToaster(INFO, 'Coming soon', 'Request feed Feature coming soon'))
+            info('Coming soon', 'Request feed Feature coming soon')
           }}
         >
           <Icon id="request_data_feed" />
@@ -122,39 +118,32 @@ export const DataFeeds = () => {
         </Button>
       </DataFeedsSearchFilter>
 
-      {isOraclesDataLoading ? (
-        <DataLoaderWrapper>
-          <ClockLoader width={150} height={150} />
-          <div className="text">Loading feeds data</div>
-        </DataLoaderWrapper>
-      ) : (
-        <DataFeedsStyled>
-          {filteredFeeds.length ? (
-            <>
-              <div className="list-wrapper">
-                {paginatedFeeds.map((feedAddress) => (
-                  <DataFeedCard
-                    feed={feedsMapper[feedAddress]}
-                    oracleNodes={feedsMapper[feedAddress].oraclesAmount}
-                    key={feedAddress}
-                  />
-                ))}
-              </div>
+      <DataFeedsStyled>
+        {filteredFeeds.length ? (
+          <>
+            <div className="list-wrapper">
+              {paginatedFeeds.map((feedAddress) => (
+                <DataFeedCard
+                  feed={feedsMapper[feedAddress]}
+                  oracleNodes={feedsMapper[feedAddress].oraclesAmount}
+                  key={feedAddress}
+                />
+              ))}
+            </div>
 
-              <Pagination
-                itemsCount={feedsAddresses.length}
-                side={PAGINATION_SIDE_RIGHT}
-                listName={FEEDS_ALL_LIST_NAME}
-              />
-            </>
-          ) : (
-            <EmptyContainer>
-              <img src="/images/not-found.svg" alt=" No data feeds to show" />
-              <figcaption> No data feeds to show</figcaption>
-            </EmptyContainer>
-          )}
-        </DataFeedsStyled>
-      )}
+            <Pagination
+              itemsCount={feedsAddresses.length}
+              side={PAGINATION_SIDE_RIGHT}
+              listName={FEEDS_ALL_LIST_NAME}
+            />
+          </>
+        ) : (
+          <EmptyContainer>
+            <img src="/images/not-found.svg" alt=" No data feeds to show" />
+            <figcaption> No data feeds to show</figcaption>
+          </EmptyContainer>
+        )}
+      </DataFeedsStyled>
     </Page>
   )
 }

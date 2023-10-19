@@ -26,7 +26,7 @@ export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
   }
 
   p {
-    font-weight: 400;
+    font-weight: 500;
     font-size: 14px;
     line-height: 20px;
     color: ${({ theme }) => theme.regularText};

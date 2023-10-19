@@ -491,101 +491,144 @@ export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
-  display: flex;
-  column-gap: 80px;
-  margin-top: 70px;
   padding-left: 25px;
-  overflow-x: auto;
-  padding-bottom: 7px;
-
-  a {
-    position: relative;
-
-    &::before {
-      position: absolute;
-      top: 0;
-      right: -40px;
-      width: 1px;
-      height: 100%;
-      content: '';
-      background-color: ${({ theme }) => theme.divider};
-    }
-
-    &:last-child {
-      &::before {
-        display: none;
-      }
-    }
-  }
 
   .tabLoader {
     margin-top: 0;
   }
 
-  .card {
-    width: 250px;
-    flex: none;
-    transition: 0.5s all;
-    cursor: pointer;
+  .farms-stats {
+    margin: 20px 0 40px 0;
+    display: flex;
+    column-gap: 60px;
 
-    .top {
-      margin-bottom: 20px;
-      .name {
-        color: ${({ theme }) => theme.mainHeadingText};
-        font-weight: 500;
-        font-size: 12px;
-        line-height: 12px;
-        transition: 0.5s all;
-
-        p {
-          margin: 0;
-        }
-
-        .large {
-          font-weight: 600;
-          font-size: 18px;
-          line-height: 18px;
-          margin-bottom: 5px;
-        }
-      }
-
-      > svg {
-        width: 58px;
-        height: 58px;
-      }
-    }
-
-    .row-info {
+    .collumn {
       display: flex;
-      justify-content: space-between;
-      margin: 3px 0;
+      flex-direction: column;
+      row-gap: 7px;
+
       .name {
         color: ${({ theme }) => theme.subHeadingText};
         font-weight: 600;
         font-size: 14px;
         line-height: 21px;
-        transition: 0.5s all;
       }
 
       .value {
+        height: 27px;
+        display: flex;
+        align-items: center;
+        column-gap: 5px;
         color: ${({ theme }) => theme.primaryText};
         font-weight: 600;
-        font-size: 14px;
-        line-height: 21px;
-        transition: 0.5s all;
+        font-size: 22px;
+      }
+    }
+  }
+
+  .farms-list {
+    display: flex;
+    column-gap: 80px;
+
+    overflow-x: auto;
+    padding-bottom: 7px;
+
+    a {
+      cursor: pointer;
+      width: fit-contentb;
+      position: relative;
+
+      &::before {
+        position: absolute;
+        top: 0;
+        right: -40px;
+        width: 1px;
+        height: 100%;
+        content: '';
+        background-color: ${({ theme }) => theme.divider};
+        pointer-events: none;
+      }
+
+      &:last-child {
+        &::before {
+          display: none;
+        }
+      }
+
+      &:hover {
+        opacity: 1;
       }
     }
 
-    &:hover {
+    .card {
+      opacity: 1;
+      width: 250px;
+      transition: 0.3s all;
+
+      &:hover {
+        opacity: 0.7;
+      }
+
+      p {
+        margin: 0;
+      }
+
       .top {
+        align-items: center;
+        margin-bottom: 30px;
+
         .name {
-          opacity: 0.8;
+          display: flex;
+          flex-direction: column;
+
+          height: fit-content;
+          width: calc(100% - 80px);
+          row-gap: 5px;
+          color: ${({ theme }) => theme.mainHeadingText};
+
+          .large {
+            font-weight: 600;
+            font-size: 18px;
+            width: 100%;
+
+            overflow-y: clip;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+
+          .creator {
+            font-weight: 500;
+            font-size: 12px;
+
+            // TODO: remove when address will be in indexer
+            visibility: hidden;
+          }
+        }
+
+        > svg {
+          width: 58px;
+          height: 58px;
         }
       }
+
       .row-info {
-        .name,
+        display: flex;
+        justify-content: space-between;
+        margin: 3px 0;
+
+        .name {
+          color: ${({ theme }) => theme.subHeadingText};
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 21px;
+        }
+
         .value {
-          opacity: 0.8;
+          color: ${({ theme }) => theme.primaryText};
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 21px;
         }
       }
     }

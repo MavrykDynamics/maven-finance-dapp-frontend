@@ -54,7 +54,7 @@ const ddItems = itemsForDropDown.map(({ text }) => text)
 const SatelliteNodes = () => {
   const { pathname, search } = useLocation()
 
-  const { userTokensBalances } = useUserContext()
+  const { userTokensBalances, userAddress } = useUserContext()
   const { isSatellite } = useUserContext()
   const {
     allSatellitesIds,
@@ -128,7 +128,9 @@ const SatelliteNodes = () => {
     <Page>
       <PageHeader page={'satellites'} />
 
-      {!isSatellite && getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 ? (
+      {!isSatellite &&
+      getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 &&
+      userAddress ? (
         <NotStakingBannerStyled>
           <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>
             <div className="link-btn">

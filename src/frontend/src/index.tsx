@@ -1,7 +1,6 @@
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
-import { Provider as ReduxProvider } from 'react-redux'
 import { ThemeProvider } from 'styled-components'
 import { ApolloProvider } from 'providers/ApolloProvider/apollo.provider'
 
@@ -28,13 +27,15 @@ import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
 import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
 import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import VestingProvider from 'providers/VestingProvider/vesting.provider'
+import FarmsProvider from 'providers/FarmsProvider/farms.provider'
 import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
+import CouncilProvider from 'providers/CouncilProvider/council.provider'
 import SatelliteGovernanceProvider from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
 import EGovProvider from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
-import { App, store } from './app/App.controller'
+import { App } from './app/App.controller'
 import { FullScreenLoadingApp } from 'app/App.style'
 import { LottieLoader } from 'app/App.components/Loader/Loader.view'
 import Mobile from './app/App.components/Mobile/Mobile.view'
@@ -53,9 +54,7 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <ReduxProvider store={store}>
-        <Router>{children}</Router>
-      </ReduxProvider>
+      <Router>{children}</Router>
     </GoogleReCaptchaProvider>
   )
 }
@@ -101,17 +100,21 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
             <DoormanProvider>
               <SatellitesProvider>
                 <LoansProvider>
-                  <EGovProvider>
-                    <SatelliteGovernanceProvider>
-                      <VaultsProvider>
-                        <FinancialRequestsProvider>
-                          <TreasuryProvider>
-                            <VestingProvider>{children}</VestingProvider>
-                          </TreasuryProvider>
-                        </FinancialRequestsProvider>
-                      </VaultsProvider>
-                    </SatelliteGovernanceProvider>
-                  </EGovProvider>
+                  <VaultsProvider>
+                    <EGovProvider>
+                      <CouncilProvider>
+                        <FarmsProvider>
+                          <SatelliteGovernanceProvider>
+                            <FinancialRequestsProvider>
+                              <TreasuryProvider>
+                                <VestingProvider>{children}</VestingProvider>
+                              </TreasuryProvider>
+                            </FinancialRequestsProvider>
+                          </SatelliteGovernanceProvider>
+                        </FarmsProvider>
+                      </CouncilProvider>
+                    </EGovProvider>
+                  </VaultsProvider>
                 </LoansProvider>
               </SatellitesProvider>
             </DoormanProvider>

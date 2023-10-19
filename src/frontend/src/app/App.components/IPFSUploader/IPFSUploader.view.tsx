@@ -1,24 +1,23 @@
 import React, { Ref, useCallback, useState } from 'react'
-import { useDispatch } from 'react-redux'
 
 // types
 import type { IPFSUploaderTypeFile } from './IPFSUploader.controller'
 
-// actions
-import { showToaster } from 'app/App.components/Toaster/Toaster.actions'
-// const
-import { INFO } from 'app/App.components/Toaster/Toaster.constants'
-// components
+// view
 import Icon from '../Icon/Icon.view'
 import { UserProfileEditor } from '../UserProfileEditor/UserProfileEditor.view'
-// styles
 import {
   IpfsUploadedImageContainer,
   IPFSUploaderStyled,
   UploaderFileSelector,
   UploadIconContainer,
 } from './IPFSUploader.style'
+
+// consts
 import { InputStatusType, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../Input/Input.constants'
+
+// hooks
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type IPFSUploaderViewProps = {
   title?: string
@@ -52,7 +51,7 @@ export const IPFSUploaderView = ({
   onBlur,
   className,
 }: IPFSUploaderViewProps) => {
-  const dispatch = useDispatch()
+  const { info } = useToasterContext()
 
   const [uploadIsFailed, setUploadIsFailed] = useState(false)
   const [isDocument, setIsDocument] = useState(false)
@@ -62,34 +61,31 @@ export const IPFSUploaderView = ({
 
   const [file, setFile] = useState<File | null>(null)
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (!e.target.files?.length) return
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return
 
-      const uploadedFile = e.target.files[0]
-      const fileSize = uploadedFile?.size / 1024 / 1024 // in MiB
-      const { name } = uploadedFile
+    const uploadedFile = e.target.files[0]
+    const fileSize = uploadedFile?.size / 1024 / 1024 // in MiB
+    const { name } = uploadedFile
 
-      if (fileSize <= IMG_MAX_SIZE) {
-        setUploadIsFailed(false)
-        setValidationStatus(INPUT_STATUS_SUCCESS)
-        setFile(uploadedFile)
-      } else {
-        setUploadIsFailed(true)
-        setValidationStatus(INPUT_STATUS_ERROR)
-        dispatch(showToaster(INFO, 'File is too big!', `Max size is ${IMG_MAX_SIZE}MB`))
-      }
+    if (fileSize <= IMG_MAX_SIZE) {
+      setUploadIsFailed(false)
+      setValidationStatus(INPUT_STATUS_SUCCESS)
+      setFile(uploadedFile)
+    } else {
+      setUploadIsFailed(true)
+      setValidationStatus(INPUT_STATUS_ERROR)
+      info('File is too big!', `Max size is ${IMG_MAX_SIZE}MB`)
+    }
 
-      // check file type
-      if (uploadedFile?.type.toLowerCase().includes('pdf')) {
-        setIsDocument(true)
-        setFileName(name)
-      } else {
-        setIsDocument(false)
-      }
-    },
-    [dispatch],
-  )
+    // check file type
+    if (uploadedFile?.type.toLowerCase().includes('pdf')) {
+      setIsDocument(true)
+      setFileName(name)
+    } else {
+      setIsDocument(false)
+    }
+  }, [])
 
   const handleDelete = () => {
     setUploadIsFailed(false)

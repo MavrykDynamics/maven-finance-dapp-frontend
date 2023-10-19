@@ -1,0 +1,97 @@
+import { normalizeCouncilActions, normalizeCouncilMembers } from './helpers/council.normalizer'
+import {
+  ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
+  ALL_ONGOING_COUNCIL_ACTIONS_SUB,
+  ALL_PAST_COUNCIL_ACTIONS_SUB,
+  BG_COUNCIL_ACTIONS_DATA,
+  BG_COUNCIL_MEMBERS_SUB,
+  COUNCIL_ACTIONS_DATA,
+  COUNCIL_MEMBERS_SUB,
+  MY_BG_PAST_COUNCIL_ACTIONS_SUB,
+  MY_PAST_COUNCIL_ACTIONS_SUB,
+} from './helpers/council.consts'
+import {
+  GetAllOngoingCouncilActionsQuery,
+  GetAllPastCouncilActionsQuery,
+  GetBgAllOngoingCouncilActionsQuery,
+  GetBgAllPastCouncilActionsQuery,
+  GetBgMyPastCouncilActionsQuery,
+  GetMyPastCouncilActionsQuery,
+} from 'utils/__generated__/graphql'
+import { CouncilActionParamsNames, CouncilsActionsIds } from './helpers/council.types'
+
+// ----- normalizer types
+export type CouncilActionType = {
+  id: number
+  actionClientId: CouncilsActionsIds
+  actionName: string
+  executed: boolean
+  initiatorAddress: string
+  signersCount: number
+  /**
+   * status is 0 - pending, 1 - executed, 2 - flushed (dropped)
+   */
+  status: 0 | 1 | 2
+  startDatetime: string | null
+  expirationTime: string | null
+  councilSize: number
+  counsilAddress: string
+  signers: Array<string>
+  parameters: Array<{ id: number; name: CouncilActionParamsNames; value: string }>
+}
+export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
+export type CouncilActionsType = ReturnType<typeof normalizeCouncilActions>
+
+// ----- queries types
+export type CounsilActionsQueryType =
+  | GetMyPastCouncilActionsQuery
+  | GetAllPastCouncilActionsQuery
+  | GetAllOngoingCouncilActionsQuery
+export type BgCounsilActionsQueryType =
+  | GetBgMyPastCouncilActionsQuery
+  | GetBgAllPastCouncilActionsQuery
+  | GetBgAllOngoingCouncilActionsQuery
+
+// ----- counsils subs types
+export type BreakGlassCouncilActionsSubsType =
+  | typeof MY_BG_PAST_COUNCIL_ACTIONS_SUB
+  | typeof ALL_BG_PAST_COUNCIL_ACTIONS_SUB
+  | typeof ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB
+
+export type CouncilActionsSubsType =
+  | typeof MY_PAST_COUNCIL_ACTIONS_SUB
+  | typeof ALL_PAST_COUNCIL_ACTIONS_SUB
+  | typeof ALL_ONGOING_COUNCIL_ACTIONS_SUB
+
+export type CouncilSubsRecordType = {
+  [BG_COUNCIL_ACTIONS_DATA]: BreakGlassCouncilActionsSubsType | null
+  [COUNCIL_ACTIONS_DATA]: CouncilActionsSubsType | null
+  [COUNCIL_MEMBERS_SUB]: boolean
+  [BG_COUNCIL_MEMBERS_SUB]: boolean
+}
+
+// ----- counsils context types
+export type CouncilActionsRecordType = {
+  allPendingActions: CouncilActionsType['allPendingActions']
+  actionsToSign: CouncilActionsType['actionsToSign']
+  myPendingActions: CouncilActionsType['myPendingActions']
+  allPastActions: CouncilActionsType['allPastActions']
+  myPastActions: CouncilActionsType['myPastActions']
+  actionsMapper: CouncilActionsType['actionsMapper']
+}
+export type NullableCouncilActionsRecordType = DeepNullable<CouncilActionsRecordType>
+
+export type CouncilStateType = {
+  breakGlassCouncilMembers: CouncilMembersType
+  councilMembers: CouncilMembersType
+  councilActions: CouncilActionsRecordType
+  breakGlassCouncilActions: CouncilActionsRecordType
+}
+
+export type NullableCouncilContextStateType = DeepNullable<CouncilStateType>
+
+export type CouncilContext = CouncilStateType & {
+  isLoading: boolean
+  changeCouncilSubscriptionList: (subs: Partial<CouncilSubsRecordType>) => void
+}

@@ -1,10 +1,8 @@
 import { useHistory, useLocation } from 'react-router'
 import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
 import { useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { State } from 'reducers'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 import Button from 'app/App.components/Button/NewButton'
@@ -21,6 +19,8 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -34,6 +34,10 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { myVaultsIds, vaultsMapper } = useVaultsContext()
+  const { userAddress } = useUserContext()
+  const {
+    globalLoadingState: { isActionActive },
+  } = useDappConfigContext()
   const {
     config: { daoFee },
   } = useLoansContext()
@@ -41,8 +45,6 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
   const loanToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: loanTokenAddress })
 
   const [showZeroVaults, setShowZeroVaults] = useState(false)
-  const { accountPkh } = useSelector((state: State) => state.wallet)
-  const { isActionActive } = useSelector((state: State) => state.loading)
 
   const userMarketVaultsIds = useMemo(
     () =>
@@ -78,7 +80,7 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
             <Button
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
-              disabled={!Boolean(accountPkh) || isActionActive}
+              disabled={!Boolean(userAddress) || isActionActive}
               onClick={() =>
                 openCreateVaultPopup({
                   marketTokenAddress: loanTokenAddress,
@@ -97,9 +99,8 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
             id="borrowing-tab-zero-filter"
             onChangeHandler={() => setShowZeroVaults(!showZeroVaults)}
             checked={showZeroVaults}
-            className="checkbox"
           >
-            <span>Hide vaults with a loan balance of 0</span>
+            Hide vaults with a loan balance of 0
           </Checkbox>
 
           <VaultsList>
@@ -117,7 +118,7 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
             <Button
               kind={BUTTON_PRIMARY}
               form={BUTTON_WIDE}
-              disabled={!Boolean(accountPkh)}
+              disabled={!Boolean(userAddress)}
               onClick={() =>
                 openCreateVaultPopup({
                   marketTokenAddress: loanTokenAddress,

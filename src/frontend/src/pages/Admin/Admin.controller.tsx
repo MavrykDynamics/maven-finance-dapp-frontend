@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import {
-  addAllCollateralTokensToMarkets,
-  addAllLoanTokensToMarkets,
-  adminChangeGovernancePeriod,
-  ChangeAllAdminsFromGovernance,
-  closeAllOfUsersEmptyVaults,
-  createFarm,
-  createTreasuries,
-} from './Admin.actions'
+// import { useDispatch } from 'react-redux'
+// import {
+//   addAllCollateralTokensToMarkets,
+//   addAllLoanTokensToMarkets,
+//   adminChangeGovernancePeriod,
+//   ChangeAllAdminsFromGovernance,
+//   closeAllOfUsersEmptyVaults,
+//   createFarm,
+//   createTreasuries,
+// } from './Admin.actions'
 import { Page } from 'styles'
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
 import { AdminView } from './Admin.view'
@@ -23,7 +23,7 @@ import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 
 export const Admin = () => {
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
 
   const { changeLoansSubscriptionsList } = useLoansContext()
   const { vaultsMapper, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
@@ -44,37 +44,37 @@ export const Admin = () => {
     }
   }, [])
 
-  const handleChangeGovernancePeriod = (chosenPeriod: string) => {
-    dispatch(adminChangeGovernancePeriod(chosenPeriod))
-  }
+  // const handleChangeGovernancePeriod = (chosenPeriod: string) => {
+  //   dispatch(adminChangeGovernancePeriod(chosenPeriod))
+  // }
 
-  const handleCreateFarm = () => {
-    dispatch(createFarm())
-  }
+  // const handleCreateFarm = () => {
+  //   dispatch(createFarm())
+  // }
 
-  const handleAddAllCollateralTokensToLendBorrow = () => {
-    console.log('Here in add all collateral tokens')
-    dispatch(addAllCollateralTokensToMarkets(collateralTokens, tokensMetadata))
-  }
-  const handleAddAllLoanTokensToLendBorrow = () => {
-    console.log('Here in add all loan tokens')
-    dispatch(addAllLoanTokensToMarkets())
-  }
-  const ChangeAllAdminsFromGov = () => {
-    dispatch(ChangeAllAdminsFromGovernance())
-  }
-  const handleCreateAllTreasuries = () => {
-    dispatch(createTreasuries())
-  }
+  // const handleAddAllCollateralTokensToLendBorrow = () => {
+  //   console.log('Here in add all collateral tokens')
+  //   dispatch(addAllCollateralTokensToMarkets(collateralTokens, tokensMetadata))
+  // }
+  // const handleAddAllLoanTokensToLendBorrow = () => {
+  //   console.log('Here in add all loan tokens')
+  //   dispatch(addAllLoanTokensToMarkets())
+  // }
+  // const ChangeAllAdminsFromGov = () => {
+  //   dispatch(ChangeAllAdminsFromGovernance())
+  // }
+  // const handleCreateAllTreasuries = () => {
+  //   dispatch(createTreasuries())
+  // }
 
-  const handleCloseUsersEmptyVaults = () => {
-    dispatch(closeAllOfUsersEmptyVaults(vaultsMapper))
-  }
+  // const handleCloseUsersEmptyVaults = () => {
+  //   dispatch(closeAllOfUsersEmptyVaults(vaultsMapper))
+  // }
   return (
     <Page>
       <PageHeader page={'admin'} />
       {isVaultsLoading ? 'vaults loading, do not use vaults actions)' : null}
-      <AdminView
+      {/* <AdminView
         handleChangeGovernancePeriod={handleChangeGovernancePeriod}
         handleCreateFarm={handleCreateFarm}
         handleChangeAllAdminsFromGov={ChangeAllAdminsFromGov}
@@ -82,7 +82,7 @@ export const Admin = () => {
         handleAddAllCollateralTokensToLendBorrow={handleAddAllCollateralTokensToLendBorrow}
         handleCreateAllTreasuries={handleCreateAllTreasuries}
         handleCloseUsersEmptyVaults={handleCloseUsersEmptyVaults}
-      />
+      /> */}
     </Page>
   )
 }

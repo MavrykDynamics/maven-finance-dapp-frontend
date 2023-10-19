@@ -94,6 +94,6 @@ export const LinkStyled = styled(Link)<{ theme: MavrykTheme }>`
 
   &.disabled {
     cursor: not-allowed;
-    opacity: 0.4;
+    opacity: 0.6;
   }
 `

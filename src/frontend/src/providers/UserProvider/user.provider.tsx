@@ -134,6 +134,13 @@ export const UserProvider = ({ children }: Props) => {
   useEffect(() => {
     const userFarms = userCtxState.rewards?.farmAccounts ?? []
     if (Object.keys(userFarms).length !== 0) {
+      setUserCtxState((prev) => ({
+        ...prev,
+        availableFarmRewards: getUsersFarmRewards({
+          userFarmsRewardsDataFromIndexer: userFarms,
+          currentLvl: currentIndexerLevelProxy.currentIndexedLevel,
+        }),
+      }))
       currentIndexedLvlListenerId.current = currentIndexerLevelProxy.registerListener((newIndexerLvl: number) => {
         setUserCtxState((prev) => ({
           ...prev,

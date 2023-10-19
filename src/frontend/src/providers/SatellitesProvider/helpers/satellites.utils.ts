@@ -170,20 +170,6 @@ export const getSatellitesProviderReturnValue = ({
     isLoadingAllSatellites ||
     isLoadingSatelliteParticipation
 
-  // TODO: loading satellites debug log, remove right before merge to dev
-  // console.log({
-  //   1: isAnySatellitesTypeInitialLoading,
-  //   2: activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB && !oraclesIds,
-  //   3: activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB && !activeSatellitesIds,
-  //   4: isLoadingSingleSatellite,
-  //   5: isLoadingAllSatellites,
-  //   6: isLoadingSatelliteParticipation,
-  //   activeSubs,
-  //   satelliteAddressToSubsctibe,
-  //   satellitesCtxState,
-  //   isLoading,
-  // })
-
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {
     return {

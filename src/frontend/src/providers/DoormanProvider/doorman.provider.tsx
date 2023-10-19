@@ -41,9 +41,7 @@ const DoormanProvider = ({ children }: Props) => {
     variables: {
       doormanContractAddress: doormanAddress,
     },
-    onCompleted: (data) => {
-      updateMvkSmvkStats(data)
-    },
+    onCompleted: (data) => updateMvkSmvkStats(data),
     onError: (error) => handleApolloError(error, 'DAPP_MVK_SMVK_STATS_SUB'),
   })
 

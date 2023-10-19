@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch } from 'react-redux'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -43,7 +42,7 @@ import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } f
 import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
-import { TzAddress, handleCopyToClipboard } from 'app/App.components/TzAddress/TzAddress.view'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
@@ -68,8 +67,6 @@ import {
 import { dropProposal } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 
 export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRecordType; isHistory: boolean }) => {
-  const dispatch = useDispatch()
-
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const {
@@ -79,8 +76,8 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     preferences: { themeSelected },
     contractAddresses: { governanceAddress },
     globalLoadingState: { isActionActive },
+    handleCopyText,
   } = useDappConfigContext()
-
   const { tokensMetadata } = useTokensContext()
 
   const isUserOwnerIfTheProposal = proposal.proposerId === userAddress
@@ -406,10 +403,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                     </div>
 
                     <div className={`byte-content`}>
-                      <div
-                        className="byte-text"
-                        onClick={isByteOpened ? () => dispatch(handleCopyToClipboard(byteText)) : undefined}
-                      >
+                      <div className="byte-text" onClick={isByteOpened ? () => handleCopyText(byteText) : undefined}>
                         {byteText} {isByteOpened ? <Icon id="copyToClipboard" /> : null}
                       </div>
                     </div>

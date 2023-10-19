@@ -1,10 +1,17 @@
+import dayjs from 'dayjs'
+
+// types
 import { GetUserActionsHistoryDataQuery, GetUserDataQuery, GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
 import { UserMetadataType, UserRewardsType } from '../user.provider.types'
-import dayjs from 'dayjs'
+
+// utils
 import { convertNumberForClient } from 'utils/calcFunctions'
+import { getUserDoomanRewards, getUserSatelliteRewards, getUsersFarmRewards } from './userRewards.helpers'
+
+// consts
 import { MVK_DECIMALS } from 'utils/constants'
-import { getUserDoomanRewards, getUserSatelliteRewards } from './userRewards.helpers'
 import { DEFAULT_USER_AVATAR } from './user.consts'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }): UserMetadataType => {
   const {
@@ -24,6 +31,8 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
   const satelliteMvkIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
   const isSatellite = satellite?.status === 0 && satellite?.currently_registered
   const isVestee = vestee?.end_vesting_timestamp && dayjs().diff(vestee.end_vesting_timestamp) <= 0
+  const isMavrykCouncil = Boolean(counsilMember?.user?.address)
+  const isBreakGlassCouncil = Boolean(bgCounsilMember?.user?.address)
 
   return {
     userAvatars: {
@@ -33,6 +42,8 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
       breakGlassAvatar,
     },
     isVestee,
+    isMavrykCouncil,
+    isBreakGlassCouncil,
     isSatellite,
     userSatelliteName: satellite?.name ?? null,
     satelliteMvkIsDelegatedTo,
@@ -74,9 +85,16 @@ export const normalizeUserRewards = ({
       number: doorman_stake_accounts[0]?.total_satellite_rewards_claimed ?? 0,
       grade: MVK_DECIMALS,
     }),
-    // TODO: add farm rewards, when farms will be available to test
-    gatheredFarmRewards: 0,
-    availableFarmRewards: {},
+    gatheredFarmRewards: farm_accounts.reduce((acc, { claimed_rewards }) => {
+      return (acc += convertNumberForClient({
+        number: claimed_rewards,
+        grade: MVK_DECIMALS,
+      }))
+    }, 0),
+    availableFarmRewards: getUsersFarmRewards({
+      userFarmsRewardsDataFromIndexer: farm_accounts,
+      currentLvl: currentIndexerLevelProxy.currentIndexedLevel,
+    }),
     availableSatellitesRewards,
     availableDoormanRewards,
     availableProposalRewards,
@@ -144,7 +162,7 @@ export const normalizeUserHistoryData = (
  * @param snapshots satellite snapshots for cycle data
  * @returns boolean value for newly registered satellite (newly registered is satellite who registered on current cycle)
  *
- * TODO: @Sam, please verify conditions, if you will keep it as it is, update query to fetch only latest snapshot (add limit: 1)
+ * TODO: @Sam-M-Israel, please verify conditions, if you will keep it as it is, update query to fetch only latest snapshot (add limit: 1)
  */
 const checkWhetherUserNewlyRegisteredSatellite = (
   userSatelliteSnapshots: GetUserDataQuery['mavryk_user'][number]['governance_satellite_snapshots'],

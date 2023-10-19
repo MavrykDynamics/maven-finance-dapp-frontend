@@ -13,22 +13,15 @@ import { FinancialRequestsActionsTypes } from 'providers/FinancialRequestsProvid
 import { WalletOperationError } from 'errors/error'
 import { ProposalActionsTypes } from 'providers/ProposalsProvider/helpers/proposals.types'
 import { SatellitesGovType } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.types'
+import { FarmActionsType } from 'providers/FarmsProvider/farms.provider.types'
+import { BreakGlassCouncilActions, MavrykCouncilActions } from 'providers/CouncilProvider/helpers/council.types'
 import { EGovProposalActionsType } from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider.types'
+import { FeedsActionsType } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 
-export type ActionTypes =
-  | StakeActionType
-  | UserActionsType
-  | SatelliteActionsType
-  | LoansActionsType
-  | VaultsActionsType
-  | ProposalActionsTypes
-  | FinancialRequestsActionsTypes
-  | SatellitesGovType
-  | EGovProposalActionsType
-
-export type DappConfigContext = {
-  // data
+// ------ context types
+export type DappConfigContextStateType = {
   maxLengths: DappMaxLengths
+  canUseIpfs: boolean
   mvkFaucetAddress: string | null
   minimumStakedMvkBalance: number
   dappTotalValueLocked: number | null
@@ -38,12 +31,14 @@ export type DappConfigContext = {
     mavrykDynamics: XtzBakerType
     otherBakers: Array<XtzBakerType>
   } | null
-  isLoading: boolean
   preferences: PreferencesState
   globalLoadingState: LoadingState
+}
 
-  // methods
-  setAction: (actionName: null | UserActionType) => void
+export type DappConfigContextMethods = {
+  // general
+  handleCopyText: (testToCopy: string) => void
+  // setter for dashboard tvl for the whole dapp
   setDappTotalValueLocked: (tvl: number) => void
   // preferences actions
   toggleTheme: (theme: ThemeType) => void
@@ -57,17 +52,29 @@ export type DappConfigContext = {
   toggleActionFullScreenLoader: (v: boolean) => void
 }
 
-export type DappConfigContextStateType = Pick<
-  DappConfigContext,
-  | 'maxLengths'
-  | 'mvkFaucetAddress'
-  | 'xtzBakers'
-  | 'minimumStakedMvkBalance'
-  | 'contractAddresses'
-  | 'preferences'
-  | 'globalLoadingState'
-  | 'dappTotalValueLocked'
->
+export type DappConfigContext = DappConfigContextStateType &
+  DappConfigContextMethods & {
+    isLoading: boolean
+
+    // action handlers
+    setAction: (actionName: null | UserActionType) => void
+  }
+
+// ------ dapp actions & action results types
+export type ActionTypes =
+  | StakeActionType
+  | UserActionsType
+  | SatelliteActionsType
+  | LoansActionsType
+  | VaultsActionsType
+  | ProposalActionsTypes
+  | FinancialRequestsActionsTypes
+  | SatellitesGovType
+  | FarmActionsType
+  | BreakGlassCouncilActions
+  | MavrykCouncilActions
+  | EGovProposalActionsType
+  | FeedsActionsType
 
 export type UserActionType = {
   actionName: ActionTypes
@@ -82,11 +89,11 @@ export type ActionSuccessReturnType = {
   operation: TransactionWalletOperation | BatchWalletOperation
 }
 
-// Contract Addresses type
+// ------ contract Addresses type
 export type DappContractAddressesType = ReturnType<typeof normalizeContractAddresses>
 export type DappContractAddressesKeysType = keyof DappContractAddressesType
 
-// MAX LENGHTS TYPES
+// ------ max lenghts type
 export type CouncilMaxLength = {
   councilMemberImageMaxLength: number
   councilMemberNameMaxLength: number
@@ -131,8 +138,7 @@ export type DappMaxLengths = {
   satelliteDelegation: SatelliteDelegationMaxLength
 }
 
-// preferences
-
+// ------ preferences types
 export type RPCNodeType = {
   url: string
   title: string
@@ -148,8 +154,7 @@ export type PreferencesState = {
   sidebarOpened: boolean
 }
 
-// loading state
-
+// ------ loading types
 export type LoadingState = {
   isActiveFullScreenLoader: boolean
   isActionActive: boolean

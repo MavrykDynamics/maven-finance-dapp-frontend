@@ -6,8 +6,8 @@ import { GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
-query getLending24hDiff($currentTimestamp: timestamptz) {
-  lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+query getLending24hDiff($currentTimestamp: timestamptz, $isMockTime: Boolean) {
+  lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
     history_data(where: {type: {_in: ["0", "1", "2", "3"]}, timestamp: {_gte: $currentTimestamp}}, order_by: {timestamp: asc}) {
       type
       amount
@@ -32,8 +32,8 @@ query getLending24hDiff($currentTimestamp: timestamptz) {
 
 // Loans history data
 export const GET_LOANS_HISTORY_DATA = gql(`
-query getLoansHistoryData {
-  lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+query getLoansHistoryData($isMockTime: Boolean) {
+  lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
     history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, order_by: {timestamp: asc}) {
       type
       amount
@@ -78,8 +78,64 @@ export function getLoansTransactionsHistory({
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
   return apolloGql(`
-    query getLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
-      lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+    query getLoansTransactionsHistory($marketTokenAddress: String, $isMockTime: Boolean, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
+      lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+        history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
+          type
+          amount
+          timestamp
+          loan_token {
+            loan_token_name
+            token {
+              token_address
+            }
+          }
+          collateral_token {
+            token {
+              token_address
+              mvk_tokens {
+                address
+              }
+            }
+          }
+          operation_hash
+          sender {
+            address
+          }
+          vault {
+            vault {
+              address
+            }
+          }
+        }
+
+        historyItemsAmount: history_data_aggregate(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}) {
+          aggregate {
+            count
+          }
+        }
+      }
+    }
+`)
+}
+export function getDevLoansTransactionsHistory({
+  userAddress,
+  vaultAddress,
+  typeFilter,
+}: {
+  userAddress?: string
+  vaultAddress?: string
+  typeFilter?: Array<number>
+}): DocumentNode | TypedDocumentNode<GetLoansTransactionsHistoryQuery, OperationVariables> {
+  const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
+  const filterVaultCondition = vaultAddress ? `vault: { vault: {address: {_eq: $vaultAddress}}}` : ''
+  const filterTypeCondition = typeFilter
+    ? `type: {_in: $typeFilter}`
+    : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
+
+  return apolloGql(`
+    query getDevLoansTransactionsHistory($marketTokenAddress: String, $isMockTime: Boolean, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
+      lending_controller: dev_lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
           type
           amount

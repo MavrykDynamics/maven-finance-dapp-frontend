@@ -106,6 +106,7 @@ export const Market = () => {
           query: CHECK_WHETHER_MARKET_EXISTS,
           variables: {
             marketAddress: currentMarketAddress ?? '',
+            isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
           },
         })
 
@@ -197,6 +198,18 @@ export const Market = () => {
         )
       : 0
 
+  const marketReserveAmount =
+    selectedMarket && loanToken
+      ? Math.max(
+          convertNumberForClient({ number: selectedMarket.totalLended, grade: loanToken.decimals }) -
+            convertNumberForClient({
+              number: selectedMarket.reserveAmount,
+              grade: loanToken.decimals,
+            }),
+          0,
+        )
+      : 0
+
   const marketPagination = (
     <MarketPagination>
       <Button
@@ -279,7 +292,10 @@ export const Market = () => {
                 <ThreeLevelListItem>
                   <div className="name">Total Earning</div>
                   <CommaNumber
-                    value={convertNumberForClient({ number: selectedMarket.totalLended, grade: loanToken.decimals })}
+                    value={
+                      convertNumberForClient({ number: selectedMarket.totalLended, grade: loanToken.decimals }) *
+                      loanToken.rate
+                    }
                     beginningText="$"
                     className="value"
                   />
@@ -342,7 +358,7 @@ export const Market = () => {
               loanMtokenAddress={selectedMarket.loanMTokenAddress}
               loanTokenAddress={selectedMarket.loanTokenAddress}
               lendAPY={selectedMarket.lendingAPY}
-              marketAvailableLiquidity={marketAvailableLiquidity}
+              marketReserveAmount={marketReserveAmount}
             />
           ) : null}
           {tabId === BORROW_TAB_ID ? (

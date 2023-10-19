@@ -40,9 +40,15 @@ export const USER_DATA_QUERY = gql(`
       }
       council_council_members{
         image
+        user {
+          address
+        }
       }
       break_glass_council_members {
         image
+        user {
+          address
+        }
       }
       
       # is user active vestee
@@ -128,6 +134,7 @@ export const USER_REWARDS_DATA_QUERY = gql(`
   
       # user farms rewards
       farm_accounts {
+        claimed_rewards
         deposited_amount
         participation_rewards_per_share
         farm {

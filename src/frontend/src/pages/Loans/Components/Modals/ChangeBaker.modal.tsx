@@ -55,10 +55,11 @@ export const ChangeBaker = ({
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
-  const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD(true)
+  const { bakers, setChoosenBaker, bakersRecord } = useXtzBakersForDD(false)
 
-  const [activeTab, setActiveSliding] = useState<BakersSlidingButtonTab>(MAVRYK_DYNAMICS_BAKERY)
+  const [activeTab, setActiveSliding] = useState<BakersSlidingButtonTab>(OTHER_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
+  const choosenBaker = bakersRecord[selectedAddress ?? ''] ?? null
 
   useLockBodyScroll(show)
 
@@ -106,25 +107,15 @@ export const ChangeBaker = ({
   )
 
   useEffect(() => {
+    setSelectedAddress(bakerAddress)
+  }, [bakerAddress])
+
+  useEffect(() => {
     // reset fields after closing the popup
     if (!show) {
-      setSelectedAddress(null)
-    } else {
-      const vaultBaker = bakerySlidingButtons.find(
-        ({ bakeryAddresses }) => bakerAddress && bakeryAddresses.includes(bakerAddress),
-      )
-
-      // vault is delegated to
-      if (vaultBaker && bakerAddress) {
-        setActiveSliding(vaultBaker.id)
-
-        // delegated to other bakery, need to select
-        if (vaultBaker.id === OTHER_BAKERY) {
-          setChoosenBaker(bakerAddress)
-        }
-      }
+      setSelectedAddress(bakerAddress)
     }
-  }, [bakerAddress, bakerySlidingButtons, setChoosenBaker, show])
+  }, [bakerAddress, show])
 
   // click on tab btn
   const handleSlidingButtonClick = (tabId: number) => {
@@ -172,7 +163,12 @@ export const ChangeBaker = ({
           </GovRightContainerTitleArea>
           <div className="modalDescr">Please choose the Bakery to delegate your XTZ.</div>
 
-          <SlidingTabButtons tabItems={bakerySlidingButtons} className="tab-bar" onClick={handleSlidingButtonClick} />
+          <SlidingTabButtons
+            disabled
+            tabItems={bakerySlidingButtons}
+            className="tab-bar"
+            onClick={handleSlidingButtonClick}
+          />
 
           {activeTab === 1 ? (
             <div className="modalDescr" style={{ marginTop: '30px' }}>
@@ -226,7 +222,12 @@ export const ChangeBaker = ({
 
               {activeTab === 3 ? (
                 choosenBaker ? (
-                  <TzAddress className="value" tzAddress={choosenBaker.bakerAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={false} />
+                  <TzAddress
+                    className="value"
+                    tzAddress={choosenBaker.bakerAddress}
+                    type={PRIMARY_TZ_ADDRESS_COLOR}
+                    hasIcon={false}
+                  />
                 ) : (
                   <div className="value">-</div>
                 )

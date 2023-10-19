@@ -7,9 +7,8 @@ export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const BecomeSatelliteForm = styled(Card)`
-  padding-bottom: 45px;
   margin-top: 0;
-  padding-top: 28px;
+  padding: 30px 30px 40px 30px;
 
   > h2 {
     margin: 0;
@@ -40,6 +39,10 @@ export const BecomeSatelliteForm = styled(Card)`
     textarea {
       font-size: 14px;
     }
+
+    label {
+      top: -26px;
+    }
   }
 
   #ipfsUploaderContainer {
@@ -52,13 +55,16 @@ export const BecomeSatelliteForm = styled(Card)`
       font-size: 14px;
       font-weight: 500;
     }
+    label {
+      top: -26px;
+    }
   }
 
   .buttons-wrapper {
     display: flex;
     justify-content: flex-end;
     margin-left: auto;
-    padding-top: 42px;
+    padding-top: 40px;
     column-gap: 20px;
   }
 
@@ -69,6 +75,12 @@ export const BecomeSatelliteForm = styled(Card)`
   .input-fee-wrap {
     width: 163px;
   }
+`
+
+export const BecomeSatelliteNavigation = styled.div<{ theme: MavrykTheme }>`
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
 `
 
 export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; theme: MavrykTheme }>`
@@ -108,7 +120,7 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
     padding: 20px 0 0 0;
   }
 
-  .checkbox {
+  .checkbox-wrapper {
     display: flex;
     align-items: center;
     column-gap: 10px;
@@ -213,4 +225,31 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
     font-size: 18px;
     line-height: 27px;
   }
+`
+
+export const SatelliteDetailsContainer = styled.div<{ theme: MavrykTheme }>`
+  .grid-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 15px 0 30px 0;
+
+    .name {
+      margin-bottom: 10px;
+    }
+
+    .value {
+      font-size: 22px;
+      font-weight: 600;
+    }
+  }
+`
+
+export const SatelliteUpperTextBlock = styled.div`
+  font-size: 14px;
+  font-weight: 600;
+
+  margin-left: 11px;
+  margin-bottom: 8px;
 `

@@ -3,25 +3,24 @@ import { useQuery, useSubscription } from '@apollo/client'
 
 // hooks
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useDappConfigMethods } from './hooks/useDappConfigMethods'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
-import { DappConfigContext, DappConfigContextStateType, RPCNodeType, UserActionType } from './dappConfig.provider.types'
-import { ThemeType } from 'consts/theme.const'
+import { DappConfigContext, DappConfigContextStateType, UserActionType } from './dappConfig.provider.types'
 
 // consts
 import { SUBSCRIPTION_INDEXER_LVL } from './queries/indexerLvl.query'
-import { DEFAULT_DAPP_CONFIG_CONTEXT, RPC_NODE } from './helpers/dappConfig.const'
-import { DAPP_INITIAL_CONFIG_QUERY } from './queries/config.query'
+import { DEFAULT_DAPP_CONFIG_CONTEXT } from './helpers/dappConfig.const'
+import { DAPP_INITIAL_CONFIG_QUERY } from './queries/dappConfig.query'
 import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
-import { TOASTER_ACTIONS_TEXTS } from 'app/App.components/Toaster/texts/toasterActions.texts'
+import { TOASTER_ACTIONS_TEXTS } from 'providers/ToasterProvider/helpers/texts/toasterActions.texts'
+import { ipfsClient } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
 // utils
 import { getXTZBakers } from './bakers/getXtzBakers'
-import { setItemInStorage } from 'utils/storage'
 import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schemes'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
-import { unknownToError } from 'errors/error'
 import { sleep } from 'utils/api/sleep'
 import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
 
@@ -34,7 +33,36 @@ type Props = {
 // TODO: handle initial loading with null values
 const DappConfigProvider = ({ children }: Props) => {
   const { handleApolloError } = useApolloContext()
-  const { bug, hideToasterMessage, success } = useToasterContext()
+  const { hideToasterMessage, success, bug } = useToasterContext()
+
+  const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>(DEFAULT_DAPP_CONFIG_CONTEXT)
+
+  // check whether keys for ipfs (image selection) are valid
+  useEffect(() => {
+    const checkIPFS = async () => {
+      try {
+        // if keys are invalid it will return error
+        await ipfsClient.version()
+        setDappConfigCtxState((prev) => ({ ...prev, canUseIpfs: true }))
+      } catch (e) {
+        bug('IPFS auth keys are invalid, image selection will be disabled', 'Keys are invalid')
+      }
+    }
+    checkIPFS()
+  }, [])
+
+  const {
+    setDappTotalValueLocked,
+    handleCopyText,
+    toggleTheme,
+    toggleRPCNodePopup,
+    selectNewRPCNode,
+    setNewRPCNodes,
+    toggleSidebarCollapsing,
+    toggleActionFullScreenLoader,
+    toggleActionCompletion,
+    toggleWertLoader,
+  } = useDappConfigMethods({ setDappConfigCtxState })
 
   // HANDLING DATA UPDATE LOADER STATE AFTER USER FIRED ACTION
   const [action, setAction] = useState<UserActionType | null>(null)
@@ -102,14 +130,11 @@ const DappConfigProvider = ({ children }: Props) => {
     if (currentIndexedLevel >= operationLvl) turnOffAction()
   }, [action, indexerLevel])
 
-  const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>(DEFAULT_DAPP_CONFIG_CONTEXT)
-
   // Load initial data for dapp (max lenghts, mvkFaucet, minSmvkAmount)
   const { loading: initialConfigLoading } = useQuery(DAPP_INITIAL_CONFIG_QUERY, {
     onCompleted: (data) => {
       try {
         const parsedConfig = dappConfigSchema.parse(data)
-
         const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(parsedConfig)
         setDappConfigCtxState((prev) => ({
           ...prev,
@@ -117,6 +142,12 @@ const DappConfigProvider = ({ children }: Props) => {
           minimumStakedMvkBalance,
           mvkFaucetAddress,
         }))
+
+        // Load lvl on dapp init, and then update it with subscription
+        const parsedLevelData = indexerLevelSchema.safeParse(data.dipdup_index)
+        if (currentIndexerLevelProxy.currentIndexedLevel === 0 && parsedLevelData.success) {
+          currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData.data[0].level
+        }
       } catch (e) {
         console.error('zod parsing DAPP_INITIAL_CONFIG_QUERY error:', { e })
       }
@@ -126,6 +157,9 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // TODO: addresses that are general, not page specific load in DAPP_INITIAL_CONFIG_QUERY other addresses load only on pages that requires them
   const { loading: contractAddressesLoading } = useQuery(GET_DAPP_CONTRACT_ADDRESSES, {
+    variables: {
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
+    },
     onCompleted: (data) => {
       setDappConfigCtxState((prev) => ({
         ...prev,
@@ -151,86 +185,17 @@ const DappConfigProvider = ({ children }: Props) => {
     }))
   }
 
-  // -------- METHODS --------
-
-  // preferences actions
-  const toggleTheme = (theme: ThemeType) => {
-    try {
-      setItemInStorage('theme', theme)
-      setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, themeSelected: theme } }))
-    } catch (e) {
-      const err = unknownToError(e)
-      bug(err)
-    }
-  }
-
-  const toggleRPCNodePopup = (isOpened: boolean) => {
-    setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, changeNodePopupOpen: isOpened } }))
-  }
-
-  const selectNewRPCNode = (newRPCNode: string) => {
-    setItemInStorage(RPC_NODE, newRPCNode)
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      preferences: { ...prev.preferences, REACT_APP_RPC_PROVIDER: newRPCNode },
-    }))
-  }
-
-  const setNewRPCNodes = (newRPCNodes: Array<RPCNodeType>) => {
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      preferences: { ...prev.preferences, RPC_NODES: newRPCNodes },
-    }))
-  }
-
-  const toggleSidebarCollapsing = (isOpened?: boolean) => {
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      preferences: { ...prev.preferences, sidebarOpened: isOpened ?? !dappConfigCtxState.preferences.sidebarOpened },
-    }))
-  }
-
-  // loading actions
-  const toggleActionFullScreenLoader = (value: boolean) => {
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      globalLoadingState: { ...prev.globalLoadingState, isActiveFullScreenLoader: value },
-    }))
-  }
-
-  const toggleActionCompletion = (value: boolean) => {
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      globalLoadingState: { ...prev.globalLoadingState, isActionActive: value },
-    }))
-  }
-
-  const toggleWertLoader = (value: boolean) => {
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      globalLoadingState: { ...prev.globalLoadingState, isWertLoading: value },
-    }))
-  }
-
-  const setDappTotalValueLocked = (newTvlValie: number) => {
-    setDappConfigCtxState((prev) => ({
-      ...prev,
-      dappTotalValueLocked: newTvlValie,
-    }))
-  }
-
   const contextProviderValue = useMemo(() => {
     return {
       isLoading: initialConfigLoading || contractAddressesLoading,
       setAction,
       setDappTotalValueLocked,
-      // preferences
+      handleCopyText,
       toggleTheme,
       toggleRPCNodePopup,
       selectNewRPCNode,
       setNewRPCNodes,
       toggleSidebarCollapsing,
-      // loading
       toggleActionFullScreenLoader,
       toggleActionCompletion,
       toggleWertLoader,

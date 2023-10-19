@@ -1,9 +1,8 @@
 import styled, { css } from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
 
-// TODO: update colors
-// TODO: extract all classname styles to it's own bases
-export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?: 586 | 750 | 395 | 950 }>`
+// TODO: extract all classname styles to it's own bases af for farms
+export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?: 586 | 750 | 395 | 950 | 420 }>`
   display: flex;
   flex-direction: column;
   padding: 40px;
@@ -192,4 +191,33 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
           }
         `
       : ''}
+`
+
+export const PopupContentWrapperBase = styled.div<{ theme: MavrykTheme }>`
+  background: ${({ theme }) => theme.cards};
+  border: 1px solid ${({ theme }) => theme.linksAndButtons};
+  border-radius: 10px;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+
+    &:before {
+      content: '✕';
+      font-size: 30px;
+      color: ${({ theme }) => theme.linksAndButtons};
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 `

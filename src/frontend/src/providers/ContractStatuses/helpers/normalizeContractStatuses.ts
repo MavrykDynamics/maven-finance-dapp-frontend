@@ -1,5 +1,5 @@
 import { GetAllContractStatusesDataQuery } from 'utils/__generated__/graphql'
-import { ContractStatusesStorage } from '../contractStatuses.types'
+import { ContractStatusesStorage } from '../contractStatuses.provider.types'
 
 export function normalizeContractStatuses(storage: GetAllContractStatusesDataQuery): ContractStatusesStorage {
   return [

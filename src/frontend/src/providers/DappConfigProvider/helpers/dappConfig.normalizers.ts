@@ -3,6 +3,7 @@ import { DappMaxLengths } from '../dappConfig.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVK_DECIMALS } from 'utils/constants'
 import { DappConfigGqlType } from './dappConfig.schemes'
+import { CAPITALIZE_CASE, parseCamelCaseString } from 'utils/parse'
 
 export const normalizerMaxLenghts = (data: DappConfigGqlType): DappMaxLengths => {
   const {

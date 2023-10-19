@@ -64,7 +64,7 @@ export function getUsersFarmRewards({
 
     const suspectedRewardsByHolding = (currentLvl - last_block_update) * current_reward_per_block
     const paidAndUnpaidRewards = unpaid_rewards + paid_rewards
-    const farmTotalEarnedRewards = suspectedRewardsByHolding * paidAndUnpaidRewards
+    const farmTotalEarnedRewards = suspectedRewardsByHolding + paidAndUnpaidRewards
 
     const reward =
       farmTotalEarnedRewards > farmMaxRewards && !infinite
@@ -82,8 +82,8 @@ export function getUsersFarmRewards({
     })
 
     if (userReward) {
-      if (acc[farmAddress]) acc[farmAddress] += userReward
-      else acc[farmAddress] = userReward
+      if (acc[farmAddress]) acc[farmAddress] += Math.max(0, userReward)
+      else acc[farmAddress] = Math.max(0, userReward)
     }
     return acc
   }, {})

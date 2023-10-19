@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__'
 
 export const EGOV_ALL_PROPOSALS = gql(`
 	query GetEGovAllProposalsQuery {
-		emergency_governance_record {
+		emergency_governance_record: emergency_governance_record {
 			id
 			title
 			description

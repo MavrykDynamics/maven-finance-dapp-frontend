@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 
 // types
 import { ChartPeriodType } from 'types/charts.type'
-import { State } from 'reducers'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 
 // providers
@@ -83,6 +81,8 @@ const DataFeedDetails = () => {
 
   const { feedsMapper } = useDataFeedsContext()
   const {
+    globalLoadingState: { isActionActive },
+    preferences: { themeSelected },
     contractAddresses: { feedsFactoryAddress },
   } = useDappConfigContext()
 
@@ -104,11 +104,6 @@ const DataFeedDetails = () => {
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
     }
   }, [])
-
-  const { isActionActive } = useSelector((state: State) => state.loading)
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   const feed = feedsMapper[feedId]
 

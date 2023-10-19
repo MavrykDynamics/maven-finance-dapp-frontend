@@ -11,7 +11,6 @@ export const ExpandStyled = styled(CardHover)`
     grid-template-columns: auto 120px;
     align-items: center;
     min-height: 73px;
-    cursor: pointer;
   }
 
   .arrow-wrap {
