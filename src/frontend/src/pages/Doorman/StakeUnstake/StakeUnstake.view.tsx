@@ -407,11 +407,21 @@ export const StakeUnstakeView = ({
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>
-          <NewButton kind={BUTTON_PRIMARY} onClick={handleStake} form={BUTTON_WIDE} disabled={isActionActive}>
+          <NewButton
+            kind={BUTTON_PRIMARY}
+            onClick={handleStake}
+            form={BUTTON_WIDE}
+            disabled={isActionActive || Number(inputData.amount) > myMvkTokenBalance}
+          >
             <Icon id="in" /> Stake
           </NewButton>
 
-          <NewButton kind={BUTTON_SECONDARY} onClick={openExitFeePopup} form={BUTTON_WIDE} disabled={isActionActive}>
+          <NewButton
+            kind={BUTTON_SECONDARY}
+            onClick={openExitFeePopup}
+            form={BUTTON_WIDE}
+            disabled={isActionActive || Number(inputData.amount) > mySMvkTokenBalance}
+          >
             <Icon id="out" /> Unstake
           </NewButton>
         </StakeUnstakeButtonGrid>

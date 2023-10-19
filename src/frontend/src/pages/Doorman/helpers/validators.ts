@@ -12,8 +12,6 @@ export const stakingInputValidation = ({
   mySMvkTokenBalance: number
   userAddress: string | null
 }) => {
-  if (amount === 0) return ''
-
   return isNumberInRange(
     amount,
     1,

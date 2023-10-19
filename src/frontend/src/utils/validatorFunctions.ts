@@ -44,7 +44,7 @@ export function isHexadecimalByteString(input: string) {
 }
 
 export function isNumberInRange(input: number, minValue = 0, maxValue = 0) {
-  if (input >= maxValue || input <= minValue) {
+  if (input > maxValue || input < minValue) {
     return false
   } else if (minValue && !maxValue) {
     return input >= minValue
