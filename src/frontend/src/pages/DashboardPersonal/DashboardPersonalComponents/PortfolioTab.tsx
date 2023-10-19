@@ -82,7 +82,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
           ) : (
             <Chart
               numberOfItemsToDisplay={2}
-              data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }}
+              data={{ type: AREA_CHART_TYPE, plots: earningHistory }}
               colors={{
                 lineColor: colors[themeSelected].primaryChartColor,
                 areaTopColor: colors[themeSelected].primaryChartColor,
