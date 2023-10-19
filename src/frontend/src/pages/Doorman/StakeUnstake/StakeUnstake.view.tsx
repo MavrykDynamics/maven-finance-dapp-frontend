@@ -105,6 +105,7 @@ export const StakeUnstakeView = ({
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
+  // TODO: @Sam-M-Israel check whether include farms & satellite rewards, cuz compound btn claims only doorman rewards here
   const rewardsToClaim =
     availableDoormanRewards +
     availableSatellitesRewards +

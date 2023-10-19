@@ -162,7 +162,7 @@ export const normalizeUserHistoryData = (
  * @param snapshots satellite snapshots for cycle data
  * @returns boolean value for newly registered satellite (newly registered is satellite who registered on current cycle)
  *
- * TODO: @Sam, please verify conditions, if you will keep it as it is, update query to fetch only latest snapshot (add limit: 1)
+ * TODO: @Sam-M-Israel, please verify conditions, if you will keep it as it is, update query to fetch only latest snapshot (add limit: 1)
  */
 const checkWhetherUserNewlyRegisteredSatellite = (
   userSatelliteSnapshots: GetUserDataQuery['mavryk_user'][number]['governance_satellite_snapshots'],
