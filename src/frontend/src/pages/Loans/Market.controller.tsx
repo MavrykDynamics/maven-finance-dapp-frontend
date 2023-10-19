@@ -106,6 +106,7 @@ export const Market = () => {
           query: CHECK_WHETHER_MARKET_EXISTS,
           variables: {
             marketAddress: currentMarketAddress ?? '',
+            isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
           },
         })
 
