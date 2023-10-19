@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Redirect, Route, Switch, useParams } from 'react-router'
 
 // Consts
@@ -69,9 +69,14 @@ export const BecomeSatellite = () => {
   const [isSatelliteExistanseError, setIsSatelliteExistanseError] = useState(false)
 
   // derived states
-  const usersSatelliteProfile = userAddress ? satelliteMapper[userAddress] : null
-  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
-  const userMvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+  const { usersSatelliteProfile, userSmvkBalance, userMvkBalance } = useMemo(
+    () => ({
+      usersSatelliteProfile: userAddress ? satelliteMapper[userAddress] : null,
+      userSmvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+      userMvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+    }),
+    [mvkTokenAddress, satelliteMapper, userAddress, userTokensBalances],
+  )
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
