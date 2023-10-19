@@ -41,7 +41,10 @@ type LoansMarketTransactionHistoryArgs = {
   typeFilter?: Array<number>
 }
 
-type TransactionHistoryStateType = { list: Record<number, GetLoansTransactionsHistoryQuery>; itemsAmount: number }
+type TransactionHistoryStateType = {
+  list: Record<number, GetLoansTransactionsHistoryQuery | GetDevLoansTransactionsHistoryQuery>
+  itemsAmount: number
+}
 
 const transactionHistoryItemsPerPage = LIST_NAMES_MAPPER[TRANSACTION_HISTORY_TABLE_NAME]
 
