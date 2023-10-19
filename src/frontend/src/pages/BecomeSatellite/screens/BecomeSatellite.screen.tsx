@@ -386,7 +386,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
       />
 
       <BecomeSatelliteRegisterAsOracle>
-        <div className="checkbox">
+        <div className="checkbox-wrapper">
           <div className="label">{pageText.registerAsOracle}</div>
 
           <Checkbox
