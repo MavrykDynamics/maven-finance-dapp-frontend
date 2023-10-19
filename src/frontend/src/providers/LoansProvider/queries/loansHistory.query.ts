@@ -2,7 +2,7 @@ import { DocumentNode } from 'graphql'
 import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
 
 import { gql } from 'utils/__generated__'
-import { GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
+import { GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
@@ -126,7 +126,7 @@ export function getDevLoansTransactionsHistory({
   userAddress?: string
   vaultAddress?: string
   typeFilter?: Array<number>
-}): DocumentNode | TypedDocumentNode<GetLoansTransactionsHistoryQuery, OperationVariables> {
+}): DocumentNode | TypedDocumentNode<GetDevLoansTransactionsHistoryQuery, OperationVariables> {
   const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
   const filterVaultCondition = vaultAddress ? `vault: { vault: {address: {_eq: $vaultAddress}}}` : ''
   const filterTypeCondition = typeFilter

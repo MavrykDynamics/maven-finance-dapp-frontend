@@ -42,11 +42,6 @@ type LoansMarketTransactionHistoryArgs = {
 }
 
 type TransactionHistoryStateType = {
-  // list: Record<
-  //   number,
-  //   | GetLoansTransactionsHistoryQuery['lending_controller'][number]['history_data']
-  //   | GetDevLoansTransactionsHistoryQuery['lending_controller'][number]['history_data']
-  // >
   list: Record<number, GetLoansTransactionsHistoryQuery['lending_controller'][number]['history_data']>
   itemsAmount: number
 }
@@ -121,7 +116,7 @@ export const useLoansTransactionHistory = ({
           setTransactionHistoryIndexer((prev) => ({
             list: {
               ...prev.list,
-              // TOOD: remove as, but hold using dev & prod saparate querise for this
+              // TOOD: remove as, but hold using dev & prod saparate dynamic queries for this onCompleted
               [currentPage]: (data.lending_controller?.[0]?.history_data ??
                 []) as GetLoansTransactionsHistoryQuery['lending_controller'][number]['history_data'],
             },
