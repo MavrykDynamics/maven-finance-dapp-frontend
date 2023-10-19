@@ -1,4 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { SingleValueData } from 'lightweight-charts'
 import * as signalR from '@microsoft/signalr'
 
 // consts
@@ -179,6 +180,13 @@ export const UserProvider = ({ children }: Props) => {
     }))
   }, [])
 
+  const setUserEarningHistory = useCallback((userEarning: Array<SingleValueData> | null) => {
+    setUserCtxState((prev) => ({
+      ...prev,
+      earningHistory: userEarning,
+    }))
+  }, [])
+
   const setUserIndexerData = useCallback(
     (indexerData: GetUserDataQuery) => {
       // if user does not exists
@@ -236,6 +244,7 @@ export const UserProvider = ({ children }: Props) => {
       changeUser,
       setUserLoansData,
       setUserHistoryData,
+      setUserEarningHistory,
       setUserRewards,
     }
   }, [
@@ -248,6 +257,7 @@ export const UserProvider = ({ children }: Props) => {
     changeUser,
     setUserLoansData,
     setUserHistoryData,
+    setUserEarningHistory,
     setUserRewards,
   ])
 

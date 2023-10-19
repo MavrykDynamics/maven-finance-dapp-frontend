@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { SingleValueData } from 'lightweight-charts'
 
 // types
 import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
@@ -61,6 +62,7 @@ export type UserContext = UserContextStateType & {
   setUserLoansData: (userLoansData: UserLoansData | null) => void
   setUserHistoryData: (page: number, userLoansData: UserHistoryData, itemsAmount: number) => void
   setUserRewards: (userRewards: UserRewardsType) => void
+  setUserEarningHistory: (userEarning: Array<SingleValueData> | null) => void
 }
 
 export type UserContextStateType = UserMetadataType & {
@@ -70,6 +72,7 @@ export type UserContextStateType = UserMetadataType & {
   availableLoansRewards: number
   userLoansData: UserLoansData | null
   actionsHistory: { paginatedList: Record<number, UserHistoryData>; itemsAmount: number }
+  earningHistory: Array<SingleValueData> | null
 
   userTokensBalances: Record<TokenAddressType, number>
   userMTokens: Record<TokenAddressType, UserMTokenType>

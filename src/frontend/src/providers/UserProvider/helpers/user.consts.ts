@@ -29,6 +29,7 @@ export const DEFAULT_USER: UserContextStateType = {
     paginatedList: {},
     itemsAmount: 0,
   },
+  earningHistory: null,
   govActionsCount: 0,
   availableLoansRewards: 0,
   userTokensBalances: {},
