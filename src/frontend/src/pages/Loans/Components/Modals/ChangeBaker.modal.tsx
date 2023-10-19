@@ -55,7 +55,9 @@ export const ChangeBaker = ({
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
   const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
-  const { bakers, setChoosenBaker, choosenBaker } = useXtzBakersForDD(true)
+  const { bakers, setChoosenBaker, bakersRecord } = useXtzBakersForDD(false)
+
+  const choosenBaker = bakersRecord[bakerAddress ?? ''] ?? null
 
   const [activeTab, setActiveSliding] = useState<BakersSlidingButtonTab>(OTHER_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
