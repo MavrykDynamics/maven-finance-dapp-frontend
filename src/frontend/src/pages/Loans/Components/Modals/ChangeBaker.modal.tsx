@@ -57,10 +57,9 @@ export const ChangeBaker = ({
   const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
   const { bakers, setChoosenBaker, bakersRecord } = useXtzBakersForDD(false)
 
-  const choosenBaker = bakersRecord[bakerAddress ?? ''] ?? null
-
   const [activeTab, setActiveSliding] = useState<BakersSlidingButtonTab>(OTHER_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)
+  const choosenBaker = bakersRecord[selectedAddress ?? ''] ?? null
 
   useLockBodyScroll(show)
 
@@ -108,11 +107,15 @@ export const ChangeBaker = ({
   )
 
   useEffect(() => {
+    setSelectedAddress(bakerAddress)
+  }, [bakerAddress])
+
+  useEffect(() => {
     // reset fields after closing the popup
     if (!show) {
-      setSelectedAddress(null)
+      setSelectedAddress(bakerAddress)
     }
-  }, [choosenBaker, show])
+  }, [bakerAddress, show])
 
   // click on tab btn
   const handleSlidingButtonClick = (tabId: number) => {
