@@ -379,7 +379,6 @@ export const StakeUnstakeView = ({
           </StakeUnstakeInputLabels>
 
           <StakeUnstakeInputWithCoin>
-            <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <Input
               className={`input-with-rate transparent-child-wrap`}
               children={'MVK'}
