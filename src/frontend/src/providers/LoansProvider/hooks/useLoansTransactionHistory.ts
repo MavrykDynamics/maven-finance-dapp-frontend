@@ -9,14 +9,17 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
+import { GetLoansTransactionsHistoryQuery, GetDevLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { LoansMarketTransactionHistoryType } from '../helpers/loans.types'
 
 // consts
 import { COLLATERAL_HISTORY_DATA_TYPES } from '../helpers/loans.const'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
-import { getLoansTransactionsHistory } from 'providers/LoansProvider/queries/loansHistory.query'
+import {
+  getDevLoansTransactionsHistory,
+  getLoansTransactionsHistory,
+} from 'providers/LoansProvider/queries/loansHistory.query'
 
 // utils
 import { getDescrByType } from '../helpers/loans.utils'
@@ -29,6 +32,7 @@ import {
   getPageNumber,
   updatePageInUrl,
 } from 'app/App.components/Pagination/pagination.consts'
+import { ApolloError } from '@apollo/client'
 
 type LoansMarketTransactionHistoryArgs = {
   marketTokenAddress: TokenAddressType
@@ -76,48 +80,63 @@ export const useLoansTransactionHistory = ({
     return () => setTransactionHistoryIndexer({ list: {}, itemsAmount: 0 })
   }, [marketTokenAddress, vaultAddress])
 
+  const queryData = useMemo(() => {
+    return {
+      variables: {
+        marketTokenAddress,
+        userAddress,
+        vaultAddress,
+        typeFilter,
+        offset: transactionHistoryItemsPerPage * (currentPage - 1),
+        limit: transactionHistoryItemsPerPage,
+        isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
+      },
+      onCompleted: (data: GetLoansTransactionsHistoryQuery | GetDevLoansTransactionsHistoryQuery) => {
+        const itemsAmount = data.lending_controller[0].historyItemsAmount.aggregate?.count ?? 0
+        const maxPage = Math.ceil(itemsAmount / transactionHistoryItemsPerPage)
+
+        // handle user empty history
+        itemsAmount === 0 ? setIsHistoryEmpty(true) : setIsHistoryEmpty(false)
+
+        // if user updated manualy page, and set it wrong, redirect him to 1st page of the list
+        if ((maxPage < currentPage || currentPage < 1) && itemsAmount !== 0) {
+          bug(`Page is out of limits, your page: ${currentPage}, max page: ${maxPage}, min page: 1`)
+          const redirectToFirstPageOfTheList = updatePageInUrl({
+            page,
+            newPage: 1,
+            listName: TRANSACTION_HISTORY_TABLE_NAME,
+            pathname,
+            restQP,
+          })
+          history.replace(redirectToFirstPageOfTheList)
+        } else {
+          setTransactionHistoryIndexer((prev) => ({
+            list: {
+              ...prev.list,
+              [currentPage]: data,
+            },
+            itemsAmount,
+          }))
+        }
+      },
+      onError: (error: ApolloError) =>
+        handleApolloError(
+          error,
+          'GET_LOANS_HISTORY_DATA',
+          'Loading transactions history error, please reload the page',
+        ),
+    }
+  }, [currentPage, history, marketTokenAddress, page, pathname, restQP, typeFilter, userAddress, vaultAddress])
+
+  // 2 queries for dev and prod, cuz query is dynamic and codegen can't generate types for it
   // always load new txHistory on market | vault address change
   useQueryWithRefetch(getLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
-    skip: (!userAddress && !vaultAddress) || !marketTokenAddress,
-    variables: {
-      marketTokenAddress,
-      userAddress,
-      vaultAddress,
-      typeFilter,
-      offset: transactionHistoryItemsPerPage * (currentPage - 1),
-      limit: transactionHistoryItemsPerPage,
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
-    },
-    onCompleted: (data) => {
-      const itemsAmount = data.lending_controller[0].historyItemsAmount.aggregate?.count ?? 0
-      const maxPage = Math.ceil(itemsAmount / transactionHistoryItemsPerPage)
-
-      // handle user empty history
-      itemsAmount === 0 ? setIsHistoryEmpty(true) : setIsHistoryEmpty(false)
-
-      // if user updated manualy page, and set it wrong, redirect him to 1st page of the list
-      if ((maxPage < currentPage || currentPage < 1) && itemsAmount !== 0) {
-        bug(`Page is out of limits, your page: ${currentPage}, max page: ${maxPage}, min page: 1`)
-        const redirectToFirstPageOfTheList = updatePageInUrl({
-          page,
-          newPage: 1,
-          listName: TRANSACTION_HISTORY_TABLE_NAME,
-          pathname,
-          restQP,
-        })
-        history.replace(redirectToFirstPageOfTheList)
-      } else {
-        setTransactionHistoryIndexer((prev) => ({
-          list: {
-            ...prev.list,
-            [currentPage]: data,
-          },
-          itemsAmount,
-        }))
-      }
-    },
-    onError: (error) =>
-      handleApolloError(error, 'GET_LOANS_HISTORY_DATA', 'Loading transactions history error, please reload the page'),
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || process.env.REACT_APP_DATA_ENV === 'dev',
+    ...queryData,
+  })
+  useQueryWithRefetch(getDevLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || process.env.REACT_APP_DATA_ENV === 'prod',
+    ...queryData,
   })
 
   const transactionHistory = useMemo(() => {

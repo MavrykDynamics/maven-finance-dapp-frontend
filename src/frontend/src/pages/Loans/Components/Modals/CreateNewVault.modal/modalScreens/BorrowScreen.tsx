@@ -181,7 +181,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
       <div className="borrow-screen-top-stats">
         <ThreeLevelListItem>
           <div className="name">Borrow Capacity</div>
-          <CommaNumber value={borrowCapacity} decimalsToShow={0} className="value" />
+          <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Collateral Utilization</div>

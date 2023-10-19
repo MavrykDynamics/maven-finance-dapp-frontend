@@ -292,7 +292,10 @@ export const Market = () => {
                 <ThreeLevelListItem>
                   <div className="name">Total Earning</div>
                   <CommaNumber
-                    value={convertNumberForClient({ number: selectedMarket.totalLended, grade: loanToken.decimals })}
+                    value={
+                      convertNumberForClient({ number: selectedMarket.totalLended, grade: loanToken.decimals }) *
+                      loanToken.rate
+                    }
                     beginningText="$"
                     className="value"
                   />

@@ -68,14 +68,14 @@ export const ConfirmationScreen = () => {
   const {
     borrowedTokenAddress = '',
     collateralBalance: currentCollateralBalance = 0,
-    borrowedAmount: currentBorrowedAmount = 0,
+    totalOutstanding: currentTotalOutstanding = 0,
     name,
   } = vaultData ?? {}
 
   const { amount: inputAmount, symbol } = finalBorrowInputData
 
   const { futureCollateralRatio, futureBorrowCapacity } = useVaultFutureStats({
-    vaultCurrentTotalOutstanding: currentBorrowedAmount,
+    vaultCurrentTotalOutstanding: currentTotalOutstanding,
     vaultCurrentCollateralBalance: currentCollateralBalance,
     vaultTokenAddress: borrowedTokenAddress,
     operationType: operationBorrow,
