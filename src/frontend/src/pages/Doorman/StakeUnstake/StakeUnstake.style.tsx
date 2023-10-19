@@ -65,7 +65,7 @@ export const StakeUnstakeInputColumn = styled.div`
 export const StakeUnstakeInputLabels = styled.h3`
   display: flex;
   justify-content: space-between;
-  margin-left: 70px;
+  margin-left: 25px;
 
   &:last-of-type {
     margin-top: 5px;
@@ -126,7 +126,7 @@ export const StakeUnstakeAmount = styled.div`
 `
 
 export const StakeUnstakeRate = styled(StakeUnstakeAmount)`
-  margin: 7px 0 0 70px;
+  margin: 7px 0 0 25px;
   cursor: auto;
 
   p {
