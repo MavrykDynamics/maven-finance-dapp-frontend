@@ -17,6 +17,7 @@ export const useUserVaultsNames = () => {
   const { loading } = useQuery(CURRENT_USER_VAULTS_NAMES_QUERY, {
     variables: {
       userAddress: userAddress ?? '',
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
     },
     onCompleted: (data) => {
       setVaultNames(

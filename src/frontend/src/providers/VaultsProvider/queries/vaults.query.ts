@@ -1,8 +1,8 @@
 import { gql } from 'utils/__generated__'
 
 export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
-	query getUserDepositorAllVaultsQuery($userAddress: String) {
-		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+	query getUserDepositorAllVaultsQuery($userAddress: String, $isMockTime: Boolean) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
 			max_vault_liquidation_pct
 			decimals
 			liquidation_fee_pct
@@ -65,8 +65,8 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 `)
 
 export const GET_USER_ALL_VAULTS_QUERY = gql(`
-	query getUserAllVaultsQuery($userAddress: String) {
-		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+	query getUserAllVaultsQuery($userAddress: String, $isMockTime: Boolean) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
 			max_vault_liquidation_pct
 			decimals
 			liquidation_fee_pct
@@ -130,8 +130,8 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 
 // get all vaults
 export const GET_ALL_VAULTS_QUERY = gql(`
-	query getAllVaultsQuery {
-		lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+	query getAllVaultsQuery($isMockTime: Boolean) {
+		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
 			max_vault_liquidation_pct
 			decimals
 			liquidation_fee_pct

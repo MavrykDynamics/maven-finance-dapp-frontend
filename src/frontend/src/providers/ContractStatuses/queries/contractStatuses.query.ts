@@ -115,7 +115,7 @@ import { gql } from 'utils/__generated__'
 // `)
 
 export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
-query getAllContractStatusesData {
+query getAllContractStatusesData($isMockTime: Boolean) {
   farm: farm(where: {admin: {_neq: ""}}) {
     name
     address
@@ -196,7 +196,7 @@ query getAllContractStatusesData {
     last_updated_at
   }
 
-  lending_controller: lending_controller(where: {mock_time: {_eq: false}}) {
+  lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
     address
     admin
     last_updated_at

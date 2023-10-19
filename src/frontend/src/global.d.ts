@@ -4,6 +4,7 @@ declare global {
   namespace NodeJS {
     // Need to specify types manually, cuz extends ProcessEnvType not working, so keed it updated due to envVariablesSchema
     interface ProcessEnv extends ProcessEnvType {
+      REACT_APP_DATA_ENV: 'dev' | 'prod'
       REACT_APP_ENV: 'dev' | 'prod'
       REACT_APP_TZKT_API: 'https://api.ghostnet.tzkt.io' | 'https://api.tzkt.io'
       REACT_APP_TZKT_LINK: 'https://ghostnet.tzkt.io' | 'https://tzkt.io'

@@ -49,6 +49,9 @@ export const LoansProvider = ({ children }: Props) => {
    */
   useQuery(GET_LOANS_CONFIG, {
     skip: !activeSubs[LOANS_CONFIG],
+    variables: {
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
+    },
     onCompleted: (data) => {
       setLoansCtxState((prev) => ({
         ...prev,
@@ -62,6 +65,7 @@ export const LoansProvider = ({ children }: Props) => {
     skip: !activeSubs[LOANS_MARKETS_DATA] || !marketAddressToSubscribe,
     variables: {
       marketTokenAddress: marketAddressToSubscribe ?? '',
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
     },
     onCompleted: (data) => {
       const newMarkets = normalizeLoansMarkets({ indexerData: data })
@@ -80,6 +84,9 @@ export const LoansProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(GET_ALL_MARKETS_QUERY, {
     skip: !activeSubs[LOANS_MARKETS_DATA],
+    variables: {
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
+    },
     onCompleted: (data) => {
       const newMarkets = normalizeLoansMarkets({ indexerData: data })
 

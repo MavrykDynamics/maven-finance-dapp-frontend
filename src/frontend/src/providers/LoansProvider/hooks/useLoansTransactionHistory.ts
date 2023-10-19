@@ -86,6 +86,7 @@ export const useLoansTransactionHistory = ({
       typeFilter,
       offset: transactionHistoryItemsPerPage * (currentPage - 1),
       limit: transactionHistoryItemsPerPage,
+      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
     },
     onCompleted: (data) => {
       const itemsAmount = data.lending_controller[0].historyItemsAmount.aggregate?.count ?? 0
