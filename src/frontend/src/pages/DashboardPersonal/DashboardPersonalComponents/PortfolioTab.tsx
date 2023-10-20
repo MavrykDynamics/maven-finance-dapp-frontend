@@ -61,6 +61,12 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
     [secondaryTabId],
   )
 
+  const chartDataAverage = earningHistory.reduce((acc, { value }) => (acc += value), 0) / earningHistory.length
+
+  console.log({
+    earningHistory,
+  })
+
   return (
     <>
       <PortfolioChartStyled>
@@ -90,10 +96,13 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
               }}
               tooltipAsset={'MVK'}
               settings={{
-                priceMargins: {
-                  top: 0.2,
-                  bottom: 0.05,
-                },
+                priceMargins:
+                  chartDataAverage < 1000
+                    ? {
+                        top: 0.2,
+                        bottom: 0.05,
+                      }
+                    : { top: 0.3, bottom: 0.2 },
               }}
             />
           )}

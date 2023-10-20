@@ -63,7 +63,7 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
     (acc, { claimed_rewards }) => {
       acc.push({
         // TODO: @Sam-M-Israel add time for claimed farm rewards here
-        time: dayjs().toISOString(),
+        time: dayjs().subtract(1, 'hour').toISOString(),
         value: convertNumberForClient({ number: claimed_rewards, grade: MVK_DECIMALS }),
       })
       return acc
@@ -83,6 +83,25 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
     )
   }, [])
 
+  // if user has earnend smth, update time of last plot to the current time
+  if (earningHistorySplittedByDays.length > 0) {
+    const lastEarningChartPlotValue = earningHistorySplittedByDays.pop()?.value ?? 0
+    return [
+      {
+        value: 0,
+        time: dayjs(
+          getDateStart(Number(earningHistorySplittedByDays.at(0)?.time ?? dayjs().valueOf())),
+        ).valueOf() as UTCTimestamp,
+      },
+      ...earningHistorySplittedByDays,
+      {
+        value: lastEarningChartPlotValue,
+        time: dayjs().valueOf() as UTCTimestamp,
+      },
+    ]
+  }
+
+  // if user hasn't earned nothing, show empty chart
   return [
     {
       value: 0,
@@ -90,9 +109,8 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
         getDateStart(Number(earningHistorySplittedByDays.at(0)?.time ?? dayjs().valueOf())),
       ).valueOf() as UTCTimestamp,
     },
-    ...earningHistorySplittedByDays,
     {
-      value: earningHistorySplittedByDays.at(-1)?.value ?? 0,
+      value: 0,
       time: dayjs().valueOf() as UTCTimestamp,
     },
   ]
