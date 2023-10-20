@@ -1,12 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 
 // consts
-import { CHART_TEST_DATA } from '../tabs.const'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
-import { SMALL_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
-import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
-import { ONE_HOUR } from 'consts/charts.const'
+import colors from 'styles/colors'
+import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { BUTTON_NAVIGATION, BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
   isValidPersonalDashboardSecondaryTabId,
@@ -16,22 +14,23 @@ import {
   PORTFOLIO_TAB_ID,
 } from '../DashboardPersonal.utils'
 
-// types
-import { ChartPeriodType } from 'types/charts.type'
-
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { LoansTxTab } from './LoansTxTab'
 import { LendBorrowPosition } from './LendBorrowPosition'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { PortfolioChartStyled, PortfolioWalletStyled } from './DashboardPersonalComponents.style'
 import Button from 'app/App.components/Button/NewButton'
+import { Plug } from 'app/App.components/Chart/Chart.style'
+import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 // hooks
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useUserEarningsHistory } from 'providers/UserProvider/hooks/useUserEarningsHistory'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type PortfolioTabProps = {
   xtzAmount: number
@@ -45,6 +44,9 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
 
   const { availableLoansRewards, userAddress } = useUserContext()
   const {
+    preferences: { themeSelected },
+  } = useDappConfigContext()
+  const {
     userBorrowings,
     totalUserBorrowed,
     totalUserLended,
@@ -52,8 +54,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
     userLendings,
     isLoading: isUserLoansLoading,
   } = useUserLoansData()
-
-  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+  const { isLoading: isUserEarhingHistoryLoading, earningHistory } = useUserEarningsHistory()
 
   const portfolioActiveTab = useMemo(
     () => (isValidPersonalDashboardSecondaryTabId(secondaryTabId) ? secondaryTabId : PORTFOLIO_LENDING_TAB_ID),
@@ -62,27 +63,40 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
 
   return (
     <>
-      {/* TODO: make this chart dynamic need data in indexer for it */}
       <PortfolioChartStyled>
         <H2Title>MVK Earning History</H2Title>
-        <ChartsSwitherWithPosition
-          currentPeriod={chartPeriod}
-          setCurrentPeriod={setChartPeriod}
-          size={SMALL_SLIDING_TAB_BUTTONS}
-          align={ALIGN_RIGHT}
-          space={15}
-          disabled
-        />
-        {/* <div className="last-seria">
-          <div className="mvk">
-            <CommaNumber endingText="MVK" value={lastSeria} />
-          </div>
-          <div className="usd">
-            <CommaNumber beginningText="$" value={lastSeria * mvkExchangeRate} />
-          </div>
-        </div> */}
-        <div className="chart">
-          <Chart data={{ type: AREA_CHART_TYPE, plots: CHART_TEST_DATA }} tooltipAsset={'MVK'} comingSoon />
+        <div className="content">
+          {!userAddress ? (
+            <Plug>
+              <div>
+                <Icon id="stars" className="icon-stars" />
+                <Icon id="cow" className="icon-cow" />
+              </div>
+              <p className="text">No data available</p>
+            </Plug>
+          ) : isUserEarhingHistoryLoading ? (
+            <DataLoaderWrapper margin="0">
+              <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
+              <div className="text">Loading your earning history data</div>
+            </DataLoaderWrapper>
+          ) : (
+            <Chart
+              numberOfItemsToDisplay={2}
+              data={{ type: AREA_CHART_TYPE, plots: earningHistory }}
+              colors={{
+                lineColor: colors[themeSelected].primaryChartColor,
+                areaTopColor: colors[themeSelected].primaryChartColor,
+                areaBottomColor: colors[themeSelected].primaryChartBottomColor,
+              }}
+              tooltipAsset={'MVK'}
+              settings={{
+                priceMargins: {
+                  top: 0.2,
+                  bottom: 0.05,
+                },
+              }}
+            />
+          )}
         </div>
       </PortfolioChartStyled>
 

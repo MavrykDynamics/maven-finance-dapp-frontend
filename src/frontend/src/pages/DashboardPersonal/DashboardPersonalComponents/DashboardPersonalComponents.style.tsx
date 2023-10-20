@@ -55,38 +55,18 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
   width: 810px;
   padding-bottom: 10px;
   position: relative;
-  padding: 20px 0 0 20px;
+  padding: 20px;
 
-  .last-seria {
-    position: absolute;
-    left: 30px;
-    top: 75px;
+  .content {
     display: flex;
-    flex-direction: column;
-    color: ${({ theme }) => theme.primaryText};
+    justify-content: center;
+    align-items: center;
+    height: calc(100% - 45px);
 
-    .mvk {
-      font-weight: 600;
-      font-size: 27px;
-
-      .suffix {
-        color: ${({ theme }) => theme.mainHeadingText};
-      }
+    .no-data {
+      font-size: 18px;
+      font-weight: 500;
     }
-
-    .usd {
-      font-weight: 600;
-      font-size: 16px;
-    }
-
-    p {
-      margin: 0;
-    }
-  }
-
-  .chart {
-    margin-top: auto;
-    height: 230px;
   }
 `
 
