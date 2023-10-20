@@ -134,7 +134,14 @@ export const ManagePermissions = ({
     const newDepositors: Array<string> =
       chosenDdItem?.id === NONE_USER ? [] : tableData.map(({ address }) => address).filter(Boolean)
 
-    return await managePermissionsAction(vaultAddress, depostiorAllowance, newDepositors, depositors, closePopup)
+    return await managePermissionsAction(
+      vaultAddress,
+      depostiorAllowance,
+      newDepositors,
+      depositors,
+      userAddress,
+      closePopup,
+    )
   }, [bug, chosenDdItem?.id, closePopup, depositors, tableData, userAddress, vaultAddress])
 
   const contractActionProps: HookContractActionArgs = useMemo(

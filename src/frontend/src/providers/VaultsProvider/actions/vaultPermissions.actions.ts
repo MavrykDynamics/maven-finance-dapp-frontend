@@ -38,6 +38,7 @@ export const managePermissionsAction = async (
   depostiorAllowance: LoanVaultAllowanceType,
   newDepositorsAddresses: Array<string>,
   vaultOriginalDepositros: Array<string>,
+  userAddress: string,
   callback: () => void,
 ) => {
   try {
@@ -60,7 +61,13 @@ export const managePermissionsAction = async (
               {
                 kind: OpKind.TRANSACTION,
                 ...contract.methods
-                  .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false)
+                  .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, true, userAddress)
+                  .toTransferParams(),
+              },
+              {
+                kind: OpKind.TRANSACTION,
+                ...contract.methods
+                  .initVaultAction('updateDepositor', VAULT_ALLOWANCE_ACCOUNTS, false, userAddress)
                   .toTransferParams(),
               },
             ]
