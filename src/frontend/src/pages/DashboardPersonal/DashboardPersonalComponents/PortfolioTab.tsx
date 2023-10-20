@@ -63,22 +63,20 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
 
   const chartDataAverage = earningHistory.reduce((acc, { value }) => (acc += value), 0) / earningHistory.length
 
-  console.log({
-    earningHistory,
-  })
+  const canShowChart = userAddress && earningHistory.length >= 2
 
   return (
     <>
       <PortfolioChartStyled>
         <H2Title>MVK Earning History</H2Title>
         <div className="content">
-          {!userAddress ? (
+          {!canShowChart ? (
             <Plug>
               <div>
                 <Icon id="stars" className="icon-stars" />
                 <Icon id="cow" className="icon-cow" />
               </div>
-              <p className="text">No data available</p>
+              <p className="text">{!userAddress ? 'No data available' : "You haven't claimed any rewards yet"}</p>
             </Plug>
           ) : isUserEarhingHistoryLoading ? (
             <DataLoaderWrapper margin="0">

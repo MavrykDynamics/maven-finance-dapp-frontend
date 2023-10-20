@@ -1,11 +1,15 @@
-import { convertNumberForClient } from 'utils/calcFunctions'
 import dayjs from 'dayjs'
-import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
+
+// utils
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getDateEnd, getDateStart } from 'utils/time'
 
 // types
 import { GetUserEarningHistoryDataQuery } from 'utils/__generated__/graphql'
+import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
+
+// consts
 import { MVK_DECIMALS } from 'utils/constants'
-import { getDateEnd, getDateStart } from 'utils/time'
 
 const getChartWithOperationSpliitedByDays = ({
   chartData,
@@ -24,17 +28,17 @@ const getChartWithOperationSpliitedByDays = ({
     return Number(operationTime) <= dayEnd && Number(operationTime) >= dayStart
   })
 
-  // if we have day in period, that === operation day, update values to be sum of operation value and day value
-  if (operationDayIdx !== -1) {
-    return chartData.reduce((acc, { value, time }, idx) => {
-      acc[idx] = {
-        value: Math.max(value + operationValue, 0),
-        time,
-      }
+  // if we have day for operation, just add operation amount to day amount
+  if (operationDayIdx !== -1 && chartData[operationDayIdx]) {
+    chartData[operationDayIdx] = {
+      value: Math.max(chartData[operationDayIdx].value + operationValue, 0),
+      time: chartData[operationDayIdx].time,
+    }
 
-      return acc
-    }, chartData)
+    return chartData
   }
+
+  // otherwise add new day to the chart
   return chartData.concat({ value: (chartData.at(-1)?.value ?? 0) + operationValue, time: operationTime })
 }
 
@@ -71,21 +75,22 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
     [],
   )
 
-  const earningHistorySplittedByDays = [...normalizedFarmsRewardsItems, ...normalizedStakesHistoryItems].reduce<
-    Array<SingleValueData>
-  >((acc, { value, time }) => {
-    return (
-      getChartWithOperationSpliitedByDays({
-        chartData: acc,
-        operationTime: dayjs(time).valueOf() as UTCTimestamp,
-        operationValue: value,
-      }) ?? acc
-    )
-  }, [])
+  const earningHistorySplittedByDays = [...normalizedFarmsRewardsItems, ...normalizedStakesHistoryItems]
+    .sort((a, b) => dayjs(a.time).valueOf() - dayjs(b.time).valueOf())
+    .reduce<Array<SingleValueData>>((acc, { value, time }) => {
+      return (
+        getChartWithOperationSpliitedByDays({
+          chartData: acc,
+          operationTime: dayjs(time).valueOf() as UTCTimestamp,
+          operationValue: value,
+        }) ?? acc
+      )
+    }, [])
 
   // if user has earnend smth, update time of last plot to the current time
   if (earningHistorySplittedByDays.length > 0) {
     const lastEarningChartPlotValue = earningHistorySplittedByDays.pop()?.value ?? 0
+
     return [
       {
         value: 0,
@@ -102,16 +107,5 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
   }
 
   // if user hasn't earned nothing, show empty chart
-  return [
-    {
-      value: 0,
-      time: dayjs(
-        getDateStart(Number(earningHistorySplittedByDays.at(0)?.time ?? dayjs().valueOf())),
-      ).valueOf() as UTCTimestamp,
-    },
-    {
-      value: 0,
-      time: dayjs().valueOf() as UTCTimestamp,
-    },
-  ]
+  return []
 }
