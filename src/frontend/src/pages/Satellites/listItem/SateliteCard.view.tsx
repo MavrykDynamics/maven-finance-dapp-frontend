@@ -183,13 +183,19 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    if (!delegationAddress) {
-      bug('Wrong delegation address')
+    if (!delegationAddress || !governanceAddress) {
+      bug('Wrong contract address')
       return null
     }
 
-    return await undelegate(userAddress, satelliteAddress, delegationAddress)
-  }, [bug, delegationAddress, satelliteAddress, userAddress])
+    return await undelegate(
+      userAddress,
+      availableProposalRewards,
+      satelliteAddress,
+      delegationAddress,
+      governanceAddress,
+    )
+  }, [availableProposalRewards, bug, delegationAddress, governanceAddress, satelliteAddress, userAddress])
 
   const unDelegateContractActionProps: HookContractActionArgs = useMemo(
     () => ({

@@ -1,23 +1,42 @@
 // utils & consts
 import { WalletOperationError, unknownToError } from 'errors/error'
-import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
+import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
 import { SatelliteGovernanceTransfer } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
+import { UserContext } from 'providers/UserProvider/user.provider.types'
+import { OpKind, TransferParams } from '@taquito/taquito'
 
 // Suspend Satellite
 export const suspendSatellite = async (
   governanceSatelliteAddress: string,
   satelliteAddress: string,
   purpose: string,
+  userProposalRewards: NonNullable<UserContext['rewards']>['availableProposalRewards'],
+  governanceAddress: string,
 ) => {
   try {
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
-    const suspendSatelliteMetaData = contract?.methods.suspendSatellite(satelliteAddress, purpose)
 
-    return await getEstimationResult(suspendSatelliteMetaData)
+    const batchArr: (TransferParams & { kind: OpKind.TRANSACTION })[] = []
+
+    if (userProposalRewards.length) {
+      const govContract = await tezos.wallet.at(governanceAddress)
+
+      batchArr.push({
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...govContract?.methods.distributeProposalRewards(satelliteAddress, userProposalRewards).toTransferParams(),
+      })
+    }
+
+    batchArr.push({
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...contract?.methods.suspendSatellite(satelliteAddress, purpose).toTransferParams(),
+    })
+
+    return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
@@ -44,13 +63,34 @@ export const suspendSatellite = async (
 // }
 
 // Ban Satellite
-export const banSatellite = async (governanceSatelliteAddress: string, satelliteAddress: string, purpose: string) => {
+export const banSatellite = async (
+  governanceSatelliteAddress: string,
+  satelliteAddress: string,
+  purpose: string,
+  userProposalRewards: NonNullable<UserContext['rewards']>['availableProposalRewards'],
+  governanceAddress: string,
+) => {
   try {
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(governanceSatelliteAddress)
-    const banSatelliteMetaData = contract?.methods.banSatellite(satelliteAddress, purpose)
 
-    return await getEstimationResult(banSatelliteMetaData)
+    const batchArr: (TransferParams & { kind: OpKind.TRANSACTION })[] = []
+
+    if (userProposalRewards.length) {
+      const govContract = await tezos.wallet.at(governanceAddress)
+
+      batchArr.push({
+        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+        ...govContract?.methods.distributeProposalRewards(satelliteAddress, userProposalRewards).toTransferParams(),
+      })
+    }
+
+    batchArr.push({
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...contract?.methods.banSatellite(satelliteAddress, purpose).toTransferParams(),
+    })
+
+    return await getEstimationBatchResult(tezos, batchArr)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
