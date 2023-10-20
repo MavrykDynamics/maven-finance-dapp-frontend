@@ -119,9 +119,10 @@ export const USER_ACTIONS_EARNING_HISTORY_DATA_QUERY = gql(`
   }
 `)
 
+// TODO: ", payments_aggregate: {count: {predicate: {_gt: 0}}}" was also the past of proposal rewards filter, is it needed?
 export const USER_REWARDS_DATA_QUERY = gql(`
   query getUserRewardsData($userAddress: String = "") {
-    governance_proposal: governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}, payments_aggregate: {count: {predicate: {_gt: 0}}}}) {
+    governance_proposal: governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}}) {
       id
     }
 
