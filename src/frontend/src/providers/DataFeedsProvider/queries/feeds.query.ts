@@ -29,6 +29,7 @@ export const FEEDS_QUERY = gql(`
       last_completed_data
       last_completed_data_last_updated_at
       last_completed_data_pct_oracle_resp
+      last_completed_data_epoch
 
       heart_beat_seconds
       reward_amount_xtz
@@ -36,10 +37,10 @@ export const FEEDS_QUERY = gql(`
       pct_oracle_threshold
       alpha_pct_per_thousand
 
-      # feed oracles amount
-      oracles_aggregate(where: {user: {satellites: {currently_registered: {_eq: true}}}}) {
-        aggregate {
-          count
+      # feeds oracles
+      oracles(where: {user: {satellites: {currently_registered: {_eq: true}}}}) {
+        user {
+          address
         }
       }
     }
@@ -56,6 +57,7 @@ export const FEEDS_UPDATE_QUERY = gql(`
       last_completed_data
       last_completed_data_pct_oracle_resp
       last_completed_data_last_updated_at
+      last_completed_data_epoch
     }
   }
 `)

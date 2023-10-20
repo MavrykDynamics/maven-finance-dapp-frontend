@@ -1,6 +1,5 @@
-import { UTCTimestamp } from 'lightweight-charts'
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
-import { DataFeedsContext, Feed, NullableDataFeedsContextStateType } from '../dataFeeds.provider.types'
+import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
+import { Feed, NullableDataFeedsContextStateType } from '../dataFeeds.provider.types'
 import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
@@ -14,11 +13,12 @@ export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
     const { category, icon } = feedMetadata
     const network = feedGql.network
 
-    const { oracles_aggregate, metadata, ...restOfTheItem } = feedGql
+    const { oracles, metadata, ...restOfTheItem } = feedGql
 
     return {
       ...restOfTheItem,
-      oraclesAmount: oracles_aggregate?.aggregate?.count ?? 0,
+      oraclesAmount: oracles.length,
+      oraclesAddresses: oracles.map(({ user: { address } }) => address),
       category: category.charAt(0).toUpperCase() + category.slice(1),
       network,
       amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
@@ -93,8 +93,8 @@ export function normalizeFeedsPrices(
 
 export function normalizeDataFeedsHistory(historyData: FeedHistoryQeuryQuery['aggregator'][number]['history_data']) {
   const { dataFeedsHistory, dataFeedsVolatility } = historyData.reduce<{
-    dataFeedsHistory: AreaChartPlotType[]
-    dataFeedsVolatility: AreaChartPlotType[]
+    dataFeedsHistory: SingleValueData[]
+    dataFeedsVolatility: SingleValueData[]
   }>(
     (acc, { data, aggregator: { decimals }, timestamp }, idx, arr) => {
       const prevItem = arr[idx - 1]
@@ -108,14 +108,14 @@ export function normalizeDataFeedsHistory(historyData: FeedHistoryQeuryQuery['ag
             symbolsAfterDecimalPoint(convertNumberForClient({ number: data, grade: decimals })),
             symbolsAfterDecimalPoint(convertNumberForClient({ number: prevData, grade: decimals })),
           ),
-        } as AreaChartPlotType)
+        } as SingleValueData)
       }
 
       // history
       acc.dataFeedsHistory.push({
         time: new Date(timestamp).getTime() as UTCTimestamp,
         value: symbolsAfterDecimalPoint(convertNumberForClient({ number: data, grade: decimals })),
-      } as AreaChartPlotType)
+      } as SingleValueData)
 
       return acc
     },

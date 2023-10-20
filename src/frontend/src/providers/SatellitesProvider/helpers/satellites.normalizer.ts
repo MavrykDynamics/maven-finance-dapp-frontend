@@ -38,6 +38,8 @@ const getSatelliteOracleRewards = (
       string,
       {
         lastPredictedPrice: number | null
+        predictionTime: string | null
+        predictionEpoch: number | null
       }
     >
   }>(
@@ -55,6 +57,8 @@ const getSatelliteOracleRewards = (
       })
       acc.participatedFeeds[feedAddress] = {
         lastPredictedPrice: latestObservation?.data ?? null,
+        predictionTime: latestObservation?.timestamp ?? null,
+        predictionEpoch: latestObservation?.epoch ?? null,
       }
       return acc
     },

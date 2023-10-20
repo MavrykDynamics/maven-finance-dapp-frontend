@@ -148,6 +148,8 @@ const DataFeedDetails = () => {
     return feedsSatellites.slice(from, to)
   }, [feedsSatellites, search])
 
+  const chartDataAverage = chartPlots.reduce((acc, { value }) => (acc += value), 0) / chartPlots.length
+
   return (
     <Page>
       <PageHeader page={'data-feeds'} />
@@ -361,7 +363,10 @@ const DataFeedDetails = () => {
                       areaBottomColor: colors[themeSelected].primaryChartBottomColor,
                     }}
                     tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
-                    settings={{ tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod) }}
+                    settings={{
+                      tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
+                      priceMargins: chartDataAverage < 10 ? { top: 0.65, bottom: 0.3 } : { top: 0.5, bottom: 0.2 },
+                    }}
                   />
                 )}
               </FeedDetailsChartWrapper>
