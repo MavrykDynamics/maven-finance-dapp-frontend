@@ -102,6 +102,23 @@ export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
   }
 `)
 
+export const USER_ACTIONS_EARNING_HISTORY_DATA_QUERY = gql(`
+  query getUserEarningHistoryData($userAddress: String) {
+    mavryk_user: mavryk_user(where: {address: {_eq: $userAddress}}) {
+      # earning history
+      stakes_history_data(where: {type: {_in: ["3", "4"]}}, order_by: {timestamp: desc}) {
+        timestamp
+        desired_amount
+        final_amount
+      }
+      # farm rewards
+      farm_accounts {
+        claimed_rewards
+      }
+    }
+  }
+`)
+
 export const USER_REWARDS_DATA_QUERY = gql(`
   query getUserRewardsData($userAddress: String = "") {
     governance_proposal: governance_proposal(where: {reward_claim_ready: {_eq: true}, votes: {voter: {address: {_eq: $userAddress}}, _and: {voting_reward_claimed: {_eq: false}}}, payments_aggregate: {count: {predicate: {_gt: 0}}}}) {

@@ -20,7 +20,7 @@ import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/Satell
 
 export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed: Feed }) => {
   const { tokensPrices } = useTokensContext()
-  const { oracleStatus } = useSatelliteStatuses(oracle)
+  const { oracleStatus } = useSatelliteStatuses(oracle, feed.address)
 
   const { address, name, XTZRewards, sMVKRewards } = oracle
   const { decimals, amount, address: feedAddress } = feed

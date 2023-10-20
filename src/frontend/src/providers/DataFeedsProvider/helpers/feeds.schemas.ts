@@ -7,6 +7,7 @@ export const smallFeedSchema = z.object({
   last_completed_data_last_updated_at: z.string(),
   last_completed_data: z.number(),
   last_completed_data_pct_oracle_resp: z.number(),
+  last_completed_data_epoch: z.number(),
 })
 
 export const smallFeedsQuerySchema = z.array(smallFeedSchema)
@@ -25,6 +26,7 @@ export const fullFeedSchema = z.object({
   last_completed_data: z.number(),
   last_completed_data_last_updated_at: z.string(),
   last_completed_data_pct_oracle_resp: z.number(),
+  last_completed_data_epoch: z.number(),
 
   heart_beat_seconds: z.number(),
   reward_amount_xtz: z.number(),
@@ -32,11 +34,13 @@ export const fullFeedSchema = z.object({
   pct_oracle_threshold: z.number(),
   alpha_pct_per_thousand: z.number(),
 
-  oracles_aggregate: z.object({
-    aggregate: z.object({
-      count: z.number(),
+  oracles: z.array(
+    z.object({
+      user: z.object({
+        address: z.string(),
+      }),
     }),
-  }),
+  ),
 })
 
 export const fullFeedsQuerySchema = z.array(fullFeedSchema)
