@@ -140,7 +140,12 @@ export const EmergencyGovernance = () => {
               <CardContent>
                 <CardContentLeftSide>
                   <h2>Trigger Emergency Governance Vote</h2>
-                  <div>Coming Soon…</div>
+                  <div>
+                    Initiate an Emergency Governance vote to break the glass by using the button on the right. Any user
+                    can trigger this system by initiating an emergency governance action, detailing the cause for the
+                    emergency vote in a form for the ecosystem to understand the urgency. In order to reduce spam, there
+                    is a 10 XTZ fee paid to the Treasury.
+                  </div>
                 </CardContentLeftSide>
                 <CardContentRightSide>
                   {userAddress ? (
@@ -149,13 +154,13 @@ export const EmergencyGovernance = () => {
                         kind={BUTTON_PRIMARY}
                         onClick={openInitiatePopup}
                         form={BUTTON_WIDE}
-                        disabled={isGlassBroken || process.env.REACT_APP_ENV === 'prod'}
+                        disabled={isGlassBroken}
                       >
                         <Icon id="auction" /> Initiate
                       </Button>
                     </div>
                   ) : (
-                    <ConnectWalletBtn />
+                    <ConnectWalletBtn isWide />
                   )}
                 </CardContentRightSide>
               </CardContent>

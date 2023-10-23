@@ -30,11 +30,12 @@ export const EmergencyGovernanceCard = styled(Card)<{ theme: MavrykTheme }>`
 `
 
 export const CardContentLeftSide = styled.div<{ theme: MavrykTheme }>`
-  width: 50%;
+  width: 80%;
   align-items: center;
   justify-content: center;
 
   > div {
+    margin-top: 5px;
     -webkit-line-clamp: 6;
     overflow: hidden;
     display: -webkit-box;
@@ -51,10 +52,12 @@ export const CardContentLeftSide = styled.div<{ theme: MavrykTheme }>`
 export const CardContent = styled.div<{ theme: MavrykTheme }>`
   display: flex;
   justify-content: center;
+
+  column-gap: 75px;
 `
 
 export const CardContentRightSide = styled.div<{ theme: MavrykTheme }>`
-  width: 50%;
+  width: 20%;
   align-items: center;
   justify-content: flex-end;
   display: flex;
