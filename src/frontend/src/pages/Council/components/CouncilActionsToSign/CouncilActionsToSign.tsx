@@ -53,7 +53,7 @@ export const CouncilActionsToSign = ({ isBreakGlassCouncil, actionstoSign, actio
         }
 
         if (!councilAddress || !breakGlassAddress) {
-          bug('Wrong counsil address')
+          bug('Wrong council address')
           return null
         }
 
@@ -64,7 +64,7 @@ export const CouncilActionsToSign = ({ isBreakGlassCouncil, actionstoSign, actio
         }
       },
     }),
-    [councilAddress, breakGlassAddress, isBreakGlassCouncil, userAddress],
+    [councilAddress, breakGlassAddress, isBreakGlassCouncil, userAddress]
   )
 
   const { actionWithArgs: handleSignAction } = useContractAction(signActionContractActionProps)

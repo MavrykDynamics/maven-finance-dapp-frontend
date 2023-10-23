@@ -126,7 +126,7 @@ export const BreakGlassCouncil = () => {
 
     return await propagateBreakGlass(
       breakGlassAddress,
-      contractStatuses.filter(({ admin }) => admin !== breakGlassAddress).map(({ address }) => address),
+      contractStatuses.filter(({ admin }) => admin !== breakGlassAddress).map(({ address }) => address)
     )
   }, [userAddress, breakGlassAddress, bug, contractStatuses])
 
@@ -135,13 +135,13 @@ export const BreakGlassCouncil = () => {
       actionType: PROPAGATE_BREAK_GLASS_ACTION,
       actionFn: propagateBreakGlassAction,
     }),
-    [propagateBreakGlassAction],
+    [propagateBreakGlassAction]
   )
 
   const { action: handleClickPropagateBreakGlass } = useContractAction(propagateBreakGlassContractActionProps)
 
   const isPropagateActionActive = Boolean(
-    allPendingActions.find((actionId) => actionsMapper[actionId].actionClientId === PROPAGATE_BREAK_GLASS_ACTION_FORM),
+    allPendingActions.find((actionId) => actionsMapper[actionId].actionClientId === PROPAGATE_BREAK_GLASS_ACTION_FORM)
   )
 
   return (
@@ -151,7 +151,7 @@ export const BreakGlassCouncil = () => {
       {isBreakGlassCounsilLoading || isContractStatusesLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading Break Glass Counsil Data</div>
+          <div className="text">Loading Break Glass Council Data</div>
         </DataLoaderWrapper>
       ) : (
         <>

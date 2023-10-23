@@ -154,7 +154,7 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
       </SatelliteVotingInfoWrapper>
       <div className="buttons-wrapper">
         <Button kind={BUTTON_PRIMARY} disabled={isActionActive} onClick={showPopup}>
-          Register to a Aggregator Pair
+          Register to an Aggregator
         </Button>
       </div>
 

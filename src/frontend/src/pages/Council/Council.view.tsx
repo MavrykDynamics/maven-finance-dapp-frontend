@@ -115,7 +115,7 @@ export function CouncilView({
       titles: isBreakGlassCouncil ? BgCounsilPageTitles : MavrykCounsilPageTitles,
       pagePathname: isBreakGlassCouncil ? '/break-glass-council' : '/mavryk-council',
       dropDownItems: Object.values(
-        isBreakGlassCouncil ? BgCounsilDdForms : MavrykCounsilDdForms,
+        isBreakGlassCouncil ? BgCounsilDdForms : MavrykCounsilDdForms
       ).map<ActionsDDItemType>((formId, index) => ({
         content: <DropdownTruncateOption text={COUNCIL_FORMS_NAMES_MAPPER[formId]} />,
         value: formId,
@@ -207,7 +207,7 @@ export function CouncilView({
       const foundItem = dropDownItems.find((item) => item.id === itemId)
       if (foundItem) setChosenDdItem(foundItem)
     },
-    [dropDownItems],
+    [dropDownItems]
   )
 
   const handleChangeTabs = useCallback(
@@ -215,10 +215,10 @@ export function CouncilView({
       history.replace(
         `${pagePathname}${tabId === 1 ? MY_PENDING_COUNSIL_TAB : `/${MY_PAST_COUNSIL_TAB}`}${
           search ? `?${search}` : ''
-        }`,
+        }`
       )
     },
-    [pagePathname, search],
+    [pagePathname, search]
   )
 
   // drop action
@@ -232,7 +232,7 @@ export function CouncilView({
         }
 
         if (!councilAddress || !breakGlassAddress) {
-          bug('Wrong counsil address')
+          bug('Wrong council address')
           return null
         }
 
@@ -243,7 +243,7 @@ export function CouncilView({
         }
       },
     }),
-    [councilAddress, breakGlassAddress, isBreakGlassCouncil, userAddress],
+    [councilAddress, breakGlassAddress, isBreakGlassCouncil, userAddress]
   )
 
   const { actionWithArgs: handleDropAction } = useContractAction(dropActionProps)
@@ -325,8 +325,8 @@ export function CouncilView({
               })
             ) : (
               <EmptyContainer>
-                <img src="/images/not-found.svg" alt=" No counsil actions to show" />
-                <figcaption> No counsil actions to show</figcaption>
+                <img src="/images/not-found.svg" alt=" No council actions to show" />
+                <figcaption> No council actions to show</figcaption>
               </EmptyContainer>
             )}
           </div>
