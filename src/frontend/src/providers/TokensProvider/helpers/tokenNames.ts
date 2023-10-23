@@ -11,26 +11,26 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
     case 'usdt':
       return { name: 'Tether', symbol: 'USDT', icon: '/images/usdt.png' }
     case 'musdt':
-      return { name: 'mUSDT', symbol: 'mUSDT', icon: '/images/usdt.png' }
+      return { name: 'mUSDT', symbol: 'mUSDT', icon: '/images/mUSDT.svg' }
 
     case 'xtz/usd':
     case 'xtz':
       return { name: 'Tezos', symbol: 'XTZ', icon: '/images/tezos.png' }
     case 'mxtz':
-      return { name: 'mXTZ', symbol: 'mXTZ', icon: '/images/tezos.png' }
+      return { name: 'mXTZ', symbol: 'mXTZ', icon: '/images/mXTZ.svg' }
 
     case 'btc/usd':
     case 'tzbtc':
       return { name: 'tzBTC', symbol: 'tzBTC', icon: '/images/tzBTC.png' }
     case 'mtzbtc':
-      return { name: 'mTzBTC', symbol: 'mTzBTC', icon: '/images/tzBTC.png' }
+      return { name: 'mTzBTC', symbol: 'mTzBTC', icon: '/images/mTzBTC.svg' }
 
     case 'euroc/usd':
     case 'eurc/usd':
     case 'eurl':
       return { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }
     case 'meurl':
-      return { name: 'mEURL', symbol: 'mEURL', icon: '/images/eurl.png' }
+      return { name: 'mEURL', symbol: 'mEURL', icon: '/images/mEURL.svg' }
 
     case 'mvk':
       return { name: 'Mavryk', symbol: 'MVK', icon: 'https://mavryk.finance/logo192.png' }
