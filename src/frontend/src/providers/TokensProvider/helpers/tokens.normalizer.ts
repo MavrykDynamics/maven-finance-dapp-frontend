@@ -240,7 +240,8 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         // getting symbol, name, icon from tokens mapper, cuz metadata from indexer is not valid for display
         const { symbol, name, icon } = getTokenSymbolAndName(symbolFromIndexer) ?? {}
 
-        const tokenIcon = parsedMetadata.icon ?? icon
+        // TODO: parsedMetadata.icon should be primary to use actual not hardcoded image
+        const tokenIcon = icon ?? parsedMetadata.icon
         // token should at least have symbol, name and icon to be able to use it on front
         if (!symbol || !name || !tokenIcon) {
           throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
@@ -337,6 +338,6 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         return acc
       }
     },
-    { tokensMetadata: {}, collateralTokens: [], mTokens: [], farmLpTokens: [] },
+    { tokensMetadata: {}, collateralTokens: [], mTokens: [], farmLpTokens: [] }
   )
 }

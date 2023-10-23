@@ -13,6 +13,8 @@ export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   .voting-ends {
     color: ${({ theme }) => theme.primaryText};
     display: flex;
+    align-items: center;
+    column-gap: 3px;
     margin: 10px 0 20px 0;
     font-weight: 600;
     font-size: 14px;

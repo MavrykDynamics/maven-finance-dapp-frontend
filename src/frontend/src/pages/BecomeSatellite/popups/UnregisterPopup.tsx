@@ -27,6 +27,7 @@ import { unregisterSatellite } from 'providers/SatellitesProvider/actions/satell
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 export const UnregisterPopup = ({
   show,
@@ -38,10 +39,11 @@ export const UnregisterPopup = ({
   satellite: SatelliteRecordType | null
 }) => {
   const {
-    contractAddresses: { delegationAddress },
+    contractAddresses: { delegationAddress, governanceAddress },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
+  const { availableProposalRewards } = useUserRewards()
 
   // unregister action ---------------------
 
@@ -50,13 +52,19 @@ export const UnregisterPopup = ({
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
     }
-    if (!delegationAddress) {
-      bug('Wrong delegation address')
+    if (!delegationAddress || !governanceAddress) {
+      bug('Wrong contract address')
       return null
     }
 
-    return await unregisterSatellite(userAddress, delegationAddress, closePopup)
-  }, [bug, closePopup, delegationAddress, userAddress])
+    return await unregisterSatellite(
+      userAddress,
+      availableProposalRewards,
+      delegationAddress,
+      governanceAddress,
+      closePopup,
+    )
+  }, [availableProposalRewards, bug, closePopup, delegationAddress, governanceAddress, userAddress])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
