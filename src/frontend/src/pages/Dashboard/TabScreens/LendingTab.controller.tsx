@@ -5,12 +5,17 @@ import { Link } from 'react-router-dom'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 import { BUTTON_WIDE, PRIMARY } from 'app/App.components/Button/Button.constants'
 
+// types
+import { LoansContext } from 'providers/LoansProvider/loans.provider.types'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+
 // view
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Impact } from 'app/App.components/Impact/Impact'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // styles
 import { StatBlock } from '../Dashboard.style'
@@ -26,8 +31,6 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import { LoansContext } from 'providers/LoansProvider/loans.provider.types'
 
 export const LendingTab = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -54,7 +57,7 @@ export const LendingTab = () => {
         tokensMetadata,
         tokensPrices,
       }),
-    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices],
+    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices]
   )
 
   return (
@@ -103,15 +106,8 @@ export const LendingTab = () => {
               <StatBlock>
                 <div className="name">Most Supplied Asset</div>
                 <div className="value">
-                  {mostLendedAsset?.icon ? (
-                    <div className="image-wrapper">
-                      <img src={mostLendedAsset.icon} alt="" />
-                    </div>
-                  ) : (
-                    <Icon id="noImage" />
-                  )}
-
-                  {mostLendedAsset?.symbol || '-'}
+                  <ImageWithPlug alt={'Most supplied asset'} imageLink={mostLendedAsset?.icon} />
+                  {mostLendedAsset?.symbol ?? ''}
                 </div>
               </StatBlock>
             </div>
@@ -146,14 +142,7 @@ export const LendingTab = () => {
               <StatBlock>
                 <div className="name">Most Borrowed Asset</div>
                 <div className="value">
-                  {mostBorrowedAsset?.icon ? (
-                    <div className="image-wrapper">
-                      <img src={mostBorrowedAsset.icon} alt="" />
-                    </div>
-                  ) : (
-                    <Icon id="noImage" />
-                  )}
-
+                  <ImageWithPlug alt={'Most borrowed asset'} imageLink={mostLendedAsset?.icon} />
                   {mostBorrowedAsset?.symbol ?? ''}
                 </div>
               </StatBlock>
@@ -235,5 +224,5 @@ const reduceLoansData = ({
       totalLended: 0,
       mostBorrowedAsset: null,
       mostLendedAsset: null,
-    },
+    }
   )

@@ -1,5 +1,6 @@
 // view
 import ConnectWalletBanner from '../ConnectWallet/ConnectWalletBanner'
+import { ImageWithPlug } from '../Icon/ImageWithPlug'
 
 // style
 import {
@@ -28,20 +29,16 @@ export const PageHeaderView = ({
 }: PageHeaderViewProps) => {
   return (
     <>
-      <PageHeaderStyled backgroundImageSrc={backgroundImageSrc || ''}>
+      <PageHeaderStyled backgroundImageSrc={backgroundImageSrc ?? ''}>
         <PageHeaderTextArea>
           <h1>
             {title}
-            {avatar && (
-              <div className="img-wrapper">
-                <img src={avatar} />
-              </div>
-            )}
+            {avatar && <ImageWithPlug alt={title} imageLink={avatar} plugSrc="/images/default-user.png" />}
           </h1>
           <p>{subText}</p>
         </PageHeaderTextArea>
         <PageHeaderForegroundImageContainer>
-          <PageHeaderForegroundImage page={page} src={foregroundImageSrc || '/images/portal.svg'} alt="portal" />
+          <PageHeaderForegroundImage page={page} src={foregroundImageSrc ?? '/images/portal.svg'} alt="portal" />
         </PageHeaderForegroundImageContainer>
       </PageHeaderStyled>
       <ConnectWalletBanner />

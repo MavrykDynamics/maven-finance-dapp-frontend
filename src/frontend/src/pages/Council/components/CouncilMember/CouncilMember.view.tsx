@@ -5,10 +5,10 @@ import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress
 // view
 import { TzAddress } from '../../../../app/App.components/TzAddress/TzAddress.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import { AvatarStyle } from '../../../../app/App.components/Avatar/Avatar.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CouncilMemberStyled } from './CouncilMember.style'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -36,16 +36,7 @@ export const CouncilMemberView = (props: Props) => {
   const memberContent = (
     <CouncilMemberStyled>
       <div className="inner">
-        <AvatarStyle>
-          <img
-            src={image}
-            alt={name}
-            onError={({ currentTarget }) => {
-              currentTarget.onerror = null
-              currentTarget.style.opacity = '0'
-            }}
-          />
-        </AvatarStyle>
+        <ImageWithPlug alt={name} imageLink={image} plugSrc="/images/default-user.png" />
         <figcaption>
           <h4>{name}</h4>
           {memberAddress ? <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={memberAddress} hasIcon /> : null}

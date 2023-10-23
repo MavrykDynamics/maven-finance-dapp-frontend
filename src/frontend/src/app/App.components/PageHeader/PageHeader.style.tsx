@@ -62,36 +62,38 @@ export const PageHeaderTextArea = styled.div<{ theme: MavrykTheme }>`
     }
   }
 
-  .asset-wrapper {
-    display: flex;
-    align-items: center;
-    svg,
-    .icon {
-      width: 45px;
-      height: 45px;
-      fill: ${({ theme }) => theme.pageHeaderColor};
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-  }
-
   .img-wrapper {
     width: 40px;
     height: 40px;
     position: absolute;
     right: -50px;
     top: -5px;
+  }
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
+  .asset-wrapper {
+    display: flex;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+
+    .img-wrapper {
+      position: relative;
+      right: unset;
+      top: unset;
     }
+
+    svg {
+      width: 40px;
+      height: 40px;
+      fill: ${({ theme }) => theme.pageHeaderColor};
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
   }
 
   p {

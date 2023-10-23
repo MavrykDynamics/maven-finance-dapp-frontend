@@ -89,19 +89,22 @@ export const SatelliteProfileImageContainer = styled.div`
   height: 45px;
   width: 45px;
   margin-right: 10px;
+
+  .img-wrapper {
+    width: 100%;
+    height: 100%;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
 `
 
 export const SatelliteProfileInfoWrapper = styled.div`
   display: flex;
-`
-
-export const SatelliteProfileImage = styled.div`
-  background-image: ${({ src }: { src: string }) => `url(${src})`};
-  background-size: cover;
-  background-position: center;
-  border-radius: 50%;
-  width: 100%;
-  height: 100%;
 `
 
 export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`

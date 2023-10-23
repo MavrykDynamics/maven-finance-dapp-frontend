@@ -1,7 +1,8 @@
 import { useLocation } from 'react-router'
-import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletBanner'
-import Icon from 'app/App.components/Icon/Icon.view'
 
+// view
+import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletBanner'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import {
   PageHeaderForegroundImage,
   PageHeaderForegroundImageContainer,
@@ -9,8 +10,13 @@ import {
   PageHeaderTextArea,
 } from 'app/App.components/PageHeader/PageHeader.style'
 
+// consts
 import { ASSETS_WE_HAVE_BG_TO } from '../Loans.const'
+
+// hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+
+// utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 type MarketPageHeaderPropsType = {
@@ -37,13 +43,7 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
       <PageHeaderStyled backgroundImageSrc={'/images/dapp-header-bg.svg'}>
         <PageHeaderTextArea className="loans">
           <div className="asset-wrapper">
-            {icon ? (
-              <div className="icon">
-                <img src={icon} alt={`${symbol} logo`} />
-              </div>
-            ) : (
-              <Icon id={'noImage'} />
-            )}
+            <ImageWithPlug alt={symbol} imageLink={icon} />
           </div>
           <div className="text-container">
             <h1>
@@ -58,7 +58,7 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
           </div>
         </PageHeaderTextArea>
         <PageHeaderForegroundImageContainer>
-          <PageHeaderForegroundImage page={'lending'} src={foregroundImageSrc || '/images/portal.svg'} alt="portal" />
+          <PageHeaderForegroundImage page={'lending'} src={foregroundImageSrc ?? '/images/portal.svg'} alt="portal" />
         </PageHeaderForegroundImageContainer>
       </PageHeaderStyled>
       <ConnectWalletInfo />
