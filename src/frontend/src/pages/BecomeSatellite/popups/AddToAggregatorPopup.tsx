@@ -37,7 +37,7 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
   const { feedsAddresses, feedsMapper, isLoading: loading } = useDataFeedsContext()
   const aggregatorsList = useMemo(
     () => feedsAddresses.map((address) => ({ content: feedsMapper[address].name, id: address })) ?? [],
-    [feedsAddresses, feedsMapper],
+    [feedsAddresses, feedsMapper]
   )
 
   const [selectedAggregator, setSelectedAggregator] = useState(aggregatorsList[0])
@@ -73,7 +73,7 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
       actionType: ADD_ORACLES_AGGREGATOR_ACTION,
       actionFn: addOracleToAggregatorActionFn,
     }),
-    [addOracleToAggregatorActionFn],
+    [addOracleToAggregatorActionFn]
   )
 
   const { action: addOracleToAggregatorAction } = useContractAction(addOracleToAggregatorContratActionProps)
@@ -83,7 +83,7 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} widthSize={586}>
         <button className="close-modal" onClick={closePopup} />
         <UnregisterSatelliteModalBase>
-          <H2Title>Register to a Aggregator Pair</H2Title>
+          <H2Title>Register to an Aggregator</H2Title>
           <div className="descr">
             Text that explains that they have to be voted in to starting to sign for each aggregator
           </div>

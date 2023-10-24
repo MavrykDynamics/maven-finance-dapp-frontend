@@ -89,11 +89,6 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mavr
     width: 30px;
     height: 30px;
   }
-
-  .uploaded-image {
-    position: relative;
-    object-fit: cover;
-  }
 `
 
 export const UploadIconContainer = styled.div<{
@@ -204,10 +199,20 @@ export const IpfsUploadedImageContainer = styled.figure`
   width: 50px;
   height: 50px;
 
-  > img {
+  .img-wrapper,
+  svg {
     height: 50px;
     width: 50px;
     border-radius: 50%;
+
+    fill: ${({ theme }) => theme.pageHeaderColor};
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
   }
 `
 

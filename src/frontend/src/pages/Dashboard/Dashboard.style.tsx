@@ -113,7 +113,7 @@ export const StatBlock = styled.div`
     position: relative;
 
     svg,
-    .image-wrapper {
+    .img-wrapper {
       width: 24px;
       height: 24px;
       margin-right: 7px;

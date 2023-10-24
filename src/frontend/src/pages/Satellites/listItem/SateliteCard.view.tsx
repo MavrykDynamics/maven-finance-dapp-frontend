@@ -18,40 +18,6 @@ import {
   BUTTON_SECONDARY,
 } from 'app/App.components/Button/Button.constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
-
-// helpers
-import {
-  getSatelliteParticipations,
-  getStatusColorBasedOnOracleType,
-} from 'providers/SatellitesProvider/helpers/satellites.utils'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-
-// view
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import Icon from 'app/App.components/Icon/Icon.view'
-import Button from 'app/App.components/Button/NewButton'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-
-// types
-import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
-
-//styles
-import { AvatarStyle } from 'app/App.components/Avatar/Avatar.style'
-import {
-  SatelliteCard,
-  SatelliteCardInner,
-  SatelliteProfileImageContainer,
-  SatelliteProfileImage,
-  SatelliteTextGroup,
-  SatelliteMainText,
-  SatelliteProfileDetails,
-  SatelliteSubText,
-  SatelliteOracleStatusComponent,
-  SatelliteCardButtons,
-  SatelliteCardRow,
-} from './SatelliteCard.style'
 import {
   ACTIVE_SATELLITE_STATUS,
   BANNED_SATELLITE_STATUS,
@@ -62,13 +28,46 @@ import {
   SATELLITE_VOTES_MAPPER,
   UNDELEGATE_ACTION,
 } from 'providers/SatellitesProvider/satellites.const'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+// helpers
+import {
+  getSatelliteParticipations,
+  getStatusColorBasedOnOracleType,
+} from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
 import { delegate, undelegate } from 'providers/SatellitesProvider/actions/satellites.actions'
 
+// view
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import Button from 'app/App.components/Button/NewButton'
+import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+
+// types
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
+
+//styles
+import {
+  SatelliteCard,
+  SatelliteCardInner,
+  SatelliteProfileImageContainer,
+  SatelliteTextGroup,
+  SatelliteMainText,
+  SatelliteProfileDetails,
+  SatelliteSubText,
+  SatelliteOracleStatusComponent,
+  SatelliteCardButtons,
+  SatelliteCardRow,
+} from './SatelliteCard.style'
+
 // hooks
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { distributeProposalRewards } from 'providers/UserProvider/actions/user.actions'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 type SatelliteListItemProps = {
@@ -171,7 +170,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       actionType: DELEGATE_ACTION,
       actionFn: delegeteAction,
     }),
-    [delegeteAction],
+    [delegeteAction]
   )
 
   const { action: delegateCallback } = useContractAction(delegateContractActionProps)
@@ -193,7 +192,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       availableProposalRewards,
       satelliteAddress,
       delegationAddress,
-      governanceAddress,
+      governanceAddress
     )
   }, [availableProposalRewards, bug, delegationAddress, governanceAddress, satelliteAddress, userAddress])
 
@@ -202,7 +201,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       actionType: UNDELEGATE_ACTION,
       actionFn: undelegeteAction,
     }),
-    [undelegeteAction],
+    [undelegeteAction]
   )
 
   const { action: undelegateCallback } = useContractAction(unDelegateContractActionProps)
@@ -234,7 +233,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       actionType: DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
       actionFn: distributeRewardsAction,
     }),
-    [distributeRewardsAction],
+    [distributeRewardsAction]
   )
 
   const { action: distributeRewardsCallback } = useContractAction(distributeRewardsContractActionProps)
@@ -245,9 +244,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         <div className="grid-container">
           <div className="grid-item">
             <SatelliteProfileImageContainer>
-              <AvatarStyle>
-                <SatelliteProfileImage src={satellite.image} />
-              </AvatarStyle>
+              <ImageWithPlug alt={satellite.name} imageLink={satellite.image} plugSrc="/images/default-user.png" />
             </SatelliteProfileImageContainer>
 
             <SatelliteTextGroup>

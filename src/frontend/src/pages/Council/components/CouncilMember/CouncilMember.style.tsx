@@ -30,7 +30,7 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
     }
   }
 
-  figure {
+  .img-wrapper {
     width: 50px;
     height: 50px;
     flex-shrink: 0;

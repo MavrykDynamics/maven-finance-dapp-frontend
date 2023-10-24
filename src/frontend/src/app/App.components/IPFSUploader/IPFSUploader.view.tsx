@@ -5,6 +5,7 @@ import type { IPFSUploaderTypeFile } from './IPFSUploader.controller'
 
 // view
 import Icon from '../Icon/Icon.view'
+import { ImageWithPlug } from '../Icon/ImageWithPlug'
 import { UserProfileEditor } from '../UserProfileEditor/UserProfileEditor.view'
 import {
   IpfsUploadedImageContainer,
@@ -144,7 +145,7 @@ export const IPFSUploaderView = ({
                     </figure>
                   ) : (
                     <IpfsUploadedImageContainer>
-                      <img className="uploaded-image" src={imageIpfsUrl} alt="" />
+                      <ImageWithPlug alt={'uploaded image'} imageLink={imageIpfsUrl} />
                       <div className="pencil-wrap">
                         <Icon id="pencil-stroke" />
                       </div>
