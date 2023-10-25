@@ -208,7 +208,14 @@ export const MavCouncilFormUpdateVestee = () => {
         setFormInputStatus((prev) => ({
           ...prev,
           [e.target.name]: isVestingValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-          cliffInMonths: isCliffValueValid && isVestingValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          ...(prev.cliffInMonths === INPUT_STATUS_DEFAULT
+            ? {}
+            : {
+                cliffInMonths:
+                  cliffInMonths !== '' && isCliffValueValid && isVestingValueValid
+                    ? INPUT_STATUS_SUCCESS
+                    : INPUT_STATUS_ERROR,
+              }),
         }))
       },
       required: true,

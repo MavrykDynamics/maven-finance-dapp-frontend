@@ -7,7 +7,11 @@ import { validateFormAddress } from 'utils/validatorFunctions'
 // consts
 import { ADD_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../../../../app/App.components/Input/Input.constants'
+import {
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+} from '../../../../app/App.components/Input/Input.constants'
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { VESTING_STORAGE_DATA_SUB, DEFAULT_VESTING_SUBS } from 'providers/VestingProvider/helpers/vesting.consts'
 
@@ -203,7 +207,14 @@ export const MavCouncilFormAddVestee = () => {
         setFormInputStatus((prev) => ({
           ...prev,
           [e.target.name]: isVestingValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
-          cliffInMonths: isCliffValueValid && isVestingValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          ...(prev.cliffInMonths === INPUT_STATUS_DEFAULT
+            ? {}
+            : {
+                cliffInMonths:
+                  cliffInMonths !== '' && isCliffValueValid && isVestingValueValid
+                    ? INPUT_STATUS_SUCCESS
+                    : INPUT_STATUS_ERROR,
+              }),
         }))
       },
       required: true,
