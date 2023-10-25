@@ -97,11 +97,11 @@ export const MavCouncilFormUpdateVestee = () => {
           Number(totalAllocated),
           Number(cliffInMonths),
           Number(vestingInMonths),
-          councilAddress,
+          councilAddress
         )
       },
     }),
-    [userAddress, councilAddress, vesteesAddresses, vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths],
+    [userAddress, councilAddress, vesteesAddresses, vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths]
   )
 
   const { action: handleUpdateVestee } = useContractAction(updateVesteeContractActionProps)
@@ -180,11 +180,14 @@ export const MavCouncilFormUpdateVestee = () => {
         // validation
         const parsedCliffPeriod = Number(e.target.value)
         const parsedVestingPeriod = Number(vestingInMonths)
-        const isCliffValueValid = parsedCliffPeriod > 0 && parsedCliffPeriod < Number(vestingInMonths)
+        const isCliffValueValid = parsedCliffPeriod >= 0 && parsedCliffPeriod < Number(vestingInMonths)
         const isVestingValueValid = parsedVestingPeriod > 0 && parsedVestingPeriod <= 120
         setFormInputStatus((prev) => ({
           ...prev,
-          [e.target.name]: isVestingValueValid && isCliffValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          [e.target.name]:
+            e.target.value !== '' && isVestingValueValid && isCliffValueValid
+              ? INPUT_STATUS_SUCCESS
+              : INPUT_STATUS_ERROR,
         }))
       },
       required: true,
@@ -201,7 +204,7 @@ export const MavCouncilFormUpdateVestee = () => {
         const parsedVestingPeriod = Number(e.target.value)
         const parsedCliffPeriod = Number(cliffInMonths)
         const isVestingValueValid = parsedVestingPeriod > 0 && parsedVestingPeriod <= 120
-        const isCliffValueValid = parsedCliffPeriod > 0 && parsedCliffPeriod < parsedVestingPeriod
+        const isCliffValueValid = parsedCliffPeriod >= 0 && parsedCliffPeriod < parsedVestingPeriod
         setFormInputStatus((prev) => ({
           ...prev,
           [e.target.name]: isVestingValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
