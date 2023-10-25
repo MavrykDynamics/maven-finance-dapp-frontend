@@ -2,16 +2,19 @@ import styled from 'styled-components'
 import { MavrykTheme } from 'styles/interfaces'
 
 export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme: MavrykTheme }>`
-  font-size: 12px;
   display: block;
-  hyphens: auto;
-  text-align: center;
+  max-width: 40vw;
+
   padding: 3px 5px;
   border-radius: 3px;
+
+  font-size: 12px;
   line-height: 15px;
+  text-align: center;
+  hyphens: auto;
+
   background: ${({ theme }) => theme.tooltipTextBg};
   color: ${({ theme }) => theme.placeholders};
-  max-width: 40vw;
 
   a {
     color: ${({ theme }) => theme.linksAndButtons};

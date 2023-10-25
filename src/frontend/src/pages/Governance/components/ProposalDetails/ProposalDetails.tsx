@@ -24,6 +24,7 @@ import {
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
+import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
@@ -42,7 +43,7 @@ import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.co
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // consts
 import {
@@ -63,7 +64,6 @@ import {
   votingRoundVote,
 } from 'providers/ProposalsProvider/actions/proposals.actions'
 import { dropProposal } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
-import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRecordType; isHistory: boolean }) => {
   const { bug } = useToasterContext()
