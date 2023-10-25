@@ -204,7 +204,7 @@ export const MavCouncilFormUpdateVestee = () => {
         const parsedVestingPeriod = Number(e.target.value)
         const parsedCliffPeriod = Number(cliffInMonths)
         const isVestingValueValid = parsedVestingPeriod > 0 && parsedVestingPeriod <= 120
-        const isCliffValueValid = parsedCliffPeriod > 0 && parsedCliffPeriod < parsedVestingPeriod
+        const isCliffValueValid = parsedCliffPeriod >= 0 && parsedCliffPeriod < parsedVestingPeriod
         setFormInputStatus((prev) => ({
           ...prev,
           [e.target.name]: isVestingValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
