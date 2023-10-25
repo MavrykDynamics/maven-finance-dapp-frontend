@@ -93,10 +93,10 @@ export type VaultType = {
 
   // liquidation data
   liquidationLvl: number | null // level when vault will be able to liquidate (liquidation delay + liquidation block), to use it we need to convert it to timestamp, if null vault is not liquidatable
-  liquidationMax: number
-  liquidationReward: number
-  liquidationRatio: number
-  adminLiquidateFee: number
+  liquidationMax: number // liquidation cost without fee @Sam-M-Israel?
+  liquidationReward: number // how much the liquidator actually receives after they liquidate a vault and the fee is taken out along with whatever assets are sent to repay the outstanding debt of the loan. This should be the liquidation_fee_pct in the indexer
+  liquidationRatio: number // at what ratio is the vault able to be liquidated. so in the indexer it says 1500, so that would be 150% collateral to outstanding debt. same usage as the collateral ratio. If the collateral ratio reaches the value of the liquidation ratio then the vault can be liquidated.
+  adminLiquidateFee: number // how much of the reward is sent to the treasury as the admin fee. so when a user liquidates a vault, the adminLiquidationFee and the liquidationReward are taken from the from the vault, not from one another.
 
   // permissions
   xtzDelegatedTo: string | null // if vault has xtz, as collateral, those xtz can be delegated to baker, here's the address of the delegated baker
