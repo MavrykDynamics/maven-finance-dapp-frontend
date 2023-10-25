@@ -7,9 +7,10 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/BorrowingExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { OldBorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/OldBorrowingExpandCard'
 import { vaultTabs } from '../Vaults.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { Button } from 'app/App.components/Button/Button.controller'
 
 // styles
@@ -45,8 +46,6 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import Icon from 'app/App.components/Icon/Icon.view'
 
 const columnWidth = '33%'
 

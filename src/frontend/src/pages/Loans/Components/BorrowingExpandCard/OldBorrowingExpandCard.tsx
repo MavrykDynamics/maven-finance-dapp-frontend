@@ -16,7 +16,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from '../StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { assetDecimalsToShow } from '../../Loans.const'
 
