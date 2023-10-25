@@ -459,6 +459,14 @@ export const NewInputLabel = styled.label`
   position: absolute;
   top: -20px;
   left: 12px;
+
+  display: flex;
+  align-items: center;
+
+  .tooltip-wrapper {
+    margin-left: 5px;
+    display: inline-block;
+  }
 `
 
 export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`

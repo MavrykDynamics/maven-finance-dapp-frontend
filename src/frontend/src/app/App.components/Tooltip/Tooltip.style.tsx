@@ -24,6 +24,11 @@ export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme
 export const TooltipTriggerStyled = styled.div<{ theme: MavrykTheme }>`
   transition: opacity 250ms;
 
+  button {
+    display: flex;
+    align-items: center;
+  }
+
   svg {
     width: 12px;
     height: 12px;
