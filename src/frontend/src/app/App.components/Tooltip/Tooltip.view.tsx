@@ -75,6 +75,9 @@ export const TooltipStyled = styled.div<{ defaultStrokeColor?: string; theme: Ma
   }
 `
 
+/**
+ * @deprecated
+ */
 export const CustomTooltip = ({
   text,
   defaultStrokeColor,

@@ -29,18 +29,10 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
     align-items: flex-start;
     position: relative;
 
-    .tooltip {
+    .tooltip-wrapper {
       position: absolute;
-      right: 0px;
-      top: -17px;
-    }
-
-    /* TODO remove after changing Tooltip logic to place text depending on screen | block width */
-    .tooltip > .text {
-      @media (max-width: 1600px) {
-        left: 0;
-        transform: translateX(-91%);
-      }
+      right: -20px;
+      top: -20px;
     }
   }
 

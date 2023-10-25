@@ -20,6 +20,7 @@
   "dependencies": {
     "@airgap/beacon-sdk": "^3.3.0",
     "@apollo/client": "^3.8.3",
+    "@floating-ui/react": "^0.26.1",
     "@microsoft/signalr": "^7.0.7",
     "@taquito/beacon-wallet": "^15.0.1",
     "@taquito/signer": "^15.0.1",
@@ -59,6 +60,7 @@
     "@cypress/instrument-cra": "^1.4.0",
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
+    "@types/babel__core": "^7.20.3",
     "@types/node": "^16.10.1",
     "@types/qs": "^6.9.7",
     "@types/react": "^17.0.24",

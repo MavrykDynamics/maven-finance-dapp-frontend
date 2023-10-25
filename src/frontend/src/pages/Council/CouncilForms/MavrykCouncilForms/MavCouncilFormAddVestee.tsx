@@ -93,11 +93,11 @@ export const MavCouncilFormAddVestee = () => {
           Number(totalAllocated),
           Number(cliffInMonths),
           Number(vestingInMonths),
-          councilAddress,
+          councilAddress
         )
       },
     }),
-    [vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths, userAddress, councilAddress, vesteesAddresses],
+    [vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths, userAddress, councilAddress, vesteesAddresses]
   )
 
   const { action: handleAddVesteeCouncil } = useContractAction(addVesteeCouncilContractActionProps)
@@ -175,11 +175,14 @@ export const MavCouncilFormAddVestee = () => {
         // validation
         const parsedCliffPeriod = Number(e.target.value)
         const parsedVestingPeriod = Number(vestingInMonths)
-        const isCliffValueValid = parsedCliffPeriod > 0 && parsedCliffPeriod < Number(vestingInMonths)
+        const isCliffValueValid = parsedCliffPeriod >= 0 && parsedCliffPeriod < Number(vestingInMonths)
         const isVestingValueValid = parsedVestingPeriod > 0 && parsedVestingPeriod <= 120
         setFormInputStatus((prev) => ({
           ...prev,
-          [e.target.name]: isVestingValueValid && isCliffValueValid ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+          [e.target.name]:
+            e.target.value !== '' && isVestingValueValid && isCliffValueValid
+              ? INPUT_STATUS_SUCCESS
+              : INPUT_STATUS_ERROR,
         }))
       },
       required: true,
