@@ -29,7 +29,7 @@ Tooltip.Trigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement> & {
     const ref = useMergeRefs([context.refs.setReference, propRef, (children as any)?.ref])
 
     return (
-      <TooltipTriggerStyled>
+      <TooltipTriggerStyled className={props.className}>
         <button ref={ref} {...context.getReferenceProps(props)}>
           {children}
         </button>
@@ -95,7 +95,7 @@ Tooltip.Content = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElemen
     zIndex: '1000',
     transform:
       placement === 'top'
-        ? `translate(${x}px, ${y - 3}px)`
+        ? `translate(${x}px, ${y - 2}px)`
         : placement === 'bottom'
         ? `translate(${x}px, ${y}px)`
         : placement === 'left'
@@ -104,7 +104,7 @@ Tooltip.Content = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElemen
   }
 
   return (
-    <FloatingPortal root={document.body} preserveTabOrder={false}>
+    <FloatingPortal preserveTabOrder={false}>
       <TooltipTextStyled
         ref={ref}
         style={{ ...floatingStyles, ...floatingContentTransform }}

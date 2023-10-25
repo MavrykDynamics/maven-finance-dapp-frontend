@@ -3,12 +3,13 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme: MavrykTheme }>`
   display: block;
-  max-width: 40vw;
+  max-width: 330px;
 
   padding: 3px 5px;
   border-radius: 3px;
 
   font-size: 12px;
+  font-weight: 600;
   line-height: 15px;
   text-align: center;
   hyphens: auto;
@@ -23,6 +24,7 @@ export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme
 
 export const TooltipTriggerStyled = styled.div<{ theme: MavrykTheme }>`
   transition: opacity 250ms;
+  display: inline-flex;
 
   button {
     display: flex;

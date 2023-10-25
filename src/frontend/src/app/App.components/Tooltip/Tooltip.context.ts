@@ -60,7 +60,7 @@ export const useTooltip = ({
     move: false,
     delay: {
       open: 75,
-      close: 0,
+      close: 100,
     },
     enabled: controlledOpen == null,
   })
