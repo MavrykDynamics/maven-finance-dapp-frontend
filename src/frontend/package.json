@@ -60,7 +60,6 @@
     "@cypress/instrument-cra": "^1.4.0",
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
-    "@types/babel__core": "^7.20.3",
     "@types/node": "^16.10.1",
     "@types/qs": "^6.9.7",
     "@types/react": "^17.0.24",
