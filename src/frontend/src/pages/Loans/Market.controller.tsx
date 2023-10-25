@@ -29,8 +29,6 @@ import { MarketPagination, MarketStyled, ThreeLevelListItem } from './Loans.styl
 import { MarketPageHeader } from './Components/LoansPageHeader'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import colors from 'styles/colors'
 import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -39,7 +37,6 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
@@ -49,6 +46,7 @@ import {
   VAULTS_USER_ALL,
 } from 'providers/VaultsProvider/vaults.provider.consts'
 import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 export const Market = () => {
   const history = useHistory<{ from?: string }>()
@@ -128,17 +126,13 @@ export const Market = () => {
     return () => setMarketAddressToSubscribe(null)
   }, [currentMarketAddress])
 
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
-
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
 
   const [prevMarketAddress, nextMarketAddress] = useMemo(() => {
     const currentTokenIdx = allMarketsAddresses.findIndex(
-      (marketTokenAddress) => marketTokenAddress === currentMarketAddress,
+      (marketTokenAddress) => marketTokenAddress === currentMarketAddress
     )
     return [
       allMarketsAddresses.at(currentTokenIdx - 1) ?? allMarketsAddresses.at(-1),
@@ -171,7 +165,7 @@ export const Market = () => {
           acc.userAvailableBorrow += getVaultBorrowCapacity(
             convertedMarketAvailableLiquidity,
             convertedBorrowedAmount + convertedInterestAmount,
-            vaultCollateralBalance,
+            vaultCollateralBalance
           )
           return acc
         },
@@ -180,9 +174,9 @@ export const Market = () => {
           userTotalCollateral: 0,
           userAccruedInterest: 0,
           userAvailableBorrow: 0,
-        },
+        }
       ),
-    [myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
+    [myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper]
   )
 
   const selectedMarket = currentMarketAddress ? marketsMapper[currentMarketAddress] : null
@@ -194,7 +188,7 @@ export const Market = () => {
             number: selectedMarket.availableLiquidity,
             grade: loanToken.decimals,
           }),
-          0,
+          0
         )
       : 0
 
@@ -206,7 +200,7 @@ export const Market = () => {
               number: selectedMarket.reserveAmount,
               grade: loanToken.decimals,
             }),
-          0,
+          0
         )
       : 0
 
@@ -340,12 +334,12 @@ export const Market = () => {
                 <ThreeLevelListItem>
                   <div className="name">
                     Your Total Available Borrow
-                    <CustomTooltip
-                      iconId="info"
-                      text={USER_AVAILABLE_BORROW(currentMarketAddress)}
-                      defaultStrokeColor={colors[themeSelected].subHeadingText}
-                      className="tooltip"
-                    />
+                    <Tooltip>
+                      <Tooltip.Trigger className="ml-5">
+                        <Icon id="info" />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>{USER_AVAILABLE_BORROW(currentMarketAddress)}</Tooltip.Content>
+                    </Tooltip>
                   </div>
                   <CommaNumber value={userAvailableBorrow} beginningText="$" className="value" />
                 </ThreeLevelListItem>

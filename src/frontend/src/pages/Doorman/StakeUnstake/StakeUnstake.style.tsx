@@ -168,6 +168,9 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
     line-height: 21px;
     margin-bottom: 2px;
     color: ${({ theme }) => theme.subHeadingText};
+
+    display: flex;
+    align-items: center;
   }
 
   img {
@@ -194,9 +197,13 @@ export const StakeUnstakeRightPart = styled.div`
   min-width: 150px;
   position: relative;
 
-  .tooltip {
+  .tooltip-trigger {
     position: absolute;
     right: -17px;
+
+    svg {
+      fill: ${({ theme }) => theme.linksAndButtons};
+    }
   }
 `
 

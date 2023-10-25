@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -27,7 +27,7 @@ import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // types
 import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
@@ -112,7 +112,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         const { data: votingEndTimestamp } = await api(
           getTimestampByLevelUrl(currentRoundEndLevel),
           { signal: abortController.signal, headers: getTimestampByLevelHeaders },
-          getTimestampByLevelSchema,
+          getTimestampByLevelSchema
         )
 
         // TODO: mb show bug in a future
@@ -139,7 +139,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
   const [proposalKeys, mappedProposals, mappedValidation] = useMemo(
     () => normalizeProposalsForSubmitProposal({ submissionProposalsIds, proposalsMapper }),
-    [submissionProposalsIds, proposalsMapper],
+    [submissionProposalsIds, proposalsMapper]
   )
 
   // Proposals user can swith between and modify, and validation to it
@@ -170,7 +170,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         active: id === selectedUserProposalId,
         value: id,
       })),
-    [proposalKeys, selectedUserProposalId, mappedProposals],
+    [proposalKeys, selectedUserProposalId, mappedProposals]
   )
 
   // Current proposal on client validation to it and current proposal on remote (might not exists if it's create new proposal with id -1)
@@ -187,7 +187,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       if (proposalId !== selectedUserProposalId && window.location.pathname.includes('submit-proposal'))
         history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
     },
-    [history, selectedUserProposalId],
+    [history, selectedUserProposalId]
   )
 
   const updateLocalProposalData = (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
@@ -238,7 +238,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       dappActionCallback: () =>
         changeActiveProposal(submissionProposalsIds.find((id) => id !== selectedUserProposalId) ?? DEFAULT_PROPOSAL.id),
     }),
-    [changeActiveProposal, dropActionFn, selectedUserProposalId, submissionProposalsIds],
+    [changeActiveProposal, dropActionFn, selectedUserProposalId, submissionProposalsIds]
   )
 
   const { action: handleDropProposal } = useContractAction(dropContractProps)
@@ -262,7 +262,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       actionType: LOCK_PROPOSAL_ACTION,
       actionFn: lockActionFn,
     }),
-    [lockActionFn],
+    [lockActionFn]
   )
 
   const { action: handleLockProposal } = useContractAction(lockContractProps)
@@ -313,14 +313,14 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     const bytes = getBytesDiff(
       [],
       currentProposal.proposalData.filter(
-        ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
-      ),
+        ({ title, encoded_code, code_description }) => title || encoded_code || code_description
+      )
     )
 
     const payments = getPaymentsDiff(
       [],
       currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-      tokensMetadata,
+      tokensMetadata
     )
 
     const { title, description, sourceCode, invoice } = currentProposal
@@ -335,7 +335,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       },
       fee,
       bytes,
-      payments,
+      payments
     )
   }, [bug, currentProposal, fee, governanceAddress, tokensMetadata, userAddress])
 
@@ -345,7 +345,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       actionFn: submitActionFn,
       dappActionCallback: getNewProposalId,
     }),
-    [getNewProposalId, submitActionFn],
+    [getNewProposalId, submitActionFn]
   )
 
   const { action: handleProposalSubmit } = useContractAction(submitContractProps)
@@ -364,13 +364,13 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     const bytesDiff = getBytesDiff(
       currentProposalOnRemote.proposalData,
       currentProposal.proposalData.filter(
-        ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
-      ),
+        ({ title, encoded_code, code_description }) => title || encoded_code || code_description
+      )
     )
     const paymentsDiff = getPaymentsDiff(
       currentProposalOnRemote.proposalPayments,
       currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-      tokensMetadata,
+      tokensMetadata
     )
 
     setLastProposalIdFromOperation(selectedUserProposalId)
@@ -390,7 +390,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       actionType: UPDATE_PROPOSAL_DATA_ACTION,
       actionFn: updateActionFn,
     }),
-    [updateActionFn],
+    [updateActionFn]
   )
 
   const { action: handleProposalUpdate } = useContractAction(updateContractProps)
@@ -428,7 +428,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             remoteProposal: currentProposalOnRemote,
           })
         : false,
-    [isProposalSubmitted, isProposalPeriod, currentProposal, currentProposalOnRemote],
+    [isProposalSubmitted, isProposalPeriod, currentProposal, currentProposalOnRemote]
   )
 
   // validate bytes (stage 2)
@@ -439,7 +439,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         currentProposal,
         remoteProposal: currentProposalOnRemote,
       }),
-    [currentProposal, currentProposalOnRemote, currentProposalValidation],
+    [currentProposal, currentProposalOnRemote, currentProposalValidation]
   )
 
   // validate payments (stage 3)
@@ -450,7 +450,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         currentProposal,
         remoteProposal: currentProposalOnRemote,
       }),
-    [currentProposal, currentProposalValidation, currentProposalOnRemote],
+    [currentProposal, currentProposalValidation, currentProposalOnRemote]
   )
 
   // validate proposal metadata (stage 1)
@@ -551,12 +551,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             >
               <Icon id="navigation-menu_close" /> Drop Proposal
             </Button>
-            <CustomTooltip
-              className="tooltip"
-              iconId="info"
-              text={DROP_PROPOSAL_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected].linksAndButtons}
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="tooltip-trigger">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{DROP_PROPOSAL_BUTTON_TOOLTIP}</Tooltip.Content>
+            </Tooltip>
           </div>
 
           {/* Submit proposal locks proposal */}
@@ -569,12 +569,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             >
               <Icon id="submit" /> Submit Proposal
             </Button>
-            <CustomTooltip
-              className="tooltip"
-              iconId="info"
-              text={SUBMIT_PROPOSAL_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected].linksAndButtons}
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="tooltip-trigger">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{SUBMIT_PROPOSAL_BUTTON_TOOLTIP}</Tooltip.Content>
+            </Tooltip>
           </div>
 
           {/* save changes btn (it creates if proposal is not created, or updates data if proposal exists) */}
@@ -587,12 +587,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             >
               <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}
             </Button>
-            <CustomTooltip
-              className="tooltip"
-              iconId="info"
-              text={SAVE_CHANGES_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected].linksAndButtons}
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="tooltip-trigger">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{SAVE_CHANGES_BUTTON_TOOLTIP}</Tooltip.Content>
+            </Tooltip>
           </div>
 
           {/* if we are not on stage 3 show next step (navigating to thee next stage btn) */}
@@ -601,12 +601,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={() => handleNextStep(activeTab + 1)}>
                 Next Step <Icon id="full-arrow-right" />
               </Button>
-              <CustomTooltip
-                className="tooltip"
-                iconId="info"
-                text={NEXT_STEP_BUTTON_TOOLTIP}
-                defaultStrokeColor={colors[themeSelected].linksAndButtons}
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="tooltip-trigger">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>{NEXT_STEP_BUTTON_TOOLTIP}</Tooltip.Content>
+              </Tooltip>
             </div>
           ) : null}
         </ProposalSubmittionButtons>

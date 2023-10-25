@@ -19,11 +19,6 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
   flex-direction: column;
   justify-content: flex-start;
 
-  button svg {
-    stroke: none;
-    fill: ${({ theme }) => theme.cards};
-  }
-
   .tabLoader {
     margin-top: 50px;
   }
@@ -151,6 +146,13 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
     font-size: 18px;
     line-height: 18px;
     color: ${({ theme }) => theme.mainHeadingText};
+  }
+
+  .name {
+    a {
+      display: flex;
+      margin-left: 5px;
+    }
   }
 
   .value {
@@ -639,6 +641,11 @@ export const PopularFeed = styled(CardHover)`
   margin-top: 0;
   padding: 10px 20px 10px 19px;
   border: 1px solid transparent;
+
+  .name {
+    display: flex;
+    align-items: center;
+  }
 
   .value {
     font-size: 16px;

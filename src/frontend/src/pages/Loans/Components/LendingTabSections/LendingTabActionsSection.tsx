@@ -19,7 +19,6 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 // consts
-import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { LENDING_TAB_SLIDING_BUTTONS, loansTabNames } from '../../Loans.const'
 import {
@@ -43,7 +42,6 @@ import { ThreeLevelListItem } from '../../Loans.style'
 import { CardSectionWrapper, LoansActionsSection } from './../LoansComponents.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
@@ -51,6 +49,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { XTZLimitInfoBanner } from '../Modals/components/XTZLimitInfoBanner'
 import { Info } from 'app/App.components/Info/Info.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type LendingTabPropsType = {
   lendingItem: LendingItemType
@@ -237,16 +236,17 @@ const LendingStatsTable = ({
   amount: number | string
   futureMBalance: number
 }) => {
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
-
   return (
     <div className="stats">
       <ThreeLevelListItem>
         <div className="name">
           Earn APY
-          <CustomTooltip iconId="info" text={EARN_APY} defaultStrokeColor={colors[themeSelected].subHeadingText} />
+          <Tooltip>
+            <Tooltip.Trigger className="ml-5">
+              <Icon id="info" />
+            </Tooltip.Trigger>
+            <Tooltip.Content>{EARN_APY}</Tooltip.Content>
+          </Tooltip>
         </div>
         <CommaNumber value={lendAPY} className="value" endingText="%" />
       </ThreeLevelListItem>

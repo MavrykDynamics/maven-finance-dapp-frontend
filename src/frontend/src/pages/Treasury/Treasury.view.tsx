@@ -4,11 +4,11 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import { TreasuryType } from 'providers/TreasuryProvider/helpers/treasury.types'
 import Icon from 'app/App.components/Icon/Icon.view'
 import PieChartView from '../../app/App.components/PieChart/PieСhart.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // helpers
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
 import { getTreasuryTVL } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -19,7 +19,6 @@ import { TreasuryViewStyle } from './Treasury.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import {
   Table,
   TableHeader,
@@ -30,7 +29,6 @@ import {
   TableScrollable,
 } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
-import colors from 'styles/colors'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -42,10 +40,6 @@ type Props = {
 }
 
 export default function TreasuryView({ treasury, isGlobal = false, factoryAddress }: Props) {
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
-
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
   const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
@@ -55,17 +49,17 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
   const filteredBalance = useMemo(
     () =>
       isGlobal || !showZeroTreasuries ? treasury.balances : treasury.balances.filter((item) => item.balance > 0.01),
-    [isGlobal, showZeroTreasuries, treasury.balances],
+    [isGlobal, showZeroTreasuries, treasury.balances]
   )
 
   const treasuryTVL = useMemo(
     () => getTreasuryTVL(treasury, tokensMetadata, tokensPrices),
-    [treasury, tokensMetadata, tokensPrices],
+    [treasury, tokensMetadata, tokensPrices]
   )
 
   const chartData = useMemo(
     () => getPieChartData(filteredBalance, treasuryTVL, hoveredPath, tokensMetadata, tokensPrices),
-    [hoveredPath, treasuryTVL, filteredBalance, tokensMetadata, tokensPrices],
+    [hoveredPath, treasuryTVL, filteredBalance, tokensMetadata, tokensPrices]
   )
 
   useEffect(() => {
@@ -77,7 +71,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
   return (
     <TreasuryViewStyle ref={ref}>
       <a href="https://mavryk.finance/litepaper#treasury " target="_blank" rel="noreferrer" className="info-link">
-        <CustomTooltip iconId="question" />
+        <Icon id="question" />
       </a>
 
       <div className="content-wrapper">
@@ -89,11 +83,15 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
           <div className="info-block">
             <p className="text">
               TVL
-              <CustomTooltip
-                iconId="info"
-                defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="ml-5">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only
+                  interact with whitelisted tokens.
+                </Tooltip.Content>
+              </Tooltip>
             </p>
             <p className="value">
               <CommaNumber beginningText="$" value={treasuryTVL} />

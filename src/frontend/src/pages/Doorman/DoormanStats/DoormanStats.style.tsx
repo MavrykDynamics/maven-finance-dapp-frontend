@@ -53,14 +53,12 @@ export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
       font-size: 14px;
       line-height: 24px;
       display: flex;
+      align-items: center;
 
       a {
-        margin-left: 4px;
-      }
-
-      svg {
-        position: relative;
-        top: 2px;
+        margin-left: 5px;
+        height: fit-content;
+        display: flex;
       }
     }
 

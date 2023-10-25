@@ -20,7 +20,6 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import {
   Table,
   TableHeader,
@@ -32,12 +31,12 @@ import {
 } from 'app/App.components/Table'
 
 // styles
-import colors from 'styles/colors'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { BlockName, StatBlock } from '../Dashboard.style'
 import { EmptyContainer, TabWrapperStyled, TreasuryContentStyled, TreasuryVesting } from './DashboardTabs.style'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 export const TreasuryTab = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
@@ -53,9 +52,6 @@ export const TreasuryTab = () => {
     changeTreasurySubscriptionsList,
     isLoading: isTreasuryLoading,
   } = useTreasuryContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   useEffect(() => {
     changeTreasurySubscriptionsList({
@@ -76,7 +72,7 @@ export const TreasuryTab = () => {
 
   const treasuryTokens = useMemo(
     () => Object.values(reduceTreasuryAssets(treasuryAddresses, treasuryMapper)),
-    [treasuryAddresses, treasuryMapper],
+    [treasuryAddresses, treasuryMapper]
   )
 
   const { mostSuppliedTreasuryName, mostSuppliedTreasuryTVL, globalTreasuryTVL } = useMemo(
@@ -95,9 +91,9 @@ export const TreasuryTab = () => {
 
           return acc
         },
-        { mostSuppliedTreasuryName: '', globalTreasuryTVL: 0, mostSuppliedTreasuryTVL: 0 },
+        { mostSuppliedTreasuryName: '', globalTreasuryTVL: 0, mostSuppliedTreasuryTVL: 0 }
       ),
-    [tokensMetadata, tokensPrices, treasuryAddresses, treasuryMapper],
+    [tokensMetadata, tokensPrices, treasuryAddresses, treasuryMapper]
   )
 
   return (
@@ -136,11 +132,15 @@ export const TreasuryTab = () => {
             <div>
               <BlockName>
                 Treasury Assets
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
-                />
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-5">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only
+                    interact with whitelisted tokens.
+                  </Tooltip.Content>
+                </Tooltip>
               </BlockName>
 
               <TableScrollable bodyHeight={120} className="treasury-table scroll-block">

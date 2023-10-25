@@ -7,7 +7,6 @@ import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.contr
 import Button from 'app/App.components/Button/NewButton'
 import { Chart } from 'app/App.components/Chart/Chart'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import {
@@ -43,6 +42,9 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import { EARN_APY } from 'texts/tooltips/loan.text'
+import { APR } from 'texts/tooltips/vault.text'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -90,7 +92,7 @@ export const Loans = () => {
       areaBottomColor: colors[themeSelected].primaryChartBottomColor,
       textColor: colors[themeSelected].regularText,
     }),
-    [themeSelected],
+    [themeSelected]
   )
 
   const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
@@ -113,7 +115,7 @@ export const Loans = () => {
     {
       totalLended: 0,
       totalBorrowed: 0,
-    },
+    }
   )
 
   useEffect(() => {
@@ -229,7 +231,7 @@ export const Loans = () => {
                       const { decimals, rate } = collateralToken
                       return (acc += convertNumberForClient({ number: amount, grade: decimals }) * rate)
                     },
-                    0,
+                    0
                   )
 
                   acc.loanTokenVaultsTotalBorrowed +=
@@ -239,7 +241,7 @@ export const Loans = () => {
                 {
                   loanTokenTotalCollaterals: 0,
                   loanTokenVaultsTotalBorrowed: 0,
-                },
+                }
               )
 
               const convertedMarketTotalLended = convertNumberForClient({ number: totalLended, grade: decimals })
@@ -271,13 +273,13 @@ export const Loans = () => {
                       <ThreeLevelListItem>
                         <div className="name">Earn APY</div>
                         <div className="value">
-                          <CommaNumber value={lendingAPY} className="value" endingText="%" />{' '}
-                          <CustomTooltip
-                            iconId="info"
-                            defaultStrokeColor={colors[themeSelected].primaryText}
-                            text="Current yield suppliers are earning on their deposits."
-                            className="tooltip"
-                          />
+                          <CommaNumber value={lendingAPY} className="value" endingText="%" />
+                          <Tooltip>
+                            <Tooltip.Trigger className="ml-5 mb-3 tooltip-trigger">
+                              <Icon id="info" />
+                            </Tooltip.Trigger>
+                            <Tooltip.Content>{EARN_APY}</Tooltip.Content>
+                          </Tooltip>
                         </div>
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>
@@ -307,13 +309,13 @@ export const Loans = () => {
                       <ThreeLevelListItem>
                         <div className="name">Borrow APR</div>
                         <div className="value">
-                          <CommaNumber value={borrowAPR} className="value" endingText="%" />{' '}
-                          <CustomTooltip
-                            iconId="info"
-                            defaultStrokeColor={colors[themeSelected].primaryText}
-                            text="Current interest rate being charged to borrowers."
-                            className="tooltip"
-                          />
+                          <CommaNumber value={borrowAPR} className="value" endingText="%" />
+                          <Tooltip>
+                            <Tooltip.Trigger className="ml-5 mb-3 tooltip-trigger">
+                              <Icon id="info" />
+                            </Tooltip.Trigger>
+                            <Tooltip.Content>{APR}</Tooltip.Content>
+                          </Tooltip>
                         </div>
                       </ThreeLevelListItem>
                       <ThreeLevelListItem>

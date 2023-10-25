@@ -59,7 +59,7 @@ export const VotingBarStyled = styled.div<{ theme: MavrykTheme }>`
     align-items: flex-start;
     position: relative;
 
-    > div:not(.voting-tooltip) {
+    > div:not(.voting-tooltip-trigger) {
       font-size: 12px;
       margin-top: 14px;
       position: absolute;
@@ -69,6 +69,12 @@ export const VotingBarStyled = styled.div<{ theme: MavrykTheme }>`
       text-align: center;
       text-overflow: ellipsis;
     }
+  }
+
+  .voting-tooltip-trigger {
+    z-index: 1000;
+    width: 100%;
+    height: 6px;
   }
 `
 

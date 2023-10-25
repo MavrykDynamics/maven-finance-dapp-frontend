@@ -31,10 +31,8 @@ Tooltip.Trigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement> & {
     const { className, ...propsWithoutClassName } = props
 
     return (
-      <TooltipTriggerStyled className={className}>
-        <button ref={ref} {...context.getReferenceProps(propsWithoutClassName)}>
-          {children}
-        </button>
+      <TooltipTriggerStyled className={className} ref={ref} {...context.getReferenceProps(propsWithoutClassName)}>
+        {children}
       </TooltipTriggerStyled>
     )
   }
@@ -110,6 +108,7 @@ Tooltip.Content = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElemen
       <TooltipTextStyled
         ref={ref}
         style={{ ...floatingStyles, ...floatingContentTransform }}
+        // className={props.className}
         {...context.getFloatingProps(props)}
       />
       <FloatingArrow

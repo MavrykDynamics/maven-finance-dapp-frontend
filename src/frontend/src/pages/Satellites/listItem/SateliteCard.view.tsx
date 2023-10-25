@@ -7,7 +7,6 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // consts
-import colors from 'styles/colors'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -44,7 +43,7 @@ import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import Button from 'app/App.components/Button/NewButton'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 
 // types
@@ -110,7 +109,6 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const {
     contractAddresses: { delegationAddress, mvkTokenAddress, governanceAddress },
     globalLoadingState: { isActionActive },
-    preferences: { themeSelected },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
 
@@ -286,11 +284,12 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
               <SatelliteTextGroup>
                 <div className="text-wrapper">
                   <SatelliteMainText>Total Voting Power</SatelliteMainText>
-                  <CustomTooltip
-                    text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
-                    iconId="info"
-                    defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  />
+                  <Tooltip>
+                    <Tooltip.Trigger className="ml-3">
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>{TOTAL_VOTING_POWER_TOOLTIP_TEXT}</Tooltip.Content>
+                  </Tooltip>
                 </div>
                 <SatelliteSubText>
                   <CommaNumber value={satellite.totalVotingPower} endingText="sMVK" />

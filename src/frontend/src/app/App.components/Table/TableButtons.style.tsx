@@ -3,51 +3,37 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const TableActionsBtn = styled.div`
   position: absolute;
+  transition: opacity 0.2s;
+  cursor: pointer;
+
+  height: fit-content;
+
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity 0.2s;
-  background-color: transparent;
-  height: fit-content;
 
-  .tooltip {
-    margin: 0;
-    width: 100%;
+  background-color: transparent;
+
+  &:hover {
+    opacity: 0.8;
   }
 `
 
 export const RemoveRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
-  top: 40%;
+  top: 50%;
   transform: translateY(-50%);
   right: -25px;
-  opacity: 1;
 
   svg {
     fill: ${({ theme }) => theme.linksAndButtons};
   }
-
-  .text {
-    bottom: 150%;
-  }
 `
 
 export const AddRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
-  bottom: -10px;
-  left: -25px;
+  bottom: -5px;
+  left: -20px;
 
-  span {
-    font-size: 25px;
-    color: ${({ theme }) => theme.linksAndButtons};
-    font-weight: 500;
-  }
-
-  &:hover {
-    span {
-      opacity: 0.8;
-    }
-  }
-
-  .text {
-    bottom: 140%;
+  svg {
+    fill: ${({ theme }) => theme.linksAndButtons};
   }
 `

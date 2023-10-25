@@ -40,12 +40,12 @@ export const ExitFeeModalStats = styled.div`
 
     color: ${({ theme }) => theme.subHeadingText};
 
-    svg {
-      width: 12px;
-      height: 12px;
-      margin-left: 4px;
+    display: flex;
+    align-items: center;
 
-      fill: ${({ theme }) => theme.subHeadingText};
+    a {
+      display: flex;
+      margin-left: 5px;
     }
   }
 `

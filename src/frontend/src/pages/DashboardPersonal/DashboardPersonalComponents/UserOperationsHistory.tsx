@@ -1,23 +1,19 @@
 import { useUserHistoryData } from 'providers/UserProvider/hooks/useUserHistoryData'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 import { USER_ACTIONS_HISTORY, PAGINATION_SIDE_CENTER } from 'app/App.components/Pagination/pagination.consts'
 
-import colors from 'styles/colors'
 import { HistoryBlock } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import Icon from 'app/App.components/Icon/Icon.view'
 
 export const UserActionHistory = () => {
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
   const { isLoading, totalItemsAmount, userActionsHistory } = useUserHistoryData()
 
   return (
@@ -35,13 +31,16 @@ export const UserActionHistory = () => {
               <TableHeaderCell>Action</TableHeaderCell>
               <TableHeaderCell>Amount: MVK</TableHeaderCell>
               <TableHeaderCell>
-                Total: MVK{' '}
-                <CustomTooltip
-                  iconId="info"
-                  className="history-tooltip"
-                  text='For unstake, this is the amount received in MVK after the fee is deducted. For the rest, same as the "Amount, MVK" column'
-                  defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                />
+                Total: MVK
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    For unstake, this is the amount received in MVK after the fee is deducted. For the rest, same as the
+                    "Amount, MVK" column.
+                  </Tooltip.Content>
+                </Tooltip>
               </TableHeaderCell>
               <TableHeaderCell contentPosition="right">Fee</TableHeaderCell>
             </TableRow>

@@ -20,16 +20,17 @@ export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme
   a {
     color: ${({ theme }) => theme.linksAndButtons};
   }
+
+  &.voting-tooltip-content {
+    display: flex;
+  }
 `
 
 export const TooltipTriggerStyled = styled.div<{ theme: MavrykTheme }>`
   transition: opacity 250ms;
   display: inline-flex;
-
-  button {
-    display: flex;
-    align-items: center;
-  }
+  align-items: center;
+  cursor: pointer;
 
   svg {
     width: 12px;

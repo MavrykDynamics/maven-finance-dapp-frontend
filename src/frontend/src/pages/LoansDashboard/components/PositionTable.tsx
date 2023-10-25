@@ -3,7 +3,6 @@ import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { BORROW_TAB_ID, LEND_TAB_ID } from 'pages/Loans/Loans.const'
-import colors from 'styles/colors'
 import {
   calculateSlicePositions,
   getPageNumber,
@@ -14,7 +13,6 @@ import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 import Button from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
@@ -27,13 +25,13 @@ import { getVaultSimpleStatus } from '../helpers/position.helpers'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { UserLoansData } from 'providers/UserProvider/user.provider.types'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // providers
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoansData['userVaultsData'] }) => {
@@ -41,10 +39,6 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress, userMTokens } = useUserContext()
   const { marketsAddresses, marketsMapper } = useLoansContext()
-
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   const { search, pathname } = useLocation()
   const currentPage = getPageNumber(search, LOANS_POSITION_TABLE)
@@ -64,21 +58,23 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                 <TableHeaderCell className="position-multy-cell lending">
                   <div className="cell-content" style={{ marginRight: '20px' }}>
                     <span>
-                      Earn APY{' '}
-                      <CustomTooltip
-                        iconId="info"
-                        text="Current yield suppliers are earning on their deposits."
-                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                      />
+                      Earn APY
+                      <Tooltip>
+                        <Tooltip.Trigger className="ml-5">
+                          <Icon id="info" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>Current yield suppliers are earning on their deposits.</Tooltip.Content>
+                      </Tooltip>
                     </span>
                     <span>Total Supplied</span>
                     <span>
-                      Yield{' '}
-                      <CustomTooltip
-                        iconId="info"
-                        text="Rewards To Date"
-                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                      />
+                      Yield
+                      <Tooltip>
+                        <Tooltip.Trigger className="ml-5">
+                          <Icon id="info" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>Rewards To Date.</Tooltip.Content>
+                      </Tooltip>
                     </span>
                     <span></span>
                   </div>
