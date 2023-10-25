@@ -39,6 +39,7 @@ import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provi
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -158,11 +159,10 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber value={totalOutstanding} className="value" showDecimal decimalsToShow={decimals} />
               <CommaNumber
                 value={totalOutstanding * rate}
                 beginningText="$"
-                className="rate"
+                className="value"
                 showDecimal
                 decimalsToShow={decimals}
               />
@@ -204,12 +204,13 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
-                  Accrued Interest{' '}
-                  <CustomTooltip
-                    iconId="info"
-                    text="Interest, compounded over time every time you borrow"
-                    defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                  />
+                  Accrued Interest
+                  <Tooltip>
+                    <Tooltip.Trigger className="ml-3">
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>Interest, compounded over time every time you borrow</Tooltip.Content>
+                  </Tooltip>
                 </div>
                 <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
                 <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
