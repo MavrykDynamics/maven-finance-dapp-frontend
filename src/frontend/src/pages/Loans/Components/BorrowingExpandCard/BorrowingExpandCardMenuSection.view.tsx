@@ -31,8 +31,6 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { TransactionHistory } from '../TransactionHistory'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
-import colors from 'styles/colors'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { EmptyContainer } from 'app/App.style'
 import {
@@ -58,6 +56,7 @@ import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vault
 // types
 import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
 import { CollateralType, DepositorsFlagType } from 'providers/VaultsProvider/vaults.provider.types'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type Props = {
   openAddNewCollateralPopup: () => void
@@ -107,7 +106,6 @@ export const BorrowingExpandCardMenuSection = ({
   const {
     contractAddresses: { lendingControllerAddress },
     globalLoadingState: { isActionActive },
-    preferences: { themeSelected },
   } = useDappConfigContext()
 
   const { pathname, search } = useLocation()
@@ -123,7 +121,7 @@ export const BorrowingExpandCardMenuSection = ({
 
         return true
       }),
-    [hideTransactionHistory],
+    [hideTransactionHistory]
   )
 
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs.find((item) => item.active))
@@ -365,11 +363,16 @@ export const BorrowingExpandCardMenuSection = ({
             <div className="useful-info-line">
               <div className="name">
                 Depositors
-                <CustomTooltip
-                  iconId="info"
-                  text="Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a depositor so your vault can receive its delegation rewards."
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                />
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For
+                    instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a
+                    depositor so your vault can receive its delegation rewards.
+                  </Tooltip.Content>
+                </Tooltip>
               </div>
               <div className="value">
                 {deporsitorsFlag === ANY_USER ? 'Allow Any' : null}
@@ -385,11 +388,14 @@ export const BorrowingExpandCardMenuSection = ({
               <div className="useful-info-line">
                 <div className="name">
                   MVK Operators
-                  <CustomTooltip
-                    iconId="info"
-                    text="MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions."
-                    defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  />
+                  <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions.
+                  </Tooltip.Content>
+                </Tooltip>
                 </div>
                 <div className="value">
                   {mappedMVKOperators.firstAddress ? (

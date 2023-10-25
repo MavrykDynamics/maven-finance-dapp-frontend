@@ -6,7 +6,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
@@ -151,7 +151,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         validationStatus: validationStatus,
       })
     },
-    [decimals, inputData, minimumRepay],
+    [decimals, inputData, minimumRepay]
   )
 
   const inputOnBlurHandle = useCallback(() => {
@@ -212,7 +212,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
         inputOnChangeHandle(e.target.value, Math.min(userAssetBalance, totalOutstanding)),
     }),
-    [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, totalOutstanding, userAssetBalance],
+    [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, totalOutstanding, userAssetBalance]
   )
 
   const settings: Settings = useMemo(
@@ -223,7 +223,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       useMaxHandler: () =>
         inputOnChangeHandle(
           getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), decimals),
-          Math.min(userAssetBalance, totalOutstanding),
+          Math.min(userAssetBalance, totalOutstanding)
         ),
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * borrowedTokenRate,
@@ -239,7 +239,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       userAssetBalance,
       totalOutstanding,
       decimals,
-    ],
+    ]
   )
 
   return (
@@ -336,12 +336,12 @@ const RepayTableStats = ({
         <ThreeLevelListItem>
           <div className="name">
             Fees Due
-            <CustomTooltip
-              iconId="info"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-              text={FEES_DUE(fee)}
-              className="tooltip"
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{FEES_DUE(fee)}</Tooltip.Content>
+            </Tooltip>
           </div>
           <CommaNumber value={Math.ceil(fee)} decimalsToShow={0} className="value" />
         </ThreeLevelListItem>
@@ -374,12 +374,12 @@ const RepayTableStats = ({
         <ThreeLevelListItem className="right">
           <div className="name">
             Available To Borrow
-            <CustomTooltip
-              iconId="info"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-              text={AVALIABLE_TO_BORROW}
-              className="tooltip"
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{AVALIABLE_TO_BORROW}</Tooltip.Content>
+            </Tooltip>
           </div>
           <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
         </ThreeLevelListItem>

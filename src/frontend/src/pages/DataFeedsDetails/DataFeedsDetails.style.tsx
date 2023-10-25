@@ -96,6 +96,14 @@ export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
         color: ${({ theme }) => theme.mainHeadingText};
         display: flex;
         align-items: center;
+
+        svg {
+          position: unset;
+          margin-left: 3px;
+          width: 12px;
+          height: 12px;
+          fill: ${({ theme }) => theme.mainHeadingText};
+        }
       }
 
       .img-wrapper,

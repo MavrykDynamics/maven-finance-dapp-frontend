@@ -11,6 +11,8 @@ import {
   COLLATERAL_AWARE_BORROWING_ADJUST_YOUR_AMOUNT,
   SELECT_THE_AMOUNT_YOU_WOULD_LIKE_TO_BORROW,
 } from 'texts/banners/vault.text'
+import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
+import colors from 'styles/colors'
 
 // hooks
 import { operationBorrow, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
@@ -34,12 +36,10 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { VaultOverview, StatusMessageStyled, CardSectionWrapper } from '../LoansComponents.style'
-import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
-import colors from 'styles/colors'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type Props = {
   borrowedAssetAddress: TokenAddressType
@@ -70,7 +70,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
 
   const { inputData, settings, inputProps, rate, icon, symbol, clearData } = useBorrowInputData(
     borrowedAssetAddress,
-    borrowCapacity,
+    borrowCapacity
   )
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
@@ -95,7 +95,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       ...settings,
       validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     }),
-    [settings],
+    [settings]
   )
 
   return (
@@ -181,24 +181,24 @@ const TableStats = ({
         <ThreeLevelListItem>
           <div className="name">
             Total Amount
-            <CustomTooltip
-              iconId="info"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-              text={TOTAL_AMOUNT}
-              className="tooltip"
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{TOTAL_AMOUNT}</Tooltip.Content>
+            </Tooltip>
           </div>
           <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">
             DAO Fee
-            <CustomTooltip
-              iconId="info"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-              text={DAO_FEE}
-              className="tooltip"
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{DAO_FEE}</Tooltip.Content>
+            </Tooltip>
           </div>
           <CommaNumber value={inputAmount * (DAOFee / 100)} decimalsToShow={assetDecimalsToShow} className="value" />
         </ThreeLevelListItem>
@@ -235,12 +235,12 @@ const TableStats = ({
         <ThreeLevelListItem className="right">
           <div className="name">
             Available To Borrow
-            <CustomTooltip
-              iconId="info"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-              text={AVALIABLE_TO_BORROW}
-              className="tooltip"
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{AVALIABLE_TO_BORROW}</Tooltip.Content>
+            </Tooltip>
           </div>
           <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
         </ThreeLevelListItem>

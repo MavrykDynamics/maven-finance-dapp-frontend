@@ -377,6 +377,9 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
     .name {
       margin-right: 10px;
       color: ${({ theme }) => theme.subHeadingText};
+
+      display: flex;
+      align-items: center;
     }
 
     .value {
@@ -388,7 +391,7 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
     }
 
     /* TODO: remove button styles from here */
-    button,
+    > button,
     a {
       margin-left: auto;
       padding: 0;

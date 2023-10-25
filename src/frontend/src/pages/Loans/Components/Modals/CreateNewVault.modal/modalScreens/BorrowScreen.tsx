@@ -5,13 +5,12 @@ import classNames from 'classnames'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Input } from 'app/App.components/Input/NewInput'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { BorrowScreenBottomStats } from '../components/BorrowScreenBottomStats'
 
 // styles
-import colors from 'styles/colors'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { BorrowScreenWrapper } from '../createNewVault.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
@@ -24,7 +23,6 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 
 // consts
 import { ERR_MSG_INPUT, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
@@ -63,7 +61,6 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const { userAddress } = useUserContext()
   const { info, bug } = useToasterContext()
   const {
-    preferences: { themeSelected },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
@@ -87,7 +84,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
 
   const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData(
     borrowedTokenAddress,
-    borrowCapacity,
+    borrowCapacity
   )
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
@@ -143,14 +140,14 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
         } else {
           bug(
             "Can't fetch new vault data, try reload the page and find your newly created vault in the the list of vaults",
-            'Update Vault Error',
+            'Update Vault Error'
           )
         }
       } catch (e) {
         bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
       }
     },
-    [apolloClient, bug, info, setCreatedVaultAddress, updateNewVault, userAddress, vaultInputState.name],
+    [apolloClient, bug, info, setCreatedVaultAddress, updateNewVault, userAddress, vaultInputState.name]
   )
 
   useEffect(() => {
@@ -173,7 +170,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
       ...settings,
       validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     }),
-    [settings],
+    [settings]
   )
 
   return (
@@ -198,12 +195,12 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
         <ThreeLevelListItem>
           <div className="name">
             DAO Fee
-            <CustomTooltip
-              iconId="info"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-              text={DAO_FEE}
-              className="tooltip"
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{DAO_FEE}</Tooltip.Content>
+            </Tooltip>
           </div>
           <CommaNumber value={daoFee} decimalsToShow={2} className="value" endingText="%" />
         </ThreeLevelListItem>

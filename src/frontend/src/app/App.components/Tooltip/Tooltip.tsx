@@ -28,9 +28,11 @@ Tooltip.Trigger = React.forwardRef<HTMLElement, React.HTMLProps<HTMLElement> & {
     const context = useTooltipContext()
     const ref = useMergeRefs([context.refs.setReference, propRef, (children as any)?.ref])
 
+    const { className, ...propsWithoutClassName } = props
+
     return (
-      <TooltipTriggerStyled className={props.className}>
-        <button ref={ref} {...context.getReferenceProps(props)}>
+      <TooltipTriggerStyled className={className}>
+        <button ref={ref} {...context.getReferenceProps(propsWithoutClassName)}>
           {children}
         </button>
       </TooltipTriggerStyled>
