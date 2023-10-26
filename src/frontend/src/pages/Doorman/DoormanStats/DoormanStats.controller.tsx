@@ -4,7 +4,9 @@ import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { TzAddress } from '../../../app/App.components/TzAddress/TzAddress.view'
 import { DoormanList, DoormanStatsHeader, DoormanStatsStyled } from './DoormanStats.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import Icon from 'app/App.components/Icon/Icon.view'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 // helpers
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -37,10 +39,15 @@ export const DoormanStats = ({
         <div>
           <h4>
             MVK Price
-            <CustomTooltip
-              text="Once launched, the price will be taken from the exchange MVK is listed on, not from our Oracle price feeds."
-              iconId={'info'}
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-5">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                Once launched, the price will be taken from the exchange MVK is listed on, not from our Oracle price
+                feeds.
+              </Tooltip.Content>
+            </Tooltip>
           </h4>
           <var>
             <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
@@ -56,9 +63,12 @@ export const DoormanStats = ({
 
         <div>
           <h4>
-            Doorman Address{' '}
-            <CustomTooltip
-              text={
+            Doorman Address
+            <Tooltip>
+              <Tooltip.Trigger className="ml-5">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
                 <>
                   The Doorman contract controls the staking mechanism for MVK. Handles all actions connected to it and
                   interacts with the other relevant contracts.{' '}
@@ -68,11 +78,10 @@ export const DoormanStats = ({
                     rel="noreferrer"
                   >
                     Read more.
-                  </a>{' '}
+                  </a>
                 </>
-              }
-              iconId="info"
-            />
+              </Tooltip.Content>
+            </Tooltip>
           </h4>
           <var className="click-address">
             <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={doormanAddress} hasIcon />
@@ -82,17 +91,18 @@ export const DoormanStats = ({
         <div>
           <h4>
             MVK Loyalty Index
-            <a
-              href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
-              target="_blank"
-              rel="noreferrer"
-              className="full-opacity"
-            >
-              <CustomTooltip
-                text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
-                iconId={'info'}
-              />
-            </a>
+            <CustomLink to="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees">
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the
+                  higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and
+                  the exit fee will rise. Click to read more.
+                </Tooltip.Content>
+              </Tooltip>
+            </CustomLink>
           </h4>
           <var>
             <CommaNumber value={mli} />
@@ -102,17 +112,18 @@ export const DoormanStats = ({
         <div>
           <h4>
             Exit Fee
-            <a
-              href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
-              target="_blank"
-              rel="noreferrer"
-              className="full-opacity"
-            >
-              <CustomTooltip
-                text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
-                iconId={'info'}
-              />
-            </a>
+            <CustomLink to="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees">
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees
+                  are paid directly to sMVK stakeholders for remaining active participants in securing the network.
+                  Click to read more.
+                </Tooltip.Content>
+              </Tooltip>
+            </CustomLink>
           </h4>
           <var>
             <CommaNumber value={fee} endingText={'%'} />

@@ -3,7 +3,8 @@ import { LoansValuesSection, LoansValuesSectionInfo } from '../LoansComponents.s
 
 // components
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 
 // consts & helpers
@@ -56,7 +57,12 @@ export const BorrowingExpandCardValuesSection = ({
 
           <div className="name">
             Outstanding Debt
-            <CustomTooltip iconId="info" text={OUTSTANDING_DEBT} defaultStrokeColor={colors[themeSelected].subHeadingText} />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{OUTSTANDING_DEBT}</Tooltip.Content>
+            </Tooltip>
           </div>
         </LoansValuesSectionInfo>
 
@@ -70,7 +76,12 @@ export const BorrowingExpandCardValuesSection = ({
           <CommaNumber value={collateralBalance} className="value" beginningText="$" showDecimal decimalsToShow={2} />
           <div className="name margin-top">
             Collateral Value
-            <CustomTooltip iconId="info" text={COLLATERAL_VALUE} defaultStrokeColor={colors[themeSelected].subHeadingText} />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{COLLATERAL_VALUE}</Tooltip.Content>
+            </Tooltip>
           </div>
         </LoansValuesSectionInfo>
 
@@ -79,7 +90,12 @@ export const BorrowingExpandCardValuesSection = ({
           <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
           <div className="name">
             Accrued Interest
-            <CustomTooltip iconId="info" text={ACCRUED_INTEREST} defaultStrokeColor={colors[themeSelected].subHeadingText} />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{ACCRUED_INTEREST}</Tooltip.Content>
+            </Tooltip>
           </div>
         </LoansValuesSectionInfo>
 
@@ -87,7 +103,12 @@ export const BorrowingExpandCardValuesSection = ({
           <CommaNumber value={apr} decimalsToShow={2} className="value" endingText="%" />
           <div className="name margin-top">
             APR
-            <CustomTooltip iconId="info" text={APR} defaultStrokeColor={colors[themeSelected].subHeadingText} />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{APR}</Tooltip.Content>
+            </Tooltip>
           </div>
         </LoansValuesSectionInfo>
 
@@ -95,7 +116,12 @@ export const BorrowingExpandCardValuesSection = ({
           <CommaNumber value={borrowCapacity} className="value" beginningText="$" showDecimal decimalsToShow={2} />
           <div className="name margin-top">
             Borrow Capacity
-            <CustomTooltip iconId="info" text={BORROW_CAPACITY} defaultStrokeColor={colors[themeSelected].subHeadingText} />
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{BORROW_CAPACITY}</Tooltip.Content>
+            </Tooltip>
           </div>
         </LoansValuesSectionInfo>
       </div>

@@ -194,8 +194,7 @@ p {
 
 
   /* spaces */
-
-  ${[10, 20, 30].map(
+  ${[3, 5, 7, 10, 20, 30].map(
     (n) => css`
       .mb-${n} {
         margin-bottom: ${n}px;
@@ -204,6 +203,14 @@ p {
       .mt-${n} {
         margin-top: ${n}px;
       }
-    `,
+
+      .ml-${n} {
+        margin-left: ${n}px;
+      }
+
+      .mr-${n} {
+        margin-right: ${n}px;
+      }
+    `
   )}
 `

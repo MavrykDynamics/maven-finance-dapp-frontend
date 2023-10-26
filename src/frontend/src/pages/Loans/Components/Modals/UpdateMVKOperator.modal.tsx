@@ -3,7 +3,7 @@ import { useLockBodyScroll } from 'react-use'
 
 // consts
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE_SMALL, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { UPDATE_OPERATORS_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // helpers
@@ -18,9 +18,9 @@ import { UpdateTokenOperator, updateOperatorsAction } from 'providers/VaultsProv
 
 // components
 import Icon from 'app/App.components/Icon/Icon.view'
-import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import Button from 'app/App.components/Button/NewButton'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 
 // styles
@@ -121,7 +121,7 @@ export const UpdateMVKOperator = ({
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
     setTableData(
-      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
+      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item))
     )
   }
 
@@ -144,7 +144,7 @@ export const UpdateMVKOperator = ({
       actionType: UPDATE_OPERATORS_ACTION,
       actionFn: updateOperatorsActionCb,
     }),
-    [updateOperatorsActionCb],
+    [updateOperatorsActionCb]
   )
 
   const { action: updateHandler } = useContractAction(contractActionProps)
@@ -188,29 +188,40 @@ export const UpdateMVKOperator = ({
                       />
                     </TableCell>
 
-                    <RemoveRowBtn
-                      className={`button-wrap remove ${tableData.length < 2 ? 'disabled' : ''}`}
-                      onClick={() => handleDeleteRow(rowIdx)}
-                    >
-                      <CustomTooltip text="Delete row">
-                        <Icon id="delete" />
-                      </CustomTooltip>
+                    <RemoveRowBtn>
+                      <Tooltip>
+                        <Tooltip.Trigger>
+                          <Button
+                            kind={BUTTON_SIMPLE_SMALL}
+                            onClick={() => handleDeleteRow(rowIdx)}
+                            disabled={tableData.length < 2}
+                          >
+                            <Icon id="delete" />
+                          </Button>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>Delete row</Tooltip.Content>
+                      </Tooltip>
                     </RemoveRowBtn>
                   </TableRow>
                 )
               })}
             </TableBody>
-            <AddRowBtn className={`button-wrap `} onClick={handleAddRow}>
-              <CustomTooltip text="Insert 1 row below">
-                <span>+</span>
-              </CustomTooltip>
+            <AddRowBtn>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow}>
+                    <Icon id="plus" />
+                  </Button>
+                </Tooltip.Trigger>
+                <Tooltip.Content>Insert 1 row below</Tooltip.Content>
+              </Tooltip>
             </AddRowBtn>
           </Table>
 
           <div className="manage-btn">
-            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={updateHandler} disabled={isActionDisabled}>
+            <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={updateHandler} disabled={isActionDisabled}>
               Update
-            </NewButton>
+            </Button>
           </div>
         </LoansModalBase>
       </PopupContainerWrapper>

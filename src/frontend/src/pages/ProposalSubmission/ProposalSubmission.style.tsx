@@ -243,10 +243,14 @@ export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
     width: 220px;
     position: relative;
 
-    .tooltip {
+    .tooltip-trigger {
       position: absolute;
       top: -15px;
       right: -2px;
+
+      svg {
+        fill: ${({ theme }) => theme.linksAndButtons};
+      }
     }
   }
 `

@@ -9,12 +9,12 @@ import { ProposalBytesType, StageTwoFormProps } from '../ProposalSubmission.type
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 import { Input } from '../../../app/App.components/Input/NewInput'
 import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Button from 'app/App.components/Button/NewButton'
 import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 import { Info } from 'app/App.components/Info/Info.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // helpers
@@ -67,7 +67,7 @@ export const StageTwoForm = ({
       {
         proposalData: proposalData.map((oldByte) => (oldByte.id === byte.id ? { ...oldByte, [type]: text } : oldByte)),
       },
-      proposalId,
+      proposalId
     )
 
     // update validation for input
@@ -81,10 +81,10 @@ export const StageTwoForm = ({
                     ...byteValidity,
                     validTitle: getBytesPairValidationStatus(text, proposalMetadataTitleMaxLength),
                   }
-                : byteValidity,
+                : byteValidity
             ),
           },
-          proposalId,
+          proposalId
         )
         break
       case 'encoded_code':
@@ -99,10 +99,10 @@ export const StageTwoForm = ({
                         ? INPUT_STATUS_SUCCESS
                         : INPUT_STATUS_ERROR,
                   }
-                : byteValidity,
+                : byteValidity
             ),
           },
-          proposalId,
+          proposalId
         )
         break
       case 'code_description':
@@ -114,10 +114,10 @@ export const StageTwoForm = ({
                     ...byteValidity,
                     validDescr: getBytesPairValidationStatus(text, proposalDescriptionMaxLength),
                   }
-                : byteValidity,
+                : byteValidity
             ),
           },
-          proposalId,
+          proposalId
         )
         break
     }
@@ -125,7 +125,7 @@ export const StageTwoForm = ({
 
   function handleOnBlur<G extends HTMLInputElement | HTMLTextAreaElement>(
     byte: ProposalBytesType,
-    e: React.FocusEvent<G>,
+    e: React.FocusEvent<G>
   ) {
     const { name, value } = e.target
     if (containSpaces(value)) {
@@ -133,10 +133,10 @@ export const StageTwoForm = ({
       updateLocalProposalData(
         {
           proposalData: proposalData.map((oldByte) =>
-            oldByte.id === byte.id ? { ...oldByte, [name]: trimmedValue } : oldByte,
+            oldByte.id === byte.id ? { ...oldByte, [name]: trimmedValue } : oldByte
           ),
         },
-        proposalId,
+        proposalId
       )
     }
   }
@@ -157,7 +157,7 @@ export const StageTwoForm = ({
           },
         ],
       },
-      proposalId,
+      proposalId
     )
     // add validation field for new bytes pair
     updateLocalProposalValidation(
@@ -169,7 +169,7 @@ export const StageTwoForm = ({
           byteId: newId,
         }),
       },
-      proposalId,
+      proposalId
     )
   }
 
@@ -182,13 +182,13 @@ export const StageTwoForm = ({
         {
           proposalData: proposalData.filter(({ id }) => id !== removeId),
         },
-        proposalId,
+        proposalId
       )
       updateLocalProposalValidation(
         {
           bytesValidation: currentProposalValidation.bytesValidation.filter(({ byteId }) => byteId !== removeId),
         },
-        proposalId,
+        proposalId
       )
     }
   }
@@ -220,7 +220,7 @@ export const StageTwoForm = ({
         {
           proposalData: updatedBytes,
         },
-        proposalId,
+        proposalId
       )
     }
   }
@@ -234,7 +234,7 @@ export const StageTwoForm = ({
           isUnderTheDrop: false,
         })),
       },
-      proposalId,
+      proposalId
     )
   }
 
@@ -253,7 +253,7 @@ export const StageTwoForm = ({
           ...(bytePairId === byte.id && byte.id !== DnDSelectedProposal?.id ? { isUnderTheDrop: true } : {}),
         })),
       },
-      proposalId,
+      proposalId
     )
   }
 
@@ -369,15 +369,18 @@ export const StageTwoForm = ({
               />
 
               <div className={`remove-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
-                <CustomTooltip text="Delete bytes pair" className="tooltip">
-                  <Button
-                    kind={BUTTON_SIMPLE}
-                    onClick={() => handleDeletePair(item.id)}
-                    disabled={!isProposalPeriod || locked || isFormDisabled}
-                  >
-                    <Icon id="delete" />
-                  </Button>
-                </CustomTooltip>
+                <Tooltip>
+                  <Tooltip.Trigger>
+                    <Button
+                      kind={BUTTON_SIMPLE}
+                      onClick={() => handleDeletePair(item.id)}
+                      disabled={!isProposalPeriod || locked || isFormDisabled}
+                    >
+                      <Icon id="delete" />
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>Delete bytes pair</Tooltip.Content>
+                </Tooltip>
               </div>
             </SubmitProposalBytesPair>
           )
@@ -395,15 +398,13 @@ export const StageTwoForm = ({
         ) : null}
 
         <div className={`add-byte ${!isProposalPeriod || locked ? 'disabled' : ''}`}>
-          <CustomTooltip text="Add bytes pair" className="tooltip">
-            <Button
-              kind={BUTTON_SIMPLE_SMALL}
-              disabled={!isProposalPeriod || locked || isFormDisabled}
-              onClick={handleCreateNewByte}
-            >
-              <Icon id="plus" /> Add New Bytes
-            </Button>
-          </CustomTooltip>
+          <Button
+            kind={BUTTON_SIMPLE_SMALL}
+            disabled={!isProposalPeriod || locked || isFormDisabled}
+            onClick={handleCreateNewByte}
+          >
+            <Icon id="plus" /> Add New Bytes
+          </Button>
         </div>
       </SubmitProposalBytes>
     </>

@@ -9,7 +9,6 @@ import {
   SATELLITE_ORACLE_STATUSES,
   SATELLITE_PARTICIPATION_DATA_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
-import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
@@ -31,7 +30,6 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DashboardPersonalSatellitesBottomLinks, SatelliteStatusBlock } from './DashboardPersonalComponents.style'
 import { DashboardCardHeader } from '../DashboardPersonal.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { UserActionHistory } from './UserOperationsHistory'
 import NewButton from 'app/App.components/Button/NewButton'
@@ -40,6 +38,7 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 const SatelliteTab = ({
   distributeProposalRewards,
@@ -134,7 +133,7 @@ const SatelliteTab = ({
                       value={Math.max(
                         satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
                           satelliteRecord.totalDelegatedAmount,
-                        0,
+                        0
                       )}
                     />
                   </div>
@@ -161,11 +160,12 @@ const SatelliteTab = ({
                 <div className="grid-item grid-item-under-image">
                   <div className="text-wrapper">
                     <div className="name">Total Voting Power</div>
-                    <CustomTooltip
-                      text={TOTAL_VOTING_POWER_TOOLTIP_TEXT}
-                      iconId="info"
-                      defaultStrokeColor={colors[themeSelected].subHeadingText}
-                    />
+                    <Tooltip>
+                      <Tooltip.Trigger className="ml-3">
+                        <Icon id="info" />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>{TOTAL_VOTING_POWER_TOOLTIP_TEXT}</Tooltip.Content>
+                    </Tooltip>
                   </div>
                   <div className="value">
                     <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVK" />

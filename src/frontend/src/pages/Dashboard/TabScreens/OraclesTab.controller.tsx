@@ -6,13 +6,11 @@ import { parseDate } from 'utils/time'
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { MVK_TOKEN_SYMBOL } from 'utils/constants'
-import colors from 'styles/colors'
 
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -21,20 +19,17 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { Trim } from 'app/App.components/Trim/Trim.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { StatBlock } from '../Dashboard.style'
 import { OraclesContentStyled, TabWrapperStyled, PopularFeed, EmptyContainer } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 export const OraclesTab = () => {
   const { feedsAddresses, feedsMapper, isLoading: isFeedsLoading } = useDataFeedsContext()
   const {
     tokensPrices: { [MVK_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
   } = useTokensContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   const { oracleRewardsTotal } = useSatelliteStatistics()
 
@@ -110,12 +105,15 @@ export const OraclesTab = () => {
                       </StatBlock>
                       <StatBlock>
                         <div className="name">
-                          Last Update{' '}
-                          <CustomTooltip
-                            iconId="info"
-                            defaultStrokeColor={colors[themeSelected].subHeadingText}
-                            text="Last time the aggregator was updated with a trusted answer and written on-chain."
-                          />
+                          Last Update
+                          <Tooltip>
+                            <Tooltip.Trigger className="ml-5">
+                              <Icon id="info" />
+                            </Tooltip.Trigger>
+                            <Tooltip.Content>
+                              Last time the aggregator was updated with a trusted answer and written on-chain.
+                            </Tooltip.Content>
+                          </Tooltip>
                         </div>
                         <div className="value">
                           {parseDate({

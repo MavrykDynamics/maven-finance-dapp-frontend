@@ -5,9 +5,11 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { stakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
 import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -15,13 +17,14 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { Input } from 'app/App.components/Input/NewInput'
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { InputErrorMessage } from 'app/App.components/Input/Input.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // helpers
 import { mathRoundTwoDigit } from '../../../utils/validatorFunctions'
 import { stakingInputValidation } from '../helpers/validators'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 // consts
 import {
@@ -41,7 +44,6 @@ import {
 } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
-import colors from 'styles/colors'
 
 // style
 import {
@@ -63,9 +65,6 @@ import {
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
-import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
@@ -85,7 +84,6 @@ export const StakeUnstakeView = ({
   const { availableDoormanRewards, availableSatellitesRewards, availableFarmRewards } = useUserRewards()
   const {
     contractAddresses: { mvkTokenAddress, doormanAddress },
-    preferences: { themeSelected },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
@@ -191,7 +189,7 @@ export const StakeUnstakeView = ({
 
       return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
     },
-    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress],
+    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress]
   )
 
   const dappCallback = useCallback(() => {
@@ -204,7 +202,7 @@ export const StakeUnstakeView = ({
       actionFn: stakeAction.bind(null, Number(inputData.amount)),
       dappActionCallback: dappCallback,
     }),
-    [dappCallback, inputData.amount, stakeAction],
+    [dappCallback, inputData.amount, stakeAction]
   )
 
   const { action: handleStake } = useContractAction(contractActionProps)
@@ -229,7 +227,7 @@ export const StakeUnstakeView = ({
       actionType: REWARDS_COMPOUND_ACTION,
       actionFn: rewardsCompoundAction,
     }),
-    [rewardsCompoundAction],
+    [rewardsCompoundAction]
   )
 
   const { action: handleCompound } = useContractAction(compoundContractActionProps)
@@ -256,7 +254,7 @@ export const StakeUnstakeView = ({
 
   const handleDelegate = () => {
     history.push(
-      satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
+      satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes'
     )
   }
 
@@ -331,12 +329,17 @@ export const StakeUnstakeView = ({
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
               <h3>
-                Pending MVK Rewards{' '}
-                <CustomTooltip
-                  text="Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or compound as doing one of those actions will automatically credit your staked MVK balance with any unclaimed rewards."
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                />
+                Pending MVK Rewards
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or
+                    compound as doing one of those actions will automatically credit your staked MVK balance with any
+                    unclaimed rewards.
+                  </Tooltip.Content>
+                </Tooltip>
               </h3>
               <CommaNumber value={rewardsToClaim} className="amount" />
             </div>
@@ -352,16 +355,16 @@ export const StakeUnstakeView = ({
             >
               <Icon id="compound" /> Compound
             </NewButton>
-            <CustomTooltip
-              text={
-                rewardsToClaim < 2 || isActionActive
+            <Tooltip>
+              <Tooltip.Trigger className="tooltip-trigger">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                {rewardsToClaim < 2 || isActionActive
                   ? `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`
-                  : `Compounds your pending exit fee rewards and converts them to sMVK.`
-              }
-              iconId="info"
-              className="tooltip"
-              defaultStrokeColor={colors[themeSelected].linksAndButtons}
-            />
+                  : `Compounds your pending exit fee rewards and converts them to sMVK.`}
+              </Tooltip.Content>
+            </Tooltip>
           </StakeUnstakeRightPart>
         </StakeUnstakeCard>
       </StakeUnstakeCards>

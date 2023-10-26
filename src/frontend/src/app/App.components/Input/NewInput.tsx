@@ -45,7 +45,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
         allowInputAfterError = false,
       },
     }: InputViewProps,
-    ref,
+    ref
   ) => {
     const { onChange, value, onBlur } = inputProps
     const { status, errorMessage, handleChange, handleBlur, handleMaxAmount } = useInputValidator({
@@ -70,7 +70,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
           <NewInputLabel>
             {label}
 
-            <>{tooltip}</>
+            <div className="tooltip-wrapper">{tooltip}</div>
           </NewInputLabel>
         ) : null}
 
@@ -111,5 +111,5 @@ export const Input = React.forwardRef<HTMLInputElement, InputViewProps>(
         {errorMessage && showErrorMessage && <InputErrorMessage>{errorMessage}</InputErrorMessage>}
       </InputWrapper>
     )
-  },
+  }
 )

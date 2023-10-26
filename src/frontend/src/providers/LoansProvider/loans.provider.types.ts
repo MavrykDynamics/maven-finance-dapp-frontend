@@ -38,8 +38,8 @@ export type LoanMarketType = {
   totalLended: number // now much supplied to market pool
   totalRewards: number // now much suppliers have earned rewards for supplying into the pool
 
-  reserveFactor: number
-  reserveAmount: number
+  reserveFactor: number // how much from current liquidity should remains unborrowed
+  reserveAmount: number // reserveFactor in tokens
 }
 
 export type LoansChartsType = {

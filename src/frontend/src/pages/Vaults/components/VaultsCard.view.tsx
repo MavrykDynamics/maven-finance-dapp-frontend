@@ -7,9 +7,10 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { BorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/BorrowingExpandCard'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { OldBorrowingExpandCard } from 'pages/Loans/Components/BorrowingExpandCard/OldBorrowingExpandCard'
 import { vaultTabs } from '../Vaults.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { Button } from 'app/App.components/Button/Button.controller'
 
 // styles
@@ -49,7 +50,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 const columnWidth = '33%'
 
 const findStatusInfo = (
-  status: string,
+  status: string
 ): {
   color: StatusFlagKind
   text: string
@@ -198,37 +199,43 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
               <TzAddress type={SECONDARY_TZ_ADDRESS_COLOR} tzAddress={ownerAddress} hasIcon />
             </div>
             <div>
-              Vault Risk
-              <CustomTooltip
-                text={VAULT_RISK}
-                iconId="info"
-                className="tooltip"
-                defaultStrokeColor={colors[themeSelected].subHeadingText}
-              />
+              <div className="name">
+                Vault Risk
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{VAULT_RISK}</Tooltip.Content>
+                </Tooltip>
+              </div>
               <div className={statusColor}>{statusText}</div>
             </div>
           </div>
 
           <div className="group">
             <div>
-              Liquidation Price
-              <CustomTooltip
-                iconId="info"
-                text={LIQUIDATION_PRICE}
-                className="tooltip"
-                defaultStrokeColor={colors[themeSelected].subHeadingText}
-              />
+              <div className="name">
+                Liquidation Price
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{LIQUIDATION_PRICE}</Tooltip.Content>
+                </Tooltip>
+              </div>
               <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
             </div>
 
             <div>
-              Liquidation Cost
-              <CustomTooltip
-                text={LIQUIDATION_COST}
-                iconId="info"
-                className="tooltip"
-                defaultStrokeColor={colors[themeSelected].subHeadingText}
-              />
+              <div className="name">
+                Liquidation Cost
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{LIQUIDATION_COST}</Tooltip.Content>
+                </Tooltip>
+              </div>
               <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
             </div>
           </div>

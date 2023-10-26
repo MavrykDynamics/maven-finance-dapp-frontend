@@ -18,7 +18,6 @@ import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasur
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Input } from 'app/App.components/Input/NewInput'
@@ -45,6 +44,7 @@ import {
   TableRow,
 } from 'app/App.components/Table'
 import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // NOTE: isLoading is handled in <ProposalSubmission.controller>
 export const StageThreeForm = ({
@@ -70,7 +70,7 @@ export const StageThreeForm = ({
 
   const treasuryTokens = useMemo(
     () => reduceTreasuryAssets(treasuryAddresses, treasuryMapper),
-    [treasuryAddresses, treasuryMapper],
+    [treasuryAddresses, treasuryMapper]
   )
 
   const isProposalRound = governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
@@ -93,7 +93,7 @@ export const StageThreeForm = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: string | number } },
     row: number,
-    options?: { tokenBalance?: number; maxLength?: number },
+    options?: { tokenBalance?: number; maxLength?: number }
   ) => {
     let { name, value } = e.target
 
@@ -109,7 +109,7 @@ export const StageThreeForm = ({
             : item
         }),
       },
-      proposalId,
+      proposalId
     )
 
     // update validation
@@ -123,10 +123,10 @@ export const StageThreeForm = ({
       updateLocalProposalValidation(
         {
           paymentsValidation: currentProposalValidation.paymentsValidation.map((paymentValidation, idx) =>
-            idx === row ? { ...paymentValidation, token_amount: validationResult } : paymentValidation,
+            idx === row ? { ...paymentValidation, token_amount: validationResult } : paymentValidation
           ),
         },
-        proposalId,
+        proposalId
       )
     } else {
       validationResult = getValidityStageThreeTable(name as StageThreeValidityItem, value, options)
@@ -136,10 +136,10 @@ export const StageThreeForm = ({
       updateLocalProposalValidation(
         {
           paymentsValidation: currentProposalValidation.paymentsValidation.map((paymentValidation, idx) =>
-            idx === row ? { ...paymentValidation, [name]: validationResult } : paymentValidation,
+            idx === row ? { ...paymentValidation, [name]: validationResult } : paymentValidation
           ),
         },
-        proposalId,
+        proposalId
       )
     }
   }
@@ -162,7 +162,7 @@ export const StageThreeForm = ({
           token_address: paymentToken,
         }),
       },
-      proposalId,
+      proposalId
     )
     updateLocalProposalValidation(
       {
@@ -173,7 +173,7 @@ export const StageThreeForm = ({
           paymentId: newId,
         }),
       },
-      proposalId,
+      proposalId
     )
   }
 
@@ -182,19 +182,19 @@ export const StageThreeForm = ({
       {
         proposalPayments: proposalPayments.filter((_, idx) => idx !== rowIdx),
       },
-      proposalId,
+      proposalId
     )
     updateLocalProposalValidation(
       {
         paymentsValidation: currentProposalValidation.paymentsValidation.filter((_, idx) => idx !== rowIdx),
       },
-      proposalId,
+      proposalId
     )
   }
 
   const isTableDisabled = useMemo(
     () => !isProposalRound || locked || !Object.keys(treasuryTokens)?.[0],
-    [isProposalRound, locked, treasuryTokens],
+    [isProposalRound, locked, treasuryTokens]
   )
 
   return (
@@ -255,7 +255,7 @@ export const StageThreeForm = ({
             {proposalPayments.length ? (
               proposalPayments.map((payment, rowIdx) => {
                 const validationObj = currentProposalValidation.paymentsValidation?.find(
-                  ({ paymentId }) => paymentId === payment.id,
+                  ({ paymentId }) => paymentId === payment.id
                 )
 
                 if (payment.to__id === null || payment.title === null || !payment.token_address) return null
@@ -381,7 +381,7 @@ export const StageThreeForm = ({
                                   number: newSelectedTokenBalance,
                                   grade: newSelectedToken.decimals,
                                 }),
-                              },
+                              }
                             )
                           }}
                         />
@@ -389,15 +389,18 @@ export const StageThreeForm = ({
                     </TableCell>
 
                     <RemoveRowBtn>
-                      <CustomTooltip text="Delete row" className="tooltip">
-                        <Button
-                          kind={BUTTON_SIMPLE_SMALL}
-                          onClick={() => handleDeleteRow(rowIdx)}
-                          disabled={isTableDisabled}
-                        >
-                          <Icon id="delete" />
-                        </Button>
-                      </CustomTooltip>
+                      <Tooltip>
+                        <Tooltip.Trigger>
+                          <Button
+                            kind={BUTTON_SIMPLE_SMALL}
+                            onClick={() => handleDeleteRow(rowIdx)}
+                            disabled={isTableDisabled}
+                          >
+                            <Icon id="delete" />
+                          </Button>
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>Delete row</Tooltip.Content>
+                      </Tooltip>
                     </RemoveRowBtn>
                   </TableRow>
                 )
@@ -417,11 +420,14 @@ export const StageThreeForm = ({
             )}
           </TableBody>
           <AddRowBtn>
-            <CustomTooltip text="Insert 1 row below" className="tooltip">
-              <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled}>
-                <Icon id="plus" />
-              </Button>
-            </CustomTooltip>
+            <Tooltip>
+              <Tooltip.Trigger>
+                <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow} disabled={isTableDisabled}>
+                  <Icon id="plus" />
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content>Insert 1 row below</Tooltip.Content>
+            </Tooltip>
           </AddRowBtn>
         </Table>
       </div>

@@ -10,7 +10,7 @@ import {
   VAULT_ALLOWANCE_ACCOUNTS,
 } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE_SMALL, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { MANAGE_PERMISSIONS_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // types
@@ -24,9 +24,9 @@ import { validateTzAddress } from 'utils/validatorFunctions'
 import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
-import NewButton from 'app/App.components/Button/NewButton'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
+import Button from 'app/App.components/Button/NewButton'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // styles
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
@@ -73,7 +73,7 @@ export const ManagePermissions = ({
         content: <DropDownJsxChild>{text}</DropDownJsxChild>,
         id: value,
       })),
-    [],
+    []
   )
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
@@ -93,7 +93,7 @@ export const ManagePermissions = ({
       // set initial data based on selected vault
       handleOnClickDropdownItem(deporsitorsFlag ?? '')
       setTableData(
-        depositors.map((depositorAddress) => ({ address: depositorAddress, validationStatus: INPUT_STATUS_SUCCESS })),
+        depositors.map((depositorAddress) => ({ address: depositorAddress, validationStatus: INPUT_STATUS_SUCCESS }))
       )
     }
   }, [data, show])
@@ -118,7 +118,7 @@ export const ManagePermissions = ({
         : INPUT_STATUS_ERROR
 
     setTableData(
-      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
+      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item))
     )
   }
 
@@ -140,7 +140,7 @@ export const ManagePermissions = ({
       newDepositors,
       depositors,
       userAddress,
-      closePopup,
+      closePopup
     )
   }, [bug, chosenDdItem?.id, closePopup, depositors, tableData, userAddress, vaultAddress])
 
@@ -149,7 +149,7 @@ export const ManagePermissions = ({
       actionType: MANAGE_PERMISSIONS_ACTION,
       actionFn: managePermissionsActionCb,
     }),
-    [managePermissionsActionCb],
+    [managePermissionsActionCb]
   )
 
   const { action: updateHandler } = useContractAction(contractActionProps)
@@ -204,30 +204,41 @@ export const ManagePermissions = ({
                         />
                       </TableCell>
 
-                      <RemoveRowBtn
-                        className={`button-wrap remove ${tableData.length < 2 ? 'disabled' : ''}`}
-                        onClick={() => handleDeleteRow(rowIdx)}
-                      >
-                        <CustomTooltip text="Delete row">
-                          <Icon id="delete" />
-                        </CustomTooltip>
+                      <RemoveRowBtn>
+                        <Tooltip>
+                          <Tooltip.Trigger>
+                            <Button
+                              kind={BUTTON_SIMPLE_SMALL}
+                              onClick={() => handleDeleteRow(rowIdx)}
+                              disabled={tableData.length < 2}
+                            >
+                              <Icon id="delete" />
+                            </Button>
+                          </Tooltip.Trigger>
+                          <Tooltip.Content>Delete row</Tooltip.Content>
+                        </Tooltip>
                       </RemoveRowBtn>
                     </TableRow>
                   )
                 })}
               </TableBody>
-              <AddRowBtn className={`button-wrap `} onClick={handleAddRow}>
-                <CustomTooltip text="Insert 1 row below">
-                  <span>+</span>
-                </CustomTooltip>
+              <AddRowBtn>
+                <Tooltip>
+                  <Tooltip.Trigger>
+                    <Button kind={BUTTON_SIMPLE_SMALL} onClick={handleAddRow}>
+                      <Icon id="plus" />
+                    </Button>
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>Insert 1 row below</Tooltip.Content>
+                </Tooltip>
               </AddRowBtn>
             </Table>
           ) : null}
 
           <div className="manage-btn">
-            <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={updateHandler} disabled={isActionDisabled}>
+            <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={updateHandler} disabled={isActionDisabled}>
               Update
-            </NewButton>
+            </Button>
           </div>
         </LoansModalBase>
       </PopupContainerWrapper>

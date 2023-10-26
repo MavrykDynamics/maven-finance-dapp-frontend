@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
-import colors from 'styles/colors'
 import { PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { TWENTY_FOUR_HOURS } from 'consts/charts.const'
 
@@ -10,7 +9,6 @@ import { TWENTY_FOUR_HOURS } from 'consts/charts.const'
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'
 
 // hooks
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
 
@@ -24,17 +22,15 @@ import { StatBlock } from '../Dashboard.style'
 import { StakingContentStyled, TabWrapperStyled, StakingHistoryChartWrapper } from './DashboardTabs.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { getChartXAxisTicks } from 'utils/charts.utils'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 /**
  * TODO: will need only to subscribe to staking chart, and get it's loading here, as staking stats data is subscribed in controller
  */
 export const StakingTab = () => {
   const { totalSupply, totalStakedMvk, isLoading: isStakingLoading } = useDoormanContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   const { smvkHistoryData, isLoading: isChartsDataLoading, noChartData } = useDoormanHistory(TWENTY_FOUR_HOURS)
 
@@ -64,11 +60,18 @@ export const StakingTab = () => {
             <StatBlock>
               <div className="name flexbox">
                 Exit Fee
-                <CustomTooltip
-                  text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
-                  iconId={'info'}
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                />
+                <CustomLink to="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees">
+                  <Tooltip>
+                    <Tooltip.Trigger>
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit
+                      fees are paid directly to sMVK stakeholders for remaining active participants in securing the
+                      network. Click to read more.
+                    </Tooltip.Content>
+                  </Tooltip>
+                </CustomLink>
               </div>
               <div className="value">
                 <CommaNumber endingText="%" value={fee} />
@@ -77,12 +80,18 @@ export const StakingTab = () => {
             <StatBlock>
               <div className="name flexbox">
                 MVK Loyalty Index
-                <CustomTooltip
-                  className="tooltip"
-                  text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
-                  iconId={'info'}
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                />
+                <CustomLink to="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees">
+                  <Tooltip>
+                    <Tooltip.Trigger>
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK,
+                      the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the
+                      MLI, and the exit fee will rise. Click to read more.
+                    </Tooltip.Content>
+                  </Tooltip>
+                </CustomLink>
               </div>
               <div className="value">
                 <CommaNumber endingText="%" value={mli} />

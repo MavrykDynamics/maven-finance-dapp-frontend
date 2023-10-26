@@ -16,7 +16,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusMessage } from '../StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { assetDecimalsToShow } from '../../Loans.const'
 
@@ -39,6 +38,7 @@ import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provi
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -158,11 +158,10 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Outstanding Debt</div>
-              <CommaNumber value={totalOutstanding} className="value" showDecimal decimalsToShow={decimals} />
               <CommaNumber
                 value={totalOutstanding * rate}
                 beginningText="$"
-                className="rate"
+                className="value"
                 showDecimal
                 decimalsToShow={decimals}
               />
@@ -204,12 +203,13 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">
-                  Accrued Interest{' '}
-                  <CustomTooltip
-                    iconId="info"
-                    text="Interest, compounded over time every time you borrow"
-                    defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                  />
+                  Accrued Interest
+                  <Tooltip>
+                    <Tooltip.Trigger className="ml-3">
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>Interest, compounded over time every time you borrow</Tooltip.Content>
+                  </Tooltip>
                 </div>
                 <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
                 <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />

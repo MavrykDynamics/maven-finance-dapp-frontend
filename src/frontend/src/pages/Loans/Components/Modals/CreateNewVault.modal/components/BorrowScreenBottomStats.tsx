@@ -1,7 +1,8 @@
 // compoennts
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // styles
 import colors from 'styles/colors'
@@ -14,6 +15,8 @@ import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault
 
 // utils
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+
+// hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type BorrowScreenBottomStatsProps = {
@@ -39,24 +42,24 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
           <ThreeLevelListItem>
             <div className="name">
               Total Amount
-              <CustomTooltip
-                iconId="info"
-                defaultStrokeColor={colors[themeSelected].subHeadingText}
-                text={TOTAL_AMOUNT}
-                className="tooltip"
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="ml-3">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>{TOTAL_AMOUNT}</Tooltip.Content>
+              </Tooltip>
             </div>
             <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">
               DAO Fee
-              <CustomTooltip
-                iconId="info"
-                defaultStrokeColor={colors[themeSelected].subHeadingText}
-                text={DAO_FEE}
-                className="tooltip"
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="ml-3">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>{DAO_FEE}</Tooltip.Content>
+              </Tooltip>
             </div>
             <CommaNumber value={inputAmount * (daoFee / 100)} decimalsToShow={assetDecimalsToShow} className="value" />
           </ThreeLevelListItem>
@@ -89,12 +92,12 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
           <ThreeLevelListItem className="right">
             <div className="name">
               Available To Borrow
-              <CustomTooltip
-                iconId="info"
-                defaultStrokeColor={colors[themeSelected].subHeadingText}
-                text={AVALIABLE_TO_BORROW}
-                className="tooltip"
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="ml-3">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>{AVALIABLE_TO_BORROW}</Tooltip.Content>
+              </Tooltip>
             </div>
             <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
           </ThreeLevelListItem>
