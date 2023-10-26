@@ -23,7 +23,6 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
@@ -59,6 +58,7 @@ import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 import { operationAddCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -173,7 +173,7 @@ export const AddCollateral = ({
         ],
         vaultId,
         lendingControllerAddress,
-        closePopup,
+        closePopup
       )
     }
 
@@ -195,7 +195,7 @@ export const AddCollateral = ({
       actionType: DEPOSIT_COLLATERAL_ACTION,
       actionFn: depositAction,
     }),
-    [depositAction],
+    [depositAction]
   )
 
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
@@ -310,12 +310,17 @@ const AddCollateralTableStats = ({
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">
-            Available to Borrow{' '}
-            <CustomTooltip
-              text="The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is: min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)"
-              iconId="info"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-            />
+            Available to Borrow
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault
+                AND the availableLiquidity of the asset pool your vault is borrowing from. The equation used is:
+                min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)
+              </Tooltip.Content>
+            </Tooltip>
           </div>
           <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
         </ThreeLevelListItem>

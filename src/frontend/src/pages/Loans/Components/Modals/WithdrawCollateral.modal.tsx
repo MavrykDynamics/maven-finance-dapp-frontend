@@ -43,7 +43,6 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // utils
 import {
@@ -67,6 +66,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { operationRemoveCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -146,7 +146,7 @@ export const WithdrawCollateral = ({
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(
     collateralBalance,
     currentTotalOutstanding * borrowedTokenRate,
-    collateralRate,
+    collateralRate
   )
 
   const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
@@ -185,7 +185,7 @@ export const WithdrawCollateral = ({
           collateralToken,
           vaultId,
           lendingControllerAddress,
-          closePopup,
+          closePopup
         )
       } else {
         return await withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup)
@@ -200,7 +200,7 @@ export const WithdrawCollateral = ({
       actionType: WITHDRAW_COLLATERAL_ACTION,
       actionFn: withdrawAction,
     }),
-    [withdrawAction],
+    [withdrawAction]
   )
 
   const { action: withdrawHandler } = useContractAction(contractActionProps)
@@ -269,7 +269,7 @@ export const WithdrawCollateral = ({
                 onChange: (e) =>
                   inputOnChangeHandle(
                     e.target.value,
-                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault),
+                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault)
                   ),
               }}
               settings={{
@@ -279,9 +279,9 @@ export const WithdrawCollateral = ({
                   inputOnChangeHandle(
                     getLoansInputMaxAmount(
                       Math.min(selectedCollateralAmountInVault, currentCollateralToWithdraw),
-                      decimals,
+                      decimals
                     ),
-                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault),
+                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault)
                   ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
@@ -359,12 +359,16 @@ const WithdrawCollateralTableStats = ({
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">
-            Withdrawable Collateral{' '}
-            <CustomTooltip
-              iconId="info"
-              text="Dollar value of collateral you are able to withdraw without making your vault under-collateralized for this specific collateral asset"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-            />
+            Withdrawable Collateral
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>
+                Dollar value of collateral you are able to withdraw without making your vault under-collateralized for
+                this specific collateral asset.
+              </Tooltip.Content>
+            </Tooltip>
           </div>
           <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
         </ThreeLevelListItem>

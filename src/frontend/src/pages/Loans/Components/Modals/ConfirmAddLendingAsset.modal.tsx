@@ -4,8 +4,8 @@ import { useLockBodyScroll } from 'react-use'
 // components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -26,7 +26,6 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
 // helpers
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import colors from 'styles/colors'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -52,10 +51,6 @@ export const ConfirmAddLendingAsset = ({
   } = useDappConfigContext()
 
   useLockBodyScroll(show)
-
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   const loanToken = getTokenDataByAddress({ tokenAddress: data?.tokenAddress, tokensMetadata, tokensPrices })
   const { mBalance = 0, inputAmount = 0, lendingAPY = 0, callback = () => {} } = data ?? {}
@@ -86,7 +81,7 @@ export const ConfirmAddLendingAsset = ({
       actionType: DEPOSIT_LENDING_ASSET_ACTION,
       actionFn: depositAction,
     }),
-    [depositAction],
+    [depositAction]
   )
 
   const { action: depositHandler } = useContractAction(contractActionProps)
@@ -109,12 +104,12 @@ export const ConfirmAddLendingAsset = ({
             <ThreeLevelListItem>
               <div className="name">
                 Lending APY
-                <CustomTooltip
-                  iconId="info"
-                  text={LENDING_APY(symbol)}
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  className="tooltip"
-                />
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{LENDING_APY(symbol)}</Tooltip.Content>
+                </Tooltip>
               </div>
               <CommaNumber value={lendingAPY} className="value" endingText="%" />
             </ThreeLevelListItem>

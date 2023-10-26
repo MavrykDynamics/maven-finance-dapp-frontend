@@ -20,7 +20,6 @@ import { ExitFeeModalButtons, ExitFeeModalContent, ExitFeeModalStats } from './E
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'

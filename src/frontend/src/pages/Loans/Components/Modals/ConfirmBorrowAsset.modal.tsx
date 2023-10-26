@@ -11,9 +11,9 @@ import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 // components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // styles
 import colors from 'styles/colors'
@@ -108,7 +108,7 @@ export const ConfirmBorrowAsset = ({
       actionType: BORROW_VAULT_ASSET_ACTION,
       actionFn: borrowAction,
     }),
-    [borrowAction],
+    [borrowAction]
   )
 
   const { action: borrowAsserHandler } = useContractAction(contractActionProps)
@@ -130,12 +130,15 @@ export const ConfirmBorrowAsset = ({
             <ThreeLevelListItem>
               <div className="name">
                 Total Amount
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  text={`Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee.`}
-                  className="tooltip"
-                />
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The
+                    amount you will actually receive is the Total Amount minus the DAO fee.
+                  </Tooltip.Content>
+                </Tooltip>
               </div>
               <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
             </ThreeLevelListItem>
@@ -150,12 +153,14 @@ export const ConfirmBorrowAsset = ({
             <ThreeLevelListItem>
               <div className="name">
                 DAO Fee
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  text={`Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.`}
-                  className="tooltip"
-                />
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>
+                    Amount paid to the DAO as the origination fee for borrowing. Each time you borrow, a fee is paid.
+                  </Tooltip.Content>
+                </Tooltip>
               </div>
               <CommaNumber
                 value={inputAmount * (DAOFee / 100)}
@@ -196,12 +201,12 @@ export const ConfirmBorrowAsset = ({
             <ThreeLevelListItem>
               <div className="name">
                 Available To Borrow
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  text={AVALIABLE_TO_BORROW}
-                  className="tooltip"
-                />
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{AVALIABLE_TO_BORROW}</Tooltip.Content>
+                </Tooltip>
               </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>

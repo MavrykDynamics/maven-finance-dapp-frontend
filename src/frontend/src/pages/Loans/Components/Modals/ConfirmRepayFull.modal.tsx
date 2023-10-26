@@ -11,8 +11,8 @@ import { REPAY_FULL_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults
 import { repayFullAndCloseVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
 
 // components
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -105,7 +105,7 @@ export const ConfirmRepayFull = ({
         () => {
           closePopup()
           callback()
-        },
+        }
       )
     }
 
@@ -127,7 +127,7 @@ export const ConfirmRepayFull = ({
       actionType: REPAY_FULL_VAULT_ACTION,
       actionFn: fullRepayAction,
     }),
-    [fullRepayAction],
+    [fullRepayAction]
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)
@@ -185,12 +185,12 @@ export const ConfirmRepayFull = ({
             <ThreeLevelListItem>
               <div className="name">
                 Available To Borrow
-                <CustomTooltip
-                  iconId="info"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                  text={AVALIABLE_TO_BORROW}
-                  className="tooltip"
-                />
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{AVALIABLE_TO_BORROW}</Tooltip.Content>
+                </Tooltip>
               </div>
               <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
             </ThreeLevelListItem>

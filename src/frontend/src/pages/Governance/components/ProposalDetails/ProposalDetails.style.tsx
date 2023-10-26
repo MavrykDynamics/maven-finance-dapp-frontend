@@ -150,10 +150,6 @@ export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; them
           text-decoration: underline;
         }
 
-        button {
-          text-decoration: underline;
-        }
-
         &.opened {
           flex-direction: column;
           row-gap: 5px;
