@@ -93,8 +93,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       Boolean(
         userAddress &&
           (getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
-            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0),
-      ),
+            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0)
+      )
     )
   }, [userAddress, mvkTokenAddress, userTokensBalances])
 
@@ -116,7 +116,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
     if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
-      bug('You have already claimed MVK', 'You are unable to claim MVK, you have already claimed')
+      bug('You have already claimed MVK', 'You are unable to claim MVK')
       return null
     }
 
@@ -128,7 +128,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       actionType: GET_MVK_FROM_FAUCET_ACTION,
       actionFn: requestMVKAction,
     }),
-    [requestMVKAction],
+    [requestMVKAction]
   )
 
   const { action: handleRequestMVK } = useContractAction(contractActionProps)

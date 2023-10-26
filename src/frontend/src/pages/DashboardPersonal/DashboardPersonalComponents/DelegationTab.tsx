@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
-import { BUTTON_SECONDARY, BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
@@ -21,7 +21,6 @@ import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -52,9 +51,6 @@ const DelegationTab = ({
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
   const { userTokensBalances, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
@@ -171,15 +167,15 @@ const DelegationTab = ({
             </div>
             <DashboardPersonalSatellitesBottomLinks>
               <Link to="/satellites">Satellites Overview</Link>
-              <Link to={`/satellites/satellite-details/${satelliteRecord.address}`}>View Satellite Profile</Link>
+              <Link to={`/satellites/satellite-details/${satelliteRecord.address}`}>My Satellite</Link>
             </DashboardPersonalSatellitesBottomLinks>
           </>
         ) : userSmvkBalance === 0 && userAddress ? (
           <div className="no-data">
             <span>You don't have SMVK</span>
             <div className="nav-button">
-              <Link to="/">
-                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE}>
+              <Link to="/staking">
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                   <Icon id="menu-staking" /> Stake MVK
                 </NewButton>
               </Link>
@@ -190,8 +186,8 @@ const DelegationTab = ({
             <span>You are not delegated at this time</span>
             <div className="nav-button">
               <Link to="/satellites">
-                <NewButton kind={BUTTON_SECONDARY} form={BUTTON_WIDE}>
-                  <Icon id="satellite" /> View Satellites
+                <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
+                  <Icon id="satellite" /> Satellites
                 </NewButton>
               </Link>
             </div>

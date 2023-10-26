@@ -1,6 +1,6 @@
 import { ContractMethod, OpKind, SendParams, TezosToolkit, TransferParams, Wallet } from '@taquito/taquito'
-import { estimateBatchOperation, estimateExecution } from './walletError.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { WalletOperationError, checkWhetherWalletAbortError } from 'errors/error'
 
 type EstimationResultParams = {
   callback?: () => void
@@ -9,35 +9,45 @@ type EstimationResultParams = {
 
 export async function getEstimationResult(
   metadata: ContractMethod<Wallet>,
-  args?: EstimationResultParams,
+  args?: EstimationResultParams
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> {
   // const op = await estimateExecution(metadata, args?.params)
 
   // if (op?.error) {
   //   return { actionSuccess: false, error: op.error }
   // }
+  try {
+    const operation = await metadata.send(args?.params)
 
-  const operation = await metadata.send(args?.params)
+    args?.callback?.()
 
-  args?.callback?.()
-
-  return { actionSuccess: true, operation }
+    return { actionSuccess: true, operation }
+  } catch (e) {
+    if (checkWhetherWalletAbortError(e))
+      return { actionSuccess: false, error: new WalletOperationError('Operation is aborted') }
+    throw e
+  }
 }
 
 export async function getEstimationBatchResult(
   tezos: TezosToolkit,
   batchArr: (TransferParams & { kind: OpKind.TRANSACTION })[],
-  cb?: () => void,
+  cb?: () => void
 ) {
   // const estimateBatchOp = await estimateBatchOperation(batchArr)
 
   // if (estimateBatchOp.error) {
   //   return { actionSuccess: false, error: estimateBatchOp.error }
   // }
+  try {
+    const operation = await tezos.wallet.batch(batchArr).send()
 
-  const operation = await tezos.wallet.batch(batchArr).send()
+    cb?.()
 
-  cb?.()
-
-  return { actionSuccess: true, operation }
+    return { actionSuccess: true, operation }
+  } catch (e) {
+    if (checkWhetherWalletAbortError(e))
+      return { actionSuccess: false, error: new WalletOperationError('Operation is aborted') }
+    throw e
+  }
 }

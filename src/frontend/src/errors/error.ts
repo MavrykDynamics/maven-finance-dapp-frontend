@@ -7,6 +7,7 @@ import type {
 } from './error.type'
 import { walletOparationErrorPayload } from './error.schema'
 import { ERROR_TYPE_FATAL } from './error.const'
+import { AbortedBeaconError } from '@airgap/beacon-sdk'
 
 /**
  * ExtendedErrorClass as base class. Contains all essential information
@@ -111,4 +112,13 @@ export function isAbortError(rawError: unknown): boolean {
   if (typedError.name === 'AbortError') return true
 
   return false
+}
+
+/**
+ * Typeguard to check whether error is wallet operation abort error
+ * @param rawError any
+ * @returns boolean value whether error is user abort error
+ */
+export const checkWhetherWalletAbortError = (rawError: any): rawError is AbortedBeaconError => {
+  return rawError?.name === 'UnknownBeaconError' && rawError?.title === 'Aborted'
 }
