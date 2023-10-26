@@ -92,6 +92,12 @@ export function isWalletOperationError(e: unknown) {
   return result.success
 }
 
+// TODO remove this after returning estimation errors logic (QUICK FIX)
+// do not use it !
+function isWalletError(e: unknown) {
+  if (e !== null && typeof e === 'object' && e.hasOwnProperty('message')) return true
+  return false
+}
 /**
  * Convert unknown to Error object or keep if it was error
  * @param rawError unknown
@@ -101,6 +107,9 @@ export function unknownToError(rawError: unknown): Error | ExtendedError {
   if (isExtendedError(rawError)) return rawError
   if (rawError instanceof Error) return rawError
   if (typeof rawError === 'string') return new Error(rawError)
+
+  // TODO remove this after returning estimation errors logic (QUICK FIX)
+  if (isWalletError(rawError)) return new Error((rawError as any).message)
 
   return new Error('unknown Error with no message, stack and payload')
 }

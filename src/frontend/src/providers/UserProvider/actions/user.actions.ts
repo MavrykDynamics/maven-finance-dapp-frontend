@@ -97,6 +97,7 @@ export const getMVKTokensFromFaucet = async (
     return await getEstimationResult(requestMVKMetaData)
   } catch (error) {
     const e = unknownToError(error)
+    console.log(error, '-----------------')
     return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
