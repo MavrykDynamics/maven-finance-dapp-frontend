@@ -73,7 +73,7 @@ export const DoormanStats = ({
                   The Doorman contract controls the staking mechanism for MVK. Handles all actions connected to it and
                   interacts with the other relevant contracts.{' '}
                   <a
-                    href="https://mavryk.finance/litepaper#mvk-and-smvk-doorman-module"
+                    href="https://docs.mavryk.finance/smart-contracts/smart-contracts-overview/doorman-contract"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -91,7 +91,7 @@ export const DoormanStats = ({
         <div>
           <h4>
             MVK Loyalty Index
-            <CustomLink to="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees">
+            <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking">
               <Tooltip>
                 <Tooltip.Trigger>
                   <Icon id="info" />
@@ -112,7 +112,7 @@ export const DoormanStats = ({
         <div>
           <h4>
             Exit Fee
-            <CustomLink to="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees">
+            <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
               <Tooltip>
                 <Tooltip.Trigger>
                   <Icon id="info" />

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 // view
 import { TreasuryType } from 'providers/TreasuryProvider/helpers/treasury.types'
@@ -21,11 +21,11 @@ import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 import {
   Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
   TableBody,
   TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
   TableScrollable,
 } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
@@ -49,17 +49,17 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
   const filteredBalance = useMemo(
     () =>
       isGlobal || !showZeroTreasuries ? treasury.balances : treasury.balances.filter((item) => item.balance > 0.01),
-    [isGlobal, showZeroTreasuries, treasury.balances]
+    [isGlobal, showZeroTreasuries, treasury.balances],
   )
 
   const treasuryTVL = useMemo(
     () => getTreasuryTVL(treasury, tokensMetadata, tokensPrices),
-    [treasury, tokensMetadata, tokensPrices]
+    [treasury, tokensMetadata, tokensPrices],
   )
 
   const chartData = useMemo(
     () => getPieChartData(filteredBalance, treasuryTVL, hoveredPath, tokensMetadata, tokensPrices),
-    [hoveredPath, treasuryTVL, filteredBalance, tokensMetadata, tokensPrices]
+    [hoveredPath, treasuryTVL, filteredBalance, tokensMetadata, tokensPrices],
   )
 
   useEffect(() => {
@@ -70,7 +70,12 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
   return (
     <TreasuryViewStyle ref={ref}>
-      <a href="https://mavryk.finance/litepaper#treasury " target="_blank" rel="noreferrer" className="info-link">
+      <a
+        href="https://docs.mavryk.finance/mavryk-finance/treasury"
+        target="_blank"
+        rel="noreferrer"
+        className="info-link"
+      >
         <Icon id="question" />
       </a>
 
@@ -126,10 +131,17 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
               {filteredBalance.length ? (
                 <TableBody className={`treasury`}>
                   {filteredBalance.map(({ balance, tokenAddress }) => {
-                    const treasuryToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                    const treasuryToken = getTokenDataByAddress({
+                      tokenAddress,
+                      tokensMetadata,
+                      tokensPrices,
+                    })
                     if (!treasuryToken || !treasuryToken.rate) return null
                     const { symbol, decimals, rate } = treasuryToken
-                    const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
+                    const treasuryTokenBalance = convertNumberForClient({
+                      number: balance,
+                      grade: decimals,
+                    })
 
                     return (
                       <TableRow rowHeight={25} borderColor="primaryText" className="add-hover" key={symbol}>

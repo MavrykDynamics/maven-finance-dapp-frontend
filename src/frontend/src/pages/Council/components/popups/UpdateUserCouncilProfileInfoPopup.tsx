@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // view
@@ -6,7 +6,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { PopupContainer } from 'app/App.components/popup/PopupMain.style'
 import { CouncilUpdateMemberPopupContent } from 'app/App.components/popup/bases/CouncilPopup.style'
-import { CouncilFormStyled, CouncilFormHeaderStyled } from '../../CouncilForms/CouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../../CouncilForms/CouncilForm.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
@@ -27,10 +27,10 @@ import { validateFormField } from 'utils/validatorFunctions'
 
 // consts
 import {
-  InputStatusType,
   INPUT_STATUS_DEFAULT,
-  INPUT_STATUS_SUCCESS,
   INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
 } from 'app/App.components/Input/Input.constants'
 import { UPDATE_USER_COUNCIL_PROFILE_FORM } from '../../helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
@@ -248,7 +248,7 @@ export const UpdateUserCouncilProfileInfoPopup = ({
           <CouncilFormStyled className="without-divider" formName={UPDATE_USER_COUNCIL_PROFILE_FORM}>
             <a
               className="info-link"
-              href="https://mavryk.finance/litepaper#mavryk-council"
+              href="https://docs.mavryk.finance/mavryk-finance/council"
               target="_blank"
               rel="noreferrer"
             >

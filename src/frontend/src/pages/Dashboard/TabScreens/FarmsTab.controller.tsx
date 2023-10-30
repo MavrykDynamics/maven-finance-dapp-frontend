@@ -4,15 +4,15 @@ import { Link } from 'react-router-dom'
 
 // consts
 import {
-  FARMS_DATA_SUB,
-  FARMS_ALL_LIVE_DATA_SUB,
   DEFAULT_FARMS_ACTIVE_SUBS,
+  FARMS_ALL_LIVE_DATA_SUB,
+  FARMS_DATA_SUB,
 } from 'providers/FarmsProvider/helpers/farms.const'
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
   FARM_CARD_COINS_LARGE,
   FARM_CARD_COINS_SMALL,
+  FarmCardCoinIcons,
 } from 'pages/Farms/components/FarmCard/cardParts/FarmCardCoinIcons'
 
 // types
@@ -25,12 +25,10 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { EmptyContainer, FarmsContentStyled, TabWrapperStyled } from './DashboardTabs.style'
-import { FarmCardCoinIcons } from 'pages/Farms/components/FarmCard/cardParts/FarmCardCoinIcons'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 
@@ -197,17 +195,17 @@ export const FarmsTab = () => {
                       </div>
 
                       <div className="row-info">
-                        <div className="name">APY: </div>
+                        <div className="name">APY:</div>
                         <CommaNumber value={apy} className="value" endingText="%" />
                       </div>
 
                       <div className="row-info">
-                        <div className="name">Earn: </div>
+                        <div className="name">Earn:</div>
                         <div className="value">sMVK + Fees</div>
                       </div>
 
                       <div className="row-info">
-                        <div className="name">Ends in: </div>
+                        <div className="name">Ends in:</div>
                         <div className="value">{infinite ? 'Not ending' : <Timer deadline={endsInTime} />}</div>
                       </div>
                     </div>
@@ -228,9 +226,9 @@ export const FarmsTab = () => {
         <div className="title">What is Yield Farming?</div>
         <div className="text">
           Liquidity providers will be able to stake their LP tokens within yield farms to receive sMVK as an incentive.
-          DEX LP tokens and Mavryk mTokens may be staked to available farms. By default, Mavryk farms are spawned for
-          three months.{' '}
-          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+          DEX LP tokens and Mavryk Finance mTokens may be staked to available farms. By default, Mavryk Finance farms
+          are spawned for three months.{' '}
+          <a href="https://docs.mavryk.finance/mavryk-finance/yield-farms" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>

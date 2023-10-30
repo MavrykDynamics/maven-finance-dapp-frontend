@@ -29,28 +29,28 @@ import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 
 // styles
 import {
-  DataFeedsStyled,
-  FeedInfo,
-  DataFeedValueText,
-  DataFeedInfoBlock,
   ContractDetails,
+  DataFeedInfoBlock,
+  DataFeedsStyled,
+  DataFeedValueText,
   FeedDetailsChartWrapper,
+  FeedInfo,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 
 // consts
 import {
-  SATELLITE_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
   SATELLITES_DATA_ORACLES_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
-  PAGINATION_SIDE_RIGHT,
-  ORACLES_DATA_IN_FEED_LIST_NAME,
   calculateSlicePositions,
   getPageNumber,
+  ORACLES_DATA_IN_FEED_LIST_NAME,
+  PAGINATION_SIDE_RIGHT,
 } from 'app/App.components/Pagination/pagination.consts'
 import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -121,7 +121,7 @@ const DataFeedDetails = () => {
     if (!feed) return
     const intervalId = setInterval(() => {
       setTrustedAnswer(
-        new Date(feed.last_completed_data_last_updated_at).getTime() + feed.heart_beat_seconds * 1000 >= Date.now()
+        new Date(feed.last_completed_data_last_updated_at).getTime() + feed.heart_beat_seconds * 1000 >= Date.now(),
       )
     }, 1000)
 
@@ -139,7 +139,7 @@ const DataFeedDetails = () => {
             .filter((address) => satelliteMapper[address].participatedFeeds[feedId])
             .map((address) => satelliteMapper[address])
         : [],
-    [feedId, oraclesIds, satelliteMapper]
+    [feedId, oraclesIds, satelliteMapper],
   )
 
   const paginatedFeedsOracles = useMemo(() => {
@@ -166,7 +166,11 @@ const DataFeedDetails = () => {
                     <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
                     <div className="text">
                       <div className="name">{feed.name}</div>
-                      <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
+                      <a
+                        href="https://docs.mavryk.finance/smart-contracts/smart-contracts-overview/aggregator-contract"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         Learn how to use {feed.name} in your smart contracts here <Icon id="question" />
                       </a>
                     </div>
@@ -377,7 +381,13 @@ const DataFeedDetails = () => {
                     tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
                     settings={{
                       tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
-                      priceMargins: chartDataAverage < 10 ? { top: 0.65, bottom: 0.3 } : { top: 0.5, bottom: 0.2 },
+                      priceMargins:
+                        chartDataAverage < 10
+                          ? { top: 0.65, bottom: 0.3 }
+                          : {
+                              top: 0.5,
+                              bottom: 0.2,
+                            },
                     }}
                   />
                 )}

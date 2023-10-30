@@ -9,7 +9,7 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 
 import { EARN_APY, INTEREST_EARNED, M_TOKEN_BALANCE, SUPPLIED_AMOUNT } from 'texts/tooltips/loan.text'
 
-import { LoansValuesSectionInfo, LoansValuesSection } from './../LoansComponents.style'
+import { LoansValuesSection, LoansValuesSectionInfo } from './../LoansComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
@@ -109,7 +109,11 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
       </div>
 
       <LoansValuesSectionInfo className="learn-more">
-        <a href="https://mavryk.finance/litepaper#multi-collateral-vaults" target="_blank" rel="noreferrer">
+        <a
+          href="https://docs.mavryk.finance/mavryk-finance/earn-and-borrow/multi-collateral-vaults"
+          target="_blank"
+          rel="noreferrer"
+        >
           Learn more at the Mavryk Finance Docs
         </a>
       </LoansValuesSectionInfo>

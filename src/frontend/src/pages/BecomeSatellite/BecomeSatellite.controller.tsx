@@ -183,7 +183,7 @@ export const BecomeSatellite = () => {
                   forgo all of the oracle rewards which are a major source of payments. For information on operating an
                   oracle node for your Satellite, please read more on Gitbook{' '}
                   <CustomLink
-                    to="https://mavryk.finance/litepaper#the-decentralized-oracle"
+                    to="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles/oracle-nodes"
                     styling={{ underline: true }}
                   >
                     here

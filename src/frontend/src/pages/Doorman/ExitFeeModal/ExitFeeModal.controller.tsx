@@ -1,10 +1,10 @@
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import {
-  INPUT_STATUS_SUCCESS,
+  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
-  ERR_MSG_TOAST,
+  INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../helpers/validators'
@@ -90,7 +90,7 @@ export const ExitFeeModal = ({
 
       return await unstakeMVK(unstakeAmount, doormanAddress)
     },
-    [bug, doormanAddress, userAddress]
+    [bug, doormanAddress, userAddress],
   )
 
   const dappActionCallback = useCallback(() => {
@@ -104,7 +104,7 @@ export const ExitFeeModal = ({
       dappActionCallback: dappActionCallback,
       afterActionCallback: closePopup,
     }),
-    [unstakeAction, inputData.amount, dappActionCallback, closePopup]
+    [unstakeAction, inputData.amount, dappActionCallback, closePopup],
   )
 
   const { action: handleUnstake } = useContractAction(contractActionProps)
@@ -166,7 +166,7 @@ export const ExitFeeModal = ({
             <div>
               <h4>
                 MVK Loyalty Index
-                <CustomLink to="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees">
+                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
@@ -187,7 +187,7 @@ export const ExitFeeModal = ({
             <div>
               <h4>
                 Exit Fee
-                <CustomLink to="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees">
+                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />

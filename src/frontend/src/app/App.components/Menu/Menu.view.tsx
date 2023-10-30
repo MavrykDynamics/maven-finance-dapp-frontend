@@ -52,7 +52,7 @@ export const SocialIcons = () => (
     <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
       <Icon id="socialDiscord" />
     </a>
-    <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
+    <a href="https://docs.mavryk.finance" target="_blank" rel="noreferrer">
       <Icon id="faqIcon" />
     </a>
     <a href="https://github.com/mavrykfinance/" target="_blank" rel="noreferrer">
@@ -93,8 +93,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       Boolean(
         userAddress &&
           (getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
-            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0)
-      )
+            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0),
+      ),
     )
   }, [userAddress, mvkTokenAddress, userTokensBalances])
 
@@ -128,7 +128,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       actionType: GET_MVK_FROM_FAUCET_ACTION,
       actionFn: requestMVKAction,
     }),
-    [requestMVKAction]
+    [requestMVKAction],
   )
 
   const { action: handleRequestMVK } = useContractAction(contractActionProps)

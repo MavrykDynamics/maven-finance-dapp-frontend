@@ -32,8 +32,8 @@ import { validateText, validateTzAddress } from 'utils/validatorFunctions'
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
-  SATELLITE_GOVERNANCE_CONTENT_FORM,
   SATELLITE_GOVERNANCE_ACTION_NAMES,
+  SATELLITE_GOVERNANCE_CONTENT_FORM,
   SATELLITE_GOVERNANCE_INITIAL_DATA,
   SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA,
 } from './SatelliteGovernance.consts'
@@ -72,7 +72,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
       Object.values(validation).some((item) => item === INPUT_STATUS_ERROR) ||
       validation.table.some((item) => item.amount === INPUT_STATUS_ERROR || item.to_ === INPUT_STATUS_ERROR) ||
       isButtonDisabled,
-    [validation, isButtonDisabled]
+    [validation, isButtonDisabled],
   )
 
   const isFixMistakenTransfer = variant === SATELLITE_GOVERNANCE_ACTION_NAMES.FIX_MISTAKEN_TRANSFER
@@ -154,7 +154,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
 
   const validationText = (
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>,
-    maxLength?: number
+    maxLength?: number,
   ) => {
     const { value, name } = e.target
 
@@ -173,7 +173,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>,
-    rowIdx?: number
+    rowIdx?: number,
   ) => {
     const { name, value } = e.target
 
@@ -197,7 +197,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
                   ...item,
                   [name]: validateTzAddress(value as string) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
                 }
-              : item
+              : item,
           ),
         }))
         break
@@ -210,7 +210,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
                   ...item,
                   [name]: Number(value) > 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
                 }
-              : item
+              : item,
           ),
         }))
         break
@@ -236,7 +236,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
                     ...item,
                     [name]: value,
                   }
-                : item
+                : item,
             ),
           }
         })
@@ -277,7 +277,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
               ...item,
               token: newSelectedSymbol as TokenType,
             }
-          : item
+          : item,
       ),
     }))
   }
@@ -292,7 +292,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
   return (
     <SatelliteGovernanceAvailableAction onSubmit={handleSubmit}>
       <a
-        href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
+        href="https://docs.mavryk.finance/mavryk-finance/governance/satellite-governance"
         target="_blank"
         rel="noreferrer"
         className="info-link"

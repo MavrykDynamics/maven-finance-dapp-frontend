@@ -20,7 +20,7 @@ import { Trim } from 'app/App.components/Trim/Trim.view'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatBlock } from '../Dashboard.style'
-import { OraclesContentStyled, TabWrapperStyled, PopularFeed, EmptyContainer } from './DashboardTabs.style'
+import { EmptyContainer, OraclesContentStyled, PopularFeed, TabWrapperStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
@@ -143,7 +143,7 @@ export const OraclesTab = () => {
           assets selected through governance, such as the collateral assets used in vaults and lending. They will then
           receive rewards in sMVK proportionate to their total voting power, and will distribute these rewards to their
           delegates.{' '}
-          <a href="https://mavryk.finance/litepaper#satellites" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>

@@ -160,7 +160,12 @@ export const MavCouncilFormSetContractBaker = () => {
 
   return (
     <CouncilFormStyled formName={MavrykCounsilDdForms.SET_CONTRACT_BAKER}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
+      <a
+        className="info-link"
+        href="https://docs.mavryk.finance/mavryk-finance/council"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 
