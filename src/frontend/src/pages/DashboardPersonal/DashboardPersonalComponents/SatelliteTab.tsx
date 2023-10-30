@@ -197,7 +197,7 @@ const SatelliteTab = ({
               </div>
             </div>
             <DashboardPersonalSatellitesBottomLinks>
-              <Link to={`/become-satellite/details`}>View Profile</Link>
+              <Link to={`/become-satellite/edit`}>View Profile</Link>
             </DashboardPersonalSatellitesBottomLinks>
           </>
         ) : (
