@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // const
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
@@ -148,7 +148,12 @@ export const MavCouncilFormDropFinancialRequest = () => {
 
   return (
     <CouncilFormStyled formName={MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
+      <a
+        className="info-link"
+        href="https://docs.mavryk.finance/mavryk-finance/council"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 

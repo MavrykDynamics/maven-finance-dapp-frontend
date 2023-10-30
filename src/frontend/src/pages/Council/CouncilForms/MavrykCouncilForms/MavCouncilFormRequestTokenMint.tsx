@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { REQUEST_TOKENS_MINT_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
-import { TREASURY_STORAGE_DATA_SUB, DEFAULT_TREASURY_SUBS } from 'providers/TreasuryProvider/helpers/treasury.consts'
+import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
@@ -18,7 +19,6 @@ import { validateFormField } from 'utils/validatorFunctions'
 
 // types
 import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 
 // view
 import { Input } from 'app/App.components/Input/NewInput'
@@ -185,7 +185,12 @@ export const MavCouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
 
   return (
     <CouncilFormStyled formName={MavrykCounsilDdForms.REQUEST_TOKEN_MINT}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
+      <a
+        className="info-link"
+        href="https://docs.mavryk.finance/mavryk-finance/council"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 

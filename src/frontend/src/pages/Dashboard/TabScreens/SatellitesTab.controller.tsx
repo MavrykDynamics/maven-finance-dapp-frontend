@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom'
 // const
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import {
-  SATELLITE_DATA_SUB,
-  SATELLITES_DATA_ACTIVE_SUB,
-  SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 
 // types
@@ -136,7 +136,7 @@ export const SatellitesTab = () => {
           <br />
           To operate a Mavryk Satellite, a users needs to stake a security deposit in MVK, and operate an oracle node
           for signing data feeds. For more information about starting & operating a Satellite.{' '}
-          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>

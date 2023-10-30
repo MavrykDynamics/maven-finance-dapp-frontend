@@ -9,7 +9,7 @@ import {
   INPUT_STATUS_SUCCESS,
   InputStatusType,
 } from '../../../../app/App.components/Input/Input.constants'
-import { VESTING_STORAGE_DATA_SUB, DEFAULT_VESTING_SUBS } from 'providers/VestingProvider/helpers/vesting.consts'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 // helpers
 import { toggleVesteeLock } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -137,7 +137,12 @@ export const MavCouncilFormToggleVesteeLock = () => {
 
   return (
     <CouncilFormStyled formName={MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
+      <a
+        className="info-link"
+        href="https://docs.mavryk.finance/mavryk-finance/council"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 

@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 // consts
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
 import { ADD_COUNSIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
+import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
@@ -13,7 +14,6 @@ import {
 // types
 import type { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 
 // helpers
 import { getShortTzAddress } from '../../../../utils/tzAdress'
@@ -233,7 +233,12 @@ export const MavCouncilFormChangeCouncilMember = ({
 
   return (
     <CouncilFormStyled formName={MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
+      <a
+        className="info-link"
+        href="https://docs.mavryk.finance/mavryk-finance/council"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 

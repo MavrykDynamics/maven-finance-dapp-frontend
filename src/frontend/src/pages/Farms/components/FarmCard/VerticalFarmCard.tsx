@@ -8,7 +8,6 @@ import { UserContext } from 'providers/UserProvider/user.provider.types'
 // view
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import Button from 'app/App.components/Button/NewButton'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import { VerticalFarmCardStyled } from './FarmCard.style'
 import { FarmCardHarvest } from './cardParts/FarmCardHarvest'
@@ -16,7 +15,6 @@ import { FarmCardHeader } from './cardParts/FarmCardHeader'
 import { FarmCardActions } from './cardParts/FarmCardActions'
 
 // consts
-import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 // utils
 import { calculateFarmAPY, getFarmUserDepositedAmount } from 'providers/FarmsProvider/helpers/farms.utils'
@@ -66,7 +64,12 @@ export const VerticalFarmCard = ({
         </div>
       ) : null}
 
-      <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
+      <a
+        className="info-link"
+        href="https://docs.mavryk.finance/mavryk-finance/yield-farms/mavryk-finances-yield-farms"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 

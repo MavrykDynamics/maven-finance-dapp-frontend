@@ -139,7 +139,11 @@ export const BorrowingExpandCardValuesSection = ({
         />
       </LoansValuesSectionInfo>
       <LoansValuesSectionInfo className="learn-more">
-        <a href="https://mavryk.finance/litepaper#multi-collateral-vaults" target="_blank" rel="noreferrer">
+        <a
+          href="https://docs.mavryk.finance/mavryk-finance/earn-and-borrow/multi-collateral-vaults"
+          target="_blank"
+          rel="noreferrer"
+        >
           Learn more at the Mavryk Finance Docs
         </a>
       </LoansValuesSectionInfo>

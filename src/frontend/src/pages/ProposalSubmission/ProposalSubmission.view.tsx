@@ -18,9 +18,9 @@ import { StageOneForm } from './StageOneForm/StageOneForm.controller'
 import { StageThreeForm } from './StageThreeForm/StageThreeForm.controller'
 import { StageTwoForm } from './StageTwoForm/StageTwoForm.controller'
 import {
-  ProposalSubmittionButtons,
   MultyProposalsStyled,
   ProposalSubmissionForm,
+  ProposalSubmittionButtons,
   SubmitProposalHeader,
 } from './ProposalSubmission.style'
 import Button from 'app/App.components/Button/NewButton'
@@ -35,9 +35,9 @@ import { MultyProposalItem, ProposalValidityObj } from './ProposalSubmission.typ
 
 // consts
 import {
+  BUTTON_NAVIGATION,
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
-  BUTTON_NAVIGATION,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
 import {
@@ -48,36 +48,34 @@ import {
   UPDATE_PROPOSAL_DATA_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'providers/ProposalsProvider/queries/getLatestUserProposal.query'
-import { DEFAULT_PROPOSAL_VALIDATION, DEFAULT_PROPOSAL } from './helpers/proposalSubmission.const'
-import colors from 'styles/colors'
+import { DEFAULT_PROPOSAL, DEFAULT_PROPOSAL_VALIDATION } from './helpers/proposalSubmission.const'
 import {
   DROP_PROPOSAL_BUTTON_TOOLTIP,
-  SUBMIT_PROPOSAL_BUTTON_TOOLTIP,
-  SAVE_CHANGES_BUTTON_TOOLTIP,
   NEXT_STEP_BUTTON_TOOLTIP,
+  SAVE_CHANGES_BUTTON_TOOLTIP,
+  SUBMIT_PROPOSAL_BUTTON_TOOLTIP,
 } from 'texts/tooltips/governance'
 
 // helpers & actions
 import {
+  dropProposal,
+  lockProposal,
   submitProposal,
   updateProposalData,
-  lockProposal,
-  dropProposal,
 } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 import { getBytesDiff, getPaymentsDiff } from './helpers/ProposalSubmissionDiff.utils'
-import { unknownToError } from 'errors/error'
-import { isAbortError } from 'errors/error'
+import { isAbortError, unknownToError } from 'errors/error'
 import { api } from 'utils/api/api'
 import {
-  getTimestampByLevelUrl,
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import {
-  isProposalHasChange,
+  checkStage1Validation,
   checkStage2Validation,
   checkStage3Validation,
-  checkStage1Validation,
+  isProposalHasChange,
 } from './helpers/proposalSubmissionValidation.utils'
 import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
 
@@ -112,7 +110,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         const { data: votingEndTimestamp } = await api(
           getTimestampByLevelUrl(currentRoundEndLevel),
           { signal: abortController.signal, headers: getTimestampByLevelHeaders },
-          getTimestampByLevelSchema
+          getTimestampByLevelSchema,
         )
 
         // TODO: mb show bug in a future
@@ -139,7 +137,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // this object represents ds we can use with stages, to interact with in tables, inputs, etc
   const [proposalKeys, mappedProposals, mappedValidation] = useMemo(
     () => normalizeProposalsForSubmitProposal({ submissionProposalsIds, proposalsMapper }),
-    [submissionProposalsIds, proposalsMapper]
+    [submissionProposalsIds, proposalsMapper],
   )
 
   // Proposals user can swith between and modify, and validation to it
@@ -170,7 +168,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         active: id === selectedUserProposalId,
         value: id,
       })),
-    [proposalKeys, selectedUserProposalId, mappedProposals]
+    [proposalKeys, selectedUserProposalId, mappedProposals],
   )
 
   // Current proposal on client validation to it and current proposal on remote (might not exists if it's create new proposal with id -1)
@@ -187,7 +185,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       if (proposalId !== selectedUserProposalId && window.location.pathname.includes('submit-proposal'))
         history.replace(`/submit-proposal?${QueryString.stringify({ proposalId })}`)
     },
-    [history, selectedUserProposalId]
+    [history, selectedUserProposalId],
   )
 
   const updateLocalProposalData = (newProposalData: Partial<ProposalRecordType>, proposalId: number) => {
@@ -238,7 +236,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       dappActionCallback: () =>
         changeActiveProposal(submissionProposalsIds.find((id) => id !== selectedUserProposalId) ?? DEFAULT_PROPOSAL.id),
     }),
-    [changeActiveProposal, dropActionFn, selectedUserProposalId, submissionProposalsIds]
+    [changeActiveProposal, dropActionFn, selectedUserProposalId, submissionProposalsIds],
   )
 
   const { action: handleDropProposal } = useContractAction(dropContractProps)
@@ -262,7 +260,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       actionType: LOCK_PROPOSAL_ACTION,
       actionFn: lockActionFn,
     }),
-    [lockActionFn]
+    [lockActionFn],
   )
 
   const { action: handleLockProposal } = useContractAction(lockContractProps)
@@ -313,14 +311,14 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     const bytes = getBytesDiff(
       [],
       currentProposal.proposalData.filter(
-        ({ title, encoded_code, code_description }) => title || encoded_code || code_description
-      )
+        ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+      ),
     )
 
     const payments = getPaymentsDiff(
       [],
       currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-      tokensMetadata
+      tokensMetadata,
     )
 
     const { title, description, sourceCode, invoice } = currentProposal
@@ -335,7 +333,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       },
       fee,
       bytes,
-      payments
+      payments,
     )
   }, [bug, currentProposal, fee, governanceAddress, tokensMetadata, userAddress])
 
@@ -345,7 +343,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       actionFn: submitActionFn,
       dappActionCallback: getNewProposalId,
     }),
-    [getNewProposalId, submitActionFn]
+    [getNewProposalId, submitActionFn],
   )
 
   const { action: handleProposalSubmit } = useContractAction(submitContractProps)
@@ -364,13 +362,13 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     const bytesDiff = getBytesDiff(
       currentProposalOnRemote.proposalData,
       currentProposal.proposalData.filter(
-        ({ title, encoded_code, code_description }) => title || encoded_code || code_description
-      )
+        ({ title, encoded_code, code_description }) => title || encoded_code || code_description,
+      ),
     )
     const paymentsDiff = getPaymentsDiff(
       currentProposalOnRemote.proposalPayments,
       currentProposal.proposalPayments.filter(({ token_amount, to__id }) => token_amount || to__id),
-      tokensMetadata
+      tokensMetadata,
     )
 
     setLastProposalIdFromOperation(selectedUserProposalId)
@@ -390,7 +388,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       actionType: UPDATE_PROPOSAL_DATA_ACTION,
       actionFn: updateActionFn,
     }),
-    [updateActionFn]
+    [updateActionFn],
   )
 
   const { action: handleProposalUpdate } = useContractAction(updateContractProps)
@@ -428,7 +426,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             remoteProposal: currentProposalOnRemote,
           })
         : false,
-    [isProposalSubmitted, isProposalPeriod, currentProposal, currentProposalOnRemote]
+    [isProposalSubmitted, isProposalPeriod, currentProposal, currentProposalOnRemote],
   )
 
   // validate bytes (stage 2)
@@ -439,7 +437,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         currentProposal,
         remoteProposal: currentProposalOnRemote,
       }),
-    [currentProposal, currentProposalOnRemote, currentProposalValidation]
+    [currentProposal, currentProposalOnRemote, currentProposalValidation],
   )
 
   // validate payments (stage 3)
@@ -450,7 +448,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
         currentProposal,
         remoteProposal: currentProposalOnRemote,
       }),
-    [currentProposal, currentProposalValidation, currentProposalOnRemote]
+    [currentProposal, currentProposalValidation, currentProposalOnRemote],
   )
 
   // validate proposal metadata (stage 1)
@@ -500,7 +498,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       <PropSubmissionTopBar valueCallback={handleNextStep} activeTab={activeTab} />
 
       <ProposalSubmissionForm>
-        <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
+        <a
+          className="info-link"
+          href="https://docs.mavryk.finance/mavryk-finance/governance/governance-rounds/proposal-round"
+          target="_blank"
+          rel="noreferrer"
+        >
           <Icon id="question" />
         </a>
 

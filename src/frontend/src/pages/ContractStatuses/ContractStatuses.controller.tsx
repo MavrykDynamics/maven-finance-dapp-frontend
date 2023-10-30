@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useLocation, useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
 // components
@@ -26,9 +26,9 @@ import {
   BGCardsWrapper,
   BGInfo,
   BGMiddleWrapper,
+  BGPrimaryTitle,
   BGStatusIndicator,
   BGStyled,
-  BGPrimaryTitle,
   BGTop,
   BGWhitelist,
 } from './ContractStatuses.style'
@@ -138,7 +138,7 @@ export const ContractStatuses = () => {
 
               <FAQLink className="BG-faq-link">
                 <a
-                  href="https://mavryk.finance/litepaper#emergency-governance--break-glass "
+                  href="https://docs.mavryk.finance/mavryk-finance/governance/emergency-governance"
                   target="_blank"
                   rel="noreferrer"
                 >

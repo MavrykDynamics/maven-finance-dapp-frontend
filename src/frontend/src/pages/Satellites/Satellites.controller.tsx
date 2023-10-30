@@ -33,9 +33,9 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
-  DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
@@ -71,7 +71,7 @@ const Satellites = () => {
       totalSatelliteOracles: activeSatellitesIds.length,
       numberOfDataFeeds: feedsAddresses.length > 50 ? feedsAddresses.length + '+' : feedsAddresses.length,
     }),
-    [activeSatellitesIds, feedsAddresses, satelliteMapper]
+    [activeSatellitesIds, feedsAddresses, satelliteMapper],
   )
 
   return (
@@ -100,7 +100,7 @@ const Satellites = () => {
               <h3>Total Delegated MVK</h3>
               <div className="value">
                 {tabsInfo.totalDelegetedMVK}
-                <CustomLink to="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
+                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles">
                   <Tooltip>
                     <Tooltip.Trigger className="tooltip-trigger">
                       <Icon id="info" />

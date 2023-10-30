@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
-import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import { BUTTON_WIDE, PRIMARY } from 'app/App.components/Button/Button.constants'
 
 // types
@@ -57,7 +57,7 @@ export const LendingTab = () => {
         tokensMetadata,
         tokensPrices,
       }),
-    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices]
+    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices],
   )
 
   return (
@@ -156,7 +156,7 @@ export const LendingTab = () => {
         <div className="text">
           Mavryk Finance allows its users to put up existing crypto-assets as collateral for a loan, up to a 50%
           loan-to-value ratio. Likewise, suppliers can loan out their crypto-assets to earn interest.{' '}
-          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavryk.finance/mavryk-finance/earn-and-borrow" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>
@@ -224,5 +224,5 @@ const reduceLoansData = ({
       totalLended: 0,
       mostBorrowedAsset: null,
       mostLendedAsset: null,
-    }
+    },
   )

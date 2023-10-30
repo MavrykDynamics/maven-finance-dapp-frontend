@@ -14,10 +14,10 @@ import { EGovCard } from './EGovCard/EGovCard.controller'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { EmptyContainer } from 'app/App.style'
 import {
-  EmergencyGovernanceCard,
   CardContent,
   CardContentLeftSide,
   CardContentRightSide,
+  EmergencyGovernanceCard,
   EmergencyGovernHistory,
 } from './EmergencyGovernance.style'
 
@@ -34,16 +34,16 @@ import {
   DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
 } from 'providers/ContractStatuses/helpers/contractStatuses.consts'
 import {
-  EGOV_CONFIG_SUB,
-  EGOV_PROPOSALS_SUB,
-  EGOV_PROPOSALS_ALL_SUB,
   DEFAULT_EGOV_SUBS,
+  EGOV_CONFIG_SUB,
+  EGOV_PROPOSALS_ALL_SUB,
+  EGOV_PROPOSALS_SUB,
 } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
-  getPageNumber,
-  EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME,
   calculateSlicePositions,
+  EMERGENCY_GOVERNANCE_HISTORY_LIST_NAME,
+  getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
 
 export const EmergencyGovernance = () => {
@@ -114,7 +114,7 @@ export const EmergencyGovernance = () => {
               break glass council members using a multi-sig.
             </div>
             <a
-              href="https://mavryk.finance/litepaper#emergency-governance--break-glass "
+              href="https://docs.mavryk.finance/mavryk-finance/governance/emergency-governance"
               target="_blank"
               rel="noreferrer"
               className="underline"
