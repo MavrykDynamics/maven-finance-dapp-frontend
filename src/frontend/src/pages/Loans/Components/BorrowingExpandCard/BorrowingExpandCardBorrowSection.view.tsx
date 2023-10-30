@@ -22,7 +22,6 @@ import { useBorrowInputData } from '../Modals/hooks/Market/useBorrowInputData'
 import { checkNan } from 'utils/checkNan'
 import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // types
@@ -130,15 +129,13 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       <div className={!showWarning ? 'mt-25' : ''}>
         <div className="tab-text mb-10">Updated Borrow {symbol} Stats</div>
         <CardSectionWrapper>
-          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
-            <TableStats
-              futureCollateralRatio={futureCollateralRatio}
-              inputAmount={inputAmount}
-              currentCollateralBalance={currentCollateralBalance}
-              futureBorrowCapacity={futureBorrowCapacity}
-              DAOFee={DAOFee}
-            />
-          </MemoizedComponent>
+          <TableStats
+            futureCollateralRatio={futureCollateralRatio}
+            inputAmount={inputAmount}
+            currentCollateralBalance={currentCollateralBalance}
+            futureBorrowCapacity={futureBorrowCapacity}
+            DAOFee={DAOFee}
+          />
         </CardSectionWrapper>
       </div>
 

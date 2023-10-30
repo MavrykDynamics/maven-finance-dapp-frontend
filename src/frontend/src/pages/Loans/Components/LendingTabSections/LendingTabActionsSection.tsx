@@ -46,7 +46,6 @@ import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingT
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { XTZLimitInfoBanner } from '../Modals/components/XTZLimitInfoBanner'
 import { Info } from 'app/App.components/Info/Info.view'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
@@ -201,15 +200,13 @@ export const LendingTabActionsSection = ({
         <div className="tab-text mb-10">Updated Lending {symbol} Stats</div>
 
         <CardSectionWrapper>
-          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
-            <LendingStatsTable
-              lendAPY={lendAPY}
-              isSupplyActiveTab={isSupplyActiveTab}
-              symbol={symbol}
-              amount={inputData.amount}
-              futureMBalance={futureMBalance}
-            />
-          </MemoizedComponent>
+          <LendingStatsTable
+            lendAPY={lendAPY}
+            isSupplyActiveTab={isSupplyActiveTab}
+            symbol={symbol}
+            amount={inputData.amount}
+            futureMBalance={futureMBalance}
+          />
         </CardSectionWrapper>
       </div>
 

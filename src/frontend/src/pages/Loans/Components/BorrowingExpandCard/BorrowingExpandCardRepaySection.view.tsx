@@ -51,7 +51,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 type Props = {
@@ -277,16 +276,14 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       <div className={!isMinimumRepayWarning ? 'mt-25' : ''}>
         <div className="tab-text mb-10">Updated Repay {symbol} Stats</div>
 
-        <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
-          <RepayTableStats
-            futureBorrowedAmount={futureBorrowedAmount}
-            collateralBalance={collateralBalance}
-            futureTotalOutstanding={futureTotalOustanding}
-            futureCollateralRatio={futureCollateralRatio}
-            futureBorrowCapacity={futureBorrowCapacity}
-            fee={fee}
-          />
-        </MemoizedComponent>
+        <RepayTableStats
+          futureBorrowedAmount={futureBorrowedAmount}
+          collateralBalance={collateralBalance}
+          futureTotalOutstanding={futureTotalOustanding}
+          futureCollateralRatio={futureCollateralRatio}
+          futureBorrowCapacity={futureBorrowCapacity}
+          fee={fee}
+        />
       </div>
 
       <div className="button-wrapper">

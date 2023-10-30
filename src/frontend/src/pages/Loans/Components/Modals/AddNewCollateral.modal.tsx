@@ -10,7 +10,6 @@ import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 
 // helpers
@@ -376,40 +375,38 @@ export const AddNewCollateral = ({
           <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="block-name">New Vault Status</div>
-          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
-            <VaultModalOverview>
-              <ThreeLevelListItem
-                className="collateral-diagram"
-                customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
-              >
-                <div className={`percentage`}>
-                  Collateral Ratio:{' '}
-                  <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-                </div>
-                <GradientDiagram
-                  className="diagram"
-                  colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                  currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
-                />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">Collateral Value</div>
-                <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">
-                  Available to Borrow
-                  <Tooltip>
-                    <Tooltip.Trigger className="ml-3">
-                      <Icon id="info" />
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>{AVALIABLE_TO_BORROW}</Tooltip.Content>
-                  </Tooltip>
-                </div>
-                <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
-              </ThreeLevelListItem>
-            </VaultModalOverview>
-          </MemoizedComponent>
+          <VaultModalOverview>
+            <ThreeLevelListItem
+              className="collateral-diagram"
+              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
+            >
+              <div className={`percentage`}>
+                Collateral Ratio:{' '}
+                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+              </div>
+              <GradientDiagram
+                className="diagram"
+                colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
+              />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">Collateral Value</div>
+              <CommaNumber value={futureCollateralBalance} className="value" beginningText="$" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">
+                Available to Borrow
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{AVALIABLE_TO_BORROW}</Tooltip.Content>
+                </Tooltip>
+              </div>
+              <CommaNumber value={futureBorrowCapacity} className="value" beginningText="$" />
+            </ThreeLevelListItem>
+          </VaultModalOverview>
 
           <div className="manage-btn">
             <NewButton

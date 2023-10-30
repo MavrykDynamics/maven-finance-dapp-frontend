@@ -24,7 +24,6 @@ import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // styles
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
@@ -345,41 +344,39 @@ export const AddCollateralScreen = () => {
 
         <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20" />
 
-        <MemoizedComponent returnMemoizedComponent={isAddCollateralContinueDisabled}>
-          <ModalStatsBlock>
-            <div className="block-name">New Vault stats</div>
-            <div className="collateral-screen">
-              <VaultOverview>
-                <div className="line">
-                  <ThreeLevelListItem>
-                    <div className="name">
-                      Total Collateral Value
-                      <Tooltip>
-                        <Tooltip.Trigger className="ml-3">
-                          <Icon id="info" />
-                        </Tooltip.Trigger>
-                        <Tooltip.Content>{COLLATERAL_VALUE}</Tooltip.Content>
-                      </Tooltip>
-                    </div>
-                    <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" />
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">
-                      Borrow Capacity
-                      <Tooltip>
-                        <Tooltip.Trigger className="ml-3">
-                          <Icon id="info" />
-                        </Tooltip.Trigger>
-                        <Tooltip.Content>{BORROW_CAPACITY}</Tooltip.Content>
-                      </Tooltip>
-                    </div>
-                    <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
-                  </ThreeLevelListItem>
-                </div>
-              </VaultOverview>
-            </div>
-          </ModalStatsBlock>
-        </MemoizedComponent>
+        <ModalStatsBlock>
+          <div className="block-name">New Vault stats</div>
+          <div className="collateral-screen">
+            <VaultOverview>
+              <div className="line">
+                <ThreeLevelListItem>
+                  <div className="name">
+                    Total Collateral Value
+                    <Tooltip>
+                      <Tooltip.Trigger className="ml-3">
+                        <Icon id="info" />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>{COLLATERAL_VALUE}</Tooltip.Content>
+                    </Tooltip>
+                  </div>
+                  <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">
+                    Borrow Capacity
+                    <Tooltip>
+                      <Tooltip.Trigger className="ml-3">
+                        <Icon id="info" />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>{BORROW_CAPACITY}</Tooltip.Content>
+                    </Tooltip>
+                  </div>
+                  <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
+                </ThreeLevelListItem>
+              </div>
+            </VaultOverview>
+          </div>
+        </ModalStatsBlock>
 
         <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
           <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backHandler}>

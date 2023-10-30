@@ -9,7 +9,6 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // consts
 import {
@@ -63,7 +62,6 @@ export const AddLendingAsset = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const {
-    preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
@@ -179,30 +177,28 @@ export const AddLendingAsset = ({
             </InputPinnedTokenInfo>
           </Input>
 
-          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
-            <div className="lending-stats" style={{ marginTop: '45px' }}>
-              <ThreeLevelListItem>
-                <div className="name">
-                  Earn APY
-                  <Tooltip>
-                    <Tooltip.Trigger className="ml-3">
-                      <Icon id="info" />
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>{`You will receive m${symbol} instead of your ${symbol}`}</Tooltip.Content>
-                  </Tooltip>
-                </div>
-                <CommaNumber value={lendingAPY} className="value" endingText="%" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">m{symbol} Received</div>
-                <CommaNumber value={Number(inputData.amount)} className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">New m{symbol} Balance</div>
-                <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
-              </ThreeLevelListItem>
-            </div>
-          </MemoizedComponent>
+          <div className="lending-stats" style={{ marginTop: '45px' }}>
+            <ThreeLevelListItem>
+              <div className="name">
+                Earn APY
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{`You will receive m${symbol} instead of your ${symbol}`}</Tooltip.Content>
+                </Tooltip>
+              </div>
+              <CommaNumber value={lendingAPY} className="value" endingText="%" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">m{symbol} Received</div>
+              <CommaNumber value={Number(inputData.amount)} className="value" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">New m{symbol} Balance</div>
+              <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
+            </ThreeLevelListItem>
+          </div>
           <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="manage-btn">
