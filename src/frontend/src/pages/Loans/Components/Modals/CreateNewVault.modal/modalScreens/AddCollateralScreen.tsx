@@ -1,12 +1,11 @@
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // utils
 import { validateInputLength } from 'app/App.utils/input/validateInput'
@@ -21,14 +20,12 @@ import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.
 // components
 import Button from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 
 // styles
-import colors from 'styles/colors'
 import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
 import { CollateralInputWrapper, DeleteCollateralInputIconWrapper, ModalStatsBlock } from '../createNewVault.style'
 import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
@@ -63,9 +60,6 @@ export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
 
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
   const { bakersRecord, bakers } = useXtzBakersForDD()
   const {
     selectedCollateralsAddresses,
@@ -85,7 +79,7 @@ export const AddCollateralScreen = () => {
 
   const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit } = useXTZMaxAmountValidator(
     selectedCollateralsAddresses,
-    selectedCollaterals,
+    selectedCollaterals
   )
 
   useEffect(() => {
@@ -114,7 +108,7 @@ export const AddCollateralScreen = () => {
         const isCollateralDisabled = Boolean(
           collateral.loanData.isPausedCollateral ||
             selectedCollaterals[collateralTokenAddress] ||
-            collateralTokenAddress === SMVK_TOKEN_ADDRESS,
+            collateralTokenAddress === SMVK_TOKEN_ADDRESS
         )
 
         if (!isCollateralDisabled && !firstNotDisabledCollateralAddress)
@@ -139,13 +133,13 @@ export const AddCollateralScreen = () => {
   }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses.length, tokensMetadata, tokensPrices])
 
   const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
-    ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress),
+    ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress)
   )
 
   const isAddCollateralContinueDisabled =
     (hasXTZTokenSelected && !selectedBaker) ||
     selectedCollateralsAddresses.some(
-      (tokenAddress) => selectedCollaterals[tokenAddress].validation !== INPUT_STATUS_SUCCESS,
+      (tokenAddress) => selectedCollaterals[tokenAddress].validation !== INPUT_STATUS_SUCCESS
     )
 
   // handlers
@@ -176,7 +170,7 @@ export const AddCollateralScreen = () => {
     newInputAmount: string,
     userCollateralBalance: number,
     collateralAddress: TokenAddressType,
-    collateralDecimals: number,
+    collateralDecimals: number
   ) => {
     const validationStatus: InputStatusType = loansInputValidation({
       inputAmount: newInputAmount,
@@ -350,41 +344,39 @@ export const AddCollateralScreen = () => {
 
         <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20" />
 
-        <MemoizedComponent returnMemoizedComponent={isAddCollateralContinueDisabled}>
-          <ModalStatsBlock>
-            <div className="block-name">New Vault stats</div>
-            <div className="collateral-screen">
-              <VaultOverview>
-                <div className="line">
-                  <ThreeLevelListItem>
-                    <div className="name">
-                      Total Collateral Value
-                      <CustomTooltip
-                        iconId="info"
-                        defaultStrokeColor={colors[themeSelected].subHeadingText}
-                        text={COLLATERAL_VALUE}
-                        className="tooltip"
-                      />
-                    </div>
-                    <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" />
-                  </ThreeLevelListItem>
-                  <ThreeLevelListItem>
-                    <div className="name">
-                      Borrow Capacity
-                      <CustomTooltip
-                        iconId="info"
-                        defaultStrokeColor={colors[themeSelected].subHeadingText}
-                        text={BORROW_CAPACITY}
-                        className="tooltip"
-                      />
-                    </div>
-                    <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
-                  </ThreeLevelListItem>
-                </div>
-              </VaultOverview>
-            </div>
-          </ModalStatsBlock>
-        </MemoizedComponent>
+        <ModalStatsBlock>
+          <div className="block-name">New Vault stats</div>
+          <div className="collateral-screen">
+            <VaultOverview>
+              <div className="line">
+                <ThreeLevelListItem>
+                  <div className="name">
+                    Total Collateral Value
+                    <Tooltip>
+                      <Tooltip.Trigger className="ml-3">
+                        <Icon id="info" />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>{COLLATERAL_VALUE}</Tooltip.Content>
+                    </Tooltip>
+                  </div>
+                  <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" />
+                </ThreeLevelListItem>
+                <ThreeLevelListItem>
+                  <div className="name">
+                    Borrow Capacity
+                    <Tooltip>
+                      <Tooltip.Trigger className="ml-3">
+                        <Icon id="info" />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>{BORROW_CAPACITY}</Tooltip.Content>
+                    </Tooltip>
+                  </div>
+                  <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
+                </ThreeLevelListItem>
+              </div>
+            </VaultOverview>
+          </div>
+        </ModalStatsBlock>
 
         <div className="buttons-wrapper" style={{ marginTop: '30px' }}>
           <Button kind={BUTTON_SECONDARY} form={BUTTON_WIDE} onClick={backHandler}>

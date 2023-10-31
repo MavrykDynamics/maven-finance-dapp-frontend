@@ -110,7 +110,7 @@ export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }
 
     position: relative;
 
-    .tooltip {
+    .tooltip-wrapper {
       position: absolute;
       right: 0px;
       top: 0px;

@@ -1,14 +1,14 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 // view
 import { TreasuryType } from 'providers/TreasuryProvider/helpers/treasury.types'
 import Icon from 'app/App.components/Icon/Icon.view'
 import PieChartView from '../../app/App.components/PieChart/PieСhart.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 // helpers
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getPieChartData } from 'app/App.components/Chart/helpers/getPieChartData'
 import { getTreasuryTVL } from 'providers/TreasuryProvider/helpers/treasury.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -19,18 +19,16 @@ import { TreasuryViewStyle } from './Treasury.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import {
   Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
   TableBody,
   TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
   TableScrollable,
 } from 'app/App.components/Table'
 import { Plug } from 'app/App.components/Chart/Chart.style'
-import colors from 'styles/colors'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -42,10 +40,6 @@ type Props = {
 }
 
 export default function TreasuryView({ treasury, isGlobal = false, factoryAddress }: Props) {
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
-
   const [hoveredPath, setHoveredPath] = useState<null | string>(null)
   const [showZeroTreasuries, setShowZeroTreasuries] = useState<boolean>(false)
   const ref = useRef<HTMLDivElement | null>(null)
@@ -76,8 +70,13 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
 
   return (
     <TreasuryViewStyle ref={ref}>
-      <a href="https://mavryk.finance/litepaper#treasury " target="_blank" rel="noreferrer" className="info-link">
-        <CustomTooltip iconId="question" />
+      <a
+        href="https://docs.mavryk.finance/mavryk-finance/treasury"
+        target="_blank"
+        rel="noreferrer"
+        className="info-link"
+      >
+        <Icon id="question" />
       </a>
 
       <div className="content-wrapper">
@@ -89,11 +88,15 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
           <div className="info-block">
             <p className="text">
               TVL
-              <CustomTooltip
-                iconId="info"
-                defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                text="Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only interact with whitelisted tokens."
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="ml-5">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  Only tokens whitelisted by the DAO are shown in the treasuries. This is because the DAO can only
+                  interact with whitelisted tokens.
+                </Tooltip.Content>
+              </Tooltip>
             </p>
             <p className="value">
               <CommaNumber beginningText="$" value={treasuryTVL} />
@@ -128,10 +131,17 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
               {filteredBalance.length ? (
                 <TableBody className={`treasury`}>
                   {filteredBalance.map(({ balance, tokenAddress }) => {
-                    const treasuryToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                    const treasuryToken = getTokenDataByAddress({
+                      tokenAddress,
+                      tokensMetadata,
+                      tokensPrices,
+                    })
                     if (!treasuryToken || !treasuryToken.rate) return null
                     const { symbol, decimals, rate } = treasuryToken
-                    const treasuryTokenBalance = convertNumberForClient({ number: balance, grade: decimals })
+                    const treasuryTokenBalance = convertNumberForClient({
+                      number: balance,
+                      grade: decimals,
+                    })
 
                     return (
                       <TableRow rowHeight={25} borderColor="primaryText" className="add-hover" key={symbol}>

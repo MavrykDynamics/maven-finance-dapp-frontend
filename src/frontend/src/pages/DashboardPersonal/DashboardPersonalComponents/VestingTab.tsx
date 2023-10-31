@@ -74,7 +74,7 @@ const VestingTab = () => {
       actionType: CLAIM_VESTING_REWARD_ACTION,
       actionFn: vestingAction,
     }),
-    [vestingAction],
+    [vestingAction]
   )
 
   const { action: handleClaimVestingReward } = useContractAction(contractActionProps)
@@ -124,7 +124,7 @@ const VestingTab = () => {
             <div className="column">
               <div className="name">Vesting Period</div>
               <div className="value">
-                <CommaNumber value={vestingMonth} endingText="mos." />
+                <CommaNumber value={vestingMonth} endingText="m" />
               </div>
             </div>
 

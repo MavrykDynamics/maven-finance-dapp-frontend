@@ -6,7 +6,6 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import Toggle from 'app/App.components/Toggle/Toggle.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { LiquidateVaultModalStyled } from './LiquidateVaultModal.styles'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
@@ -89,11 +88,11 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
           data.ownerAddress,
           Number(inputAmount),
           borrowedToken,
-          lendingControllerAddress,
+          lendingControllerAddress
         )
       },
     }),
-    [borrowedToken, inputAmount, lendingControllerAddress, data.ownerAddress, userAddress, data.vaultId],
+    [borrowedToken, inputAmount, lendingControllerAddress, data.ownerAddress, userAddress, data.vaultId]
   )
 
   const { action: handleLiquidateVault } = useContractAction(contractActionProps)
@@ -165,15 +164,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
           <div className="flex-group">
             <div>
-              <div className="v-centering-group">
-                Liquidation Max
-                <CustomTooltip
-                  text=""
-                  iconId="info"
-                  className="info-icon"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                />
-              </div>
+              <div className="v-centering-group">Liquidation Max</div>
               <CommaNumber
                 value={liquidationMax}
                 decimalsToShow={2}
@@ -266,15 +257,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
               <CommaNumber value={profit} decimalsToShow={2} showDecimal beginningText="$" className="upColor" />
             </div>
             <div>
-              <div className="v-centering-group">
-                Treasury Fee
-                <CustomTooltip
-                  text=""
-                  iconId="info"
-                  className="info-icon"
-                  defaultStrokeColor={colors[themeSelected].subHeadingText}
-                />
-              </div>
+              <div className="v-centering-group">Treasury Fee</div>
               <CommaNumber
                 value={treasuryFee}
                 decimalsToShow={2}

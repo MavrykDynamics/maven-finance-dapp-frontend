@@ -12,7 +12,6 @@ import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useCont
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
 import { INFO_DEFAULT } from 'app/App.components/Info/info.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-import colors from 'styles/colors'
 
 // utils
 import { api } from 'utils/api/api'
@@ -25,6 +24,7 @@ import {
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
+import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
 
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
@@ -43,8 +43,7 @@ import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.co
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { getTooltipForStatus } from 'pages/Governance/helpers/governanceView.helpers'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // consts
 import {
@@ -73,7 +72,6 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     config: { governancePhase },
   } = useProposalsContext()
   const {
-    preferences: { themeSelected },
     contractAddresses: { governanceAddress },
     globalLoadingState: { isActionActive },
     handleCopyText,
@@ -102,8 +100,8 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     async (
       actionFn: (
         governanceAddress: string,
-        proposalId: number,
-      ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>,
+        proposalId: number
+      ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>
     ) => {
       if (!userAddress) {
         bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -116,7 +114,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
 
       return await actionFn(governanceAddress, Number(proposal.id))
     },
-    [bug, governanceAddress, proposal.id, userAddress],
+    [bug, governanceAddress, proposal.id, userAddress]
   )
 
   // drop proposal ------------------------------------------------------------------------
@@ -125,7 +123,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: DROP_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, dropProposal),
     }),
-    [invokeActionWithIdenticalParameters],
+    [invokeActionWithIdenticalParameters]
   )
 
   const { action: handleDeleteProposal } = useContractAction(dropProposalContractProps)
@@ -137,7 +135,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: EXECUTE_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, executeProposal),
     }),
-    [invokeActionWithIdenticalParameters],
+    [invokeActionWithIdenticalParameters]
   )
 
   const { action: handleClickExecuteProposal } = useContractAction(executeProposalContractProps)
@@ -148,7 +146,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: PROCESS_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, processProposalPayment),
     }),
-    [invokeActionWithIdenticalParameters],
+    [invokeActionWithIdenticalParameters]
   )
 
   const { action: handleClickProcessPayment } = useContractAction(processProposalPaymentContractProps)
@@ -159,7 +157,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: PROPOSAL_ROUND_VOTE_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, proposalRoundVote),
     }),
-    [invokeActionWithIdenticalParameters],
+    [invokeActionWithIdenticalParameters]
   )
 
   const { action: handleProposalRoundVote } = useContractAction(proposaRoundVoteContractProps)
@@ -178,7 +176,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
 
       return await votingRoundVote(governanceAddress, vote)
     },
-    [bug, governanceAddress, userAddress],
+    [bug, governanceAddress, userAddress]
   )
 
   // @ts-ignore
@@ -187,7 +185,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: VOTING_ROUND_VOTE_ACTION,
       actionFn: votingRoundVoteActionFn,
     }),
-    [votingRoundVoteActionFn],
+    [votingRoundVoteActionFn]
   )
 
   const { actionWithArgs: handleVotingRoundVote } = useContractAction<VotingTypes>(handleVotingRoundContractProps)
@@ -199,12 +197,12 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       againstVotesMVKTotal: proposal.downvoteMvkTotal,
       forVotesMVKTotal: proposal.upvoteMvkTotal,
       unusedVotesMVKTotal: Math.round(
-        proposal.quorumMvkTotal - proposal.abstainMvkTotal - proposal.downvoteMvkTotal - proposal.upvoteMvkTotal,
+        proposal.quorumMvkTotal - proposal.abstainMvkTotal - proposal.downvoteMvkTotal - proposal.upvoteMvkTotal
       ),
       passVotesMVKTotal: proposal.passVoteMvkTotal,
       quorum: proposal.minQuorumPercentage,
     }),
-    [proposal],
+    [proposal]
   )
 
   // Loading voting till time for proposal
@@ -228,7 +226,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         const { data: votingEndTimestamp } = await api(
           getTimestampByLevelUrl(currentCycleEndLevel),
           { signal: abortController.signal, headers: getTimestampByLevelHeaders },
-          getTimestampByLevelSchema,
+          getTimestampByLevelSchema
         )
         setVotingTill(new Date(votingEndTimestamp).getTime())
       } catch (e) {
@@ -254,14 +252,16 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       <div className="title-status">
         <H2Title>{proposal.title}</H2Title>
         <StatusFlag text={proposal.status} status={proposal.status} />
-        {statusTooltipText ? (
-          <CustomTooltip
-            className="tooltip"
-            text={statusTooltipText}
-            iconId="info"
-            defaultStrokeColor={colors[themeSelected].subHeadingText}
-          />
-        ) : null}
+        <div className="tooltip-wrapper">
+          {statusTooltipText ? (
+            <Tooltip>
+              <Tooltip.Trigger>
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{statusTooltipText}</Tooltip.Content>
+            </Tooltip>
+          ) : null}
+        </div>
       </div>
 
       {isHistory &&
@@ -313,7 +313,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         vote={proposal.votes.find(
           ({ address, round }) =>
             address === userAddress &&
-            round === (governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION ? 0 : 1),
+            round === (governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION ? 0 : 1)
         )}
         isVoteActive={
           proposal.status === ProposalStatus.LOCKED || proposal.status === ProposalStatus.ONGOING
@@ -412,7 +412,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                       kind={BUTTON_SIMPLE_SMALL}
                       onClick={() =>
                         setOpenedBytes(
-                          isByteOpened ? openedBytes.filter((id) => id !== item.id) : [...openedBytes, item.id],
+                          isByteOpened ? openedBytes.filter((id) => id !== item.id) : [...openedBytes, item.id]
                         )
                       }
                     >

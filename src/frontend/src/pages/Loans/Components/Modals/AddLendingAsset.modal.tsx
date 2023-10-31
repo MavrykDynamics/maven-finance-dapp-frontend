@@ -6,10 +6,9 @@ import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // consts
 import {
@@ -42,7 +41,6 @@ import { depositLendingAssetAction } from 'providers/LoansProvider/actions/loans
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import colors from 'styles/colors'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -64,7 +62,6 @@ export const AddLendingAsset = ({
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const {
-    preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
@@ -119,7 +116,7 @@ export const AddLendingAsset = ({
       loanToken,
       Number(inputData.amount),
       lendingControllerAddress,
-      closePopup,
+      closePopup
     )
   }, [bug, closePopup, inputData.amount, lendingControllerAddress, loanToken, userAddress])
 
@@ -128,7 +125,7 @@ export const AddLendingAsset = ({
       actionType: DEPOSIT_LENDING_ASSET_ACTION,
       actionFn: depositAction,
     }),
-    [depositAction],
+    [depositAction]
   )
 
   const { action: depositHandler } = useContractAction(contractActionProps)
@@ -180,30 +177,28 @@ export const AddLendingAsset = ({
             </InputPinnedTokenInfo>
           </Input>
 
-          <MemoizedComponent returnMemoizedComponent={inputData.validationStatus === INPUT_STATUS_ERROR}>
-            <div className="lending-stats" style={{ marginTop: '45px' }}>
-              <ThreeLevelListItem>
-                <div className="name">
-                  Earn APY{' '}
-                  <CustomTooltip
-                    iconId="info"
-                    defaultStrokeColor={colors[themeSelected].subHeadingText}
-                    text={`You will receive m${symbol} instead of your ${symbol}`}
-                    className="tooltip"
-                  />
-                </div>
-                <CommaNumber value={lendingAPY} className="value" endingText="%" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">m{symbol} Received</div>
-                <CommaNumber value={Number(inputData.amount)} className="value" />
-              </ThreeLevelListItem>
-              <ThreeLevelListItem>
-                <div className="name">New m{symbol} Balance</div>
-                <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
-              </ThreeLevelListItem>
-            </div>
-          </MemoizedComponent>
+          <div className="lending-stats" style={{ marginTop: '45px' }}>
+            <ThreeLevelListItem>
+              <div className="name">
+                Earn APY
+                <Tooltip>
+                  <Tooltip.Trigger className="ml-3">
+                    <Icon id="info" />
+                  </Tooltip.Trigger>
+                  <Tooltip.Content>{`You will receive m${symbol} instead of your ${symbol}`}</Tooltip.Content>
+                </Tooltip>
+              </div>
+              <CommaNumber value={lendingAPY} className="value" endingText="%" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">m{symbol} Received</div>
+              <CommaNumber value={Number(inputData.amount)} className="value" />
+            </ThreeLevelListItem>
+            <ThreeLevelListItem>
+              <div className="name">New m{symbol} Balance</div>
+              <CommaNumber value={mBalance + Number(inputData.amount)} className="value" />
+            </ThreeLevelListItem>
+          </div>
           <XTZLimitInfoBanner show={willExceedXTZTheLimit} spaces="mt-20 mb-20" />
 
           <div className="manage-btn">

@@ -215,7 +215,7 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
     .gauge-chart {
       position: relative;
 
-      .tooltip {
+      .tooltip-trigger {
         position: absolute;
         right: 0px;
         top: 0px;

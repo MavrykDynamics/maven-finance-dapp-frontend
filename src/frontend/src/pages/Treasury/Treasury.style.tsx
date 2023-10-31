@@ -69,6 +69,9 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
     .text {
       margin-right: 30px;
       color: ${({ theme }) => theme.mainHeadingText};
+
+      display: flex;
+      align-items: center;
     }
 
     .tzAddressToClick {

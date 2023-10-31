@@ -44,6 +44,21 @@ export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavrykTheme }>`
       margin: 0;
     }
   }
+
+  a {
+    display: flex;
+    margin-left: 5px;
+    margin-top: 4px;
+  }
+
+  .tooltip-trigger {
+    display: flex;
+    height: fit-content;
+
+    svg {
+      fill: ${({ theme }) => theme.primaryText};
+    }
+  }
 `
 
 export const SatelliteGovernanceAvailableActions = styled(Card)`

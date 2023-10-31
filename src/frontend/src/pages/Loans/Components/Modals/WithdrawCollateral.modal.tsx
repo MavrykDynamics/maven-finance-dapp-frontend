@@ -36,14 +36,12 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { MemoizedComponent } from 'app/App.HOC/MemoizedComponent'
 import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // utils
 import {
@@ -67,6 +65,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { operationRemoveCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -146,7 +145,7 @@ export const WithdrawCollateral = ({
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(
     collateralBalance,
     currentTotalOutstanding * borrowedTokenRate,
-    collateralRate,
+    collateralRate
   )
 
   const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
@@ -185,7 +184,7 @@ export const WithdrawCollateral = ({
           collateralToken,
           vaultId,
           lendingControllerAddress,
-          closePopup,
+          closePopup
         )
       } else {
         return await withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup)
@@ -200,7 +199,7 @@ export const WithdrawCollateral = ({
       actionType: WITHDRAW_COLLATERAL_ACTION,
       actionFn: withdrawAction,
     }),
-    [withdrawAction],
+    [withdrawAction]
   )
 
   const { action: withdrawHandler } = useContractAction(contractActionProps)
@@ -269,7 +268,7 @@ export const WithdrawCollateral = ({
                 onChange: (e) =>
                   inputOnChangeHandle(
                     e.target.value,
-                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault),
+                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault)
                   ),
               }}
               settings={{
@@ -279,9 +278,9 @@ export const WithdrawCollateral = ({
                   inputOnChangeHandle(
                     getLoansInputMaxAmount(
                       Math.min(selectedCollateralAmountInVault, currentCollateralToWithdraw),
-                      decimals,
+                      decimals
                     ),
-                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault),
+                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault)
                   ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
@@ -338,37 +337,39 @@ const WithdrawCollateralTableStats = ({
   validationStatus: InputStatusType
 }) => {
   return (
-    <MemoizedComponent returnMemoizedComponent={validationStatus === INPUT_STATUS_ERROR}>
-      <VaultModalOverview>
-        <ThreeLevelListItem
-          className="collateral-diagram"
-          customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
-        >
-          <div className={`percentage`}>
-            Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
-          </div>
-          <GradientDiagram
-            className="diagram"
-            colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-            currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
-          />
-        </ThreeLevelListItem>
-        <ThreeLevelListItem>
-          <div className="name">Collateral Value</div>
-          <CommaNumber value={collateralBalance} className="value" beginningText="$" />
-        </ThreeLevelListItem>
-        <ThreeLevelListItem>
-          <div className="name">
-            Withdrawable Collateral{' '}
-            <CustomTooltip
-              iconId="info"
-              text="Dollar value of collateral you are able to withdraw without making your vault under-collateralized for this specific collateral asset"
-              defaultStrokeColor={colors[themeSelected].subHeadingText}
-            />
-          </div>
-          <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
-        </ThreeLevelListItem>
-      </VaultModalOverview>
-    </MemoizedComponent>
+    <VaultModalOverview>
+      <ThreeLevelListItem
+        className="collateral-diagram"
+        customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+      >
+        <div className={`percentage`}>
+          Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+        </div>
+        <GradientDiagram
+          className="diagram"
+          colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
+          currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
+        />
+      </ThreeLevelListItem>
+      <ThreeLevelListItem>
+        <div className="name">Collateral Value</div>
+        <CommaNumber value={collateralBalance} className="value" beginningText="$" />
+      </ThreeLevelListItem>
+      <ThreeLevelListItem>
+        <div className="name">
+          Withdrawable Collateral
+          <Tooltip>
+            <Tooltip.Trigger className="ml-3">
+              <Icon id="info" />
+            </Tooltip.Trigger>
+            <Tooltip.Content>
+              Dollar value of collateral you are able to withdraw without making your vault under-collateralized for
+              this specific collateral asset.
+            </Tooltip.Content>
+          </Tooltip>
+        </div>
+        <CommaNumber value={currentCollateralToWithdraw * collateralRate} className="value" beginningText="$" />
+      </ThreeLevelListItem>
+    </VaultModalOverview>
   )
 }

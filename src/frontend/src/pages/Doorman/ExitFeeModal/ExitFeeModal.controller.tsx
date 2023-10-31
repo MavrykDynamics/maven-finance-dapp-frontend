@@ -1,10 +1,10 @@
 // helpers
 import { calcExitFee, calcMLI } from '../../../utils/calcFunctions'
 import {
-  INPUT_STATUS_SUCCESS,
+  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
-  ERR_MSG_TOAST,
+  INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from '../../../app/App.components/Button/Button.constants'
 import { stakingInputValidation } from '../helpers/validators'
@@ -20,7 +20,6 @@ import { ExitFeeModalButtons, ExitFeeModalContent, ExitFeeModalStats } from './E
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { CustomTooltip } from '../../../app/App.components/Tooltip/Tooltip.view'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -32,6 +31,8 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 import { unstakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
 import { useCallback, useMemo } from 'react'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type ExitFeeModalPropsType = {
   closePopup: () => void
@@ -165,16 +166,18 @@ export const ExitFeeModal = ({
             <div>
               <h4>
                 MVK Loyalty Index
-                <a
-                  href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <CustomTooltip
-                    text="The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and the exit fee will rise. Click here to read more."
-                    iconId={'info'}
-                  />
-                </a>
+                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
+                  <Tooltip>
+                    <Tooltip.Trigger>
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK,
+                      the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the
+                      MLI, and the exit fee will rise. Click to read more.
+                    </Tooltip.Content>
+                  </Tooltip>
+                </CustomLink>
               </h4>
               <var>
                 <CommaNumber value={mli} endingText={' '} />
@@ -184,16 +187,18 @@ export const ExitFeeModal = ({
             <div>
               <h4>
                 Exit Fee
-                <a
-                  href="https://mavryk.finance/litepaper#converting-smvk-back-to-mvk-exit-fees"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <CustomTooltip
-                    text="The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees are paid directly to sMVK stakeholders for remaining active participants in securing the network. Click to read more."
-                    iconId={'info'}
-                  />
-                </a>
+                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
+                  <Tooltip>
+                    <Tooltip.Trigger>
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                      The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit
+                      fees are paid directly to sMVK stakeholders for remaining active participants in securing the
+                      network. Click to read more.
+                    </Tooltip.Content>
+                  </Tooltip>
+                </CustomLink>
               </h4>
               <var>
                 <CommaNumber value={fee} endingText={'%'} />

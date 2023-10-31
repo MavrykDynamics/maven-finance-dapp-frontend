@@ -23,34 +23,34 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
 
 // styles
 import {
-  DataFeedsStyled,
-  FeedInfo,
-  DataFeedValueText,
-  DataFeedInfoBlock,
   ContractDetails,
+  DataFeedInfoBlock,
+  DataFeedsStyled,
+  DataFeedValueText,
   FeedDetailsChartWrapper,
+  FeedInfo,
 } from './DataFeedsDetails.style'
 import { EmptyContainer } from 'app/App.style'
 import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 
 // consts
 import {
-  SATELLITE_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
   SATELLITES_DATA_ORACLES_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
 import {
-  PAGINATION_SIDE_RIGHT,
-  ORACLES_DATA_IN_FEED_LIST_NAME,
   calculateSlicePositions,
   getPageNumber,
+  ORACLES_DATA_IN_FEED_LIST_NAME,
+  PAGINATION_SIDE_RIGHT,
 } from 'app/App.components/Pagination/pagination.consts'
 import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -166,9 +166,12 @@ const DataFeedDetails = () => {
                     <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
                     <div className="text">
                       <div className="name">{feed.name}</div>
-                      <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
-                        Learn how to use {feed.name} in your smart contracts here
-                        <CustomTooltip iconId={'question'} defaultStrokeColor={colors[themeSelected].mainHeadingText} />
+                      <a
+                        href="https://docs.mavryk.finance/smart-contracts/smart-contracts-overview/aggregator-contract"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Learn how to use {feed.name} in your smart contracts here <Icon id="question" />
                       </a>
                     </div>
                   </div>
@@ -179,14 +182,14 @@ const DataFeedDetails = () => {
                     </DataFeedValueText>
                     <H3TitleSecondary>
                       {isTrustedAnswer ? 'Trusted Answer' : 'Not Trusted Answer'}
-                      <CustomTooltip
-                        text={`The current price is ${
+                      <Tooltip>
+                        <Tooltip.Trigger className="ml-3">
+                          <Icon id="info" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>{`The current price is ${
                           isTrustedAnswer ? 'trusted' : 'not trusted'
-                        } and approved by a majority of the oracles`}
-                        iconId={'info'}
-                        className="info-icon"
-                        defaultStrokeColor={colors[themeSelected].regularText}
-                      />
+                        } and approved by a majority of the oracles`}</Tooltip.Content>
+                      </Tooltip>
                     </H3TitleSecondary>
                   </div>
                 </div>
@@ -194,12 +197,16 @@ const DataFeedDetails = () => {
                   <DataFeedInfoBlock>
                     <H3TitlePrimary>
                       Trigger parameters
-                      <CustomTooltip
-                        text={`If the price of the asset is volatile and changes more than the set deviation trigger, a new trusted price will be pushed on chain from the oracle. Aside from the deviation trigger, price updates occur on average every 15 minutes.`}
-                        iconId={'info'}
-                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                        className="info-icon opacity-1"
-                      />
+                      <Tooltip>
+                        <Tooltip.Trigger className="ml-3">
+                          <Icon id="info" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          If the price of the asset is volatile and changes more than the set deviation trigger, a new
+                          trusted price will be pushed on chain from the oracle. Aside from the deviation trigger, price
+                          updates occur on average every 15 minutes.
+                        </Tooltip.Content>
+                      </Tooltip>
                     </H3TitlePrimary>
 
                     <h4>Deviation Trigger</h4>
@@ -212,11 +219,12 @@ const DataFeedDetails = () => {
                   <DataFeedInfoBlock justifyContent={'space-between'}>
                     <H3TitleSecondary>
                       Heartbeat
-                      <CustomTooltip
-                        text={'Countdown until the next set data feed update.'}
-                        iconId={'info'}
-                        defaultStrokeColor={colors[themeSelected].regularText}
-                      />
+                      <Tooltip>
+                        <Tooltip.Trigger className="ml-3">
+                          <Icon id="info" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>Countdown until the next set data feed update.</Tooltip.Content>
+                      </Tooltip>
                     </H3TitleSecondary>
 
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
@@ -242,12 +250,15 @@ const DataFeedDetails = () => {
                   <DataFeedInfoBlock>
                     <H3TitlePrimary>
                       Oracle responses
-                      <CustomTooltip
-                        className="info-icon opacity-1"
-                        text={`The aggregator requires a minimum amount of responses from oracles for the answer to be trusted`}
-                        iconId={'info'}
-                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                      />
+                      <Tooltip>
+                        <Tooltip.Trigger className="ml-3">
+                          <Icon id="info" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          The aggregator requires a minimum amount of responses from oracles for the answer to be
+                          trusted
+                        </Tooltip.Content>
+                      </Tooltip>
                     </H3TitlePrimary>
                     <h4>Minimum of {feed.pct_oracle_threshold}%</h4>
                     <DataFeedValueText fontSize={16} fontWeidth={600}>
@@ -258,12 +269,14 @@ const DataFeedDetails = () => {
                   <DataFeedInfoBlock>
                     <H3TitlePrimary>
                       Last update
-                      <CustomTooltip
-                        text={`Last time the aggregator was updated with a trusted answer and written on-chain`}
-                        iconId={'info'}
-                        className="info-icon opacity-1"
-                        defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                      />
+                      <Tooltip>
+                        <Tooltip.Trigger className="ml-3">
+                          <Icon id="info" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          Last time the aggregator was updated with a trusted answer and written on-chain
+                        </Tooltip.Content>
+                      </Tooltip>
                     </H3TitlePrimary>
                     <DataFeedValueText
                       fontSize={14}
@@ -284,12 +297,12 @@ const DataFeedDetails = () => {
                 <div className="info-wrapper">
                   <H3TitlePrimary>
                     Contract address
-                    <CustomTooltip
-                      text={`Address of this specific data feed`}
-                      iconId={'info'}
-                      defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                      className="opacity-1"
-                    />
+                    <Tooltip>
+                      <Tooltip.Trigger className="ml-3">
+                        <Icon id="info" />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>Address of this specific data feed</Tooltip.Content>
+                    </Tooltip>
                   </H3TitlePrimary>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     <TzAddress tzAddress={feed.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
@@ -298,12 +311,15 @@ const DataFeedDetails = () => {
                 <div className="info-wrapper">
                   <H3TitlePrimary>
                     Oracle Factory
-                    <CustomTooltip
-                      text={`Address of the oracle (aggregator) factory which is responsible for creating the aggregator feeds which oracles can sign price feeds for`}
-                      iconId={'info'}
-                      defaultStrokeColor={colors[themeSelected].mainHeadingText}
-                      className="opacity-1"
-                    />
+                    <Tooltip>
+                      <Tooltip.Trigger className="ml-3">
+                        <Icon id="info" />
+                      </Tooltip.Trigger>
+                      <Tooltip.Content>
+                        Address of the oracle (aggregator) factory which is responsible for creating the aggregator
+                        feeds which oracles can sign price feeds for
+                      </Tooltip.Content>
+                    </Tooltip>
                   </H3TitlePrimary>
                   <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
                     {feedsFactoryAddress ? (
@@ -365,7 +381,13 @@ const DataFeedDetails = () => {
                     tooltipAsset={activeTab === 1 ? feed.name.split('/')?.[1] : '%'}
                     settings={{
                       tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
-                      priceMargins: chartDataAverage < 10 ? { top: 0.65, bottom: 0.3 } : { top: 0.5, bottom: 0.2 },
+                      priceMargins:
+                        chartDataAverage < 10
+                          ? { top: 0.65, bottom: 0.3 }
+                          : {
+                              top: 0.5,
+                              bottom: 0.2,
+                            },
                     }}
                   />
                 )}

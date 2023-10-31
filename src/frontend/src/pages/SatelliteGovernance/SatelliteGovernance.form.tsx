@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Icon from '../../app/App.components/Icon/Icon.view'
 import { Input } from 'app/App.components/Input/NewInput'
 import Button from 'app/App.components/Button/NewButton'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { TextArea } from '../../app/App.components/TextArea/TextArea.controller'
 import { DDItemId, DropDown, getDdItem } from 'app/App.components/DropDown/NewDropdown'
 import {
@@ -16,7 +17,6 @@ import {
   TableHeaderCell,
   TableRow,
 } from 'app/App.components/Table'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 
 // type
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../../app/App.components/Input/Input.constants'
@@ -32,8 +32,8 @@ import { validateText, validateTzAddress } from 'utils/validatorFunctions'
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
-  SATELLITE_GOVERNANCE_CONTENT_FORM,
   SATELLITE_GOVERNANCE_ACTION_NAMES,
+  SATELLITE_GOVERNANCE_CONTENT_FORM,
   SATELLITE_GOVERNANCE_INITIAL_DATA,
   SATELLITE_GOVERNANCE_INITIAL_VALIDATION_DATA,
 } from './SatelliteGovernance.consts'
@@ -292,12 +292,12 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
   return (
     <SatelliteGovernanceAvailableAction onSubmit={handleSubmit}>
       <a
-        href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
+        href="https://docs.mavryk.finance/mavryk-finance/governance/satellite-governance"
         target="_blank"
         rel="noreferrer"
         className="info-link"
       >
-        <CustomTooltip iconId="question" />
+        <Icon id="question" />
       </a>
 
       <div>
@@ -403,18 +403,24 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
                     </TableCell>
 
                     <RemoveRowBtn className="button-wrap remove" onClick={() => handleDeleteRow(rowIdx)}>
-                      <CustomTooltip text="Delete row">
-                        <Icon id="delete" />
-                      </CustomTooltip>
+                      <Tooltip>
+                        <Tooltip.Trigger>
+                          <Icon id="delete" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>Delete row</Tooltip.Content>
+                      </Tooltip>
                     </RemoveRowBtn>
                   </TableRow>
                 )
               })}
             </TableBody>
             <AddRowBtn className="button-wrap add" onClick={handleAddRow}>
-              <CustomTooltip text="Insert 1 row below">
-                <span>+</span>
-              </CustomTooltip>
+              <Tooltip>
+                <Tooltip.Trigger>
+                  <Icon id="plus" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>Insert 1 row below</Tooltip.Content>
+              </Tooltip>
             </AddRowBtn>
           </Table>
         </div>

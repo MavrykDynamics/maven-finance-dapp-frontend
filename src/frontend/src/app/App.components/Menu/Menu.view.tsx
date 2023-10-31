@@ -52,7 +52,7 @@ export const SocialIcons = () => (
     <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
       <Icon id="socialDiscord" />
     </a>
-    <a href="https://mavryk.finance/litepaper" target="_blank" rel="noreferrer">
+    <a href="https://docs.mavryk.finance" target="_blank" rel="noreferrer">
       <Icon id="faqIcon" />
     </a>
     <a href="https://github.com/mavrykfinance/" target="_blank" rel="noreferrer">
@@ -116,7 +116,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
 
     if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
-      bug('You have already claimed MVK', 'You are unable to claim MVK, you have already claimed')
+      bug('You have already claimed MVK', 'You are unable to claim MVK')
       return null
     }
 

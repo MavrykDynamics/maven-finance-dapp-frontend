@@ -17,11 +17,11 @@ import Button from 'app/App.components/Button/NewButton'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import Icon from 'app/App.components/Icon/Icon.view'
 import {
-  SideBarFaq,
   FAQLink,
   SatelliteSideBarStyled,
-  SideBarSection,
+  SideBarFaq,
   SideBarItem,
+  SideBarSection,
   SidebarUserButton,
 } from './SatelliteSideBar.style'
 
@@ -29,27 +29,27 @@ export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
     <h2>Satellite FAQ</h2>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#governance--treasury" target="_blank" rel="noreferrer">
+      <a href="https://docs.mavryk.finance/mavryk-finance/governance" target="_blank" rel="noreferrer">
         Who controls Mavryk Finance, and how are decisions made?
       </a>
     </FAQLink>
     <FAQLink>
-      <a
-        href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle"
-        target="_blank"
-        rel="noreferrer"
-      >
+      <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
         What are Satellite’s and what do they do?
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#the-decentralized-oracle" target="_blank" rel="noreferrer">
+      <a
+        href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles/oracle-nodes"
+        target="_blank"
+        rel="noreferrer"
+      >
         How is the price data secured with the decentralized oracle?
       </a>
     </FAQLink>
     <FAQLink>
       <a
-        href="https://mavryk.finance/litepaper#what-is-mvk-and-how-does-it-differ-from-smvk"
+        href="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking"
         target="_blank"
         rel="noreferrer"
       >
@@ -57,7 +57,11 @@ export const SateliteSideBarFAQ = () => (
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://mavryk.finance/litepaper#satellite-delegations " target="_blank" rel="noreferrer">
+      <a
+        href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles/delegating-to-satellites"
+        target="_blank"
+        rel="noreferrer"
+      >
         How can I be involved with the DAO without setting up my own Satellite?
       </a>
     </FAQLink>

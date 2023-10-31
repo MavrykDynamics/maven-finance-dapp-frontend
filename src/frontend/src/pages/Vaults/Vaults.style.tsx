@@ -106,6 +106,11 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
           min-width: 130px;
           color: ${({ theme }) => theme.subHeadingText};
         }
+
+        .name {
+          display: flex;
+          align-items: center;
+        }
       }
     }
 
@@ -148,11 +153,6 @@ export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
       p {
         margin: 0;
       }
-    }
-
-    .tooltip {
-      position: relative;
-      top: 2px;
     }
   }
 

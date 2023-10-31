@@ -4,25 +4,24 @@ import { Link } from 'react-router-dom'
 // consts
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
-import colors from 'styles/colors'
 
 // types
 import { UserLoansData } from 'providers/UserProvider/user.provider.types'
 
 // hooks
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useLoansGaugeChartData } from 'providers/LoansProvider/hooks/useLoansGaugeChartData'
 
 // view
 import { LBHInfoBlock } from './DashboardPersonalComponents.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { LoansPositionTable } from 'pages/LoansDashboard/components/PositionTable'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { GaugeChart } from 'app/App.components/GaugeChart/GaugeChart'
 import Button from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 export const LendBorrowPosition = ({
   userLoansRewards,
@@ -38,9 +37,6 @@ export const LendBorrowPosition = ({
   isUserLoansLoading: boolean
 }) => {
   const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   useEffect(() => {
     changeLoansSubscriptionsList({
@@ -71,14 +67,16 @@ export const LendBorrowPosition = ({
         <>
           <div className="acc-stats">
             <div className="gauge-chart">
-              <CustomTooltip
-                iconId="info"
-                text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated.
-                      Risk value = Total Borrow/Borrow Limit*100 
-                      Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
-                defaultStrokeColor={colors[themeSelected].regularText}
-                className="tooltip"
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="tooltip-trigger">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral
+                  will be liquidated. Risk value = Total Borrow/Borrow Limit*100 Net APY = [Σ(Value of Supplied
+                  Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets
+                </Tooltip.Content>
+              </Tooltip>
               <GaugeChart
                 maxValue={gaugeData.maxValue}
                 minValue={gaugeData.minValue}

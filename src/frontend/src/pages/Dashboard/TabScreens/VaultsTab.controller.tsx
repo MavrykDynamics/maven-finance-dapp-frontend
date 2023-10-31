@@ -18,15 +18,15 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import PieChartView from 'app/App.components/PieChart/PieСhart.view'
 import {
   Table,
-  TableHeader,
-  TableRow,
-  TableHeaderCell,
   TableBody,
   TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
   TableScrollable,
 } from 'app/App.components/Table'
 import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
-import { StatBlock, BlockName } from '../Dashboard.style'
+import { BlockName, StatBlock } from '../Dashboard.style'
 import { EmptyContainer, TabWrapperStyled, VaultsContentStyled } from './DashboardTabs.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -116,12 +116,19 @@ export const VaultsTab = () => {
 
                   <TableBody className="treasury">
                     {reducedVaultsCollaterals.map(({ tokenAddress, balance }) => {
-                      const token = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                      const token = getTokenDataByAddress({
+                        tokenAddress,
+                        tokensMetadata,
+                        tokensPrices,
+                      })
                       if (!token || !token.rate) return null
 
                       const { symbol, rate, decimals } = token
 
-                      const convertedBalance = convertNumberForClient({ number: balance, grade: decimals })
+                      const convertedBalance = convertNumberForClient({
+                        number: balance,
+                        grade: decimals,
+                      })
 
                       return (
                         <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
@@ -195,7 +202,7 @@ export const VaultsTab = () => {
         <div className="text">
           Mavryk Finance’s vaults are non-custodial smart contracts and are direct between the vault owner and smart
           contract. In order to borrow, users must open a vault and deposit collateral.{' '}
-          <a href="https://blogs.mavryk.finance/" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavryk.finance/mavryk-finance/earn-and-borrow" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 
 // consts
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import colors from 'styles/colors'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 import { getClassNameBasedOnPersentValue } from './helpers/comparing.helpers'
 
@@ -18,8 +17,9 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { LBHInfoBlock } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { Page } from 'styles'
 import { AccountStyledStyled, LoansDashboardStyled, TotalVolumeStyled } from './LoansDashboard.styles'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import Icon from 'app/App.components/Icon/Icon.view'
 import ConnectWalletBtn from 'app/App.components/ConnectWallet/ConnectWalletBtn'
 
 // utils
@@ -32,7 +32,6 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 import useLendBorrow24hDiff from 'providers/LoansProvider/hooks/useLendBorrow24hDiff'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useLoansGaugeChartData } from 'providers/LoansProvider/hooks/useLoansGaugeChartData'
 
 export const LoansDashboard = () => {
@@ -43,9 +42,6 @@ export const LoansDashboard = () => {
     availableLoansRewards,
     userAvatars: { mainAvatar },
   } = useUserContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   const { isLoading: is24hDiffLoading, lending24hPersentChange, borrowing24hPersentChange } = useLendBorrow24hDiff()
   const { isLoading: userLoansDataLoading, userVaultsData, totalUserBorrowed, totalUserLended } = useUserLoansData()
@@ -82,9 +78,9 @@ export const LoansDashboard = () => {
         {
           totalLended: 0,
           totalBorrowed: 0,
-        },
+        }
       ),
-    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices],
+    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices]
   )
 
   return (
@@ -139,14 +135,20 @@ export const LoansDashboard = () => {
 
                 <div className="content">
                   <div className="gauge-chart">
-                    <CustomTooltip
-                      iconId="info"
-                      text="Risk value indicates how risky your portfolio is. When the risk value reaches 100, your collateral will be liquidated.
-                      Risk value = Total Borrow/Borrow Limit*100 
-                      Net APY = [Σ(Value of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied Assets"
-                      defaultStrokeColor={colors[themeSelected].regularText}
-                      className="tooltip"
-                    />
+                    <div className="tooltip-wrapper">
+                      <Tooltip>
+                        <Tooltip.Trigger className="ml-3">
+                          <Icon id="info" />
+                        </Tooltip.Trigger>
+                        <Tooltip.Content>
+                          Risk value indicates how risky your portfolio is. When the risk value reaches 100, your
+                          collateral will be liquidated. Risk value = Total Borrow/Borrow Limit*100 Net APY = [Σ(Value
+                          of Supplied Assets*Supply APY) - Σ(Value of Borrowed Assets*Borrow APY)] / Value of Supplied
+                          Assets
+                        </Tooltip.Content>
+                      </Tooltip>
+                    </div>
+
                     <GaugeChart
                       maxValue={gaugeData.maxValue}
                       minValue={gaugeData.minValue}

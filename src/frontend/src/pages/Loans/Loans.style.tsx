@@ -369,6 +369,9 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     font-size: 14px;
     line-height: 21px;
     color: ${({ theme }) => theme.subHeadingText};
+
+    display: flex;
+    align-items: center;
   }
 
   .value {
@@ -405,6 +408,12 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     &.neutral {
       fill: ${({ theme }) => theme.primaryText};
     }
+
+    .tooltip-trigger {
+      svg {
+        fill: ${({ theme }) => theme.primaryText};
+      }
+    }
   }
 
   .rate {
@@ -415,9 +424,8 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
     color: ${({ theme }) => theme.primaryText};
   }
 
-  .tooltip {
+  .tooltip-wrapper {
     margin-left: 7px;
-    display: inline-flex;
   }
 
   &.collateral-diagram {

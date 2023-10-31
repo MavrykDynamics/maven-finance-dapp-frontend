@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom'
 
 // providers
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // view
 import SatellitesSideBar from './SatellitesSideBar/SatellitesSideBar.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
 import { SatelliteListItem } from './listItem/SateliteCard.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { DataFeedCard } from '../DataFeedsDetails/listItem/DataFeedCard.view'
@@ -35,13 +33,14 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
-  DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
-import colors from 'styles/colors'
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
+import CustomLink from 'app/App.components/CustomLink/CustomLink'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
@@ -52,9 +51,6 @@ const Satellites = () => {
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
   const { userTokensBalances, isSatellite, userAddress } = useUserContext()
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -104,13 +100,14 @@ const Satellites = () => {
               <h3>Total Delegated MVK</h3>
               <div className="value">
                 {tabsInfo.totalDelegetedMVK}
-                <a href="https://mavryk.finance/litepaper#satellites-governance-and-the-decentralized-oracle">
-                  <CustomTooltip
-                    iconId="info"
-                    text="All staked MVK that is delegated to satellites by users"
-                    defaultStrokeColor={colors[themeSelected].primaryText}
-                  />
-                </a>
+                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles">
+                  <Tooltip>
+                    <Tooltip.Trigger className="tooltip-trigger">
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>All staked MVK that is delegated to satellites by users.</Tooltip.Content>
+                  </Tooltip>
+                </CustomLink>
               </div>
             </SatelliteGovernanceStatsInfo>
             <SatelliteGovernanceStatsInfo>

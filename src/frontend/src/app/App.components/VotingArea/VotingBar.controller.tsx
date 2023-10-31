@@ -1,5 +1,5 @@
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from '../Tooltip/Tooltip.view'
+import { Tooltip } from '../Tooltip/Tooltip'
 import { VotingBarProps } from './helpers/voting'
 import {
   NotYetVoted,
@@ -45,26 +45,46 @@ export const VotingBar = ({
       </QuorumBar>
       <VotingBarStyled>
         <VotingFor width={forVotesWidth}>
-          <CustomTooltip text={`${forVotesMVKTotal.toFixed(0)} yay votes`} className="voting-tooltip" />
-          <CommaNumber value={forVotesMVKTotal} />
+          <Tooltip>
+            <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
+            <Tooltip.Content className="voting-tooltip-content">
+              <CommaNumber value={+forVotesMVKTotal.toFixed(0)} /> &nbsp; yay votes
+            </Tooltip.Content>
+          </Tooltip>
+          <CommaNumber value={+forVotesMVKTotal.toFixed(0)} />
         </VotingFor>
 
         {abstainVotesMVKTotal !== undefined ? (
           <VotingAbstention width={abstainingVotesWidth}>
-            <CustomTooltip text={`${abstainVotesMVKTotal.toFixed(0)} abstention votes`} className="voting-tooltip" />
-            <CommaNumber value={abstainVotesMVKTotal} />
+            <Tooltip>
+              <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
+              <Tooltip.Content className="voting-tooltip-content">
+                <CommaNumber value={+abstainVotesMVKTotal.toFixed(0)} /> &nbsp; abstention votes
+              </Tooltip.Content>
+            </Tooltip>
+            <CommaNumber value={+abstainVotesMVKTotal.toFixed(0)} />
           </VotingAbstention>
         ) : null}
 
         <NotYetVoted width={unusedVotesWidth}>
-          <CustomTooltip text={`${unusedVotesMVKTotal.toFixed(0)} unused votes`} className="voting-tooltip" />
-          <CommaNumber value={unusedVotesMVKTotal} />
+          <Tooltip>
+            <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
+            <Tooltip.Content className="voting-tooltip-content">
+              <CommaNumber value={+unusedVotesMVKTotal.toFixed(0)} /> &nbsp; unused votes
+            </Tooltip.Content>
+          </Tooltip>
+          <CommaNumber value={+unusedVotesMVKTotal.toFixed(0)} />
         </NotYetVoted>
 
         {againstVotesMVKTotal !== undefined ? (
           <VotingAgainst width={againstVotesWidth}>
-            <CustomTooltip text={`${againstVotesWidth.toFixed(0)} nay votes`} className="voting-tooltip" />
-            <CommaNumber value={againstVotesMVKTotal} />
+            <Tooltip>
+              <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
+              <Tooltip.Content className="voting-tooltip-content">
+                <CommaNumber value={+againstVotesWidth.toFixed(0)} /> &nbsp; nay votes
+              </Tooltip.Content>
+            </Tooltip>
+            <CommaNumber value={+againstVotesMVKTotal.toFixed(0)} />
           </VotingAgainst>
         ) : null}
       </VotingBarStyled>

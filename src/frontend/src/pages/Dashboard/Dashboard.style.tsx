@@ -157,6 +157,9 @@ export const BlockName = styled(H2SimpleTitle)`
   font-weight: 600;
   font-size: 18px;
   line-height: 18px;
+
+  display: flex;
+  align-items: center;
 `
 export const BGPrimaryTitleStyled = styled(BGPrimaryTitle)`
   font-size: 22px;

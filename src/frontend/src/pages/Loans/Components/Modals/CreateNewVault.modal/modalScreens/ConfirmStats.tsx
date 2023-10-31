@@ -34,19 +34,15 @@ import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { ConfirmStatsVaultOverview } from '../createNewVault.style'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-import colors from 'styles/colors'
 
 // components
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 export const ConfirmStats = () => {
-  const {
-    preferences: { themeSelected },
-  } = useDappConfigContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
 
   const { bug } = useToasterContext()
@@ -114,7 +110,7 @@ export const ConfirmStats = () => {
         vaultFactoryAddress,
         lendingControllerAddress,
         tokensArr,
-        selectedBaker?.bakerAddress ?? null,
+        selectedBaker?.bakerAddress ?? null
       )
     }
 
@@ -143,7 +139,7 @@ export const ConfirmStats = () => {
       errActionCallback: () => updateVaultCreating(false),
       isSilentAction: true,
     }),
-    [createVaultAction, updateScreenToShow, updateVaultCreating],
+    [createVaultAction, updateScreenToShow, updateVaultCreating]
   )
 
   const { action: createVaultHandler } = useContractAction(createVaultActionProps)
@@ -211,12 +207,12 @@ export const ConfirmStats = () => {
           <ThreeLevelListItem className="right">
             <div className="name">
               Available To Borrow
-              <CustomTooltip
-                iconId="info"
-                defaultStrokeColor={colors[themeSelected].subHeadingText}
-                text={AVALIABLE_TO_BORROW}
-                className="tooltip"
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="ml-3">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>{AVALIABLE_TO_BORROW}</Tooltip.Content>
+              </Tooltip>
             </div>
             <CommaNumber value={borrowCapacity} className="value" beginningText="$" />
           </ThreeLevelListItem>

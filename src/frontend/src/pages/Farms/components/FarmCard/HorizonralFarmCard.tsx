@@ -6,7 +6,6 @@ import { FarmCardHarvest } from './cardParts/FarmCardHarvest'
 import { FarmCardHeader } from './cardParts/FarmCardHeader'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { FarmCardActions } from './cardParts/FarmCardActions'
-import Button from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 
@@ -18,7 +17,6 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
-import { BUTTON_SIMPLE } from 'app/App.components/Button/Button.constants'
 
 // types
 import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
@@ -60,7 +58,12 @@ export const HorizontalFarmCard = ({
 
   return (
     <HorizontalFarmCardStyled className={classNames({ isCardOpened })}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#yield-farming" target="_blank" rel="noreferrer">
+      <a
+        className="info-link"
+        href="https://docs.mavryk.finance/mavryk-finance/yield-farms/mavryk-finances-yield-farms"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useHistory } from 'react-router'
@@ -18,16 +18,16 @@ import { StageOneForm } from './StageOneForm/StageOneForm.controller'
 import { StageThreeForm } from './StageThreeForm/StageThreeForm.controller'
 import { StageTwoForm } from './StageTwoForm/StageTwoForm.controller'
 import {
-  ProposalSubmittionButtons,
   MultyProposalsStyled,
   ProposalSubmissionForm,
+  ProposalSubmittionButtons,
   SubmitProposalHeader,
 } from './ProposalSubmission.style'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { CustomTooltip } from 'app/App.components/Tooltip/Tooltip.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // types
 import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
@@ -35,9 +35,9 @@ import { MultyProposalItem, ProposalValidityObj } from './ProposalSubmission.typ
 
 // consts
 import {
+  BUTTON_NAVIGATION,
   BUTTON_PRIMARY,
   BUTTON_SECONDARY,
-  BUTTON_NAVIGATION,
   BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
 import {
@@ -48,36 +48,34 @@ import {
   UPDATE_PROPOSAL_DATA_ACTION,
 } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { GOVERNANCE_LATEST_USER_PROPOSAL_QUERY } from 'providers/ProposalsProvider/queries/getLatestUserProposal.query'
-import { DEFAULT_PROPOSAL_VALIDATION, DEFAULT_PROPOSAL } from './helpers/proposalSubmission.const'
-import colors from 'styles/colors'
+import { DEFAULT_PROPOSAL, DEFAULT_PROPOSAL_VALIDATION } from './helpers/proposalSubmission.const'
 import {
   DROP_PROPOSAL_BUTTON_TOOLTIP,
-  SUBMIT_PROPOSAL_BUTTON_TOOLTIP,
-  SAVE_CHANGES_BUTTON_TOOLTIP,
   NEXT_STEP_BUTTON_TOOLTIP,
+  SAVE_CHANGES_BUTTON_TOOLTIP,
+  SUBMIT_PROPOSAL_BUTTON_TOOLTIP,
 } from 'texts/tooltips/governance'
 
 // helpers & actions
 import {
+  dropProposal,
+  lockProposal,
   submitProposal,
   updateProposalData,
-  lockProposal,
-  dropProposal,
 } from 'providers/ProposalsProvider/actions/proposalsSubmission.actions'
 import { getBytesDiff, getPaymentsDiff } from './helpers/ProposalSubmissionDiff.utils'
-import { unknownToError } from 'errors/error'
-import { isAbortError } from 'errors/error'
+import { isAbortError, unknownToError } from 'errors/error'
 import { api } from 'utils/api/api'
 import {
-  getTimestampByLevelUrl,
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import {
-  isProposalHasChange,
+  checkStage1Validation,
   checkStage2Validation,
   checkStage3Validation,
-  checkStage1Validation,
+  isProposalHasChange,
 } from './helpers/proposalSubmissionValidation.utils'
 import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
 
@@ -500,7 +498,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       <PropSubmissionTopBar valueCallback={handleNextStep} activeTab={activeTab} />
 
       <ProposalSubmissionForm>
-        <a className="info-link" href="https://mavryk.finance/litepaper#governance" target="_blank" rel="noreferrer">
+        <a
+          className="info-link"
+          href="https://docs.mavryk.finance/mavryk-finance/governance/governance-rounds/proposal-round"
+          target="_blank"
+          rel="noreferrer"
+        >
           <Icon id="question" />
         </a>
 
@@ -551,12 +554,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             >
               <Icon id="navigation-menu_close" /> Drop Proposal
             </Button>
-            <CustomTooltip
-              className="tooltip"
-              iconId="info"
-              text={DROP_PROPOSAL_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected].linksAndButtons}
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="tooltip-trigger">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{DROP_PROPOSAL_BUTTON_TOOLTIP}</Tooltip.Content>
+            </Tooltip>
           </div>
 
           {/* Submit proposal locks proposal */}
@@ -569,12 +572,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             >
               <Icon id="submit" /> Submit Proposal
             </Button>
-            <CustomTooltip
-              className="tooltip"
-              iconId="info"
-              text={SUBMIT_PROPOSAL_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected].linksAndButtons}
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="tooltip-trigger">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{SUBMIT_PROPOSAL_BUTTON_TOOLTIP}</Tooltip.Content>
+            </Tooltip>
           </div>
 
           {/* save changes btn (it creates if proposal is not created, or updates data if proposal exists) */}
@@ -587,12 +590,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
             >
               <Icon id="save" /> {isProposalSubmitted ? 'Save Changes' : 'Save Proposal'}
             </Button>
-            <CustomTooltip
-              className="tooltip"
-              iconId="info"
-              text={SAVE_CHANGES_BUTTON_TOOLTIP}
-              defaultStrokeColor={colors[themeSelected].linksAndButtons}
-            />
+            <Tooltip>
+              <Tooltip.Trigger className="tooltip-trigger">
+                <Icon id="info" />
+              </Tooltip.Trigger>
+              <Tooltip.Content>{SAVE_CHANGES_BUTTON_TOOLTIP}</Tooltip.Content>
+            </Tooltip>
           </div>
 
           {/* if we are not on stage 3 show next step (navigating to thee next stage btn) */}
@@ -601,12 +604,12 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
               <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={() => handleNextStep(activeTab + 1)}>
                 Next Step <Icon id="full-arrow-right" />
               </Button>
-              <CustomTooltip
-                className="tooltip"
-                iconId="info"
-                text={NEXT_STEP_BUTTON_TOOLTIP}
-                defaultStrokeColor={colors[themeSelected].linksAndButtons}
-              />
+              <Tooltip>
+                <Tooltip.Trigger className="tooltip-trigger">
+                  <Icon id="info" />
+                </Tooltip.Trigger>
+                <Tooltip.Content>{NEXT_STEP_BUTTON_TOOLTIP}</Tooltip.Content>
+              </Tooltip>
             </div>
           ) : null}
         </ProposalSubmittionButtons>

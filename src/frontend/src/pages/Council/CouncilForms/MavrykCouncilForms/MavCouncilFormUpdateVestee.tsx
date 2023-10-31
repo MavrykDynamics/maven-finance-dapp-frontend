@@ -3,13 +3,14 @@ import { useEffect, useMemo, useState } from 'react'
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import { UPDATE_VESTEE_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from '../../../../app/App.components/Input/Input.constants'
 import { MavrykCounsilDdForms } from '../../helpers/council.consts'
-import { VESTING_STORAGE_DATA_SUB, DEFAULT_VESTING_SUBS } from 'providers/VestingProvider/helpers/vesting.consts'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 // helpers
 import { updateVestee } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
@@ -25,7 +26,6 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 
 // types
 import type { InputProps } from 'app/App.components/Input/newInput.type'
-import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -97,11 +97,11 @@ export const MavCouncilFormUpdateVestee = () => {
           Number(totalAllocated),
           Number(cliffInMonths),
           Number(vestingInMonths),
-          councilAddress
+          councilAddress,
         )
       },
     }),
-    [userAddress, councilAddress, vesteesAddresses, vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths]
+    [userAddress, councilAddress, vesteesAddresses, vesteeAddress, totalAllocated, cliffInMonths, vestingInMonths],
   )
 
   const { action: handleUpdateVestee } = useContractAction(updateVesteeContractActionProps)
@@ -253,7 +253,12 @@ export const MavCouncilFormUpdateVestee = () => {
 
   return (
     <CouncilFormStyled formName={MavrykCounsilDdForms.UPDATE_VESTEE}>
-      <a className="info-link" href="https://mavryk.finance/litepaper#mavryk-council" target="_blank" rel="noreferrer">
+      <a
+        className="info-link"
+        href="https://docs.mavryk.finance/mavryk-finance/council"
+        target="_blank"
+        rel="noreferrer"
+      >
         <Icon id="question" />
       </a>
 
