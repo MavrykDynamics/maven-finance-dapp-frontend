@@ -10,7 +10,6 @@
     "graphql-compile-watch": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local",
     "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
     "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
-    "postinstall": "cd ../../ && npx husky install",
     "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
@@ -72,7 +71,6 @@
     "cypress": "^8.4.1",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-jsdoc": "^46.0.0",
-    "husky": "^8.0.3",
     "prettier": "2.8.7",
     "source-map-explorer": "^2.5.2",
     "typescript": "^5.0.4"
