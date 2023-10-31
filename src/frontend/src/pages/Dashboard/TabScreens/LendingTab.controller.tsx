@@ -57,7 +57,7 @@ export const LendingTab = () => {
         tokensMetadata,
         tokensPrices,
       }),
-    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices],
+    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices]
   )
 
   return (
@@ -142,7 +142,7 @@ export const LendingTab = () => {
               <StatBlock>
                 <div className="name">Most Borrowed Asset</div>
                 <div className="value">
-                  <ImageWithPlug alt={'Most borrowed asset'} imageLink={mostLendedAsset?.icon} />
+                  <ImageWithPlug alt={'Most borrowed asset'} imageLink={mostBorrowedAsset?.icon} />
                   {mostBorrowedAsset?.symbol ?? ''}
                 </div>
               </StatBlock>
@@ -224,5 +224,5 @@ const reduceLoansData = ({
       totalLended: 0,
       mostBorrowedAsset: null,
       mostLendedAsset: null,
-    },
+    }
   )
