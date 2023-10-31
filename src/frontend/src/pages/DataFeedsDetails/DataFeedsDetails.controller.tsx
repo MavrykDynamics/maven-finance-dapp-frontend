@@ -63,6 +63,7 @@ import { getChartXAxisTicks } from 'utils/charts.utils'
 import { parseDate } from 'utils/time'
 import { SMALL_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
+import { TEMP_MAX_ORACLE_DATA_PUSH_SECONDS } from '../../utils/constants'
 
 const tabsList = [
   {
@@ -120,8 +121,10 @@ const DataFeedDetails = () => {
   useEffect(() => {
     if (!feed) return
     const intervalId = setInterval(() => {
+      // TODO: heart_beat_seconds update for new delay. Switch TEMP_MAX_ORACLE_DATA_PUSH_SECONDS back to feed.heart_beat_seconds
       setTrustedAnswer(
-        new Date(feed.last_completed_data_last_updated_at).getTime() + feed.heart_beat_seconds * 1000 >= Date.now(),
+        new Date(feed.last_completed_data_last_updated_at).getTime() + TEMP_MAX_ORACLE_DATA_PUSH_SECONDS * 1000 >=
+          Date.now(),
       )
     }, 1000)
 
@@ -239,7 +242,7 @@ const DataFeedDetails = () => {
                             }}
                             timestamp={
                               new Date(feed.last_completed_data_last_updated_at).getTime() +
-                              feed.heart_beat_seconds * 1000
+                              TEMP_MAX_ORACLE_DATA_PUSH_SECONDS * 1000
                             }
                           />
                         </div>

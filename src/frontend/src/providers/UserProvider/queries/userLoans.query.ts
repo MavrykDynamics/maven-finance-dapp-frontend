@@ -37,6 +37,7 @@ export const GET_USER_LOANS_DATA = gql(`
         }
         loan_decimals
         loan_principal_total
+        loan_interest_total
         loan_token {
           token {
             token_address

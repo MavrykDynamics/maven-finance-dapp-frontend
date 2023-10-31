@@ -4,20 +4,21 @@ import { useEffect, useState } from 'react'
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
 
 import {
-  SatelliteOracleStatusType,
   SatelliteIndexerStatusType,
+  SatelliteOracleStatusType,
   SatelliteRecordType,
 } from '../satellites.provider.types'
 
 import {
-  NOT_AN_ORACLE_ORACLE_STATUS,
   ACTIVE_SATELLITE_STATUS,
-  RESPONDED_ORACLE_STATUS,
   AWAITING_ORACLE_STATUS,
-  NO_RESPONSE_ORACLE_STATUS,
   INACTIVE_SATELLITE_STATUS,
+  NO_RESPONSE_ORACLE_STATUS,
+  NOT_AN_ORACLE_ORACLE_STATUS,
+  RESPONDED_ORACLE_STATUS,
 } from '../satellites.const'
 import { DataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
+import { TEMP_MAX_ORACLE_DATA_PUSH_SECONDS } from '../../../utils/constants'
 
 export const useSatelliteStatuses = (
   satellite: SatelliteRecordType | null,
@@ -85,7 +86,6 @@ const getFeedsWhereSatelliteParticipated = ({
 }) => {
   if (specificFeedAddress) {
     const isSatelliteOracleInSpecificFeed = feedsMapper[specificFeedAddress].oraclesAddresses.includes(satelliteAddress)
-
     return isSatelliteOracleInSpecificFeed ? [specificFeedAddress] : []
   }
 
@@ -98,15 +98,30 @@ const checkWhetherAlloraclePredictionsActive = (
   satellite: SatelliteRecordType,
 ) => {
   return currentFeedsWhereSatelliteParticipating.every((feedAddress) => {
-    const { last_completed_data_last_updated_at: feedLastUpdateTime, heart_beat_seconds } = feedsMapper[feedAddress]
-    const { predictionTime } = satellite.participatedFeeds[feedAddress]
+    const {
+      last_completed_data_last_updated_at: feedLastUpdateTime,
+      heart_beat_seconds,
+      last_completed_data_epoch: latestEpoch,
+    } = feedsMapper[feedAddress]
+    const { predictionTime, predictionEpoch } = satellite.participatedFeeds[feedAddress]
 
+    // TODO: heart_beat_seconds update for new delay. Switch TEMP_MAX_ORACLE_DATA_PUSH_SECONDS back to heart_beat_seconds
+
+    let isValidEpoch = false
+    let isValidPredictionGap = false
+    if (predictionEpoch !== null && latestEpoch <= predictionEpoch) {
+      isValidEpoch = true
+    }
     // diff from now to last feed update and now in ms
     // const diffTimeNowAndLastFeedUpdate = dayjs().subtract(dayjs(feedLastUpdateTime).valueOf()).valueOf()
 
     // diff from last satellite prediction and now in ms
-    const diffTimeNowAndLastSatellitePrediction = dayjs().subtract(dayjs(predictionTime).valueOf()).valueOf()
+    const diffTimeNowAndLastSatellitePrediction = dayjs(feedLastUpdateTime)
+      .subtract(dayjs(predictionTime).valueOf())
+      .valueOf()
 
-    return diffTimeNowAndLastSatellitePrediction / 1000 <= heart_beat_seconds
+    isValidPredictionGap = diffTimeNowAndLastSatellitePrediction / 1000 <= TEMP_MAX_ORACLE_DATA_PUSH_SECONDS
+
+    return isValidEpoch || isValidPredictionGap
   })
 }
