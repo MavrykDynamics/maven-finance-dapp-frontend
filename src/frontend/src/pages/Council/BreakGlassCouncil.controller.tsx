@@ -1,17 +1,17 @@
-import { useCallback, useEffect, useMemo } from 'react'
-import { useParams } from 'react-router'
+import {useCallback, useEffect, useMemo} from 'react'
+import {useParams} from 'react-router'
 
 // utils
-import { propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { parseCounsilTab } from './helpers/commonCouncil.utils'
+import {propagateBreakGlass} from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
+import {parseCounsilTab} from './helpers/commonCouncil.utils'
 
 // hooks
-import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
+import {useCouncilContext} from 'providers/CouncilProvider/council.provider'
+import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction'
+import {useDappConfigContext} from 'providers/DappConfigProvider/dappConfig.provider'
+import {useUserContext} from 'providers/UserProvider/user.provider'
+import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
+import {useContractStatusesContext} from 'providers/ContractStatuses/ContractStatuses.provider'
 
 // consts
 import {
@@ -23,7 +23,7 @@ import {
   MY_BG_PAST_COUNCIL_ACTIONS_SUB,
   PROPAGATE_BREAK_GLASS_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
-import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import {BUTTON_PRIMARY} from 'app/App.components/Button/Button.constants'
 import {
   ALL_PAST_COUNSIL_TAB,
   ALL_PENDING_COUNSIL_TAB,
@@ -37,15 +37,15 @@ import {
 } from 'providers/ContractStatuses/helpers/contractStatuses.consts'
 
 // view
-import { Page } from 'styles'
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { CouncilView } from './Council.view'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { PropagateBreakGlassCouncilCard } from 'pages/Council/Council.style'
+import {Page} from 'styles'
+import {PageHeader} from '../../app/App.components/PageHeader/PageHeader.controller'
+import {CouncilView} from './Council.view'
+import {DataLoaderWrapper} from 'app/App.components/Loader/Loader.style'
+import {ClockLoader} from 'app/App.components/Loader/Loader.view'
+import {PropagateBreakGlassCouncilCard} from 'pages/Council/Council.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
+import {H2Title} from 'styles/generalStyledComponents/Titles.style'
 
 // TODO: validate tab in url?
 export const BreakGlassCouncil = () => {
@@ -126,7 +126,7 @@ export const BreakGlassCouncil = () => {
 
     return await propagateBreakGlass(
       breakGlassAddress,
-      contractStatuses.filter(({ admin }) => admin !== breakGlassAddress).map(({ address }) => address)
+      contractStatuses.filter(({ admin }) => admin !== breakGlassAddress).map(({ address }) => address),
     )
   }, [userAddress, breakGlassAddress, bug, contractStatuses])
 
@@ -135,13 +135,13 @@ export const BreakGlassCouncil = () => {
       actionType: PROPAGATE_BREAK_GLASS_ACTION,
       actionFn: propagateBreakGlassAction,
     }),
-    [propagateBreakGlassAction]
+    [propagateBreakGlassAction],
   )
 
   const { action: handleClickPropagateBreakGlass } = useContractAction(propagateBreakGlassContractActionProps)
 
   const isPropagateActionActive = Boolean(
-    allPendingActions.find((actionId) => actionsMapper[actionId].actionClientId === PROPAGATE_BREAK_GLASS_ACTION_FORM)
+    allPendingActions.find((actionId) => actionsMapper[actionId].actionClientId === PROPAGATE_BREAK_GLASS_ACTION_FORM),
   )
 
   return (
@@ -161,7 +161,7 @@ export const BreakGlassCouncil = () => {
                 <H2Title>Propagate Break Glass</H2Title>
                 <p>
                   This action can only be taken to pause all contracts in the event of a successful emergency governance
-                  where a critical flaw has been detected in the Mavryk Smart Contracts.
+                  where a critical flaw has been detected in the Mavryk Finance Smart Contracts.
                 </p>
               </div>
 

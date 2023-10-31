@@ -1,9 +1,9 @@
 import {
   GlobalStyle,
   MobilePlugBackground,
-  MobilePlugWrapper,
-  MobilePlugLogoWrapper,
   MobilePlugFooter,
+  MobilePlugLogoWrapper,
+  MobilePlugWrapper,
 } from './Mobile.style'
 
 import Icon from '../Icon/Icon.view'
@@ -43,7 +43,7 @@ export default function Mobile() {
           </div>
 
           <div className="dapp-descr">
-            Mavryk is a DAO operated financial ecosystem that lets users borrow and earn on their terms, while
+            Mavryk Finance is a DAO operated financial ecosystem that lets users borrow and earn on their terms, while
             participating in the governance of the platform.
           </div>
 

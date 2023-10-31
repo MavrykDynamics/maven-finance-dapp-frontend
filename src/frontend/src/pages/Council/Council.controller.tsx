@@ -1,19 +1,19 @@
-import { useParams } from 'react-router'
-import { useEffect, useMemo } from 'react'
+import {useParams} from 'react-router'
+import {useEffect, useMemo} from 'react'
 
 // hooks
-import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
+import {useCouncilContext} from 'providers/CouncilProvider/council.provider'
+import {useUserContext} from 'providers/UserProvider/user.provider'
 
 // utils
-import { parseCounsilTab } from './helpers/commonCouncil.utils'
+import {parseCounsilTab} from './helpers/commonCouncil.utils'
 
 // view
-import { Page } from 'styles'
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { CouncilView } from 'pages/Council/Council.view'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import {Page} from 'styles'
+import {PageHeader} from '../../app/App.components/PageHeader/PageHeader.controller'
+import {CouncilView} from 'pages/Council/Council.view'
+import {DataLoaderWrapper} from 'app/App.components/Loader/Loader.style'
+import {ClockLoader} from 'app/App.components/Loader/Loader.view'
 
 // consts
 import {
@@ -24,7 +24,7 @@ import {
   DEFAULT_COUNCIL_ACTIVE_SUBS,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from 'providers/CouncilProvider/helpers/council.consts'
-import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB } from './helpers/council.consts'
+import {ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB, MY_PENDING_COUNSIL_TAB} from './helpers/council.consts'
 
 // TODO: validate tab in url?
 export const Council = () => {
@@ -79,7 +79,7 @@ export const Council = () => {
       {isCounsilLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading Mavryk Council Data</div>
+          <div className="text">Loading Mavryk Finance Council Data</div>
         </DataLoaderWrapper>
       ) : (
         <CouncilView

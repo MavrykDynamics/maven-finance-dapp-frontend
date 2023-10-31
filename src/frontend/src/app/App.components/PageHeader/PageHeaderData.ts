@@ -221,7 +221,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'treasury',
     {
       title: 'Treasury',
-      subText: 'The treasury holds assets for the development of the Mavryk ecosystem.',
+      subText: 'The treasury holds assets for the development of the Mavryk Finance ecosystem.',
       foregroundImageSrc: '/images/treasury-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
