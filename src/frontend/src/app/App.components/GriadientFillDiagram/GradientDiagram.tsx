@@ -3,7 +3,7 @@ import { getGradient } from './GradientDiagram.helpers'
 import { GradientBreakpoint, GradientDiagramStyled } from './GradientDiagram.style'
 
 export type ColorBreakpoint = {
-  persentage: number
+  percentage: number
   color: {
     r: number
     g: number
@@ -14,15 +14,15 @@ export type ColorBreakpoint = {
 
 export type GradientDiagramPropsType = {
   colorBreakpoints: Array<ColorBreakpoint>
-  currentPersentage: number
+  currentPercentage: number
   className?: string
 }
 
-export const GradientDiagram = ({ colorBreakpoints, currentPersentage, className = '' }: GradientDiagramPropsType) => {
+export const GradientDiagram = ({ colorBreakpoints, currentPercentage, className = '' }: GradientDiagramPropsType) => {
   const gradient = getGradient({ colorBreakpoints })
 
   return (
-    <GradientDiagramStyled gradient={gradient} gradientWidth={currentPersentage} className={className}>
+    <GradientDiagramStyled gradient={gradient} gradientWidth={currentPercentage} className={className}>
       {colorBreakpoints.map(({ color, value }) => (
         <GradientBreakpoint
           background={`rgb(${color.r}, ${color.g}, ${color.b})`}

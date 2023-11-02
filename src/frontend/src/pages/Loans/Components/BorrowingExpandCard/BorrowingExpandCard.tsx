@@ -14,18 +14,18 @@ import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/Gradien
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
 import { ThreeLevelListItem } from '../../Loans.style'
-import { LoansActionsSection, BorrowingExpandedCard } from '../LoansComponents.style'
+import { BorrowingExpandedCard, LoansActionsSection } from '../LoansComponents.style'
 import colors from 'styles/colors'
 
 import { scrollToFullView } from 'utils/scrollToFullView'
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import {
   COLLATERAL_RATIO_GRADIENT,
+  getCollateralRatioPercentColor,
+  loansTabNames,
   VAULT_CARD_REPAY_BORROW_SLIDING_BUTTONS,
   VAULT_CARD_REPAY_SLIDING_BUTTONS,
-  getCollateralRationPersent,
-  loansTabNames,
 } from 'pages/Loans/Loans.const'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
 import { useHistory, useLocation } from 'react-router'
@@ -38,7 +38,7 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 type BorrowingExpandCardPropsType = {
   vault: VaultType
   isOwner?: boolean
-  headerSufix?: React.ReactNode
+  headerSuffix?: React.ReactNode
   children?: React.ReactNode
   status?: string
   DAOFee: number
@@ -48,7 +48,7 @@ type BorrowingExpandCardPropsType = {
 export const BorrowingExpandCard = ({
   vault,
   isOwner = false,
-  headerSufix,
+  headerSuffix,
   children,
   DAOFee,
   hideTransactionHistory,
@@ -144,7 +144,7 @@ export const BorrowingExpandCard = ({
     collateralBalance,
     borrowCapacity,
     collateralRatio,
-    deporsitorsFlag,
+    depositorsFlag,
     depositors,
     xtzDelegatedTo,
     sMVKDelegatedTo,
@@ -314,7 +314,7 @@ export const BorrowingExpandCard = ({
   const handleClickOpenManagePermissionsPopup = () => {
     openManagePermissionsPopup?.({
       vaultAddress,
-      deporsitorsFlag,
+      depositorsFlag: depositorsFlag,
       depositors,
     })
   }
@@ -335,7 +335,7 @@ export const BorrowingExpandCard = ({
         onClick={handleClickExpand}
         openButtonName="View"
         className={classNames('expand-borrow-tab', { 'expanded-card': isExpanded })}
-        sufix={headerSufix}
+        sufix={headerSuffix}
         header={
           <>
             <ThreeLevelListItem className="borrow-asset-header">
@@ -349,15 +349,22 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+              customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
-                Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+                Collateral Ratio:{' '}
+                <CommaNumber
+                  value={collateralRatio}
+                  endingText="%"
+                  showDecimal
+                  decimalsToShow={2}
+                  beginningText={collateralRatio === 1000 ? '+' : ''}
+                />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
+                currentPercentage={getCollateralRatioByPercentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -466,7 +473,7 @@ export const BorrowingExpandCard = ({
                 sMVKDelegatedTo={sMVKDelegatedTo}
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
-                deporsitorsFlag={deporsitorsFlag}
+                depositorsFlag={depositorsFlag}
                 hideTransactionHistory={hideTransactionHistory}
               />
             )}

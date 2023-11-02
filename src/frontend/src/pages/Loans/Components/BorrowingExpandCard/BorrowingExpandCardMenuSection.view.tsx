@@ -9,11 +9,11 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 // consts
 import {
   ANY_USER,
+  assetDecimalsToShow,
+  loansTabNames,
   NONE_USER,
   VAULT_CARD_MENU_TABS,
   WHITELIST_USERS,
-  assetDecimalsToShow,
-  loansTabNames,
 } from 'pages/Loans/Loans.const'
 import { MINIMUN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 import {
@@ -77,7 +77,7 @@ type Props = {
   sMVKDelegatedTo?: string
   collateralRatio: number
   collateralBalance: number
-  deporsitorsFlag: DepositorsFlagType
+  depositorsFlag: DepositorsFlagType
   hideTransactionHistory?: boolean
 }
 
@@ -99,7 +99,7 @@ export const BorrowingExpandCardMenuSection = ({
   sMVKDelegatedTo,
   collateralRatio,
   collateralBalance,
-  deporsitorsFlag,
+  depositorsFlag,
   hideTransactionHistory,
 }: Props) => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -121,7 +121,7 @@ export const BorrowingExpandCardMenuSection = ({
 
         return true
       }),
-    [hideTransactionHistory]
+    [hideTransactionHistory],
   )
 
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs.find((item) => item.active))
@@ -189,7 +189,11 @@ export const BorrowingExpandCardMenuSection = ({
               {collateralData
                 .sort((a, b) => b.amount - a.amount)
                 .map(({ amount, tokenAddress }, idx) => {
-                  const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                  const collateralToken = getTokenDataByAddress({
+                    tokenAddress,
+                    tokensMetadata,
+                    tokensPrices,
+                  })
 
                   if (!collateralToken || !collateralToken.rate || !checkWhetherTokenIsCollateralToken(collateralToken))
                     return null
@@ -236,7 +240,12 @@ export const BorrowingExpandCardMenuSection = ({
                           </Button>
                           {isOwner ? (
                             <Button
-                              onClick={() => openWithdrawCollateralPopup({ amount: convertedAmount, idx })}
+                              onClick={() =>
+                                openWithdrawCollateralPopup({
+                                  amount: convertedAmount,
+                                  idx,
+                                })
+                              }
                               form={BUTTON_WIDE}
                               kind={BUTTON_SECONDARY}
                               disabled={
@@ -339,7 +348,7 @@ export const BorrowingExpandCardMenuSection = ({
 
               {vaultHasSmvkCollateral ? (
                 <div className="useful-info-line">
-                  <div className="name">sMVK Delegated to </div>
+                  <div className="name">sMVK Delegated to</div>
                   <div className="value">
                     {sMVKDelegatedTo ? (
                       <TzAddress tzAddress={sMVKDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
@@ -375,9 +384,9 @@ export const BorrowingExpandCardMenuSection = ({
                 </Tooltip>
               </div>
               <div className="value">
-                {deporsitorsFlag === ANY_USER ? 'Allow Any' : null}
-                {deporsitorsFlag === NONE_USER ? 'Vault Owner' : null}
-                {deporsitorsFlag === WHITELIST_USERS ? 'Defined Accounts' : null}
+                {depositorsFlag === ANY_USER ? 'Allow Any' : null}
+                {depositorsFlag === NONE_USER ? 'Vault Owner' : null}
+                {depositorsFlag === WHITELIST_USERS ? 'Defined Accounts' : null}
               </div>
               <Button kind={BUTTON_SIMPLE} onClick={openManagePermissionsPopup} disabled={isActionActive}>
                 Update <Icon id="paginationArrowLeft" />

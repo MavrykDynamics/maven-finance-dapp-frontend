@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
-import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from 'pages/Loans/Loans.const'
 import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
@@ -24,7 +24,7 @@ import { LoansModalBase, VaultModalOverview } from './Modals.style'
 import colors from 'styles/colors'
 
 // utils
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // providers
@@ -100,7 +100,7 @@ export const ConfirmRepay = ({
         () => {
           closePopup()
           callback()
-        }
+        },
       )
     }
 
@@ -122,7 +122,7 @@ export const ConfirmRepay = ({
       actionType: REPAY_PART_OF_VAULT_ACTION,
       actionFn: partlyRepayAction,
     }),
-    [partlyRepayAction]
+    [partlyRepayAction],
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)
@@ -159,16 +159,22 @@ export const ConfirmRepay = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
+              customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
-                <CommaNumber value={futureCollateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+                <CommaNumber
+                  value={futureCollateralRatio}
+                  endingText="%"
+                  showDecimal
+                  decimalsToShow={2}
+                  beginningText={futureCollateralRatio === 1000 ? '+' : ''}
+                />
               </div>
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
+                currentPercentage={getCollateralRatioByPercentage(futureCollateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

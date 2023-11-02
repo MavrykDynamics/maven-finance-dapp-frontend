@@ -6,8 +6,8 @@ import {
   NullableLoansContextState,
 } from '../loans.provider.types'
 
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA } from './loans.const'
+import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
+import {EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA} from './loans.const'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
 export const getDescrByType = (type: number) => {
@@ -68,7 +68,7 @@ export const calcSupplyAPY = (utilizationRate: number, currentInterestRate: numb
   return leftSide * (1 - treasuryShare)
 }
 
-export const calcMarketAvaliableLiquidity = ({
+export const calcMarketAvailableLiquidity = ({
   total_remaining,
   token_pool_total,
   reserve_ratio,

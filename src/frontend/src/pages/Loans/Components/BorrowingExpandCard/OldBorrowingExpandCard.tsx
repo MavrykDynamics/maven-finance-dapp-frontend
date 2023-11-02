@@ -3,7 +3,7 @@ import { useClickAway } from 'react-use'
 import { useHistory, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
 
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from '../../Loans.const'
+import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from '../../Loans.const'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
@@ -17,13 +17,12 @@ import { StatusMessage } from '../StatusMessage.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { assetDecimalsToShow } from '../../Loans.const'
 
-import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { ThreeLevelListItem } from '../../Loans.style'
 import { BorrowingExpandedCard } from '../LoansComponents.style'
 
-import { getCollateralRatioByPersentage } from '../../Loans.helpers'
+import { getCollateralRatioByPercentage } from '../../Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   checkWhetherTokenIsCollateralToken,
@@ -145,7 +144,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+              customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -153,7 +152,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               <GradientDiagram
                 className="diagram"
                 colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-                currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
+                currentPercentage={getCollateralRatioByPercentage(collateralRatio)}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -236,7 +235,11 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
                   <TableBody>
                     {collateralData.map(({ tokenAddress, amount }, idx) => {
-                      const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                      const collateralToken = getTokenDataByAddress({
+                        tokenAddress,
+                        tokensMetadata,
+                        tokensPrices,
+                      })
 
                       if (
                         !collateralToken ||
@@ -247,7 +250,10 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
                       const { symbol, icon, rate, decimals } = collateralToken
 
-                      const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                      const convertedAmount = convertNumberForClient({
+                        number: amount,
+                        grade: decimals,
+                      })
                       const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                       return (

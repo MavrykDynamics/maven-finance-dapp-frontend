@@ -16,26 +16,26 @@ import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.type
 
 // styles
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { VaultOverview, StatusMessageStyled } from '../LoansComponents.style'
+import { StatusMessageStyled, VaultOverview } from '../LoansComponents.style'
 import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 
 // consts
 import colors from 'styles/colors'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import {
-  COLLATERAL_RATIO_GRADIENT,
   assetDecimalsToShow,
-  getCollateralRationPersent,
+  COLLATERAL_RATIO_GRADIENT,
+  getCollateralRatioPercentColor,
   loansTabNames,
 } from 'pages/Loans/Loans.const'
 import {
   ERR_MSG_INPUT,
+  getOnBlurValue,
+  getOnFocusValue,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   InputStatusType,
-  getOnBlurValue,
-  getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
@@ -43,7 +43,7 @@ import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
 
 // urils
-import { getCollateralRatioByPersentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPercentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { checkNan } from 'utils/checkNan'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 
@@ -150,7 +150,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         validationStatus: validationStatus,
       })
     },
-    [decimals, inputData, minimumRepay]
+    [decimals, inputData, minimumRepay],
   )
 
   const inputOnBlurHandle = useCallback(() => {
@@ -211,7 +211,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
         inputOnChangeHandle(e.target.value, Math.min(userAssetBalance, totalOutstanding)),
     }),
-    [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, totalOutstanding, userAssetBalance]
+    [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, totalOutstanding, userAssetBalance],
   )
 
   const settings: Settings = useMemo(
@@ -222,7 +222,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       useMaxHandler: () =>
         inputOnChangeHandle(
           getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), decimals),
-          Math.min(userAssetBalance, totalOutstanding)
+          Math.min(userAssetBalance, totalOutstanding),
         ),
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * borrowedTokenRate,
@@ -238,7 +238,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       userAssetBalance,
       totalOutstanding,
       decimals,
-    ]
+    ],
   )
 
   return (
@@ -355,7 +355,7 @@ const RepayTableStats = ({
       <div className="line">
         <ThreeLevelListItem
           className="collateral-diagram"
-          customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
+          customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
         >
           <div className={`percentage`}>
             Collateral Ratio:
@@ -364,7 +364,7 @@ const RepayTableStats = ({
           <GradientDiagram
             className="diagram"
             colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-            currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
+            currentPercentage={getCollateralRatioByPercentage(futureCollateralRatio)}
           />
         </ThreeLevelListItem>
 

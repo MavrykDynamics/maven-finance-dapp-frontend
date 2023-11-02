@@ -1,7 +1,7 @@
 import { GetLoansConfigQuery } from 'utils/__generated__/graphql'
 import { LoansContext, MarketsIndexerDataType } from '../loans.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
-import { calcLendingAPY, calcMarketAvaliableLiquidity } from './loans.utils'
+import { calcLendingAPY, calcMarketAvailableLiquidity } from './loans.utils'
 
 export const normalizeLoansConfig = ({ indexerData }: { indexerData: GetLoansConfigQuery }): LoansContext['config'] => {
   return {
@@ -33,7 +33,7 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: MarketsInd
       vaults_aggregate: { aggregate: borrowers },
     } = loanToken
 
-    const { reserveAmount, reserveFactor, availableLiquidity } = calcMarketAvaliableLiquidity(loanToken)
+    const { reserveAmount, reserveFactor, availableLiquidity } = calcMarketAvailableLiquidity(loanToken)
 
     const tokenCurrentInterestRate = convertNumberForClient({
       number: current_interest_rate,

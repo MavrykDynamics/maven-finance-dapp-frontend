@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import classNames from 'classnames'
 
 // consts
-import { COLLATERAL_RATIO_GRADIENT, assetDecimalsToShow, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_PULSE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
@@ -20,7 +20,7 @@ import { useBorrowInputData } from '../Modals/hooks/Market/useBorrowInputData'
 
 // utils
 import { checkNan } from 'utils/checkNan'
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -37,7 +37,7 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { VaultOverview, StatusMessageStyled, CardSectionWrapper } from '../LoansComponents.style'
+import { CardSectionWrapper, StatusMessageStyled, VaultOverview } from '../LoansComponents.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type Props = {
@@ -69,7 +69,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
 
   const { inputData, settings, inputProps, rate, icon, symbol, clearData } = useBorrowInputData(
     borrowedAssetAddress,
-    borrowCapacity
+    borrowCapacity,
   )
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
@@ -94,7 +94,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
       ...settings,
       validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     }),
-    [settings]
+    [settings],
   )
 
   return (
@@ -216,7 +216,7 @@ const TableStats = ({
       <div className="line">
         <ThreeLevelListItem
           className="collateral-diagram right"
-          customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
+          customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
         >
           <div className={`percentage`}>
             Collateral Ratio:
@@ -225,7 +225,7 @@ const TableStats = ({
           <GradientDiagram
             className="diagram"
             colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-            currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
+            currentPercentage={getCollateralRatioByPercentage(futureCollateralRatio)}
           />
         </ThreeLevelListItem>
 

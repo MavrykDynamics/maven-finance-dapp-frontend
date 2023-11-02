@@ -92,7 +92,7 @@ export const Loans = () => {
       areaBottomColor: colors[themeSelected].primaryChartBottomColor,
       textColor: colors[themeSelected].regularText,
     }),
-    [themeSelected]
+    [themeSelected],
   )
 
   const { totalBorrowed, totalLended } = marketsAddresses.reduce<{
@@ -115,7 +115,7 @@ export const Loans = () => {
     {
       totalLended: 0,
       totalBorrowed: 0,
-    }
+    },
   )
 
   useEffect(() => {
@@ -171,7 +171,7 @@ export const Loans = () => {
       {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading loans markets</div>
+          <div className="text">Loading loan markets</div>
         </DataLoaderWrapper>
       ) : marketsAddresses.length ? (
         <LoansStyled>
@@ -184,7 +184,11 @@ export const Loans = () => {
             <H2Title>Markets</H2Title>
             {marketsAddresses.map((marketAddress) => {
               const market = marketsMapper[marketAddress]
-              const loanToken = getTokenDataByAddress({ tokenAddress: marketAddress, tokensPrices, tokensMetadata })
+              const loanToken = getTokenDataByAddress({
+                tokenAddress: marketAddress,
+                tokensPrices,
+                tokensMetadata,
+              })
 
               if (!loanToken || !loanToken.rate || !market) return null
               const {
@@ -201,11 +205,18 @@ export const Loans = () => {
                 lendingAPY,
               } = market
 
-              const mToken = getTokenDataByAddress({ tokenAddress: loanMTokenAddress, tokensPrices, tokensMetadata })
+              const mToken = getTokenDataByAddress({
+                tokenAddress: loanMTokenAddress,
+                tokensPrices,
+                tokensMetadata,
+              })
 
               const interestEarned =
                 mToken && checkWhetherTokenIsM_Token(mToken)
-                  ? convertNumberForClient({ number: totalRewards, grade: mToken.mToken.interestRateDecimals })
+                  ? convertNumberForClient({
+                      number: totalRewards,
+                      grade: mToken.mToken.interestRateDecimals,
+                    })
                   : 0
 
               const { symbol, decimals, icon, rate, address } = loanToken
@@ -229,9 +240,13 @@ export const Loans = () => {
 
                       if (!collateralToken || !collateralToken.rate) return acc
                       const { decimals, rate } = collateralToken
-                      return (acc += convertNumberForClient({ number: amount, grade: decimals }) * rate)
+                      return (acc +=
+                        convertNumberForClient({
+                          number: amount,
+                          grade: decimals,
+                        }) * rate)
                     },
-                    0
+                    0,
                   )
 
                   acc.loanTokenVaultsTotalBorrowed +=
@@ -241,11 +256,17 @@ export const Loans = () => {
                 {
                   loanTokenTotalCollaterals: 0,
                   loanTokenVaultsTotalBorrowed: 0,
-                }
+                },
               )
 
-              const convertedMarketTotalLended = convertNumberForClient({ number: totalLended, grade: decimals })
-              const convertedMarketTotalBorrowed = convertNumberForClient({ number: totalBorrowed, grade: decimals })
+              const convertedMarketTotalLended = convertNumberForClient({
+                number: totalLended,
+                grade: decimals,
+              })
+              const convertedMarketTotalBorrowed = convertNumberForClient({
+                number: totalBorrowed,
+                grade: decimals,
+              })
 
               const totalCorratealColor =
                 loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed
@@ -294,7 +315,12 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link to={{ pathname: `/loans/${address}/${LEND_TAB_ID}`, state: { from: '/loans' } }}>
+                      <Link
+                        to={{
+                          pathname: `/loans/${address}/${LEND_TAB_ID}`,
+                          state: { from: '/loans' },
+                        }}
+                      >
                         <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                           Earn <Icon id="arrowRight" />
                         </Button>
@@ -322,7 +348,13 @@ export const Loans = () => {
                         <div className="name">Available Liquidity</div>
                         <CommaNumber
                           value={
-                            Math.max(convertNumberForClient({ number: availableLiquidity, grade: decimals }), 0) * rate
+                            Math.max(
+                              convertNumberForClient({
+                                number: availableLiquidity,
+                                grade: decimals,
+                              }),
+                              0,
+                            ) * rate
                           }
                           className="value"
                           beginningText="$"
@@ -340,7 +372,12 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link to={{ pathname: `/loans/${address}/${BORROW_TAB_ID}`, state: { from: '/loans' } }}>
+                      <Link
+                        to={{
+                          pathname: `/loans/${address}/${BORROW_TAB_ID}`,
+                          state: { from: '/loans' },
+                        }}
+                      >
                         <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                           Borrow <Icon id="arrowRight" />
                         </Button>

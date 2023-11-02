@@ -10,11 +10,11 @@ import { VaultOverview } from 'pages/Loans/Components/LoansComponents.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 
 // consts
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from 'pages/Loans/Loans.const'
 import { AVALIABLE_TO_BORROW, DAO_FEE, TOTAL_AMOUNT } from 'texts/tooltips/vault.text'
 
 // utils
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
+import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -76,7 +76,7 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
         <div className="line">
           <ThreeLevelListItem
             className="collateral-diagram right"
-            customColor={getCollateralRationPersent(colors[themeSelected], futureCollateralRatio)}
+            customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
           >
             <div className={`percentage`}>
               Collateral Ratio:
@@ -85,7 +85,7 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
             <GradientDiagram
               className="diagram"
               colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-              currentPersentage={getCollateralRatioByPersentage(futureCollateralRatio)}
+              currentPercentage={getCollateralRatioByPercentage(futureCollateralRatio)}
             />
           </ThreeLevelListItem>
 

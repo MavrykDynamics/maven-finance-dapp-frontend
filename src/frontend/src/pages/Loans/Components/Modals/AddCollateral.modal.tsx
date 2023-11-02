@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo } from 'react'
-import { useLockBodyScroll } from 'react-use'
+import {useCallback, useEffect, useMemo} from 'react'
+import {useLockBodyScroll} from 'react-use'
 
 // consts
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import {BUTTON_PRIMARY, BUTTON_WIDE} from 'app/App.components/Button/Button.constants'
+import {COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor} from 'pages/Loans/Loans.const'
 import {
   ERR_MSG_INPUT,
   INPUT_LARGE,
@@ -11,53 +11,50 @@ import {
   INPUT_STATUS_ERROR,
   InputStatusType,
 } from 'app/App.components/Input/Input.constants'
-import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {DEPOSIT_COLLATERAL_ACTION} from 'providers/VaultsProvider/helpers/vaults.const'
 
 // types
-import { AddCollateralPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import {AddCollateralPopupDataType} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 // components
-import { Input } from 'app/App.components/Input/NewInput'
+import {Input} from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
+import {GradientDiagram} from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import {ImageWithPlug} from 'app/App.components/Icon/ImageWithPlug'
 
 // styles
-import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import {LoansModalBase, VaultModalOverview} from './Modals.style'
+import {GovRightContainerTitleArea} from 'pages/Governance/Governance.style'
+import {InputPinnedTokenInfo} from 'app/App.components/Input/Input.style'
+import {PopupContainer, PopupContainerWrapper} from 'app/App.components/popup/PopupMain.style'
+import {ThreeLevelListItem} from 'pages/Loans/Loans.style'
 
 // actions
-import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
+import {depositCollateralsAction} from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 
 // helpers
-import { checkNan } from 'utils/checkNan'
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
-import {
-  checkWhetherTokenIsCollateralToken,
-  getTokenDataByAddress,
-} from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import {checkNan} from 'utils/checkNan'
+import {getCollateralRatioByPercentage} from 'pages/Loans/Loans.helpers'
+import {checkWhetherTokenIsCollateralToken, getTokenDataByAddress,} from 'providers/TokensProvider/helpers/tokens.utils'
+import {convertNumberForContractCall} from 'utils/calcFunctions'
+import {getUserTokenBalanceByAddress} from 'providers/UserProvider/helpers/userBalances.helpers'
 import colors from 'styles/colors'
 
 // providers
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import {useUserContext} from 'providers/UserProvider/user.provider'
+import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
+import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
-import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
-import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
-import { operationAddCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
-import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction'
+import {useDappConfigContext} from 'providers/DappConfigProvider/dappConfig.provider'
+import {validateInputLength} from 'app/App.utils/input/validateInput'
+import {useCollateralInputData} from './hooks/Market/useCollateralInputData'
+import {XTZLimitInfoBanner} from './components/XTZLimitInfoBanner'
+import {operationAddCollateral, useVaultFutureStats} from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239476&t=Sx2aEpp3ifrGxBtQ-0
 export const AddCollateral = ({
@@ -172,7 +169,7 @@ export const AddCollateral = ({
         ],
         vaultId,
         lendingControllerAddress,
-        closePopup
+        closePopup,
       )
     }
 
@@ -194,7 +191,7 @@ export const AddCollateral = ({
       actionType: DEPOSIT_COLLATERAL_ACTION,
       actionFn: depositAction,
     }),
-    [depositAction]
+    [depositAction],
   )
 
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
@@ -291,15 +288,22 @@ const AddCollateralTableStats = ({
     <VaultModalOverview>
       <ThreeLevelListItem
         className="collateral-diagram"
-        customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+        customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
       >
         <div className={`percentage`}>
-          Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+          Collateral Ratio:{' '}
+          <CommaNumber
+            value={collateralRatio}
+            endingText="%"
+            showDecimal
+            decimalsToShow={2}
+            beginningText={collateralRatio === 1000 ? '+' : ''}
+          />
         </div>
         <GradientDiagram
           className="diagram"
           colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-          currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
+          currentPercentage={getCollateralRatioByPercentage(collateralRatio)}
         />
       </ThreeLevelListItem>
       <ThreeLevelListItem>
