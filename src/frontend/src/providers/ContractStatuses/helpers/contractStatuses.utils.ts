@@ -9,7 +9,7 @@ import {
   ContractStatusesSubsRecordType,
   NullableContractStatusesContextStateType,
 } from '../contractStatuses.provider.types'
-import { GlasssBrokenStatusAndWhiteListDevsQuery } from 'utils/__generated__/graphql'
+import { GlassBrokenStatusAndWhiteListDevsQuery } from 'utils/__generated__/graphql'
 
 // consts
 import {
@@ -69,7 +69,7 @@ export const getContractStatusesProviderReturnValue = ({
 }
 
 export const normalizeContractStatusesConfig = (
-  data: GlasssBrokenStatusAndWhiteListDevsQuery,
+  data: GlassBrokenStatusAndWhiteListDevsQuery,
 ): NullableContractStatusesContextStateType['config'] => {
   const isGlassBroken = data.break_glass[0].glass_broken ?? null
   const whitelistDevelopers = data?.whitelist_developer.map(({ developer: { address } }) => address) ?? []
@@ -92,12 +92,12 @@ export const getContractMethodsPausedStatus = (
   normalizedContractStatuses: ReturnType<typeof normalizeContractStatuses>,
   failPercentage: number,
 ) => {
-  // check for correct percantage value
+  // check for correct percentage value
   const percentage = failPercentage <= 100 && failPercentage >= 1 ? failPercentage : DEFAULT_FAIL_PERCENTAGE
 
   // get array of booleans which are indicating contract methods statuses
   const contractMethodsPausedStatuses = normalizedContractStatuses.map((c) => Object.values(c.methods)).flat()
-  // get pasued and working contract methods data
+  // get paused and working contract methods data
   const { paused, working } = contractMethodsPausedStatuses.reduce<{ paused: number; working: number }>(
     (acc, isPaused) => {
       if (isPaused === false) acc.working = acc.working + 1
