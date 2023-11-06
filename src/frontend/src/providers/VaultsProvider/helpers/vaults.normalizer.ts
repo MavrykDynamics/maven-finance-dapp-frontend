@@ -1,17 +1,17 @@
-import { ANY_USER, WHITELIST_USERS, NONE_USER } from 'pages/Loans/Loans.const'
+import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import { BLOCKS_PER_MINUTE, SMVK_TOKEN_ADDRESS } from 'utils/constants'
 
 import {
   CollateralType,
   DepositorsFlagType,
-  VaultType,
   VaultsCtxState,
   VaultsIndexerDataType,
+  VaultType,
 } from 'providers/VaultsProvider/vaults.provider.types'
 import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { calcMarketAvaliableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
+import { calcMarketAvailableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
 
 const getVaultsDepositorsData = (
   vault: Exclude<VaultsIndexerDataType['lending_controller'][number]['vaults'][number]['vault'], null | undefined>,
@@ -107,7 +107,7 @@ export const normalizeVaults = ({
         }) * 100
 
       // Calc how much free tokens pool has for certain market
-      const { availableLiquidity } = calcMarketAvaliableLiquidity(loan_token)
+      const { availableLiquidity } = calcMarketAvailableLiquidity(loan_token)
 
       const { depositors, deporsitorsFlag } = getVaultsDepositorsData(vault)
       const collateralData = normalizeCollaterals(collateral_balances)
@@ -145,7 +145,7 @@ export const normalizeVaults = ({
         sMVKDelegatedTo: '',
         xtzDelegatedTo: vault?.baker?.address ?? null,
         depositors,
-        deporsitorsFlag,
+        depositorsFlag: deporsitorsFlag,
       }
 
       acc.vaultsMapper[vault.address] = normallizedVault

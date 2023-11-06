@@ -3,11 +3,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // consts
 import {
-  NONE_USER,
-  WHITELIST_USERS,
   ANY_USER,
-  VAULT_ALLOWANCE_ANY,
+  NONE_USER,
   VAULT_ALLOWANCE_ACCOUNTS,
+  VAULT_ALLOWANCE_ANY,
+  WHITELIST_USERS,
 } from 'pages/Loans/Loans.const'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SIMPLE_SMALL, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -73,7 +73,7 @@ export const ManagePermissions = ({
         content: <DropDownJsxChild>{text}</DropDownJsxChild>,
         id: value,
       })),
-    []
+    [],
   )
 
   const [chosenDdItem, setChosenDdItem] = useState<DropDownItemType | undefined>()
@@ -89,23 +89,26 @@ export const ManagePermissions = ({
       setTableData([{ address: '', validationStatus: '' }])
       setChosenDdItem(undefined)
     } else {
-      const { deporsitorsFlag, depositors } = data
+      const { depositorsFlag, depositors } = data
       // set initial data based on selected vault
-      handleOnClickDropdownItem(deporsitorsFlag ?? '')
+      handleOnClickDropdownItem(depositorsFlag ?? '')
       setTableData(
-        depositors.map((depositorAddress) => ({ address: depositorAddress, validationStatus: INPUT_STATUS_SUCCESS }))
+        depositors.map((depositorAddress) => ({
+          address: depositorAddress,
+          validationStatus: INPUT_STATUS_SUCCESS,
+        })),
       )
     }
   }, [data, show])
 
-  const { vaultAddress = '', deporsitorsFlag, depositors = [] } = data ?? {}
+  const { vaultAddress = '', depositorsFlag, depositors = [] } = data ?? {}
 
   const isActionDisabled =
     (chosenDdItem?.id === WHITELIST_USERS &&
       tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS)) ||
     (tableData.length === depositors.length &&
       tableData.every(({ address }) => depositors.includes(address)) &&
-      deporsitorsFlag === chosenDdItem?.id) ||
+      depositorsFlag === chosenDdItem?.id) ||
     !chosenDdItem
 
   const handleAddRow = () => setTableData(tableData.concat([{ address: '', validationStatus: '' }]))
@@ -118,7 +121,7 @@ export const ManagePermissions = ({
         : INPUT_STATUS_ERROR
 
     setTableData(
-      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item))
+      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
     )
   }
 
@@ -140,7 +143,7 @@ export const ManagePermissions = ({
       newDepositors,
       depositors,
       userAddress,
-      closePopup
+      closePopup,
     )
   }, [bug, chosenDdItem?.id, closePopup, depositors, tableData, userAddress, vaultAddress])
 
@@ -149,7 +152,7 @@ export const ManagePermissions = ({
       actionType: MANAGE_PERMISSIONS_ACTION,
       actionFn: managePermissionsActionCb,
     }),
-    [managePermissionsActionCb]
+    [managePermissionsActionCb],
   )
 
   const { action: updateHandler } = useContractAction(contractActionProps)

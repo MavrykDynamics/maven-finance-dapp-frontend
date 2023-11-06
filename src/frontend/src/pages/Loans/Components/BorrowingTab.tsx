@@ -1,6 +1,5 @@
 import { useHistory, useLocation } from 'react-router'
-import { useMemo } from 'react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
@@ -85,8 +84,11 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
                 openCreateVaultPopup({
                   marketTokenAddress: loanTokenAddress,
                   setCreatedVaultAddress: handleCreatedVaultAddress,
-                  avaliableLiquidity:
-                    convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
+                  availableLiquidity:
+                    convertNumberForClient({
+                      number: marketAvaliableLiquidity,
+                      grade: decimals,
+                    }) * rate,
                 })
               }
             >
@@ -123,8 +125,11 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
                 openCreateVaultPopup({
                   marketTokenAddress: loanTokenAddress,
                   setCreatedVaultAddress: handleCreatedVaultAddress,
-                  avaliableLiquidity:
-                    convertNumberForClient({ number: marketAvaliableLiquidity, grade: decimals }) * rate,
+                  availableLiquidity:
+                    convertNumberForClient({
+                      number: marketAvaliableLiquidity,
+                      grade: decimals,
+                    }) * rate,
                 })
               }
             >

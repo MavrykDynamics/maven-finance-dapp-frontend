@@ -1,4 +1,4 @@
-import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import {LoansTokenMetadataType, TokenAddressType} from 'providers/TokensProvider/tokens.provider.types'
 import {
   BORROW_VAULT_ASSET_ACTION,
   CHANGE_BAKER_ACTION,
@@ -13,13 +13,13 @@ import {
   UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from './helpers/vaults.const'
-import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
+import {VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR} from './vaults.provider.consts'
+import {vaultsStatuses} from 'pages/Vaults/Vaults.consts'
+import {ANY_USER, NONE_USER, WHITELIST_USERS} from 'pages/Loans/Loans.const'
 import {
+  GetAllVaultsQueryQuery,
   GetUserAllVaultsQueryQuery,
   GetUserDepositorAllVaultsQueryQuery,
-  GetAllVaultsQueryQuery,
 } from 'utils/__generated__/graphql'
 
 // actions type
@@ -96,19 +96,19 @@ export type VaultType = {
   liquidationMax: number // liquidation cost without fee @Sam-M-Israel?
   liquidationReward: number // how much the liquidator actually receives after they liquidate a vault and the fee is taken out along with whatever assets are sent to repay the outstanding debt of the loan. This should be the liquidation_fee_pct in the indexer
   liquidationRatio: number // at what ratio is the vault able to be liquidated. so in the indexer it says 1500, so that would be 150% collateral to outstanding debt. same usage as the collateral ratio. If the collateral ratio reaches the value of the liquidation ratio then the vault can be liquidated.
-  adminLiquidateFee: number // how much of the reward is sent to the treasury as the admin fee. so when a user liquidates a vault, the adminLiquidationFee and the liquidationReward are taken from the from the vault, not from one another.
+  adminLiquidateFee: number // how much of the reward is sent to the treasury as the admin fee. so when a user liquidates a vault, the adminLiquidationFee and the liquidationReward are taken from the vault, not from one another.
 
   // permissions
   xtzDelegatedTo: string | null // if vault has xtz, as collateral, those xtz can be delegated to baker, here's the address of the delegated baker
   sMVKDelegatedTo?: string // if vault has smvk, as collateral, those smvk can be delegated to satellite, here's the address of the delegated satellite
   ownerAddress: string // address of the vault owner
   depositors: Array<string> // list of people who are allowed to deposit in the vault
-  deporsitorsFlag: DepositorsFlagType // vault has 3 permissions states any -≥ anyone can deposit in it, none -> only owner can, whitelist -> only allowed users can deposit
+  depositorsFlag: DepositorsFlagType // vault has 3 permissions states any -≥ anyone can deposit in it, none -> only owner can, whitelist -> only allowed users can deposit
 
   // Additional fields for vaults page
-  minimumRepay: number // minimun amount of token that user can repay
+  minimumRepay: number // minimum amount of token that user can repay
   apr: number // interest rate the user is charged for borrowing
-  availableLiquidity: number // how much token avaliable in a pool, user to calc borrowCapacity of the vault *after normalizer it's not converted to client format*
+  availableLiquidity: number // how much token available in a pool, user to calc borrowCapacity of the vault *after normalizer it's not converted to client format*
   creationTimestamp: number // creation timestamp of the vault
 }
 
@@ -117,7 +117,7 @@ export type FullLoansVaultType = VaultType & {
   liquidationTimestamp: number | null // same as liquidationLvl but converted to timestamp
   totalOutstanding: number // fee + borrowed amount in USD
   collateralBalance: number // sum of collaterals in USD
-  borrowCapacity: number // how mush user can borrow from vault (avaliable liq | amount of token while collateral ration >= 200%)
+  borrowCapacity: number // how much user can borrow from vault (available liq | amount of token while collateral ration >= 200%)
   liquidationPrice: number
   collateralRatio: number // relation of collaterals in vault to borrowed amount
   status: (typeof vaultsStatuses)[keyof typeof vaultsStatuses] // status of the vault, depends on collateralRatio

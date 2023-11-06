@@ -1,7 +1,7 @@
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { VaultType, DepositorsFlagType } from '../../VaultsProvider/vaults.provider.types'
+import {TokenAddressType} from 'providers/TokensProvider/tokens.provider.types'
+import {DepositorsFlagType, VaultType} from '../../VaultsProvider/vaults.provider.types'
 
 // --- confirm borrow popup
 export type ConfirmBorrowPopupDataType = {
@@ -242,13 +242,13 @@ export const DEFAULT_CHANGE_NAME_POPUP_DATA: ChangeVaultNamePopupDataType = {
 // --- create vault popup
 export type CreateVaultPopupDataType = {
   marketTokenAddress: TokenAddressType
-  avaliableLiquidity: number
+  availableLiquidity: number
   setCreatedVaultAddress?: (address: string) => void
 }
 
 export const DEFAULT_CREATE_VAULT_POPUP_DATA: CreateVaultPopupDataType = {
   marketTokenAddress: '',
-  avaliableLiquidity: 0,
+  availableLiquidity: 0,
   setCreatedVaultAddress: () => {},
 }
 
@@ -256,12 +256,12 @@ export const DEFAULT_CREATE_VAULT_POPUP_DATA: CreateVaultPopupDataType = {
 export type ManagePermissionsPopupDataType = {
   vaultAddress: string
   depositors: Array<string>
-  deporsitorsFlag: DepositorsFlagType
+  depositorsFlag: DepositorsFlagType
 }
 
 export const DEFAULT_MANAGE_PERMISSIONS_POPUP_DATA: ManagePermissionsPopupDataType = {
   vaultAddress: '',
-  deporsitorsFlag: 'any',
+  depositorsFlag: 'any',
   depositors: [],
 }
 

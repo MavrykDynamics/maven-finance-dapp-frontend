@@ -9,14 +9,14 @@ const getMixedColorPart = (prevColorNumber: number, nextColorNumber: number, int
 
 export const getGradient = ({ colorBreakpoints }: { colorBreakpoints: Array<ColorBreakpoint> }) => {
   let counterFinished = false
-  const gradientColorsFillling = colorBreakpoints.reduce<Array<string>>((acc, { persentage, color }, idx, arr) => {
+  const gradientColorsFillling = colorBreakpoints.reduce<Array<string>>((acc, { percentage, color }, idx, arr) => {
     if (counterFinished === false) {
-      if (persentage <= 100) {
-        acc.push(` ${`rgb(${color.r}, ${color.g}, ${color.b})`} ${persentage}%`)
+      if (percentage <= 100) {
+        acc.push(` ${`rgb(${color.r}, ${color.g}, ${color.b})`} ${percentage}%`)
       } else {
         if (!arr?.[idx - 1]) return acc
-        const { color: prevColor, persentage: prevPersentage } = arr?.[idx - 1]
-        const currentIntervalPersentage = (100 - prevPersentage) / (persentage - prevPersentage)
+        const { color: prevColor, percentage: prevPercentage } = arr?.[idx - 1]
+        const currentIntervalPersentage = (100 - prevPercentage) / (percentage - prevPercentage)
 
         const mixedColor = {
           r: getMixedColorPart(prevColor.r, color.r, currentIntervalPersentage),

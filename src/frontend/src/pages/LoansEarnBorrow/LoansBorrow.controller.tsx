@@ -24,12 +24,11 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { MarketSettingsType, MarketType } from './LoansEarnBorrow.consts'
 
 // helpers
-
 // actions
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultCollateralRatio, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultCollateralBalance, getVaultCollateralRatio } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
+import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_DATA,
@@ -39,7 +38,7 @@ import { loansEarnBorrowContext } from './context/loansEarnBorrowContext'
 
 const marketSettings: MarketSettingsType = {
   priceName: 'Oracle Price',
-  totalName: 'Total Borrowed',
+  totalName: 'Total Available',
   leftValueName: 'Outstanding Debt',
   rightValueName: 'Collateral Amount',
   buttonName: 'Borrow',
@@ -87,7 +86,7 @@ export const LoansBorrow = () => {
       marketsAddresses.reduce<MarketType[]>((acc, marketTokenAddress) => {
         const market = marketsMapper[marketTokenAddress]
         const chartData = marketBorrowChart[marketTokenAddress] ?? {}
-
+        console.log('Logging market here:', market)
         const token = getTokenDataByAddress({
           tokenAddress: marketTokenAddress,
           tokensPrices,
@@ -96,7 +95,13 @@ export const LoansBorrow = () => {
 
         if (!token || !token.rate || !market) return acc
 
-        const { symbol, icon, rate: price, address } = token
+        const { symbol, icon, rate: price, address, decimals } = token
+
+        const marketAvailableLiquidity =
+          convertNumberForClient({
+            number: market.availableLiquidity,
+            grade: decimals,
+          }) * price
 
         acc.push({
           icon,
@@ -106,7 +111,7 @@ export const LoansBorrow = () => {
           annualRateName: 'APR',
           leftValue: userVaultsData[marketTokenAddress]?.principle ?? 0,
           rightValue: userVaultsData[marketTokenAddress]?.collateralBalance ?? 0,
-          totalAmount: chartData.total?.at(-1)?.value ?? 0,
+          totalAmount: marketAvailableLiquidity, //chartData.total?.at(-1)?.value ?? 0,
           price,
           chartData,
         })
@@ -159,13 +164,16 @@ export const LoansBorrow = () => {
       })
 
       if (market && marketToken && marketToken.rate) {
-        const marketAvaliableLiquidity =
-          convertNumberForClient({ number: market.availableLiquidity, grade: marketToken.decimals }) * marketToken.rate
+        const marketAvailableLiquidity =
+          convertNumberForClient({
+            number: market.availableLiquidity,
+            grade: marketToken.decimals,
+          }) * marketToken.rate
 
         openCreateVaultPopup({
           marketTokenAddress: marketTokenAddress,
           setCreatedVaultAddress: handleSetNewlyCreatedVaultAddress(marketTokenAddress),
-          avaliableLiquidity: marketAvaliableLiquidity,
+          availableLiquidity: marketAvailableLiquidity,
         })
       }
     } else {

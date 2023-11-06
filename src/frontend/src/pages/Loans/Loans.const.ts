@@ -112,19 +112,19 @@ export const REPAY_AND_CLOSE_MODAL_ID = 'repayAndCloseVault'
 export const UPDATE_MVK_OPERATORS_MODAL_ID = 'updateMVKOperators'
 export const WITHDRAW_COLLATERAL_MODAL_ID = 'withdrawCollateral'
 
-export const getCollateralRationPersent = (theme: MavrykTheme, persentage: number) => {
-  if (persentage === 0) return theme.subHeadingText
+export const getCollateralRatioPercentColor = (theme: MavrykTheme, percentage: number) => {
+  if (percentage === 0) return theme.subHeadingText
 
   const color = COLLATERAL_RATIO_GRADIENT.find(({ value }) => {
-    if (persentage < 100) {
+    if (percentage < 100) {
       return value === 100
     }
 
-    if (persentage > 250) {
+    if (percentage > 250) {
       return value === 250
     }
 
-    return value + 50 > persentage && value - 50 < persentage
+    return value + 50 > percentage && value - 50 < percentage
   })?.color
 
   return color ? `rgb(${color.r}, ${color.g}, ${color.b})` : theme.placeholders
@@ -132,7 +132,7 @@ export const getCollateralRationPersent = (theme: MavrykTheme, persentage: numbe
 
 export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
   {
-    persentage: 0,
+    percentage: 0,
     color: {
       r: 255,
       g: 67,
@@ -141,7 +141,7 @@ export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
     value: 100,
   },
   {
-    persentage: 33,
+    percentage: 33,
     color: {
       r: 255,
       g: 120,
@@ -150,7 +150,7 @@ export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
     value: 150,
   },
   {
-    persentage: 66,
+    percentage: 66,
     color: {
       r: 110,
       g: 255,
@@ -159,7 +159,7 @@ export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
     value: 200,
   },
   {
-    persentage: 100,
+    percentage: 100,
     color: {
       r: 52,
       g: 246,

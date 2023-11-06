@@ -1,19 +1,13 @@
 // styles
-import { LoansValuesSection, LoansValuesSectionInfo } from '../LoansComponents.style'
-
-// components
+import { LoansValuesSection, LoansValuesSectionInfo } from '../LoansComponents.style' // components
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-
-// consts & helpers
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram' // consts & helpers
+import { COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from 'pages/Loans/Loans.const'
 import colors from 'styles/colors'
 import { ACCRUED_INTEREST, APR, BORROW_CAPACITY, COLLATERAL_VALUE, OUTSTANDING_DEBT } from 'texts/tooltips/vault.text'
-import { getCollateralRatioByPersentage } from 'pages/Loans/Loans.helpers'
-
-// providers
+import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers' // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type Props = {
@@ -127,15 +121,21 @@ export const BorrowingExpandCardValuesSection = ({
       </div>
       <LoansValuesSectionInfo
         className="collateral-diagram"
-        customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+        customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
       >
         <div className="percentage">
           Collateral Ratio:
-          <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+          <CommaNumber
+            value={collateralRatio}
+            endingText="%"
+            showDecimal
+            decimalsToShow={2}
+            beginningText={collateralRatio === 1000 ? '+' : ''}
+          />
         </div>
         <GradientDiagram
           colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-          currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
+          currentPercentage={getCollateralRatioByPercentage(collateralRatio)}
         />
       </LoansValuesSectionInfo>
       <LoansValuesSectionInfo className="learn-more">

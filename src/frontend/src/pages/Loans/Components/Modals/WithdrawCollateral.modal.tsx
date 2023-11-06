@@ -1,28 +1,27 @@
-import { useLockBodyScroll } from 'react-use'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {useLockBodyScroll} from 'react-use'
+import {useCallback, useEffect, useMemo, useState} from 'react'
 
 // consts
 import {
   ERR_MSG_INPUT,
-  INPUT_LARGE,
-  INPUT_STATUS_DEFAULT,
-  INPUT_STATUS_ERROR,
-  INPUT_STATUS_SUCCESS,
-  InputStatusType,
   getOnBlurValue,
   getOnFocusValue,
+  INPUT_LARGE,
+  INPUT_STATUS_DEFAULT,
+  INPUT_STATUS_SUCCESS,
+  InputStatusType,
 } from 'app/App.components/Input/Input.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRationPersent } from 'pages/Loans/Loans.const'
+import {COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor} from 'pages/Loans/Loans.const'
 import colors from 'styles/colors'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import {BUTTON_PRIMARY, BUTTON_WIDE} from 'app/App.components/Button/Button.constants'
 import {
   MINIMUN_COLLATERAL_RATIO_PERSENT,
   WITHDRAW_COLLATERAL_ACTION,
 } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // types
-import { ThemeType } from 'consts/theme.const'
-import { WithdrawCollateralPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import {ThemeType} from 'consts/theme.const'
+import {WithdrawCollateralPopupDataType} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 // actions
 import {
@@ -31,41 +30,38 @@ import {
 } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 
 // view
-import { Input } from 'app/App.components/Input/NewInput'
+import {Input} from 'app/App.components/Input/NewInput'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import {GradientDiagram} from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import NewButton from 'app/App.components/Button/NewButton'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { LoansModalBase, VaultModalOverview } from './Modals.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
+import {LoansModalBase, VaultModalOverview} from './Modals.style'
+import {GovRightContainerTitleArea} from 'pages/Governance/Governance.style'
+import {InputPinnedTokenInfo} from 'app/App.components/Input/Input.style'
+import {ThreeLevelListItem} from 'pages/Loans/Loans.style'
+import {PopupContainer, PopupContainerWrapper} from 'app/App.components/popup/PopupMain.style'
+import {ImageWithPlug} from 'app/App.components/Icon/ImageWithPlug'
 
 // utils
+import {checkWhetherTokenIsCollateralToken, getTokenDataByAddress,} from 'providers/TokensProvider/helpers/tokens.utils'
 import {
-  checkWhetherTokenIsCollateralToken,
-  getTokenDataByAddress,
-} from 'providers/TokensProvider/helpers/tokens.utils'
-import {
-  getCollateralRatioByPersentage,
+  getCollateralRatioByPercentage,
   getLoansInputMaxAmount,
   getMaxCollateralWithdraw,
   loansInputValidation,
 } from 'pages/Loans/Loans.helpers'
-import { checkNan } from 'utils/checkNan'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import {checkNan} from 'utils/checkNan'
+import {validateInputLength} from 'app/App.utils/input/validateInput'
+import {getUserTokenBalanceByAddress} from 'providers/UserProvider/helpers/userBalances.helpers'
 
 // hooks
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { operationRemoveCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
-import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
+import {useDappConfigContext} from 'providers/DappConfigProvider/dappConfig.provider'
+import {useUserContext} from 'providers/UserProvider/user.provider'
+import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
+import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction'
+import {operationRemoveCollateral, useVaultFutureStats} from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239234&t=Sx2aEpp3ifrGxBtQ-0
 export const WithdrawCollateral = ({
@@ -145,7 +141,7 @@ export const WithdrawCollateral = ({
   const currentCollateralToWithdraw = getMaxCollateralWithdraw(
     collateralBalance,
     currentTotalOutstanding * borrowedTokenRate,
-    collateralRate
+    collateralRate,
   )
 
   const futureCollateralWithdraw = currentCollateralToWithdraw - inputAmount
@@ -184,7 +180,7 @@ export const WithdrawCollateral = ({
           collateralToken,
           vaultId,
           lendingControllerAddress,
-          closePopup
+          closePopup,
         )
       } else {
         return await withdrawCollateralAction(Number(inputData.amount), collateralToken, vaultAddress, closePopup)
@@ -199,7 +195,7 @@ export const WithdrawCollateral = ({
       actionType: WITHDRAW_COLLATERAL_ACTION,
       actionFn: withdrawAction,
     }),
-    [withdrawAction]
+    [withdrawAction],
   )
 
   const { action: withdrawHandler } = useContractAction(contractActionProps)
@@ -268,7 +264,7 @@ export const WithdrawCollateral = ({
                 onChange: (e) =>
                   inputOnChangeHandle(
                     e.target.value,
-                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault)
+                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault),
                   ),
               }}
               settings={{
@@ -278,9 +274,9 @@ export const WithdrawCollateral = ({
                   inputOnChangeHandle(
                     getLoansInputMaxAmount(
                       Math.min(selectedCollateralAmountInVault, currentCollateralToWithdraw),
-                      decimals
+                      decimals,
                     ),
-                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault)
+                    Math.min(currentCollateralToWithdraw, selectedCollateralAmountInVault),
                   ),
                 inputStatus: inputData.validationStatus,
                 convertedValue: inputAmount * collateralRate,
@@ -340,15 +336,22 @@ const WithdrawCollateralTableStats = ({
     <VaultModalOverview>
       <ThreeLevelListItem
         className="collateral-diagram"
-        customColor={getCollateralRationPersent(colors[themeSelected], collateralRatio)}
+        customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
       >
         <div className={`percentage`}>
-          Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
+          Collateral Ratio:{' '}
+          <CommaNumber
+            value={collateralRatio}
+            endingText="%"
+            showDecimal
+            decimalsToShow={2}
+            beginningText={collateralRatio === 1000 ? '+' : ''}
+          />
         </div>
         <GradientDiagram
           className="diagram"
           colorBreakpoints={COLLATERAL_RATIO_GRADIENT}
-          currentPersentage={getCollateralRatioByPersentage(collateralRatio)}
+          currentPercentage={getCollateralRatioByPercentage(collateralRatio)}
         />
       </ThreeLevelListItem>
       <ThreeLevelListItem>

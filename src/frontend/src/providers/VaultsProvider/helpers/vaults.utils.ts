@@ -1,32 +1,32 @@
 import dayjs from 'dayjs'
 
 // helpers
-import { statusSortPriority, vaultsStatuses } from 'pages/Vaults/Vaults.consts'
-import { api } from 'utils/api/api'
+import {statusSortPriority, vaultsStatuses} from 'pages/Vaults/Vaults.consts'
+import {api} from 'utils/api/api'
 import {
-  getTimestampByLevelUrl,
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
+  getTimestampByLevelUrl,
   TimestampByLevelResponceType,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
+import {getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
+import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
+import {convertNumberForClient, getNumberInBounds} from 'utils/calcFunctions'
 
 // types
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
+import {TokensContext} from 'providers/TokensProvider/tokens.provider.types'
 import {
   FullLoansVaultType,
-  VaultType,
+  NullableVaultsCtxState,
   VaultsContext,
   VaultsCtxState,
   VaultsSubsRecordType,
-  NullableVaultsCtxState,
+  VaultType,
 } from '../vaults.provider.types'
 
 // consts
-import { EMPTY_VAULTS_CONTEXT, VAULTS_DATA } from '../vaults.provider.consts'
-import { MINIMUN_COLLATERAL_RATIO_PERSENT } from './vaults.const'
+import {EMPTY_VAULTS_CONTEXT, VAULTS_DATA} from '../vaults.provider.consts'
+import {MINIMUN_COLLATERAL_RATIO_PERSENT} from './vaults.const'
 
 // sort vaults by status
 export const sortVaultsByStatus = async ({
@@ -195,11 +195,13 @@ export const getVaultCollateralBalance = (
 /**
  *
  * @param collateralAmount – USD amount of collaterals in the vault
- * @param totalOustanding – USD amount of principal + interest in the vault
+ * @param totalOutstanding
+ * @param useMinMax
  * @returns collateral ratio for the vault
  *
  * collateral ratio – is the relation of the borrowed amount to collaterals amount:
  * if vault has borrowAmount 0, collateral ratio 0 if we don't have collaterals, or 250, if we have some
+ * The upper bound for the collateral ratio is 1,000. This allows people to see that their vault is significantly over collateralized
  */
 export const getVaultCollateralRatio = (collateralAmount: number, totalOutstanding: number, useMinMax = true) => {
   // means we haven't borrowed anything
@@ -209,7 +211,7 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
   if (totalOutstanding === 0) return 250
 
   const collateralRatio = (collateralAmount / totalOutstanding) * 100
-  return useMinMax ? getNumberInBounds(0, 250, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
+  return useMinMax ? getNumberInBounds(0, 1000, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
 }
 
 // TODO: add descr to liquidation utils while testing liquidation functionality and popup

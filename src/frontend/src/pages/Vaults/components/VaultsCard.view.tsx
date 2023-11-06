@@ -15,7 +15,7 @@ import { Button } from 'app/App.components/Button/Button.controller'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
-import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import colors, { ThemeColorsType } from 'styles/colors'
 
@@ -50,7 +50,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 const columnWidth = '33%'
 
 const findStatusInfo = (
-  status: string
+  status: string,
 ): {
   color: StatusFlagKind
   text: string
@@ -256,7 +256,11 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
               <TableBody>
                 {collateralData.map(({ tokenAddress, amount }, index) => {
-                  const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                  const collateralToken = getTokenDataByAddress({
+                    tokenAddress,
+                    tokensMetadata,
+                    tokensPrices,
+                  })
 
                   if (!collateralToken || !collateralToken.rate) return null
 
@@ -351,7 +355,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     return (
       <BorrowingExpandCard
         vault={vault}
-        headerSufix={headerSufix}
+        headerSuffix={headerSufix}
         DAOFee={daoFee}
         isOwner={isOwner}
         hideTransactionHistory
@@ -370,7 +374,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   return (
     <BorrowingExpandCard
       vault={vault}
-      headerSufix={headerSufix}
+      headerSuffix={headerSufix}
       DAOFee={daoFee}
       isOwner={isOwner}
       hideTransactionHistory

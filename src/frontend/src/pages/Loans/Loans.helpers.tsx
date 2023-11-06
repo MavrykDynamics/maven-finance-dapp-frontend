@@ -1,13 +1,13 @@
-import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
+import {AreaChartPlotType} from 'app/App.components/Chart/helpers/Chart.types'
 
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import {INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS} from 'app/App.components/Input/Input.constants'
 
-import { convertNumberForClient, convertNumberForContractCall } from '../../utils/calcFunctions'
-import { assetDecimalsToShow } from './Loans.const'
-import { SingleValueData } from 'lightweight-charts'
-import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
-import { DEFAULT_MIN_COLLATERAL_AMOUNT } from 'utils/constants'
+import {convertNumberForClient, convertNumberForContractCall} from '../../utils/calcFunctions'
+import {assetDecimalsToShow} from './Loans.const'
+import {SingleValueData} from 'lightweight-charts'
+import {TokenMetadataType} from 'providers/TokensProvider/tokens.provider.types'
+import {checkWhetherTokenIsLoanToken} from 'providers/TokensProvider/helpers/tokens.utils'
+import {DEFAULT_MIN_COLLATERAL_AMOUNT} from 'utils/constants'
 
 // HELPER FOR BORROW FEE
 export const calculateAccruedInterest = (
@@ -93,10 +93,10 @@ export const getLoansInputMaxAmount = (amount: number = 0, decimals: number = as
 }
 
 /**
- * @param collateralRatio is a number from 0 to 250. Which usually used to display collateral ratio in persentage
- * @returns number from 1 to 100. Use this result for currentPersentage prop into GradientDiagram component
+ * @param collateralRatio is a number from 0 to 250. Which usually used to display collateral ratio in percentage
+ * @returns number from 1 to 100. Use this result for currentPercentage prop into GradientDiagram component
  */
-export const getCollateralRatioByPersentage = (collateralRatio: number) => {
+export const getCollateralRatioByPercentage = (collateralRatio: number) => {
   return Math.max(0, Math.min(((collateralRatio - 100) / 150) * 100, 100))
 }
 

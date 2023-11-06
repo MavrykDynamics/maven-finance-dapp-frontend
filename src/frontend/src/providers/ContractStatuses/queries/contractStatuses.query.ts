@@ -1,4 +1,4 @@
-import { gql } from 'utils/__generated__'
+import {gql} from 'utils/__generated__'
 
 // TODO for future separate queries and subs
 // DO NOT REMOVE IT!
@@ -125,16 +125,15 @@ query getAllContractStatusesData($isMockTime: Boolean) {
     admin
     last_updated_at
   }
-
   farm_factory: farm_factory(where: {admin: {_neq: ""}}) {
     create_farm_paused
+    create_farm_m_token_paused
     track_farm_paused
     untrack_farm_paused
     address
     admin
     last_updated_at
   }
-
   delegation: delegation(where: {admin: {_neq: ""}}) {
     delegate_to_satellite_paused
     distribute_reward_paused
@@ -142,40 +141,44 @@ query getAllContractStatusesData($isMockTime: Boolean) {
     undelegate_from_satellite_paused
     unregister_as_satellite_paused
     update_satellite_record_paused
+    take_satellites_snapshot_paused
     address
     admin
     last_updated_at
   }
-
   doorman: doorman(where: {admin: {_neq: ""}}) {
     address
     compound_paused
     farm_claim_paused
+    stake_paused
     unstake_paused
+    exit_paused
+    on_vault_deposit_stake_paused
+    on_vault_liquidate_stake_paused
+    on_vault_withdraw_stake_paused
     admin
     last_updated_at
   }
-
   treasury: treasury(where: {admin: {_neq: ""}}) {
     name
+    address
+    admin
     mint_mvk_and_transfer_paused
     stake_tokens_paused
     transfer_paused
-    address
     unstake_tokens_paused
+    update_token_operators_paused
     admin
     last_updated_at
   }
-  
   treasury_factory: treasury_factory(where: {admin: {_neq: ""}}) {
     create_treasury_paused
-    address
     track_treasury_paused
     untrack_treasury_paused
+    address
     admin
     last_updated_at
   }
-
   aggregator: aggregator(where: {admin: {_neq: ""}}) {
     address
     name
@@ -184,18 +187,16 @@ query getAllContractStatusesData($isMockTime: Boolean) {
     admin
     last_updated_at
   }
-
   aggregator_factory: aggregator_factory(where: {admin: {_neq: ""}}) {
     address
+    admin
     untrack_aggregator_paused
     track_aggregator_paused
     distribute_reward_xtz_paused
     distribute_reward_smvk_paused
     create_aggregator_paused
-    admin
     last_updated_at
   }
-
   lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
     address
     admin
@@ -217,7 +218,6 @@ query getAllContractStatusesData($isMockTime: Boolean) {
     vault_withdraw_paused
     vault_withdraw_staked_token_paused
   }
-  
   vault_factory: vault_factory {
     address
     admin
@@ -225,5 +225,4 @@ query getAllContractStatusesData($isMockTime: Boolean) {
     last_updated_at
   }
 }
-
 `)
