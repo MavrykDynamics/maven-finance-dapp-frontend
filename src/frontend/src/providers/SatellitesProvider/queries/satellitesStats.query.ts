@@ -1,4 +1,4 @@
-import { gql } from 'utils/__generated__'
+import { gql } from 'utils/__generated__';
 
 // data for sidebar
 export const SATELLITES_STATS = gql(`
@@ -13,16 +13,6 @@ query SatellitesStatsQuery{
   # active satellites amount
   activeSatellitesAmount: satellite_aggregate(where: {user: {satellites: {status: {_eq: "0"}, currently_registered: {_eq: true}}}}) {
     aggregate {
-      count
-    }
-  }
-
-  # feeds rewards 
-  rewardsFromFeeds: aggregator_aggregate {
-    aggregate {
-      sum {
-        reward_amount_smvk
-      }
       count
     }
   }
@@ -51,4 +41,4 @@ query SatellitesStatsQuery{
     }
   }
 }
-`)
+`);

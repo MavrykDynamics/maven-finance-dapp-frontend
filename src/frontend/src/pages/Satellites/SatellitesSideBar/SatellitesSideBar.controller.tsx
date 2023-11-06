@@ -1,21 +1,21 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 // hooks
-import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics';
+import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider';
+import { useUserContext } from 'providers/UserProvider/user.provider';
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider';
 
 // consts
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants';
+import { SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts';
 
 // view
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import Button from 'app/App.components/Button/NewButton'
-import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
-import Icon from 'app/App.components/Icon/Icon.view'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller';
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view';
+import Button from 'app/App.components/Button/NewButton';
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug';
+import Icon from 'app/App.components/Icon/Icon.view';
 import {
   FAQLink,
   SatelliteSideBarStyled,
@@ -23,18 +23,26 @@ import {
   SideBarItem,
   SideBarSection,
   SidebarUserButton,
-} from './SatelliteSideBar.style'
+} from './SatelliteSideBar.style';
 
 export const SateliteSideBarFAQ = () => (
   <SideBarFaq>
     <h2>Satellite FAQ</h2>
     <FAQLink>
-      <a href="https://docs.mavryk.finance/mavryk-finance/governance" target="_blank" rel="noreferrer">
+      <a
+        href="https://docs.mavryk.finance/mavryk-finance/governance"
+        target="_blank"
+        rel="noreferrer"
+      >
         Who controls Mavryk Finance, and how are decisions made?
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
+      <a
+        href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles"
+        target="_blank"
+        rel="noreferrer"
+      >
         What are Satellite’s and what do they do?
       </a>
     </FAQLink>
@@ -66,7 +74,7 @@ export const SateliteSideBarFAQ = () => (
       </a>
     </FAQLink>
   </SideBarFaq>
-)
+);
 
 const SidebarUserEditButton = ({ image, name }: { image: string; name: string }) => {
   return (
@@ -77,8 +85,8 @@ const SidebarUserEditButton = ({ image, name }: { image: string; name: string })
         <div className="link">View Satellite Profile</div>
       </div>
     </SidebarUserButton>
-  )
-}
+  );
+};
 
 const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
   const {
@@ -86,13 +94,14 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     isSatellite,
     userSatelliteName,
     userAvatars: { satelliteAvatar },
-  } = useUserContext()
+  } = useUserContext();
   const {
     contractAddresses: { delegationAddress, feedsFactoryAddress },
-  } = useDappConfigContext()
+  } = useDappConfigContext();
 
-  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks, averageFeedReward } = useSatelliteStatistics()
-  const { feedsAddresses } = useDataFeedsContext()
+  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks, averageOracleReward } =
+    useSatelliteStatistics();
+  const { feedsAddresses } = useDataFeedsContext();
 
   return (
     <SatelliteSideBarStyled>
@@ -152,14 +161,14 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Avg. Oracles Rewards MVK</h3>
           <var>
-            <CommaNumber value={averageFeedReward} />
+            <CommaNumber value={averageOracleReward} />
           </var>
         </SideBarItem>
       </SideBarSection>
 
       <SateliteSideBarFAQ />
     </SatelliteSideBarStyled>
-  )
-}
+  );
+};
 
-export default SatellitesSideBar
+export default SatellitesSideBar;
