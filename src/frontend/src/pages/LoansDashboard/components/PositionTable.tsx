@@ -112,13 +112,13 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
 
                   const { lendValue = 0, interestEarned = 0 } = lendingItem ?? {}
                   const {
-                    principle = 0,
+                    principal = 0,
                     interest = 0,
                     borrowedVaultsCollateralBalance = 0,
                   } = marketVaultsUserData ?? {}
 
                   const collateralRatio = marketVaultsUserData
-                    ? getVaultCollateralRatio(borrowedVaultsCollateralBalance, principle + interest)
+                    ? getVaultCollateralRatio(borrowedVaultsCollateralBalance, principal + interest)
                     : 0
                   const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
 
@@ -182,7 +182,7 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                           {marketVaultsUserData ? (
                             <>
                               <CommaNumber value={borrowAPR} endingText="%" />
-                              <CommaNumber value={marketVaultsUserData.principle} beginningText="$" />
+                              <CommaNumber value={marketVaultsUserData.principal} beginningText="$" />
                               <div className={`vault-status ${averageVaultStatus.status}`}>
                                 {averageVaultStatus.text}
                               </div>

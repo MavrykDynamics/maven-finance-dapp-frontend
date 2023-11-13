@@ -1,9 +1,9 @@
-import { z } from 'zod'
-import { SingleValueData } from 'lightweight-charts'
+import {z} from 'zod'
+import {SingleValueData} from 'lightweight-charts'
 
 // types
-import { TokenAddressType, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
-import { GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
+import {TokenAddressType, UserMTokenType} from 'providers/TokensProvider/tokens.provider.types'
+import {GetUserRewardsDataQuery} from 'utils/__generated__/graphql'
 
 // consts
 import {
@@ -12,10 +12,10 @@ import {
   GET_MVK_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from './helpers/user.consts'
-import { userTzktTokenBalancesSchema, userTzktWSAccountSchema } from './helpers/user.schemes'
+import {userTzktTokenBalancesSchema, userTzktWSAccountSchema} from './helpers/user.schemes'
 
 // utils
-import { normalizeUserHistoryData } from './helpers/userData.helpers'
+import {normalizeUserHistoryData} from './helpers/userData.helpers'
 
 // User loans data types
 export type UserLendBorrowItem = {
@@ -34,7 +34,7 @@ export type UserLoansData = {
   userLendings: Array<UserLendBorrowItem>
   userVaultsData: Record<
     string,
-    { principle: number; collateralBalance: number; borrowedVaultsCollateralBalance: number; interest: number }
+    { principal: number; collateralBalance: number; borrowedVaultsCollateralBalance: number; interest: number }
   >
 }
 

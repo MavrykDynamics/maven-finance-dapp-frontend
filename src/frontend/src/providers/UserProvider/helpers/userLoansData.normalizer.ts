@@ -9,7 +9,7 @@ import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 export const normalizeUserLoansData = (
   indexerData: GetUserLoansDataQuery,
   tokensMetadata: TokensContext['tokensMetadata'],
-  tokensPrices: TokensContext['tokensPrices']
+  tokensPrices: TokensContext['tokensPrices'],
 ) => {
   const { userLendings, totalUserLended, userBorrowings, totalUserBorrowed } =
     indexerData.mavryk_user[0].lending_controller_history_data_sender?.reduce<Omit<UserLoansData, 'userVaultsData'>>(
@@ -23,7 +23,7 @@ export const normalizeUserLoansData = (
           operation_hash,
           timestamp,
           lending_controller: { interest_rate_decimals, interest_treasury_share, decimals },
-        }
+        },
       ) => {
         const token = getTokenDataByAddress({
           tokenAddress: loan_token?.token.token_address,
@@ -42,7 +42,7 @@ export const normalizeUserLoansData = (
           annualPecentage: calcLendingAPY(
             convertNumberForClient({ number: loan_token.utilisation_rate, grade: interest_rate_decimals }),
             convertNumberForClient({ number: loan_token.current_interest_rate, grade: interest_rate_decimals }),
-            convertNumberForClient({ number: interest_treasury_share, grade: decimals })
+            convertNumberForClient({ number: interest_treasury_share, grade: decimals }),
           ),
         }
 
@@ -85,7 +85,7 @@ export const normalizeUserLoansData = (
 
         return acc
       },
-      { userBorrowings: [], totalUserBorrowed: 0, userLendings: [], totalUserLended: 0 }
+      { userBorrowings: [], totalUserBorrowed: 0, userLendings: [], totalUserLended: 0 },
     ) ?? { userBorrowings: [], totalUserBorrowed: 0, userLendings: [], totalUserLended: 0 }
 
   const userVaultsData =
@@ -112,23 +112,23 @@ export const normalizeUserLoansData = (
               collateral_token: {
                 token: { token_address },
               },
-            }) => ({ amount: balance, tokenAddress: token_address })
+            }) => ({ amount: balance, tokenAddress: token_address }),
           ),
           tokensMetadata,
-          tokensPrices
+          tokensPrices,
         )
 
         const isVaultBorrowed = convertedBorrowedAmount > 0 || convertedInterestAmount > 0
 
         if (!acc[borrowedToken.address]) {
           acc[borrowedToken.address] = {
-            principle: convertedBorrowedAmount,
+            principal: convertedBorrowedAmount,
             collateralBalance: collateralAmount,
             interest: convertedInterestAmount,
             borrowedVaultsCollateralBalance: isVaultBorrowed ? collateralAmount : 0,
           }
         } else {
-          acc[borrowedToken.address].principle += convertedBorrowedAmount
+          acc[borrowedToken.address].principal += convertedBorrowedAmount
           acc[borrowedToken.address].collateralBalance += collateralAmount
           acc[borrowedToken.address].interest += convertedInterestAmount
           acc[borrowedToken.address].borrowedVaultsCollateralBalance += isVaultBorrowed ? collateralAmount : 0
@@ -136,7 +136,7 @@ export const normalizeUserLoansData = (
 
         return acc
       },
-      {}
+      {},
     ) ?? {}
 
   return {

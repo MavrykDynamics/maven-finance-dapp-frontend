@@ -109,7 +109,7 @@ export const LoansBorrow = () => {
           address,
           annualRate: market.borrowAPR,
           annualRateName: 'APR',
-          leftValue: userVaultsData[marketTokenAddress]?.principle ?? 0,
+          leftValue: userVaultsData[marketTokenAddress]?.principal ?? 0,
           rightValue: userVaultsData[marketTokenAddress]?.collateralBalance ?? 0,
           totalAmount: marketAvailableLiquidity, //chartData.total?.at(-1)?.value ?? 0,
           price,
