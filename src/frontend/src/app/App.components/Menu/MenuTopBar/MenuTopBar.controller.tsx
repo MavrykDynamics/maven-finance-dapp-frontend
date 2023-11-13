@@ -64,7 +64,7 @@ export const DOCS_LINKS = [
   },
   { name: 'DAO Docs', href: 'https://docs.mavryk.finance/', disabled: false },
   { name: 'Security Audits (Soon)', href: '/', disabled: true },
-  { name: 'Github (Soon)', href: 'https://github.com/mavrykfinance/', disabled: true },
+  { name: 'Github', href: 'https://github.com/mavrykfinance/', disabled: false },
 ]
 
 export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodePopupHandler }: MenuTopBarProps) => {
