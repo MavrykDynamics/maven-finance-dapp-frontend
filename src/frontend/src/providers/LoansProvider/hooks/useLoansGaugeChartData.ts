@@ -66,7 +66,11 @@ export const useLoansGaugeChartData = ({ userVaultsData }: Props) => {
         (acc, marketTokenAddress) => {
           const market = marketsMapper[marketTokenAddress]
 
-          const token = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensMetadata, tokensPrices })
+          const token = getTokenDataByAddress({
+            tokenAddress: marketTokenAddress,
+            tokensMetadata,
+            tokensPrices,
+          })
 
           if (!token || !token.rate || !market) return acc
           const { borrowAPR, lendingAPY, loanMTokenAddress, loanTokenAddress } = market
@@ -77,16 +81,16 @@ export const useLoansGaugeChartData = ({ userVaultsData }: Props) => {
           const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
           const { rate } = token
-          const { principle, collateralBalance } = userMarketVaultsData
+          const { principal, collateralBalance } = userMarketVaultsData
 
           //  calculating value risk data & how much borrowed per vault
-          acc.collateralAmount += principle > 0 ? collateralBalance : 0
-          acc.borrowedAmount += principle
+          acc.collateralAmount += principal > 0 ? collateralBalance : 0
+          acc.borrowedAmount += principal
 
           // calculating net APY supplied & borrowed ratio's
           acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
           // TODO: check this calc
-          acc.sumOfRatioBorrowedToAPR += principle * borrowAPR
+          acc.sumOfRatioBorrowedToAPR += principal * borrowAPR
           acc.totalSuppliedValue += lendValue * rate
           return acc
         },

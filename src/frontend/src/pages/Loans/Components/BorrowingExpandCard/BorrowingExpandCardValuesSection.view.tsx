@@ -63,7 +63,7 @@ export const BorrowingExpandCardValuesSection = ({
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
           <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
           <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
-          <div className="name">Principle</div>
+          <div className="name">Principal</div>
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo>
