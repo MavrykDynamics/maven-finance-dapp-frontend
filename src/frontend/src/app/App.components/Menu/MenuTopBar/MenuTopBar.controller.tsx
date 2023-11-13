@@ -62,7 +62,7 @@ export const DOCS_LINKS = [
     disabled: false,
     path: 'https://mavryk.finance/litepaper',
   },
-  { name: 'DAO Docs', href: 'https://docs.mavryk.finance/', disabled: true },
+  { name: 'DAO Docs', href: 'https://docs.mavryk.finance/', disabled: false },
   { name: 'Security Audits (Soon)', href: '/', disabled: true },
   { name: 'Github (Soon)', href: 'https://github.com/mavrykfinance/', disabled: true },
 ]
