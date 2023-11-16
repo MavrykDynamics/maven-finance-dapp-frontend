@@ -17,13 +17,13 @@
     "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "^3.3.0",
+    "@airgap/beacon-sdk": "^4.0.6",
     "@apollo/client": "^3.8.3",
     "@floating-ui/react": "^0.26.1",
     "@microsoft/signalr": "^7.0.7",
-    "@taquito/beacon-wallet": "^15.0.1",
+    "@taquito/beacon-wallet": "^17.2.0",
     "@taquito/signer": "^15.0.1",
-    "@taquito/taquito": "^15.0.1",
+    "@taquito/taquito": "^17.2.0",
     "@taquito/utils": "^15.0.1",
     "@temple-wallet/dapp": "^6.0.1",
     "@wert-io/widget-initializer": "^2.0.0",
