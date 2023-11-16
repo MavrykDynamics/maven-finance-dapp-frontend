@@ -2,18 +2,18 @@
   "name": "mavryk-finance-dapp-frontend",
   "version": "1.0.0",
   "scripts": {
-    "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
-    "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
-    "build": "npm run graphql-compile && DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "build:evenlop": "npm run graphql-compile && export NODE_OPTIONS=--openssl-legacy-provider && DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-app-rewired -r @cypress/instrument-cra start && open http://localhost:3000",
+    "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-app-rewired -r @cypress/instrument-cra start && open http://localhost:3000",
+    "build": "npm run graphql-compile && DISABLE_ESLINT_PLUGIN=true react-app-rewired build",
+    "build:evenlop": "npm run graphql-compile && export NODE_OPTIONS=--openssl-legacy-provider && DISABLE_ESLINT_PLUGIN=true react-app-rewired build",
     "graphql-compile": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local",
     "graphql-compile-watch": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local",
     "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
     "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
-    "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
+    "analyze": "react-app-rewired build && source-map-explorer 'build/static/js/*.js'",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "test": "react-scripts test",
+    "test": "react-app-rewired test",
     "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'"
   },
   "dependencies": {
@@ -25,7 +25,6 @@
     "@taquito/signer": "^15.0.1",
     "@taquito/taquito": "^17.2.0",
     "@taquito/utils": "^15.0.1",
-    "@temple-wallet/dapp": "^6.0.1",
     "@wert-io/widget-initializer": "^2.0.0",
     "bignumber.js": "^9.1.0",
     "classnames": "^2.3.2",
@@ -39,7 +38,7 @@
     "qs": "^6.11.0",
     "react": "^17.0.2",
     "react-avatar-editor": "^13.0.0",
-    "react-collapsed": "^3.3.0",
+    "react-collapsed": "^4.1.2",
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.0",
@@ -67,27 +66,23 @@
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.3.0",
     "@types/styled-components": "^5.1.14",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
     "babel-plugin-styled-components": "^1.13.2",
     "cypress": "^8.4.1",
-    "eslint-config-react-app": "^6.0.0",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-jsdoc": "^46.0.0",
     "prettier": "2.8.7",
+    "react-app-rewired": "^2.2.1",
     "source-map-explorer": "^2.5.2",
-    "typescript": "^5.0.4"
+    "typescript": "4.4.4"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }
