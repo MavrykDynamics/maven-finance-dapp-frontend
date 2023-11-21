@@ -11,10 +11,11 @@ import { walletErrorPayload } from 'errors/error.schema'
 /**
  * checks is it's wallet error and is yes - gets the error info by that specific code
  * @param e Error instance
+ * @param skipValidation temporary solution to show error message by code when estimation operation is off
  * @returns {Message, description} object which contains info from error code
  */
-export const getContractErrorMessage = (e: unknown): WalletErrorPayload => {
-  const isTezosError = isWalletOperationError(e)
+export const getContractErrorMessage = (e: unknown, skipValidation = false): WalletErrorPayload => {
+  const isTezosError = skipValidation ? true : isWalletOperationError(e)
   if (isTezosError) {
     const error = e as TezosOperationError
     const errorCode = Number(error.message) ? Number(error.message) : error.message ? error.message : null
