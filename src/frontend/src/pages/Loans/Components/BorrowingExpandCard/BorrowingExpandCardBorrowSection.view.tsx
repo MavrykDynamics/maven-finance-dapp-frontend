@@ -144,7 +144,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={() => openConfirmBorrowPopup(inputAmount, clearData)}
-          disabled={isDisabledButton}
+          // disabled={isDisabledButton}
           animation={isDisabledButton ? null : BUTTON_PULSE}
         >
           <Icon id="coin-loan" />

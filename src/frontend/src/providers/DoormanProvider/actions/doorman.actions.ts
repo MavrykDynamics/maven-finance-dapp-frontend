@@ -49,7 +49,7 @@ export const stakeMVK = async (
 
     const stakeBatchItemMetaData = {
       kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-      ...doormanContract.methods.stake(convertNumberForContractCall({ number: amount })).toTransferParams(),
+      ...doormanContract.methods.stake(convertNumberForContractCall({ number: amount * 1000 })).toTransferParams(),
     }
 
     const batchArr = [approveBatchItemMetaData, stakeBatchItemMetaData, removeBatchItemMetaData]
@@ -69,7 +69,7 @@ export const unstakeMVK = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(doormanAddress)
-    const unstakeOperationMetaData = contract?.methods.unstake(convertNumberForContractCall({ number: amount }))
+    const unstakeOperationMetaData = contract?.methods.unstake(convertNumberForContractCall({ number: amount * 1000 }))
 
     return await getEstimationResult(unstakeOperationMetaData)
   } catch (error) {
