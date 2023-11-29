@@ -25,6 +25,7 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
     case 'mtzbtc':
       return { name: 'mTzBTC', symbol: 'mTzBTC', icon: '/images/mTzBTC.svg' }
 
+    case 'eurt/usd':
     case 'euroc/usd':
     case 'eurc/usd':
     case 'eurl':
