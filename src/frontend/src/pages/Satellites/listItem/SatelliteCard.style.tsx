@@ -17,16 +17,17 @@ export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
   margin: 0;
 `
 
-export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean }>`
+export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean; hasEmptyRightSection?: boolean }>`
   display: grid;
-  grid-template-columns: ${({ isExtendedListItem }) => (isExtendedListItem ? 'auto 220px' : 'auto 180px')};
+  grid-template-columns: ${({ isExtendedListItem, hasEmptyRightSection }) =>
+    hasEmptyRightSection ? 'auto' : isExtendedListItem ? 'auto 220px' : 'auto 180px'};
   column-gap: 20px;
   padding: 20px;
 
   .grid-container {
     display: grid;
     grid-template-rows: repeat(2, auto);
-    grid-template-columns: 202px minmax(87px, 1fr) minmax(121px, 1fr);
+    grid-template-columns: minmax(202px, 1fr) minmax(87px, 0.5fr) minmax(121px, 1fr);
     grid-column-gap: 34px;
     grid-row-gap: 20px;
   }
@@ -128,11 +129,11 @@ export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SatelliteMainText = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteMainText = styled.div<{ theme: MavrykTheme; hasEmptyRightSection?: boolean }>`
   color: ${({ theme }) => theme.subHeadingText};
   font-weight: 600;
   font-size: 14px;
-  max-width: 138px;
+  max-width: ${({ hasEmptyRightSection }) => (hasEmptyRightSection ? '200px' : '138px')};
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
