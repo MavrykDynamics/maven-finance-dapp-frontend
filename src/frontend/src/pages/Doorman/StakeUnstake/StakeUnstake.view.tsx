@@ -1,4 +1,4 @@
-import { useHistory } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useCallback, useEffect, useMemo } from 'react'
 
 // context
@@ -37,30 +37,30 @@ import {
 import { STAKE_ACTION } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { REWARDS_COMPOUND_ACTION } from 'providers/UserProvider/helpers/user.consts'
 import {
-  INPUT_STATUS_SUCCESS,
+  ERR_MSG_TOAST,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
-  ERR_MSG_TOAST,
+  INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
 import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 
 // style
 import {
+  StakeDelegatedUser,
   StakeLabel,
   StakeUnstakeActionCard,
+  StakeUnstakeAmount,
   StakeUnstakeBalance,
   StakeUnstakeButtonGrid,
   StakeUnstakeCard,
-  StakeUnstakeInputColumn,
-  StakeUnstakeInputWithCoin,
-  StakeUnstakeInputLabels,
-  StakeUnstakeRate,
-  StakeUnstakeStyled,
   StakeUnstakeCards,
+  StakeUnstakeInputColumn,
+  StakeUnstakeInputLabels,
+  StakeUnstakeInputWithCoin,
+  StakeUnstakeRate,
   StakeUnstakeRightPart,
-  StakeDelegatedUser,
-  StakeUnstakeAmount,
+  StakeUnstakeStyled,
 } from './StakeUnstake.style'
 
 // types
@@ -189,7 +189,7 @@ export const StakeUnstakeView = ({
 
       return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
     },
-    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress]
+    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress],
   )
 
   const dappCallback = useCallback(() => {
@@ -202,7 +202,7 @@ export const StakeUnstakeView = ({
       actionFn: stakeAction.bind(null, Number(inputData.amount)),
       dappActionCallback: dappCallback,
     }),
-    [dappCallback, inputData.amount, stakeAction]
+    [dappCallback, inputData.amount, stakeAction],
   )
 
   const { action: handleStake } = useContractAction(contractActionProps)
@@ -227,7 +227,7 @@ export const StakeUnstakeView = ({
       actionType: REWARDS_COMPOUND_ACTION,
       actionFn: rewardsCompoundAction,
     }),
-    [rewardsCompoundAction]
+    [rewardsCompoundAction],
   )
 
   const { action: handleCompound } = useContractAction(compoundContractActionProps)
@@ -254,7 +254,7 @@ export const StakeUnstakeView = ({
 
   const handleDelegate = () => {
     history.push(
-      satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes'
+      satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
     )
   }
 
@@ -282,7 +282,7 @@ export const StakeUnstakeView = ({
           <StakeUnstakeBalance>
             <ImageWithPlug imageLink={'/images/coin-silver.svg'} alt="coin" />
             <div>
-              <h3>Total MVK Staked</h3>
+              <h3>My Staked MVK Balance</h3>
               <div className="balance-btn-group">
                 <CommaNumber value={mySMvkTokenBalance} className="amount" />
                 {Boolean(mySMvkTokenBalance) && (
@@ -329,15 +329,14 @@ export const StakeUnstakeView = ({
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
               <h3>
-                Pending MVK Rewards
+                Pending sMVK Rewards
                 <Tooltip>
                   <Tooltip.Trigger className="ml-3">
                     <Icon id="info" />
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    Amount of MVK you have earned and not yet claimed. This resets every time you stake, unstake, or
-                    compound as doing one of those actions will automatically credit your staked MVK balance with any
-                    unclaimed rewards.
+                    The amount of pending sMVK you have earned but not yet claimed. Claim your rewards in the Personal
+                    Dashboard.
                   </Tooltip.Content>
                 </Tooltip>
               </h3>
@@ -346,25 +345,26 @@ export const StakeUnstakeView = ({
           </StakeUnstakeBalance>
 
           <StakeUnstakeRightPart>
-            <NewButton
-              kind={BUTTON_PRIMARY}
-              form={BUTTON_WIDE}
-              isThin
-              onClick={handleCompound}
-              disabled={rewardsToClaim < 2 || isActionActive}
-            >
-              <Icon id="compound" /> Compound
-            </NewButton>
-            <Tooltip>
-              <Tooltip.Trigger className="tooltip-trigger">
-                <Icon id="info" />
-              </Tooltip.Trigger>
-              <Tooltip.Content>
-                {rewardsToClaim < 2 || isActionActive
-                  ? `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`
-                  : `Compounds your pending exit fee rewards and converts them to sMVK.`}
-              </Tooltip.Content>
-            </Tooltip>
+            {/*<NewButton*/}
+            {/*  kind={BUTTON_PRIMARY}*/}
+            {/*  form={BUTTON_WIDE}*/}
+            {/*  isThin*/}
+            {/*  onClick={handleCompound}*/}
+            {/*  disabled={rewardsToClaim < 2 || isActionActive}*/}
+            {/*>*/}
+            {/*  <Icon id="compound" /> Compound*/}
+            {/*</NewButton>*/}
+            <Link to={`/dashboard-personal/portfolio/`}>Personal Dashboard</Link>
+            {/*<Tooltip>*/}
+            {/*  <Tooltip.Trigger className="tooltip-trigger">*/}
+            {/*    <Icon id="info" />*/}
+            {/*  </Tooltip.Trigger>*/}
+            {/*  <Tooltip.Content>*/}
+            {/*    {rewardsToClaim < 2 || isActionActive*/}
+            {/*      ? `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`*/}
+            {/*      : `Compounds your pending exit fee rewards and converts them to sMVK.`}*/}
+            {/*  </Tooltip.Content>*/}
+            {/*</Tooltip>*/}
           </StakeUnstakeRightPart>
         </StakeUnstakeCard>
       </StakeUnstakeCards>

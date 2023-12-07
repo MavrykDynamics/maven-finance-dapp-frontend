@@ -1,15 +1,38 @@
 import { ContractMethod, OpKind, SendParams, TezosToolkit, TransferParams, Wallet } from '@taquito/taquito'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { WalletOperationError, checkWhetherWalletAbortError } from 'errors/error'
+import { estimateExecution, getContractErrorMessage } from './walletError.helper'
 
 type EstimationResultParams = {
   callback?: () => void
   params?: Partial<SendParams>
 }
 
+// WHile estimation logic is comented, use this function to hanlde tezos wallet errors
+function handleErrorWhenEstimationLogicIsDisabled(e: unknown) {
+  const rawError: any = e
+
+  if (checkWhetherWalletAbortError(rawError))
+    return { actionSuccess: false, error: new WalletOperationError('Operation is aborted') }
+  else if (rawError.data[1]?.with?.string || rawError.data[1]?.with?.int) {
+    const _with = rawError.data[1]?.with
+    const withPayload = _with?.string ? _with.string : _with?.int
+
+    return { actionSuccess: false, error: getContractErrorMessage(new Error(withPayload), true) }
+  }
+  // throw e
+  return {
+    actionSuccess: false,
+    error: {
+      message: 'Invalid Transaction',
+      description: 'Please review documentation',
+    },
+  }
+}
+
 export async function getEstimationResult(
   metadata: ContractMethod<Wallet>,
-  args?: EstimationResultParams
+  args?: EstimationResultParams,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> {
   // const op = await estimateExecution(metadata, args?.params)
 
@@ -23,16 +46,14 @@ export async function getEstimationResult(
 
     return { actionSuccess: true, operation }
   } catch (e) {
-    if (checkWhetherWalletAbortError(e))
-      return { actionSuccess: false, error: new WalletOperationError('Operation is aborted') }
-    throw e
+    return handleErrorWhenEstimationLogicIsDisabled(e)
   }
 }
 
 export async function getEstimationBatchResult(
   tezos: TezosToolkit,
   batchArr: (TransferParams & { kind: OpKind.TRANSACTION })[],
-  cb?: () => void
+  cb?: () => void,
 ) {
   // const estimateBatchOp = await estimateBatchOperation(batchArr)
 
@@ -46,8 +67,6 @@ export async function getEstimationBatchResult(
 
     return { actionSuccess: true, operation }
   } catch (e) {
-    if (checkWhetherWalletAbortError(e))
-      return { actionSuccess: false, error: new WalletOperationError('Operation is aborted') }
-    throw e
+    return handleErrorWhenEstimationLogicIsDisabled(e)
   }
 }

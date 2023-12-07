@@ -133,7 +133,7 @@ const SatelliteTab = ({
                       value={Math.max(
                         satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
                           satelliteRecord.totalDelegatedAmount,
-                        0
+                        0,
                       )}
                     />
                   </div>

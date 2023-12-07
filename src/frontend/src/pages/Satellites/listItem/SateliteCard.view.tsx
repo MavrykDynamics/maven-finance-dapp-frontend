@@ -168,7 +168,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       actionType: DELEGATE_ACTION,
       actionFn: delegeteAction,
     }),
-    [delegeteAction]
+    [delegeteAction],
   )
 
   const { action: delegateCallback } = useContractAction(delegateContractActionProps)
@@ -190,7 +190,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       availableProposalRewards,
       satelliteAddress,
       delegationAddress,
-      governanceAddress
+      governanceAddress,
     )
   }, [availableProposalRewards, bug, delegationAddress, governanceAddress, satelliteAddress, userAddress])
 
@@ -199,7 +199,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       actionType: UNDELEGATE_ACTION,
       actionFn: undelegeteAction,
     }),
-    [undelegeteAction]
+    [undelegeteAction],
   )
 
   const { action: undelegateCallback } = useContractAction(unDelegateContractActionProps)
@@ -231,14 +231,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       actionType: DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
       actionFn: distributeRewardsAction,
     }),
-    [distributeRewardsAction]
+    [distributeRewardsAction],
   )
 
   const { action: distributeRewardsCallback } = useContractAction(distributeRewardsContractActionProps)
 
+  const hasEmptyRightSection = isUserSatellite || !isSatelliteActive
   return (
     <SatelliteCard key={String(`satellite${satellite.address}`)}>
-      <SatelliteCardInner isExtendedListItem={isDetailsPage}>
+      <SatelliteCardInner isExtendedListItem={isDetailsPage} hasEmptyRightSection={hasEmptyRightSection}>
         <div className="grid-container">
           <div className="grid-item">
             <SatelliteProfileImageContainer>
@@ -246,7 +247,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             </SatelliteProfileImageContainer>
 
             <SatelliteTextGroup>
-              <SatelliteMainText>{satellite.name}</SatelliteMainText>
+              <SatelliteMainText hasEmptyRightSection={hasEmptyRightSection}>{satellite.name}</SatelliteMainText>
               <SatelliteSubText>
                 <TzAddress tzAddress={satellite.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon isBold />
               </SatelliteSubText>
