@@ -198,7 +198,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
 
             <SocialIcons />
             <span>
-              DAPP v0.1
+              DAPP v2.0
               <br />© Mavryk Finance 2023
             </span>
           </MenuFooter>

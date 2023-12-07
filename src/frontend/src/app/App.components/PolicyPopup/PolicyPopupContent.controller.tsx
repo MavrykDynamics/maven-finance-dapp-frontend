@@ -15,7 +15,7 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
       <h1>Welcome to the Mavryk Finance Public Beta!</h1>
 
       <p>
-        TLDR: We’re super excited to present Mavryk Finance’s Beta v1.0!! This stage is to showcase our platform to the
+        TLDR: We’re super excited to present Mavryk Finance’s Beta v2.0!! This stage is to showcase our platform to the
         community and for public testing & feedback. Please keep in mind we are undergoing continuous internal testing &
         bug fixes, and we are constantly updating the Dapp. That being said, we would love for you explore, test, and
         become familiar with Mavryk Finance, and everything our team is building. We only ask that you reach out to us
@@ -24,11 +24,11 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
         wider social media.
       </p>
 
-      <h3>Incoming Updates & Fixes:</h3>
+      {/*<h3>Incoming Updates & Fixes:</h3>*/}
 
-      <ol>
-        <li>Transaction Estimation & Improved Error Handling.</li>
-      </ol>
+      {/*<ol>*/}
+      {/*  <li>Transaction Estimation & Improved Error Handling.</li>*/}
+      {/*</ol>*/}
 
       {/*<h3>Known UI/UX Issues & Bugs:</h3>*/}
 
