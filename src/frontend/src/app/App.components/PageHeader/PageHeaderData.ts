@@ -148,8 +148,8 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
   [
     'council',
     {
-      title: 'Mavryk Council',
-      subText: 'Responsible for performing operations to develop the Mavryk Finance ecosystem',
+      title: 'Maven Council',
+      subText: 'Responsible for performing operations to develop the Maven Finance ecosystem',
       foregroundImageSrc: '/images/gov-main-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -221,7 +221,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'treasury',
     {
       title: 'Treasury',
-      subText: 'The treasury holds assets for the development of the Mavryk Finance ecosystem.',
+      subText: 'The treasury holds assets for the development of the Maven Finance ecosystem.',
       foregroundImageSrc: '/images/treasury-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -275,7 +275,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'oracles-users',
     {
       title: 'Oracles Users',
-      subText: 'Decentralized oracles powered by Mavryk Finance',
+      subText: 'Decentralized oracles powered by Maven Finance',
       foregroundImageSrc: '/images/data-feeds-header.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },

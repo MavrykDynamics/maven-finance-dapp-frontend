@@ -130,11 +130,11 @@ export const SatellitesTab = () => {
       <div className="descr">
         <div className="title">What are Satellites?</div>
         <div className="text">
-          Satellites are nodes that administer the Mavryk Finance platform (similarly to validators on PoS). A Satellite
+          Satellites are nodes that administer the Maven Finance platform (similarly to validators on PoS). A Satellite
           can act on its own behalf and can receive delegations on behalf of others.
           <br />
           <br />
-          To operate a Mavryk Finance Satellite, a users needs to stake a security deposit in MVK, and operate an oracle
+          To operate a Maven Finance Satellite, a users needs to stake a security deposit in MVK, and operate an oracle
           node for signing data feeds. For more information about starting & operating a Satellite.{' '}
           <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
             Read More

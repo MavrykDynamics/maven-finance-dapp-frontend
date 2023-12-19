@@ -1,46 +1,46 @@
-import { useEffect, useMemo } from 'react'
-import { Redirect, useLocation } from 'react-router'
+import {useEffect, useMemo} from 'react'
+import {Redirect, useLocation} from 'react-router'
 import QueryString from 'qs'
 
 // view
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { Page } from 'styles'
-import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
-import { DashboardStyled, BGPrimaryTitleStyled, StatBlock } from './Dashboard.style'
-import { FarmsTab } from './TabScreens/FarmsTab.controller'
-import { LendingTab } from './TabScreens/LendingTab.controller'
-import { OraclesTab } from './TabScreens/OraclesTab.controller'
-import { StakingTab } from './TabScreens/StakingTab.controller'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
-import { VaultsTab } from './TabScreens/VaultsTab.controller'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { Impact } from 'app/App.components/Impact/Impact'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import {PageHeader} from '../../app/App.components/PageHeader/PageHeader.controller'
+import {Page} from 'styles'
+import {SatellitesTab} from './TabScreens/SatellitesTab.controller'
+import {BGPrimaryTitleStyled, DashboardStyled, StatBlock} from './Dashboard.style'
+import {FarmsTab} from './TabScreens/FarmsTab.controller'
+import {LendingTab} from './TabScreens/LendingTab.controller'
+import {OraclesTab} from './TabScreens/OraclesTab.controller'
+import {StakingTab} from './TabScreens/StakingTab.controller'
+import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
+import {TreasuryTab} from './TabScreens/TreasuryTab.controller'
+import {VaultsTab} from './TabScreens/VaultsTab.controller'
+import {DataLoaderWrapper} from 'app/App.components/Loader/Loader.style'
+import {Impact} from 'app/App.components/Impact/Impact'
+import {ClockLoader} from 'app/App.components/Loader/Loader.view'
 
 // const
 import {
-  mvkStatsType,
+  FARMS_TAB_ID,
   isValidPersonalDashboardTabId,
   LENDING_TAB_ID,
-  FARMS_TAB_ID,
+  mvkStatsType,
   ORACLES_TAB_ID,
   SATELLITES_TAB_ID,
   STAKING_TAB_ID,
+  TabId,
   TREASURY_TAB_ID,
   VAULTS_TAB_ID,
-  TabId,
 } from './Dashboard.utils'
-import { MVK_TOKEN_SYMBOL } from 'utils/constants'
-import { DEFAULT_STAKING_ACTIVE_SUBS, DAPP_MVK_SMVK_STATS_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
+import {MVK_TOKEN_SYMBOL} from 'utils/constants'
+import {DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS} from 'providers/DoormanProvider/helpers/doorman.consts'
 
 // hooks
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
-import { useDappTvl } from 'providers/DappConfigProvider/hooks/useDappTvl'
+import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
+import {useDoormanContext} from 'providers/DoormanProvider/doorman.provider'
+import {useDappTvl} from 'providers/DappConfigProvider/hooks/useDappTvl'
 
 // utils
-import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
+import {calcDiffBetweenTwoNumbersInPersentage} from 'utils/calcFunctions'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 // TODO: add farms when their data loading will be fixed and up
@@ -80,7 +80,7 @@ export const Dashboard = () => {
           <>
             <div className="top">
               <div className="tvlBlock">
-                <BGPrimaryTitleStyled>Mavryk TVL</BGPrimaryTitleStyled>
+                <BGPrimaryTitleStyled>Maven TVL</BGPrimaryTitleStyled>
                 <CommaNumber beginningText="$" value={DAPP_TVL} />
               </div>
 

@@ -20,8 +20,8 @@ proposal. Please note, you have the option to fill out all 3 steps one after the
 save as you go. Furthermore, once you have submitted your proposal, you are unable to make any more changes to
 it and it is open to voting. So please ensure your proposal is ready before you click Submit Proposal.`
 export const STAGE_2_DESCRIPTION = `In this step, you are able to add sets of bytes to your proposal. Each set of bytes can change/add one part of
-Mavryk Finance’s smart contracts. For example, a set can create a new farm and another set of bytes can whitelist a
-token for one of the treasury contracts. Read more about in the Mavryk Finance Docs`
+Maven Finance’s smart contracts. For example, a set can create a new farm and another set of bytes can whitelist a
+token for one of the treasury contracts. Read more about in the Maven Finance Docs`
 export const STAGE_3_DESCRIPTION = `In this step, you are able to add a list of payments and treasury transfers to your proposal. This can used to
 request payment for the work you have put into your proposal or to rearrange treasury funds. If you are a
 business and using an actual invoice in Step 1, please add each required payment to this table also.`

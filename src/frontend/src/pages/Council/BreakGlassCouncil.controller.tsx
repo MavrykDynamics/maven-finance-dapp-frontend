@@ -161,7 +161,7 @@ export const BreakGlassCouncil = () => {
                 <H2Title>Propagate Break Glass</H2Title>
                 <p>
                   This action can only be taken to pause all contracts in the event of a successful emergency governance
-                  where a critical flaw has been detected in the Mavryk Finance Smart Contracts.
+                  where a critical flaw has been detected in the Maven Finance Smart Contracts.
                 </p>
               </div>
 

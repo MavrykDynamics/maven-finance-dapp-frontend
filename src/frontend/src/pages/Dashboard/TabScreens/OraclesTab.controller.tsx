@@ -139,7 +139,7 @@ export const OraclesTab = () => {
       <div className="descr">
         <div className="title">What are Oracles?</div>
         <div className="text">
-          Satellites may also operate as nodes for Mavryk Finance’s decentralized oracle. Oracles provide price data for
+          Satellites may also operate as nodes for Maven Finance’s decentralized oracle. Oracles provide price data for
           assets selected through governance, such as the collateral assets used in vaults and lending. They will then
           receive rewards in sMVK proportionate to their total voting power, and will distribute these rewards to their
           delegates.{' '}
