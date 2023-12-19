@@ -79,7 +79,7 @@ export const Council = () => {
       {isCounsilLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
-          <div className="text">Loading Mavryk Finance Council Data</div>
+          <div className="text">Loading Maven Finance Council Data</div>
         </DataLoaderWrapper>
       ) : (
         <CouncilView

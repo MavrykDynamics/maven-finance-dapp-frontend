@@ -120,10 +120,10 @@ export const StakingTab = () => {
       )}
 
       <div className="descr">
-        <div className="title">Why stake MVK on Mavryk?</div>
+        <div className="title">Why stake MVK on Maven?</div>
         <div className="text">
           You can earn rewards by staking your MVK & delegating your voting rights to a Satellite. Staked MVK helps
-          secure Mavryk Finance’s governance & decentralized oracles, by allowing Satellites to vote on business
+          secure Maven Finance’s governance & decentralized oracles, by allowing Satellites to vote on business
           decisions & sign data feeds on your behalf. The earned rewards are paid directly to you, minus a small
           Satellite fee. Satellites can never move or spend your tokens, and you may re-delegate to a new Satellite at
           any time.{' '}

@@ -161,9 +161,9 @@ export const mainNavigationLinks: MainNavigationRoute[] = [
       },
       {
         id: 79754,
-        subTitle: 'Mavryk Council',
-        subPath: 'mavryk-council',
-        routeSubPath: ['/mavryk-council', '/mavryk-council/:tabId'],
+        subTitle: 'Maven Council',
+        subPath: 'maven-council',
+        routeSubPath: ['/maven-council', '/maven-council/:tabId'],
       },
       {
         id: 38374,

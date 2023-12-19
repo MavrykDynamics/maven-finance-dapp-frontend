@@ -255,7 +255,7 @@ export const TreasuryTab = () => {
         <div className="title">What is the purpose of the Treasury?</div>
         <div className="text">
           The Treasury is managed by Satellites through on-chain voting. The purpose is to store the income earned from
-          Mavryk Finance for assigned purposes, such as buying back MVK, investing & holding in on-chain assets, and
+          Maven Finance for assigned purposes, such as buying back MVK, investing & holding in on-chain assets, and
           more.{' '}
           <a href="https://docs.mavryk.finance/mavryk-finance/treasury" target="_blank" rel="noreferrer">
             Read More

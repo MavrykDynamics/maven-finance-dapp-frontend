@@ -300,7 +300,7 @@ export const StageTwoForm = ({
               target="_blank"
               rel="noreferrer"
             >
-              Mavryk Finance Docs
+              Maven Finance Docs
             </a>
             .
           </>
