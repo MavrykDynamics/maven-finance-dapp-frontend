@@ -66,7 +66,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const {
     mvkFaucetAddress,
     toggleSidebarCollapsing,
-    contractAddresses: { mvkTokenAddress },
+    contractAddresses: { mvnTokenAddress },
     preferences: { sidebarOpened },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
@@ -92,11 +92,11 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     setCanGetInitThouthand(
       Boolean(
         userAddress &&
-          (getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
+          (getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress }) === 0 ||
             getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) === 0),
       ),
     )
-  }, [userAddress, mvkTokenAddress, userTokensBalances])
+  }, [userAddress, mvnTokenAddress, userTokensBalances])
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
@@ -112,7 +112,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       return null
     }
 
-    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
     if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
@@ -121,7 +121,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     }
 
     return await getMVKTokensFromFaucet(mvkFaucetAddress)
-  }, [bug, mvkFaucetAddress, mvkTokenAddress, userAddress, userTokensBalances])
+  }, [bug, mvkFaucetAddress, mvnTokenAddress, userAddress, userTokensBalances])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({

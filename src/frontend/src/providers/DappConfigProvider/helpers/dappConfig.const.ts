@@ -1,8 +1,7 @@
-import { getItemFromStorage } from 'utils/storage'
-import { DappConfigContextStateType } from '../dappConfig.provider.types'
-import { PreferencesState, LoadingState } from '../dappConfig.provider.types'
-import { ThemeType, themeSchema } from 'consts/theme.const'
-import { ecadLabGhostnetRpcNode, marigoldGhostnetRpcNode } from 'consts/rpcNodes.const'
+import {getItemFromStorage} from 'utils/storage'
+import {DappConfigContextStateType, LoadingState, PreferencesState} from '../dappConfig.provider.types'
+import {themeSchema, ThemeType} from 'consts/theme.const'
+import {ecadLabGhostnetRpcNode, marigoldGhostnetRpcNode} from 'consts/rpcNodes.const'
 
 // ------ default max length
 export const defaultCouncilMemberImageMaxLength = 500
@@ -63,7 +62,7 @@ export const DAPP_DEFAULT_CONTRACT_ADDRESSES = {
   farmsFactoryAddress: null,
   delegationAddress: null,
   doormanAddress: null,
-  mvkTokenAddress: null,
+  mvnTokenAddress: null,
   governanceAddress: null,
   governanceFinancialAddress: null,
   emergencyGovernanceAddress: null,

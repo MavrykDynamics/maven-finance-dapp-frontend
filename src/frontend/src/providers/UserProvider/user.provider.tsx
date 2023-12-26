@@ -50,7 +50,7 @@ export const UserProvider = ({ children }: Props) => {
   const { handleApolloError } = useApolloContext()
   const { tokensMetadata } = useTokensContext()
   const {
-    contractAddresses: { mvkTokenAddress },
+    contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
@@ -76,7 +76,7 @@ export const UserProvider = ({ children }: Props) => {
   const canRestoreUser =
     hasUserInLocalStorage &&
     Object.keys(tokensMetadata).length &&
-    mvkTokenAddress &&
+    mvnTokenAddress &&
     !isUserRestored.current &&
     tzktSocket.current
 
@@ -169,7 +169,10 @@ export const UserProvider = ({ children }: Props) => {
   const setUserHistoryData = useCallback((page: number, userHistoryData: UserHistoryData, itemsAmount: number) => {
     setUserCtxState((prev) => ({
       ...prev,
-      actionsHistory: { paginatedList: { ...prev.actionsHistory.paginatedList, [page]: userHistoryData }, itemsAmount },
+      actionsHistory: {
+        paginatedList: { ...prev.actionsHistory.paginatedList, [page]: userHistoryData },
+        itemsAmount,
+      },
     }))
   }, [])
 
@@ -198,7 +201,7 @@ export const UserProvider = ({ children }: Props) => {
       const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
         indexerData,
         tokensMetadata,
-        mvkTokenAddress,
+        mvkTokenAddress: mvnTokenAddress,
       })
 
       const normalizedUserData = normalizeUser({ indexerData })
@@ -214,7 +217,7 @@ export const UserProvider = ({ children }: Props) => {
       }))
       setUserLoading(false)
     },
-    [mvkTokenAddress, tokensMetadata],
+    [mvnTokenAddress, tokensMetadata],
   )
 
   const providerValue = useMemo(() => {

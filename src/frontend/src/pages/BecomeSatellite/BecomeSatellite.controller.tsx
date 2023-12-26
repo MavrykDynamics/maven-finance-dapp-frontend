@@ -44,7 +44,7 @@ const pageTexts = {
 
 export const BecomeSatellite = () => {
   const {
-    contractAddresses: { mvkTokenAddress },
+    contractAddresses: { mvnTokenAddress },
     minimumStakedMvkBalance,
   } = useDappConfigContext()
   const {
@@ -73,9 +73,9 @@ export const BecomeSatellite = () => {
     () => ({
       usersSatelliteProfile: userAddress ? satelliteMapper[userAddress] : null,
       userSmvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
-      userMvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+      userMvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress }),
     }),
-    [mvkTokenAddress, satelliteMapper, userAddress, userTokensBalances],
+    [mvnTokenAddress, satelliteMapper, userAddress, userTokensBalances],
   )
 
   useEffect(() => {

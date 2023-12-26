@@ -41,7 +41,7 @@ export const Doorman = () => {
   const { tokensPrices } = useTokensContext()
   const { userTokensBalances, userAddress } = useUserContext()
   const {
-    contractAddresses: { doormanAddress, mvkTokenAddress },
+    contractAddresses: { doormanAddress, mvnTokenAddress },
   } = useDappConfigContext()
   const { changeSatellitesSubscriptionsList } = useSatellitesContext()
   const {
@@ -67,7 +67,7 @@ export const Doorman = () => {
 
   const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
-    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
 
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)
 
@@ -125,7 +125,7 @@ export const Doorman = () => {
               totalStakedMvk={totalStakedMvk}
               totalSupply={totalSupply}
               doormanAddress={doormanAddress}
-              mvkTokenAddress={mvkTokenAddress}
+              mvkTokenAddress={mvnTokenAddress}
             />
           </DoormanInfoStyled>
         </>

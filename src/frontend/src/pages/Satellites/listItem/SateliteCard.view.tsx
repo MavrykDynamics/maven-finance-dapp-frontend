@@ -107,7 +107,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const { availableProposalRewards } = useUserRewards()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    contractAddresses: { delegationAddress, mvkTokenAddress, governanceAddress },
+    contractAddresses: { delegationAddress, mvnTokenAddress, governanceAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
@@ -147,7 +147,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
     const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
     if (mvkTokenBalance === 0) {
@@ -161,7 +161,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     }
 
     return await delegate(userAddress, satelliteAddress, delegationAddress)
-  }, [bug, delegationAddress, mvkTokenAddress, satelliteAddress, userAddress, userTokensBalances])
+  }, [bug, delegationAddress, mvnTokenAddress, satelliteAddress, userAddress, userTokensBalances])
 
   const delegateContractActionProps: HookContractActionArgs = useMemo(
     () => ({
