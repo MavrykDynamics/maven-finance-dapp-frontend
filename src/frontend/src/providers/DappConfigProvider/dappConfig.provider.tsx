@@ -135,12 +135,12 @@ const DappConfigProvider = ({ children }: Props) => {
     onCompleted: (data) => {
       try {
         const parsedConfig = dappConfigSchema.parse(data)
-        const { maxLengths, minimumStakedMvnBalance, mvkFaucetAddress } = normalizeInitialConfigData(parsedConfig)
+        const { maxLengths, minimumStakedMvnBalance, mvnFaucetAddress } = normalizeInitialConfigData(parsedConfig)
         setDappConfigCtxState((prev) => ({
           ...prev,
           maxLenghts: maxLengths,
           minimumStakedMvnBalance: minimumStakedMvnBalance,
-          mvkFaucetAddress,
+          mvnFaucetAddress: mvnFaucetAddress,
         }))
 
         // Load lvl on dapp init, and then update it with subscription

@@ -113,7 +113,7 @@ export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
   xtzBakers: null,
   contractAddresses: DAPP_DEFAULT_CONTRACT_ADDRESSES,
   // TODO: set default address to null, when contracts are updated
-  mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
+  mvnFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
   preferences: preferencesDefaultState,
   globalLoadingState: defaultLoadingState,
 }
