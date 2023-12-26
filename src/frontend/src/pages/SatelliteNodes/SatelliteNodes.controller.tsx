@@ -5,9 +5,9 @@ import { useLocation } from 'react-router'
 // consts
 import {
   calculateSlicePositions,
+  getPageNumber,
   PAGINATION_SIDE_RIGHT,
   SATELITES_NODES_LIST_NAME,
-  getPageNumber,
 } from 'app/App.components/Pagination/pagination.consts'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -25,16 +25,16 @@ import { DropdownContainer } from 'app/App.components/DropDown/DropDown.style'
 import { SatelliteSearchFilter } from 'pages/Satellites/Satellites.style'
 import { SatelliteNodesStyled } from './SatelliteNodes.style'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
-  DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { Info } from 'app/App.components/Info/Info.view'
@@ -129,7 +129,7 @@ const SatelliteNodes = () => {
       <PageHeader page={'satellites'} />
 
       {!isSatellite &&
-      getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 &&
+      getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) === 0 &&
       userAddress ? (
         <NotStakingBannerStyled>
           <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>

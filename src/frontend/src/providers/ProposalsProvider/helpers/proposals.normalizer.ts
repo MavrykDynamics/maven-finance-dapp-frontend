@@ -11,7 +11,7 @@ import { getProposalStatus } from './proposals.utils'
 
 // consts
 import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 import { GovPhases, ProposalStatus } from './proposals.const'
 
 export const normalizeProposal = (
@@ -60,11 +60,11 @@ export const normalizeProposal = (
     sourceCode: item.source_code,
 
     // voting data
-    passVoteMvkTotal: convertNumberForClient({ number: item.proposal_vote_smvk_total, grade: MVK_DECIMALS }),
-    upvoteMvkTotal: convertNumberForClient({ number: item.yay_vote_smvk_total, grade: MVK_DECIMALS }),
-    downvoteMvkTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVK_DECIMALS }),
-    abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVK_DECIMALS }),
-    quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVK_DECIMALS }),
+    passVoteMvkTotal: convertNumberForClient({ number: item.proposal_vote_smvk_total, grade: MVN_DECIMALS }),
+    upvoteMvkTotal: convertNumberForClient({ number: item.yay_vote_smvk_total, grade: MVN_DECIMALS }),
+    downvoteMvkTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVN_DECIMALS }),
+    abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVN_DECIMALS }),
+    quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVN_DECIMALS }),
     minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
 
     votes: item.votes.reduce<

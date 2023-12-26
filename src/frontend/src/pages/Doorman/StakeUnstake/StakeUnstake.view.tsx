@@ -42,7 +42,7 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { DEFAULT_STAKE_UNSTAKE_INPUT } from '../Doorman.controller'
 
 // style
@@ -98,7 +98,7 @@ export const StakeUnstakeView = ({
   }, [satelliteMvkIsDelegatedTo])
 
   const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
-  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
     myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
@@ -265,7 +265,7 @@ export const StakeUnstakeView = ({
           <StakeUnstakeBalance>
             <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
             <div>
-              <h3>My MVK Balance</h3>
+              <h3>My MVN Balance</h3>
               <div className="balance-btn-group">
                 <CommaNumber value={myMvkTokenBalance} className="amount" />
                 {Boolean(myMvkTokenBalance) && (
@@ -282,7 +282,7 @@ export const StakeUnstakeView = ({
           <StakeUnstakeBalance>
             <ImageWithPlug imageLink={'/images/coin-silver.svg'} alt="coin" />
             <div>
-              <h3>My Staked MVK Balance</h3>
+              <h3>My Staked MVN Balance</h3>
               <div className="balance-btn-group">
                 <CommaNumber value={mySMvkTokenBalance} className="amount" />
                 {Boolean(mySMvkTokenBalance) && (
@@ -329,7 +329,7 @@ export const StakeUnstakeView = ({
             <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
             <div>
               <h3>
-                Pending sMVK Rewards
+                Pending sMVN Rewards
                 <Tooltip>
                   <Tooltip.Trigger className="ml-3">
                     <Icon id="info" />
@@ -372,12 +372,12 @@ export const StakeUnstakeView = ({
       <StakeUnstakeActionCard>
         <StakeUnstakeInputColumn>
           <StakeUnstakeInputLabels>
-            <div className="minAmount">Min 1 MVK</div>
+            <div className="minAmount">Min 1 MVN</div>
 
             <StakeUnstakeAmount onClick={onUseMaxBalance('smvk')}>
               <span>Staked Amount:</span>
               &nbsp;
-              <CommaNumber value={mySMvkTokenBalance} endingText={'MVK'} />
+              <CommaNumber value={mySMvkTokenBalance} endingText={'MVN'} />
             </StakeUnstakeAmount>
           </StakeUnstakeInputLabels>
 

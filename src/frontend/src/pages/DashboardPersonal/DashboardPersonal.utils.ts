@@ -2,7 +2,7 @@ import { TokensContext } from './../../providers/TokensProvider/tokens.provider.
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { UserContext } from 'providers/UserProvider/user.provider.types'
-import { SMVK_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
 
 export const PORTFOLIO_TAB_ID = 'portfolio'
 export const SATELLITE_TAB_ID = 'satellite'
@@ -46,7 +46,7 @@ export const getDbPersonalUserWalletData = ({
     // If token is mToken or shown by default return acc, we skip such tokens
     if (
       tokenAddress === mvkTokenAddress ||
-      tokenAddress === SMVK_TOKEN_ADDRESS ||
+      tokenAddress === SMVN_TOKEN_ADDRESS ||
       tokenAddress === XTZ_TOKEN_ADDRESS ||
       mTokens.includes(tokenAddress)
     )
@@ -86,7 +86,7 @@ export const getDbPersonalUserWalletData = ({
 
   return {
     xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
-    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
     MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
     ...(mostSuppliedUserToken
       ? {

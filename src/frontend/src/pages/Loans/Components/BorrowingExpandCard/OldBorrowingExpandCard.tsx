@@ -5,7 +5,7 @@ import classNames from 'classnames'
 
 import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from '../../Loans.const'
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
@@ -103,7 +103,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const { symbol, decimals, icon, rate } = borrowedToken
 
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
-  const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
+  const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVN_TOKEN_ADDRESS)
 
   const handleOpenVault = () => {
     if (isExpanded) return

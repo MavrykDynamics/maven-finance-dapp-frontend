@@ -1,9 +1,8 @@
 import { GetContractAddressesQueryQuery } from 'utils/__generated__/graphql'
 import { DappMaxLengths } from '../dappConfig.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 import { DappConfigGqlType } from './dappConfig.schemes'
-import { CAPITALIZE_CASE, parseCamelCaseString } from 'utils/parse'
 
 export const normalizerMaxLenghts = (data: DappConfigGqlType): DappMaxLengths => {
   const {
@@ -63,7 +62,7 @@ export const normalizeInitialConfigData = (indexerData: DappConfigGqlType) => {
     mvkFaucetAddress: indexerData.mvk_faucet[0]?.address ?? null,
     minimumStakedMvkBalance: convertNumberForClient({
       number: indexerData.delegation[0].minimum_smvk_balance,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }),
   }
 }

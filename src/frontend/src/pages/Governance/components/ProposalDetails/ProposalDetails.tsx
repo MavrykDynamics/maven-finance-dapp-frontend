@@ -38,7 +38,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Info } from 'app/App.components/Info/Info.view'
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
-import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { VotingProposalsArea } from 'app/App.components/VotingArea/VotingArea.controller'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { ProposalDetailsStyled } from './ProposalDetails.style'
@@ -100,8 +100,8 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
     async (
       actionFn: (
         governanceAddress: string,
-        proposalId: number
-      ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>
+        proposalId: number,
+      ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>,
     ) => {
       if (!userAddress) {
         bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -114,7 +114,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
 
       return await actionFn(governanceAddress, Number(proposal.id))
     },
-    [bug, governanceAddress, proposal.id, userAddress]
+    [bug, governanceAddress, proposal.id, userAddress],
   )
 
   // drop proposal ------------------------------------------------------------------------
@@ -123,7 +123,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: DROP_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, dropProposal),
     }),
-    [invokeActionWithIdenticalParameters]
+    [invokeActionWithIdenticalParameters],
   )
 
   const { action: handleDeleteProposal } = useContractAction(dropProposalContractProps)
@@ -135,7 +135,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: EXECUTE_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, executeProposal),
     }),
-    [invokeActionWithIdenticalParameters]
+    [invokeActionWithIdenticalParameters],
   )
 
   const { action: handleClickExecuteProposal } = useContractAction(executeProposalContractProps)
@@ -146,7 +146,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: PROCESS_PROPOSAL_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, processProposalPayment),
     }),
-    [invokeActionWithIdenticalParameters]
+    [invokeActionWithIdenticalParameters],
   )
 
   const { action: handleClickProcessPayment } = useContractAction(processProposalPaymentContractProps)
@@ -157,7 +157,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: PROPOSAL_ROUND_VOTE_ACTION,
       actionFn: invokeActionWithIdenticalParameters.bind(null, proposalRoundVote),
     }),
-    [invokeActionWithIdenticalParameters]
+    [invokeActionWithIdenticalParameters],
   )
 
   const { action: handleProposalRoundVote } = useContractAction(proposaRoundVoteContractProps)
@@ -176,7 +176,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
 
       return await votingRoundVote(governanceAddress, vote)
     },
-    [bug, governanceAddress, userAddress]
+    [bug, governanceAddress, userAddress],
   )
 
   // @ts-ignore
@@ -185,7 +185,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
       actionType: VOTING_ROUND_VOTE_ACTION,
       actionFn: votingRoundVoteActionFn,
     }),
-    [votingRoundVoteActionFn]
+    [votingRoundVoteActionFn],
   )
 
   const { actionWithArgs: handleVotingRoundVote } = useContractAction<VotingTypes>(handleVotingRoundContractProps)
@@ -193,16 +193,16 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(
     () => ({
-      abstainVotesMVKTotal: proposal.abstainMvkTotal,
-      againstVotesMVKTotal: proposal.downvoteMvkTotal,
-      forVotesMVKTotal: proposal.upvoteMvkTotal,
-      unusedVotesMVKTotal: Math.round(
-        proposal.quorumMvkTotal - proposal.abstainMvkTotal - proposal.downvoteMvkTotal - proposal.upvoteMvkTotal
+      abstainVotesMVNTotal: proposal.abstainMvkTotal,
+      againstVotesMVNTotal: proposal.downvoteMvkTotal,
+      forVotesMVNTotal: proposal.upvoteMvkTotal,
+      unusedVotesMVNTotal: Math.round(
+        proposal.quorumMvkTotal - proposal.abstainMvkTotal - proposal.downvoteMvkTotal - proposal.upvoteMvkTotal,
       ),
-      passVotesMVKTotal: proposal.passVoteMvkTotal,
+      passVotesMVNTotal: proposal.passVoteMvkTotal,
       quorum: proposal.minQuorumPercentage,
     }),
-    [proposal]
+    [proposal],
   )
 
   // Loading voting till time for proposal
@@ -226,7 +226,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         const { data: votingEndTimestamp } = await api(
           getTimestampByLevelUrl(currentCycleEndLevel),
           { signal: abortController.signal, headers: getTimestampByLevelHeaders },
-          getTimestampByLevelSchema
+          getTimestampByLevelSchema,
         )
         setVotingTill(new Date(votingEndTimestamp).getTime())
       } catch (e) {
@@ -313,7 +313,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
         vote={proposal.votes.find(
           ({ address, round }) =>
             address === userAddress &&
-            round === (governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION ? 0 : 1)
+            round === (governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION ? 0 : 1),
         )}
         isVoteActive={
           proposal.status === ProposalStatus.LOCKED || proposal.status === ProposalStatus.ONGOING
@@ -412,7 +412,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                       kind={BUTTON_SIMPLE_SMALL}
                       onClick={() =>
                         setOpenedBytes(
-                          isByteOpened ? openedBytes.filter((id) => id !== item.id) : [...openedBytes, item.id]
+                          isByteOpened ? openedBytes.filter((id) => id !== item.id) : [...openedBytes, item.id],
                         )
                       }
                     >
@@ -450,12 +450,18 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
                 )
                   return null
 
-                const token = getTokenDataByAddress({ tokenAddress: payment.token_address, tokensMetadata })
+                const token = getTokenDataByAddress({
+                  tokenAddress: payment.token_address,
+                  tokensMetadata,
+                })
 
                 if (!token) return null
 
                 const { symbol, decimals } = token
-                const tokenAmount = convertNumberForClient({ number: Number(payment.token_amount), grade: decimals })
+                const tokenAmount = convertNumberForClient({
+                  number: Number(payment.token_amount),
+                  grade: decimals,
+                })
 
                 return (
                   <TableRow className="editable-row proposal-details-payments" key={payment.id}>

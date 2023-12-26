@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
 import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 
 import { EGovProposalType } from '../emergencyGovernance.provider.types'
 import { GetEGovAllProposalsQueryQuery } from 'utils/__generated__/graphql'
@@ -26,7 +26,7 @@ export const normalizeEGovProposal = (
 
   const proposalVoters = indexerProposal.voters.map<eGovProposalVoterType>((voteData) => ({
     voterAddress: voteData.voter.address,
-    voteAmount: convertNumberForClient({ number: voteData.smvk_amount, grade: MVK_DECIMALS }),
+    voteAmount: convertNumberForClient({ number: voteData.smvk_amount, grade: MVN_DECIMALS }),
     voteTime: voteData.timestamp,
   }))
 
@@ -48,9 +48,9 @@ export const normalizeEGovProposal = (
     smvkPercentageRequired: indexerProposal.smvk_percentage_required / 100,
     smvkRequiredForTrigger: convertNumberForClient({
       number: indexerProposal.smvk_required_for_trigger,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }),
-    totalSmvkVotes: convertNumberForClient({ number: indexerProposal.total_smvk_votes, grade: MVK_DECIMALS }),
+    totalSmvkVotes: convertNumberForClient({ number: indexerProposal.total_smvk_votes, grade: MVN_DECIMALS }),
 
     voters: proposalVoters,
   }
