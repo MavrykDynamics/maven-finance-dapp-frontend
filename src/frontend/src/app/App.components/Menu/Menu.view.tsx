@@ -18,7 +18,7 @@ import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './M
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -93,7 +93,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       Boolean(
         userAddress &&
           (getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }) === 0 ||
-            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0),
+            getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) === 0),
       ),
     )
   }, [userAddress, mvkTokenAddress, userTokensBalances])
@@ -108,15 +108,15 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     }
 
     if (!mvkFaucetAddress) {
-      bug('Wrong MVK Faucet address')
+      bug('Wrong MVN Faucet address')
       return null
     }
 
     const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
-    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
     if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
-      bug('You have already claimed MVK', 'You are unable to claim MVK')
+      bug('You have already claimed MVN', 'You are unable to claim MVN')
       return null
     }
 
@@ -181,7 +181,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               onClick={handleRequestMVK}
               disabled={!canGetInitThouthand || isActionActive}
             >
-              {sidebarOpened ? 'MVK Faucet' : 'MVK'}
+              {sidebarOpened ? 'MVN Faucet' : 'MVN'}
             </NewButton>
 
             <CustomLink to="https://faucet.marigold.dev/" kind={sidebarOpened ? LinkWide : LinkWrapper}>

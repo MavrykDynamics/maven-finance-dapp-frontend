@@ -50,7 +50,7 @@ import {
   getTokenDataByAddress,
   isTezosAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 
 // types
@@ -128,7 +128,7 @@ export const BorrowingExpandCardMenuSection = ({
 
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
   // TODO: test it when sMVK will be avaliable as collateral
-  const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVK_TOKEN_ADDRESS)
+  const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVN_TOKEN_ADDRESS)
 
   const handleSwitchTab = (setActiveTab: (tab?: SlidingTabButtonType) => void) => (newTabId: number) => {
     // condition to set list page to 1, when change tab
@@ -348,7 +348,7 @@ export const BorrowingExpandCardMenuSection = ({
 
               {vaultHasSmvkCollateral ? (
                 <div className="useful-info-line">
-                  <div className="name">sMVK Delegated to</div>
+                  <div className="name">sMVN Delegated to</div>
                   <div className="value">
                     {sMVKDelegatedTo ? (
                       <TzAddress tzAddress={sMVKDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />

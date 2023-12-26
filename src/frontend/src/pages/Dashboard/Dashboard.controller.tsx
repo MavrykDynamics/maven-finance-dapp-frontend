@@ -31,7 +31,7 @@ import {
   TREASURY_TAB_ID,
   VAULTS_TAB_ID,
 } from './Dashboard.utils'
-import {MVK_TOKEN_SYMBOL} from 'utils/constants'
+import {MVN_TOKEN_SYMBOL} from 'utils/constants'
 import {DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS} from 'providers/DoormanProvider/helpers/doorman.consts'
 
 // hooks
@@ -193,7 +193,7 @@ const DashboardMvkData = () => {
   // staking stats loading is handled in <Dashboard /> component
   const { totalStakedMvk, totalSupply, maximumTotalSupply } = useDoormanContext()
 
-  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
+  const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
   const mvkStatsBlock: mvkStatsType = {
     marketCap: mvkExchangeRate * totalSupply,
     stakedMvk: totalStakedMvk,
@@ -208,7 +208,7 @@ const DashboardMvkData = () => {
 
   return (
     <div className="mvkStats">
-      <BGPrimaryTitleStyled>MVK</BGPrimaryTitleStyled>
+      <BGPrimaryTitleStyled>MVN</BGPrimaryTitleStyled>
       <div className="statsWrapper">
         <StatBlock>
           <div className="name">Market Cap</div>
@@ -218,7 +218,7 @@ const DashboardMvkData = () => {
         </StatBlock>
 
         <StatBlock>
-          <div className="name">Staked MVK</div>
+          <div className="name">Staked MVN</div>
           <div className="value">
             <CommaNumber value={mvkStatsBlock.stakedMvk} endingText="MVK" />
           </div>

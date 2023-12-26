@@ -53,7 +53,7 @@ export const SateliteSideBarFAQ = () => (
         target="_blank"
         rel="noreferrer"
       >
-        What is the difference between MVK and Staked MVK (sMVK)?
+        What is the difference between MVN and Staked MVN (sMVK)?
       </a>
     </FAQLink>
     <FAQLink>

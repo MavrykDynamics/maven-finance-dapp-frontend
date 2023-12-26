@@ -5,7 +5,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'doorman',
     {
       title: 'Staking',
-      subText: 'Lock your MVK and earn rewards through loan income.',
+      subText: 'Lock your MVN and earn rewards through loan income.',
       foregroundImageSrc: '/images/staking-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -248,7 +248,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'farms',
     {
       title: 'Yield Farms',
-      subText: 'Provide LP and MVK Tokens to the liquidity pools and gain rewards.',
+      subText: 'Provide LP and MVN Tokens to the liquidity pools and gain rewards.',
       foregroundImageSrc: '/images/farms-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },

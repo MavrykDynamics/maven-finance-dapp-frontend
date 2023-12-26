@@ -46,7 +46,7 @@ export const PRODUCTS_LINKS = [
 ]
 
 export const ABOUT_LINKS = [
-  { name: 'MVK Token (Soon)', href: '/', disabled: true },
+  { name: 'MVN Token (Soon)', href: '/', disabled: true },
   { name: 'Team', href: 'https://mavryk.finance/#team', disabled: false, path: 'https://mavryk.finance/#team' },
   // TODO: [MAV-501]
   // { name: 'Who we are', href: 'https://mavryk.finance/', disabled: false },
@@ -117,7 +117,7 @@ export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodeP
         <div className="grouped-links">
           <TopBarLinks groupName={'Products'} groupLinks={PRODUCTS_LINKS} />
           <TopBarLinks groupName={'About'} groupLinks={ABOUT_LINKS} />
-          <TopBarLinks groupName={'Blog 🔥'} groupLinks={BLOG_LINKS} groupNameLink="https://blogs.mavryk.finance/" />
+          <TopBarLinks groupName={'Blog 🔥'} groupLinks={BLOG_LINKS} groupNameLink="https://blog.mavrykdynamics.com/" />
           <TopBarLinks groupName={'Docs'} groupLinks={DOCS_LINKS} />
         </div>
         <div className="right-side">

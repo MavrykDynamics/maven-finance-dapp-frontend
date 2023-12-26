@@ -14,7 +14,7 @@ export default function Mobile() {
       <GlobalStyle />
       <MobilePlugWrapper>
         <MobilePlugLogoWrapper>
-          <img src="./mobile-plug-logo.png" alt="mavryk logo" />
+          <img src="./mobile-plug-logo.png" alt="maven logo" />
         </MobilePlugLogoWrapper>
 
         <div className="plug-message">
