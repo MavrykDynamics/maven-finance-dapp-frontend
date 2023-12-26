@@ -45,7 +45,7 @@ const pageTexts = {
 export const BecomeSatellite = () => {
   const {
     contractAddresses: { mvnTokenAddress },
-    minimumStakedMvkBalance,
+    minimumStakedMvnBalance,
   } = useDappConfigContext()
   const {
     satelliteMapper,
@@ -135,7 +135,7 @@ export const BecomeSatellite = () => {
         {!isPageLoading ? (
           <BecomeSatelliteBanners
             smvkBalance={userSmvkBalance}
-            requiredSmvkAmount={minimumStakedMvkBalance}
+            requiredSmvkAmount={minimumStakedMvnBalance}
             userAddress={userAddress}
             mvkBalance={userMvkBalance}
             isSatellite={isSatellite}
