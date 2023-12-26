@@ -64,7 +64,7 @@ export const SocialIcons = () => (
 export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { bug } = useToasterContext()
   const {
-    mvkFaucetAddress,
+    mvnFaucetAddress,
     toggleSidebarCollapsing,
     contractAddresses: { mvnTokenAddress },
     preferences: { sidebarOpened },
@@ -107,7 +107,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       return null
     }
 
-    if (!mvkFaucetAddress) {
+    if (!mvnFaucetAddress) {
       bug('Wrong MVN Faucet address')
       return null
     }
@@ -120,8 +120,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       return null
     }
 
-    return await getMVKTokensFromFaucet(mvkFaucetAddress)
-  }, [bug, mvkFaucetAddress, mvnTokenAddress, userAddress, userTokensBalances])
+    return await getMVKTokensFromFaucet(mvnFaucetAddress)
+  }, [bug, mvnFaucetAddress, mvnTokenAddress, userAddress, userTokensBalances])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({

@@ -22,7 +22,7 @@ import {FeedsActionsType} from 'providers/DataFeedsProvider/dataFeeds.provider.t
 export type DappConfigContextStateType = {
   maxLengths: DappMaxLengths
   canUseIpfs: boolean
-  mvkFaucetAddress: string | null
+  mvnFaucetAddress: string | null
   minimumStakedMvnBalance: number
   dappTotalValueLocked: number | null
   contractAddresses: Record<DappContractAddressesKeysType, string | null>
