@@ -23,7 +23,7 @@ import colors from 'styles/colors'
 import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
 import { MLI_FEE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { DECIMALS_TO_SHOW } from 'utils/constants'
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
+import { AREA_CHART_TYPE, checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import { MLI_FEE_CHART_DATA } from './MliFee-chart-data'
 import {
   SECONDARY_SLIDING_TAB_BUTTONS,
@@ -36,12 +36,11 @@ import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
 // utils
 import { calcExitFee, calcMLI } from 'utils/calcFunctions'
-import { checkPlotType } from 'app/App.components/Chart/helpers/Chart.const'
 import { getChartXAxisTicks } from 'utils/charts.utils'
 
 const tabsList: SlidingTabButtonType[] = [
   {
-    text: 'MVK vs. sMVK',
+    text: 'MVN vs. sMVN',
     id: 1,
     active: true,
   },
@@ -121,10 +120,12 @@ export function DoormanChart() {
             />
             <div className="double-chart-legend">
               <div className="row mvk">
-                <div className="circle" /> MVK
+                <div className="circle" />
+                MVN
               </div>
               <div className="row smvk">
-                <div className="circle" /> sMVK
+                <div className="circle" />
+                sMVN
               </div>
             </div>
 
@@ -166,11 +167,11 @@ export function DoormanChart() {
           <>
             <DoormanExitFeeCurrentValues>
               <div className="row">
-                <div className="name">Current Exit Fee: </div>
+                <div className="name">Current Exit Fee:</div>
                 <CommaNumber value={currentExitFee} endingText="%" className="value" />
               </div>
               <div className="row">
-                <div className="name">Current MLI: </div>
+                <div className="name">Current MLI:</div>
 
                 <CommaNumber value={currentMLI} className="value" />
               </div>
@@ -186,7 +187,11 @@ export function DoormanChart() {
               settings={{
                 height: 380,
                 tickDateFormatter: (timeTick) => formatNumber({ number: timeTick, decimalsToShow: 0 }),
-                valueTooltipFormatter: (amount) => formatNumber({ number: amount, decimalsToShow: DECIMALS_TO_SHOW }),
+                valueTooltipFormatter: (amount) =>
+                  formatNumber({
+                    number: amount,
+                    decimalsToShow: DECIMALS_TO_SHOW,
+                  }),
                 // as data is static we can set margins we want, but if data will change we will need to check those margins
                 priceMargins: { top: 0.61, bottom: 0.01 },
                 yAxisSide: 'left',

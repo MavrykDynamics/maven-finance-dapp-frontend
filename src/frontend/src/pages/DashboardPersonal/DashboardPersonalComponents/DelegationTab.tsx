@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
-import { BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 // view
@@ -28,10 +28,10 @@ import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
-  SATELLITE_DATA_SUB,
-  SATELLITES_DATA_SINGLE_SUB,
-  SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 
 const DelegationTab = ({
@@ -52,7 +52,7 @@ const DelegationTab = ({
   } = useSatellitesContext()
   const { userTokensBalances, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
 
-  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -135,7 +135,7 @@ const DelegationTab = ({
                     value={Math.max(
                       satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
                         satelliteRecord.totalDelegatedAmount,
-                      0
+                      0,
                     )}
                   />
                 </div>
@@ -172,11 +172,11 @@ const DelegationTab = ({
           </>
         ) : userSmvkBalance === 0 && userAddress ? (
           <div className="no-data">
-            <span>You don't have SMVK</span>
+            <span>You don't have sMVN</span>
             <div className="nav-button">
               <Link to="/staking">
                 <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
-                  <Icon id="menu-staking" /> Stake MVK
+                  <Icon id="menu-staking" /> Stake MVN
                 </NewButton>
               </Link>
             </div>

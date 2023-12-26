@@ -16,7 +16,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 
 // consts, helpers, actions
 import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { NOT_STAKING_MVK_TEXT } from 'app/App.components/Info/Banners/banners.texts'
 import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/helpers/satellites.utils'
@@ -78,7 +78,7 @@ const Satellites = () => {
     <Page>
       <PageHeader page={'satellites'} />
       {!isSatellite &&
-      getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 &&
+      getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) === 0 &&
       userAddress ? (
         <NotStakingBannerStyled>
           <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>
@@ -105,7 +105,7 @@ const Satellites = () => {
                     <Tooltip.Trigger className="tooltip-trigger">
                       <Icon id="info" />
                     </Tooltip.Trigger>
-                    <Tooltip.Content>All staked MVK that is delegated to satellites by users.</Tooltip.Content>
+                    <Tooltip.Content>All staked MVN that is delegated to satellites by users.</Tooltip.Content>
                   </Tooltip>
                 </CustomLink>
               </div>

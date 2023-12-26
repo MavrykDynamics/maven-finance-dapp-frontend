@@ -1,46 +1,34 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
-import { useSatelliteStatuses } from "providers/SatellitesProvider/hooks/useSatelliteStatus";
-import { useTokensContext } from "providers/TokensProvider/tokens.provider";
+import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
-import { Feed } from "providers/DataFeedsProvider/dataFeeds.provider.types";
-import { SatelliteRecordType } from "providers/SatellitesProvider/satellites.provider.types";
+import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
+import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
-import { MVK_TOKEN_SYMBOL } from "utils/constants";
-import { XTZ_TOKEN_SYMBOL } from "utils/constants";
-import { SATELLITE_ORACLE_STATUSES } from "providers/SatellitesProvider/satellites.const";
+import { MVN_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
 
-import { calcPersent, convertNumberForClient } from "utils/calcFunctions";
+import { calcPersent, convertNumberForClient } from 'utils/calcFunctions'
 
-import { CommaNumber } from "app/App.components/CommaNumber/CommaNumber.controller";
-import {
-  FeedsListItem,
-  FeedsOraclesCardStyled,
-  DataFeedListItemTextTruncated,
-} from "pages/DataFeeds/DataFeeds.styles";
-import { StatusFlag } from "app/App.components/StatusFlag/StatusFlag.controller";
-import { getStatusColorBasedOnOracleType } from "providers/SatellitesProvider/helpers/satellites.utils";
-import { SatelliteOracleStatusComponent } from "pages/Satellites/listItem/SatelliteCard.style";
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { DataFeedListItemTextTruncated, FeedsListItem, FeedsOraclesCardStyled } from 'pages/DataFeeds/DataFeeds.styles'
+import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
+import { getStatusColorBasedOnOracleType } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 
-export const OracleCard = ({
-  oracle,
-  feed,
-}: {
-  oracle: SatelliteRecordType;
-  feed: Feed;
-}) => {
-  const { tokensPrices } = useTokensContext();
-  const { oracleStatus } = useSatelliteStatuses(oracle, feed.address);
+export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed: Feed }) => {
+  const { tokensPrices } = useTokensContext()
+  const { oracleStatus } = useSatelliteStatuses(oracle, feed.address)
 
-  const { address, name, participatedFeeds } = oracle;
-  const { decimals, amount, address: feedAddress } = feed;
-  const oracleFeedRewards = participatedFeeds[feedAddress];
+  const { address, name, participatedFeeds } = oracle
+  const { decimals, amount, address: feedAddress } = feed
+  const oracleFeedRewards = participatedFeeds[feedAddress]
 
-  const xtzExchangeRate = tokensPrices[XTZ_TOKEN_SYMBOL] ?? 0;
-  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0;
+  const xtzExchangeRate = tokensPrices[XTZ_TOKEN_SYMBOL] ?? 0
+  const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
 
-  const oracleLastPredictedPrice =
-    oracle.participatedFeeds[feedAddress].lastPredictedPrice;
+  const oracleLastPredictedPrice = oracle.participatedFeeds[feedAddress].lastPredictedPrice
 
   // TODO: check whether calcs for accuracy valid
   const feedAccuracy = oracleLastPredictedPrice
@@ -49,15 +37,12 @@ export const OracleCard = ({
           number: oracleLastPredictedPrice,
           grade: decimals,
         }),
-        amount
+        amount,
       )
-    : 0;
+    : 0
 
   return (
-    <Link
-      to={`/satellites/satellite-details/${address}`}
-      className="full-opacity"
-    >
+    <Link to={`/satellites/satellite-details/${address}`} className="full-opacity">
       <FeedsOraclesCardStyled>
         <FeedsListItem>
           <h5>Oracle</h5>
@@ -65,29 +50,19 @@ export const OracleCard = ({
         </FeedsListItem>
 
         <FeedsListItem>
-          <h5>sMVK Rewards</h5>
+          <h5>sMVN Rewards</h5>
           <var>
-            <CommaNumber
-              showDecimal
-              value={oracleFeedRewards?.sMVKReward ?? 0}
-            />
+            <CommaNumber showDecimal value={oracleFeedRewards?.sMVKReward ?? 0} />
           </var>
           <div className="converted">
-            <CommaNumber
-              showDecimal
-              beginningText="$"
-              value={(oracleFeedRewards?.sMVKReward ?? 0) * mvkExchangeRate}
-            />
+            <CommaNumber showDecimal beginningText="$" value={(oracleFeedRewards?.sMVKReward ?? 0) * mvkExchangeRate} />
           </div>
         </FeedsListItem>
 
         <FeedsListItem>
           <h5>Recouped Gas Fees</h5>
           <var>
-            <CommaNumber
-              showDecimal
-              value={oracleFeedRewards?.XTZReward ?? 0}
-            />
+            <CommaNumber showDecimal value={oracleFeedRewards?.XTZReward ?? 0} />
           </var>
           {xtzExchangeRate ? (
             <div className="converted">
@@ -123,5 +98,5 @@ export const OracleCard = ({
         </FeedsListItem>
       </FeedsOraclesCardStyled>
     </Link>
-  );
-};
+  )
+}

@@ -3,6 +3,8 @@ import { MavrykTheme } from 'styles/interfaces'
 
 export const GlobalStyle = createGlobalStyle`
   body {
+    font-family: 'Metropolis', Helvetica, Arial, sans-serif;
+    font-display: optional;
     min-width: unset !important;
   }
 `

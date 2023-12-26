@@ -68,7 +68,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
   return (
     <>
       <PortfolioChartStyled>
-        <H2Title>MVK Earning History</H2Title>
+        <H2Title>MVN Earning History</H2Title>
         <div className="content">
           {!canShowChart ? (
             <Plug>
@@ -92,7 +92,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
                 areaTopColor: colors[themeSelected].primaryChartColor,
                 areaBottomColor: colors[themeSelected].primaryChartBottomColor,
               }}
-              tooltipAsset={'MVK'}
+              tooltipAsset={'MVN'}
               settings={{
                 priceMargins:
                   chartDataAverage < 1000
@@ -110,7 +110,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
       <PortfolioWalletStyled>
         <H2Title>Wallet</H2Title>
         <div className="wallet-info">
-          <div className="name">Staked MVK</div>
+          <div className="name">Staked MVN</div>
           <div className="value">
             <CommaNumber value={sMVKAmount} />
             <Link to={userAddress ? '/staking' : '#'}>
@@ -121,7 +121,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
           </div>
         </div>
         <div className="wallet-info">
-          <div className="name">MVK Not Staked</div>
+          <div className="name">MVN Not Staked</div>
           <div className="value">
             <CommaNumber value={MVKAmount} />
             <Link to={userAddress ? '/staking' : '#'}>
