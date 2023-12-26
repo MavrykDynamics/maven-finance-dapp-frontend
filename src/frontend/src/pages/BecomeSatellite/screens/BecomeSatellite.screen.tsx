@@ -43,8 +43,8 @@ import { UnregisterPopup } from '../popups/UnregisterPopup'
 // styles
 import {
   BecomeSatelliteFormBalanceCheck,
-  BecomeSatelliteRegisterAsOracle,
   BecomeSatelliteOracleText,
+  BecomeSatelliteRegisterAsOracle,
 } from '../BecomeSatellite.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
@@ -69,12 +69,12 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
     maxLengths: { satelliteDelegation },
     contractAddresses: { delegationAddress },
     globalLoadingState: { isActionActive },
-    minimumStakedMvkBalance,
+    minimumStakedMvnBalance,
   } = useDappConfigContext()
 
   const { bug } = useToasterContext()
 
-  const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvkBalance
+  const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvnBalance
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
   const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
@@ -98,7 +98,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
               default:
                 return true
             }
-          })
+          }),
         )
 
     const formIsValid = Object.values(formForValidation).every(({ status }) => status === INPUT_STATUS_SUCCESS)
@@ -123,7 +123,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
       fee: Number(form.satelliteFee.text.replace('%', '')),
       image: form.image.text,
     }),
-    [form]
+    [form],
   )
 
   // Remove peerId and publicKey fields from request if checkbox 'Register as Oracle" not chosen
@@ -132,7 +132,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
       isChecked
         ? { ...mainRequestForm, peerId: form.oraclePeerId.text, publicKey: form.oraclePublicKey.text }
         : mainRequestForm,
-    [form.oraclePeerId.text, form.oraclePublicKey.text, isChecked, mainRequestForm]
+    [form.oraclePeerId.text, form.oraclePublicKey.text, isChecked, mainRequestForm],
   )
 
   // Set satellite data if user is satellite
@@ -159,7 +159,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
   }, [usersSatelliteProfile, userAddress])
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } }
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: string } },
   ) => {
     const {
       target: { name, value },
@@ -187,7 +187,10 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
         })
       }
     } else {
-      setForm({ ...form, [name]: { text: value, status: getInputValidationStatus(name, value, satelliteDelegation) } })
+      setForm({
+        ...form,
+        [name]: { text: value, status: getInputValidationStatus(name, value, satelliteDelegation) },
+      })
     }
   }
 
@@ -207,7 +210,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
 
       return await registerSatellite(userAddress, requestData, delegationAddress, satelliteMvkIsDelegatedTo)
     },
-    [bug, delegationAddress, satelliteMvkIsDelegatedTo, userAddress]
+    [bug, delegationAddress, satelliteMvkIsDelegatedTo, userAddress],
   )
 
   const registerContractActionProps: HookContractActionArgs = useMemo(
@@ -215,7 +218,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
       actionType: REGISTER_SATELLITE_ACTION,
       actionFn: registerAction.bind(null, requestData),
     }),
-    [registerAction, requestData]
+    [registerAction, requestData],
   )
 
   const { action: handleRegister } = useContractAction(registerContractActionProps)
@@ -234,7 +237,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
 
       return await updateSatellite(requestData, delegationAddress)
     },
-    [bug, delegationAddress, userAddress]
+    [bug, delegationAddress, userAddress],
   )
 
   const updateContractActionProps: HookContractActionArgs = useMemo(
@@ -242,7 +245,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
       actionType: UPDATE_SATELLITE_ACTION,
       actionFn: updateAction.bind(null, requestData),
     }),
-    [updateAction, requestData]
+    [updateAction, requestData],
   )
 
   const { action: handleUpdate } = useContractAction(updateContractActionProps)
@@ -302,7 +305,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
 
       <CommaNumber
         className="label"
-        value={Number(minimumStakedMvkBalance)}
+        value={Number(minimumStakedMvnBalance)}
         beginningText={'1 - Stake at least'}
         endingText={'MVK'}
       />

@@ -139,7 +139,7 @@ const DappConfigProvider = ({ children }: Props) => {
         setDappConfigCtxState((prev) => ({
           ...prev,
           maxLenghts: maxLengths,
-          minimumStakedMvkBalance: minimumStakedMvnBalance,
+          minimumStakedMvnBalance: minimumStakedMvnBalance,
           mvkFaucetAddress,
         }))
 
