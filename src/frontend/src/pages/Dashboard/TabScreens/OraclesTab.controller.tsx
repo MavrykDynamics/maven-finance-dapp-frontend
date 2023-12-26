@@ -10,7 +10,7 @@ import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSa
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL } from 'utils/constants'
 
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -28,7 +28,7 @@ import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 export const OraclesTab = () => {
   const { feedsAddresses, feedsMapper, isLoading: isFeedsLoading } = useDataFeedsContext()
   const {
-    tokensPrices: { [MVK_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
+    tokensPrices: { [MVN_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
   } = useTokensContext()
 
   const { oracleRewardsTotal } = useSatelliteStatistics()

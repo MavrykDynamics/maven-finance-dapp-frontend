@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useRef, useState } from 'react'
 
 // consts
-import { MVK_TOKEN_SYMBOL, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { QUERY_TOKENS_METADATA } from './queries/tokens.query'
 import { tokensGqlSchema } from './helpers/tokens.schemes'
 
@@ -33,7 +33,7 @@ export const TokensProvider = ({ children }: Props) => {
     mTokens: [],
     tokensMetadata: {},
     farmLpTokens: [],
-    tokensPrices: { [MVK_TOKEN_SYMBOL]: 1, [SMVK_TOKEN_ADDRESS]: 1 },
+    tokensPrices: { [MVN_TOKEN_SYMBOL]: 1, [SMVN_TOKEN_ADDRESS]: 1 },
   })
 
   // Load tokens metadata

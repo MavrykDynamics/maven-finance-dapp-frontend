@@ -1,24 +1,24 @@
 // utils
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { getTokenSymbolAndName } from './tokenNames'
-import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
+import {convertNumberForClient} from 'utils/calcFunctions'
+import {getTokenSymbolAndName} from './tokenNames'
+import {checkWhetherTokenIsCollateralToken} from './tokens.utils'
 
 // types
-import { TokenMetadataType, TokensContextStateType } from '../tokens.provider.types'
-import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
-import { TokenType, isValidTokenType } from 'utils/TypesAndInterfaces/General'
-import { TokensMetadataQuery } from 'utils/__generated__/graphql'
+import {TokenMetadataType, TokensContextStateType} from '../tokens.provider.types'
+import {TokenPricesFeedsType} from 'providers/DataFeedsProvider/helpers/feeds.schemas'
+import {isValidTokenType, TokenType} from 'utils/TypesAndInterfaces/General'
+import {TokensMetadataQuery} from 'utils/__generated__/graphql'
 
 // consts
-import { DEFAULT_MIN_COLLATERAL_AMOUNT, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import {DEFAULT_MIN_COLLATERAL_AMOUNT, SMVN_TOKEN_ADDRESS} from 'utils/constants'
 import {
-  TokenIndexerMetadataType,
-  TokensGqlSchemaType,
   farmLiquidityPairTokenMetadataSchema,
   farmLiquidityTokenMetadataSchema,
   farmLpSubtokenMetadataSchema,
   mTokenMetadataSchema,
+  TokenIndexerMetadataType,
   tokenMetadataSchema,
+  TokensGqlSchemaType,
 } from './tokens.schemes'
 
 /**
@@ -72,7 +72,7 @@ const handleMvkToken = ({
         id: token_id,
         type: tokenType,
         decimals: Number(parsedMetadata.decimals),
-        address: SMVK_TOKEN_ADDRESS,
+        address: SMVN_TOKEN_ADDRESS,
         ...(lending_controller_collateral_tokens?.[0]?.token_name === 'smvk'
           ? {
               loanData: collateralData,
@@ -338,6 +338,6 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         return acc
       }
     },
-    { tokensMetadata: {}, collateralTokens: [], mTokens: [], farmLpTokens: [] }
+    { tokensMetadata: {}, collateralTokens: [], mTokens: [], farmLpTokens: [] },
   )
 }

@@ -1,5 +1,5 @@
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
-import { BLOCKS_PER_MINUTE, SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { BLOCKS_PER_MINUTE, SMVN_TOKEN_ADDRESS } from 'utils/constants'
 
 import {
   CollateralType,
@@ -36,10 +36,10 @@ const normalizeCollaterals = (
   return collateral_balances.reduce<Array<CollateralType>>((acc, collateral) => {
     if (!collateral.collateral_token.token) return acc
 
-    // condition to set smvk client address, cuz back-end returns mvk token address, that is not valid for output
+    // condition to set smvn client address, cuz back-end returns mvk token address, that is not valid for output
     if (collateral.collateral_token.token_name === 'smvk') {
       acc.push({
-        tokenAddress: SMVK_TOKEN_ADDRESS,
+        tokenAddress: SMVN_TOKEN_ADDRESS,
         amount: collateral.balance,
       })
     } else {

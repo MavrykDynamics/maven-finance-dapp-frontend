@@ -9,7 +9,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { getUserDoomanRewards, getUserSatelliteRewards, getUsersFarmRewards } from './userRewards.helpers'
 
 // consts
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 import { DEFAULT_USER_AVATAR } from './user.consts'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
@@ -79,16 +79,16 @@ export const normalizeUserRewards = ({
   return {
     gatheredDoormanRewards: convertNumberForClient({
       number: doorman_stake_accounts[0]?.total_exit_fee_rewards_claimed ?? 0,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }),
     gatheredSatellitesRewards: convertNumberForClient({
       number: doorman_stake_accounts[0]?.total_satellite_rewards_claimed ?? 0,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }),
     gatheredFarmRewards: farm_accounts.reduce((acc, { claimed_rewards }) => {
       return (acc += convertNumberForClient({
         number: claimed_rewards,
-        grade: MVK_DECIMALS,
+        grade: MVN_DECIMALS,
       }))
     }, 0),
     availableFarmRewards: getUsersFarmRewards({
@@ -139,8 +139,8 @@ export const normalizeUserHistoryData = (
       id: number
     }>
   >((acc, { type, final_amount, desired_amount, id }) => {
-    const convertedFinalAmount = convertNumberForClient({ number: final_amount, grade: MVK_DECIMALS })
-    const convertedDesiredAmount = convertNumberForClient({ number: desired_amount, grade: MVK_DECIMALS })
+    const convertedFinalAmount = convertNumberForClient({ number: final_amount, grade: MVN_DECIMALS })
+    const convertedDesiredAmount = convertNumberForClient({ number: desired_amount, grade: MVN_DECIMALS })
 
     const isUnstake = type === USER_ACTIONS_TYPES.UNSTAKE
     const actionName = getOperationName(type)

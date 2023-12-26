@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Redirect, Route, Switch, useParams } from 'react-router'
 
 // Consts
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
@@ -72,7 +72,7 @@ export const BecomeSatellite = () => {
   const { usersSatelliteProfile, userSmvkBalance, userMvkBalance } = useMemo(
     () => ({
       usersSatelliteProfile: userAddress ? satelliteMapper[userAddress] : null,
-      userSmvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+      userSmvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
       userMvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
     }),
     [mvkTokenAddress, satelliteMapper, userAddress, userTokensBalances],

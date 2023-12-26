@@ -6,16 +6,15 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // types
 import { EGovContext, EGovSubsRecordType, NullableEGovContextState } from './emergencyGovernance.provider.types'
-import { GetEGovAllProposalsQueryQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { EGOV_ALL_PROPOSALS } from './queries/eGovProposals.query'
-import { MVK_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
 import {
+  DEFAULT_EGOV_CTX,
   DEFAULT_EGOV_SUBS,
   EGOV_CONFIG_SUB,
   EGOV_PROPOSALS_ALL_SUB,
-  DEFAULT_EGOV_CTX,
   EGOV_PROPOSALS_SUB,
 } from './helpers/eGov.consts'
 import { EGOV_CONFIG_QUERY } from './queries/eGovConfig.query'
@@ -50,10 +49,13 @@ const EGovProvider = ({ children }: Props) => {
         ...prev,
         config: {
           emergencyGovActive: eGovCOnfig.current_emergency_record_id !== 0,
-          requiredFeeMutez: convertNumberForClient({ number: eGovCOnfig.required_fee_mutez, grade: XTZ_DECIMALS }),
+          requiredFeeMutez: convertNumberForClient({
+            number: eGovCOnfig.required_fee_mutez,
+            grade: XTZ_DECIMALS,
+          }),
           minStakedMvkRequiredToVote: convertNumberForClient({
             number: eGovCOnfig.min_smvk_required_to_vote,
-            grade: MVK_DECIMALS,
+            grade: MVN_DECIMALS,
           }),
           sMvkPercentageRequired: eGovCOnfig.smvk_percentage_required / 100,
         },

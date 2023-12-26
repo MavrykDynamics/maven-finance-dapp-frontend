@@ -9,13 +9,13 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { GetLoansTransactionsHistoryQuery, GetDevLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
+import { GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { LoansMarketTransactionHistoryType } from '../helpers/loans.types'
 
 // consts
 import { COLLATERAL_HISTORY_DATA_TYPES } from '../helpers/loans.const'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import {
   getDevLoansTransactionsHistory,
   getLoansTransactionsHistory,
@@ -27,9 +27,9 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { parseDate } from 'utils/time'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import {
+  getPageNumber,
   LIST_NAMES_MAPPER,
   TRANSACTION_HISTORY_TABLE_NAME,
-  getPageNumber,
   updatePageInUrl,
 } from 'app/App.components/Pagination/pagination.consts'
 import { ApolloError } from '@apollo/client'
@@ -169,7 +169,7 @@ export const useLoansTransactionHistory = ({
         const tokenAddress =
           COLLATERAL_HISTORY_DATA_TYPES.includes(type) && collateralTokenAddress
             ? isSmvkCollateral
-              ? SMVK_TOKEN_ADDRESS
+              ? SMVN_TOKEN_ADDRESS
               : collateralTokenAddress
             : loanTokenAddress
 

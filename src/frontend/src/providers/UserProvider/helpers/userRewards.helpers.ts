@@ -1,6 +1,6 @@
-import { GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { FIXED_POINT_ACCURACY, MVK_DECIMALS } from 'utils/constants'
+import {GetUserRewardsDataQuery} from 'utils/__generated__/graphql'
+import {convertNumberForClient} from 'utils/calcFunctions'
+import {FIXED_POINT_ACCURACY, MVN_DECIMALS} from 'utils/constants'
 
 // TODO: check on back-end why unclaimed rewards are not changing with compound
 export function getUserDoomanRewards({
@@ -19,7 +19,7 @@ export function getUserDoomanRewards({
   const usersRewardsForStaking = (userSmvkBalance * currentFeesPerShare) / FIXED_POINT_ACCURACY
 
   // return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking + unclaimed_rewards), grade: MVK_DECIMALS })
-  return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking), grade: MVK_DECIMALS })
+  return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking), grade: MVN_DECIMALS })
 }
 
 export function getUserSatelliteRewards({
@@ -35,7 +35,7 @@ export function getUserSatelliteRewards({
   const satelliteRewardRatio = satellite_accumulated_reward_per_share - participation_rewards_per_share
   const usersAvailableSatelliteRewards = (unpaid + satelliteRewardRatio * userSmvkBalance) / FIXED_POINT_ACCURACY
 
-  return convertNumberForClient({ number: Math.trunc(usersAvailableSatelliteRewards), grade: MVK_DECIMALS })
+  return convertNumberForClient({ number: Math.trunc(usersAvailableSatelliteRewards), grade: MVN_DECIMALS })
 }
 
 export function getUsersFarmRewards({
@@ -78,7 +78,7 @@ export function getUsersFarmRewards({
 
     const userReward = convertNumberForClient({
       number: (currentRewardsPerShareRatio * deposited_amount) / FIXED_POINT_ACCURACY,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     })
 
     if (userReward) {

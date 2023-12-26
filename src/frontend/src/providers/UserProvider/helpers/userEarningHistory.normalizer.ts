@@ -9,7 +9,7 @@ import { GetUserEarningHistoryDataQuery } from 'utils/__generated__/graphql'
 import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 
 // consts
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 
 const getChartWithOperationSpliitedByDays = ({
   chartData,
@@ -56,7 +56,7 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
     (acc, { timestamp, final_amount }) => {
       acc.push({
         time: timestamp,
-        value: convertNumberForClient({ number: final_amount, grade: MVK_DECIMALS }),
+        value: convertNumberForClient({ number: final_amount, grade: MVN_DECIMALS }),
       })
       return acc
     },
@@ -68,7 +68,7 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
       acc.push({
         // TODO: @Sam-M-Israel add time for claimed farm rewards here
         time: dayjs().subtract(1, 'hour').toISOString(),
-        value: convertNumberForClient({ number: claimed_rewards, grade: MVK_DECIMALS }),
+        value: convertNumberForClient({ number: claimed_rewards, grade: MVN_DECIMALS }),
       })
       return acc
     },

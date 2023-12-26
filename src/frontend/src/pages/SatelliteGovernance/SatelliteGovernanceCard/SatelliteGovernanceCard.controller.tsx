@@ -92,10 +92,10 @@ export const SatelliteGovernanceCard = ({
 
   const voteStatistic = useMemo(
     () => ({
-      forVotesMVKTotal: yayVotesSmvkTotal / PRECISION_NUMBER,
-      againstVotesMVKTotal: nayVotesSmvkTotal / PRECISION_NUMBER,
+      forVotesMVNTotal: yayVotesSmvkTotal / PRECISION_NUMBER,
+      againstVotesMVNTotal: nayVotesSmvkTotal / PRECISION_NUMBER,
       abstainVotesMVKTotal: passVoteSmvkTotal / PRECISION_NUMBER,
-      unusedVotesMVKTotal: Math.round(
+      unusedVotesMVNTotal: Math.round(
         snapshotSmvkTotalSupply / PRECISION_NUMBER -
           yayVotesSmvkTotal / PRECISION_NUMBER -
           nayVotesSmvkTotal / PRECISION_NUMBER -
@@ -221,7 +221,14 @@ export const SatelliteGovernanceCard = ({
           <h3>Vote Statistics</h3>
           <b className="voting-ends">
             {actionDroppedDate ? (
-              <>Action was dropped on {parseDate({ time: actionDroppedDate, timeFormat: 'MMM DD, HH:mm' })} CEST</>
+              <>
+                Action was dropped on{' '}
+                {parseDate({
+                  time: actionDroppedDate,
+                  timeFormat: 'MMM DD, HH:mm',
+                })}{' '}
+                CEST
+              </>
             ) : (
               <>
                 Voting {!isEndingVotingTime ? 'ended' : 'ending'} on{' '}

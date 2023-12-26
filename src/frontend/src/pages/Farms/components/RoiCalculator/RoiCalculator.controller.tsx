@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState, useMemo, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
 
@@ -36,7 +36,7 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { useLockBodyScroll } from 'react-use'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL } from 'utils/constants'
 
 export default function RoiCalculator({
   closeHandler,
@@ -55,7 +55,7 @@ export default function RoiCalculator({
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { tokensPrices } = useTokensContext()
-  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL]
+  const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL]
 
   const farm = farms.find(({ address }) => selectedFarmAddress === address)
 

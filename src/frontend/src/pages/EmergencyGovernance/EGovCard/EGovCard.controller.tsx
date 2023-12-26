@@ -7,7 +7,7 @@ import { parseDate } from 'utils/time'
 import { voteForEGovProposal } from 'providers/EmergencyGovernanceProvider/actions/eGovActions'
 
 // consts
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { VOTE_FOR_EGOV_PROPOSAL_ACTION } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import colors from 'styles/colors'
@@ -63,15 +63,15 @@ export const EGovCard = ({ proposal }: Props) => {
 
   const votingStatistic = useMemo(
     () => ({
-      forVotesMVKTotal: totalSmvkVotes,
-      unusedVotesMVKTotal: totalStakedMvk - totalSmvkVotes,
+      forVotesMVNTotal: totalSmvkVotes,
+      unusedVotesMVNTotal: totalStakedMvk - totalSmvkVotes,
       quorum: smvkPercentageRequired,
     }),
     [smvkPercentageRequired, totalSmvkVotes, totalStakedMvk],
   )
 
   const isUserVoter = voters.find(({ voterAddress }) => userAddress === voterAddress)
-  const userSmvkAmount = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+  const userSmvkAmount = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
   const voteForEGovProposalProps: HookContractActionArgs = useMemo(
     () => ({

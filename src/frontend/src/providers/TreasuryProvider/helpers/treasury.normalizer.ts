@@ -1,5 +1,5 @@
 import type { TreasuryBalanceType, TreasuryData, TreauryGQLData } from './treasury.types'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { getDiagramSectionColor } from 'app/App.components/PieChart/pieChart.utils'
 
 export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
@@ -14,8 +14,8 @@ export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
       acc[address] = {
         balance: smvk_balance,
         contract: address,
-        chartColor: treasuryAssetsColors[SMVK_TOKEN_ADDRESS],
-        tokenAddress: SMVK_TOKEN_ADDRESS,
+        chartColor: treasuryAssetsColors[SMVN_TOKEN_ADDRESS],
+        tokenAddress: SMVN_TOKEN_ADDRESS,
       }
 
       return acc

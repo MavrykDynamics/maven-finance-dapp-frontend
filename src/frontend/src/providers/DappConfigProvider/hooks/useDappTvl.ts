@@ -16,7 +16,7 @@ import { DashboardTvlQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { GET_DAPP_TVL } from '../queries/dappTvl.query'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 
 export const useDappTvl = () => {
   const { handleApolloError } = useApolloContext()
@@ -79,7 +79,7 @@ const reduceTvlValue = ({
   } = indexerData
 
   // calculating doorman tvl
-  const smvkToken = getTokenDataByAddress({ tokenAddress: SMVK_TOKEN_ADDRESS, tokensMetadata, tokensPrices })
+  const smvkToken = getTokenDataByAddress({ tokenAddress: SMVN_TOKEN_ADDRESS, tokensMetadata, tokensPrices })
   const doormanTVL =
     doormanAccount && smvkToken && smvkToken.rate
       ? convertNumberForClient({ number: doormanAccount.mvk_balance, grade: smvkToken.decimals }) * smvkToken.rate
@@ -139,7 +139,11 @@ const reduceTvlValue = ({
         })
 
         if (treasuryToken && treasuryToken.rate) {
-          acc += convertNumberForClient({ number: Number(balance), grade: treasuryToken.decimals }) * treasuryToken.rate
+          acc +=
+            convertNumberForClient({
+              number: Number(balance),
+              grade: treasuryToken.decimals,
+            }) * treasuryToken.rate
         }
 
         return acc

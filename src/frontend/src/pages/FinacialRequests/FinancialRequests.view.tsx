@@ -35,9 +35,9 @@ import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 import {
   FinancialRequestsRightContainer,
   FinancialRequestsStyled,
-  InfoBlockValue,
-  InfoBlockTitle,
   InfoBlockName,
+  InfoBlockTitle,
+  InfoBlockValue,
 } from './FinancialRequests.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 
@@ -93,9 +93,9 @@ export const FinancialRequestsView = ({
   const isActiveVotingButtons = rightItemStatus === ProposalStatus.ONGOING
 
   const votingStats = {
-    forVotesMVKTotal: rightSideContent.forVotesMVKTotal,
-    againstVotesMVKTotal: rightSideContent.againstVotesMVKTotal,
-    unusedVotesMVKTotal: Math.round(
+    forVotesMVNTotal: rightSideContent.forVotesMVKTotal,
+    againstVotesMVNTotal: rightSideContent.againstVotesMVKTotal,
+    unusedVotesMVNTotal: Math.round(
       rightSideContent.sMVKTotakSupply - rightSideContent.forVotesMVKTotal - rightSideContent.againstVotesMVKTotal,
     ),
     quorum: rightSideContent.quorum,
@@ -152,7 +152,11 @@ export const FinancialRequestsView = ({
         <div className="voting_ending">
           {rightSideContent.droppedTime ? (
             <>
-              Request was dropped on {parseDate({ time: rightSideContent.droppedTime, timeFormat: 'MMM DD, HH:mm' })}{' '}
+              Request was dropped on{' '}
+              {parseDate({
+                time: rightSideContent.droppedTime,
+                timeFormat: 'MMM DD, HH:mm',
+              })}{' '}
               CEST
             </>
           ) : (
@@ -205,7 +209,10 @@ export const FinancialRequestsView = ({
               <InfoBlockName>Amount Requested</InfoBlockName>
               <InfoBlockValue>
                 <CommaNumber
-                  value={convertNumberForClient({ number: rightSideContent.tokensAmount, grade: decimals })}
+                  value={convertNumberForClient({
+                    number: rightSideContent.tokensAmount,
+                    grade: decimals,
+                  })}
                   endingText={symbol}
                 />
               </InfoBlockValue>

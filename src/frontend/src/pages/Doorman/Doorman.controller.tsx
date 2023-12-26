@@ -18,7 +18,7 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
 // actions
-import { SMVK_TOKEN_ADDRESS, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -26,8 +26,8 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITES_DATA_SINGLE_SUB,
   SATELLITE_DATA_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -65,8 +65,8 @@ export const Doorman = () => {
     }
   }, [])
 
-  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
-  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
+  const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
+  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
     myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
 
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)

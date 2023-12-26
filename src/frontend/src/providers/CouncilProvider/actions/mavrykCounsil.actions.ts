@@ -1,10 +1,9 @@
-import { WalletOperationError, unknownToError } from 'errors/error'
-import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
-import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { TokenType } from 'utils/TypesAndInterfaces/General'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
+import {unknownToError, WalletOperationError} from 'errors/error'
+import {getEstimationResult} from 'errors/helpers/estimateAction.helper'
+import {TokenMetadataType} from 'providers/TokensProvider/tokens.provider.types'
+import {DAPP_INSTANCE} from 'providers/UserProvider/user.provider'
+import {convertNumberForContractCall} from 'utils/calcFunctions'
+import {MVN_DECIMALS} from 'utils/constants'
 
 // Sign
 export const signMavrykAction = async (actionID: number, counsilAddress: string) => {
@@ -30,7 +29,10 @@ export const addVestee = async (
   counsilAddress: string,
 ) => {
   try {
-    const convertedTotalAllocatedAmount = convertNumberForContractCall({ number: totalAllocated, grade: MVK_DECIMALS })
+    const convertedTotalAllocatedAmount = convertNumberForContractCall({
+      number: totalAllocated,
+      grade: MVN_DECIMALS,
+    })
 
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -84,7 +86,10 @@ export const updateVestee = async (
   counsilAddress: string,
 ) => {
   try {
-    const convertedTotalAllocatedAmount = convertNumberForContractCall({ number: totalAllocated, grade: MVK_DECIMALS })
+    const convertedTotalAllocatedAmount = convertNumberForContractCall({
+      number: totalAllocated,
+      grade: MVN_DECIMALS,
+    })
 
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
@@ -269,7 +274,7 @@ export const requestTokenMint = async (
     const requestMintMetaData = contract?.methods.councilActionRequestMint(
       treasuryAddress,
       receiverAddress,
-      convertNumberForContractCall({ number: tokenAmount, grade: MVK_DECIMALS }),
+      convertNumberForContractCall({ number: tokenAmount, grade: MVN_DECIMALS }),
       purpose,
     )
 

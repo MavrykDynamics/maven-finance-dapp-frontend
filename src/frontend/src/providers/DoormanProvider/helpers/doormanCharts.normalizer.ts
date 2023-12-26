@@ -8,7 +8,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { ChartPeriodType } from 'types/charts.type'
 import { ALL_TIME } from 'consts/charts.const'
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 
 type HistoryItemType = {
   value: number
@@ -24,7 +24,7 @@ function createChartHistoryItemFromInitValue(
   const convertedValueToClient = parseFloat(
     convertNumberForClient({
       number: value,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }).toFixed(2),
   )
   return {
@@ -104,9 +104,9 @@ export function normalizeDoormanChartsData(storage: SmvkMvkHistoryDataQuery, per
       const _time = dayjs(timestamp).valueOf() as UTCTimestamp
 
       const _mvkAmount = mvk_total_supply - smvk_total_supply
-      const mvkValue = parseFloat(convertNumberForClient({ number: _mvkAmount, grade: MVK_DECIMALS }).toFixed(2))
+      const mvkValue = parseFloat(convertNumberForClient({ number: _mvkAmount, grade: MVN_DECIMALS }).toFixed(2))
       const sMvkValue = parseFloat(
-        convertNumberForClient({ number: smvk_total_supply, grade: MVK_DECIMALS }).toFixed(2),
+        convertNumberForClient({ number: smvk_total_supply, grade: MVN_DECIMALS }).toFixed(2),
       )
 
       acc.mvkHistoryData.push({

@@ -1,4 +1,4 @@
-import { PRECISION_NUMBER, SECONDS_PER_BLOCK, MVK_DECIMALS, DECIMALS_TO_SHOW } from './constants'
+import {DECIMALS_TO_SHOW, MVN_DECIMALS, PRECISION_NUMBER, SECONDS_PER_BLOCK} from './constants'
 
 /**
  * Calculates the MVK Loyalty Index (MLI) per the function in the litepaper
@@ -40,7 +40,7 @@ export const removeUnnessesaryDecimals = (amount: number = 0, decimals: number) 
  */
 export const convertNumberForContractCall = ({
   number,
-  grade = MVK_DECIMALS,
+  grade = MVN_DECIMALS,
 }: {
   number: number
   grade?: number
@@ -58,7 +58,7 @@ export const convertNumberForContractCall = ({
  */
 export const convertNumberForClient = ({
   number,
-  grade = MVK_DECIMALS,
+  grade = MVN_DECIMALS,
 }: {
   number: number
   grade?: number

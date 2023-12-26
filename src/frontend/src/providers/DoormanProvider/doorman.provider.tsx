@@ -11,13 +11,13 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { DoormanContext, NullableDoormanContextStateType, DoormanSubsRecordType } from './doorman.provider.types'
-import { SmvkMvkHistoryDataQuery, GetDappSmvkMvkStatsQuery } from 'utils/__generated__/graphql'
+import { DoormanContext, DoormanSubsRecordType, NullableDoormanContextStateType } from './doorman.provider.types'
+import { GetDappSmvkMvkStatsQuery, SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
 import { ChartPeriodType } from 'types/charts.type'
 
 // consts
-import { MVK_DECIMALS } from 'utils/constants'
-import { DEFAULT_STAKING_CTX, DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from './helpers/doorman.consts'
+import { MVN_DECIMALS } from 'utils/constants'
+import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS, DEFAULT_STAKING_CTX } from './helpers/doorman.consts'
 import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
@@ -66,10 +66,13 @@ const DoormanProvider = ({ children }: Props) => {
       ...prevState,
       totalStakedMvk: convertNumberForClient({
         number: doormanContractBalances?.mvk_balance ?? 0,
-        grade: MVK_DECIMALS,
+        grade: MVN_DECIMALS,
       }),
-      totalSupply: convertNumberForClient({ number: mvkTokenData?.total_supply ?? 0, grade: MVK_DECIMALS }),
-      maximumTotalSupply: convertNumberForClient({ number: mvkTokenData?.maximum_supply ?? 0, grade: MVK_DECIMALS }),
+      totalSupply: convertNumberForClient({ number: mvkTokenData?.total_supply ?? 0, grade: MVN_DECIMALS }),
+      maximumTotalSupply: convertNumberForClient({
+        number: mvkTokenData?.maximum_supply ?? 0,
+        grade: MVN_DECIMALS,
+      }),
     }))
   }
 

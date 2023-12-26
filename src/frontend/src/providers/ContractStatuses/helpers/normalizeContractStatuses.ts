@@ -140,7 +140,7 @@ export function normalizeContractStatuses(storage: GetAllContractStatusesDataQue
               lastUpdated: item.last_updated_at,
               admin: item.admin,
               methods: {
-                'withdraw reward smvk': item.withdraw_reward_smvk_paused,
+                'withdraw reward smvn': item.withdraw_reward_smvk_paused,
                 'withdraw reward xtz': item.withdraw_reward_xtz_paused,
               },
             }
@@ -159,7 +159,7 @@ export function normalizeContractStatuses(storage: GetAllContractStatusesDataQue
               admin: item.admin,
               methods: {
                 'distribute reward xtz': item.distribute_reward_xtz_paused,
-                'distribute reward smvk': item.distribute_reward_smvk_paused,
+                'distribute reward smvn': item.distribute_reward_smvk_paused,
                 'untrack aggregator': item.untrack_aggregator_paused,
                 'track aggregator': item.track_aggregator_paused,
                 'create aggregator': item.create_aggregator_paused,

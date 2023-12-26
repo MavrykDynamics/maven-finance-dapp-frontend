@@ -5,11 +5,7 @@ import { CouncilActionType } from 'providers/CouncilProvider/council.provider.ty
 import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 import { CouncilActionParamCellType } from 'pages/Council/helpers/council.types'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import {
-  ACTION_READ_MORE_CONTRACTS_LIST,
-  ACTION_READ_MORE_PURPOSE,
-  ActionReadMorePopupDataType,
-} from '../popups/CouncilActionReadMorePopupPopup'
+import { ACTION_READ_MORE_PURPOSE, ActionReadMorePopupDataType } from '../popups/CouncilActionReadMorePopupPopup'
 
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
@@ -18,10 +14,10 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // consts
-import { BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { CouncilActionsToSignGridCellsMapper } from './CouncilActionsToSign.consts'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 import { MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
 
 // utils
@@ -155,7 +151,7 @@ const getCardToSignBodyCels = (
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.totalAllocatedAmount ||
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.newTotalAllocatedAmount ||
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenAmount
-            ? String(convertNumberForClient({ number: parseFloat(parsedValue), grade: MVK_DECIMALS }))
+            ? String(convertNumberForClient({ number: parseFloat(parsedValue), grade: MVN_DECIMALS }))
             : parsedValue
 
         acc.push({
@@ -210,7 +206,13 @@ const getCardToSignBodyCels = (
           )
 
           acc.push({
-            valueContent: getCellValueContent({ ...columnData, sufix: tokenUsedInAction.symbol }, columnValue),
+            valueContent: getCellValueContent(
+              {
+                ...columnData,
+                sufix: tokenUsedInAction.symbol,
+              },
+              columnValue,
+            ),
             className: columnData.className,
             value: columnValue,
             paramName: name,
