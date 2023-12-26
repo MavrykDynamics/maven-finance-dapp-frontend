@@ -60,7 +60,7 @@ export const normalizeInitialConfigData = (indexerData: DappConfigGqlType) => {
   return {
     maxLengths: normalizerMaxLenghts(indexerData),
     mvkFaucetAddress: indexerData.mvk_faucet[0]?.address ?? null,
-    minimumStakedMvkBalance: convertNumberForClient({
+    minimumStakedMvnBalance: convertNumberForClient({
       number: indexerData.delegation[0].minimum_smvk_balance,
       grade: MVN_DECIMALS,
     }),
