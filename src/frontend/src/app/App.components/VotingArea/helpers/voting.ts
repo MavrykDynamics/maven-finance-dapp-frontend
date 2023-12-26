@@ -3,11 +3,11 @@ import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { VotingTypes } from './voting.const'
 
 export type VoteStatistics = {
-  forVotesMVKTotal: number
-  againstVotesMVKTotal?: number
-  abstainVotesMVKTotal?: number
-  passVotesMVKTotal?: number
-  unusedVotesMVKTotal: number
+  forVotesMVNTotal: number
+  againstVotesMVNTotal?: number
+  abstainVotesMVNTotal?: number
+  passVotesMVNTotal?: number
+  unusedVotesMVNTotal: number
   quorum: number
 }
 

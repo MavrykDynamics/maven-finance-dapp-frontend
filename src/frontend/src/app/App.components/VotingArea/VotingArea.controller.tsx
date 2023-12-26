@@ -1,6 +1,6 @@
 // types
 import { VotingProposalsProps, VotingProps } from './helpers/voting'
-import { VotingTypes, VoteList } from './helpers/voting.const'
+import { VoteList, VotingTypes } from './helpers/voting.const'
 
 // view
 import { VotingBar } from './VotingBar.controller'
@@ -12,7 +12,7 @@ import Button from '../Button/NewButton'
 
 // consts
 import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
-import { VOTING_AGAINST, BUTTON_PRIMARY, VOTING_FOR, VOTING_PASS, BUTTON_WIDE } from '../Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, VOTING_AGAINST, VOTING_FOR, VOTING_PASS } from '../Button/Button.constants'
 import { INFO_DEFAULT } from '../Info/info.constants'
 import { NEWLY_REGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
@@ -149,8 +149,8 @@ export const VotingProposalsArea = ({
           <div className="voted-block">
             <CommaNumber
               className="voted-label"
-              value={voteStatistics.passVotesMVKTotal ?? 0}
-              endingText={'voted MVK'}
+              value={voteStatistics.passVotesMVNTotal ?? 0}
+              endingText={'voted MVN'}
             />
           </div>
         </VotingAreaStyled>
@@ -165,7 +165,7 @@ export const VotingProposalsArea = ({
     return (
       <VotingAreaStyled>
         <div className="voted-block">
-          <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
+          <CommaNumber className="voted-label" value={voteStatistics.passVotesMVNTotal ?? 0} endingText={'voted MVN'} />
           {isNewlyRegisteredSatellite && (
             <div className="banner-area">
               <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
