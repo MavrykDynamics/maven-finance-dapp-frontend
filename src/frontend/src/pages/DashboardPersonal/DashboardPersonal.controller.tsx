@@ -21,13 +21,13 @@ import { DashboardPersonalStyled } from './DashboardPersonal.style'
 
 // helpers
 import {
-  isValidPersonalDashboardTabId,
-  PORTFOLIO_TAB_ID,
   DELEGATION_TAB_ID,
+  getDbPersonalUserWalletData,
+  isValidPersonalDashboardTabId,
+  PORTFOLIO_POSITION_TAB_ID,
+  PORTFOLIO_TAB_ID,
   SATELLITE_TAB_ID,
   VESTING_TAB_ID,
-  PORTFOLIO_POSITION_TAB_ID,
-  getDbPersonalUserWalletData,
 } from './DashboardPersonal.utils'
 
 // actions
@@ -54,7 +54,7 @@ const DashboardPersonal = () => {
   const { bug } = useToasterContext()
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
   const {
-    contractAddresses: { mvkTokenAddress, doormanAddress, governanceAddress },
+    contractAddresses: { mvnTokenAddress, doormanAddress, governanceAddress },
   } = useDappConfigContext()
   const {
     userTokensBalances,
@@ -164,8 +164,15 @@ const DashboardPersonal = () => {
   }
 
   const userWalletData = useMemo(
-    () => getDbPersonalUserWalletData({ userTokensBalances, mTokens, mvkTokenAddress, tokensPrices, tokensMetadata }),
-    [userTokensBalances, mTokens, mvkTokenAddress, tokensPrices, tokensMetadata],
+    () =>
+      getDbPersonalUserWalletData({
+        userTokensBalances,
+        mTokens,
+        mvkTokenAddress: mvnTokenAddress,
+        tokensPrices,
+        tokensMetadata,
+      }),
+    [userTokensBalances, mTokens, mvnTokenAddress, tokensPrices, tokensMetadata],
   )
   const activeTab = useMemo(() => (isValidPersonalDashboardTabId(tabId) ? tabId : PORTFOLIO_TAB_ID), [tabId])
 

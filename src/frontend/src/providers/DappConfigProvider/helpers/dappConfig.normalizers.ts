@@ -72,7 +72,7 @@ export const normalizeContractAddresses = (data: GetContractAddressesQueryQuery)
     farmsFactoryAddress: data.farm_factory[0].address,
     delegationAddress: data.delegation[0].address,
     doormanAddress: data.doorman[0].address,
-    mvkTokenAddress: data.mvk_token[0].address,
+    mvnTokenAddress: data.mvk_token[0].address,
     governanceAddress: data.governance[0].address,
     governanceFinancialAddress: data.governance_financial[0].address,
     emergencyGovernanceAddress: data.emergency_governance[0].address,

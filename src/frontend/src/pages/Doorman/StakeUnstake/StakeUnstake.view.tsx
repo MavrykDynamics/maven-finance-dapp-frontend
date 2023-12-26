@@ -83,7 +83,7 @@ export const StakeUnstakeView = ({
   const { userTokensBalances, userAddress, satelliteMvkIsDelegatedTo, isSatellite } = useUserContext()
   const { availableDoormanRewards, availableSatellitesRewards, availableFarmRewards } = useUserRewards()
   const {
-    contractAddresses: { mvkTokenAddress, doormanAddress },
+    contractAddresses: { mvnTokenAddress, doormanAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
@@ -99,7 +99,7 @@ export const StakeUnstakeView = ({
 
   const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
-    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
   const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
@@ -172,7 +172,7 @@ export const StakeUnstakeView = ({
         bug('Click Connect in the left menu', 'Please connect your wallet')
         return null
       }
-      if (!doormanAddress || !mvkTokenAddress) {
+      if (!doormanAddress || !mvnTokenAddress) {
         bug('Wrong doorman or mvkToken address was provided')
         return null
       }
@@ -187,9 +187,9 @@ export const StakeUnstakeView = ({
         errorMessage: '',
       })
 
-      return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvkTokenAddress)
+      return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvnTokenAddress)
     },
-    [bug, doormanAddress, inputData, mvkTokenAddress, myMvkTokenBalance, setInputData, userAddress],
+    [bug, doormanAddress, inputData, mvnTokenAddress, myMvkTokenBalance, setInputData, userAddress],
   )
 
   const dappCallback = useCallback(() => {

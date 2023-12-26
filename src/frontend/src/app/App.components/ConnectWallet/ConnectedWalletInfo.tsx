@@ -33,7 +33,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
   const {
-    contractAddresses: { mvkTokenAddress },
+    contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()
 
   const mvkTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
@@ -89,7 +89,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
               <CommaNumber
                 value={getUserTokenBalanceByAddress({
                   userTokensBalances,
-                  tokenAddress: mvkTokenAddress,
+                  tokenAddress: mvnTokenAddress,
                 })}
                 endingText={'MVN'}
                 showDecimal
@@ -99,7 +99,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
                 value={
                   getUserTokenBalanceByAddress({
                     userTokensBalances,
-                    tokenAddress: mvkTokenAddress,
+                    tokenAddress: mvnTokenAddress,
                   }) * mvkTokenRate
                 }
                 endingText={'USD'}
@@ -174,7 +174,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
           </div>
 
           {userTokens.map((tokenAddress) => {
-            if (tokenAddress === mvkTokenAddress || tokenAddress === SMVN_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
+            if (tokenAddress === mvnTokenAddress || tokenAddress === SMVN_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
               return null
 
             const tokenBalance = userTokensBalances[tokenAddress]
@@ -228,7 +228,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
   const {
-    contractAddresses: { mvkTokenAddress },
+    contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()
 
   const mvkTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
@@ -291,7 +291,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
               <CommaNumber
                 value={getUserTokenBalanceByAddress({
                   userTokensBalances,
-                  tokenAddress: mvkTokenAddress,
+                  tokenAddress: mvnTokenAddress,
                 })}
                 endingText={'MVN'}
                 showDecimal
@@ -301,7 +301,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
                 value={
                   getUserTokenBalanceByAddress({
                     userTokensBalances,
-                    tokenAddress: mvkTokenAddress,
+                    tokenAddress: mvnTokenAddress,
                   }) * mvkTokenRate
                 }
                 endingText={'USD'}
@@ -376,7 +376,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
           </div>
 
           {userTokens.map((tokenAddress) => {
-            if (tokenAddress === mvkTokenAddress || tokenAddress === SMVN_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
+            if (tokenAddress === mvnTokenAddress || tokenAddress === SMVN_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
               return null
 
             const tokenBalance = userTokensBalances[tokenAddress]
