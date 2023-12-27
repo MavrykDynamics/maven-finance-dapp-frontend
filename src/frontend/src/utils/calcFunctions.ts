@@ -68,11 +68,11 @@ export const convertNumberForClient = ({
 
 /**
  *
- * @param number number we want to get it's persent
- * @param wholeSum number we wan't to get persent from
- * @returns persent of number in whole sum
+ * @param number number we want to get it's percent
+ * @param wholeSum number we want to get percent from
+ * @returns percent of number in whole sum
  */
-export const calcPersent = (number: number, wholeSum: number) => {
+export const calcPercent = (number: number, wholeSum: number) => {
   const divider = wholeSum / 100
   return divider === 0 ? 0 : getNumberInBounds(0, 100, number / divider)
 }

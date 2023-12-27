@@ -26,7 +26,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // helpers
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 export const SatellitesTab = () => {
   const {
@@ -163,7 +163,7 @@ const reduceSatellitesData = ({
       const satelliteRecord = satelliteMapper[satelliteAddress]
       if (!satelliteRecord || satelliteRecord.status !== 0) return acc
 
-      const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+      const { proposalParticipation, votingParticipation } = getSatelliteParticipation({
         satellite: satelliteRecord,
         proposalsAmount,
         satelliteGovActionsAmount,
@@ -172,13 +172,13 @@ const reduceSatellitesData = ({
 
       acc.activeSatellites += 1
       acc.avgFee += satelliteRecord.satelliteFee
-      acc.avgStakedMVK += satelliteRecord.sMvkBalance
-      acc.partisipationRate += (proposalParticipation + votingPartisipation) / 2
+      acc.avgStakedMVK += satelliteRecord.sMvnBalance
+      acc.partisipationRate += (proposalParticipation + votingParticipation) / 2
       acc.avgFreesMVKSpace += Math.max(
-        satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
+        satelliteRecord.sMvnBalance * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
         0,
       )
-      acc.avgDelegatedsMVK += satelliteRecord.sMvkBalance + satelliteRecord.totalDelegatedAmount
+      acc.avgDelegatedsMVK += satelliteRecord.sMvnBalance + satelliteRecord.totalDelegatedAmount
 
       return acc
     },

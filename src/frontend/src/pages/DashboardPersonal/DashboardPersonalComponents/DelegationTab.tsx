@@ -24,7 +24,7 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 
 // helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
@@ -47,7 +47,7 @@ const DelegationTab = ({
     satelliteGovActionsAmount,
     finRequestsAmount,
     changeSatellitesSubscriptionsList,
-    setSatelliteAddressToSubsctibe,
+    setSatelliteAddressToSubscribe,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
   const { userTokensBalances, satelliteMvnIsDelegatedTo, userAddress } = useUserContext()
@@ -67,13 +67,13 @@ const DelegationTab = ({
 
   useEffect(() => {
     if (satelliteMvnIsDelegatedTo) {
-      setSatelliteAddressToSubsctibe(satelliteMvnIsDelegatedTo)
+      setSatelliteAddressToSubscribe(satelliteMvnIsDelegatedTo)
     }
-    return () => setSatelliteAddressToSubsctibe(null)
+    return () => setSatelliteAddressToSubscribe(null)
   }, [satelliteMvnIsDelegatedTo])
 
   const satelliteRecord = satelliteMvnIsDelegatedTo ? satelliteMapper[satelliteMvnIsDelegatedTo] : null
-  const { proposalParticipation } = getSatelliteParticipations({
+  const { proposalParticipation } = getSatelliteParticipation({
     satellite: satelliteRecord,
     proposalsAmount,
     satelliteGovActionsAmount,
@@ -133,7 +133,7 @@ const DelegationTab = ({
                 <div className="value">
                   <CommaNumber
                     value={Math.max(
-                      satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
+                      satelliteRecord.sMvnBalance * satelliteRecord.delegationRatio -
                         satelliteRecord.totalDelegatedAmount,
                       0,
                     )}
@@ -149,7 +149,7 @@ const DelegationTab = ({
               <div className="grid-item delegated">
                 <div className="name">Delegated MVK</div>
                 <div className="value">
-                  <CommaNumber value={satelliteRecord.totalDelegatedAmount + satelliteRecord.sMvkBalance} />
+                  <CommaNumber value={satelliteRecord.totalDelegatedAmount + satelliteRecord.sMvnBalance} />
                 </div>
               </div>
               <div className="grid-item fee">

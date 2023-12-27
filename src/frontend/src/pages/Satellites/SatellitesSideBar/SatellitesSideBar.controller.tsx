@@ -91,7 +91,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     contractAddresses: { delegationAddress, feedsFactoryAddress },
   } = useDappConfigContext()
 
-  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks, averageOracleReward } =
+  const { totalDelegatedMVN, totalActiveSatellites, totalOracleNetworks, averageOracleReward } =
     useSatelliteStatistics()
   const { feedsAddresses } = useDataFeedsContext()
 
@@ -147,7 +147,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
         <SideBarItem>
           <h3>Total delegated MVK</h3>
           <var>
-            <CommaNumber value={totalDelegatedMVK} showDecimal={false} />
+            <CommaNumber value={totalDelegatedMVN} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>

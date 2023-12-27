@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Page } from 'styles'
-import { useLocation, useParams, useHistory } from 'react-router'
+import { useHistory, useLocation, useParams } from 'react-router'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -9,31 +9,31 @@ import { useSatelliteGovernanceContext } from 'providers/SatellitesGovernancePro
 
 // const
 import {
+  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
 import {
   SATELLITE_GOVERNANCE_ACTIONS,
   SATELLITE_GOVERNANCE_MENU_TABS,
   SATELLITE_GOVERNANCE_PATHNAME,
 } from './SatelliteGovernance.consts'
-import { TAB_ID_ONGOING, TabIdType, getSatelliteGovSub } from './utils/tabsHelper'
+import { getSatelliteGovSub, TAB_ID_ONGOING, TabIdType } from './utils/tabsHelper'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
 import {
   DEFAULT_SATELLITE_GOVERNANCE_SUBS,
-  SATELLITES_GOVERNANCE_CONFIG_SUB,
   SATELLITE_GOV_ACTIONS_DATA,
+  SATELLITES_GOVERNANCE_CONFIG_SUB,
 } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
 
 // style
 import {
   SatelliteGovernanceAvailableActions,
-  SatelliteGovernanceStats,
-  SatelliteGovernanceStyled,
-  SatelliteGovernanceStatsInfo,
   SatelliteGovernanceMenuCards,
+  SatelliteGovernanceStats,
+  SatelliteGovernanceStatsInfo,
+  SatelliteGovernanceStyled,
 } from './SatelliteGovernance.style'
 import { EmptyContainer } from '../../app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -86,7 +86,7 @@ export const SatelliteGovernance = () => {
 
   const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: TabIdType }>()
 
-  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
+  const { totalDelegatedMVN, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
   const {
     maxLengths: {
       governanceSatellite: { purposeMaxLength },
@@ -174,7 +174,7 @@ export const SatelliteGovernance = () => {
           return ongoingSatelliteGovIds
       }
     },
-    [mySatelliteGovIds, ongoingSatelliteGovIds, pastSatelliteGovIds]
+    [mySatelliteGovIds, ongoingSatelliteGovIds, pastSatelliteGovIds],
   )
 
   const currentListName = getCurrentListNameById(tabId)
@@ -218,7 +218,7 @@ export const SatelliteGovernance = () => {
           <SatelliteGovernanceStatsInfo>
             <h3>Total Delegated MVK</h3>
             <div className="value">
-              <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
+              <CommaNumber value={totalDelegatedMVN} endingText={'MVK'} />
               <Tooltip>
                 <Tooltip.Trigger className="ml-3 mt-3 tooltip-trigger">
                   <Icon id="info" />

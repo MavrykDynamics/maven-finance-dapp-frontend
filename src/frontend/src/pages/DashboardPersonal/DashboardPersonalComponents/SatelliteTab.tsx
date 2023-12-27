@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom'
 // const
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITES_DATA_SINGLE_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_ORACLE_STATUSES,
   SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -16,7 +16,7 @@ import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 // helpers
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
 import {
-  getSatelliteParticipations,
+  getSatelliteParticipation,
   getStatusColorBasedOnOracleType,
 } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
@@ -53,7 +53,7 @@ const SatelliteTab = ({
     proposalsAmount,
     satelliteGovActionsAmount,
     finRequestsAmount,
-    setSatelliteAddressToSubsctibe,
+    setSatelliteAddressToSubscribe,
     changeSatellitesSubscriptionsList,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
@@ -71,9 +71,9 @@ const SatelliteTab = ({
 
   useEffect(() => {
     if (userAddress) {
-      setSatelliteAddressToSubsctibe(userAddress)
+      setSatelliteAddressToSubscribe(userAddress)
     }
-    return () => setSatelliteAddressToSubsctibe(null)
+    return () => setSatelliteAddressToSubscribe(null)
   }, [userAddress])
 
   const {
@@ -83,7 +83,7 @@ const SatelliteTab = ({
   const satelliteRecord = userAddress ? satelliteMapper[userAddress] : null
 
   const { oracleStatus } = useSatelliteStatuses(satelliteRecord)
-  const { proposalParticipation } = getSatelliteParticipations({
+  const { proposalParticipation } = getSatelliteParticipation({
     satellite: satelliteRecord,
     proposalsAmount,
     satelliteGovActionsAmount,
@@ -131,7 +131,7 @@ const SatelliteTab = ({
                   <div className="value">
                     <CommaNumber
                       value={Math.max(
-                        satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
+                        satelliteRecord.sMvnBalance * satelliteRecord.delegationRatio -
                           satelliteRecord.totalDelegatedAmount,
                         0,
                       )}

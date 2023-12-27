@@ -18,9 +18,9 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { Page, PageContent } from 'styles'
 import { EmptyContainer } from 'app/App.style'
 import {
+  BlockName,
   SatelliteCardBottomRow,
   SatelliteDescrBlock,
-  BlockName,
   SatelliteMetrics,
   SatelliteMetricsBlock,
   SatelliteVotingInfoWrapper,
@@ -28,14 +28,14 @@ import {
 
 // helpers
 import { useSatelliteVotes } from 'providers/SatellitesProvider/hooks/useSatelliteVotes'
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // consts
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITES_DATA_SINGLE_SUB,
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { FatalError } from 'errors/error'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
@@ -50,12 +50,12 @@ export const SatelliteDetails = () => {
     satelliteGovActionsAmount,
     finRequestsAmount,
     isLoading: isSatellitesLoading,
-    setSatelliteAddressToSubsctibe,
+    setSatelliteAddressToSubscribe,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
   const currentSatellite = satelliteMapper[satelliteId]
 
-  const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+  const { proposalParticipation, votingParticipation } = getSatelliteParticipation({
     satellite: currentSatellite,
     proposalsAmount,
     satelliteGovActionsAmount,
@@ -72,14 +72,14 @@ export const SatelliteDetails = () => {
 
     return () => {
       changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
-      setSatelliteAddressToSubsctibe(null)
+      setSatelliteAddressToSubscribe(null)
     }
   }, [])
 
   // check whether satellite exists, cuz address is stored in url and user can change it
   useEffect(() => {
     if (satelliteId && satelliteMapper[satelliteId]) {
-      setSatelliteAddressToSubsctibe(satelliteId)
+      setSatelliteAddressToSubscribe(satelliteId)
       return
     }
 
@@ -95,7 +95,7 @@ export const SatelliteDetails = () => {
         })
 
         if (satelliteFromGql.data.satellite[0]?.user.address === satelliteId) {
-          setSatelliteAddressToSubsctibe(satelliteId)
+          setSatelliteAddressToSubscribe(satelliteId)
           return
         }
 
@@ -109,7 +109,7 @@ export const SatelliteDetails = () => {
 
     checkWhetherSatelliteExists()
 
-    return () => setSatelliteAddressToSubsctibe(null)
+    return () => setSatelliteAddressToSubscribe(null)
   }, [satelliteId])
 
   const { satelliteVotes, isLoading: isSatelliteVotesLoading } = useSatelliteVotes(satelliteId)
@@ -149,7 +149,7 @@ export const SatelliteDetails = () => {
                       </p>
                       <h5>Vote Participation</h5>
                       <p>
-                        <CommaNumber value={votingPartisipation} endingText="%" showDecimal={false} />
+                        <CommaNumber value={votingParticipation} endingText="%" showDecimal={false} />
                       </p>
                       <h5>Oracle Participation</h5>
                       <p>
@@ -161,7 +161,7 @@ export const SatelliteDetails = () => {
                   <SatelliteMetricsBlock>
                     <h5>Satellite’s sMVK</h5>
                     <p>
-                      <CommaNumber value={currentSatellite.sMvkBalance} showDecimal />
+                      <CommaNumber value={currentSatellite.sMvnBalance} showDecimal />
                     </p>
                     <h5># Delegators</h5>
                     <p>

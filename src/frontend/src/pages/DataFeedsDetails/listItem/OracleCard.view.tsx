@@ -9,7 +9,7 @@ import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.pro
 import { MVN_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
 import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
 
-import { calcPersent, convertNumberForClient } from 'utils/calcFunctions'
+import { calcPercent, convertNumberForClient } from 'utils/calcFunctions'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { DataFeedListItemTextTruncated, FeedsListItem, FeedsOraclesCardStyled } from 'pages/DataFeeds/DataFeeds.styles'
@@ -32,7 +32,7 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
 
   // TODO: check whether calcs for accuracy valid
   const feedAccuracy = oracleLastPredictedPrice
-    ? calcPersent(
+    ? calcPercent(
         convertNumberForClient({
           number: oracleLastPredictedPrice,
           grade: decimals,
@@ -52,10 +52,10 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
         <FeedsListItem>
           <h5>sMVN Rewards</h5>
           <var>
-            <CommaNumber showDecimal value={oracleFeedRewards?.sMVKReward ?? 0} />
+            <CommaNumber showDecimal value={oracleFeedRewards?.sMVNReward ?? 0} />
           </var>
           <div className="converted">
-            <CommaNumber showDecimal beginningText="$" value={(oracleFeedRewards?.sMVKReward ?? 0) * mvkExchangeRate} />
+            <CommaNumber showDecimal beginningText="$" value={(oracleFeedRewards?.sMVNReward ?? 0) * mvkExchangeRate} />
           </div>
         </FeedsListItem>
 
