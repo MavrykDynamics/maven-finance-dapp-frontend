@@ -28,7 +28,7 @@ import { useEGovContext } from 'providers/EmergencyGovernanceProvider/emergencyG
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
-import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
+import { DAPP_MVN_SMVN_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   CONTRACT_STATUSES_CONFIG_SUB,
   DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS,
@@ -71,7 +71,7 @@ export const EmergencyGovernance = () => {
       [CONTRACT_STATUSES_CONFIG_SUB]: true,
     })
     changeStakingSubscriptionsList({
-      [DAPP_MVK_SMVK_STATS_SUB]: true,
+      [DAPP_MVN_SMVN_STATS_SUB]: true,
     })
     changeEGovSubscriptionsList({
       [EGOV_CONFIG_SUB]: true,

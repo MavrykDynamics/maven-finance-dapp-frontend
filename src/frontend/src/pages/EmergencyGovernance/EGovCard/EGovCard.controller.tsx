@@ -37,7 +37,7 @@ type Props = {
 
 export const EGovCard = ({ proposal }: Props) => {
   const { bug } = useToasterContext()
-  const { totalStakedMvk } = useDoormanContext()
+  const { totalStakedMvn } = useDoormanContext()
   const { userTokensBalances, userAddress } = useUserContext()
   const {
     config: { minStakedMvkRequiredToVote },
@@ -64,10 +64,10 @@ export const EGovCard = ({ proposal }: Props) => {
   const votingStatistic = useMemo(
     () => ({
       forVotesMVNTotal: totalSmvkVotes,
-      unusedVotesMVNTotal: totalStakedMvk - totalSmvkVotes,
+      unusedVotesMVNTotal: totalStakedMvn - totalSmvkVotes,
       quorum: smvkPercentageRequired,
     }),
-    [smvkPercentageRequired, totalSmvkVotes, totalStakedMvk],
+    [smvkPercentageRequired, totalSmvkVotes, totalStakedMvn],
   )
 
   const isUserVoter = voters.find(({ voterAddress }) => userAddress === voterAddress)
