@@ -23,7 +23,7 @@ import { addCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCo
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // consts
-import { BgCounsilDdForms } from '../../helpers/council.consts'
+import { BgCouncilDdForms } from '../../helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
 import { ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
@@ -197,7 +197,7 @@ export function BgCouncilFormAddCouncilMember({
   ])
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER}>
+    <CouncilFormStyled formName={BgCouncilDdForms.BG_ADD_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

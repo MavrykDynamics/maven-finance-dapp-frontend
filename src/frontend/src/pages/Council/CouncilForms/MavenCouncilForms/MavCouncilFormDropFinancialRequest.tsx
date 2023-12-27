@@ -12,7 +12,7 @@ import {
   DROP_FIN_REQUEST_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 import { BYTES_STRING_TYPE, convertBytes } from 'utils/convertBytes'
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // view
@@ -25,7 +25,7 @@ import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style
 
 // utils
 import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
-import { dropFinancialRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { dropFinancialRequest } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 
 // hooks
 import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
@@ -73,7 +73,7 @@ export const MavCouncilFormDropFinancialRequest = () => {
     // map all fin requests that are dropping to exclude them from list "fin requests to drop"
     const droppingFinRequestsMapper = allPendingActions.reduce<Record<string, boolean>>((acc, actionId) => {
       const dropFinReqActionParams =
-        actionsMapper[actionId].actionClientId === MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST
+        actionsMapper[actionId].actionClientId === MavenCouncilDdForms.DROP_FINANCIAL_REQUEST
           ? actionsMapper[actionId].parameters
           : null
       const dropFinReqActionFinReqIdInBytes =
@@ -147,7 +147,7 @@ export const MavCouncilFormDropFinancialRequest = () => {
   const isButtonDisabled = isActionActive || !chosenDdItem || isFinancialRequestsLoading
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.DROP_FINANCIAL_REQUEST}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

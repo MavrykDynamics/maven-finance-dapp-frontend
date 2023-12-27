@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
@@ -7,7 +7,7 @@ import { IPFSUploader } from '../../../../app/App.components/IPFSUploader/IPFSUp
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import Icon from '../../../../app/App.components/Icon/Icon.view'
-import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // types
 import {
@@ -27,7 +27,7 @@ import { validateFormAddress, validateFormField } from 'utils/validatorFunctions
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
 import { CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { BgCounsilDdForms } from '../../helpers/council.consts'
+import { BgCouncilDdForms } from '../../helpers/council.consts'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -235,7 +235,7 @@ export function BgCouncilFormChangeCouncilMember({
   ])
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER}>
+    <CouncilFormStyled formName={BgCouncilDdForms.BG_CHANGE_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

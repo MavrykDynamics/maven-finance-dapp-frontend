@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 // consts
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { SET_CONTRACT_BAKER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
@@ -12,7 +12,7 @@ import {
 } from '../../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { setContractBakerRequest } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { setContractBakerRequest } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { validateFormAddress } from 'utils/validatorFunctions'
 
 // view
@@ -159,7 +159,7 @@ export const MavCouncilFormSetContractBaker = () => {
   }, [formInputStatus.keyHash, formInputStatus.targetContractAddress, keyHash, targetContractAddress])
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.SET_CONTRACT_BAKER}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.SET_CONTRACT_BAKER}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

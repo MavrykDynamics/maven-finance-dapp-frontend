@@ -1,5 +1,5 @@
-import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
-import { MavrykCounsilDdForms, BgCounsilDdForms, UPDATE_USER_COUNCIL_PROFILE_FORM } from '../helpers/council.consts'
+import {CouncilsFormsIds} from 'providers/CouncilProvider/helpers/council.types'
+import {BgCouncilDdForms, MavenCouncilDdForms, UPDATE_USER_COUNCIL_PROFILE_FORM} from '../helpers/council.consts'
 
 // grid setting for council forms
 export const CouncilFormsGridMapper: Record<
@@ -10,8 +10,8 @@ export const CouncilFormsGridMapper: Record<
     areaTemplate: string
   }
 > = {
-  // ------- MAVRYK COUNCIL MEMBERS FORMS
-  [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
+  // ------- MAVEN COUNCIL MEMBERS FORMS
+  [MavenCouncilDdForms.ADD_COUNCIL_MEMBER]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto auto 50px`,
     areaTemplate: `
@@ -21,7 +21,7 @@ export const CouncilFormsGridMapper: Record<
       ". submit-form"
     `,
   },
-  [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto auto auto 50px`,
     areaTemplate: `
@@ -32,7 +32,7 @@ export const CouncilFormsGridMapper: Record<
       ". submit-form"
     `,
   },
-  [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,
     areaTemplate: `
@@ -40,8 +40,8 @@ export const CouncilFormsGridMapper: Record<
     `,
   },
 
-  // ------- MAVRYK COUNCIL VESTEES FORMS
-  [MavrykCounsilDdForms.ADD_VESTEE]: {
+  // ------- MAVEN COUNCIL VESTEES FORMS
+  [MavenCouncilDdForms.ADD_VESTEE]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto 50px`,
     areaTemplate: `
@@ -50,7 +50,7 @@ export const CouncilFormsGridMapper: Record<
       ". submit-form"
     `,
   },
-  [MavrykCounsilDdForms.UPDATE_VESTEE]: {
+  [MavenCouncilDdForms.UPDATE_VESTEE]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto 50px`,
     areaTemplate: `
@@ -59,14 +59,14 @@ export const CouncilFormsGridMapper: Record<
       ". submit-form"
     `,
   },
-  [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {
+  [MavenCouncilDdForms.TOGGLE_VESTEE_LOCK]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,
     areaTemplate: `
       "vestee-address submit-form"
     `,
   },
-  [MavrykCounsilDdForms.REMOVE_VESTEE]: {
+  [MavenCouncilDdForms.REMOVE_VESTEE]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,
     areaTemplate: `
@@ -74,8 +74,8 @@ export const CouncilFormsGridMapper: Record<
     `,
   },
 
-  // ------- MAVRYK COUNCIL TOKENS FORMS
-  [MavrykCounsilDdForms.REQUEST_TOKENS]: {
+  // ------- MAVEN COUNCIL TOKENS FORMS
+  [MavenCouncilDdForms.REQUEST_TOKENS]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto auto auto 60px`,
     areaTemplate: `
@@ -86,7 +86,7 @@ export const CouncilFormsGridMapper: Record<
       ". submit-form"
     `,
   },
-  [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
+  [MavenCouncilDdForms.REQUEST_TOKEN_MINT]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto 60px`,
     areaTemplate: `
@@ -95,7 +95,7 @@ export const CouncilFormsGridMapper: Record<
       ". submit-form"
     `,
   },
-  [MavrykCounsilDdForms.TRANSFER_TOKENS]: {
+  [MavenCouncilDdForms.TRANSFER_TOKENS]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto auto auto 60px`,
     areaTemplate: `
@@ -107,15 +107,15 @@ export const CouncilFormsGridMapper: Record<
     `,
   },
 
-  // ------- MAVRYK COUNCIL BAKERS FORMS
-  [MavrykCounsilDdForms.SET_BAKER]: {
+  // ------- MAVEN COUNCIL BAKERS FORMS
+  [MavenCouncilDdForms.SET_BAKER]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,
     areaTemplate: `
       "baker-hash submit-form"
     `,
   },
-  [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
+  [MavenCouncilDdForms.SET_CONTRACT_BAKER]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto 50px`,
     areaTemplate: `
@@ -124,8 +124,8 @@ export const CouncilFormsGridMapper: Record<
     `,
   },
 
-  // ------- MAVRYK COUNCIL OTHER FORMS
-  [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {
+  // ------- MAVEN COUNCIL OTHER FORMS
+  [MavenCouncilDdForms.DROP_FINANCIAL_REQUEST]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,
     areaTemplate: `
@@ -134,7 +134,7 @@ export const CouncilFormsGridMapper: Record<
   },
 
   // ------- BREAG GLASS COUNCIL MEMBERS FORMS
-  [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {
+  [BgCouncilDdForms.BG_ADD_COUNCIL_MEMBER]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto auto 50px`,
     areaTemplate: `
@@ -144,7 +144,7 @@ export const CouncilFormsGridMapper: Record<
       ". submit-form"
     `,
   },
-  [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
+  [BgCouncilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto auto auto 50px`,
     areaTemplate: `
@@ -155,7 +155,7 @@ export const CouncilFormsGridMapper: Record<
       ". submit-form"
     `,
   },
-  [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
+  [BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,
     areaTemplate: `
@@ -164,7 +164,7 @@ export const CouncilFormsGridMapper: Record<
   },
 
   // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORM
-  [BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
+  [BgCouncilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto 50px`,
     areaTemplate: `
@@ -174,14 +174,14 @@ export const CouncilFormsGridMapper: Record<
   },
 
   // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
-  [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
+  [BgCouncilDdForms.REMOVE_BREAK_GLASS_CONTROL]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,
     areaTemplate: `
       "select-contracts submit-form"
     `,
   },
-  [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
+  [BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
     columnsTemplate: `380px auto`,
     rowsTemplate: `auto`,
     areaTemplate: `
@@ -189,7 +189,7 @@ export const CouncilFormsGridMapper: Record<
     `,
   },
 
-  // ------- COMMON BREAG GLASS & MAVRYK COUNCIL FORMS
+  // ------- COMMON BREAK GLASS & MAVEN COUNCIL FORMS
   [UPDATE_USER_COUNCIL_PROFILE_FORM]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `auto auto auto 50px`,

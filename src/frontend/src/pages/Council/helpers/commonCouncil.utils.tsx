@@ -3,36 +3,32 @@ import { CouncilActionsParamsColumnsType, CouncilContractsMultiselectOptionType 
 import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
 import {
   CouncilActionParamsNames,
-  CouncilTabsType,
   CouncilsActionsIds,
-} from 'providers/CouncilProvider/helpers/council.types'
-
-// consts
+  CouncilTabsType,
+} from 'providers/CouncilProvider/helpers/council.types' // consts
 import {
-  MY_PENDING_COUNSIL_TAB,
-  MY_PAST_COUNSIL_TAB,
-  ALL_PENDING_COUNSIL_TAB,
-  ALL_PAST_COUNSIL_TAB,
+  ALL_PAST_COUNCIL_TAB,
+  ALL_PENDING_COUNCIL_TAB,
+  MY_PAST_COUNCIL_TAB,
+  MY_PENDING_COUNCIL_TAB,
 } from './council.consts'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
-import { BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE, convertBytes } from 'utils/convertBytes'
-
-// view
+import { BYTES_ADDRESS_TYPE, BYTES_STRING_TYPE, convertBytes } from 'utils/convertBytes' // view
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
 
-export const parseCounsilTab = (tabId = ''): CouncilTabsType => {
+export const parseCouncilTab = (tabId = ''): CouncilTabsType => {
   switch (tabId) {
-    case MY_PENDING_COUNSIL_TAB:
-      return MY_PENDING_COUNSIL_TAB
-    case MY_PAST_COUNSIL_TAB:
-      return MY_PAST_COUNSIL_TAB
-    case ALL_PENDING_COUNSIL_TAB:
-      return ALL_PENDING_COUNSIL_TAB
-    case ALL_PAST_COUNSIL_TAB:
-      return ALL_PAST_COUNSIL_TAB
+    case MY_PENDING_COUNCIL_TAB:
+      return MY_PENDING_COUNCIL_TAB
+    case MY_PAST_COUNCIL_TAB:
+      return MY_PAST_COUNCIL_TAB
+    case ALL_PENDING_COUNCIL_TAB:
+      return ALL_PENDING_COUNCIL_TAB
+    case ALL_PAST_COUNCIL_TAB:
+      return ALL_PAST_COUNCIL_TAB
     default:
       return null
   }
@@ -44,7 +40,7 @@ export const handleBgCouncilContractSearch = (contract: CouncilContractsMultisel
 
 /**
  *
- * @param columnData type of value see CouncilActionsToSignColumnsType[CouncilsActionsIds]['type'] and sufix in case we need to add token name after it's amount
+ * @param columnData type of value see CouncilActionsToSignColumnsType[CouncilsActionsIds]['type'] and suffix in case we need to add token name after it's amount
  * @param convertedParamValue unpacked param value bytes, if need converted to client format
  * @param name name of the parameter
  * @returns ReactNode to output to user
@@ -53,10 +49,10 @@ export const getCellValueContent = (
   columnData: NonNullable<NonNullable<CouncilActionsParamsColumnsType[CouncilsActionsIds]>[CouncilActionParamsNames]>,
   convertedParamValue: string,
 ) => {
-  const { type, sufix, cellName } = columnData
+  const { type, suffix, cellName } = columnData
 
   return type === 'number' ? (
-    <CommaNumber value={parseFloat(convertedParamValue)} endingText={sufix} />
+    <CommaNumber value={parseFloat(convertedParamValue)} endingText={suffix} />
   ) : type === 'url' ? (
     <CustomLink to={convertedParamValue}>{convertedParamValue}</CustomLink>
   ) : type === 'address' ? (

@@ -3,7 +3,7 @@ import {useParams} from 'react-router'
 
 // utils
 import {propagateBreakGlass} from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import {parseCounsilTab} from './helpers/commonCouncil.utils'
+import {parseCouncilTab} from './helpers/commonCouncil.utils'
 
 // hooks
 import {useCouncilContext} from 'providers/CouncilProvider/council.provider'
@@ -25,9 +25,9 @@ import {
 } from 'providers/CouncilProvider/helpers/council.consts'
 import {BUTTON_PRIMARY} from 'app/App.components/Button/Button.constants'
 import {
-  ALL_PAST_COUNSIL_TAB,
-  ALL_PENDING_COUNSIL_TAB,
-  MY_PENDING_COUNSIL_TAB,
+  ALL_PAST_COUNCIL_TAB,
+  ALL_PENDING_COUNCIL_TAB,
+  MY_PENDING_COUNCIL_TAB,
   PROPAGATE_BREAK_GLASS_ACTION_FORM,
 } from './helpers/council.consts'
 import {
@@ -62,7 +62,7 @@ export const BreakGlassCouncil = () => {
     userAvatars: { breakGlassAvatar },
   } = useUserContext()
   const {
-    isLoading: isBreakGlassCounsilLoading,
+    isLoading: isBreakGlassCouncilLoading,
     changeCouncilSubscriptionList,
     breakGlassCouncilMembers,
     breakGlassCouncilActions: {
@@ -93,12 +93,12 @@ export const BreakGlassCouncil = () => {
     }
   }, [])
 
-  const selectedTab = useMemo(() => parseCounsilTab(tabId), [tabId])
+  const selectedTab = useMemo(() => parseCouncilTab(tabId), [tabId])
 
   useEffect(() => {
-    const isMyPendingTab = selectedTab === MY_PENDING_COUNSIL_TAB
-    const isAllPendingTab = selectedTab === ALL_PENDING_COUNSIL_TAB
-    const isAllPastTab = selectedTab === ALL_PAST_COUNSIL_TAB
+    const isMyPendingTab = selectedTab === MY_PENDING_COUNCIL_TAB
+    const isAllPendingTab = selectedTab === ALL_PENDING_COUNCIL_TAB
+    const isAllPastTab = selectedTab === ALL_PAST_COUNCIL_TAB
 
     changeCouncilSubscriptionList({
       [BG_COUNCIL_MEMBERS_SUB]: true,
@@ -148,7 +148,7 @@ export const BreakGlassCouncil = () => {
     <Page>
       <PageHeader page={'break glass council'} avatar={breakGlassAvatar} />
 
-      {isBreakGlassCounsilLoading || isContractStatusesLoading ? (
+      {isBreakGlassCouncilLoading || isContractStatusesLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading Break Glass Council Data</div>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 // consts
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { REQUEST_TOKENS_MINT_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { DAPP_MVN_SMVN_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
@@ -14,7 +14,7 @@ import {
 } from '../../../../app/App.components/Input/Input.constants'
 
 // helpers
-import { requestTokenMint } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { requestTokenMint } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { validateFormField } from 'utils/validatorFunctions'
 
 // types
@@ -150,7 +150,7 @@ export const MavCouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(e)
 
-        // validate mvk amount
+        // validate mvn amount
         const amountInNumber = Number(e.target.value)
         setFormInputStatus((prev) => ({
           ...prev,
@@ -184,7 +184,7 @@ export const MavCouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const validateText = validateFormField(setFormInputStatus)
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.REQUEST_TOKEN_MINT}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.REQUEST_TOKEN_MINT}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"
@@ -211,7 +211,7 @@ export const MavCouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
         <div className="token-amount">
           <label>Token Amount</label>
           <Input className="transparent-child-wrap" inputProps={tokenAmountProps} settings={tokenAmountSettings}>
-            <div className="pinned-child">MVK</div>
+            <div className="pinned-child">MVN</div>
           </Input>
         </div>
 

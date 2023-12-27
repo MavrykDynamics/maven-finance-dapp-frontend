@@ -19,11 +19,11 @@ export type ActionReadMorePopupDataType =
   | {
       contentType: typeof ACTION_READ_MORE_PURPOSE
       purposeText: string
-      constractsList?: never
+      contractsList?: never
     }
   | {
       contentType: typeof ACTION_READ_MORE_CONTRACTS_LIST
-      constractsList: Array<string>
+      contractsList: Array<string>
       purposeText?: never
     }
 
@@ -79,7 +79,7 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
             {popupContentData?.contentType === ACTION_READ_MORE_PURPOSE ? <p>{popupContentData.purposeText}</p> : null}
             {popupContentData?.contentType === ACTION_READ_MORE_CONTRACTS_LIST ? (
               <div className="contracts-grid">
-                {popupContentData.constractsList.map((contractAddress) => {
+                {popupContentData.contractsList.map((contractAddress) => {
                   const contractName = mappedContractAddresses[contractAddress]
                   if (!contractName) return null
                   return (

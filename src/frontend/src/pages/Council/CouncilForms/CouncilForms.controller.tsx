@@ -1,5 +1,5 @@
 // consts
-import { MavrykCounsilDdForms, BgCounsilDdForms } from '../helpers/council.consts'
+import { BgCouncilDdForms, MavenCouncilDdForms } from '../helpers/council.consts'
 
 // types
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
@@ -13,20 +13,20 @@ import { BgCouncilFormRemoveCouncilMember } from './BreakGlassCouncilForms/BgCou
 import { BgCouncilFormUnpauseAllEntrypoints } from './BreakGlassCouncilForms/BgCouncilFormUnpauseAllEntrypoints'
 import { BgCouncilFormRemoveBreakGlassControl } from './BreakGlassCouncilForms/BgCouncilFormRemoveBreakGlassControl'
 
-// mavryk council forms components
-import { MavCouncilFormAddVestee } from './MavrykCouncilForms/MavCouncilFormAddVestee'
-import { MavCouncilFormAddCouncilMember } from './MavrykCouncilForms/MavCouncilFormAddCouncilMember'
-import { MavCouncilFormUpdateVestee } from './MavrykCouncilForms/MavCouncilFormUpdateVestee'
-import { MavCouncilFormRemoveVestee } from './MavrykCouncilForms/MavCouncilFormRemoveVestee'
-import { MavCouncilFormToggleVesteeLock } from './MavrykCouncilForms/MavCouncilFormToggleVesteeLock'
-import { MavCouncilFormChangeCouncilMember } from './MavrykCouncilForms/MavCouncilFormChangeCouncilMember'
-import { MavCouncilFormRemoveCouncilMember } from './MavrykCouncilForms/MavCouncilFormRemoveCouncilMember'
-import { MavCouncilFormTransferTokens } from './MavrykCouncilForms/MavCouncilFormTransferTokens'
-import { MavCouncilFormRequestTokens } from './MavrykCouncilForms/MavCouncilFormRequestTokens'
-import { MavCouncilFormRequestTokenMint } from './MavrykCouncilForms/MavCouncilFormRequestTokenMint'
-import { MavCouncilFormDropFinancialRequest } from './MavrykCouncilForms/MavCouncilFormDropFinancialRequest'
-import { MavCouncilFormSetBaker } from './MavrykCouncilForms/MavCouncilFormSetBaker'
-import { MavCouncilFormSetContractBaker } from './MavrykCouncilForms/MavCouncilFormSetContractBaker'
+// maven council forms components
+import { MavCouncilFormAddVestee } from './MavenCouncilForms/MavCouncilFormAddVestee'
+import { MavCouncilFormAddCouncilMember } from './MavenCouncilForms/MavCouncilFormAddCouncilMember'
+import { MavCouncilFormUpdateVestee } from './MavenCouncilForms/MavCouncilFormUpdateVestee'
+import { MavCouncilFormRemoveVestee } from './MavenCouncilForms/MavCouncilFormRemoveVestee'
+import { MavCouncilFormToggleVesteeLock } from './MavenCouncilForms/MavCouncilFormToggleVesteeLock'
+import { MavCouncilFormChangeCouncilMember } from './MavenCouncilForms/MavCouncilFormChangeCouncilMember'
+import { MavCouncilFormRemoveCouncilMember } from './MavenCouncilForms/MavCouncilFormRemoveCouncilMember'
+import { MavCouncilFormTransferTokens } from './MavenCouncilForms/MavCouncilFormTransferTokens'
+import { MavCouncilFormRequestTokens } from './MavenCouncilForms/MavCouncilFormRequestTokens'
+import { MavCouncilFormRequestTokenMint } from './MavenCouncilForms/MavCouncilFormRequestTokenMint'
+import { MavCouncilFormDropFinancialRequest } from './MavenCouncilForms/MavCouncilFormDropFinancialRequest'
+import { MavCouncilFormSetBaker } from './MavenCouncilForms/MavCouncilFormSetBaker'
+import { MavCouncilFormSetContractBaker } from './MavenCouncilForms/MavCouncilFormSetContractBaker'
 
 type Props = {
   councilMaxLengths: DappConfigContext['maxLengths']['council']
@@ -37,47 +37,47 @@ type Props = {
 export const CouncilForms = ({ councilMaxLengths, selectedAction, members }: Props) => {
   switch (selectedAction) {
     // break glass council forms
-    case BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN:
+    case BgCouncilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN:
       return <BgCouncilFormSetSelectedContractsAdmin />
-    case BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER:
+    case BgCouncilDdForms.BG_ADD_COUNCIL_MEMBER:
       return <BgCouncilFormAddCouncilMember maxLength={councilMaxLengths} breakGlassCouncilMembers={members} />
-    case BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER:
+    case BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER:
       return <BgCouncilFormRemoveCouncilMember breakGlassCouncilMembers={members} />
-    case BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS:
+    case BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS:
       return <BgCouncilFormUnpauseAllEntrypoints />
-    case BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL:
+    case BgCouncilDdForms.REMOVE_BREAK_GLASS_CONTROL:
       return <BgCouncilFormRemoveBreakGlassControl />
-    case BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER:
+    case BgCouncilDdForms.BG_CHANGE_COUNCIL_MEMBER:
       return (
         <BgCouncilFormChangeCouncilMember councilMaxLengths={councilMaxLengths} breakGlassCouncilMembers={members} />
       )
 
-    // mavryk council forms
-    case MavrykCounsilDdForms.ADD_VESTEE:
+    // maven council forms
+    case MavenCouncilDdForms.ADD_VESTEE:
       return <MavCouncilFormAddVestee />
-    case MavrykCounsilDdForms.ADD_COUNCIL_MEMBER:
+    case MavenCouncilDdForms.ADD_COUNCIL_MEMBER:
       return <MavCouncilFormAddCouncilMember maxLength={councilMaxLengths} councilMembers={members} />
-    case MavrykCounsilDdForms.UPDATE_VESTEE:
+    case MavenCouncilDdForms.UPDATE_VESTEE:
       return <MavCouncilFormUpdateVestee />
-    case MavrykCounsilDdForms.REMOVE_VESTEE:
+    case MavenCouncilDdForms.REMOVE_VESTEE:
       return <MavCouncilFormRemoveVestee />
-    case MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK:
+    case MavenCouncilDdForms.TOGGLE_VESTEE_LOCK:
       return <MavCouncilFormToggleVesteeLock />
-    case MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER:
+    case MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER:
       return <MavCouncilFormChangeCouncilMember councilMaxLengths={councilMaxLengths} councilMembers={members} />
-    case MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER:
+    case MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER:
       return <MavCouncilFormRemoveCouncilMember councilMembers={members} />
-    case MavrykCounsilDdForms.TRANSFER_TOKENS:
+    case MavenCouncilDdForms.TRANSFER_TOKENS:
       return <MavCouncilFormTransferTokens {...councilMaxLengths} />
-    case MavrykCounsilDdForms.REQUEST_TOKENS:
+    case MavenCouncilDdForms.REQUEST_TOKENS:
       return <MavCouncilFormRequestTokens {...councilMaxLengths} />
-    case MavrykCounsilDdForms.REQUEST_TOKEN_MINT:
+    case MavenCouncilDdForms.REQUEST_TOKEN_MINT:
       return <MavCouncilFormRequestTokenMint {...councilMaxLengths} />
-    case MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST:
+    case MavenCouncilDdForms.DROP_FINANCIAL_REQUEST:
       return <MavCouncilFormDropFinancialRequest />
-    case MavrykCounsilDdForms.SET_BAKER:
+    case MavenCouncilDdForms.SET_BAKER:
       return <MavCouncilFormSetBaker />
-    case MavrykCounsilDdForms.SET_CONTRACT_BAKER:
+    case MavenCouncilDdForms.SET_CONTRACT_BAKER:
       return <MavCouncilFormSetContractBaker />
     default:
       return null

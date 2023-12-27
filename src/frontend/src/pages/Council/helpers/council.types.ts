@@ -1,4 +1,4 @@
-import { CouncilsActionsIds, CouncilActionParamsNames } from 'providers/CouncilProvider/helpers/council.types'
+import { CouncilActionParamsNames, CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 
 export type CouncilContractsMultiselectOptionType = {
   value: string
@@ -16,7 +16,7 @@ export type CouncilActionsParamsColumnsType = Partial<
           className: string
           cellName: string
           type: 'number' | 'address' | 'image' | 'url' | 'default'
-          sufix?: string
+          suffix?: string
         }
       >
     >

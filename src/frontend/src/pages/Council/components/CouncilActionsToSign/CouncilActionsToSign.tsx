@@ -8,7 +8,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // utils
 import { signBreakGlassAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { signMavrykAction } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { signMavenAction } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 
 // types
 import { CouncilActionType } from 'providers/CouncilProvider/council.provider.types'
@@ -16,7 +16,7 @@ import { CouncilActionType } from 'providers/CouncilProvider/council.provider.ty
 // consts
 import {
   SIGN_BREAK_GLASS_COUNCIL_ACTION,
-  SIGN_MAVRYK_COUNCIL_ACTION,
+  SIGN_MAVEN_COUNCIL_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 
 // view
@@ -45,7 +45,7 @@ export const CouncilActionsToSign = ({ isBreakGlassCouncil, actionstoSign, actio
   // Sign request action
   const signActionContractActionProps: HookContractActionArgs<number> = useMemo(
     () => ({
-      actionType: isBreakGlassCouncil ? SIGN_BREAK_GLASS_COUNCIL_ACTION : SIGN_MAVRYK_COUNCIL_ACTION,
+      actionType: isBreakGlassCouncil ? SIGN_BREAK_GLASS_COUNCIL_ACTION : SIGN_MAVEN_COUNCIL_ACTION,
       actionFn: async (actionId: number) => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -60,11 +60,11 @@ export const CouncilActionsToSign = ({ isBreakGlassCouncil, actionstoSign, actio
         if (isBreakGlassCouncil) {
           return await signBreakGlassAction(actionId, breakGlassAddress)
         } else {
-          return await signMavrykAction(actionId, councilAddress)
+          return await signMavenAction(actionId, councilAddress)
         }
       },
     }),
-    [councilAddress, breakGlassAddress, isBreakGlassCouncil, userAddress]
+    [councilAddress, breakGlassAddress, isBreakGlassCouncil, userAddress],
   )
 
   const { actionWithArgs: handleSignAction } = useContractAction(signActionContractActionProps)

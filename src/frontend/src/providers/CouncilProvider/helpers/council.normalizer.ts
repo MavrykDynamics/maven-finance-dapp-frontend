@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 
 // types
 import { GetBreakGlassCouncilMembersQuery, GetCouncilMembersQuery } from 'utils/__generated__/graphql'
-import { BgCounsilActionsQueryType, CouncilActionType, CounsilActionsQueryType } from '../council.provider.types'
+import { BgCouncilActionsQueryType, CouncilActionsQueryType, CouncilActionType } from '../council.provider.types'
 
 // utils
 import { checkWhetherActionParamValid, getClientActionIdByIndexerActionType } from './council.utils'
@@ -10,8 +10,8 @@ import { checkWhetherActionParamValid, getClientActionIdByIndexerActionType } fr
 // consts
 import { COUNCIL_FORMS_NAMES_MAPPER, DROP_COUNCIL_ACTION_FORM } from 'pages/Council/helpers/council.consts'
 
-type MavrykCounsilIndexerItemType = CounsilActionsQueryType['council_action'][number]
-type BreakGlassCounsilIndexerItemType = BgCounsilActionsQueryType['break_glass_action'][number]
+type MavrykCounsilIndexerItemType = CouncilActionsQueryType['council_action'][number]
+type BreakGlassCounsilIndexerItemType = BgCouncilActionsQueryType['break_glass_action'][number]
 type CouncilActionParametersType = Array<{ id: number; name: string; value: string }>
 type CouncilActionSignersType = Array<{ signer: { address: string } }>
 
@@ -67,18 +67,18 @@ export const normalizeCouncilAction = (
   if (isMavrykCouncilAction) {
     return {
       ...actionCommonDataBetweenCollections,
-      counsilAddress: indexerAction.council.address,
+      councilAddress: indexerAction.council.address,
     }
   } else {
     return {
       ...actionCommonDataBetweenCollections,
-      counsilAddress: indexerAction.break_glass.address,
+      councilAddress: indexerAction.break_glass.address,
     }
   }
 }
 
 export const normalizeCouncilActions = (
-  storage: BgCounsilActionsQueryType['break_glass_action'] | CounsilActionsQueryType['council_action'],
+  storage: BgCouncilActionsQueryType['break_glass_action'] | CouncilActionsQueryType['council_action'],
   userAddress: string | null,
 ) => {
   const convertedStorageForTs = storage as Array<MavrykCounsilIndexerItemType | BreakGlassCounsilIndexerItemType>
