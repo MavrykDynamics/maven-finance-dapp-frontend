@@ -103,7 +103,7 @@ const SatelliteLastProposalVote = ({
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const { userTokensBalances, isSatellite: isUserSatellite, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
+  const { userTokensBalances, isSatellite: isUserSatellite, satelliteMvnIsDelegatedTo, userAddress } = useUserContext()
   const { availableProposalRewards } = useUserRewards()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
@@ -130,7 +130,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   } = satellite
 
   const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
-  const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvkIsDelegatedTo
+  const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvnIsDelegatedTo
   const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) >= 1
   const isSatelliteActive = satelliteStatus === ACTIVE_SATELLITE_STATUS && currentlyRegistered
 
@@ -216,7 +216,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    const satelliteAddressToDistribute = isUserSatellite ? userAddress : satelliteMvkIsDelegatedTo
+    const satelliteAddressToDistribute = isUserSatellite ? userAddress : satelliteMvnIsDelegatedTo
 
     if (!satelliteAddressToDistribute) {
       bug('Wrong satellite address to distribute rewards')
@@ -224,7 +224,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     }
 
     return await distributeProposalRewards(governanceAddress, satelliteAddressToDistribute, availableProposalRewards)
-  }, [userAddress, governanceAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+  }, [userAddress, governanceAddress, isUserSatellite, satelliteMvnIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({

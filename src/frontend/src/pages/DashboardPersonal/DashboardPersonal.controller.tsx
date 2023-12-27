@@ -60,7 +60,7 @@ const DashboardPersonal = () => {
     userTokensBalances,
     userAddress,
     userAvatars: { mainAvatar },
-    satelliteMvkIsDelegatedTo,
+    satelliteMvnIsDelegatedTo,
     availableLoansRewards,
     isSatellite,
     isVestee,
@@ -128,7 +128,7 @@ const DashboardPersonal = () => {
       return null
     }
 
-    const satelliteAddressToDistribute = isSatellite ? userAddress : satelliteMvkIsDelegatedTo
+    const satelliteAddressToDistribute = isSatellite ? userAddress : satelliteMvnIsDelegatedTo
 
     if (!satelliteAddressToDistribute) {
       bug('Wrong satellite address to distribute rewards')
@@ -136,7 +136,7 @@ const DashboardPersonal = () => {
     }
 
     return await distributeProposalRewards(governanceAddress, satelliteAddressToDistribute, availableProposalRewards)
-  }, [userAddress, governanceAddress, isSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+  }, [userAddress, governanceAddress, isSatellite, satelliteMvnIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({

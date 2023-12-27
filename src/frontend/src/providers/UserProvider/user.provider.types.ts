@@ -92,18 +92,18 @@ export type UserRewardsType = {
 }
 
 export type UserMetadataType = {
-  satelliteMvkIsDelegatedTo: string | null
+  satelliteMvnIsDelegatedTo: string | null
   isSatellite: boolean
   userSatelliteName: string | null
   isVestee: boolean
-  isMavrykCouncil: boolean
+  isMavenCouncil: boolean
   isBreakGlassCouncil: boolean
   isNewlyRegisteredSatellite: boolean
   govActionsCount: number
   userAvatars: {
     mainAvatar: string
     satelliteAvatar: string | null
-    counsilAvatar: string | null
+    councilAvatar: string | null
     breakGlassAvatar: string | null
   }
 }

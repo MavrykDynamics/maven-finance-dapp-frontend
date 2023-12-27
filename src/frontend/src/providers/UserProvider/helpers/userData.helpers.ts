@@ -6,7 +6,7 @@ import { UserMetadataType, UserRewardsType } from '../user.provider.types'
 
 // utils
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getUserDoomanRewards, getUserSatelliteRewards, getUsersFarmRewards } from './userRewards.helpers'
+import { getUserDoormanRewards, getUserSatelliteRewards, getUsersFarmRewards } from './userRewards.helpers'
 
 // consts
 import { MVN_DECIMALS } from 'utils/constants'
@@ -17,36 +17,36 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
   const {
     delegations,
     satellites: [satellite],
-    council_council_members: [counsilMember],
-    break_glass_council_members: [bgCounsilMember],
+    council_council_members: [councilMember],
+    break_glass_council_members: [bgCouncilMember],
     vesting_vestees: [vestee],
     governance_satellite_snapshots,
     governance_satellite_action_initiators_aggregate,
   } = indexerData.mavryk_user[0]
 
   const satelliteAvatar = satellite?.image ?? null
-  const counsilAvatar = counsilMember?.image ?? null
-  const breakGlassAvatar = bgCounsilMember?.image ?? null
+  const councilAvatar = councilMember?.image ?? null
+  const breakGlassAvatar = bgCouncilMember?.image ?? null
 
-  const satelliteMvkIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
+  const satelliteMvnIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
   const isSatellite = satellite?.status === 0 && satellite?.currently_registered
   const isVestee = vestee?.end_vesting_timestamp && dayjs().diff(vestee.end_vesting_timestamp) <= 0
-  const isMavrykCouncil = Boolean(counsilMember?.user?.address)
-  const isBreakGlassCouncil = Boolean(bgCounsilMember?.user?.address)
+  const isMavrykCouncil = Boolean(councilMember?.user?.address)
+  const isBreakGlassCouncil = Boolean(bgCouncilMember?.user?.address)
 
   return {
     userAvatars: {
-      mainAvatar: satelliteAvatar ?? counsilAvatar ?? breakGlassAvatar ?? DEFAULT_USER_AVATAR,
+      mainAvatar: satelliteAvatar ?? councilAvatar ?? breakGlassAvatar ?? DEFAULT_USER_AVATAR,
       satelliteAvatar,
-      counsilAvatar,
+      councilAvatar: councilAvatar,
       breakGlassAvatar,
     },
     isVestee,
-    isMavrykCouncil,
+    isMavenCouncil: isMavrykCouncil,
     isBreakGlassCouncil,
     isSatellite,
     userSatelliteName: satellite?.name ?? null,
-    satelliteMvkIsDelegatedTo,
+    satelliteMvnIsDelegatedTo: satelliteMvnIsDelegatedTo,
 
     isNewlyRegisteredSatellite: checkWhetherUserNewlyRegisteredSatellite(governance_satellite_snapshots),
     govActionsCount: governance_satellite_action_initiators_aggregate.aggregate?.count ?? 0,
@@ -63,14 +63,14 @@ export const normalizeUserRewards = ({
   const { doorman_stake_accounts, satellite_rewardss, smvk_balance, farm_accounts } = rewardsIndexerData
 
   const availableDoormanRewards = doorman_stake_accounts[0]
-    ? getUserDoomanRewards({
+    ? getUserDoormanRewards({
         userDoormanRewardsDataFromIndexer: doorman_stake_accounts[0],
-        userSmvkBalance: smvk_balance,
+        userSmvnBalance: smvk_balance,
       })
     : 0
   const availableSatellitesRewards = satellite_rewardss[0]
     ? getUserSatelliteRewards({
-        userSmvkBalance: smvk_balance,
+        userSmvnBalance: smvk_balance,
         userSatelliteRewardsDataFromIndexer: satellite_rewardss[0],
       })
     : 0

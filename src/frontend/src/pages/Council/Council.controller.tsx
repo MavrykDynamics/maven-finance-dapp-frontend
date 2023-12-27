@@ -31,7 +31,7 @@ export const Council = () => {
   const { tabId } = useParams<{ tabId: string }>()
 
   const {
-    userAvatars: { counsilAvatar },
+    userAvatars: { councilAvatar },
   } = useUserContext()
   const {
     changeCouncilSubscriptionList,
@@ -74,7 +74,7 @@ export const Council = () => {
 
   return (
     <Page>
-      <PageHeader page={'council'} avatar={counsilAvatar} />
+      <PageHeader page={'council'} avatar={councilAvatar} />
 
       {isCounsilLoading ? (
         <DataLoaderWrapper>

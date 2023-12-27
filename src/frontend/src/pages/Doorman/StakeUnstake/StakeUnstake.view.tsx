@@ -80,7 +80,7 @@ export const StakeUnstakeView = ({
   setInputData,
 }: StakeUnstakeViewProps) => {
   const history = useHistory()
-  const { userTokensBalances, userAddress, satelliteMvkIsDelegatedTo, isSatellite } = useUserContext()
+  const { userTokensBalances, userAddress, satelliteMvnIsDelegatedTo, isSatellite } = useUserContext()
   const { availableDoormanRewards, availableSatellitesRewards, availableFarmRewards } = useUserRewards()
   const {
     contractAddresses: { mvnTokenAddress, doormanAddress },
@@ -91,13 +91,13 @@ export const StakeUnstakeView = ({
   const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
 
   useEffect(() => {
-    if (satelliteMvkIsDelegatedTo) {
-      setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
+    if (satelliteMvnIsDelegatedTo) {
+      setSatelliteAddressToSubsctibe(satelliteMvnIsDelegatedTo)
     }
     return () => setSatelliteAddressToSubsctibe(null)
-  }, [satelliteMvkIsDelegatedTo])
+  }, [satelliteMvnIsDelegatedTo])
 
-  const delegatedUser = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
+  const delegatedUser = satelliteMvnIsDelegatedTo ? satelliteMapper[satelliteMvnIsDelegatedTo] : null
   const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
     myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
 
@@ -108,7 +108,7 @@ export const StakeUnstakeView = ({
     availableDoormanRewards +
     availableSatellitesRewards +
     Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
-  const showDelegateBtn = !isSatellite && !satelliteMvkIsDelegatedTo
+  const showDelegateBtn = !isSatellite && !satelliteMvnIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
     handleInputData(String(mathRoundTwoDigit(balance === 'mvk' ? myMvkTokenBalance : mySMvkTokenBalance)))
@@ -254,7 +254,7 @@ export const StakeUnstakeView = ({
 
   const handleDelegate = () => {
     history.push(
-      satelliteMvkIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvkIsDelegatedTo}` : '/satellite-nodes',
+      satelliteMvnIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvnIsDelegatedTo}` : '/satellite-nodes',
     )
   }
 

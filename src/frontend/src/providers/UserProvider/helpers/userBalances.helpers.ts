@@ -71,16 +71,16 @@ export const normalizeUserTzktTokensBalances = ({
 }
 
 /**
- * nomalize user tokens from indexer (mTokens, mvk, smvk)
+ * normalize user tokens from indexer (mTokens, mvn, smvn)
  */
 export const normalizeUserIndexerTokensBalances = ({
   indexerData,
   tokensMetadata,
-  mvkTokenAddress,
+  mvnTokenAddress,
 }: {
   indexerData: GetUserDataQuery
   tokensMetadata: TokensContext['tokensMetadata']
-  mvkTokenAddress: string | null
+  mvnTokenAddress: string | null
 }) => {
   const { smvk_balance, mvk_balance, m_token_accounts } = indexerData.mavryk_user[0]
 
@@ -120,8 +120,8 @@ export const normalizeUserIndexerTokensBalances = ({
 
   return {
     tokensBalances: {
-      ...(mvkTokenAddress
-        ? { [mvkTokenAddress]: convertNumberForClient({ number: mvk_balance, grade: MVN_DECIMALS }) }
+      ...(mvnTokenAddress
+        ? { [mvnTokenAddress]: convertNumberForClient({ number: mvk_balance, grade: MVN_DECIMALS }) }
         : {}),
       [SMVN_TOKEN_ADDRESS]: convertNumberForClient({ number: smvk_balance, grade: MVN_DECIMALS }),
       ...mTokenBalances,

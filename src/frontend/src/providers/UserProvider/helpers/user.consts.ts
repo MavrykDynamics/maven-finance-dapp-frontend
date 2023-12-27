@@ -12,18 +12,18 @@ export const DEFAULT_USER_LOANS_DATA: UserLoansData = {
 
 export const DEFAULT_USER: UserContextStateType = {
   userAddress: null,
-  satelliteMvkIsDelegatedTo: null,
+  satelliteMvnIsDelegatedTo: null,
   userAvatars: {
     mainAvatar: DEFAULT_USER_AVATAR,
     satelliteAvatar: null,
-    counsilAvatar: null,
+    councilAvatar: null,
     breakGlassAvatar: null,
   },
   isNewlyRegisteredSatellite: false,
   userSatelliteName: null,
   isSatellite: false,
   isVestee: false,
-  isMavrykCouncil: false,
+  isMavenCouncil: false,
   isBreakGlassCouncil: false,
   actionsHistory: {
     paginatedList: {},
@@ -56,6 +56,6 @@ export const DEFAULT_USER_REWARDS: UserRewardsType = {
 
 // CONSTS FOR USER ACTIONS
 export const CLAIM_VESTING_REWARD_ACTION = 'claimVestingReward'
-export const CLAIM_ALL_REWARDS_ACTION = 'clailAllRewards'
+export const CLAIM_ALL_REWARDS_ACTION = 'claimAllRewards'
 export const GET_MVK_FROM_FAUCET_ACTION = 'faucetMVK'
 export const REWARDS_COMPOUND_ACTION = 'rewardsCompound'
