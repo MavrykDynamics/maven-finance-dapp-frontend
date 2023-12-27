@@ -69,7 +69,7 @@ export const UserProvider = ({ children }: Props) => {
    * we can start restoring user from localStorage if:
    *    1. we have his data in localStorage
    *    2. we have tokensAddresses we need to load balances for
-   *    3. we have mvkToken address, so set it's balance
+   *    3. we have mvnToken address, so set its balance
    *    4. we haven't loaded user data previously in this app mount
    *    5. we have tzktSocket started to attach listeners to it
    */
@@ -111,7 +111,7 @@ export const UserProvider = ({ children }: Props) => {
     userCtxState,
   })
 
-  // effect to perform resotring user from localStorage
+  // effect to perform restoring user from localStorage
   useEffect(() => {
     if (canRestoreUser) connect()
   }, [canRestoreUser, connect])
@@ -127,8 +127,8 @@ export const UserProvider = ({ children }: Props) => {
   })
 
   /**
-   * User farm rewards depends on current indexed level, and every time level updates we need to recalc farm rewards
-   * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
+   * User farm rewards depends on current indexed level, and every time level updates we need to re-calc farm rewards
+   * to reduce amount of needed re-renders, we re-calc farm rewards every 3rd level change
    *
    * skip when user don't participated any farms
    */
@@ -201,7 +201,7 @@ export const UserProvider = ({ children }: Props) => {
       const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
         indexerData,
         tokensMetadata,
-        mvkTokenAddress: mvnTokenAddress,
+        mvnTokenAddress: mvnTokenAddress,
       })
 
       const normalizedUserData = normalizeUser({ indexerData })
@@ -225,7 +225,7 @@ export const UserProvider = ({ children }: Props) => {
 
     /**
      * set isUserRestored to true, when:
-     *    1. we have't restored user
+     *    1. we haven't restored user
      *    2. we have user address set in context (user data loading started)
      *    3. loading are false, means, that user has been loaded
      *    or 4. we don't have user's wallet in localStorage, and we can't restore him
@@ -271,7 +271,7 @@ export const useUserContext = () => {
   const context = useContext(userContext)
 
   if (!context) {
-    throw new Error('userContext should be used withing UserProvider')
+    throw new Error('userContext should be used within UserProvider')
   }
 
   return context
