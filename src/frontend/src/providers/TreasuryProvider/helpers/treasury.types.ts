@@ -1,10 +1,11 @@
-import { GetTreasuryStorageDataQuery, GetTreasurySmvkBalancesQuery, Treasury } from 'utils/__generated__/graphql'
+import { GetTreasurySmvkBalancesQuery, GetTreasuryStorageDataQuery, Treasury } from 'utils/__generated__/graphql'
 import { normalizeTreasuryStorage } from './treasury.normalizer'
+
 export type TreasuryGraphQL = Omit<Treasury, '__typename'>
 
 export type TreasuryType = ReturnType<typeof normalizeTreasuryStorage>
 
-export type TreauryGQLData = GetTreasuryStorageDataQuery & GetTreasurySmvkBalancesQuery
+export type TreasuryGQLData = GetTreasuryStorageDataQuery & GetTreasurySmvkBalancesQuery
 
 export type TreasuryBalanceType = {
   balance: number

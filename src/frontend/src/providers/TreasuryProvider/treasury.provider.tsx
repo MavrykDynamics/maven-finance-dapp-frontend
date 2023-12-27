@@ -7,10 +7,10 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // types
 import { NullableTreasuryContextStateType, TreasuryContext, TreasurySubsRecordType } from './treasury.provider.types'
-import { GetTreasuryStorageDataQuery, GetTreasurySmvkBalancesQuery } from 'utils/__generated__/graphql'
+import { GetTreasurySmvkBalancesQuery, GetTreasuryStorageDataQuery } from 'utils/__generated__/graphql'
 
 // consts
-import { GET_TREASURY_STORAGE_QUERY, GET_TREASURY_SMVK_BALANCES } from './queries/treasury.queries'
+import { GET_TREASURY_SMVN_BALANCES, GET_TREASURY_STORAGE_QUERY } from './queries/treasury.queries'
 import { DEFAULT_TREASURY_CTX, DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from './helpers/treasury.consts'
 
 // utils
@@ -29,11 +29,11 @@ const TreasuryProvider = ({ children }: Props) => {
 
   const [treasuryCtxState, setTreasuryCtxState] = useState<NullableTreasuryContextStateType>(DEFAULT_TREASURY_CTX)
   const [activeSubs, setActiveSubs] = useState<TreasurySubsRecordType>(DEFAULT_TREASURY_SUBS)
-  const [allowTreasurtSMVKBalances, setAllowTreasurySMVKBalances] = useState(false)
+  const [allowTreasurySMVNBalances, setAllowTreasurySMVNBalances] = useState(false)
 
   // methods to update context data
-  const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, smvkBalances: GetTreasurySmvkBalancesQuery) => {
-    const data = { ...treasury, ...smvkBalances }
+  const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, smvnBalances: GetTreasurySmvkBalancesQuery) => {
+    const data = { ...treasury, ...smvnBalances }
     const treasuryMapper = normalizeTreasuryStorage(data)
 
     setTreasuryCtxState((prev) => ({
@@ -61,19 +61,19 @@ const TreasuryProvider = ({ children }: Props) => {
       //   pass the first part of data -> treasury data
       treasuryNormalizerDataUpdaterRef.current =
         treasuryNormalizerDataUpdaterRef.current<GetTreasuryStorageDataQuery>(data)
-      setAllowTreasurySMVKBalances(true)
+      setAllowTreasurySMVNBalances(true)
     },
     onError: (error) => handleApolloError(error, 'GET_TREASURY_STORAGE_QUERY'),
   })
 
-  useQuery(GET_TREASURY_SMVK_BALANCES, {
-    skip: !allowTreasurtSMVKBalances || treasuryCtxState.treasuryAddresses === null,
+  useQuery(GET_TREASURY_SMVN_BALANCES, {
+    skip: !allowTreasurySMVNBalances || treasuryCtxState.treasuryAddresses === null,
     variables: {
       addresses: treasuryCtxState.treasuryAddresses,
     },
     onCompleted: (data) => {
       if (!data) {
-        setAllowTreasurySMVKBalances(false)
+        setAllowTreasurySMVNBalances(false)
         return
       }
 
@@ -82,9 +82,9 @@ const TreasuryProvider = ({ children }: Props) => {
       // reset for future calls
       treasuryNormalizerDataUpdaterRef.current = curry(updateTreasuryStorage)
       // disallow this query until new data for treasury is received
-      setAllowTreasurySMVKBalances(false)
+      setAllowTreasurySMVNBalances(false)
     },
-    onError: (error) => handleApolloError(error, 'GET_TREASURY_SMVK_BALANCES'),
+    onError: (error) => handleApolloError(error, 'GET_TREASURY_SMVN_BALANCES'),
   })
 
   const changeTreasurySubscriptionsList = (newSkips: Partial<TreasurySubsRecordType>) => {

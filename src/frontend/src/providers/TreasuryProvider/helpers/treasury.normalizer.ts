@@ -1,15 +1,15 @@
-import type { TreasuryBalanceType, TreasuryData, TreauryGQLData } from './treasury.types'
+import type { TreasuryBalanceType, TreasuryData, TreasuryGQLData } from './treasury.types'
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { getDiagramSectionColor } from 'app/App.components/PieChart/pieChart.utils'
 
-export const MIN_TREASURY_PERSENT_TO_DISPLAY = 0.1
+export const MIN_TREASURY_PERCENT_TO_DISPLAY = 0.1
 
-export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
-  const { mavryk_user: sMVKAmounts, treasury } = data
-  const treasuryAssetsColors: Record<string, string> = sMVKAmounts?.length ? { smvk: getDiagramSectionColor(0) } : {}
+export const normalizeTreasuryStorage = (data: TreasuryGQLData) => {
+  const { mavryk_user: sMVNAmounts, treasury } = data
+  const treasuryAssetsColors: Record<string, string> = sMVNAmounts?.length ? { smvn: getDiagramSectionColor(0) } : {}
 
-  // Parse sMVK amount for each treasury, to make this structure usable
-  const sMVKBalancesMapper = sMVKAmounts?.reduce<Record<string, TreasuryBalanceType>>(
+  // Parse sMVN amount for each treasury, to make this structure usable
+  const sMVNBalancesMapper = sMVNAmounts?.reduce<Record<string, TreasuryBalanceType>>(
     (acc, { address, smvk_balance }) => {
       acc[address] = {
         balance: smvk_balance,
@@ -24,7 +24,7 @@ export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
   )
   // Map every treasury to combine treasury name, and divide balance by constant
   return treasury.reduce<Record<string, TreasuryData>>((acc, treasuryData, idx) => {
-    const sMVKAmount = sMVKBalancesMapper[treasuryData.address] ?? null
+    const sMVNAmount = sMVNBalancesMapper[treasuryData.address] ?? null
 
     const treasuryNormalizedTokens = treasuryData.balances
       .reduce<Array<TreasuryBalanceType>>((acc, { balance, token: { token_address } }) => {
@@ -45,8 +45,8 @@ export const normalizeTreasuryStorage = (data: TreauryGQLData) => {
 
         return acc
       }, [])
-      // Add sMVK treasury asset if has
-      .concat(sMVKAmount ?? [])
+      // Add sMVN treasury asset if has
+      .concat(sMVNAmount ?? [])
 
     acc[treasuryData.address] = {
       address: treasuryData.address,
