@@ -12,36 +12,36 @@ import { NotStakingBannerStyled } from './BecomeSatelliteBanners.style'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 export const BecomeSatelliteBanners = ({
-  mvkBalance,
-  smvkBalance,
-  requiredSmvkAmount,
+  mvnBalance,
+  smvnBalance,
+  requiredSmvnAmount,
   userAddress,
   isSatellite,
 }: {
-  mvkBalance: number
-  smvkBalance: number
-  requiredSmvkAmount: number
+  mvnBalance: number
+  smvnBalance: number
+  requiredSmvnAmount: number
   userAddress: string | null
   isSatellite: boolean
 }) => {
-  if (smvkBalance >= requiredSmvkAmount || isSatellite) return null
+  if (smvnBalance >= requiredSmvnAmount || isSatellite) return null
 
-  // amount of mvk tokens, that user need to stake to be able to become a satellite
-  const smvkAmountToHitRequired = requiredSmvkAmount - smvkBalance
+  // amount of mvn tokens, that user need to stake to be able to become a satellite
+  const smvnAmountToHitRequired = requiredSmvnAmount - smvnBalance
 
-  // amount of mvk tokens, that user need to buy, to be able to stake required amount of smvk to be able to become a satellite
-  const mvkAmountToHitRequired = requiredSmvkAmount - smvkBalance - mvkBalance
+  // amount of mvn tokens, that user need to buy, to be able to stake required amount of smvn to be able to become a satellite
+  const mvnAmountToHitRequired = requiredSmvnAmount - smvnBalance - mvnBalance
 
-  // if user can't stake all his mvk and get required amount of smvk show buy mvk banner
-  if (smvkAmountToHitRequired > mvkBalance) {
+  // if user can't stake all his mvn and get required amount of smvn show buy mvn banner
+  if (smvnAmountToHitRequired > mvnBalance) {
     return (
       <NotStakingBannerStyled>
         {userAddress ? (
           <Info
             text={
               <>
-                You are currently don’t have enought MVK to start staking, please buy &nbsp;
-                <CommaNumber value={mvkAmountToHitRequired} endingText="MVK" className="value" />
+                You are currently don’t have enough MVN to start staking, please buy &nbsp;
+                <CommaNumber value={mvnAmountToHitRequired} endingText="MVN" className="value" />
               </>
             }
             type={INFO_ERROR}
@@ -50,7 +50,7 @@ export const BecomeSatelliteBanners = ({
               <Link to="/staking">
                 <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                   <Icon id="loans" />
-                  Buy MVK
+                  Buy MVN
                 </NewButton>
               </Link>
             </div>
@@ -66,8 +66,8 @@ export const BecomeSatelliteBanners = ({
             text={
               <>
                 To become a satellite you need to stake &nbsp;
-                <CommaNumber value={requiredSmvkAmount} endingText="MVK" className="value" /> , left to stake: &nbsp;
-                <CommaNumber value={smvkAmountToHitRequired} endingText="MVK" className="value" />
+                <CommaNumber value={requiredSmvnAmount} endingText="MVN" className="value" /> , left to stake: &nbsp;
+                <CommaNumber value={smvnAmountToHitRequired} endingText="MVN" className="value" />
               </>
             }
             type={INFO_ERROR}
