@@ -20,7 +20,7 @@ export const COUNCIL_MEMBERS_QUERY = gql(`
   }
 `)
 
-export const ALL_PAST_COUNSILS_QUERY = gql(`
+export const ALL_PAST_COUNCILS_QUERY = gql(`
   query GetAllPastCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z"){
     council_action: council_action(order_by: {start_datetime: desc}, where: {_or: [{expiration_datetime: {_lt: $currentTimestamp}}, {status: {_in: ["1", "2"]}}]}) {
       action_type
@@ -51,7 +51,7 @@ export const ALL_PAST_COUNSILS_QUERY = gql(`
   }
 `)
 
-export const ALL_ONGOING_COUNSILS_QUERY = gql(`
+export const ALL_ONGOING_COUNCILS_QUERY = gql(`
   query GetAllOngoingCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z"){
     council_action: council_action(order_by: {start_datetime: desc}, where: {status: {_eq: "0"}, expiration_datetime: {_gt: $currentTimestamp}}) {
       action_type
@@ -82,7 +82,7 @@ export const ALL_ONGOING_COUNSILS_QUERY = gql(`
   }
 `)
 
-export const MY_PAST_COUNSILS_QUERY = gql(`
+export const MY_PAST_COUNCILS_QUERY = gql(`
   query GetMyPastCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z", $userAddress: String = ""){
     council_action: council_action(order_by: {start_datetime: desc}, where: {_or: [
       {_and: [

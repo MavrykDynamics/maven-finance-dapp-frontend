@@ -5,6 +5,7 @@ import { CouncilFormsGridMapper } from './CouncilForms.consts'
 
 const FORMS_AREAS_NAMES = css`
   /* ------- common */
+
   .admin-address {
     grid-area: admin-address;
   }
@@ -14,6 +15,7 @@ const FORMS_AREAS_NAMES = css`
   }
 
   /* ------- members */
+
   .member-address {
     grid-area: member-address;
   }
@@ -31,6 +33,7 @@ const FORMS_AREAS_NAMES = css`
   }
 
   /* ------- vesting */
+
   .vestee-address {
     grid-area: vestee-address;
   }
@@ -48,6 +51,7 @@ const FORMS_AREAS_NAMES = css`
   }
 
   /* ------- tokens */
+
   .receiver-address {
     grid-area: receiver-address;
   }
@@ -69,11 +73,13 @@ const FORMS_AREAS_NAMES = css`
   }
 
   /* ------- bakers */
+
   .baker-hash {
     grid-area: baker-hash;
   }
 
-  /* ------- selectes/dropdowns */
+  /* ------- selects/dropdowns */
+
   .select-contracts {
     grid-area: select-contracts;
   }
@@ -83,6 +89,7 @@ const FORMS_AREAS_NAMES = css`
   }
 
   /* ------- form btn */
+
   .submit-form {
     grid-area: submit-form;
   }
@@ -94,7 +101,6 @@ export const CouncilFormStyled = styled.div<{ theme: MavrykTheme; formName: Coun
   border-top: 1px solid ${({ theme }) => theme.divider};
 
   ${FORMS_AREAS_NAMES}
-
   &.without-divider {
     border-top: none;
   }
@@ -137,6 +143,7 @@ export const CouncilFormStyled = styled.div<{ theme: MavrykTheme; formName: Coun
       }
 
       /* TODO: should be handled by input */
+
       .pinned-child {
         display: flex;
         align-items: center;

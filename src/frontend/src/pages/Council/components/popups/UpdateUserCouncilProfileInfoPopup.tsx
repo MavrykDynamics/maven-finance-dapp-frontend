@@ -22,7 +22,7 @@ import { CouncilMembersType } from 'providers/CouncilProvider/council.provider.t
 
 // utils
 import { updateBgCouncilMember } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
-import { updateCouncilMemberInfo } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { updateCouncilMemberInfo } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { validateFormField } from 'utils/validatorFunctions'
 
 // consts
@@ -36,7 +36,7 @@ import { UPDATE_USER_COUNCIL_PROFILE_FORM } from '../../helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-  UPDATE_COUNSIL_MEMBER_INFO_ACTION,
+  UPDATE_COUNCIL_MEMBER_INFO_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 import Portal from 'app/App.components/popup/Portal'
 
@@ -124,10 +124,10 @@ export const UpdateUserCouncilProfileInfoPopup = ({
   )
   const { action: handleUpdateBreakGlassCouncilUserProfile } = useContractAction(updateBgCouncilContractActionProps)
 
-  // action to update mavryk council member
+  // action to update maven council member
   const updateCouncilMemberContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: UPDATE_COUNSIL_MEMBER_INFO_ACTION,
+      actionType: UPDATE_COUNCIL_MEMBER_INFO_ACTION,
       dappActionCallback: closePopup,
       actionFn: async () => {
         if (!userAddress) {
@@ -145,7 +145,7 @@ export const UpdateUserCouncilProfileInfoPopup = ({
     }),
     [closePopup, userAddress, councilAddress, newMemberName, newMemberWebsite, newMemberImage, bug],
   )
-  const { action: handleUpdateMavrykCouncilUserProfile } = useContractAction(updateCouncilMemberContractActionProps)
+  const { action: handleUpdateMavenCouncilUserProfile } = useContractAction(updateCouncilMemberContractActionProps)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -154,7 +154,7 @@ export const UpdateUserCouncilProfileInfoPopup = ({
       if (isBreakGlassCouncil) {
         await handleUpdateBreakGlassCouncilUserProfile()
       } else {
-        await handleUpdateMavrykCouncilUserProfile()
+        await handleUpdateMavenCouncilUserProfile()
       }
     } catch (error) {
       console.error('UpdateUserCouncilProfileInfoPopup', error)

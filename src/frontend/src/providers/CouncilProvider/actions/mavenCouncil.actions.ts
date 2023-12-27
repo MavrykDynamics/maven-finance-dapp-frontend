@@ -3,14 +3,14 @@ import {getEstimationResult} from 'errors/helpers/estimateAction.helper'
 import {TokenMetadataType} from 'providers/TokensProvider/tokens.provider.types'
 import {DAPP_INSTANCE} from 'providers/UserProvider/user.provider'
 import {convertNumberForContractCall} from 'utils/calcFunctions'
-import {MVN_DECIMALS} from 'utils/constants'
+import {MVN_DECIMALS} from 'utils/constants' // Sign
 
 // Sign
-export const signMavrykAction = async (actionID: number, counsilAddress: string) => {
+export const signMavenAction = async (actionID: number, councilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const signActionAdminMetaData = contract?.methods.signAction(actionID)
 
     return await getEstimationResult(signActionAdminMetaData)
@@ -26,7 +26,7 @@ export const addVestee = async (
   totalAllocated: number,
   cliffInMonths: number,
   vestingInMonths: number,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     const convertedTotalAllocatedAmount = convertNumberForContractCall({
@@ -36,7 +36,7 @@ export const addVestee = async (
 
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const addVesteeMetaData = contract?.methods.councilActionAddVestee(
       vesteeAddress,
       convertedTotalAllocatedAmount,
@@ -57,12 +57,12 @@ export const addCouncilMember = async (
   newMemberName: string,
   newMemberWebsite: string,
   newMemberImage: string,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const addCouncilMemberMetaData = contract?.methods.councilActionAddMember(
       newMemberAddress,
       newMemberName,
@@ -83,7 +83,7 @@ export const updateVestee = async (
   totalAllocated: number,
   cliffInMonths: number,
   vestingInMonths: number,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     const convertedTotalAllocatedAmount = convertNumberForContractCall({
@@ -93,7 +93,7 @@ export const updateVestee = async (
 
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionUpdateVestee(
       vesteeAddress,
       convertedTotalAllocatedAmount,
@@ -109,11 +109,11 @@ export const updateVestee = async (
 }
 
 // Toggle Vestee Lock
-export const toggleVesteeLock = async (vesteeAddress: string, counsilAddress: string) => {
+export const toggleVesteeLock = async (vesteeAddress: string, councilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionToggleVesteeLock(vesteeAddress)
 
     return await getEstimationResult(setSingleContractAdminMetaData)
@@ -124,18 +124,18 @@ export const toggleVesteeLock = async (vesteeAddress: string, counsilAddress: st
 }
 
 // Change Council Member
-export const changeMavrykCouncilMember = async (
+export const changeMavenCouncilMember = async (
   oldCouncilMemberAddress: string,
   newCouncilMemberAddress: string,
   newMemberName: string,
   newMemberWebsite: string,
   newMemberImage: string,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionChangeMember(
       oldCouncilMemberAddress,
       newCouncilMemberAddress,
@@ -152,11 +152,11 @@ export const changeMavrykCouncilMember = async (
 }
 
 // Remove Council Member
-export const removeCouncilMember = async (counsilAddress: string, memberAddress: string) => {
+export const removeCouncilMember = async (councilAddress: string, memberAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionRemoveMember(memberAddress)
 
     return await getEstimationResult(setSingleContractAdminMetaData)
@@ -171,12 +171,12 @@ export const updateCouncilMemberInfo = async (
   newMemberName: string,
   newMemberWebsite: string,
   newMemberImage: string,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.updateCouncilMemberInfo(
       newMemberName,
       newMemberWebsite,
@@ -197,7 +197,7 @@ export const transferTokens = async (
   tokenAmount: number,
   tokenToTransfer: TokenMetadataType,
   purpose: string,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     const { decimals, type, id } = tokenToTransfer
@@ -205,7 +205,7 @@ export const transferTokens = async (
 
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionTransfer(
       receiverAddress,
       tokenContractAddress,
@@ -231,7 +231,7 @@ export const requestTokens = async (
   tokenToRequest: TokenMetadataType,
   tokenAmount: number,
   purpose: string,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     const { decimals, name, type, id } = tokenToRequest
@@ -239,7 +239,7 @@ export const requestTokens = async (
 
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionRequestTokens(
       treasuryAddress,
       receiverAddress,
@@ -265,12 +265,12 @@ export const requestTokenMint = async (
   receiverAddress: string,
   tokenAmount: number,
   purpose: string,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const requestMintMetaData = contract?.methods.councilActionRequestMint(
       treasuryAddress,
       receiverAddress,
@@ -286,11 +286,11 @@ export const requestTokenMint = async (
 }
 
 // Drop Financial Request
-export const dropFinancialRequest = async (financialReqID: string, counsilAddress: string) => {
+export const dropFinancialRequest = async (financialReqID: string, councilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionDropFinancialReq(financialReqID)
 
     return await getEstimationResult(setSingleContractAdminMetaData)
@@ -301,11 +301,11 @@ export const dropFinancialRequest = async (financialReqID: string, counsilAddres
 }
 
 // Remove Vestee Request
-export const removeVesteeRequest = async (vesteeAddress: string, counsilAddress: string) => {
+export const removeVesteeRequest = async (vesteeAddress: string, councilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionRemoveVestee(vesteeAddress)
 
     return await getEstimationResult(setSingleContractAdminMetaData)
@@ -316,11 +316,11 @@ export const removeVesteeRequest = async (vesteeAddress: string, counsilAddress:
 }
 
 // Set Baker Request
-export const setBakerRequest = async (bakerHash: string, counsilAddress: string) => {
+export const setBakerRequest = async (bakerHash: string, councilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionSetBaker(bakerHash)
 
     return await getEstimationResult(setSingleContractAdminMetaData)
@@ -334,12 +334,12 @@ export const setBakerRequest = async (bakerHash: string, counsilAddress: string)
 export const setContractBakerRequest = async (
   targetContractAddress: string,
   keyHash: string,
-  counsilAddress: string,
+  councilAddress: string,
 ) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.councilActionSetContractBaker(
       targetContractAddress,
       keyHash,
@@ -353,11 +353,11 @@ export const setContractBakerRequest = async (
 }
 
 // Drop Request
-export const dropMavrykCouncilAction = async (actionID: number, counsilAddress: string) => {
+export const dropMavenCouncilAction = async (actionID: number, councilAddress: string) => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(counsilAddress)
+    const contract = await tezos.wallet.at(councilAddress)
     const setSingleContractAdminMetaData = contract?.methods.flushAction(actionID)
 
     return await getEstimationResult(setSingleContractAdminMetaData)

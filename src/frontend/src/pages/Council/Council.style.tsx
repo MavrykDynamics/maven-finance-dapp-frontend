@@ -4,7 +4,7 @@ import { Card } from 'styles'
 // types
 import { MavrykTheme } from '../../styles/interfaces'
 
-export const CounsilPageWrapper = styled.div`
+export const CouncilPageWrapper = styled.div`
   margin-top: 30px;
 
   .pending-signature-title {
@@ -80,7 +80,7 @@ export const CouncilSidebarNav = styled(Card)<{ theme: MavrykTheme }>`
   margin-bottom: 10px;
 `
 
-export const AvaliableActions = styled(Card)<{ theme: MavrykTheme }>`
+export const AvailableActions = styled(Card)<{ theme: MavrykTheme }>`
   margin: 0;
   margin-bottom: 10px;
   padding: 0;

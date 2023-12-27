@@ -5,7 +5,7 @@ import { Input } from 'app/App.components/Input/NewInput'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 import { Multiselect } from 'app/App.components/Multiselect/Multiselect'
 
 // utils
@@ -14,7 +14,7 @@ import { handleBgCouncilContractSearch } from '../../helpers/commonCouncil.utils
 import { validateFormAddress } from 'utils/validatorFunctions'
 
 // consts
-import { BgCounsilDdForms } from '../../helpers/council.consts'
+import { BgCouncilDdForms } from '../../helpers/council.consts'
 import { INPUT_STATUS_DEFAULT, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
 import { MULTISELECT_SELECT_ALL_OPTION_VALUE } from 'app/App.components/Multiselect/Multiselect.consts'
@@ -142,7 +142,7 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
     Object.values(formInputStatus).some((status) => status !== INPUT_STATUS_SUCCESS) ||
     Boolean(
       allPendingActions.find(
-        (actionId) => actionsMapper[actionId].actionClientId === BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN,
+        (actionId) => actionsMapper[actionId].actionClientId === BgCouncilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN,
       ),
     )
 
@@ -168,7 +168,7 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
   }, [formInputStatus.newAdminAddress, newAdminAddress])
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN}>
+    <CouncilFormStyled formName={BgCouncilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

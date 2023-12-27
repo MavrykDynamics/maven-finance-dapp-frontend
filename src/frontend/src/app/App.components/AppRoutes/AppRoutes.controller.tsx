@@ -100,7 +100,7 @@ export const AppRoutes = () => {
       <Route exact path="/emergency-governance">
         <EmergencyGovernance />
       </Route>
-      <Route exact path="/mavryk-council/:tabId?">
+      <Route exact path="/maven-council/:tabId?">
         <Council />
       </Route>
       <Route exact path="/break-glass-council/:tabId?">

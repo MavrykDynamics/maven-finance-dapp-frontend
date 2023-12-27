@@ -13,12 +13,12 @@ import { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provid
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
 
 // utils
-import { addCouncilMember } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { addCouncilMember } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
 
 // consts
-import { ADD_COUNSIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { ADD_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import {
   INPUT_STATUS_DEFAULT,
@@ -69,7 +69,7 @@ export const MavCouncilFormAddCouncilMember = ({
   // add council member council action
   const addCouncilMemberContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: ADD_COUNSIL_MEMBER_ACTION,
+      actionType: ADD_COUNCIL_MEMBER_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -182,7 +182,7 @@ export const MavCouncilFormAddCouncilMember = ({
   ])
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.ADD_COUNCIL_MEMBER}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.ADD_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

@@ -30,7 +30,7 @@ export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCou
     councilSize,
     startDatetime,
     signersCount,
-    counsilAddress,
+    councilAddress,
     executed,
     expirationTime,
     initiatorAddress,
@@ -70,7 +70,7 @@ export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCou
           </div>
         </div>
         <div className="open-action">
-          <CustomLink to={`${process.env.REACT_APP_TZKT_LINK}/${counsilAddress}/operations/`}>
+          <CustomLink to={`${process.env.REACT_APP_TZKT_LINK}/${councilAddress}/operations/`}>
             <Icon id="send" />
           </CustomLink>
         </div>

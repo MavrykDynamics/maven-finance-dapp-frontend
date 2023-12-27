@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
 // consts
-import { ALL_PAST_COUNSIL_TAB, ALL_PENDING_COUNSIL_TAB } from '../helpers/council.consts'
-import { BUTTON_WIDE, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
+import { ALL_PAST_COUNCIL_TAB, ALL_PENDING_COUNCIL_TAB } from '../helpers/council.consts'
+import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -21,56 +21,56 @@ import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 type Props = {
   membersTitle: string
-  counsilMembers: CouncilMembersType
+  councilMembers: CouncilMembersType
   openUpdateMemberProfilePopup: () => void
   pagePathname: string
   selectedTab: CouncilTabsType
 }
 
-export const CounsilSidebar = ({
+export const CouncilSidebar = ({
   pagePathname,
   openUpdateMemberProfilePopup,
   membersTitle,
-  counsilMembers,
+  councilMembers,
   selectedTab,
 }: Props) => {
   const { userAddress } = useUserContext()
 
-  const { sortedCounsils, isUserCounsil } = useMemo(() => {
-    const indexOfMember = counsilMembers.findIndex((item) => item.memberAddress === userAddress)
+  const { sortedCouncils, isUserCouncil } = useMemo(() => {
+    const indexOfMember = councilMembers.findIndex((item) => item.memberAddress === userAddress)
 
-    const sortedCounsils =
+    const sortedCouncils =
       indexOfMember === -1
-        ? counsilMembers
-        : [counsilMembers[indexOfMember]].concat(
-            counsilMembers.filter(({ memberAddress }) => memberAddress !== userAddress),
+        ? councilMembers
+        : [councilMembers[indexOfMember]].concat(
+            councilMembers.filter(({ memberAddress }) => memberAddress !== userAddress),
           )
 
     return {
-      isUserCounsil: indexOfMember !== -1,
-      sortedCounsils,
+      isUserCouncil: indexOfMember !== -1,
+      sortedCouncils: sortedCouncils,
     }
-  }, [counsilMembers, userAddress])
+  }, [councilMembers, userAddress])
 
   return (
     <div className="right-block">
       <CouncilSidebarNav>
         <CustomLink
           to={`${pagePathname}/:tabId`}
-          params={{ tabId: ALL_PAST_COUNSIL_TAB }}
-          disabled={selectedTab === ALL_PAST_COUNSIL_TAB}
+          params={{ tabId: ALL_PAST_COUNCIL_TAB }}
+          disabled={selectedTab === ALL_PAST_COUNCIL_TAB}
         >
-          <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY} disabled={selectedTab === ALL_PAST_COUNSIL_TAB}>
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY} disabled={selectedTab === ALL_PAST_COUNCIL_TAB}>
             Review Past Actions
           </NewButton>
         </CustomLink>
 
         <CustomLink
           to={`${pagePathname}/:tabId`}
-          params={{ tabId: ALL_PENDING_COUNSIL_TAB }}
-          disabled={selectedTab === ALL_PENDING_COUNSIL_TAB}
+          params={{ tabId: ALL_PENDING_COUNCIL_TAB }}
+          disabled={selectedTab === ALL_PENDING_COUNCIL_TAB}
         >
-          <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY} disabled={selectedTab === ALL_PENDING_COUNSIL_TAB}>
+          <NewButton form={BUTTON_WIDE} kind={BUTTON_SECONDARY} disabled={selectedTab === ALL_PENDING_COUNCIL_TAB}>
             Review Pending Actions
           </NewButton>
         </CustomLink>
@@ -78,9 +78,9 @@ export const CounsilSidebar = ({
 
       <H2Title>{membersTitle}</H2Title>
 
-      {sortedCounsils.length ? (
+      {sortedCouncils.length ? (
         <div>
-          {sortedCounsils.map((item) => (
+          {sortedCouncils.map((item) => (
             <CouncilMemberView
               key={item.id}
               image={item.image}
@@ -88,7 +88,7 @@ export const CounsilSidebar = ({
               isMemberSatellite={item.isMemberSatellite}
               memberAddress={item.memberAddress}
               openModal={openUpdateMemberProfilePopup}
-              showUpdateInfo={isUserCounsil}
+              showUpdateInfo={isUserCouncil}
             />
           ))}
         </div>

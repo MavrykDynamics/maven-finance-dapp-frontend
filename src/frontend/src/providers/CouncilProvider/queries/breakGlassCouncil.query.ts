@@ -18,7 +18,7 @@ export const BREAK_GLASS_COUNCIL_MEMBERS_QUERY = gql(`
   }
 `)
 
-export const ALL_BG_PAST_COUNSILS_QUERY = gql(`
+export const ALL_BG_PAST_COUNCILS_QUERY = gql(`
   query GetBgAllPastCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z"){
     break_glass_action: break_glass_action(order_by: {start_datetime: desc}, where: {_or: [{expiration_datetime: {_lt: $currentTimestamp}}, {status: {_in: ["1", "2"]}}]}) {
       action_type
@@ -49,7 +49,7 @@ export const ALL_BG_PAST_COUNSILS_QUERY = gql(`
   }
 `)
 
-export const ALL_BG_ONGOING_COUNSILS_QUERY = gql(`
+export const ALL_BG_ONGOING_COUNCILS_QUERY = gql(`
   query GetBgAllOngoingCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z"){
     break_glass_action: break_glass_action(order_by: {start_datetime: desc}, where: {status: {_eq: "0"}, expiration_datetime: {_gt: $currentTimestamp}}) {
       action_type
@@ -80,7 +80,7 @@ export const ALL_BG_ONGOING_COUNSILS_QUERY = gql(`
   }
 `)
 
-export const MY_BG_PAST_COUNSILS_QUERY = gql(`
+export const MY_BG_PAST_COUNCILS_QUERY = gql(`
   query GetBgMyPastCouncilActions($currentTimestamp: timestamptz = "1970-01-01T00:00:00.000Z", $userAddress: String = ""){
     break_glass_action: break_glass_action(order_by: {start_datetime: desc}, where: {_or: [
       {_and: [

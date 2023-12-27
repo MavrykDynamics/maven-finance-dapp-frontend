@@ -1,35 +1,25 @@
-import { useMemo, useState } from 'react'
-
-// consts
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
-import { ADD_COUNSIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
+import { useMemo, useState } from 'react' // consts
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
+import { ADD_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
-} from '../../../../app/App.components/Input/Input.constants'
-
-// types
+} from '../../../../app/App.components/Input/Input.constants' // types
 import type { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
-import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
-
-// helpers
+import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types' // helpers
 import { getShortTzAddress } from '../../../../utils/tzAdress'
-import { changeMavrykCouncilMember } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
-import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
-
-// view
+import { changeMavenCouncilMember } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
+import { validateFormAddress, validateFormField } from 'utils/validatorFunctions' // view
 import { Input } from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import Icon from '../../../../app/App.components/Icon/Icon.view'
 import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 import { IPFSUploader } from '../../../../app/App.components/IPFSUploader/IPFSUploader.controller'
-import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown'
-
-// hooks
+import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown' // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -91,7 +81,7 @@ export const MavCouncilFormChangeCouncilMember = ({
   // change council member council action
   const changeCouncilMemberContractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: ADD_COUNSIL_MEMBER_ACTION,
+      actionType: ADD_COUNCIL_MEMBER_ACTION,
       actionFn: async () => {
         if (!userAddress) {
           bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -113,7 +103,7 @@ export const MavCouncilFormChangeCouncilMember = ({
           return null
         }
 
-        return await changeMavrykCouncilMember(
+        return await changeMavenCouncilMember(
           oldCouncilMemberAddress,
           newCouncilMemberAddress,
           newMemberName,
@@ -232,7 +222,7 @@ export const MavCouncilFormChangeCouncilMember = ({
   ])
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"
