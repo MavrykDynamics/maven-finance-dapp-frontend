@@ -18,6 +18,7 @@ import { InternalErrorType, SharedErrorFileds, SharedErrors } from 'errors/error
 import { WalletActionType } from 'types/actions.type'
 import { getErrorPageData } from './helpers/getErrorPageData'
 import { ERROR_TYPE_FATAL, ERROR_TYPE_ROUTER } from 'errors/error.const'
+import { MaintancePage } from 'pages/Error/MaintancePage'
 
 export const toasterContext = React.createContext<ToasterContextType>(undefined!)
 
@@ -207,14 +208,11 @@ export default class ToasterProvider extends React.Component<Props, State> {
       errorPageContent = getErrorPageData(type)
     }
 
-    if (this.state.context.maintance) {
-      type = ERROR_TYPE_ROUTER
-      errorPageContent = getErrorPageData(type)
-    }
-
     return (
       <toasterContext.Provider value={this.state.context}>
-        {errorPageContent ? (
+        {this.state.context.maintance ? (
+          <MaintancePage />
+        ) : errorPageContent ? (
           <ErrorPage headerText={errorPageContent.header} descText={errorPageContent.desc} type={type} />
         ) : (
           this.props.children
