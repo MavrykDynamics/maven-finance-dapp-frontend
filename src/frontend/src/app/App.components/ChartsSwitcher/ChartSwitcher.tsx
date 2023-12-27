@@ -1,8 +1,8 @@
 import { memo, useCallback, useMemo } from 'react'
 
 // view
-import { SlidingTabButtonType, SlidingTabButtons } from '../SlidingTabButtons/SlidingTabButtons.controller'
-import { ChartsSwitherWrapper } from './ChartSwitcher.style'
+import { SlidingTabButtons, SlidingTabButtonType } from '../SlidingTabButtons/SlidingTabButtons.controller'
+import { ChartsSwitcherWrapper } from './ChartSwitcher.style'
 
 // consts
 import { chartsPeriodArr } from 'consts/charts.const'
@@ -45,20 +45,20 @@ export const ChartSwitcher = memo(({ setCurrentPeriod, currentPeriod, size, disa
   return <SlidingTabButtons tabItems={tabItems} disabled={disabled} onClick={handleTabSwitch} size={size} />
 })
 
-type ChartSwitherWithPositionProps = ChartSwitcherProps & {
+type ChartSwitcherWithPositionProps = ChartSwitcherProps & {
   align?: ChartSwitcherAlignmentType
   space?: number
   disabled?: boolean
 }
 
-export const ChartsSwitherWithPosition = ({
+export const ChartsSwitcherWithPosition = ({
   align = ALIGN_LEFT,
   space = 20,
   ...props
-}: ChartSwitherWithPositionProps) => {
+}: ChartSwitcherWithPositionProps) => {
   return (
-    <ChartsSwitherWrapper align={align} space={space}>
+    <ChartsSwitcherWrapper align={align} space={space}>
       <ChartSwitcher {...props} />
-    </ChartsSwitherWrapper>
+    </ChartsSwitcherWrapper>
   )
 }

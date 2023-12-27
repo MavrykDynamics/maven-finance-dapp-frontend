@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { SingleValueData, Time } from 'lightweight-charts'
 
 // components
-import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
+import { ChartsSwitcherWithPosition } from 'app/App.components/ChartsSwitcher'
 import { DoubleChart } from 'app/App.components/Chart/ChartTypes/DoubleChart'
 import { DoormanChartCard, DoormanExitFeeCurrentValues, Wrapper } from './DoormanChart.style'
 import { Chart } from '../../../app/App.components/Chart/Chart'
@@ -111,7 +111,7 @@ export function DoormanChart() {
       <DoormanChartCard isExitFeeChart={activeTabId === tabsList[1].id}>
         {activeTabId === tabsList[0].id ? (
           <>
-            <ChartsSwitherWithPosition
+            <ChartsSwitcherWithPosition
               currentPeriod={chartPeriod}
               setCurrentPeriod={setChartPeriod}
               size={SMALL_SLIDING_TAB_BUTTONS}
@@ -221,7 +221,7 @@ export function DoormanChart() {
 
         {activeTabId === tabsList[2].id ? (
           <>
-            <ChartsSwitherWithPosition
+            <ChartsSwitcherWithPosition
               currentPeriod={chartPeriod}
               setCurrentPeriod={setChartPeriod}
               size={SMALL_SLIDING_TAB_BUTTONS}

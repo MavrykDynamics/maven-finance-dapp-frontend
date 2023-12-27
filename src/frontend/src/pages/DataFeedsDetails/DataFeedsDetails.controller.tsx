@@ -25,7 +25,7 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { Button } from 'app/App.components/Button/Button.controller'
-import { ChartsSwitherWithPosition } from 'app/App.components/ChartsSwitcher'
+import { ChartsSwitcherWithPosition } from 'app/App.components/ChartsSwitcher'
 
 // styles
 import {
@@ -359,7 +359,7 @@ const DataFeedDetails = () => {
               </div>
 
               <FeedDetailsChartWrapper>
-                <ChartsSwitherWithPosition
+                <ChartsSwitcherWithPosition
                   currentPeriod={chartPeriod}
                   setCurrentPeriod={handlePeriodChange}
                   size={SMALL_SLIDING_TAB_BUTTONS}
