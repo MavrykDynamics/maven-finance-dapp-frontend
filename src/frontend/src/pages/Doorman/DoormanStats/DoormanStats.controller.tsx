@@ -14,7 +14,7 @@ import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress
 type DoormanStatsPropsType = {
   mvnExchangeRate: number
   maximumTotalSupply: number
-  totalStakedMvk: number
+  totalStakedMvn: number
   totalSupply: number
   doormanAddress: string | null
   mvnTokenAddress: string | null
@@ -23,13 +23,13 @@ type DoormanStatsPropsType = {
 export const DoormanStats = ({
   mvnExchangeRate,
   maximumTotalSupply,
-  totalStakedMvk,
+  totalStakedMvn,
   totalSupply,
   doormanAddress,
   mvnTokenAddress,
 }: DoormanStatsPropsType) => {
-  const mli = calcMLI(totalSupply, totalStakedMvk)
-  const fee = calcExitFee(totalSupply, totalStakedMvk)
+  const mli = calcMLI(totalSupply, totalStakedMvn)
+  const fee = calcExitFee(totalSupply, totalStakedMvn)
   const marketCapValue = mvnExchangeRate ? mvnExchangeRate * totalSupply : 0
 
   return (
@@ -133,21 +133,21 @@ export const DoormanStats = ({
         <div>
           <h4>Total Staked MVN</h4>
           <var>
-            <CommaNumber value={totalStakedMvk} endingText={'MVK'} />
+            <CommaNumber value={totalStakedMvn} endingText={'MVN'} />
           </var>
         </div>
 
         <div>
           <h4>Total Circulating</h4>
           <var>
-            <CommaNumber value={totalSupply} endingText={'MVK'} />
+            <CommaNumber value={totalSupply} endingText={'MVN'} />
           </var>
         </div>
 
         <div>
           <h4>Max Supply</h4>
           <var>
-            <CommaNumber value={maximumTotalSupply} endingText={'MVK'} />
+            <CommaNumber value={maximumTotalSupply} endingText={'MVN'} />
           </var>
         </div>
 
@@ -161,7 +161,7 @@ export const DoormanStats = ({
         {/* <div>
           <h4>Total supply</h4>
           <var>
-            <CommaNumber value={maximumTotalSupply}  endingText={'MVK'} />
+            <CommaNumber value={maximumTotalSupply}  endingText={'MVN'} />
           </var>
         </div> */}
       </DoormanList>

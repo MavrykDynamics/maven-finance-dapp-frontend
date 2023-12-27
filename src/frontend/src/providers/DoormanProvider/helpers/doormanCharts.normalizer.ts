@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { UTCTimestamp } from 'lightweight-charts'
 
+// TODO: rebranding - change all mvk instances to mvn
 import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
 
 // calc
@@ -44,8 +45,8 @@ function getStartEndPlotsForPeriod(
   // if period don't have data (at(-1) does not exists), make last plot same as first one
   const lastPlotInPeriod = operationsInPeriod.at(-1) ?? firstPlotInPeriod
 
-  // mvk default chart points
-  const MVK_PeriodStartPoint = createChartHistoryItemFromInitValue(
+  // mvn default chart points
+  const MVN_PeriodStartPoint = createChartHistoryItemFromInitValue(
     Number(firstPlotInPeriod?.mvk_total_supply) - Number(firstPlotInPeriod?.smvk_total_supply),
     'first',
     period,
@@ -67,7 +68,7 @@ function getStartEndPlotsForPeriod(
     SMVK_PeriodEndPoint,
     SMVK_PeriodStartPoint,
     MVK_PeriodEndPoint,
-    MVK_PeriodStartPoint,
+    MVK_PeriodStartPoint: MVN_PeriodStartPoint,
   }
 }
 

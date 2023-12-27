@@ -7,7 +7,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { stakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
+import { stakeMVN } from 'providers/DoormanProvider/actions/doorman.actions'
 import { rewardsCompound } from 'providers/UserProvider/actions/user.actions'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
@@ -98,10 +98,10 @@ export const StakeUnstakeView = ({
   }, [satelliteMvnIsDelegatedTo])
 
   const delegatedUser = satelliteMvnIsDelegatedTo ? satelliteMapper[satelliteMvnIsDelegatedTo] : null
-  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
-    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
+  const mySMvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
+    myMvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
 
-  const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
+  const mySMvnBalanceIsZero = mySMvnTokenBalance === 0
   const exchangeValue = mvnExchangeRate && inputData.amount ? Number(inputData.amount) * mvnExchangeRate : 0
   // TODO: @Sam-M-Israel check whether include farms & satellite rewards, cuz compound btn claims only doorman rewards here
   const rewardsToClaim =
@@ -110,8 +110,8 @@ export const StakeUnstakeView = ({
     Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
   const showDelegateBtn = !isSatellite && !satelliteMvnIsDelegatedTo
 
-  const onUseMaxBalance = (balance: 'smvk' | 'mvk') => () => {
-    handleInputData(String(mathRoundTwoDigit(balance === 'mvk' ? myMvkTokenBalance : mySMvkTokenBalance)))
+  const onUseMaxBalance = (balance: 'smvn' | 'mvn') => () => {
+    handleInputData(String(mathRoundTwoDigit(balance === 'mvn' ? myMvnTokenBalance : mySMvnTokenBalance)))
   }
 
   const onInputChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,8 +121,8 @@ export const StakeUnstakeView = ({
   const handleInputData = (value: string) => {
     const validationStatus = stakingInputValidation({
       amount: Number(value),
-      myMvnTokenBalance: myMvkTokenBalance,
-      mySMvnTokenBalance: mySMvkTokenBalance,
+      myMvnTokenBalance,
+      mySMvnTokenBalance,
       userAddress,
     })
 
@@ -131,11 +131,11 @@ export const StakeUnstakeView = ({
 
   // Stake actions
   const handleStakeAll = async () => {
-    if (!myMvkTokenBalance) return
+    if (!myMvnTokenBalance) return
 
     setInputData({
       ...inputData,
-      amount: String(mathRoundTwoDigit(myMvkTokenBalance)),
+      amount: String(mathRoundTwoDigit(myMvnTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
     })
 
@@ -143,11 +143,11 @@ export const StakeUnstakeView = ({
   }
 
   const handleUnstakeAll = () => {
-    if (!mySMvkTokenBalance) return
+    if (!mySMvnTokenBalance) return
 
     setInputData({
       ...inputData,
-      amount: String(mathRoundTwoDigit(mySMvkTokenBalance)),
+      amount: String(mathRoundTwoDigit(mySMvnTokenBalance)),
       validation: INPUT_STATUS_SUCCESS,
     })
     openExitFeePopup()
@@ -157,12 +157,12 @@ export const StakeUnstakeView = ({
 
   const stakeAction = useCallback(
     async (stakeAmount: number) => {
-      const canStakeAmount = stakeAmount <= Number(myMvkTokenBalance)
+      const canStakeAmount = stakeAmount <= Number(myMvnTokenBalance)
 
       if (!canStakeAmount) {
         setInputData({
           ...inputData,
-          errorMessage: "You don't have enought MVK to stake",
+          errorMessage: "You don't have enough MVN to stake",
         })
 
         return null
@@ -173,7 +173,7 @@ export const StakeUnstakeView = ({
         return null
       }
       if (!doormanAddress || !mvnTokenAddress) {
-        bug('Wrong doorman or mvkToken address was provided')
+        bug('Wrong doorman or mvnToken address was provided')
         return null
       }
 
@@ -187,9 +187,9 @@ export const StakeUnstakeView = ({
         errorMessage: '',
       })
 
-      return await stakeMVK(stakeAmount, userAddress, doormanAddress, mvnTokenAddress)
+      return await stakeMVN(stakeAmount, userAddress, doormanAddress, mvnTokenAddress)
     },
-    [bug, doormanAddress, inputData, mvnTokenAddress, myMvkTokenBalance, setInputData, userAddress],
+    [bug, doormanAddress, inputData, mvnTokenAddress, myMvnTokenBalance, setInputData, userAddress],
   )
 
   const dappCallback = useCallback(() => {
@@ -267,8 +267,8 @@ export const StakeUnstakeView = ({
             <div>
               <h3>My MVN Balance</h3>
               <div className="balance-btn-group">
-                <CommaNumber value={myMvkTokenBalance} className="amount" />
-                {Boolean(myMvkTokenBalance) && (
+                <CommaNumber value={myMvnTokenBalance} className="amount" />
+                {Boolean(myMvnTokenBalance) && (
                   <NewButton onClick={handleStakeAll} kind={BUTTON_SIMPLE} disabled={isActionActive}>
                     Stake All
                   </NewButton>
@@ -284,8 +284,8 @@ export const StakeUnstakeView = ({
             <div>
               <h3>My Staked MVN Balance</h3>
               <div className="balance-btn-group">
-                <CommaNumber value={mySMvkTokenBalance} className="amount" />
-                {Boolean(mySMvkTokenBalance) && (
+                <CommaNumber value={mySMvnTokenBalance} className="amount" />
+                {Boolean(mySMvnTokenBalance) && (
                   <NewButton onClick={handleUnstakeAll} kind={BUTTON_SIMPLE} disabled={isActionActive}>
                     Unstake All
                   </NewButton>
@@ -295,9 +295,9 @@ export const StakeUnstakeView = ({
           </StakeUnstakeBalance>
 
           <StakeUnstakeRightPart>
-            {mySMvkBalanceIsZero && myMvkTokenBalance > 0 && <StakeLabel>Not Staking</StakeLabel>}
+            {mySMvnBalanceIsZero && myMvnTokenBalance > 0 && <StakeLabel>Not Staking</StakeLabel>}
 
-            {!mySMvkBalanceIsZero && showDelegateBtn && (
+            {!mySMvnBalanceIsZero && showDelegateBtn && (
               <NewButton
                 onClick={handleDelegate}
                 kind={BUTTON_PRIMARY}
@@ -311,7 +311,7 @@ export const StakeUnstakeView = ({
               </NewButton>
             )}
 
-            {!mySMvkBalanceIsZero && delegatedUser && (
+            {!mySMvnBalanceIsZero && delegatedUser && (
               <StakeDelegatedUser>
                 <ImageWithPlug className="userImage" imageLink={delegatedUser.image} alt="user image" />
 
@@ -335,7 +335,7 @@ export const StakeUnstakeView = ({
                     <Icon id="info" />
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    The amount of pending sMVK you have earned but not yet claimed. Claim your rewards in the Personal
+                    The amount of pending sMVN you have earned but not yet claimed. Claim your rewards in the Personal
                     Dashboard.
                   </Tooltip.Content>
                 </Tooltip>
@@ -361,8 +361,8 @@ export const StakeUnstakeView = ({
             {/*  </Tooltip.Trigger>*/}
             {/*  <Tooltip.Content>*/}
             {/*    {rewardsToClaim < 2 || isActionActive*/}
-            {/*      ? `Compounds your pending exit fee rewards and converts them to sMVK. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVK.`*/}
-            {/*      : `Compounds your pending exit fee rewards and converts them to sMVK.`}*/}
+            {/*      ? `Compounds your pending exit fee rewards and converts them to sMVN. You currently, do not have any pending exit fee rewards amounting to at least 2 sMVN.`*/}
+            {/*      : `Compounds your pending exit fee rewards and converts them to sMVN.`}*/}
             {/*  </Tooltip.Content>*/}
             {/*</Tooltip>*/}
           </StakeUnstakeRightPart>
@@ -374,26 +374,26 @@ export const StakeUnstakeView = ({
           <StakeUnstakeInputLabels>
             <div className="minAmount">Min 1 MVN</div>
 
-            <StakeUnstakeAmount onClick={onUseMaxBalance('smvk')}>
+            <StakeUnstakeAmount onClick={onUseMaxBalance('smvn')}>
               <span>Staked Amount:</span>
               &nbsp;
-              <CommaNumber value={mySMvkTokenBalance} endingText={'MVN'} />
+              <CommaNumber value={mySMvnTokenBalance} endingText={'MVN'} />
             </StakeUnstakeAmount>
           </StakeUnstakeInputLabels>
 
           <StakeUnstakeInputWithCoin>
             <Input
               className={`input-with-rate transparent-child-wrap`}
-              children={'MVK'}
+              children={'MVN'}
               inputProps={inputProps}
               settings={{
                 inputStatus: inputData.validation,
                 convertedValue: exchangeValue,
-                balance: myMvkTokenBalance,
-                balanceAsset: 'MVK',
+                balance: myMvnTokenBalance,
+                balanceAsset: 'MVN',
                 balanceName: 'Wallet Balance',
                 inputSize: INPUT_LARGE,
-                balanceHandler: onUseMaxBalance('mvk'),
+                balanceHandler: onUseMaxBalance('mvn'),
                 validationFns: [[validateInputLength, ERR_MSG_TOAST]],
               }}
             />
@@ -404,7 +404,7 @@ export const StakeUnstakeView = ({
         </StakeUnstakeInputColumn>
 
         <StakeUnstakeRate>
-          <span>1 MVK =</span>
+          <span>1 MVN =</span>
           &nbsp;
           <CommaNumber value={mvnExchangeRate} beginningText={'$'} />
         </StakeUnstakeRate>
@@ -414,7 +414,7 @@ export const StakeUnstakeView = ({
             kind={BUTTON_PRIMARY}
             onClick={handleStake}
             form={BUTTON_WIDE}
-            disabled={isActionActive || Number(inputData.amount) > myMvkTokenBalance}
+            disabled={isActionActive || Number(inputData.amount) > myMvnTokenBalance}
           >
             <Icon id="in" /> Stake
           </NewButton>
@@ -423,7 +423,7 @@ export const StakeUnstakeView = ({
             kind={BUTTON_SECONDARY}
             onClick={openExitFeePopup}
             form={BUTTON_WIDE}
-            disabled={isActionActive || Number(inputData.amount) > mySMvkTokenBalance}
+            disabled={isActionActive || Number(inputData.amount) > mySMvnTokenBalance}
           >
             <Icon id="out" /> Unstake
           </NewButton>
