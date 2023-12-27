@@ -57,4 +57,5 @@ export type ToasterContextType = {
   setError: InstanceType<typeof ToasterProvider>['setError']
   setSharedError: InstanceType<typeof ToasterProvider>['setSharedError']
   messages: ToasterMessage[]
+  maintance: boolean
 }

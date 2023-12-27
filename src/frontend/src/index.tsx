@@ -142,7 +142,7 @@ const AppContainer = () => {
 export const Root = () => {
   return (
     <DappLibsProviders>
-      <ToasterProvider>
+      <ToasterProvider maintance>
         <ApolloProvider>
           <InitialDataDappProviders>
             <DappSectionsDataProviders>

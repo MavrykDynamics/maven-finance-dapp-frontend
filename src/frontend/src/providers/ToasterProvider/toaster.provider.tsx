@@ -26,6 +26,7 @@ type Props = {
   children: React.ReactNode
   error?: CustomErrors
   pageNotFound?: JSX.Element
+  maintance?: boolean
 }
 
 type State = {
@@ -57,6 +58,7 @@ export default class ToasterProvider extends React.Component<Props, State> {
         messages: [],
         setError: this.setError,
         setSharedError: this.setSharedError,
+        maintance: props.maintance ?? false,
       },
     }
   }
@@ -201,7 +203,12 @@ export default class ToasterProvider extends React.Component<Props, State> {
     let type: InternalErrorType = ERROR_TYPE_ROUTER
 
     if (error instanceof FatalError) {
-      type = error.type
+      type = error?.type ?? ERROR_TYPE_FATAL
+      errorPageContent = getErrorPageData(type)
+    }
+
+    if (this.state.context.maintance) {
+      type = ERROR_TYPE_ROUTER
       errorPageContent = getErrorPageData(type)
     }
 
