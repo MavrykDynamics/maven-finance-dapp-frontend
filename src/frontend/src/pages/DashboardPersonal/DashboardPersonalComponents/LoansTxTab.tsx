@@ -68,7 +68,7 @@ export const LoansTxTab = ({
             </TableHeader>
 
             <TableBody className="dashboard-loans treasury">
-              {userLoansData.map(({ amount, annualPecentage, operationHash, date, id, tokenAddress }) => {
+              {userLoansData.map(({ amount, annualPercentage, operationHash, date, id, tokenAddress }) => {
                 const token = getTokenDataByAddress({ tokenAddress, tokensMetadata })
                 if (!token) return null
 
@@ -85,7 +85,7 @@ export const LoansTxTab = ({
                       <CommaNumber value={amount} />
                     </TableCell>
                     <TableCell width="20%">
-                      <CommaNumber value={annualPecentage} endingText="%" />
+                      <CommaNumber value={annualPercentage} endingText="%" />
                     </TableCell>
                     <TableCell width="30%">
                       {parseDate({ time: date, timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' })}
