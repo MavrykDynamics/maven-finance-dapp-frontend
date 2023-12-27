@@ -25,7 +25,7 @@ import {
   SidebarUserButton,
 } from './SatelliteSideBar.style'
 
-export const SateliteSideBarFAQ = () => (
+export const SatelliteSideBarFAQ = () => (
   <SideBarFaq>
     <h2>Satellite FAQ</h2>
     <FAQLink>
@@ -53,7 +53,7 @@ export const SateliteSideBarFAQ = () => (
         target="_blank"
         rel="noreferrer"
       >
-        What is the difference between MVN and Staked MVN (sMVK)?
+        What is the difference between MVN and Staked MVN (sMVN)?
       </a>
     </FAQLink>
     <FAQLink>
@@ -145,20 +145,20 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Total delegated MVK</h3>
+          <h3>Total delegated MVN</h3>
           <var>
             <CommaNumber value={totalDelegatedMVN} showDecimal={false} />
           </var>
         </SideBarItem>
         <SideBarItem>
-          <h3>Avg. Oracles Rewards MVK</h3>
+          <h3>Avg. Oracles Rewards MVN</h3>
           <var>
             <CommaNumber value={averageOracleReward} />
           </var>
         </SideBarItem>
       </SideBarSection>
 
-      <SateliteSideBarFAQ />
+      <SatelliteSideBarFAQ />
     </SatelliteSideBarStyled>
   )
 }

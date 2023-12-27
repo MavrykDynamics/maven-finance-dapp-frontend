@@ -205,7 +205,7 @@ export const BecomeSatellite = () => {
                   <Route exact path={`/become-satellite/${SATELLITE_TAB_EDIT}`}>
                     <BecomeSatelliteScreen
                       usersSatelliteProfile={usersSatelliteProfile}
-                      userSmvkBalance={userSmvkBalance}
+                      userSmvnBalance={userSmvkBalance}
                     />
                   </Route>
 

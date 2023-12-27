@@ -159,7 +159,7 @@ export const SatelliteDetails = () => {
                   </div>
 
                   <SatelliteMetricsBlock>
-                    <h5>Satellite’s sMVK</h5>
+                    <h5>Satellite’s sMVN</h5>
                     <p>
                       <CommaNumber value={currentSatellite.sMvnBalance} showDecimal />
                     </p>

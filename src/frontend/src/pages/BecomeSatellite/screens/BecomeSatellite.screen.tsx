@@ -59,10 +59,10 @@ const connectWalletMessage = (
 
 type BecomeSatelliteScreenProps = {
   usersSatelliteProfile: SatelliteMapper[0] | null
-  userSmvkBalance: number
+  userSmvnBalance: number
 }
 
-export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }: BecomeSatelliteScreenProps) => {
+export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvnBalance }: BecomeSatelliteScreenProps) => {
   const { userAddress, isSatellite, satelliteMvnIsDelegatedTo } = useUserContext()
 
   const {
@@ -74,7 +74,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
 
   const { bug } = useToasterContext()
 
-  const balanceOverMinStakedMvk = userSmvkBalance >= minimumStakedMvnBalance
+  const balanceOverMinStakedMvn = userSmvnBalance >= minimumStakedMvnBalance
 
   const [form, setForm] = useState(DEFAULT_BECOME_SATELLITE_FORM)
   const [showUnregisterPopup, setShowUnregisterPopup] = useState(false)
@@ -83,7 +83,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
   const [isChecked, setIsChecked] = useState(isUserOracle)
   const showOracleWarning = isUserOracle && !isChecked
 
-  // Disable update button when no user connected, not enoght sMVK to become a satellite, not full valid form, or user is satellite, but hasn't changed nothing
+  // Disable update button when no user connected, not enough sMVN to become a satellite, not full valid form, or user is satellite but hasn't changed anything
   const isUpdateButtonDisabled = useMemo(() => {
     // Remove oraclePeerId and oraclePublicKey fields from validation if checkbox 'Register as Oracle" not chosen
     const formForValidation = isChecked
@@ -112,8 +112,8 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
       return text !== DEFAULT_BECOME_SATELLITE_FORM[key as keyof BecomeSatelliteFormStateType].text
     })
 
-    return !balanceOverMinStakedMvk || !userAddress || !formIsValid || !hasChangedValues
-  }, [userAddress, balanceOverMinStakedMvk, form, isChecked, usersSatelliteProfile])
+    return !balanceOverMinStakedMvn || !userAddress || !formIsValid || !hasChangedValues
+  }, [userAddress, balanceOverMinStakedMvn, form, isChecked, usersSatelliteProfile])
 
   const mainRequestForm: RegisterAsSatelliteForm = useMemo(
     () => ({
@@ -307,13 +307,13 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
         className="label"
         value={Number(minimumStakedMvnBalance)}
         beginningText={'1 - Stake at least'}
-        endingText={'MVK'}
+        endingText={'MVN'}
       />
 
       {userAddress ? (
-        <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvk}>
-          <Icon id={balanceOverMinStakedMvk ? 'check-stroke' : 'close-stroke'} />
-          <CommaNumber value={userSmvkBalance} beginningText={'Currently staking'} endingText={'MVK'} />
+        <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvn}>
+          <Icon id={balanceOverMinStakedMvn ? 'check-stroke' : 'close-stroke'} />
+          <CommaNumber value={userSmvnBalance} beginningText={'Currently staking'} endingText={'MVN'} />
         </BecomeSatelliteFormBalanceCheck>
       ) : (
         connectWalletMessage

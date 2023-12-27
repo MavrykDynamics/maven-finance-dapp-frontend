@@ -72,7 +72,7 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
 
   // calcs
   const { sMvnBalance, delegationRatio, totalDelegatedAmount } = usersSatelliteProfile
-  const freesMVKSpace = Math.max(sMvnBalance * delegationRatio - totalDelegatedAmount, 0)
+  const freesMVNSpace = Math.max(sMvnBalance * delegationRatio - totalDelegatedAmount, 0)
 
   return (
     <SatelliteDetailsContainer>
@@ -92,8 +92,8 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
         </ThreeLevelListItem>
 
         <ThreeLevelListItem>
-          <div className="name">Free sMVK Space</div>
-          <CommaNumber value={freesMVKSpace} decimalsToShow={2} className="value" />
+          <div className="name">Free sMVN Space</div>
+          <CommaNumber value={freesMVNSpace} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Oracle Status</div>
@@ -127,7 +127,7 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
         </div>
 
         <SatelliteMetricsBlock>
-          <h5>Satellite’s sMVK</h5>
+          <h5>Satellite’s sMVN</h5>
           <p>
             <CommaNumber value={usersSatelliteProfile.sMvnBalance} showDecimal />
           </p>

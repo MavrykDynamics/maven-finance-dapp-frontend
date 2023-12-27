@@ -96,7 +96,7 @@ export const UnregisterPopup = ({
               <div className="descr-big">Your delegate status:</div>
               <div className="card">
                 <div className="col">
-                  <div className="name">Total Delegated sMVK</div>
+                  <div className="name">Total Delegated sMVN</div>
                   <CommaNumber value={totalDelegatedAmount} className="value" />
                 </div>
                 <div className="col">

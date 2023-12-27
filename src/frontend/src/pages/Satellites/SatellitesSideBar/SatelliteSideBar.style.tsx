@@ -20,7 +20,6 @@ export const SatelliteSideBarStyled = styled(Card)`
 `
 
 export const SideBarSection = styled.aside<{ theme: MavrykTheme }>`
-  padding: 0 20px;
   padding: 31px 17px;
   position: relative;
 
