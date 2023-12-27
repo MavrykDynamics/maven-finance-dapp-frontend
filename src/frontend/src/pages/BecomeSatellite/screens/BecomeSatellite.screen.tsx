@@ -63,7 +63,7 @@ type BecomeSatelliteScreenProps = {
 }
 
 export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }: BecomeSatelliteScreenProps) => {
-  const { userAddress, isSatellite, satelliteMvkIsDelegatedTo } = useUserContext()
+  const { userAddress, isSatellite, satelliteMvnIsDelegatedTo } = useUserContext()
 
   const {
     maxLengths: { satelliteDelegation },
@@ -208,9 +208,9 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
         return null
       }
 
-      return await registerSatellite(userAddress, requestData, delegationAddress, satelliteMvkIsDelegatedTo)
+      return await registerSatellite(userAddress, requestData, delegationAddress, satelliteMvnIsDelegatedTo)
     },
-    [bug, delegationAddress, satelliteMvkIsDelegatedTo, userAddress],
+    [bug, delegationAddress, satelliteMvnIsDelegatedTo, userAddress],
   )
 
   const registerContractActionProps: HookContractActionArgs = useMemo(
@@ -280,16 +280,16 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvkBalance }
 
   return (
     <>
-      {satelliteMvkIsDelegatedTo ? (
+      {satelliteMvnIsDelegatedTo ? (
         <div className="delegated-banner">
           <Info
             type={INFO_DEFAULT}
             text={
               <>
                 You are currently delegated to satellite{' '}
-                <CustomLink to={`/satellites/satellite-details/${satelliteMvkIsDelegatedTo}`}>
+                <CustomLink to={`/satellites/satellite-details/${satelliteMvnIsDelegatedTo}`}>
                   <TzAddress
-                    tzAddress={satelliteMvkIsDelegatedTo}
+                    tzAddress={satelliteMvnIsDelegatedTo}
                     hasIcon={false}
                     shouldCopy={false}
                     type={SECONDARY_TZ_ADDRESS_COLOR}

@@ -50,7 +50,7 @@ const DelegationTab = ({
     setSatelliteAddressToSubsctibe,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
-  const { userTokensBalances, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
+  const { userTokensBalances, satelliteMvnIsDelegatedTo, userAddress } = useUserContext()
 
   const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
@@ -66,13 +66,13 @@ const DelegationTab = ({
   }, [])
 
   useEffect(() => {
-    if (satelliteMvkIsDelegatedTo) {
-      setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
+    if (satelliteMvnIsDelegatedTo) {
+      setSatelliteAddressToSubsctibe(satelliteMvnIsDelegatedTo)
     }
     return () => setSatelliteAddressToSubsctibe(null)
-  }, [satelliteMvkIsDelegatedTo])
+  }, [satelliteMvnIsDelegatedTo])
 
-  const satelliteRecord = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
+  const satelliteRecord = satelliteMvnIsDelegatedTo ? satelliteMapper[satelliteMvnIsDelegatedTo] : null
   const { proposalParticipation } = getSatelliteParticipations({
     satellite: satelliteRecord,
     proposalsAmount,
@@ -96,7 +96,7 @@ const DelegationTab = ({
             Distribute Gov. Rewards
           </NewButton>
         </DashboardCardHeader>
-        {satelliteMvkIsDelegatedTo && isSatellitesLoading ? (
+        {satelliteMvnIsDelegatedTo && isSatellitesLoading ? (
           <DataLoaderWrapper margin="20px 0 0 0">
             <ClockLoader width={75} height={75} />
             <div className="text">Loading your delegation data</div>
