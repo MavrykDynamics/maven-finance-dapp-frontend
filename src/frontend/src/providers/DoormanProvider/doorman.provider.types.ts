@@ -1,31 +1,31 @@
 import { normalizeDoormanChartsData } from './helpers/doormanCharts.normalizer'
 
-import { DAPP_MVK_SMVK_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
+import { DAPP_MVN_SMVN_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
 import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
 import { ChartPeriodType } from 'types/charts.type'
 
-export type SmvkHistoryData = ReturnType<typeof normalizeDoormanChartsData>
+export type SmvnHistoryData = ReturnType<typeof normalizeDoormanChartsData>
 export type StakeActionType = typeof STAKE_ACTION | typeof UNSTAKE_ACTION
-export type StakingSubsType = typeof DAPP_MVK_SMVK_STATS_SUB
+export type StakingSubsType = typeof DAPP_MVN_SMVN_STATS_SUB
 
 // nullable history default state types
-export type NullableMvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvkHistoryData['mvkHistoryData'] | null>
-export type NullableSmvkHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvkHistoryData['smvkHistoryData'] | null>
+export type NullableMvnHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvnHistoryData['mvnHistoryData'] | null>
+export type NullableSmvnHistoryChartsType = TupleKeyValueAny<ChartPeriodType, SmvnHistoryData['smvnHistoryData'] | null>
 
 export type DoormanContextStateType = {
-  mvkHistoryData: NullableMvkHistoryChartsType
-  smvkHistoryData: NullableSmvkHistoryChartsType
-  noChartData: SmvkHistoryData['noChartData']
-  totalStakedMvk: number
+  mvnHistoryData: NullableMvnHistoryChartsType
+  smvnHistoryData: NullableSmvnHistoryChartsType
+  noChartData: SmvnHistoryData['noChartData']
+  totalStakedMvn: number
   totalSupply: number
   maximumTotalSupply: number
 }
 
 export type NullableDoormanContextStateType = DeepNullable<
-  Omit<DoormanContextStateType, 'mvkHistoryData' | 'smvkHistoryData'>
+  Omit<DoormanContextStateType, 'mvnHistoryData' | 'smvnHistoryData'>
 > & {
-  mvkHistoryData: NullableMvkHistoryChartsType
-  smvkHistoryData: NullableSmvkHistoryChartsType
+  mvnHistoryData: NullableMvnHistoryChartsType
+  smvnHistoryData: NullableSmvnHistoryChartsType
 }
 
 export type DoormanContext = DoormanContextStateType & {

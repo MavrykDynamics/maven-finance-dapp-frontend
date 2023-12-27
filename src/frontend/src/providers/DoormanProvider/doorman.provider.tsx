@@ -17,8 +17,8 @@ import { ChartPeriodType } from 'types/charts.type'
 
 // consts
 import { MVN_DECIMALS } from 'utils/constants'
-import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS, DEFAULT_STAKING_CTX } from './helpers/doorman.consts'
-import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
+import { DAPP_MVN_SMVN_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS, DEFAULT_STAKING_CTX } from './helpers/doorman.consts'
+import { DAPP_MVK_SMVN_STATS } from './queries/doorman.query'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
@@ -36,35 +36,35 @@ const DoormanProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   // subscribes
-  useQueryWithRefetch(DAPP_MVK_SMVK_STATS, {
-    skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
+  useQueryWithRefetch(DAPP_MVK_SMVN_STATS, {
+    skip: !activeSubs[DAPP_MVN_SMVN_STATS_SUB] || !doormanAddress,
     variables: {
       doormanContractAddress: doormanAddress,
     },
-    onCompleted: (data) => updateMvkSmvkStats(data),
+    onCompleted: (data) => updateMvkSmvnStats(data),
     onError: (error) => handleApolloError(error, 'DAPP_MVK_SMVK_STATS_SUB'),
   })
 
   // methods to update context data
   const updateStakeHistoryData = (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {
-    const { smvkHistoryData, mvkHistoryData, noChartData } = normalizeDoormanChartsData(historyData, period)
+    const { smvnHistoryData, mvnHistoryData, noChartData } = normalizeDoormanChartsData(historyData, period)
 
     setStakingCtxState((prevState) => ({
       ...prevState,
-      smvkHistoryData: { ...prevState.smvkHistoryData, [period]: smvkHistoryData },
-      mvkHistoryData: { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
+      smvnHistoryData: { ...prevState.smvnHistoryData, [period]: smvnHistoryData },
+      mvnHistoryData: { ...prevState.mvnHistoryData, [period]: mvnHistoryData },
       noChartData,
     }))
   }
 
-  const updateMvkSmvkStats = (storage: GetDappSmvkMvkStatsQuery) => {
+  const updateMvkSmvnStats = (storage: GetDappSmvkMvkStatsQuery) => {
     const {
       mavryk_user: [doormanContractBalances],
       mvk_token: [mvkTokenData],
     } = storage
     setStakingCtxState((prevState) => ({
       ...prevState,
-      totalStakedMvk: convertNumberForClient({
+      totalStakedMvn: convertNumberForClient({
         number: doormanContractBalances?.mvk_balance ?? 0,
         grade: MVN_DECIMALS,
       }),

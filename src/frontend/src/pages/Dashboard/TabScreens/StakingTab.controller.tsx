@@ -30,12 +30,12 @@ import CustomLink from 'app/App.components/CustomLink/CustomLink'
  * TODO: will need only to subscribe to staking chart, and get it's loading here, as staking stats data is subscribed in controller
  */
 export const StakingTab = () => {
-  const { totalSupply, totalStakedMvk, isLoading: isStakingLoading } = useDoormanContext()
+  const { totalSupply, totalStakedMvn, isLoading: isStakingLoading } = useDoormanContext()
 
-  const { smvkHistoryData, isLoading: isChartsDataLoading, noChartData } = useDoormanHistory(TWENTY_FOUR_HOURS)
+  const { smvnHistoryData, isLoading: isChartsDataLoading, noChartData } = useDoormanHistory(TWENTY_FOUR_HOURS)
 
-  const mli = calcMLI(totalSupply, totalStakedMvk)
-  const fee = calcExitFee(totalSupply, totalStakedMvk)
+  const mli = calcMLI(totalSupply, totalStakedMvn)
+  const fee = calcExitFee(totalSupply, totalStakedMvn)
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_stakingTab_bg.png">
@@ -103,10 +103,10 @@ export const StakingTab = () => {
             <StakingHistoryChartWrapper>
               <Chart
                 isLoading={isChartsDataLoading}
-                numberOfItemsToDisplay={smvkHistoryData.length && !noChartData ? smvkHistoryData.length : 10}
+                numberOfItemsToDisplay={smvnHistoryData.length && !noChartData ? smvnHistoryData.length : 10}
                 data={{
                   type: AREA_CHART_TYPE,
-                  plots: smvkHistoryData,
+                  plots: smvnHistoryData,
                 }}
                 settings={{
                   height: 100,

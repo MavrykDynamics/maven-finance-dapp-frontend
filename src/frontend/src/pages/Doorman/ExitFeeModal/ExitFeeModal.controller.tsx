@@ -28,7 +28,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types
 import { InputProps } from 'app/App.components/Input/newInput.type'
-import { unstakeMVK } from 'providers/DoormanProvider/actions/doorman.actions'
+import { unstakeMVN } from 'providers/DoormanProvider/actions/doorman.actions'
 import { useCallback, useMemo } from 'react'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
@@ -38,11 +38,11 @@ type ExitFeeModalPropsType = {
   closePopup: () => void
   show: boolean
   data: {
-    mvkExchangeRate: number
-    mySMvkTokenBalance: number
-    myMvkTokenBalance: number
-    totalStakedMvk: number
-    totalMVKSupply: number
+    mvnExchangeRate: number
+    mySMvnTokenBalance: number
+    myMvnTokenBalance: number
+    totalStakedMvn: number
+    totalMVNSupply: number
     userAddress: string | null
   }
   inputData: typeof DEFAULT_STAKE_UNSTAKE_INPUT
@@ -52,7 +52,7 @@ type ExitFeeModalPropsType = {
 export const ExitFeeModal = ({
   closePopup,
   show,
-  data: { mvkExchangeRate, mySMvkTokenBalance, myMvkTokenBalance, totalStakedMvk, userAddress, totalMVKSupply },
+  data: { mvnExchangeRate, mySMvnTokenBalance, myMvnTokenBalance, totalStakedMvn, userAddress, totalMVNSupply },
   inputData,
   setInputData,
 }: ExitFeeModalPropsType) => {
@@ -66,10 +66,10 @@ export const ExitFeeModal = ({
   } = useDappConfigContext()
 
   const parsedInputAmount = Number(inputData.amount)
-  const convertedValue = mvkExchangeRate ? parsedInputAmount * mvkExchangeRate : 0
+  const convertedValue = mvnExchangeRate ? parsedInputAmount * mvnExchangeRate : 0
 
-  const mli = calcMLI(totalMVKSupply, totalStakedMvk)
-  const fee = calcExitFee(totalMVKSupply, totalStakedMvk)
+  const mli = calcMLI(totalMVNSupply, totalStakedMvn)
+  const fee = calcExitFee(totalMVNSupply, totalStakedMvn)
 
   const unstakeAction = useCallback(
     async (unstakeAmount: number) => {
@@ -88,7 +88,7 @@ export const ExitFeeModal = ({
         return null
       }
 
-      return await unstakeMVK(unstakeAmount, doormanAddress)
+      return await unstakeMVN(unstakeAmount, doormanAddress)
     },
     [bug, doormanAddress, userAddress],
   )
@@ -114,12 +114,12 @@ export const ExitFeeModal = ({
 
     const validationStatus = stakingInputValidation({
       amount: Number(value),
-      myMvkTokenBalance,
-      mySMvkTokenBalance,
+      myMvnTokenBalance: myMvnTokenBalance,
+      mySMvnTokenBalance: mySMvnTokenBalance,
       userAddress,
     })
 
-    const errorMessage = Number(value) > Number(mySMvkTokenBalance) ? "You don't have enought sMVK to unstake" : ''
+    const errorMessage = Number(value) > Number(mySMvnTokenBalance) ? "You don't have enought sMVN to unstake" : ''
 
     setInputData({ ...inputData, amount: value, validation: validationStatus, errorMessage })
   }
@@ -134,7 +134,6 @@ export const ExitFeeModal = ({
       setInputData({ ...inputData, amount: '0' })
     }
   }
-
   const inputProps: InputProps = {
     type: 'number',
     value: inputData.amount,
@@ -147,13 +146,13 @@ export const ExitFeeModal = ({
     <PopupContainer onClick={closePopup} show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="exitFee">
         <button onClick={closePopup} className="close-modal" />
-        <h1>Unstake your MVK</h1>
+        <h1>Unstake your MVN</h1>
 
         <ExitFeeModalContent>
           <label>Amount to Unstake:</label>
           <Input
             className={`input-with-rate transparent-child-wrap`}
-            children={<InputPinnedTokenInfo>MVK</InputPinnedTokenInfo>}
+            children={<InputPinnedTokenInfo>MVN</InputPinnedTokenInfo>}
             inputProps={inputProps}
             settings={{
               inputStatus: inputData.validation,
@@ -165,16 +164,16 @@ export const ExitFeeModal = ({
           <ExitFeeModalStats>
             <div>
               <h4>
-                MVK Loyalty Index
-                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
+                Maven Loyalty Index
+                <CustomLink to="https://docs.s.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
                     </Tooltip.Trigger>
                     <Tooltip.Content>
-                      The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK,
-                      the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the
-                      MLI, and the exit fee will rise. Click to read more.
+                      The Maven Loyalty Index (MLI) is a metric that balances MVN & sMVN. The more MVN is staked v.s.
+                      MVN, the higher the MLI, and the lower the exit fee is. The less MVN staked v.s. MVN, the lower
+                      the MLI, and the exit fee will rise. Click to read more.
                     </Tooltip.Content>
                   </Tooltip>
                 </CustomLink>
@@ -194,7 +193,7 @@ export const ExitFeeModal = ({
                     </Tooltip.Trigger>
                     <Tooltip.Content>
                       The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit
-                      fees are paid directly to sMVK stakeholders for remaining active participants in securing the
+                      fees are paid directly to sMVN stakeholders for remaining active participants in securing the
                       network. Click to read more.
                     </Tooltip.Content>
                   </Tooltip>

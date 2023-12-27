@@ -32,7 +32,7 @@ import {
   VAULTS_TAB_ID,
 } from './Dashboard.utils'
 import {MVN_TOKEN_SYMBOL} from 'utils/constants'
-import {DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS} from 'providers/DoormanProvider/helpers/doorman.consts'
+import {DAPP_MVN_SMVN_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS} from 'providers/DoormanProvider/helpers/doorman.consts'
 
 // hooks
 import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
@@ -58,7 +58,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [DAPP_MVK_SMVK_STATS_SUB]: true,
+      [DAPP_MVN_SMVN_STATS_SUB]: true,
     })
 
     return () => {
@@ -191,12 +191,12 @@ const TabById = ({ activeTab }: { activeTab: TabId }) => {
 const DashboardMvkData = () => {
   const { tokensPrices } = useTokensContext()
   // staking stats loading is handled in <Dashboard /> component
-  const { totalStakedMvk, totalSupply, maximumTotalSupply } = useDoormanContext()
+  const { totalStakedMvn, totalSupply, maximumTotalSupply } = useDoormanContext()
 
   const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
   const mvkStatsBlock: mvkStatsType = {
     marketCap: mvkExchangeRate * totalSupply,
-    stakedMvk: totalStakedMvk,
+    stakedMvk: totalStakedMvn,
     circuatingSupply: totalSupply,
     maxSupply: maximumTotalSupply,
     livePrice: mvkExchangeRate,

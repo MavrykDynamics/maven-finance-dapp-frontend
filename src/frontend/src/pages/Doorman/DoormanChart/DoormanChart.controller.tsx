@@ -81,18 +81,18 @@ const findExitFeeClosestTimePlot = (exitFeePlots: Array<AreaChartPlotType>, exit
 }
 
 export function DoormanChart() {
-  const { totalStakedMvk, totalSupply } = useDoormanContext()
+  const { totalStakedMvn, totalSupply } = useDoormanContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const currentExitFee = calcExitFee(totalSupply, totalStakedMvk)
-  const currentMLI = calcMLI(totalSupply, totalStakedMvk)
+  const currentExitFee = calcExitFee(totalSupply, totalStakedMvn)
+  const currentMLI = calcMLI(totalSupply, totalStakedMvn)
 
   const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
   const {
-    smvkHistoryData,
-    mvkHistoryData,
+    smvnHistoryData,
+    mvnHistoryData,
     isLoading: isChartsDataLoading,
     noChartData,
   } = useDoormanHistory(chartPeriod)
@@ -102,7 +102,7 @@ export function DoormanChart() {
   const handleChangeTabs = (tabId?: number) => setActiveTabId(tabsList.find(({ id }) => tabId === id)?.id ?? 1)
 
   const exitFeeMarkerTime = findExitFeeClosestTimePlot(MLI_FEE_CHART_DATA, currentExitFee)
-  const numberOfItemsToDisplay = smvkHistoryData.length < 10 && !noChartData ? smvkHistoryData.length : 10
+  const numberOfItemsToDisplay = smvnHistoryData.length < 10 && !noChartData ? smvnHistoryData.length : 10
 
   return (
     <Wrapper>
@@ -119,11 +119,11 @@ export function DoormanChart() {
               space={15}
             />
             <div className="double-chart-legend">
-              <div className="row mvk">
+              <div className="row mvn">
                 <div className="circle" />
                 MVN
               </div>
-              <div className="row smvk">
+              <div className="row smvn">
                 <div className="circle" />
                 sMVN
               </div>
@@ -135,7 +135,7 @@ export function DoormanChart() {
               firstChart={{
                 data: {
                   type: 'area',
-                  plots: mvkHistoryData,
+                  plots: mvnHistoryData,
                 },
                 colors: {
                   lineColor: colors[themeSelected].primaryChartColor,
@@ -146,7 +146,7 @@ export function DoormanChart() {
               secondChart={{
                 data: {
                   type: 'area',
-                  plots: smvkHistoryData,
+                  plots: smvnHistoryData,
                 },
                 colors: {
                   lineColor: colors[themeSelected].secondaryChartColor,
@@ -232,7 +232,7 @@ export function DoormanChart() {
               isLoading={isChartsDataLoading}
               data={{
                 type: AREA_CHART_TYPE,
-                plots: smvkHistoryData,
+                plots: smvnHistoryData,
               }}
               settings={{
                 height: 370,

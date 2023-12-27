@@ -1,12 +1,12 @@
-import { DoormanContextStateType, NullableDoormanContextStateType } from '../doorman.provider.types'
-import { ALL_TIME, ONE_HOUR, ONE_MONTH, ONE_WEEK, TWENTY_FOUR_HOURS } from 'consts/charts.const'
+import {DoormanContextStateType, NullableDoormanContextStateType} from '../doorman.provider.types'
+import {ALL_TIME, ONE_HOUR, ONE_MONTH, ONE_WEEK, TWENTY_FOUR_HOURS} from 'consts/charts.const'
 
 // CONSTS FOR STAKE ACTIONS
 export const STAKE_ACTION = 'stake'
 export const UNSTAKE_ACTION = 'unstake'
 
 // CONSTS FOR STAKING PROVIDER STATES
-export const DAPP_MVK_SMVK_STATS_SUB = 'mvkSmvkStatsSub'
+export const DAPP_MVN_SMVN_STATS_SUB = 'mvnSmvnStatsSub'
 
 export const DEFAULT_DOORMAN_HISTORY = {
   [ONE_HOUR]: null,
@@ -17,23 +17,23 @@ export const DEFAULT_DOORMAN_HISTORY = {
 }
 
 export const DEFAULT_STAKING_ACTIVE_SUBS = {
-  [DAPP_MVK_SMVK_STATS_SUB]: false,
+  [DAPP_MVN_SMVN_STATS_SUB]: false,
 } as const
 
 export const DEFAULT_STAKING_CTX: NullableDoormanContextStateType = {
-  totalStakedMvk: null,
+  totalStakedMvn: null,
   totalSupply: null,
   maximumTotalSupply: null,
-  mvkHistoryData: DEFAULT_DOORMAN_HISTORY,
-  smvkHistoryData: DEFAULT_DOORMAN_HISTORY,
+  mvnHistoryData: DEFAULT_DOORMAN_HISTORY,
+  smvnHistoryData: DEFAULT_DOORMAN_HISTORY,
   noChartData: false,
 }
 
 export const EMPTY_DOORMAN_CTX: DoormanContextStateType = {
-  totalStakedMvk: 0,
+  totalStakedMvn: 0,
   totalSupply: 0,
   maximumTotalSupply: 0,
-  mvkHistoryData: DEFAULT_DOORMAN_HISTORY,
-  smvkHistoryData: DEFAULT_DOORMAN_HISTORY,
+  mvnHistoryData: DEFAULT_DOORMAN_HISTORY,
+  smvnHistoryData: DEFAULT_DOORMAN_HISTORY,
   noChartData: false,
 }
