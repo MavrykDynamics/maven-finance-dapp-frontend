@@ -5,7 +5,7 @@ import {
   SUBMIT_EGOV_PROPOSAL_ACTION,
   VOTE_FOR_EGOV_PROPOSAL_ACTION,
 } from './helpers/eGov.consts'
-import { normalizeEGovProposal } from './helpers/eGov.normalizer'
+import {normalizeEGovProposal} from './helpers/eGov.normalizer'
 
 // eGov data types
 export type EGovProposalType = ReturnType<typeof normalizeEGovProposal>
@@ -24,8 +24,8 @@ export type EGovContextState = {
   config: {
     emergencyGovActive: boolean
     requiredFeeMutez: number
-    sMvkPercentageRequired: number
-    minStakedMvkRequiredToVote: number
+    sMvnPercentageRequired: number
+    minStakedMvnRequiredToVote: number
   }
   allProposals: Array<number>
   pastProposals: Array<number>

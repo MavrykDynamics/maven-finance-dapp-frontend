@@ -45,12 +45,12 @@ export const normalizeEGovProposal = (
 
     proposerAddress: indexerProposal.proposer.address,
 
-    smvkPercentageRequired: indexerProposal.smvk_percentage_required / 100,
-    smvkRequiredForTrigger: convertNumberForClient({
+    smvnPercentageRequired: indexerProposal.smvk_percentage_required / 100,
+    smvnRequiredForTrigger: convertNumberForClient({
       number: indexerProposal.smvk_required_for_trigger,
       grade: MVN_DECIMALS,
     }),
-    totalSmvkVotes: convertNumberForClient({ number: indexerProposal.total_smvk_votes, grade: MVN_DECIMALS }),
+    totalSmvnVotes: convertNumberForClient({ number: indexerProposal.total_smvk_votes, grade: MVN_DECIMALS }),
 
     voters: proposalVoters,
   }

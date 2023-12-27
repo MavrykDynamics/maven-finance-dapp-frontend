@@ -40,7 +40,7 @@ export const EGovCard = ({ proposal }: Props) => {
   const { totalStakedMvn } = useDoormanContext()
   const { userTokensBalances, userAddress } = useUserContext()
   const {
-    config: { minStakedMvkRequiredToVote },
+    config: { minStakedMvnRequiredToVote },
   } = useEGovContext()
   const {
     globalLoadingState: { isActionActive },
@@ -52,8 +52,8 @@ export const EGovCard = ({ proposal }: Props) => {
     voters,
     isActive,
     status,
-    totalSmvkVotes,
-    smvkPercentageRequired,
+    totalSmvnVotes,
+    smvnPercentageRequired,
     title,
     description,
     expirationTimestamp,
@@ -63,15 +63,15 @@ export const EGovCard = ({ proposal }: Props) => {
 
   const votingStatistic = useMemo(
     () => ({
-      forVotesMVNTotal: totalSmvkVotes,
-      unusedVotesMVNTotal: totalStakedMvn - totalSmvkVotes,
-      quorum: smvkPercentageRequired,
+      forVotesMVNTotal: totalSmvnVotes,
+      unusedVotesMVNTotal: totalStakedMvn - totalSmvnVotes,
+      quorum: smvnPercentageRequired,
     }),
-    [smvkPercentageRequired, totalSmvkVotes, totalStakedMvn],
+    [smvnPercentageRequired, totalSmvnVotes, totalStakedMvn],
   )
 
   const isUserVoter = voters.find(({ voterAddress }) => userAddress === voterAddress)
-  const userSmvkAmount = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
+  const userSmvnAmount = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
   const voteForEGovProposalProps: HookContractActionArgs = useMemo(
     () => ({
@@ -84,7 +84,7 @@ export const EGovCard = ({ proposal }: Props) => {
           }
 
           if (!emergencyGovernanceAddress) {
-            bug('Wrong evergency governance address')
+            bug('Wrong emergency governance address')
             return null
           }
 
@@ -122,7 +122,7 @@ export const EGovCard = ({ proposal }: Props) => {
         <VotingArea
           voteStatistics={votingStatistic}
           isVotingActive
-          disableVotingButtons={Boolean(isUserVoter) || userSmvkAmount < minStakedMvkRequiredToVote || isActionActive}
+          disableVotingButtons={Boolean(isUserVoter) || userSmvnAmount < minStakedMvnRequiredToVote || isActionActive}
           handleVote={handleEGovProposalVote}
           buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}
           className="eGov-voting"

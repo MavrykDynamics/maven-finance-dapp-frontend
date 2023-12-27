@@ -53,11 +53,11 @@ const EGovProvider = ({ children }: Props) => {
             number: eGovCOnfig.required_fee_mutez,
             grade: XTZ_DECIMALS,
           }),
-          minStakedMvkRequiredToVote: convertNumberForClient({
+          minStakedMvnRequiredToVote: convertNumberForClient({
             number: eGovCOnfig.min_smvk_required_to_vote,
             grade: MVN_DECIMALS,
           }),
-          sMvkPercentageRequired: eGovCOnfig.smvk_percentage_required / 100,
+          sMvnPercentageRequired: eGovCOnfig.smvk_percentage_required / 100,
         },
       }))
     },

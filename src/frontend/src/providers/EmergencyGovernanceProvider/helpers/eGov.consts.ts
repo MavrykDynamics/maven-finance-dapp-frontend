@@ -1,4 +1,4 @@
-import { EGovSubsRecordType } from '../emergencyGovernance.provider.types'
+import {EGovSubsRecordType} from '../emergencyGovernance.provider.types'
 
 // actions
 export const VOTE_FOR_EGOV_PROPOSAL_ACTION = 'VOTE_FOR_EGOV_PROPOSAL_ACTION'
@@ -17,8 +17,8 @@ export const EMPTY_EGOV_CTX = {
   config: {
     emergencyGovActive: false,
     requiredFeeMutez: 0,
-    sMvkPercentageRequired: 0,
-    minStakedMvkRequiredToVote: 0,
+    sMvnPercentageRequired: 0,
+    minStakedMvnRequiredToVote: 0,
   },
   allProposals: [],
   pastProposals: [],
