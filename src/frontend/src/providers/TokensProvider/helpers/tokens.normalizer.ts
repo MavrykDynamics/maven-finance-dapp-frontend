@@ -37,8 +37,8 @@ export const normalizeTokenPrices = (feedsLedger: TokenPricesFeedsType) => {
   }, {})
 }
 
-// TODO: if need add support of loan tokens and mTokens to mvk | smvk
-const handleMvkToken = ({
+// TODO: if need add support of loan tokens and mTokens to mvn | smvn
+const handleMvnToken = ({
   token_address,
   token_id,
   tokenType,
@@ -51,38 +51,38 @@ const handleMvkToken = ({
   parsedMetadata: TokenIndexerMetadataType
   lending_controller_collateral_tokens: TokensMetadataQuery['token'][number]['lending_controller_collateral_tokens']
 }): {
-  smvk: TokenMetadataType | null
-  mvk: TokenMetadataType | null
+  smvn: TokenMetadataType | null
+  mvn: TokenMetadataType | null
 } => {
-  const smvkTokenData = getTokenSymbolAndName('smvk')
-  const mvkTokenData = getTokenSymbolAndName('mvk')
+  const smvnTokenData = getTokenSymbolAndName('smvn')
+  const mvnTokenData = getTokenSymbolAndName('mvn')
 
   const collateralData = {
     indexerName: lending_controller_collateral_tokens?.[0]?.token_name,
-    // sMVK collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
+    // sMVN collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
     isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
     isScaled: lending_controller_collateral_tokens?.[0]?.is_scaled_token,
     isStaked: lending_controller_collateral_tokens?.[0]?.is_staked_token,
     minDepositAmount: DEFAULT_MIN_COLLATERAL_AMOUNT,
   }
 
-  const smvkTokenMetadata: TokenMetadataType | null = smvkTokenData
+  const smvnTokenMetadata: TokenMetadataType | null = smvnTokenData
     ? {
-        ...smvkTokenData,
+        ...smvnTokenData,
         id: token_id,
         type: tokenType,
         decimals: Number(parsedMetadata.decimals),
         address: SMVN_TOKEN_ADDRESS,
-        ...(lending_controller_collateral_tokens?.[0]?.token_name === 'smvk'
+        ...(lending_controller_collateral_tokens?.[0]?.token_name === 'smvn'
           ? {
               loanData: collateralData,
             }
           : {}),
       }
     : null
-  const mvkTokenMetadata: TokenMetadataType | null = mvkTokenData
+  const mvnTokenMetadata: TokenMetadataType | null = mvnTokenData
     ? {
-        ...mvkTokenData,
+        ...mvnTokenData,
         id: token_id,
         type: tokenType,
         decimals: Number(parsedMetadata.decimals),
@@ -91,15 +91,15 @@ const handleMvkToken = ({
     : null
 
   return {
-    smvk: smvkTokenMetadata,
-    mvk: mvkTokenMetadata,
+    smvn: smvnTokenMetadata,
+    mvn: mvnTokenMetadata,
   }
 }
 
 /**
  * farm can have liquidityPairTokenParsed -> 2 tokens unite into 1 token,
  * and liquidityTokenParsed -> 1 tokens that represents farm
- * this util parsing metadata of that tokens to get it's address and symbol
+ * this util parsing metadata of that tokens to get its address and symbol
  */
 const parseFarmLiquidityToken = (lpTokenMetadata: any) => {
   const liquidityPairTokenParsed = farmLiquidityPairTokenMetadataSchema.safeParse(lpTokenMetadata)
@@ -214,7 +214,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
             acc.farmLpTokens.push(farmLpTokenMetadata.address)
           }
         }
-
+        // TODO: rebranding - change mvk_tokens to mvn_tokens
         const {
           token_id,
           token_address,
@@ -247,9 +247,10 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
           throw new Error(`Token do not have valid symbol, name or icon ${symbol}, ${name}, ${tokenIcon}`)
         }
 
-        // we have 2 mvk tokens in indexer one is empty hardcoded and one is token with data, so we need to exclude empty one
-        if (symbol === 'MVK' && !mvk_tokens?.[0]?.address) {
-          throw new Error(`Omit hardcoded fake mvk token`)
+        // we have 2 mvn tokens in indexer one is empty hardcoded and one is token with data, so we need to exclude empty one
+        // TODO: rebranding - change mvk_tokens to mvn_tokens
+        if (symbol === 'MVN' && !mvk_tokens?.[0]?.address) {
+          throw new Error(`Omit hardcoded fake mvn token`)
         }
 
         let tokenMetadata: TokenMetadataType = {
@@ -262,9 +263,10 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
           decimals: Number(parsedMetadata.decimals),
         }
 
-        // if token is mvk we need to add mvk & smvk tokens, it's special case
+        // if token is mvn we need to add mvn & smvn tokens, it's special case
+        // TODO: rebranding - change mvk_tokens to mvn_tokens
         if (mvk_tokens?.[0]?.address) {
-          const { smvk, mvk } = handleMvkToken({
+          const { smvn, mvn } = handleMvnToken({
             token_id,
             token_address,
             tokenType,
@@ -272,14 +274,14 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
             lending_controller_collateral_tokens,
           })
 
-          if (mvk) {
-            acc.tokensMetadata[mvk.address] = { ...acc.tokensMetadata[mvk.address], ...mvk }
+          if (mvn) {
+            acc.tokensMetadata[mvn.address] = { ...acc.tokensMetadata[mvn.address], ...mvn }
           }
 
-          if (smvk) {
-            acc.tokensMetadata[smvk.address] = { ...acc.tokensMetadata[smvk.address], ...smvk }
+          if (smvn) {
+            acc.tokensMetadata[smvn.address] = { ...acc.tokensMetadata[smvn.address], ...smvn }
 
-            if (checkWhetherTokenIsCollateralToken(smvk)) acc.collateralTokens.push(smvk.address)
+            if (checkWhetherTokenIsCollateralToken(smvn)) acc.collateralTokens.push(smvn.address)
           }
 
           return acc
