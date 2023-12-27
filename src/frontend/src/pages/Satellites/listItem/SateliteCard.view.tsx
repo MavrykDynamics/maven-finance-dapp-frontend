@@ -129,15 +129,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     address: satelliteAddress,
   } = satellite
 
-  const freesMVKSpace = Math.max(sMvnBalance * delegationRatio - totalDelegatedAmount, 0)
+  const freesMVNSpace = Math.max(sMvnBalance * delegationRatio - totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvnIsDelegatedTo
-  const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) >= 1
+  const balanceOver1SMvn = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) >= 1
   const isSatelliteActive = satelliteStatus === ACTIVE_SATELLITE_STATUS && currentlyRegistered
 
   // Actions ---------------------------------------------------------
 
   // delegate action --------------
-  const delegeteAction = useCallback(async () => {
+  const delegateAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
@@ -147,16 +147,16 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
-    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
+    const mvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
+    const sMvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
-    if (mvkTokenBalance === 0) {
-      bug('Unable to Delegate', 'Please buy MVK and stake it')
+    if (mvnTokenBalance === 0) {
+      bug('Unable to Delegate', 'Please buy MVN and stake it')
       return null
     }
 
-    if (sMvkTokenBalance === 0) {
-      bug('Unable to Delegate', 'Please stake your MVK')
+    if (sMvnTokenBalance === 0) {
+      bug('Unable to Delegate', 'Please stake your MVN')
       return null
     }
 
@@ -166,15 +166,15 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const delegateContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: DELEGATE_ACTION,
-      actionFn: delegeteAction,
+      actionFn: delegateAction,
     }),
-    [delegeteAction],
+    [delegateAction],
   )
 
   const { action: delegateCallback } = useContractAction(delegateContractActionProps)
 
   // undelegate action --------------
-  const undelegeteAction = useCallback(async () => {
+  const undelegateAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
@@ -197,9 +197,9 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const unDelegateContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: UNDELEGATE_ACTION,
-      actionFn: undelegeteAction,
+      actionFn: undelegateAction,
     }),
-    [undelegeteAction],
+    [undelegateAction],
   )
 
   const { action: undelegateCallback } = useContractAction(unDelegateContractActionProps)
@@ -264,9 +264,9 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           </div>
           <div className="grid-item">
             <SatelliteTextGroup>
-              <SatelliteMainText>Free sMVK Space</SatelliteMainText>
+              <SatelliteMainText>Free sMVN Space</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={freesMVKSpace} />
+                <CommaNumber value={freesMVNSpace} />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
@@ -293,7 +293,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
                   </Tooltip>
                 </div>
                 <SatelliteSubText>
-                  <CommaNumber value={satellite.totalVotingPower} endingText="sMVK" />
+                  <CommaNumber value={satellite.totalVotingPower} endingText="sMVN" />
                 </SatelliteSubText>
               </SatelliteTextGroup>
             )}
@@ -353,7 +353,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
                 onClick={delegateCallback}
-                disabled={isActionActive || !balanceOver1SMvk}
+                disabled={isActionActive || !balanceOver1SMvn}
               >
                 <Icon id="man-check" />
                 Delegate

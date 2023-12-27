@@ -18,7 +18,7 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { NOT_STAKING_MVK_TEXT } from 'app/App.components/Info/Banners/banners.texts'
+import { NOT_STAKING_MVN_TEXT } from 'app/App.components/Info/Banners/banners.texts'
 import { getTotalDelegatedMVN } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // styles
@@ -81,7 +81,7 @@ const Satellites = () => {
       getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) === 0 &&
       userAddress ? (
         <NotStakingBannerStyled>
-          <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>
+          <Info text={NOT_STAKING_MVN_TEXT} type={INFO_ERROR}>
             <div className="link-btn">
               <Link to="/staking">
                 <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>

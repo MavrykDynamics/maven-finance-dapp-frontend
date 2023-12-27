@@ -11,7 +11,7 @@ import {
 } from 'app/App.components/Pagination/pagination.consts'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { NOT_STAKING_MVK_TEXT } from 'app/App.components/Info/Banners/banners.texts'
+import { NOT_STAKING_MVN_TEXT } from 'app/App.components/Info/Banners/banners.texts'
 import { handleFilterSatellites, handleSortSatellites } from './SatelliteNodes.helpers'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
@@ -45,7 +45,7 @@ import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSa
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
   { text: 'Highest Fee', value: 'satelliteFee' },
-  { text: 'Delegated MVK', value: 'totalDelegatedAmount' },
+  { text: 'Delegated MVN', value: 'totalDelegatedAmount' },
   { text: 'Participation', value: 'participation' },
 ]
 
@@ -132,7 +132,7 @@ const SatelliteNodes = () => {
       getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) === 0 &&
       userAddress ? (
         <NotStakingBannerStyled>
-          <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>
+          <Info text={NOT_STAKING_MVN_TEXT} type={INFO_ERROR}>
             <div className="link-btn">
               <Link to="/staking">
                 <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>

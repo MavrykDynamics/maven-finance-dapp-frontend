@@ -23,7 +23,7 @@ export const handleSortSatellites =
         return satelliteA.satelliteFee - satelliteB.satelliteFee
       case 'Highest Fee':
         return satelliteB.satelliteFee - satelliteA.satelliteFee
-      case 'Delegated MVK':
+      case 'Delegated MVN':
         return (
           satelliteB.totalDelegatedAmount +
           satelliteB.sMvnBalance -
