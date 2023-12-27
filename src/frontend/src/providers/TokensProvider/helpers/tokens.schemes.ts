@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import {z} from 'zod'
 
 // full token schema
 export const tokenGqlSchema = z.object({
@@ -36,7 +36,7 @@ export const tokenGqlSchema = z.object({
       }),
     ])
     .or(z.tuple([])),
-
+  // TODO: rebranding - nvk_tokens to mvn_tokens
   mvk_tokens: z
     .tuple([
       z.object({
