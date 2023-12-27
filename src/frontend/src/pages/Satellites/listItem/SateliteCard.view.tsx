@@ -30,7 +30,7 @@ import {
 
 // helpers
 import {
-  getSatelliteParticipations,
+  getSatelliteParticipation,
   getStatusColorBasedOnOracleType,
 } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -114,7 +114,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const { oracleStatus, satelliteStatus } = useSatelliteStatuses(satellite)
 
-  const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+  const { proposalParticipation, votingParticipation } = getSatelliteParticipation({
     satellite,
     proposalsAmount,
     satelliteGovActionsAmount,
@@ -123,13 +123,13 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const {
     currentlyRegistered,
-    sMvkBalance,
+    sMvnBalance,
     delegationRatio,
     totalDelegatedAmount,
     address: satelliteAddress,
   } = satellite
 
-  const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
+  const freesMVKSpace = Math.max(sMvnBalance * delegationRatio - totalDelegatedAmount, 0)
   const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvnIsDelegatedTo
   const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) >= 1
   const isSatelliteActive = satelliteStatus === ACTIVE_SATELLITE_STATUS && currentlyRegistered
@@ -303,7 +303,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={(proposalParticipation + votingPartisipation) / 2} endingText="%" />
+                <CommaNumber value={(proposalParticipation + votingParticipation) / 2} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>

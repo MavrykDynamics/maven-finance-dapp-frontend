@@ -49,7 +49,7 @@ export const BecomeSatellite = () => {
   } = useDappConfigContext()
   const {
     satelliteMapper,
-    setSatelliteAddressToSubsctibe,
+    setSatelliteAddressToSubscribe,
     changeSatellitesSubscriptionsList,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
@@ -107,7 +107,7 @@ export const BecomeSatellite = () => {
         })
 
         if (satelliteFromGql.data.satellite[0]?.user.address === userAddress) {
-          setSatelliteAddressToSubsctibe(userAddress)
+          setSatelliteAddressToSubscribe(userAddress)
           return
         }
 
@@ -121,7 +121,7 @@ export const BecomeSatellite = () => {
 
     checkWhetherSatelliteExists()
 
-    return () => setSatelliteAddressToSubsctibe(null)
+    return () => setSatelliteAddressToSubscribe(null)
   }, [userAddress])
 
   const isPageLoading =

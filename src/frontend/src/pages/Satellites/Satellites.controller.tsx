@@ -19,7 +19,7 @@ import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/B
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { NOT_STAKING_MVK_TEXT } from 'app/App.components/Info/Banners/banners.texts'
-import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getTotalDelegatedMVN } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // styles
 import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -66,7 +66,7 @@ const Satellites = () => {
   const tabsInfo = useMemo(
     () => ({
       totalDelegetedMVK: (
-        <CommaNumber value={getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
+        <CommaNumber value={getTotalDelegatedMVN(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
       ),
       totalSatelliteOracles: activeSatellitesIds.length,
       numberOfDataFeeds: feedsAddresses.length > 50 ? feedsAddresses.length + '+' : feedsAddresses.length,

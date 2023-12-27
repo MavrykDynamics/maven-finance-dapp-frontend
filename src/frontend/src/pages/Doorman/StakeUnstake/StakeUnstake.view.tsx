@@ -88,13 +88,13 @@ export const StakeUnstakeView = ({
   } = useDappConfigContext()
   const { bug } = useToasterContext()
 
-  const { satelliteMapper, setSatelliteAddressToSubsctibe } = useSatellitesContext()
+  const { satelliteMapper, setSatelliteAddressToSubscribe } = useSatellitesContext()
 
   useEffect(() => {
     if (satelliteMvnIsDelegatedTo) {
-      setSatelliteAddressToSubsctibe(satelliteMvnIsDelegatedTo)
+      setSatelliteAddressToSubscribe(satelliteMvnIsDelegatedTo)
     }
-    return () => setSatelliteAddressToSubsctibe(null)
+    return () => setSatelliteAddressToSubscribe(null)
   }, [satelliteMvnIsDelegatedTo])
 
   const delegatedUser = satelliteMvnIsDelegatedTo ? satelliteMapper[satelliteMvnIsDelegatedTo] : null

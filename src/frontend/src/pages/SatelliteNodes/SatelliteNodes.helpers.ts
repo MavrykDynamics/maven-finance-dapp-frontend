@@ -1,4 +1,4 @@
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { SatelliteMapper, SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 export const handleSortSatellites =
@@ -26,26 +26,26 @@ export const handleSortSatellites =
       case 'Delegated MVK':
         return (
           satelliteB.totalDelegatedAmount +
-          satelliteB.sMvkBalance -
-          (satelliteA.totalDelegatedAmount + satelliteA.sMvkBalance)
+          satelliteB.sMvnBalance -
+          (satelliteA.totalDelegatedAmount + satelliteA.sMvnBalance)
         )
       case 'Participation':
-        const satelliteA_participation = getSatelliteParticipations({
+        const satelliteA_participation = getSatelliteParticipation({
           satellite: satelliteA,
           proposalsAmount,
           satelliteGovActionsAmount,
           finRequestsAmount,
         })
 
-        const satelliteB_participation = getSatelliteParticipations({
+        const satelliteB_participation = getSatelliteParticipation({
           satellite: satelliteB,
           proposalsAmount,
           satelliteGovActionsAmount,
           finRequestsAmount,
         })
         return (
-          (satelliteB_participation.proposalParticipation + satelliteB_participation.votingPartisipation) / 2 -
-          (satelliteA_participation.proposalParticipation + satelliteA_participation.votingPartisipation) / 2
+          (satelliteB_participation.proposalParticipation + satelliteB_participation.votingParticipation) / 2 -
+          (satelliteA_participation.proposalParticipation + satelliteA_participation.votingParticipation) / 2
         )
       default:
         return 0

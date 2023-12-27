@@ -10,7 +10,7 @@ import {
 import { SatelliteVotesQueryQuery } from 'utils/__generated__/graphql'
 
 // helpers
-import { calcPersent, convertNumberForClient } from '../../../utils/calcFunctions'
+import { calcPercent, convertNumberForClient } from '../../../utils/calcFunctions'
 
 // const
 import { MVN_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
@@ -26,7 +26,7 @@ type SatelliteVoteItemType = {
 /**
  *
  * @param satelliteOracleData – satellite predictions on feeds and rewards for this predictions
- * @returns@participatedFeeds – object where satellite participated and his latest prediction price, and his smvk & xtz rewards from this feed
+ * @returns@participatedFeeds – object where satellite participated and his latest prediction price, and his smvn & xtz rewards from this feed
  */
 const getSatelliteOracleRewards = (
   satelliteOracleData: SatellitesIndexerDataType['satellite'][number]['user']['aggregator_oracles'],
@@ -36,7 +36,7 @@ const getSatelliteOracleRewards = (
       string,
       {
         lastPredictedPrice: number | null
-        sMVKReward: number | null
+        sMVNReward: number | null
         XTZReward: number | null
         predictionTime: string | null
         predictionEpoch: number | null
@@ -51,7 +51,7 @@ const getSatelliteOracleRewards = (
         lastPredictedPrice: latestObservation?.data ?? null,
         predictionTime: latestObservation?.timestamp ?? null,
         predictionEpoch: latestObservation?.epoch ?? null,
-        sMVKReward: convertNumberForClient({
+        sMVNReward: convertNumberForClient({
           number: smvkRewardsAmount.aggregate?.sum?.reward ?? 0,
           grade: MVN_DECIMALS,
         }),
@@ -107,10 +107,10 @@ const getSatelliteOracleEfficiency = (satelliteUser: SatellitesIndexerDataType['
   const { epoch, round, init_epoch, init_round } = latestObservation
   const predictionSuccessRatio = epoch / Math.max(round, 1) - init_epoch / Math.max(init_round, 1)
 
-  return calcPersent(predictionSuccessRatio, totalFeedsObservation)
+  return calcPercent(predictionSuccessRatio, totalFeedsObservation)
 }
 
-export const normallizeSatellite = (satelliteRecord: SatellitesIndexerDataType['satellite'][number]) => {
+export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['satellite'][number]) => {
   try {
     const satelliteAddress = satelliteRecord.user.address
     const satelliteUser = satelliteRecord.user
@@ -156,18 +156,18 @@ export const normallizeSatellite = (satelliteRecord: SatellitesIndexerDataType['
         grade: MVN_DECIMALS,
       }),
 
-      mvkBalance: convertNumberForClient({
+      mvnBalance: convertNumberForClient({
         number: satelliteRecord?.user.mvk_balance,
         grade: MVN_DECIMALS,
       }),
-      sMvkBalance: convertNumberForClient({
+      sMvnBalance: convertNumberForClient({
         number: satelliteRecord?.user.smvk_balance,
         grade: MVN_DECIMALS,
       }),
       participatedFeeds,
       oracleEfficiency: getSatelliteOracleEfficiency(satelliteUser),
 
-      // votes & voting metrix
+      // votes & voting metrics
       lastVotedProposal:
         lastVotedProposal &&
         lastVotedProposal.governance_proposal.cycle === lastVotedProposal.governance_proposal.governance.cycle_id
@@ -188,7 +188,7 @@ export const normallizeSatellite = (satelliteRecord: SatellitesIndexerDataType['
       createdSatelliteGovProposalsAmount: satelliteUser.createdSatelliteGovActionsAmount.aggregate?.count ?? 0,
     }
   } catch (e) {
-    console.error('normallizeSatellite parsing error: ', { e })
+    console.error('normalizeSatellite parsing error: ', { e })
     return null
   }
 }
@@ -200,18 +200,18 @@ export const normalizeSatellitesLedger = (store: SatellitesIndexerDataType) => {
     oraclesIds: string[]
   }>(
     (acc, satelliteRecord) => {
-      const nomalizedSatellite = normallizeSatellite(satelliteRecord)
+      const normalizedSatellite = normalizeSatellite(satelliteRecord)
 
-      if (!nomalizedSatellite) return acc
+      if (!normalizedSatellite) return acc
 
-      acc.satelliteMapper[nomalizedSatellite.address] = nomalizedSatellite
+      acc.satelliteMapper[normalizedSatellite.address] = normalizedSatellite
 
-      if (nomalizedSatellite.currentlyRegistered && nomalizedSatellite.status === 0) {
-        acc.activeSatellitesIds.push(nomalizedSatellite.address)
+      if (normalizedSatellite.currentlyRegistered && normalizedSatellite.status === 0) {
+        acc.activeSatellitesIds.push(normalizedSatellite.address)
       }
 
-      if (Object.keys(nomalizedSatellite.participatedFeeds).length) {
-        acc.oraclesIds.push(nomalizedSatellite.address)
+      if (Object.keys(normalizedSatellite.participatedFeeds).length) {
+        acc.oraclesIds.push(normalizedSatellite.address)
       }
 
       return acc
@@ -224,7 +224,7 @@ export const normalizeSatellitesLedger = (store: SatellitesIndexerDataType) => {
   )
 }
 
-export const normalizeSatelliteVotings = ({
+export const normalizeSatelliteVotes = ({
   governance_proposals_votes,
   governance_financial_requests_votes,
   governance_satellite_actions_votes,

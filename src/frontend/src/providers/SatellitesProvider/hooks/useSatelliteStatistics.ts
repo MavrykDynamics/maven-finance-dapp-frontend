@@ -10,7 +10,7 @@ import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNull
 type SatelliteStatsStateType = {
   totalActiveSatellites: number
   totalOracleNetworks: number
-  totalDelegatedMVK: number
+  totalDelegatedMVN: number
   averageOracleReward: number
   oracleRewardsTotal: number
 }
@@ -18,7 +18,7 @@ type SatelliteStatsStateType = {
 const DEFAULT_SATELLITES_STATS = {
   totalActiveSatellites: 0,
   totalOracleNetworks: 0,
-  totalDelegatedMVK: 0,
+  totalDelegatedMVN: 0,
   averageOracleReward: 0,
   oracleRewardsTotal: 0,
 }
@@ -27,16 +27,16 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
   const [storage, setStorage] = useState<DeepNullable<SatelliteStatsStateType>>({
     totalActiveSatellites: null,
     totalOracleNetworks: null,
-    totalDelegatedMVK: null,
+    totalDelegatedMVN: null,
     averageOracleReward: null,
     oracleRewardsTotal: null,
   })
-
+  // TODO: rebranding - change all mvk instances to mvn
   useQueryWithRefetch(
     SATELLITES_STATS,
     {
       onCompleted: (data) => {
-        const totalDelegatedMVK = data.satellite_aggregate.nodes.reduce((acc, node) => {
+        const totalDelegatedMVN = data.satellite_aggregate.nodes.reduce((acc, node) => {
           const satelliteTotalDelegatedAmount =
             node.delegations.length > 0
               ? node.delegations.reduce((sum, current) => sum + Number(current.user.smvk_balance), 0)
@@ -56,8 +56,8 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
           averageOracleReward: oracleRewardsTotal / (data.oraclesAmount.aggregate?.count ?? 0),
           totalOracleNetworks: data.oraclesAmount.aggregate?.count ?? 0,
           totalActiveSatellites: data.activeSatellitesAmount.aggregate?.count ?? 0,
-          totalDelegatedMVK: convertNumberForClient({
-            number: totalDelegatedMVK,
+          totalDelegatedMVN: convertNumberForClient({
+            number: totalDelegatedMVN,
             grade: MVN_DECIMALS,
           }),
         })
@@ -71,7 +71,7 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
   const isLoading =
     storage.oracleRewardsTotal === null ||
     storage.totalActiveSatellites === null ||
-    storage.totalDelegatedMVK === null ||
+    storage.totalDelegatedMVN === null ||
     storage.averageOracleReward === null ||
     storage.totalOracleNetworks === null
 

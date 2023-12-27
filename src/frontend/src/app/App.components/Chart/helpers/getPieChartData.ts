@@ -5,11 +5,11 @@ import { PieChartDataType } from 'app/App.components/Chart/helpers/Chart.types'
 import { VaultAssetData } from 'providers/VaultsProvider/vaults.provider.types'
 
 // consts
-import { HIGHLIGHTED_STROKE_WIDTH, DEFAULT_STROKE_WIDTH } from 'app/App.components/PieChart/pieChart.const'
+import { DEFAULT_STROKE_WIDTH, HIGHLIGHTED_STROKE_WIDTH } from 'app/App.components/PieChart/pieChart.const'
 
 // utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { calcPersent, convertNumberForClient } from 'utils/calcFunctions'
+import { calcPercent, convertNumberForClient } from 'utils/calcFunctions'
 
 export const getPieChartData = (
   balances: Array<TreasuryBalanceType | VaultAssetData>,
@@ -48,7 +48,7 @@ export const getPieChartData = (
     const { symbol, rate, decimals } = token
 
     const tokenUsdValue = convertNumberForClient({ number: item.balance, grade: decimals }) * rate
-    const tokenPersent = calcPersent(tokenUsdValue, reducedBalance)
+    const tokenPersent = calcPercent(tokenUsdValue, reducedBalance)
 
     if (tokenPersent < 10 || !tokenUsdValue) {
       const smallValuesAccIdx = acc.findIndex((item) => item.groupedSmall)
@@ -87,7 +87,7 @@ export const getPieChartData = (
         title: `${smallValuesAccObj.title},${symbol}`,
         isHoveredPathAsset,
         value: smallSectorValue,
-        labelPersent: calcPersent(groupedSectorsValue, reducedBalance),
+        labelPersent: calcPercent(groupedSectorsValue, reducedBalance),
         segmentStroke: isHoveredPathAsset ? HIGHLIGHTED_STROKE_WIDTH : DEFAULT_STROKE_WIDTH,
       }
 
