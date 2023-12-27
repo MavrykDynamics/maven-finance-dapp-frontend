@@ -1,19 +1,19 @@
-import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { TreasuryBalanceType, TreasuryData } from './treasury.types'
+import {getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
+import {TokensContext} from 'providers/TokensProvider/tokens.provider.types'
+import {convertNumberForClient} from 'utils/calcFunctions'
+import {TreasuryBalanceType, TreasuryData} from './treasury.types'
 import {
   NullableTreasuryContextStateType,
   TreasuryContext,
   TreasuryContextStateType,
   TreasurySubsRecordType,
 } from '../treasury.provider.types'
-import { EMPTY_TREASURY_CTX, TREASURY_STORAGE_DATA_SUB } from './treasury.consts'
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import {EMPTY_TREASURY_CTX, TREASURY_STORAGE_DATA_SUB} from './treasury.consts'
+import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
 
 /**
  * @param treasuryAddresses array of treasuries addresses
- * @param treasuryData Reacord of treasury data objects where key is address from "treasuryAddresses" array
+ * @param treasuryData Record of treasury data objects where key is address from "treasuryAddresses" array
  * @returns object that represent token address and amount of that token in all treasuries, AMOUNT is not converted
  */
 export const reduceTreasuryAssets = (
