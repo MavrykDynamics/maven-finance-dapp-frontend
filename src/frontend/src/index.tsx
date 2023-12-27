@@ -142,7 +142,7 @@ const AppContainer = () => {
 export const Root = () => {
   return (
     <DappLibsProviders>
-      <ToasterProvider maintance>
+      <ToasterProvider maintance={process.env.REACT_APP_IS_MAINTANCE_MODE === 'on'}>
         <ApolloProvider>
           <InitialDataDappProviders>
             <DappSectionsDataProviders>
