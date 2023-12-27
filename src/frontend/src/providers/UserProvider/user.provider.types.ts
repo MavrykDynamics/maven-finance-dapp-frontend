@@ -21,7 +21,7 @@ import {normalizeUserHistoryData} from './helpers/userData.helpers'
 export type UserLendBorrowItem = {
   amount: number
   id: number
-  annualPecentage: number
+  annualPercentage: number
   date: string
   operationHash: string
   tokenAddress: TokenAddressType

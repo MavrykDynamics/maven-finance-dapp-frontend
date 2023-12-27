@@ -11,7 +11,7 @@ import { SingleValueData, UTCTimestamp } from 'lightweight-charts'
 // consts
 import { MVN_DECIMALS } from 'utils/constants'
 
-const getChartWithOperationSpliitedByDays = ({
+const getChartWithOperationSplitByDays = ({
   chartData,
   operationValue,
   operationTime,
@@ -45,7 +45,7 @@ const getChartWithOperationSpliitedByDays = ({
 /**
  *
  * @param indexerData user rewards (doorman, satellite farms)
- * @returns data for chart, where all rewards claiming splitted by days, and added 2 extra plots:
+ * @returns data for chart, where all rewards claiming split by days, and added 2 extra plots:
  * 1. to the end - current time and current rewards claimed amount
  * 2. to the start - when started claiming with 0 rewards amount
  */
@@ -75,11 +75,11 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
     [],
   )
 
-  const earningHistorySplittedByDays = [...normalizedFarmsRewardsItems, ...normalizedStakesHistoryItems]
+  const earningHistorySplitByDays = [...normalizedFarmsRewardsItems, ...normalizedStakesHistoryItems]
     .sort((a, b) => dayjs(a.time).valueOf() - dayjs(b.time).valueOf())
     .reduce<Array<SingleValueData>>((acc, { value, time }) => {
       return (
-        getChartWithOperationSpliitedByDays({
+        getChartWithOperationSplitByDays({
           chartData: acc,
           operationTime: dayjs(time).valueOf() as UTCTimestamp,
           operationValue: value,
@@ -87,18 +87,18 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
       )
     }, [])
 
-  // if user has earnend smth, update time of last plot to the current time
-  if (earningHistorySplittedByDays.length > 0) {
-    const lastEarningChartPlotValue = earningHistorySplittedByDays.pop()?.value ?? 0
+  // if user has earned something, update time of last plot to the current time
+  if (earningHistorySplitByDays.length > 0) {
+    const lastEarningChartPlotValue = earningHistorySplitByDays.pop()?.value ?? 0
 
     return [
       {
         value: 0,
         time: dayjs(
-          getDateStart(Number(earningHistorySplittedByDays.at(0)?.time ?? dayjs().valueOf())),
+          getDateStart(Number(earningHistorySplitByDays.at(0)?.time ?? dayjs().valueOf())),
         ).valueOf() as UTCTimestamp,
       },
-      ...earningHistorySplittedByDays,
+      ...earningHistorySplitByDays,
       {
         value: lastEarningChartPlotValue,
         time: dayjs().valueOf() as UTCTimestamp,
@@ -106,6 +106,6 @@ export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDa
     ]
   }
 
-  // if user hasn't earned nothing, show empty chart
+  // if user hasn't earned anything, show empty chart
   return []
 }
