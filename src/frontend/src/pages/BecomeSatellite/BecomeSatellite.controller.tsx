@@ -65,15 +65,15 @@ export const BecomeSatellite = () => {
   const { tabId } = useParams<{ tabId: SatelliteTabType }>()
 
   // local states
-  const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
-  const [isSatelliteExistanseError, setIsSatelliteExistanseError] = useState(false)
+  const [isSatelliteExistenceLoading, setIsSatelliteExistenceLoading] = useState(false)
+  const [isSatelliteExistenceError, setIsSatelliteExistenceError] = useState(false)
 
   // derived states
-  const { usersSatelliteProfile, userSmvkBalance, userMvkBalance } = useMemo(
+  const { usersSatelliteProfile, userSmvnBalance, userMvnBalance } = useMemo(
     () => ({
       usersSatelliteProfile: userAddress ? satelliteMapper[userAddress] : null,
-      userSmvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
-      userMvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress }),
+      userSmvnBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
+      userMvnBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress }),
     }),
     [mvnTokenAddress, satelliteMapper, userAddress, userTokensBalances],
   )
@@ -91,11 +91,11 @@ export const BecomeSatellite = () => {
 
   // check whether satellite exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
-    setIsSatelliteExistanseError(false)
+    setIsSatelliteExistenceError(false)
 
     if ((userAddress && satelliteMapper[userAddress]) || !userAddress) return
 
-    setIsSatelliteExistanseLoading(true)
+    setIsSatelliteExistenceLoading(true)
 
     const checkWhetherSatelliteExists = async () => {
       try {
@@ -111,11 +111,11 @@ export const BecomeSatellite = () => {
           return
         }
 
-        setIsSatelliteExistanseError(true)
+        setIsSatelliteExistenceError(true)
       } catch (e) {
-        setIsSatelliteExistanseError(true)
+        setIsSatelliteExistenceError(true)
       } finally {
-        setIsSatelliteExistanseLoading(false)
+        setIsSatelliteExistenceLoading(false)
       }
     }
 
@@ -125,7 +125,7 @@ export const BecomeSatellite = () => {
   }, [userAddress])
 
   const isPageLoading =
-    (!isSatelliteExistanseError && isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistanseLoading
+    (!isSatelliteExistenceError && isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistenceLoading
 
   return (
     <>
@@ -134,10 +134,10 @@ export const BecomeSatellite = () => {
 
         {!isPageLoading ? (
           <BecomeSatelliteBanners
-            smvkBalance={userSmvkBalance}
-            requiredSmvkAmount={minimumStakedMvnBalance}
+            smvnBalance={userSmvnBalance}
+            requiredSmvnAmount={minimumStakedMvnBalance}
             userAddress={userAddress}
-            mvkBalance={userMvkBalance}
+            mvnBalance={userMvnBalance}
             isSatellite={isSatellite}
           />
         ) : null}
@@ -205,7 +205,7 @@ export const BecomeSatellite = () => {
                   <Route exact path={`/become-satellite/${SATELLITE_TAB_EDIT}`}>
                     <BecomeSatelliteScreen
                       usersSatelliteProfile={usersSatelliteProfile}
-                      userSmvnBalance={userSmvkBalance}
+                      userSmvnBalance={userSmvnBalance}
                     />
                   </Route>
 
