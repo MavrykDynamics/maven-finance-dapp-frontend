@@ -18,7 +18,7 @@ import { ChartPeriodType } from 'types/charts.type'
 // consts
 import { MVN_DECIMALS } from 'utils/constants'
 import { DAPP_MVN_SMVN_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS, DEFAULT_STAKING_CTX } from './helpers/doorman.consts'
-import { DAPP_MVK_SMVN_STATS } from './queries/doorman.query'
+import { DAPP_MVN_SMVN_STATS } from './queries/doorman.query'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
@@ -36,12 +36,12 @@ const DoormanProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   // subscribes
-  useQueryWithRefetch(DAPP_MVK_SMVN_STATS, {
+  useQueryWithRefetch(DAPP_MVN_SMVN_STATS, {
     skip: !activeSubs[DAPP_MVN_SMVN_STATS_SUB] || !doormanAddress,
     variables: {
       doormanContractAddress: doormanAddress,
     },
-    onCompleted: (data) => updateMvkSmvnStats(data),
+    onCompleted: (data) => updateMvnSmvnStats(data),
     onError: (error) => handleApolloError(error, 'DAPP_MVK_SMVK_STATS_SUB'),
   })
 
@@ -57,10 +57,10 @@ const DoormanProvider = ({ children }: Props) => {
     }))
   }
 
-  const updateMvkSmvnStats = (storage: GetDappSmvkMvkStatsQuery) => {
+  const updateMvnSmvnStats = (storage: GetDappSmvkMvkStatsQuery) => {
     const {
       mavryk_user: [doormanContractBalances],
-      mvk_token: [mvkTokenData],
+      mvk_token: [mvnTokenData],
     } = storage
     setStakingCtxState((prevState) => ({
       ...prevState,
@@ -68,9 +68,9 @@ const DoormanProvider = ({ children }: Props) => {
         number: doormanContractBalances?.mvk_balance ?? 0,
         grade: MVN_DECIMALS,
       }),
-      totalSupply: convertNumberForClient({ number: mvkTokenData?.total_supply ?? 0, grade: MVN_DECIMALS }),
+      totalSupply: convertNumberForClient({ number: mvnTokenData?.total_supply ?? 0, grade: MVN_DECIMALS }),
       maximumTotalSupply: convertNumberForClient({
-        number: mvkTokenData?.maximum_supply ?? 0,
+        number: mvnTokenData?.maximum_supply ?? 0,
         grade: MVN_DECIMALS,
       }),
     }))

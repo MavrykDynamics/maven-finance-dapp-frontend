@@ -122,7 +122,7 @@ export const Doorman = () => {
             <DoormanStats
               mvnExchangeRate={mvnExchangeRate}
               maximumTotalSupply={maximumTotalSupply}
-              totalStakedMvk={totalStakedMvn}
+              totalStakedMvn={totalStakedMvn}
               totalSupply={totalSupply}
               doormanAddress={doormanAddress}
               mvnTokenAddress={mvnTokenAddress}

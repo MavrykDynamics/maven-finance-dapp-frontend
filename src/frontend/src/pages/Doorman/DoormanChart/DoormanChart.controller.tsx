@@ -154,8 +154,8 @@ export function DoormanChart() {
                   areaBottomColor: colors[themeSelected].secondaryChartBottomColor,
                 },
               }}
-              tooltipAssetFirst={'MVK'}
-              tooltipAssetSecond={'sMVK'}
+              tooltipAssetFirst={'MVN'}
+              tooltipAssetSecond={'sMVN'}
               settings={{
                 height: 370,
                 tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
@@ -238,7 +238,7 @@ export function DoormanChart() {
                 height: 370,
                 tickDateFormatter: (date: number) => getChartXAxisTicks(date, chartPeriod),
               }}
-              tooltipAsset={'sMVK'}
+              tooltipAsset={'sMVN'}
               // check is there is a dat for chart, if no - show default chart text
               numberOfItemsToDisplay={numberOfItemsToDisplay}
             />

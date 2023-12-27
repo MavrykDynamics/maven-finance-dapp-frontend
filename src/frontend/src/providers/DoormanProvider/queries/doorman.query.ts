@@ -22,7 +22,7 @@ export const SMVN_MVN_HISTORY_DATA = gql(`
   }
 `)
 
-export const DAPP_MVK_SMVN_STATS = gql(`
+export const DAPP_MVN_SMVN_STATS = gql(`
   query getDappSmvkMvkStats($doormanContractAddress: String) {
     mavryk_user: mavryk_user(where: { address: { _eq: $doormanContractAddress } }) {
       address

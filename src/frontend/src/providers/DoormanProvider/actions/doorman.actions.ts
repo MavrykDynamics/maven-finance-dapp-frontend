@@ -5,21 +5,21 @@ import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { OpKind } from '@taquito/taquito'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 
-export const stakeMVK = async (
+export const stakeMVN = async (
   amount: number,
   accountPkh: string,
   doormanAddress: string,
-  mvkTokenAddress: string,
+  mvnTokenAddress: string,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const mvkTokenContract = await tezos?.wallet.at(mvkTokenAddress)
+    const mvnTokenContract = await tezos?.wallet.at(mvnTokenAddress)
     const doormanContract = await tezos?.wallet.at(doormanAddress)
 
     const approveBatchItemMetaData = {
       kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-      ...mvkTokenContract.methods
+      ...mvnTokenContract.methods
         .update_operators([
           {
             add_operator: {
@@ -34,7 +34,7 @@ export const stakeMVK = async (
 
     const removeBatchItemMetaData = {
       kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-      ...mvkTokenContract.methods
+      ...mvnTokenContract.methods
         .update_operators([
           {
             remove_operator: {

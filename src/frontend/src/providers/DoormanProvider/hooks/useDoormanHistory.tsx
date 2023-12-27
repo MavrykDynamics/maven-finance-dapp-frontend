@@ -55,7 +55,7 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
       variables: {
         periodTimestamp: currentPeriod,
       },
-      onError: (error) => handleApolloError(error, 'SMVK_MVK_HISTORY_DATA'),
+      onError: (error) => handleApolloError(error, 'SMVN_MVN_HISTORY_DATA'),
     },
     { refetchQueryVariables },
   )
