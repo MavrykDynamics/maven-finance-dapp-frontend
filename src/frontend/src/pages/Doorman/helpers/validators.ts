@@ -3,19 +3,19 @@ import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Inp
 
 export const stakingInputValidation = ({
   amount,
-  myMvkTokenBalance,
-  mySMvkTokenBalance,
+  myMvnTokenBalance,
+  mySMvnTokenBalance,
   userAddress,
 }: {
   amount: number
-  myMvkTokenBalance: number
-  mySMvkTokenBalance: number
+  myMvnTokenBalance: number
+  mySMvnTokenBalance: number
   userAddress: string | null
 }) => {
   return isNumberInRange(
     amount,
     1,
-    userAddress ? Math.max(Number(myMvkTokenBalance), Number(mySMvkTokenBalance)) : undefined,
+    userAddress ? Math.max(Number(myMvnTokenBalance), Number(mySMvnTokenBalance)) : undefined,
   )
     ? INPUT_STATUS_SUCCESS
     : INPUT_STATUS_ERROR

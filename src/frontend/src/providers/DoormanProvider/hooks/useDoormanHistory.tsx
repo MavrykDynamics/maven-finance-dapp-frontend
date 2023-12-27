@@ -1,23 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {useCallback, useEffect, useRef, useState} from 'react'
 
 // types
-import { ChartPeriodType } from 'types/charts.type'
+import {ChartPeriodType} from 'types/charts.type'
 
 // hooks
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useDoormanContext } from '../doorman.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import {useApolloContext} from 'providers/ApolloProvider/apollo.provider'
+import {useDoormanContext} from '../doorman.provider'
+import {useQueryWithRefetch} from 'providers/common/hooks/useQueryWithRefetch'
 
 // consts
-import { SMVK_MVK_HISTORY_DATA } from '../queries/doorman.query'
-import { ONE_HOUR } from 'consts/charts.const'
+import {SMVN_MVN_HISTORY_DATA} from '../queries/doorman.query'
+import {ONE_HOUR} from 'consts/charts.const'
 
 // utils
-import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
+import {getTimestampBasedOnPeriod} from 'utils/charts.utils'
 
 // getTimestampBasedOnPeriod
 export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
-  const { updateStakeHistoryData, mvkHistoryData, smvkHistoryData, noChartData } = useDoormanContext()
+  const { updateStakeHistoryData, mvnHistoryData, smvnHistoryData, noChartData } = useDoormanContext()
   const { handleApolloError } = useApolloContext()
 
   const [currentPeriod, setCurrentPeriod] = useState(() => getTimestampBasedOnPeriod(period))
@@ -40,7 +40,7 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
   }, [period])
 
   useQueryWithRefetch(
-    SMVK_MVK_HISTORY_DATA,
+    SMVN_MVN_HISTORY_DATA,
     {
       onCompleted: (data) => {
         if (!data) return
@@ -61,9 +61,9 @@ export const useDoormanHistory = (period: ChartPeriodType = ONE_HOUR) => {
   )
 
   return {
-    isLoading: mvkHistoryData[period] === null || smvkHistoryData[period] === null,
+    isLoading: mvnHistoryData[period] === null || smvnHistoryData[period] === null,
     noChartData,
-    mvkHistoryData: mvkHistoryData[period] ?? [],
-    smvkHistoryData: smvkHistoryData[period] ?? [],
+    mvnHistoryData: mvnHistoryData[period] ?? [],
+    smvnHistoryData: smvnHistoryData[period] ?? [],
   }
 }

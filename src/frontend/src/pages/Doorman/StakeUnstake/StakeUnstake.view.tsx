@@ -68,14 +68,14 @@ import { InputProps } from 'app/App.components/Input/newInput.type'
 
 type StakeUnstakeViewProps = {
   openExitFeePopup: () => void
-  mvkExchangeRate: number
+  mvnExchangeRate: number
   inputData: typeof DEFAULT_STAKE_UNSTAKE_INPUT
   setInputData: (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => void
 }
 
 export const StakeUnstakeView = ({
   openExitFeePopup,
-  mvkExchangeRate,
+  mvnExchangeRate,
   inputData,
   setInputData,
 }: StakeUnstakeViewProps) => {
@@ -102,7 +102,7 @@ export const StakeUnstakeView = ({
     myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
 
   const mySMvkBalanceIsZero = mySMvkTokenBalance === 0
-  const exchangeValue = mvkExchangeRate && inputData.amount ? Number(inputData.amount) * mvkExchangeRate : 0
+  const exchangeValue = mvnExchangeRate && inputData.amount ? Number(inputData.amount) * mvnExchangeRate : 0
   // TODO: @Sam-M-Israel check whether include farms & satellite rewards, cuz compound btn claims only doorman rewards here
   const rewardsToClaim =
     availableDoormanRewards +
@@ -121,8 +121,8 @@ export const StakeUnstakeView = ({
   const handleInputData = (value: string) => {
     const validationStatus = stakingInputValidation({
       amount: Number(value),
-      myMvkTokenBalance,
-      mySMvkTokenBalance,
+      myMvnTokenBalance: myMvkTokenBalance,
+      mySMvnTokenBalance: mySMvkTokenBalance,
       userAddress,
     })
 
@@ -406,7 +406,7 @@ export const StakeUnstakeView = ({
         <StakeUnstakeRate>
           <span>1 MVK =</span>
           &nbsp;
-          <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
+          <CommaNumber value={mvnExchangeRate} beginningText={'$'} />
         </StakeUnstakeRate>
 
         <StakeUnstakeButtonGrid>

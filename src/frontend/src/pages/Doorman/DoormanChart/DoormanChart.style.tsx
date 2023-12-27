@@ -90,13 +90,13 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme; isExitFeeChar
       font-size: 12px;
       color: ${({ theme }) => theme.subHeadingText};
 
-      &.mvk {
+      &.mvn {
         .circle {
           background: ${({ theme }) => theme.primaryChartColor};
         }
       }
 
-      &.smvk {
+      &.smvn {
         .circle {
           // constant color for all theme
           background: #86d4c9;

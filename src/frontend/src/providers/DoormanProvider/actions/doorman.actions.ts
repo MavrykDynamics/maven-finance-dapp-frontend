@@ -1,5 +1,5 @@
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { WalletOperationError, unknownToError } from 'errors/error'
+import { unknownToError, WalletOperationError } from 'errors/error'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { OpKind } from '@taquito/taquito'
@@ -61,7 +61,7 @@ export const stakeMVK = async (
   }
 }
 
-export const unstakeMVK = async (
+export const unstakeMVN = async (
   amount: number,
   doormanAddress: string,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {

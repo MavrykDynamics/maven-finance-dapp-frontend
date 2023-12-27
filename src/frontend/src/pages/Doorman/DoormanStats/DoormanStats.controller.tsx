@@ -12,25 +12,25 @@ import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 type DoormanStatsPropsType = {
-  mvkExchangeRate: number
+  mvnExchangeRate: number
   maximumTotalSupply: number
   totalStakedMvk: number
   totalSupply: number
   doormanAddress: string | null
-  mvkTokenAddress: string | null
+  mvnTokenAddress: string | null
 }
 
 export const DoormanStats = ({
-  mvkExchangeRate,
+  mvnExchangeRate,
   maximumTotalSupply,
   totalStakedMvk,
   totalSupply,
   doormanAddress,
-  mvkTokenAddress,
+  mvnTokenAddress,
 }: DoormanStatsPropsType) => {
   const mli = calcMLI(totalSupply, totalStakedMvk)
   const fee = calcExitFee(totalSupply, totalStakedMvk)
-  const marketCapValue = mvkExchangeRate ? mvkExchangeRate * totalSupply : 0
+  const marketCapValue = mvnExchangeRate ? mvnExchangeRate * totalSupply : 0
 
   return (
     <DoormanStatsStyled>
@@ -50,14 +50,14 @@ export const DoormanStats = ({
             </Tooltip>
           </h4>
           <var>
-            <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
+            <CommaNumber value={mvnExchangeRate} beginningText={'$'} />
           </var>
         </div>
 
         <div>
           <h4>MVN Token Address</h4>
           <var className="click-address">
-            <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={mvkTokenAddress} hasIcon />
+            <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={mvnTokenAddress} hasIcon />
           </var>
         </div>
 
