@@ -15,7 +15,6 @@ import { FarmCardHeader } from './cardParts/FarmCardHeader'
 import { FarmCardActions } from './cardParts/FarmCardActions'
 
 // consts
-
 // utils
 import { calculateFarmAPY, getFarmUserDepositedAmount } from 'providers/FarmsProvider/helpers/farms.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -95,7 +94,7 @@ export const VerticalFarmCard = ({
 
         <div className="row">
           <div className="name">Earn</div>
-          <div className="value">sMVK</div>
+          <div className="value">sMVN</div>
         </div>
 
         <div className="row">

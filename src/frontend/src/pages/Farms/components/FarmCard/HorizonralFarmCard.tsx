@@ -17,7 +17,6 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
-
 // types
 import { FarmRecordType } from 'providers/FarmsProvider/farms.provider.types'
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
@@ -83,7 +82,7 @@ export const HorizontalFarmCard = ({
 
             <div className="column">
               <div className="name">Earn</div>
-              <div className="value">sMVK</div>
+              <div className="value">sMVN</div>
             </div>
 
             <div className="column apy">
