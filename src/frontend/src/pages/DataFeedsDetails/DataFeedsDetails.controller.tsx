@@ -12,7 +12,7 @@ import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provi
 import { useFeedCharts } from 'providers/DataFeedsProvider/hooks/useFeedCharts'
 
 // view
-import DataFeedsPagination from './pagination/DataFeedsPagination.controler'
+import DataFeedsPagination from './pagination/DataFeedsPagination.controller'
 import { H2Title, H3TitlePrimary, H3TitleSecondary } from 'styles/generalStyledComponents/Titles.style'
 import { Timer } from 'app/App.components/Timer/Timer.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'

@@ -26,7 +26,7 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
   const oracleFeedRewards = participatedFeeds[feedAddress]
 
   const xtzExchangeRate = tokensPrices[XTZ_TOKEN_SYMBOL] ?? 0
-  const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
+  const mvnExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
 
   const oracleLastPredictedPrice = oracle.participatedFeeds[feedAddress].lastPredictedPrice
 
@@ -55,7 +55,7 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
             <CommaNumber showDecimal value={oracleFeedRewards?.sMVNReward ?? 0} />
           </var>
           <div className="converted">
-            <CommaNumber showDecimal beginningText="$" value={(oracleFeedRewards?.sMVNReward ?? 0) * mvkExchangeRate} />
+            <CommaNumber showDecimal beginningText="$" value={(oracleFeedRewards?.sMVNReward ?? 0) * mvnExchangeRate} />
           </div>
         </FeedsListItem>
 
