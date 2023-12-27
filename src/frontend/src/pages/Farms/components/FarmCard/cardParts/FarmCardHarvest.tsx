@@ -40,7 +40,7 @@ export const FarmCardHarvest = ({
 }) => (
   <FarmCardHarvestStyled className="farm-harvest">
     <div className="info">
-      <div className="name">Unclaimed sMVK</div>
+      <div className="name">Unclaimed sMVN</div>
       <CommaNumber className="value" value={userReward} />
     </div>
     <Button

@@ -55,14 +55,14 @@ export default function RoiCalculator({
   const { accountPkh } = useSelector((state: State) => state.wallet)
 
   const { tokensPrices } = useTokensContext()
-  const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL]
+  const mvnExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL]
 
   const farm = farms.find(({ address }) => selectedFarmAddress === address)
 
   const [inputStatus, setInputStatus] = useState<InputStatusesType>(defaultInputStatuses)
   const [inputValues, setInputValue] = useState<InputValuesType>(defaultInputValues)
   const [lastInputUse, setLastInputUse] = useState<typeof TOP_INPUT | typeof BOTTOM_INPUT>(TOP_INPUT)
-  const [isPensilClicked, togglePensil] = useState(false)
+  const [isPencilClicked, togglePencil] = useState(false)
   const [userBalance, setUserBalance] = useState(0)
   const [compoundEverythingActive, toggleCompoundEverything] = useState(false)
   const [shouldDisableBalanceTabs, toggleDisablingBalanceTabs] = useState(true)
@@ -90,7 +90,7 @@ export default function RoiCalculator({
     })().catch((e) => console.error('fetching user balance in ROI calc error: ', e))
   }, [farm?.lpTokenAddress])
 
-  // validation for input and running calcuations based on input
+  // validation for input and running calculations based on input
   useEffect(() => {
     const validityStatus = +inputValues.backwardAmount >= 0 ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
 
@@ -330,7 +330,7 @@ export default function RoiCalculator({
             <div>
               <h3>ROI at Current Rates</h3>
 
-              {isPensilClicked ? (
+              {isPencilClicked ? (
                 <div className="input-wrapper">
                   <Input
                     id="input-roi-backward"
@@ -348,8 +348,8 @@ export default function RoiCalculator({
                     <span>
                       <CommaNumber
                         beginningText="~"
-                        value={+inputValues.backwardAmount * mvkExchangeRate}
-                        endingText="sMVK"
+                        value={+inputValues.backwardAmount * mvnExchangeRate}
+                        endingText="sMVN"
                       />
                       <CommaNumber
                         beginningText="("
@@ -367,8 +367,8 @@ export default function RoiCalculator({
                   <p>
                     <CommaNumber
                       beginningText="~"
-                      value={+inputValues.backwardAmount * mvkExchangeRate}
-                      endingText="sMVK"
+                      value={+inputValues.backwardAmount * mvnExchangeRate}
+                      endingText="sMVN"
                     />
                     <CommaNumber
                       beginningText="("
@@ -380,9 +380,9 @@ export default function RoiCalculator({
               )}
             </div>
             <button
-              className={`${isPensilClicked ? 'active' : ''}`}
+              className={`${isPencilClicked ? 'active' : ''}`}
               type="button"
-              onClick={() => togglePensil(!isPensilClicked)}
+              onClick={() => togglePencil(!isPencilClicked)}
             >
               <Icon id="pencil-stroke" />
             </button>
@@ -392,7 +392,7 @@ export default function RoiCalculator({
           <Expand className="roi-expand" showCustomText="Details">
             <ul className="roi-expand-ul">
               <li>
-                <h4>Base APR (MVK yield only)</h4>
+                <h4>Base APR (MVN yield only)</h4>
                 <var>
                   <CommaNumber value={farmAPR} endingText="%" />
                 </var>
