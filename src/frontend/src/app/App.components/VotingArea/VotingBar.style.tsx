@@ -78,7 +78,7 @@ export const VotingBarStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const VotingFor = styled.div<{ width: number; theme: MavrykTheme }>`
+export const VotingYay = styled.div<{ width: number; theme: MavrykTheme }>`
   border-radius: 10px 0 0 10px;
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.upColor};
@@ -94,7 +94,7 @@ export const VotingFor = styled.div<{ width: number; theme: MavrykTheme }>`
   }
 `
 
-export const VotingAgainst = styled.div<{ width: number; theme: MavrykTheme }>`
+export const VotingNay = styled.div<{ width: number; theme: MavrykTheme }>`
   border-radius: 0 10px 10px 0;
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.downColor};
@@ -108,7 +108,7 @@ export const VotingAgainst = styled.div<{ width: number; theme: MavrykTheme }>`
     }
   }
 `
-export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }>`
+export const VotingPass = styled.div<{ width: number; theme: MavrykTheme }>`
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.neutralColor};
   color: ${({ theme }) => theme.neutralColor};
@@ -121,7 +121,7 @@ export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }
     }
   }
 `
-export const NotYetVoted = styled.div<{ width: number; theme: MavrykTheme }>`
+export const UnusedVote = styled.div<{ width: number; theme: MavrykTheme }>`
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.neutralSecondaryColor};
   color: ${({ theme }) => theme.neutralSecondaryColor};

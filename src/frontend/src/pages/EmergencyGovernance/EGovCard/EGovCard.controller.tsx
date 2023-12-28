@@ -61,10 +61,11 @@ export const EGovCard = ({ proposal }: Props) => {
     proposerAddress,
   } = proposal
 
+  // In emergency governance there are only yay votes so no need to include the other voting fields here
   const votingStatistic = useMemo(
     () => ({
-      forVotesMVNTotal: totalSmvnVotes,
-      unusedVotesMVNTotal: totalStakedMvn - totalSmvnVotes,
+      yayVotesMvnTotal: totalSmvnVotes,
+      unusedVotesMvnTotal: totalStakedMvn - totalSmvnVotes,
       quorum: smvnPercentageRequired,
     }),
     [smvnPercentageRequired, totalSmvnVotes, totalStakedMvn],
@@ -124,7 +125,7 @@ export const EGovCard = ({ proposal }: Props) => {
           isVotingActive
           disableVotingButtons={Boolean(isUserVoter) || userSmvnAmount < minStakedMvnRequiredToVote || isActionActive}
           handleVote={handleEGovProposalVote}
-          buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}
+          buttonsToShow={{ yayBtn: { text: 'Vote to Trigger' } }}
           className="eGov-voting"
         />
       </div>

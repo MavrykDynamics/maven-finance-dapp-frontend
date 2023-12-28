@@ -2,38 +2,38 @@ import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { VotingBarProps } from './helpers/voting'
 import {
-  NotYetVoted,
   QuorumBar,
-  VotingAbstention,
-  VotingAgainst,
+  UnusedVote,
   VotingBarStyled,
   VotingContainer,
-  VotingFor,
+  VotingNay,
+  VotingPass,
+  VotingYay,
 } from './VotingBar.style'
 
 export const VotingBar = ({
-  voteStatistics: { forVotesMVNTotal, againstVotesMVNTotal, abstainVotesMVNTotal, unusedVotesMVNTotal, quorum },
+  voteStatistics: { yayVotesMvnTotal, nayVotesMvnTotal, passVotesMvnTotal, unusedVotesMvnTotal, quorum },
   quorumText = 'Quorum',
 }: VotingBarProps) => {
-  const totalVotes = forVotesMVNTotal + (againstVotesMVNTotal ?? 0) + (abstainVotesMVNTotal ?? 0) + unusedVotesMVNTotal
+  const totalVotes = yayVotesMvnTotal + (nayVotesMvnTotal ?? 0) + (passVotesMvnTotal ?? 0) + unusedVotesMvnTotal
 
-  let forVotesWidth = (forVotesMVNTotal / totalVotes) * 100
-  let againstVotesWidth = ((againstVotesMVNTotal ?? 0) / totalVotes) * 100
-  let abstainingVotesWidth = ((abstainVotesMVNTotal ?? 0) / totalVotes) * 100
-  let unusedVotesWidth = (unusedVotesMVNTotal / totalVotes) * 100
+  let yayVotesWidth = (yayVotesMvnTotal / totalVotes) * 100
+  let nayVotesWidth = ((nayVotesMvnTotal ?? 0) / totalVotes) * 100
+  let passVotesWidth = ((passVotesMvnTotal ?? 0) / totalVotes) * 100
+  let unusedVotesWidth = (unusedVotesMvnTotal / totalVotes) * 100
 
   if (totalVotes === 0) {
-    const averagePersent =
+    const averagePercent =
       100 /
-      ((forVotesMVNTotal === undefined ? 0 : 1) +
-        (againstVotesMVNTotal === undefined ? 0 : 1) +
-        (abstainVotesMVNTotal === undefined ? 0 : 1) +
-        (unusedVotesMVNTotal === undefined ? 0 : 1))
+      ((yayVotesMvnTotal === undefined ? 0 : 1) +
+        (nayVotesMvnTotal === undefined ? 0 : 1) +
+        (passVotesMvnTotal === undefined ? 0 : 1) +
+        (unusedVotesMvnTotal === undefined ? 0 : 1))
 
-    forVotesWidth = averagePersent
-    againstVotesWidth = averagePersent
-    abstainingVotesWidth = averagePersent
-    unusedVotesWidth = averagePersent
+    yayVotesWidth = averagePercent
+    nayVotesWidth = averagePercent
+    passVotesWidth = averagePercent
+    unusedVotesWidth = averagePercent
   }
 
   return (
@@ -44,48 +44,48 @@ export const VotingBar = ({
         </div>
       </QuorumBar>
       <VotingBarStyled>
-        <VotingFor width={forVotesWidth}>
+        <VotingYay width={yayVotesWidth}>
           <Tooltip>
             <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
             <Tooltip.Content className="voting-tooltip-content">
-              <CommaNumber value={+forVotesMVNTotal.toFixed(0)} /> &nbsp; yay votes
+              <CommaNumber value={+yayVotesMvnTotal.toFixed(0)} /> &nbsp; yay votes
             </Tooltip.Content>
           </Tooltip>
-          <CommaNumber value={+forVotesMVNTotal.toFixed(0)} />
-        </VotingFor>
+          <CommaNumber value={+yayVotesMvnTotal.toFixed(0)} />
+        </VotingYay>
 
-        {abstainVotesMVNTotal !== undefined ? (
-          <VotingAbstention width={abstainingVotesWidth}>
+        {passVotesMvnTotal !== undefined ? (
+          <VotingPass width={passVotesWidth}>
             <Tooltip>
               <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
               <Tooltip.Content className="voting-tooltip-content">
-                <CommaNumber value={+abstainVotesMVNTotal.toFixed(0)} /> &nbsp; abstention votes
+                <CommaNumber value={+passVotesMvnTotal.toFixed(0)} /> &nbsp; abstention votes
               </Tooltip.Content>
             </Tooltip>
-            <CommaNumber value={+abstainVotesMVNTotal.toFixed(0)} />
-          </VotingAbstention>
+            <CommaNumber value={+passVotesMvnTotal.toFixed(0)} />
+          </VotingPass>
         ) : null}
 
-        <NotYetVoted width={unusedVotesWidth}>
+        <UnusedVote width={unusedVotesWidth}>
           <Tooltip>
             <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
             <Tooltip.Content className="voting-tooltip-content">
-              <CommaNumber value={+unusedVotesMVNTotal.toFixed(0)} /> &nbsp; unused votes
+              <CommaNumber value={+unusedVotesMvnTotal.toFixed(0)} /> &nbsp; unused votes
             </Tooltip.Content>
           </Tooltip>
-          <CommaNumber value={+unusedVotesMVNTotal.toFixed(0)} />
-        </NotYetVoted>
+          <CommaNumber value={+unusedVotesMvnTotal.toFixed(0)} />
+        </UnusedVote>
 
-        {againstVotesMVNTotal !== undefined ? (
-          <VotingAgainst width={againstVotesWidth}>
+        {nayVotesMvnTotal !== undefined ? (
+          <VotingNay width={nayVotesWidth}>
             <Tooltip>
               <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
               <Tooltip.Content className="voting-tooltip-content">
-                <CommaNumber value={+againstVotesWidth.toFixed(0)} /> &nbsp; nay votes
+                <CommaNumber value={+nayVotesWidth.toFixed(0)} /> &nbsp; nay votes
               </Tooltip.Content>
             </Tooltip>
-            <CommaNumber value={+againstVotesMVNTotal.toFixed(0)} />
-          </VotingAgainst>
+            <CommaNumber value={+nayVotesMvnTotal.toFixed(0)} />
+          </VotingNay>
         ) : null}
       </VotingBarStyled>
     </VotingContainer>

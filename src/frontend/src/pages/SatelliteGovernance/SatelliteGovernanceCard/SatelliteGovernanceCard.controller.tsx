@@ -92,10 +92,10 @@ export const SatelliteGovernanceCard = ({
 
   const voteStatistic = useMemo(
     () => ({
-      forVotesMVNTotal: yayVotesSmvkTotal / PRECISION_NUMBER,
-      againstVotesMVNTotal: nayVotesSmvkTotal / PRECISION_NUMBER,
-      abstainVotesMVKTotal: passVoteSmvkTotal / PRECISION_NUMBER,
-      unusedVotesMVNTotal: Math.round(
+      yayVotesMvnTotal: yayVotesSmvkTotal / PRECISION_NUMBER,
+      nayVotesMvnTotal: nayVotesSmvkTotal / PRECISION_NUMBER,
+      passVotesMvnTotal: passVoteSmvkTotal / PRECISION_NUMBER,
+      unusedVotesMvnTotal: Math.round(
         snapshotSmvkTotalSupply / PRECISION_NUMBER -
           yayVotesSmvkTotal / PRECISION_NUMBER -
           nayVotesSmvkTotal / PRECISION_NUMBER -
