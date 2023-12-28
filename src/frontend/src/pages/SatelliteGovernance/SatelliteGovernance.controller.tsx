@@ -5,7 +5,7 @@ import { useHistory, useLocation, useParams } from 'react-router'
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useSatelliteGovernanceContext } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
+import { useSatelliteGovernanceContext } from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider'
 
 // const
 import {
@@ -20,12 +20,12 @@ import {
 } from './SatelliteGovernance.consts'
 import { getSatelliteGovSub, TAB_ID_ONGOING, TabIdType } from './utils/tabsHelper'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
-import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
+import { TOTAL_DELEGATED_MVN } from 'texts/tooltips/satellite'
 import {
   DEFAULT_SATELLITE_GOVERNANCE_SUBS,
   SATELLITE_GOV_ACTIONS_DATA,
   SATELLITES_GOVERNANCE_CONFIG_SUB,
-} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+} from 'providers/SatelliteGovernanceProvider/helpers/satellitesGov.consts'
 
 // style
 import {
@@ -216,14 +216,14 @@ export const SatelliteGovernance = () => {
             <div className="value">{totalOracleNetworks}</div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
-            <h3>Total Delegated MVK</h3>
+            <h3>Total Delegated MVN</h3>
             <div className="value">
-              <CommaNumber value={totalDelegatedMVN} endingText={'MVK'} />
+              <CommaNumber value={totalDelegatedMVN} endingText={'MVN'} />
               <Tooltip>
                 <Tooltip.Trigger className="ml-3 mt-3 tooltip-trigger">
                   <Icon id="info" />
                 </Tooltip.Trigger>
-                <Tooltip.Content>{TOTAL_DELEGATED_MVK}</Tooltip.Content>
+                <Tooltip.Content>{TOTAL_DELEGATED_MVN}</Tooltip.Content>
               </Tooltip>
             </div>
           </SatelliteGovernanceStatsInfo>
@@ -283,11 +283,11 @@ export const SatelliteGovernance = () => {
                         statusFlag={action.statusFlag}
                         purpose={action.purpose}
                         governanceType={action.type}
-                        snapshotSmvkTotalSupply={action.snapshotSmvkTotalSupply}
-                        smvkPercentageForApproval={action.smvkPercentageForApproval}
-                        yayVotesSmvkTotal={action.yayVoteSmvkTotal}
-                        nayVotesSmvkTotal={action.nayVoteSmvkTotal}
-                        passVoteSmvkTotal={action.passVoteSmvkTotal}
+                        snapshotSmvnTotalSupply={action.snapshotSmvnTotalSupply}
+                        smvnPercentageForApproval={action.smvnPercentageForApproval}
+                        yayVotesSmvnTotal={action.yayVotesSmvnTotal}
+                        nayVotesSmvnTotal={action.nayVotesSmvnTotal}
+                        passVoteSmvnTotal={action.passVotesSmvnTotal}
                         accountPkh={userAddress}
                         isActionActive={isActionActive}
                         votes={action.votes}

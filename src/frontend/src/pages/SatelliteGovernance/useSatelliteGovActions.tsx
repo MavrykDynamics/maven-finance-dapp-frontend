@@ -7,7 +7,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
-import { SatelliteGovernanceTransfer } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
+import { SatelliteGovernanceTransfer } from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider.types'
 import { UserContext } from 'providers/UserProvider/user.provider.types'
 
 // hooks
@@ -28,7 +28,7 @@ import {
   UNBAN_SATELLITE_ACTION,
   UNSUSPEND_SATELLITE_ACTION,
   UPDATE_AGGREGATOR_STATUS_ACTION,
-} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+} from 'providers/SatelliteGovernanceProvider/helpers/satellitesGov.consts'
 
 // actions
 import {
@@ -36,13 +36,13 @@ import {
   banSatellite,
   fixMistakenTransfer,
   registerAggregator,
-  removeOracleInAggregator,
   removeOracleFromSatellite,
+  removeOracleInAggregator,
   restoreSatellite,
   setAggregatorMaintainer,
   suspendSatellite,
   updateAggregatorStatus,
-} from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
+} from 'providers/SatelliteGovernanceProvider/actions/satellitesGov.actions'
 
 export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: string, purpose: string) => {
   const {

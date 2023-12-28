@@ -1,6 +1,6 @@
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { ValidationResult } from 'pages/ProposalSubmission/ProposalSubmission.types'
-import { SatelliteGovernanceTransfer } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
+import { SatelliteGovernanceTransfer } from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider.types'
 import { ALL_TOKEN_TYPES } from 'utils/TypesAndInterfaces/General'
 
 export const SATELLITE_GOVERNANCE_CONTENT_FORM = {

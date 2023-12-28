@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
 // consts
-import { ADD_ORACLES_AGGREGATOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
-import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { ADD_ORACLES_AGGREGATOR_ACTION } from 'providers/SatelliteGovernanceProvider/helpers/satellitesGov.consts'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -20,7 +20,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // actions
-import { addOracleToAggregator } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
+import { addOracleToAggregator } from 'providers/SatelliteGovernanceProvider/actions/satellitesGov.actions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -37,7 +37,7 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
   const { feedsAddresses, feedsMapper, isLoading: loading } = useDataFeedsContext()
   const aggregatorsList = useMemo(
     () => feedsAddresses.map((address) => ({ content: feedsMapper[address].name, id: address })) ?? [],
-    [feedsAddresses, feedsMapper]
+    [feedsAddresses, feedsMapper],
   )
 
   const [selectedAggregator, setSelectedAggregator] = useState(aggregatorsList[0])
@@ -73,7 +73,7 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
       actionType: ADD_ORACLES_AGGREGATOR_ACTION,
       actionFn: addOracleToAggregatorActionFn,
     }),
-    [addOracleToAggregatorActionFn]
+    [addOracleToAggregatorActionFn],
   )
 
   const { action: addOracleToAggregatorAction } = useContractAction(addOracleToAggregatorContratActionProps)

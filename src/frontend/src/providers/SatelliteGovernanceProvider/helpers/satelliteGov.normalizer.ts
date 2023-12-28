@@ -18,12 +18,12 @@ type SatelliteGovernanceActionType = {
   expirationDatetime: string | null
   startDatetime: string | null
   droppedTime: string | null
-  smvkPercentageForApproval: number
-  smvkRequiredForApproval: number
-  snapshotSmvkTotalSupply: number
-  yayVoteSmvkTotal: number
-  nayVoteSmvkTotal: number
-  passVoteSmvkTotal: number
+  smvnPercentageForApproval: number
+  smvnRequiredForApproval: number
+  snapshotSmvnTotalSupply: number
+  yayVotesSmvnTotal: number
+  nayVotesSmvnTotal: number
+  passVotesSmvnTotal: number
   parameters: {
     name: string
     value: string
@@ -117,12 +117,12 @@ export const normalizerSatelliteGovernanceAction = (
     expirationDatetime: actionData.executed ? actionData.execution_datetime : actionData.expiration_datetime ?? null,
     startDatetime: actionData.start_datetime ?? null,
     droppedTime: statusFlag === ProposalStatus.DROPPED ? actionData.dropped_datetime : null,
-    smvkPercentageForApproval: actionData.smvk_percentage_for_approval,
-    smvkRequiredForApproval: actionData.smvk_required_for_approval,
-    snapshotSmvkTotalSupply: actionData.snapshot_smvk_total_supply,
-    yayVoteSmvkTotal: actionData.yay_vote_smvk_total,
-    nayVoteSmvkTotal: actionData.nay_vote_smvk_total,
-    passVoteSmvkTotal: actionData.pass_vote_smvk_total,
+    smvnPercentageForApproval: actionData.smvk_percentage_for_approval,
+    smvnRequiredForApproval: actionData.smvk_required_for_approval,
+    snapshotSmvnTotalSupply: actionData.snapshot_smvk_total_supply,
+    yayVotesSmvnTotal: actionData.yay_vote_smvk_total,
+    nayVotesSmvnTotal: actionData.nay_vote_smvk_total,
+    passVotesSmvnTotal: actionData.pass_vote_smvk_total,
     parameters,
     votes,
   }

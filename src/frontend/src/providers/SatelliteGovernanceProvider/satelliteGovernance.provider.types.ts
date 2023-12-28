@@ -1,15 +1,15 @@
 import { TokenType } from 'utils/TypesAndInterfaces/General'
 import {
-  normalizeSatelliteGovernanceConfig,
   normalizerSatelliteGovernanceActions,
+  normalizeSatelliteGovernanceConfig,
 } from './helpers/satelliteGov.normalizer'
 import {
+  SATELLITE_GOV_ACTIONS_DATA,
   SATELLITES_GOVERNANCE_ALL_ACTIONS_SUB,
   SATELLITES_GOVERNANCE_CONFIG_SUB,
   SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB,
   SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB,
   SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB,
-  SATELLITE_GOV_ACTIONS_DATA,
 } from './helpers/satellitesGov.consts'
 import {
   OngoingGovernanceSatelliteActionsQueryQuery,
@@ -55,7 +55,7 @@ export type SatelliteGovSubsType = SatelliteGovActionSubsType | typeof SATELLITE
 
 export type SatelliteGovernanceSubsRecordType = {
   [SATELLITES_GOVERNANCE_CONFIG_SUB]: boolean // subscribe to config
-  [SATELLITE_GOV_ACTIONS_DATA]: SatelliteGovActionSubsType | null // choose only one subsription for actions data
+  [SATELLITE_GOV_ACTIONS_DATA]: SatelliteGovActionSubsType | null // choose only one subscription for actions data
 }
 
 // ------ common types

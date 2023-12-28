@@ -81,7 +81,7 @@ import {
   UNSUSPEND_SATELLITE_ACTION,
   UPDATE_AGGREGATOR_STATUS_ACTION,
   VOTE_FOR_ACTION,
-} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+} from 'providers/SatelliteGovernanceProvider/helpers/satellitesGov.consts'
 
 // council
 import {

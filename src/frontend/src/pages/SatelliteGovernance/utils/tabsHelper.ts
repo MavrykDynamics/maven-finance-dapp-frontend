@@ -2,7 +2,7 @@ import {
   SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB,
   SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB,
   SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB,
-} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+} from 'providers/SatelliteGovernanceProvider/helpers/satellitesGov.consts'
 
 export const TAB_ID_ONGOING = 'ongoing'
 export const TAB_ID_PAST = 'past'
