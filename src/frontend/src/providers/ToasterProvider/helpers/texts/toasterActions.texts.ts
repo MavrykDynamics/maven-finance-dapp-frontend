@@ -11,7 +11,7 @@ import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
-  GET_MVK_FROM_FAUCET_ACTION,
+  GET_MVN_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from 'providers/UserProvider/helpers/user.consts'
 
@@ -176,7 +176,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [GET_MVK_FROM_FAUCET_ACTION]: {
+  [GET_MVN_FROM_FAUCET_ACTION]: {
     start: {
       title: 'Requesting MVK...',
       message: ACTION_START_MESSAGE_TEXT,

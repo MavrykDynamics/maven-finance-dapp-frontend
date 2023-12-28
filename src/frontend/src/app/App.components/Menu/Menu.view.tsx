@@ -14,7 +14,7 @@ import { MainNavigationRoute } from '../../../utils/TypesAndInterfaces/Navigatio
 // styles
 import { MenuFooter, MenuGrid, MenuSidebarContent, MenuSidebarStyled } from './Menu.style'
 
-// helpers, costants
+// helpers, constants
 import { mainNavigationLinks } from './NavigationLink/MainNavigationLinks'
 import { checkIfLinkSelected } from './NavigationLink/NavigationLink.constants'
 import { BUTTON_PRIMARY, BUTTON_ROUND, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -24,8 +24,8 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { LinkWide, LinkWrapper } from '../CustomLink/CustomLink.const'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { getMVKTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
-import { GET_MVK_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { getMVNTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
+import { GET_MVN_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -100,8 +100,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
 
   const [selectedMainLink, setSelectedMainLink] = useState<number>(0)
 
-  // requestMVK action  ----------------------
-  const requestMVKAction = useCallback(async () => {
+  // requestMVN action  ----------------------
+  const requestMVNAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
@@ -112,26 +112,26 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
       return null
     }
 
-    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
-    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
+    const mvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
+    const sMvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
-    if (mvkTokenBalance > 0 || sMvkTokenBalance > 0) {
+    if (mvnTokenBalance > 0 || sMvnTokenBalance > 0) {
       bug('You have already claimed MVN', 'You are unable to claim MVN')
       return null
     }
 
-    return await getMVKTokensFromFaucet(mvnFaucetAddress)
+    return await getMVNTokensFromFaucet(mvnFaucetAddress)
   }, [bug, mvnFaucetAddress, mvnTokenAddress, userAddress, userTokensBalances])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
-      actionType: GET_MVK_FROM_FAUCET_ACTION,
-      actionFn: requestMVKAction,
+      actionType: GET_MVN_FROM_FAUCET_ACTION,
+      actionFn: requestMVNAction,
     }),
-    [requestMVKAction],
+    [requestMVNAction],
   )
 
-  const { action: handleRequestMVK } = useContractAction(contractActionProps)
+  const { action: handleRequestMVN } = useContractAction(contractActionProps)
 
   const burgerClickHandler = useCallback(() => {
     toggleSidebarCollapsing()
@@ -178,7 +178,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               kind={BUTTON_PRIMARY}
               form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
               isThin
-              onClick={handleRequestMVK}
+              onClick={handleRequestMVN}
               disabled={!canGetInitThouthand || isActionActive}
             >
               {sidebarOpened ? 'MVN Faucet' : 'MVN'}
