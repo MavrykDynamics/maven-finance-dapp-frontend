@@ -52,7 +52,7 @@ const DelegationTab = ({
   } = useSatellitesContext()
   const { userTokensBalances, satelliteMvnIsDelegatedTo, userAddress } = useUserContext()
 
-  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
+  const userSmvnBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -125,11 +125,11 @@ const DelegationTab = ({
                   </Tooltip>
                 </div>
                 <div className="value">
-                  <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVK" />
+                  <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVN" />
                 </div>
               </div>
               <div className="grid-item space">
-                <div className="name">Free MVK Space</div>
+                <div className="name">Free MVN Space</div>
                 <div className="value">
                   <CommaNumber
                     value={Math.max(
@@ -147,7 +147,7 @@ const DelegationTab = ({
                 </div>
               </div>
               <div className="grid-item delegated">
-                <div className="name">Delegated MVK</div>
+                <div className="name">Delegated MVN</div>
                 <div className="value">
                   <CommaNumber value={satelliteRecord.totalDelegatedAmount + satelliteRecord.sMvnBalance} />
                 </div>
@@ -170,7 +170,7 @@ const DelegationTab = ({
               <Link to={`/satellites/satellite-details/${satelliteRecord.address}`}>My Satellite</Link>
             </DashboardPersonalSatellitesBottomLinks>
           </>
-        ) : userSmvkBalance === 0 && userAddress ? (
+        ) : userSmvnBalance === 0 && userAddress ? (
           <div className="no-data">
             <span>You don't have sMVN</span>
             <div className="nav-button">
@@ -181,7 +181,7 @@ const DelegationTab = ({
               </Link>
             </div>
           </div>
-        ) : userAddress && userSmvkBalance ? (
+        ) : userAddress && userSmvnBalance ? (
           <div className="no-data">
             <span>You are not delegated at this time</span>
             <div className="nav-button">

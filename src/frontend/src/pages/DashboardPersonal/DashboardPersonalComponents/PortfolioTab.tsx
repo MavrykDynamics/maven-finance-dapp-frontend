@@ -34,12 +34,12 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 type PortfolioTabProps = {
   xtzAmount: number
-  sMVKAmount: number
-  MVKAmount: number
+  sMvnAmount: number
+  mvnAmount: number
   mostSuppliedUserToken?: { amount: number; name: string }
 }
 
-const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount }: PortfolioTabProps) => {
+const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount }: PortfolioTabProps) => {
   const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
 
   const { availableLoansRewards, userAddress } = useUserContext()
@@ -112,7 +112,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
         <div className="wallet-info">
           <div className="name">Staked MVN</div>
           <div className="value">
-            <CommaNumber value={sMVKAmount} />
+            <CommaNumber value={sMvnAmount} />
             <Link to={userAddress ? '/staking' : '#'}>
               <Button kind={BUTTON_SIMPLE} disabled={!userAddress}>
                 View
@@ -123,7 +123,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMVKAmount, MVKAmount 
         <div className="wallet-info">
           <div className="name">MVN Not Staked</div>
           <div className="value">
-            <CommaNumber value={MVKAmount} />
+            <CommaNumber value={mvnAmount} />
             <Link to={userAddress ? '/staking' : '#'}>
               <Button kind={BUTTON_SIMPLE} disabled={!userAddress}>
                 Stake
