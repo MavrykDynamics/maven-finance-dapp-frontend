@@ -130,7 +130,7 @@ const DappConfigProvider = ({ children }: Props) => {
     if (currentIndexedLevel >= operationLvl) turnOffAction()
   }, [action, indexerLevel])
 
-  // Load initial data for dapp (max lenghts, mvkFaucet, minSmvkAmount)
+  // Load initial data for dapp (max lengths, mvnFaucet, minSmvnAmount)
   const { loading: initialConfigLoading } = useQuery(DAPP_INITIAL_CONFIG_QUERY, {
     onCompleted: (data) => {
       try {
@@ -138,7 +138,7 @@ const DappConfigProvider = ({ children }: Props) => {
         const { maxLengths, minimumStakedMvnBalance, mvnFaucetAddress } = normalizeInitialConfigData(parsedConfig)
         setDappConfigCtxState((prev) => ({
           ...prev,
-          maxLenghts: maxLengths,
+          maxLengths: maxLengths,
           minimumStakedMvnBalance: minimumStakedMvnBalance,
           mvnFaucetAddress: mvnFaucetAddress,
         }))

@@ -14,13 +14,13 @@ export const USER_TOKEN_TYPE_WHITELIST = 'whitelistToken'
 export const USER_TOKEN_TYPE_MTOKEN = 'mToken'
 export const USER_TOKEN_TYPE_DEFAULT = 'defaultDDtoken'
 
-// Decimals contants
-export const PRECISION_NUMBER = 1_000_000_000 // (10^9) MVK decimals
+// Decimals constants
+export const PRECISION_NUMBER = 1_000_000_000 // (10^9) MVN decimals
 export const MU_NUMBER = 1_000_000 // (10^6) XTZ decimals
 export const MVN_DECIMALS = 9
 export const XTZ_DECIMALS = 6
 
-// Decimals parsing contstants
+// Decimals parsing constants
 export const DECIMALS_TO_SHOW = 2
 export const ACCURATE_DECIMALS_TO_SHOW = 9
 
