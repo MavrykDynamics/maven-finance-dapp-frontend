@@ -178,11 +178,11 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
   },
   [GET_MVN_FROM_FAUCET_ACTION]: {
     start: {
-      title: 'Requesting MVK...',
+      title: 'Requesting MVN...',
       message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
-      title: 'Received 1,000 MVK...',
+      title: 'Received 1,000 MVN...',
       message: 'Enjoy using Maven Finance :)',
     },
   },

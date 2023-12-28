@@ -1,4 +1,4 @@
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
+import {InputStatusType} from 'app/App.components/Input/Input.constants'
 
 /**
  * Types for forms
@@ -24,7 +24,7 @@ export type ValidSubmitProposalForm = {
   title: boolean | undefined
   description: boolean | undefined
   invoice: boolean | undefined
-  successMVKReward: boolean | undefined
+  successMVNReward: boolean | undefined
   invoiceTable: boolean | undefined
   sourceCode: boolean | undefined
 }
@@ -33,7 +33,7 @@ export type SubmitProposalFormInputStatus = {
   title: InputStatusType
   description: InputStatusType
   invoice: InputStatusType
-  successMVKReward: InputStatusType
+  successMVNReward: InputStatusType
   invoiceTable: InputStatusType
   sourceCode: InputStatusType
 }

@@ -100,7 +100,7 @@ export function normalizeContractStatuses(storage: GetAllContractStatusesDataQue
               admin: item.admin,
               lastUpdated: item.last_updated_at,
               methods: {
-                'mint mvk and transfer': item.mint_mvk_and_transfer_paused,
+                'mint mvn and transfer': item.mint_mvk_and_transfer_paused,
                 'stake tokens': item.stake_tokens_paused,
                 transfer: item.transfer_paused,
                 'unstake tokens': item.unstake_tokens_paused,
