@@ -109,7 +109,7 @@ export const MANAGE_PERMISSIONS_MODAL_ID = 'managePermissions'
 export const REMOVE_ASSET_LENDING_MODAL_ID = 'removeAssetsFromLending'
 export const REPAY_MODAL_ID = 'repayVault'
 export const REPAY_AND_CLOSE_MODAL_ID = 'repayAndCloseVault'
-export const UPDATE_MVK_OPERATORS_MODAL_ID = 'updateMVKOperators'
+export const UPDATE_MVN_OPERATORS_MODAL_ID = 'updateMVNOperators'
 export const WITHDRAW_COLLATERAL_MODAL_ID = 'withdrawCollateral'
 
 export const getCollateralRatioPercentColor = (theme: MavrykTheme, percentage: number) => {

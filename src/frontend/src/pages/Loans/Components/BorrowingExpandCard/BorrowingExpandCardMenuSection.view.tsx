@@ -64,7 +64,7 @@ type Props = {
   openWithdrawCollateralPopup: ({ amount, idx }: { amount: number; idx: number }) => void
   openChangeBakerPopup: () => void
   openManagePermissionsPopup: () => void
-  openUpdateMvkOperatorsPopup: () => void
+  openUpdateMvnOperatorsPopup: () => void
   openChangeVaultNamePopup: () => void
 
   collateralData: CollateralType[]
@@ -74,7 +74,7 @@ type Props = {
   vaultName: string
   vaultAddress: string
   xtzDelegatedTo: string | null
-  sMVKDelegatedTo?: string
+  sMVNDelegatedTo?: string
   collateralRatio: number
   collateralBalance: number
   depositorsFlag: DepositorsFlagType
@@ -87,7 +87,7 @@ export const BorrowingExpandCardMenuSection = ({
   openWithdrawCollateralPopup,
   openChangeBakerPopup,
   openManagePermissionsPopup,
-  openUpdateMvkOperatorsPopup,
+  openUpdateMvnOperatorsPopup,
   openChangeVaultNamePopup,
 
   collateralData,
@@ -96,7 +96,7 @@ export const BorrowingExpandCardMenuSection = ({
   vaultName,
   vaultAddress,
   xtzDelegatedTo,
-  sMVKDelegatedTo,
+  sMVNDelegatedTo,
   collateralRatio,
   collateralBalance,
   depositorsFlag,
@@ -127,8 +127,8 @@ export const BorrowingExpandCardMenuSection = ({
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs.find((item) => item.active))
 
   const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
-  // TODO: test it when sMVK will be avaliable as collateral
-  const vaultHasSmvkCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVN_TOKEN_ADDRESS)
+  // TODO: test it when sMVN will be available as collateral
+  const vaultHasSmvnCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVN_TOKEN_ADDRESS)
 
   const handleSwitchTab = (setActiveTab: (tab?: SlidingTabButtonType) => void) => (newTabId: number) => {
     // condition to set list page to 1, when change tab
@@ -322,7 +322,7 @@ export const BorrowingExpandCardMenuSection = ({
             </div>
           </div>
 
-          {vaultHasXtzCollateral || vaultHasSmvkCollateral ? (
+          {vaultHasXtzCollateral || vaultHasSmvnCollateral ? (
             <div className="useful-info">
               <div className="useful-info-title">Delegations</div>
 
@@ -346,17 +346,17 @@ export const BorrowingExpandCardMenuSection = ({
                 </div>
               ) : null}
 
-              {vaultHasSmvkCollateral ? (
+              {vaultHasSmvnCollateral ? (
                 <div className="useful-info-line">
                   <div className="name">sMVN Delegated to</div>
                   <div className="value">
-                    {sMVKDelegatedTo ? (
-                      <TzAddress tzAddress={sMVKDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                    {sMVNDelegatedTo ? (
+                      <TzAddress tzAddress={sMVNDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
                     ) : (
                       'None'
                     )}
                   </div>
-                  <Link to={sMVKDelegatedTo ? `/satellites/satellite-details/${sMVKDelegatedTo}` : '/satellite-nodes'}>
+                  <Link to={sMVNDelegatedTo ? `/satellites/satellite-details/${sMVNDelegatedTo}` : '/satellite-nodes'}>
                     <Button kind={BUTTON_SIMPLE}>
                       View Satellite <Icon id="paginationArrowLeft" />
                     </Button>
@@ -393,30 +393,30 @@ export const BorrowingExpandCardMenuSection = ({
               </Button>
             </div>
 
-            {/* {vaultHasSmvkCollateral ? (
+            {/* {vaultHasSmvnCollateral ? (
               <div className="useful-info-line">
                 <div className="name">
-                  MVK Operators
+                  MVN Operators
                   <Tooltip>
                   <Tooltip.Trigger className="ml-3">
                     <Icon id="info" />
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    MVK operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVK so it can execute its required functions.
+                    MVN operators are tz or KT addresses that you allow to perform specific actions with your tokens. Only use this if you know exactly what you are doing. By default, you have to allow the vault to do an operator of your sMVN so it can execute its required functions.
                   </Tooltip.Content>
                 </Tooltip>
                 </div>
                 <div className="value">
-                  {mappedMVKOperators.firstAddress ? (
+                  {mappedMVNOperators.firstAddress ? (
                     <>
-                      <TzAddress tzAddress={mappedMVKOperators.firstAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
-                      {mappedMVKOperators.amount ?? ''}
+                      <TzAddress tzAddress={mappedMVNOperators.firstAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
+                      {mappedMVNOperators.amount ?? ''}
                     </>
                   ) : (
                     'None'
                   )}
                 </div>
-                <Button kind={BUTTON_SIMPLE} disabled={true || isActionActive} onClick={openUpdateMvkOperatorsPopup}>
+                <Button kind={BUTTON_SIMPLE} disabled={true || isActionActive} onClick={openUpdateMvnOperatorsPopup}>
                   Update <Icon id="paginationArrowLeft" />
                 </Button>
               </div>
