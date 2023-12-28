@@ -36,7 +36,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
     contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()
 
-  const mvkTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
+  const mvnTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
   const { pathname } = useLocation()
@@ -83,7 +83,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         <div className="tokens scroll-block">
           <div className="row">
             <div className="icon">
-              <Icon id={'mvkTokenGold'} />
+              <Icon id={'mvnTokenGold'} />
             </div>
             <div className="values">
               <CommaNumber
@@ -100,7 +100,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
                   getUserTokenBalanceByAddress({
                     userTokensBalances,
                     tokenAddress: mvnTokenAddress,
-                  }) * mvkTokenRate
+                  }) * mvnTokenRate
                 }
                 endingText={'USD'}
                 showDecimal
@@ -117,7 +117,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
           <div className="row">
             <div className="icon">
-              <Icon id={'mvkTokenSilver'} />
+              <Icon id={'mvnTokenSilver'} />
             </div>
             <div className="values">
               <CommaNumber
@@ -231,7 +231,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
     contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()
 
-  const mvkTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
+  const mvnTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
   const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
   const { pathname } = useLocation()
@@ -285,7 +285,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         <div className="tokens scroll-block">
           <div className="row">
             <div className="icon">
-              <Icon id={'mvkTokenGold'} />
+              <Icon id={'mvnTokenGold'} />
             </div>
             <div className="values">
               <CommaNumber
@@ -302,7 +302,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
                   getUserTokenBalanceByAddress({
                     userTokensBalances,
                     tokenAddress: mvnTokenAddress,
-                  }) * mvkTokenRate
+                  }) * mvnTokenRate
                 }
                 endingText={'USD'}
                 showDecimal
@@ -311,7 +311,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             </div>
 
             <div className="action">
-              <Button onClick={() => mountWertWiget('MVK')} kind={BUTTON_SIMPLE} disabled>
+              <Button onClick={() => mountWertWiget('MVN')} kind={BUTTON_SIMPLE} disabled>
                 Buy MVN <Icon id="paginationArrowLeft" />
               </Button>
             </div>
@@ -319,7 +319,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
           <div className="row">
             <div className="icon">
-              <Icon id={'mvkTokenSilver'} />
+              <Icon id={'mvnTokenSilver'} />
             </div>
             <div className="values">
               <CommaNumber
