@@ -67,7 +67,7 @@ export const StakingTab = () => {
                     </Tooltip.Trigger>
                     <Tooltip.Content>
                       The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit
-                      fees are paid directly to sMVK stakeholders for remaining active participants in securing the
+                      fees are paid directly to sMVN stakeholders for remaining active participants in securing the
                       network. Click to read more.
                     </Tooltip.Content>
                   </Tooltip>
@@ -79,16 +79,16 @@ export const StakingTab = () => {
             </StatBlock>
             <StatBlock>
               <div className="name flexbox">
-                MVK Loyalty Index
+                Maven Loyalty Index
                 <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
                     </Tooltip.Trigger>
                     <Tooltip.Content>
-                      The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK,
-                      the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the
-                      MLI, and the exit fee will rise. Click to read more.
+                      The Maven Loyalty Index is a metric that balances MVN & sMVN. The more MVN is staked v.s. MVN, the
+                      higher the MLI, and the lower the exit fee is. The less MVN staked v.s. MVN, the lower the MLI,
+                      and the exit fee will rise. Click to read more.
                     </Tooltip.Content>
                   </Tooltip>
                 </CustomLink>
@@ -112,7 +112,7 @@ export const StakingTab = () => {
                   height: 100,
                   tickDateFormatter: (date: number) => getChartXAxisTicks(date, TWENTY_FOUR_HOURS),
                 }}
-                tooltipAsset={'sMVK'}
+                tooltipAsset={'sMVN'}
               />
             </StakingHistoryChartWrapper>
           </div>

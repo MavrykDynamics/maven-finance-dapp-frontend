@@ -28,7 +28,7 @@ import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 export const OraclesTab = () => {
   const { feedsAddresses, feedsMapper, isLoading: isFeedsLoading } = useDataFeedsContext()
   const {
-    tokensPrices: { [MVN_TOKEN_SYMBOL]: mvkExchangeRate = 0 },
+    tokensPrices: { [MVN_TOKEN_SYMBOL]: mvnExchangeRate = 0 },
   } = useTokensContext()
 
   const { oracleRewardsTotal } = useSatelliteStatistics()
@@ -58,10 +58,10 @@ export const OraclesTab = () => {
             <StatBlock>
               <div className="name">Total Oracle Rewards Paid</div>
               <div className="value">
-                <CommaNumber value={oracleRewardsTotal} endingText="sMVK" />
+                <CommaNumber value={oracleRewardsTotal} endingText="sMVN" />
               </div>
               <div className="converted">
-                <CommaNumber beginningText="$" value={oracleRewardsTotal * mvkExchangeRate} />
+                <CommaNumber beginningText="$" value={oracleRewardsTotal * mvnExchangeRate} />
               </div>
             </StatBlock>
             <StatBlock>
@@ -141,7 +141,7 @@ export const OraclesTab = () => {
         <div className="text">
           Satellites may also operate as nodes for Maven Finance’s decentralized oracle. Oracles provide price data for
           assets selected through governance, such as the collateral assets used in vaults and lending. They will then
-          receive rewards in sMVK proportionate to their total voting power, and will distribute these rewards to their
+          receive rewards in sMVN proportionate to their total voting power, and will distribute these rewards to their
           delegates.{' '}
           <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
             Read More

@@ -23,7 +23,7 @@ import {
   FARMS_TAB_ID,
   isValidPersonalDashboardTabId,
   LENDING_TAB_ID,
-  mvkStatsType,
+  mvnStatsType,
   ORACLES_TAB_ID,
   SATELLITES_TAB_ID,
   STAKING_TAB_ID,
@@ -84,7 +84,7 @@ export const Dashboard = () => {
                 <CommaNumber beginningText="$" value={DAPP_TVL} />
               </div>
 
-              <DashboardMvkData />
+              <DashboardMvnData />
             </div>
 
             <div className="dashboard-navigation">
@@ -188,48 +188,48 @@ const TabById = ({ activeTab }: { activeTab: TabId }) => {
   }
 }
 
-const DashboardMvkData = () => {
+const DashboardMvnData = () => {
   const { tokensPrices } = useTokensContext()
   // staking stats loading is handled in <Dashboard /> component
   const { totalStakedMvn, totalSupply, maximumTotalSupply } = useDoormanContext()
 
-  const mvkExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
-  const mvkStatsBlock: mvkStatsType = {
-    marketCap: mvkExchangeRate * totalSupply,
-    stakedMvk: totalStakedMvn,
-    circuatingSupply: totalSupply,
+  const mvnExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
+  const mvnStatsBlock: mvnStatsType = {
+    marketCap: mvnExchangeRate * totalSupply,
+    stakedMvn: totalStakedMvn,
+    circulatingSupply: totalSupply,
     maxSupply: maximumTotalSupply,
-    livePrice: mvkExchangeRate,
-    // TODO: remove when mvk rate will be dynamic
-    prevPrice: mvkExchangeRate - 0.00999,
+    livePrice: mvnExchangeRate,
+    // TODO: remove when mvn rate will be dynamic
+    prevPrice: mvnExchangeRate - 0.00999,
   }
 
-  const mvkRateChange = calcDiffBetweenTwoNumbersInPersentage(mvkStatsBlock.livePrice, mvkStatsBlock.prevPrice)
+  const mvnRateChange = calcDiffBetweenTwoNumbersInPersentage(mvnStatsBlock.livePrice, mvnStatsBlock.prevPrice)
 
   return (
-    <div className="mvkStats">
+    <div className="mvnStats">
       <BGPrimaryTitleStyled>MVN</BGPrimaryTitleStyled>
       <div className="statsWrapper">
         <StatBlock>
           <div className="name">Market Cap</div>
           <div className="value">
-            <CommaNumber value={mvkStatsBlock.marketCap} endingText="USD" />
+            <CommaNumber value={mvnStatsBlock.marketCap} endingText="USD" />
           </div>
         </StatBlock>
 
         <StatBlock>
           <div className="name">Staked MVN</div>
           <div className="value">
-            <CommaNumber value={mvkStatsBlock.stakedMvk} endingText="MVK" />
+            <CommaNumber value={mvnStatsBlock.stakedMvn} endingText="MVN" />
           </div>
         </StatBlock>
 
         <StatBlock>
           <div className="name">Live Price</div>
           <div className="value">
-            <CommaNumber beginningText="$" value={mvkStatsBlock.livePrice} />
+            <CommaNumber beginningText="$" value={mvnStatsBlock.livePrice} />
             <div className="impact-wrapper">
-              <Impact value={mvkRateChange} endingText="% 24h" />
+              <Impact value={mvnRateChange} endingText="% 24h" />
             </div>
           </div>
         </StatBlock>
@@ -237,14 +237,14 @@ const DashboardMvkData = () => {
         <StatBlock>
           <div className="name">Circulating Supply</div>
           <div className="value">
-            <CommaNumber value={mvkStatsBlock.circuatingSupply} endingText="MVK" />
+            <CommaNumber value={mvnStatsBlock.circulatingSupply} endingText="MVN" />
           </div>
         </StatBlock>
 
         <StatBlock>
           <div className="name">Max Supply</div>
           <div className="value">
-            <CommaNumber value={mvkStatsBlock.maxSupply} endingText="MVK" />
+            <CommaNumber value={mvnStatsBlock.maxSupply} endingText="MVN" />
           </div>
         </StatBlock>
       </div>
