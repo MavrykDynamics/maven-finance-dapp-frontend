@@ -53,7 +53,7 @@ export const DEFAULT_PROPOSAL_VALIDATION: ProposalValidityObj = {
   title: '',
   description: '',
   invoice: '',
-  successMVKReward: '',
+  successMVNReward: '',
   invoiceTable: '',
   sourceCode: '',
   bytesValidation: [],

@@ -39,8 +39,7 @@ export const ProposalListItem = styled(CardHover)<{ selected: boolean; theme: Ma
       border-color: ${({ theme }) => theme.linksAndButtons};
       box-shadow: ${({ theme }) => theme.cardHoverColor};
     `}
-
-  .proposal-voted-mvk {
+  .proposal-voted-mvn {
     font-weight: 600;
     font-size: 14px;
     color: ${({ theme }) => theme.primaryText};
