@@ -1,5 +1,5 @@
 export const LENDING_TAB_SUPPLY_TEXT = (asset: string) =>
-  `Earn yield by supplying assets to Mavryk’s lending pools. Loans are secured by 200% collateral.${
+  `Earn yield by supplying assets to Maven’s lending pools. Loans are secured by 200% collateral.${
     asset.toLowerCase() === 'xtz' ? ' Supplied XTZ is automatically delegated to the Maven Finance DAO Bakery.' : ''
   }`
 
