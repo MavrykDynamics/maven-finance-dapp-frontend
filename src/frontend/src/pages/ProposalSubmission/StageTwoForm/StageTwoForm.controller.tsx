@@ -278,7 +278,7 @@ export const StageTwoForm = ({
 
         <div className="submitted-data">
           <div className="label">2 - Proposal Success Reward</div>
-          <CommaNumber className="value" value={successReward} endingText="MVK" />
+          <CommaNumber className="value" value={successReward} endingText="MVN" />
         </div>
 
         <div className="submitted-data">

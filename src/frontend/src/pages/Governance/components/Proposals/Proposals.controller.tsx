@@ -60,7 +60,7 @@ export const Proposals = ({
       <div className="proposals-list-wrapper">
         {paginatedItemsList.map((proposalId, index) => {
           const proposal = proposalsMapper[proposalId]
-          const proposalVotedMvk =
+          const proposalVotedMvn =
             // if proposal is history show voting round or if it's 0 show proposal round votes
             listName === HISTORY_PROPOSALS_LIST_NAME
               ? proposal.quorumMvnTotal || proposal.proposalUpVotesMvnTotal
@@ -81,9 +81,9 @@ export const Proposals = ({
                 <h4>{proposal.title}</h4>
               </ProposalItemLeftSide>
               <CommaNumber
-                className="proposal-voted-mvk"
-                value={proposalVotedMvk}
-                endingText={'voted MVK'}
+                className="proposal-voted-mvn"
+                value={proposalVotedMvn}
+                endingText={'voted MVN'}
                 showDecimal={false}
               />
               <StatusFlag text={proposal.status} status={proposal.status} />
