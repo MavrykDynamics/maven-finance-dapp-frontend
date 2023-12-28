@@ -50,7 +50,7 @@ export const SatellitesTab = () => {
     }
   }, [])
 
-  const { avgDelegatedsMVK, avgFee, avgFreesMVKSpace, avgStakedMVK, partisipationRate } = useMemo(
+  const { avgDelegatedMvn, avgFee, avgFreeMvnSpace, avgStakedMvn, participationRate } = useMemo(
     () =>
       reduceSatellitesData({
         activeSatellitesIds,
@@ -86,16 +86,16 @@ export const SatellitesTab = () => {
           </StatBlock>
 
           <StatBlock>
-            <div className="name">Avg. Delegated sMVK</div>
+            <div className="name">Avg. Delegated sMVN</div>
             <div className="value">
-              <CommaNumber endingText="sMVK" value={avgDelegatedsMVK} />
+              <CommaNumber endingText="sMVN" value={avgDelegatedMvn} />
             </div>
           </StatBlock>
 
           <StatBlock>
-            <div className="name">Avg. Free sMVK Space</div>
+            <div className="name">Avg. Free sMVN Space</div>
             <div className="value">
-              <CommaNumber endingText="sMVK" value={avgFreesMVKSpace} />
+              <CommaNumber endingText="sMVN" value={avgFreeMvnSpace} />
             </div>
           </StatBlock>
 
@@ -107,16 +107,16 @@ export const SatellitesTab = () => {
           </StatBlock>
 
           <StatBlock>
-            <div className="name">Avg. MVK Staked</div>
+            <div className="name">Avg. MVN Staked</div>
             <div className="value">
-              <CommaNumber endingText="sMVK" value={avgStakedMVK} />
+              <CommaNumber endingText="sMVN" value={avgStakedMvn} />
             </div>
           </StatBlock>
 
           <StatBlock>
             <div className="name">Participation Rate</div>
             <div className="value">
-              <CommaNumber endingText="%" value={partisipationRate} />
+              <CommaNumber endingText="%" value={participationRate} />
             </div>
           </StatBlock>
         </SatellitesContentStyled>
@@ -134,7 +134,7 @@ export const SatellitesTab = () => {
           can act on its own behalf and can receive delegations on behalf of others.
           <br />
           <br />
-          To operate a Maven Finance Satellite, a users needs to stake a security deposit in MVK, and operate an oracle
+          To operate a Maven Finance Satellite, a users needs to stake a security deposit in MVN, and operate an oracle
           node for signing data feeds. For more information about starting & operating a Satellite.{' '}
           <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
             Read More
@@ -172,31 +172,31 @@ const reduceSatellitesData = ({
 
       acc.activeSatellites += 1
       acc.avgFee += satelliteRecord.satelliteFee
-      acc.avgStakedMVK += satelliteRecord.sMvnBalance
-      acc.partisipationRate += (proposalParticipation + votingParticipation) / 2
-      acc.avgFreesMVKSpace += Math.max(
+      acc.avgStakedMvn += satelliteRecord.sMvnBalance
+      acc.participationRate += (proposalParticipation + votingParticipation) / 2
+      acc.avgFreeMvnSpace += Math.max(
         satelliteRecord.sMvnBalance * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
         0,
       )
-      acc.avgDelegatedsMVK += satelliteRecord.sMvnBalance + satelliteRecord.totalDelegatedAmount
+      acc.avgDelegatedMvn += satelliteRecord.sMvnBalance + satelliteRecord.totalDelegatedAmount
 
       return acc
     },
     {
       activeSatellites: 0,
       avgFee: 0,
-      avgDelegatedsMVK: 0,
-      avgStakedMVK: 0,
-      partisipationRate: 0,
-      avgFreesMVKSpace: 0,
+      avgDelegatedMvn: 0,
+      avgStakedMvn: 0,
+      participationRate: 0,
+      avgFreeMvnSpace: 0,
     },
   )
 
   return {
     avgFee: satellitesInfo.avgFee / satellitesInfo.activeSatellites,
-    avgStakedMVK: satellitesInfo.avgStakedMVK / satellitesInfo.activeSatellites,
-    partisipationRate: satellitesInfo.partisipationRate / satellitesInfo.activeSatellites,
-    avgFreesMVKSpace: satellitesInfo.avgFreesMVKSpace / satellitesInfo.activeSatellites,
-    avgDelegatedsMVK: satellitesInfo.avgDelegatedsMVK / satellitesInfo.activeSatellites,
+    avgStakedMvn: satellitesInfo.avgStakedMvn / satellitesInfo.activeSatellites,
+    participationRate: satellitesInfo.participationRate / satellitesInfo.activeSatellites,
+    avgFreeMvnSpace: satellitesInfo.avgFreeMvnSpace / satellitesInfo.activeSatellites,
+    avgDelegatedMvn: satellitesInfo.avgDelegatedMvn / satellitesInfo.activeSatellites,
   }
 }

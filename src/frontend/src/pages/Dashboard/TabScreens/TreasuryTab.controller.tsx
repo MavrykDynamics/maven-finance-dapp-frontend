@@ -213,7 +213,7 @@ export const TreasuryTab = () => {
                       Tokens Claimed
                     </div>
                     <div className="value">
-                      <CommaNumber value={totalClaimedAmount} endingText="MVK" />
+                      <CommaNumber value={totalClaimedAmount} endingText="MVN" />
                     </div>
                   </div>
 
@@ -223,14 +223,14 @@ export const TreasuryTab = () => {
                       Total Vested
                     </div>
                     <div className="value">
-                      <CommaNumber value={totalVestedAmount} endingText="MVK" />
+                      <CommaNumber value={totalVestedAmount} endingText="MVN" />
                     </div>
                   </div>
 
                   <div className="ratio">
                     <div className="claimed">
                       <div className="hoverValue">
-                        Claimed tokens persent: {(totalClaimedAmount / amountOfTokens || 0.5) * 100}%
+                        Claimed tokens percent: {(totalClaimedAmount / amountOfTokens || 0.5) * 100}%
                       </div>
                     </div>
                     <div className="total">
@@ -255,7 +255,7 @@ export const TreasuryTab = () => {
         <div className="title">What is the purpose of the Treasury?</div>
         <div className="text">
           The Treasury is managed by Satellites through on-chain voting. The purpose is to store the income earned from
-          Maven Finance for assigned purposes, such as buying back MVK, investing & holding in on-chain assets, and
+          Maven Finance for assigned purposes, such as buying back MVN, investing & holding in on-chain assets, and
           more.{' '}
           <a href="https://docs.mavryk.finance/mavryk-finance/treasury" target="_blank" rel="noreferrer">
             Read More

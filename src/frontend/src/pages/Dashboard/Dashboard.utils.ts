@@ -1,7 +1,7 @@
-export type mvkStatsType = {
+export type mvnStatsType = {
   marketCap: number
-  stakedMvk: number
-  circuatingSupply: number
+  stakedMvn: number
+  circulatingSupply: number
   maxSupply: number
   livePrice: number
   prevPrice: number

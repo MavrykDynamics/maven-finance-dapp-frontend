@@ -5,6 +5,7 @@ import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
 
 export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
   margin-bottom: -20px;
+
   > .top {
     margin-top: 32px;
     display: flex;
@@ -33,7 +34,7 @@ export const DashboardStyled = styled.div<{ theme: MavrykTheme }>`
       }
     }
 
-    .mvkStats {
+    .mvnStats {
       background-color: ${({ theme }) => theme.cards};
 
       .statsWrapper {
@@ -146,6 +147,7 @@ export const StatBlock = styled.div`
     .value {
       font-weight: 700;
       font-size: 24px;
+
       .impact {
         font-size: 20px;
       }
