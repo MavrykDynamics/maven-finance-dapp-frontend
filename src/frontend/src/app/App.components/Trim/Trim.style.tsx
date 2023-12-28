@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const TrimStyled = styled.div<{ trim?: boolean, theme: MavrykTheme }>`
+export const TrimStyled = styled.div<{ trim?: boolean, theme: MavenTheme }>`
  ${({ trim }) => trim && css`
     &::after {
       content: '...';

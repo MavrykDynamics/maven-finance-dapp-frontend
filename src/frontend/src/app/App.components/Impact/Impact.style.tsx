@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { ImpactValueType, NEGATIVE_IMPACT, POSITIVE_IMPACT } from './Impact.conts'
 
-export const ImpactStyled = styled.div<{ theme: MavrykTheme; impact: ImpactValueType }>`
+export const ImpactStyled = styled.div<{ theme: MavenTheme; impact: ImpactValueType }>`
   height: 18px;
   padding: 3px;
   border-radius: 5px;

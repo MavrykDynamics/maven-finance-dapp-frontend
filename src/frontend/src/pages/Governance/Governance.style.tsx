@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 
-export const GovernanceStyled = styled.div<{ theme: MavrykTheme }>`
+export const GovernanceStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   width: 100%;
   flex-direction: row;
@@ -16,7 +16,7 @@ export const GovernanceStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const GovernanceLeftContainer = styled.div<{ theme: MavrykTheme }>`
+export const GovernanceLeftContainer = styled.div<{ theme: MavenTheme }>`
   width: 50%;
   position: relative;
 
@@ -42,7 +42,7 @@ export const GovernanceLeftContainer = styled.div<{ theme: MavrykTheme }>`
 `
 
 // TODO: remove this component across the dapp
-export const GovRightContainerTitleArea = styled.div<{ theme: MavrykTheme }>`
+export const GovRightContainerTitleArea = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;

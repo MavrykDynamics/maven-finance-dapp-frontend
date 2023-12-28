@@ -1,10 +1,10 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 import { PRIMARY_TRANSACTION_HISTORY_STYLE, SECONDARY_TRANSACTION_HISTORY_STYLE } from './Loans.const'
 
-export const LoansStyled = styled.div<{ theme: MavrykTheme }>``
+export const LoansStyled = styled.div<{ theme: MavenTheme }>``
 
-export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
+export const MarketChartsContainer = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: center;
   column-gap: 40px;
@@ -65,14 +65,14 @@ export const MarketChartsContainer = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MarketsOverviewContainer = styled.div<{ theme: MavrykTheme }>`
+export const MarketsOverviewContainer = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   margin-top: 30px;
   row-gap: 20px;
 `
 
-export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
+export const MarketOverview = styled.div<{ theme: MavenTheme }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -179,7 +179,7 @@ export const MarketOverview = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MarketPagination = styled.div<{ theme: MavrykTheme }>`
+export const MarketPagination = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -217,7 +217,7 @@ export const MarketPagination = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
+export const MarketStyled = styled.div<{ theme: MavenTheme }>`
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -300,7 +300,7 @@ export const MarketStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?: string }>`
+export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; customColor?: string }>`
   p {
     margin: 0;
   }
@@ -452,7 +452,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavrykTheme; customColor?:
   }
 `
 
-export const TransactionHistoryStyled = styled.div<{ theme: MavrykTheme }>`
+export const TransactionHistoryStyled = styled.div<{ theme: MavenTheme }>`
   .lending-controller {
     display: flex;
     column-gap: 5px;

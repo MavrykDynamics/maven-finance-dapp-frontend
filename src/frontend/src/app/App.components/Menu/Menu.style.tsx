@@ -1,9 +1,9 @@
 import styled from 'styled-components/macro'
 import { MENU_Z_INDEX, Z_INDEX_DEFAULT } from 'styles/constants'
 
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const MenuSidebarStyled = styled.div<{ theme: MavrykTheme }>`
+export const MenuSidebarStyled = styled.div<{ theme: MavenTheme }>`
   max-width: 232px;
   width: 100vw;
   transition: 0.6s all;
@@ -133,7 +133,7 @@ export const MenuGrid = styled.div`
   margin-bottom: 50px;
 `
 
-export const MenuFooter = styled.div<{ theme: MavrykTheme }>`
+export const MenuFooter = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   align-items: center;

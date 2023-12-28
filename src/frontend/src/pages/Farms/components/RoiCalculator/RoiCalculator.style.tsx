@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../../styles/interfaces'
+import { MavenTheme } from '../../../../styles/interfaces'
 
-export const RoiCalculatorStyled = styled.section<{ theme: MavrykTheme }>`
+export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
   padding: 40px 40px;
   padding-bottom: 30px;
 

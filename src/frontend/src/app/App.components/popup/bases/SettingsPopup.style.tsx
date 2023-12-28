@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const SettingsPopupBase = styled.div<{ theme: MavrykTheme }>`
+export const SettingsPopupBase = styled.div<{ theme: MavenTheme }>`
   .title {
     font-weight: 700;
     font-size: 25px;
@@ -54,7 +54,7 @@ export const ChangeNodeNodesList = styled.div`
   padding-right: 10px;
 `
 
-export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean; theme: MavrykTheme }>`
+export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean; theme: MavenTheme }>`
   display: flex;
   align-items: center;
 

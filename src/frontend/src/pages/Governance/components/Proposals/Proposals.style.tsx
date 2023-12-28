@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro'
 import { CardHover } from 'styles'
-import { MavrykTheme } from '../../../../styles/interfaces'
+import { MavenTheme } from '../../../../styles/interfaces'
 
-export const ProposalListContainer = styled.div<{ theme: MavrykTheme }>`
+export const ProposalListContainer = styled.div<{ theme: MavenTheme }>`
   margin-bottom: 38px;
   position: relative;
 
@@ -20,7 +20,7 @@ export const ProposalListContainer = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ProposalListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTheme }>`
+export const ProposalListItem = styled(CardHover)<{ selected: boolean; theme: MavenTheme }>`
   height: 57px;
   margin: 0;
   width: 100%;
@@ -47,7 +47,7 @@ export const ProposalListItem = styled(CardHover)<{ selected: boolean; theme: Ma
   }
 `
 
-export const VoterListItem = styled(CardHover)<{ theme: MavrykTheme }>`
+export const VoterListItem = styled(CardHover)<{ theme: MavenTheme }>`
   width: 100%;
   display: flex;
   align-items: center;
@@ -93,7 +93,7 @@ export const VoterListItem = styled(CardHover)<{ theme: MavrykTheme }>`
   }
 `
 
-export const ProposalItemLeftSide = styled.div<{ theme: MavrykTheme }>`
+export const ProposalItemLeftSide = styled.div<{ theme: MavenTheme }>`
   display: flex;
   font-size: 14px;
   align-items: center;

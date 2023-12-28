@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const ExitFeeModalContent = styled.div<{ theme: MavrykTheme }>`
+export const ExitFeeModalContent = styled.div<{ theme: MavenTheme }>`
   padding: 10px 40px 0 40px;
 
   label {

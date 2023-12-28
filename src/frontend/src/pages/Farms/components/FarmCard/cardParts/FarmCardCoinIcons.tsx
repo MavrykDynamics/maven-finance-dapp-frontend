@@ -9,7 +9,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // types
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 // utils
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
@@ -95,7 +95,7 @@ const COIN_IMAGES_SIZES = css`
   }
 `
 
-const FarmCardCoinIconsStyled = styled.figure<{ theme: MavrykTheme }>`
+const FarmCardCoinIconsStyled = styled.figure<{ theme: MavenTheme }>`
   align-items: center;
   position: relative;
   margin: 0;

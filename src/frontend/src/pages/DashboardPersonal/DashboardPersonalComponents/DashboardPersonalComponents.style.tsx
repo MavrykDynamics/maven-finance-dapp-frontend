@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
+export const SmallBlockBase = styled.div<{ theme: MavenTheme }>`
   width: calc(50% - 10px);
   height: 235px;
   background-color: ${({ theme }) => theme.cards};
@@ -26,7 +26,7 @@ export const SmallBlockBase = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
+export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavenTheme }>`
   height: 361px;
   display: flex;
   flex-direction: column;
@@ -51,7 +51,7 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
   }
 `
 
-export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavenTheme }>`
   width: 810px;
   padding-bottom: 10px;
   position: relative;
@@ -70,7 +70,7 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavrykTheme
   }
 `
 
-export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavenTheme }>`
   width: 260px;
 
   .wallet-info {
@@ -96,7 +96,7 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavrykThem
   }
 `
 
-export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
+export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavenTheme }>`
   background-image: url('/images/dashboard/dashboardPersonalMyRewards.svg?v=0'),
     ${({ theme }) => theme.dashboardTvlBackground};
   background-size: cover;
@@ -142,7 +142,7 @@ export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
     }
   }
 `
-export const EarnHistoryStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
+export const EarnHistoryStyled = styled(SmallBlockBase)<{ theme: MavenTheme }>`
   .top {
     display: flex;
     justify-content: space-between;
@@ -167,7 +167,7 @@ export const EarnHistoryStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
   }
 `
 
-export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavenTheme }>`
   width: 100%;
   padding-right: 0px;
   position: relative;
@@ -230,7 +230,7 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   }
 `
 
-export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavenTheme }>`
   width: 100%;
   max-height: 712px;
   height: fit-content;
@@ -248,7 +248,7 @@ export const HistoryBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   }
 `
 
-export const VestingTabStyled = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+export const VestingTabStyled = styled(MediumBlockBase)<{ theme: MavenTheme }>`
   width: 100%;
   height: 187px;
   padding-bottom: 20px;
@@ -273,7 +273,7 @@ export const VestingTabStyled = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
   }
 `
 
-export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme }>`
+export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavenTheme }>`
   padding-bottom: 20px;
   width: 100%;
   height: 315px;
@@ -372,7 +372,7 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavrykTheme
   }
 `
 
-export const DelegationStatusBlock = styled(SatelliteStatusBlock)<{ theme: MavrykTheme }>`
+export const DelegationStatusBlock = styled(SatelliteStatusBlock)<{ theme: MavenTheme }>`
   height: 285px;
   .top-row {
     margin-top: 25px;
@@ -387,13 +387,13 @@ export const DelegationStatusBlock = styled(SatelliteStatusBlock)<{ theme: Mavry
   }
 `
 
-export const DashboardPersonalTabStyled = styled.div<{ theme: MavrykTheme }>`
+export const DashboardPersonalTabStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
 `
 
-export const DashboardPersonalSatellitesBottomLinks = styled.div<{ theme: MavrykTheme }>`
+export const DashboardPersonalSatellitesBottomLinks = styled.div<{ theme: MavenTheme }>`
   margin-top: auto;
   position: relative;
 

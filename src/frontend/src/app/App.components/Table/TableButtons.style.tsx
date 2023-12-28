@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const TableActionsBtn = styled.div`
   position: absolute;
@@ -19,7 +19,7 @@ export const TableActionsBtn = styled.div`
   }
 `
 
-export const RemoveRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
+export const RemoveRowBtn = styled(TableActionsBtn)<{ theme: MavenTheme }>`
   top: 50%;
   transform: translateY(-50%);
   right: -25px;
@@ -29,7 +29,7 @@ export const RemoveRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
   }
 `
 
-export const AddRowBtn = styled(TableActionsBtn)<{ theme: MavrykTheme }>`
+export const AddRowBtn = styled(TableActionsBtn)<{ theme: MavenTheme }>`
   bottom: -5px;
   left: -20px;
 

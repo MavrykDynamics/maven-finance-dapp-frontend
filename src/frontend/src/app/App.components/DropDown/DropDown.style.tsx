@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
+export const DropDownStyled = styled.div<{ theme: MavenTheme }>`
   width: 100%;
   min-width: 226px;
   margin: 0 auto;
@@ -107,7 +107,7 @@ export const DropDownStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const DropDownMenu = styled.div<{ theme: MavrykTheme }>`
+export const DropDownMenu = styled.div<{ theme: MavenTheme }>`
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -158,7 +158,7 @@ export const DropDownListContainer = styled.div`
   z-index: 11;
 `
 
-export const DropDownList = styled.ul<{ theme: MavrykTheme }>`
+export const DropDownList = styled.ul<{ theme: MavenTheme }>`
   display: block;
   position: relative;
   height: min-content;
@@ -215,7 +215,7 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
   }
 `
 
-export const DropdownContainer = styled.div<{ theme: MavrykTheme }>`
+export const DropdownContainer = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   align-items: center;

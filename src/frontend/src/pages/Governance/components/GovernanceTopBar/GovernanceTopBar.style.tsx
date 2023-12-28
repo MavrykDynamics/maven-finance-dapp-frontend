@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from '../../../../styles/interfaces'
+import { MavenTheme } from '../../../../styles/interfaces'
 
 export const GovernanceTopBarStyled = styled(Card)`
   display: flex;
@@ -25,7 +25,7 @@ export const GovernanceTopBarStyled = styled(Card)`
   }
 `
 
-export const GovTopBarPhaseText = styled.div<{ isActivePhase?: boolean; theme: MavrykTheme }>`
+export const GovTopBarPhaseText = styled.div<{ isActivePhase?: boolean; theme: MavenTheme }>`
   color: ${({ isActivePhase, theme }) => (isActivePhase ? theme.selectedColor : theme.regularText)};
   font-weight: 600;
   font-size: 18px;

@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 import {
@@ -11,7 +11,7 @@ import {
   STATUS_FLAG_WAITING,
 } from './StatusFlag.constants'
 
-export const StatusFlagStyled = styled.div<{ theme: MavrykTheme; kind: StatusFlagKind; isFilled: boolean }>`
+export const StatusFlagStyled = styled.div<{ theme: MavenTheme; kind: StatusFlagKind; isFilled: boolean }>`
   border-radius: 10px;
   border: 1px solid;
   text-align: center;

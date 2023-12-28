@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const SatelliteNodesStyled = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteNodesStyled = styled.div<{ theme: MavenTheme }>`
   .list {
     margin-top: 30px;
 

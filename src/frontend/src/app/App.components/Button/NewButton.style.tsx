@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import {
   BUTTON_LARGE,
   BUTTON_NAVIGATION,
@@ -183,7 +183,7 @@ const BUTTONS_ANIMATIONS_STYLES = css`
 `
 
 // TODO: refactor colors with theme implementation
-export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
+export const ButtonStyled = styled.button<{ theme: MavenTheme }>`
   font-weight: 600;
   font-size: 16px;
   line-height: 16px;

@@ -6,9 +6,9 @@ import {
   SECONDARY_SLIDING_TAB_BUTTONS,
   SMALL_SLIDING_TAB_BUTTONS,
 } from './SlidingTabButtons.conts'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
+export const SlidingTabButtonsStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,7 +54,7 @@ export const SlidingTabButtonsStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
-export const SlidingTabBtn = styled.button<{ theme: MavrykTheme }>`
+export const SlidingTabBtn = styled.button<{ theme: MavenTheme }>`
   border: none;
   cursor: pointer;
   white-space: nowrap;

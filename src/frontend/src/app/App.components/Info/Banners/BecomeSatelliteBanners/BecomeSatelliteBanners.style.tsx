@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const NotStakingBannerStyled = styled.div<{ theme: MavrykTheme }>`
+export const NotStakingBannerStyled = styled.div<{ theme: MavenTheme }>`
   margin-top: 30px;
   max-height: 90px;
 

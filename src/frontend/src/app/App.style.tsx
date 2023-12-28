@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components/macro'
 
-import { MavrykTheme } from '../styles/interfaces'
+import { MavenTheme } from '../styles/interfaces'
 
 export const AppStyled = styled.div<{
-  theme: MavrykTheme
+  theme: MavenTheme
   isExpandedMenu?: boolean
 }>`
   --carousel-button-size: 30px;
@@ -17,14 +17,14 @@ export const AppStyled = styled.div<{
   }
 `
 
-export const FullScreenLoadingApp = styled.div<{ theme: MavrykTheme }>`
+export const FullScreenLoadingApp = styled.div<{ theme: MavenTheme }>`
   position: fixed;
   background-color: ${({ theme }) => theme.loaderBackgroundColor};
   width: 100vw;
   height: 100vh;
 `
 
-export const EmptyContainer = styled.figure<{ theme: MavrykTheme }>`
+export const EmptyContainer = styled.figure<{ theme: MavenTheme }>`
   display: flex;
   justify-content: center;
   align-items: center;

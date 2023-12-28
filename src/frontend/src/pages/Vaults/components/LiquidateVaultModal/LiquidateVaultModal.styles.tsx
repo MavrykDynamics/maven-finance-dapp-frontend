@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean; theme: MavrykTheme }>`
+export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean; theme: MavenTheme }>`
   font-weight: 600;
   font-size: 14px;
   line-height: 21px;

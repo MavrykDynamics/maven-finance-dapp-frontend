@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
 export const ChartWrapper = styled.div`
   position: absolute;
@@ -54,13 +54,13 @@ export const Plug = styled.div`
   }
 `
 
-export const ChartStyled = styled.div<{ theme: MavrykTheme }>`
+export const ChartStyled = styled.div<{ theme: MavenTheme }>`
   width: 100%;
   height: 100%;
   position: relative;
 `
 
-const BaseTooltipStyles = styled.div<{ theme: MavrykTheme }>`
+const BaseTooltipStyles = styled.div<{ theme: MavenTheme }>`
   position: absolute;
   z-index: 100;
   padding: 7px 10px 7px 10px;

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
+export const GaugeChartStyled = styled.div<{ theme: MavenTheme }>`
   position: relative;
   width: 125px;
   height: 125px;
@@ -46,7 +46,7 @@ export const GaugeChartStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ValueWrapper = styled.div<{ theme: MavrykTheme }>`
+export const ValueWrapper = styled.div<{ theme: MavenTheme }>`
   width: 82px;
   height: 82px;
   border-radius: 50%;
@@ -108,7 +108,7 @@ export const ValueWrapper = styled.div<{ theme: MavrykTheme }>`
   z-index: 3;
 `
 
-export const ArrowStyled = styled.div<{ theme: MavrykTheme; angle: number }>`
+export const ArrowStyled = styled.div<{ theme: MavenTheme; angle: number }>`
   width: 82px;
   height: 14px;
   position: absolute;

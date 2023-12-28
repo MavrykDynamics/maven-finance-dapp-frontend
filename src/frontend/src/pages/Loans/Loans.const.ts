@@ -1,5 +1,5 @@
 import { ColorBreakpoint } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const LEND_TAB_ID = 'lendingTab'
 export const BORROW_TAB_ID = 'borrowTab'
@@ -112,7 +112,7 @@ export const REPAY_AND_CLOSE_MODAL_ID = 'repayAndCloseVault'
 export const UPDATE_MVN_OPERATORS_MODAL_ID = 'updateMVNOperators'
 export const WITHDRAW_COLLATERAL_MODAL_ID = 'withdrawCollateral'
 
-export const getCollateralRatioPercentColor = (theme: MavrykTheme, percentage: number) => {
+export const getCollateralRatioPercentColor = (theme: MavenTheme, percentage: number) => {
   if (percentage === 0) return theme.subHeadingText
 
   const color = COLLATERAL_RATIO_GRADIENT.find(({ value }) => {

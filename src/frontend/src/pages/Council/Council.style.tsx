@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 import { Card } from 'styles'
 
 // types
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
 export const CouncilPageWrapper = styled.div`
   margin-top: 30px;
@@ -12,7 +12,7 @@ export const CouncilPageWrapper = styled.div`
   }
 `
 
-export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
+export const CouncilStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
 
@@ -45,7 +45,7 @@ export const CouncilStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme }>`
+export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -68,7 +68,7 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavrykTheme 
   }
 `
 
-export const CouncilSidebarNav = styled(Card)<{ theme: MavrykTheme }>`
+export const CouncilSidebarNav = styled(Card)<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
 
@@ -80,7 +80,7 @@ export const CouncilSidebarNav = styled(Card)<{ theme: MavrykTheme }>`
   margin-bottom: 10px;
 `
 
-export const AvailableActions = styled(Card)<{ theme: MavrykTheme }>`
+export const AvailableActions = styled(Card)<{ theme: MavenTheme }>`
   margin: 0;
   margin-bottom: 10px;
   padding: 0;

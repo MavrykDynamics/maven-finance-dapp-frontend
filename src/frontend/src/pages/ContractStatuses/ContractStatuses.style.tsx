@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
-export const BGStyled = styled.div<{ theme: MavrykTheme }>`
+export const BGStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   width: 100%;
   flex-direction: row;
@@ -12,7 +12,7 @@ export const BGStyled = styled.div<{ theme: MavrykTheme }>`
   grid-auto-rows: 65px auto;
 `
 
-export const BGTop = styled.div<{ theme: MavrykTheme }>`
+export const BGTop = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 25px;
@@ -21,11 +21,11 @@ export const BGTop = styled.div<{ theme: MavrykTheme }>`
   grid-column-end: 4;
 `
 
-const BGBlockBaseStyles = styled.div<{ theme: MavrykTheme }>`
+const BGBlockBaseStyles = styled.div<{ theme: MavenTheme }>`
   background-color: ${({ theme }) => theme.cards};
 `
 
-export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
+export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavenTheme }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -65,7 +65,7 @@ export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavrykTheme 
   }
 `
 
-export const BGMiddleWrapper = styled.div<{ theme: MavrykTheme }>`
+export const BGMiddleWrapper = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   height: 40px;
@@ -81,7 +81,7 @@ export const BGMiddleWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
+export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavenTheme }>`
   display: flex;
   height: fit-content;
   flex-direction: column;
@@ -116,7 +116,7 @@ export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
   }
 `
 
-export const BGCardsWrapper = styled.div<{ theme: MavrykTheme }>`
+export const BGCardsWrapper = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   grid-column-start: 1;
@@ -131,7 +131,7 @@ export const BGCardsWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const BGWhitelist = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
+export const BGWhitelist = styled(BGBlockBaseStyles)<{ theme: MavenTheme }>`
   padding: 25px 0;
   margin-top: 20px;
   border-top: 1px solid ${({ theme }) => theme.divider};
@@ -149,7 +149,7 @@ export const BGWhitelist = styled(BGBlockBaseStyles)<{ theme: MavrykTheme }>`
   }
 `
 
-export const BGPrimaryTitle = styled.h1<{ theme: MavrykTheme }>`
+export const BGPrimaryTitle = styled.h1<{ theme: MavenTheme }>`
   margin: 0;
 
   font-weight: 700;
