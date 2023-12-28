@@ -3,11 +3,11 @@ import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { VotingTypes } from './voting.const'
 
 export type VoteStatistics = {
-  forVotesMVNTotal: number
-  againstVotesMVNTotal?: number
-  abstainVotesMVNTotal?: number
-  passVotesMVNTotal?: number
-  unusedVotesMVNTotal: number
+  yayVotesMvnTotal: number
+  nayVotesMvnTotal?: number
+  passVotesMvnTotal?: number
+  proposalUpVotesMvnTotal?: number
+  unusedVotesMvnTotal: number
   quorum: number
 }
 
@@ -19,10 +19,10 @@ export type VotingProps = {
   handleVote?: (vote: VotingTypes) => void
   quorumText?: string
   buttonsToShow?: {
-    forBtn?: {
+    yayBtn?: {
       text: string
     }
-    againsBtn?: {
+    nayBtn?: {
       text: string
     }
     passBtn?: {

@@ -1,7 +1,7 @@
-import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
-import { ProposalRecordType } from 'providers/ProposalsProvider/helpers/proposals.types'
-import { Governance_Proposal } from 'utils/__generated__/graphql'
-import { ProposalValidityObj } from '../ProposalSubmission.types'
+import {ProposalStatus} from 'providers/ProposalsProvider/helpers/proposals.const'
+import {ProposalRecordType} from 'providers/ProposalsProvider/helpers/proposals.types'
+import {Governance_Proposal} from 'utils/__generated__/graphql'
+import {ProposalValidityObj} from '../ProposalSubmission.types'
 
 // CONSTS
 export const PROPOSAL_BYTE = {
@@ -29,12 +29,12 @@ export const DEFAULT_PROPOSAL: ProposalRecordType = {
   description: '',
   invoice: '',
   sourceCode: '',
-  passVoteMvkTotal: 0,
-  upvoteMvkTotal: 0,
-  downvoteMvkTotal: 0,
-  abstainMvkTotal: 0,
+  proposalUpVotesMvnTotal: 0,
+  yayVotesMvnTotal: 0,
+  nayVotesMvnTotal: 0,
+  passVotesMvnTotal: 0,
   minQuorumPercentage: 0,
-  quorumMvkTotal: 0,
+  quorumMvnTotal: 0,
   currentCycleEndLevel: 0,
   cycle: 0,
   successReward: 0,

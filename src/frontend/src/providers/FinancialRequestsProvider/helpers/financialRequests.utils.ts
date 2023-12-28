@@ -1,9 +1,9 @@
-import { FinRequestVoteType, FinancialRequestRecord } from './financialRequests.types'
+import {FinancialRequestRecord, FinRequestVoteType} from './financialRequests.types'
 import {
-  FinRequestsSubsRecordType,
   FinancialRequestsContext,
   FinancialRequestsIndexerType,
   FinancialRequestsStateType,
+  FinRequestsSubsRecordType,
   NullableFinancialRequestsContextStateType,
 } from '../financialRequests.provider.types'
 
@@ -13,11 +13,11 @@ import {
   FIN_REQUESTS_DATA,
   ONGOING_FIN_REQUESTS_SUB,
 } from './financialRequests.consts'
-import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
+import {ProposalStatus} from 'providers/ProposalsProvider/helpers/proposals.const'
 
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { finRequestVote } from './financialRequests.schema'
+import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
+import {convertNumberForClient} from 'utils/calcFunctions'
+import {finRequestVote} from './financialRequests.schema'
 
 /**
  *
@@ -106,9 +106,9 @@ export const normalizeFinancialRequests = (storage: {
         }, []),
 
         // Votes data
-        forVotesMVKTotal: convertNumberForClient({ number: item.yay_vote_smvk_total }),
-        againstVotesMVKTotal: convertNumberForClient({ number: item.nay_vote_smvk_total }),
-        sMVKTotakSupply: convertNumberForClient({ number: item.snapshot_smvk_total_supply }),
+        yayVotesMvnTotal: convertNumberForClient({ number: item.yay_vote_smvk_total }),
+        nayVotesMvnTotal: convertNumberForClient({ number: item.nay_vote_smvk_total }),
+        sMVNTotalSupply: convertNumberForClient({ number: item.snapshot_smvk_total_supply }),
         quorum: item.smvk_percentage_for_approval / 100,
       }
 

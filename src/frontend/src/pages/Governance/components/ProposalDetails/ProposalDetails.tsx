@@ -193,13 +193,13 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   // Voting stuff
   const voteStatistics = useMemo<VoteStatistics>(
     () => ({
-      abstainVotesMVNTotal: proposal.abstainMvkTotal,
-      againstVotesMVNTotal: proposal.downvoteMvkTotal,
-      forVotesMVNTotal: proposal.upvoteMvkTotal,
-      unusedVotesMVNTotal: Math.round(
-        proposal.quorumMvkTotal - proposal.abstainMvkTotal - proposal.downvoteMvkTotal - proposal.upvoteMvkTotal,
+      passVotesMvnTotal: proposal.passVotesMvnTotal,
+      nayVotesMvnTotal: proposal.nayVotesMvnTotal,
+      yayVotesMvnTotal: proposal.yayVotesMvnTotal,
+      unusedVotesMvnTotal: Math.round(
+        proposal.quorumMvnTotal - proposal.passVotesMvnTotal - proposal.nayVotesMvnTotal - proposal.yayVotesMvnTotal,
       ),
-      passVotesMVNTotal: proposal.passVoteMvkTotal,
+      proposalUpVotesMvnTotal: proposal.proposalUpVotesMvnTotal,
       quorum: proposal.minQuorumPercentage,
     }),
     [proposal],

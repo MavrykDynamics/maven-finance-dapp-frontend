@@ -93,10 +93,10 @@ export const FinancialRequestsView = ({
   const isActiveVotingButtons = rightItemStatus === ProposalStatus.ONGOING
 
   const votingStats = {
-    forVotesMVNTotal: rightSideContent.forVotesMVKTotal,
-    againstVotesMVNTotal: rightSideContent.againstVotesMVKTotal,
-    unusedVotesMVNTotal: Math.round(
-      rightSideContent.sMVKTotakSupply - rightSideContent.forVotesMVKTotal - rightSideContent.againstVotesMVKTotal,
+    yayVotesMvnTotal: rightSideContent.yayVotesMvnTotal,
+    nayVotesMvnTotal: rightSideContent.nayVotesMvnTotal,
+    unusedVotesMvnTotal: Math.round(
+      rightSideContent.sMVNTotalSupply - rightSideContent.yayVotesMvnTotal - rightSideContent.nayVotesMvnTotal,
     ),
     quorum: rightSideContent.quorum,
   }
@@ -173,8 +173,8 @@ export const FinancialRequestsView = ({
           handleVote={handleVotingRoundVote}
           buttonsToShow={
             isActiveVotingButtons
-              ? { forBtn: { text: 'Approve' }, againsBtn: { text: 'Disapprove' } }
-              : { forBtn: undefined, againsBtn: undefined }
+              ? { yayBtn: { text: 'Approve' }, nayBtn: { text: 'Disapprove' } }
+              : { yayBtn: undefined, nayBtn: undefined }
           }
           className={'fr-voting'}
           disableButtonByVote={userVote}

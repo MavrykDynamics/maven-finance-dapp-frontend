@@ -53,10 +53,12 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
 
   .fr-voting {
     margin-bottom: 20px;
+
     > div {
       justify-content: space-between;
       column-gap: 15px;
       padding-top: 0px;
+
       button {
         width: 50%;
       }
@@ -94,6 +96,7 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
         display: flex;
         width: 100%;
         justify-content: space-between;
+
         p {
           margin: 0;
         }
@@ -142,8 +145,7 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTh
       border-color: ${({ theme }) => theme.linksAndButtons};
       box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
     `}
-
-  .proposal-voted-mvk {
+  .proposal-voted-mvn {
     font-weight: 600;
     font-size: 14px;
     color: ${({ theme }) => theme.primaryText};

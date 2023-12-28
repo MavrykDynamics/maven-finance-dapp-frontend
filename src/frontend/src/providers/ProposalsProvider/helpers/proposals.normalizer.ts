@@ -59,12 +59,14 @@ export const normalizeProposal = (
     successReward: item.success_reward,
     sourceCode: item.source_code,
 
-    // voting data
-    passVoteMvkTotal: convertNumberForClient({ number: item.proposal_vote_smvk_total, grade: MVN_DECIMALS }),
-    upvoteMvkTotal: convertNumberForClient({ number: item.yay_vote_smvk_total, grade: MVN_DECIMALS }),
-    downvoteMvkTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVN_DECIMALS }),
-    abstainMvkTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVN_DECIMALS }),
-    quorumMvkTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVN_DECIMALS }),
+    // voting data - Re-doing proposal votes naming
+    // proposalUpVotesMvnTotal - up votes for a proposal during the PROPOSAL round
+    // yayVotesMvnTotal, nayVotesMvnTotal, & passVotesMvnTotal - votes during the VOTING round
+    proposalUpVotesMvnTotal: convertNumberForClient({ number: item.proposal_vote_smvk_total, grade: MVN_DECIMALS }),
+    yayVotesMvnTotal: convertNumberForClient({ number: item.yay_vote_smvk_total, grade: MVN_DECIMALS }),
+    nayVotesMvnTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVN_DECIMALS }),
+    passVotesMvnTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVN_DECIMALS }),
+    quorumMvnTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVN_DECIMALS }),
     minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
 
     votes: item.votes.reduce<

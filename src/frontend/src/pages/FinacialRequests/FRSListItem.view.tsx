@@ -13,7 +13,7 @@ export type FRListItemProps = {
 }
 
 export const FRSListItem = ({ id, selected = false, onClickHandler, request }: FRListItemProps) => {
-  const dividedPassVoteMvkTotal = request.againstVotesMVKTotal + request.forVotesMVKTotal
+  const dividedPassVoteMvnTotal = request.nayVotesMvnTotal + request.yayVotesMvnTotal
   const status = getRequestStatus(request)
 
   return (
@@ -24,7 +24,7 @@ export const FRSListItem = ({ id, selected = false, onClickHandler, request }: F
           {request.type} {request.purpose}
         </h4>
       </div>
-      <CommaNumber className="proposal-voted-mvk" value={dividedPassVoteMvkTotal} endingText={'voted'} />
+      <CommaNumber className="proposal-voted-mvn" value={dividedPassVoteMvnTotal} endingText={'voted'} />
       <StatusFlag text={status} status={status} />
     </FRListItem>
   )
