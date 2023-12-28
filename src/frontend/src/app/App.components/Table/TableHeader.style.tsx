@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 const EDITABLE_TABLE_HEADER_STYLES = css`
   &.editable-head {
@@ -28,7 +28,7 @@ const PROPOSAL_PAYMENTS_DETAILS_HEADER_STYLES = css`
   }
 `
 
-export const TableHeader = styled.thead<{ theme: MavrykTheme }>`
+export const TableHeader = styled.thead<{ theme: MavenTheme }>`
   z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
 
   tr {
@@ -92,7 +92,7 @@ const LOANS_DASHBOARD_TABLE_HEADER_CELL_STYLES = css`
   }
 `
 
-export const TableHeaderCell = styled.th<{ theme: MavrykTheme; contentPosition?: 'left' | 'center' | 'right' }>`
+export const TableHeaderCell = styled.th<{ theme: MavenTheme; contentPosition?: 'left' | 'center' | 'right' }>`
   color: ${({ theme }) => theme.subHeadingText};
 
   ${({ contentPosition }) => {

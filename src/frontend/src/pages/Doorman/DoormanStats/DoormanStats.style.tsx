@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import { Card, CardHeader } from 'styles'
 
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
 export const DoormanStatsStyled = styled(Card)`
   display: flex;
@@ -27,7 +27,7 @@ export const DoormanStatsStyled = styled(Card)`
   }
 `
 
-export const DoormanStatsHeader = styled(CardHeader)<{ theme: MavrykTheme }>`
+export const DoormanStatsHeader = styled(CardHeader)<{ theme: MavenTheme }>`
   text-align: center;
   margin-bottom: 10px;
 
@@ -39,7 +39,7 @@ export const DoormanStatsHeader = styled(CardHeader)<{ theme: MavrykTheme }>`
   }
 `
 
-export const DoormanList = styled.aside<{ theme: MavrykTheme }>`
+export const DoormanList = styled.aside<{ theme: MavenTheme }>`
   > div {
     display: flex;
     justify-content: space-between;

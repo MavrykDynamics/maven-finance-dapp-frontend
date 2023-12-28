@@ -1,21 +1,21 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const SatelliteGovernanceStyled = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteGovernanceStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 30px;
   margin-top: 30px;
 `
 
-export const SatelliteGovernanceStats = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteGovernanceStats = styled.div<{ theme: MavenTheme }>`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   column-gap: 20px;
 `
 
-export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavenTheme }>`
   padding: 30px 25px;
   height: 102px;
 
@@ -81,7 +81,7 @@ export const SatelliteGovernanceAvailableActions = styled(Card)`
   }
 `
 
-export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavrykTheme }>`
+export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavenTheme }>`
   position: relative;
   display: flex;
   flex-direction: column;

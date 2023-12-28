@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import { CardHover, Card } from 'styles'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { EmptyContainer as EmptyContainerBase } from 'app/App.style'
 
-export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage?: string }>`
+export const TabWrapperStyled = styled.div<{ theme: MavenTheme; backgroundImage?: string }>`
   padding: 24px 32px 40px 32px;
   position: relative;
 
@@ -80,7 +80,7 @@ export const TabWrapperStyled = styled.div<{ theme: MavrykTheme; backgroundImage
   }
 `
 
-export const LendingContentStyled = styled.div<{ theme: MavrykTheme }>`
+export const LendingContentStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   padding: 0 20px;
@@ -123,7 +123,7 @@ export const LendingContentStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
-export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
+export const StakingContentStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   max-width: 600px;
@@ -181,7 +181,7 @@ export const StakingContentStyled = styled.div<{ theme: MavrykTheme }>`
     }
   }
 `
-export const StakingHistoryChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
+export const StakingHistoryChartWrapper = styled(Card)<{ theme: MavenTheme }>`
   padding: 38px 0 15px 20px;
   height: 148px;
   margin: 0;
@@ -190,7 +190,7 @@ export const StakingHistoryChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
   flex-direction: column;
 `
 
-export const SatellitesContentStyled = styled.div<{ theme: MavrykTheme }>`
+export const SatellitesContentStyled = styled.div<{ theme: MavenTheme }>`
   display: grid;
   padding-left: 20px;
   grid-template-columns: repeat(3, auto);
@@ -202,7 +202,7 @@ export const SatellitesContentStyled = styled.div<{ theme: MavrykTheme }>`
   max-width: 600px;
 `
 
-export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
+export const OraclesContentStyled = styled.div<{ theme: MavenTheme }>`
   margin-top: 20px;
 
   .wrapper {
@@ -253,7 +253,7 @@ export const OraclesContentStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const TreasuryContentStyled = styled.div<{ theme: MavrykTheme }>`
+export const TreasuryContentStyled = styled.div<{ theme: MavenTheme }>`
   padding-left: 20px;
   margin-top: 20px;
 
@@ -282,7 +282,7 @@ export const TreasuryContentStyled = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const TreasuryVesting = styled.div<{
-  theme: MavrykTheme
+  theme: MavenTheme
   totalPersent: number
   claimedColor: string
   totalColor: string
@@ -401,7 +401,7 @@ export const TreasuryVesting = styled.div<{
   }
 `
 
-export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
+export const VaultsContentStyled = styled.div<{ theme: MavenTheme }>`
   padding-left: 20px;
   margin-top: 20px;
 
@@ -492,7 +492,7 @@ export const VaultsContentStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const FarmsContentStyled = styled.div<{ theme: MavrykTheme }>`
+export const FarmsContentStyled = styled.div<{ theme: MavenTheme }>`
   padding-left: 25px;
 
   .tabLoader {

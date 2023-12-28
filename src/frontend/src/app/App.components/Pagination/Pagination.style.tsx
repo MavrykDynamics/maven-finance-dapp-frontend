@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { PaginationPlacementVariants, PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
-export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: PaginationPlacementVariants }>`
+export const PaginationWrapper = styled.div<{ theme: MavenTheme; side?: PaginationPlacementVariants }>`
   display: flex;
   max-height: 36px;
   align-items: center;
@@ -37,7 +37,7 @@ export const PaginationWrapper = styled.div<{ theme: MavrykTheme; side?: Paginat
   }
 `
 
-export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boolean; theme: MavrykTheme }>`
+export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boolean; theme: MavenTheme }>`
   display: flex;
   justify-content: center;
   align-items: center;

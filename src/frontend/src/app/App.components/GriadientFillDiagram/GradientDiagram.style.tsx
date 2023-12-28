@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: string; gradientWidth: number }>`
+export const GradientDiagramStyled = styled.div<{ theme: MavenTheme; gradient: string; gradientWidth: number }>`
   display: flex;
   box-sizing: border-box;
   align-items: center;
@@ -32,7 +32,7 @@ export const GradientDiagramStyled = styled.div<{ theme: MavrykTheme; gradient: 
   }
 `
 
-export const GradientBreakpoint = styled.div<{ theme: MavrykTheme; background: string }>`
+export const GradientBreakpoint = styled.div<{ theme: MavenTheme; background: string }>`
   height: 8px;
   width: 8px;
   border-radius: 50%;

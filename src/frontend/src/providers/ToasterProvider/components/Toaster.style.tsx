@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/macro'
 import { decreaseBar } from 'styles/animations'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { TOASTER_LOADING, TOASTER_REVEAL, getColorByToasterStatus } from '../toaster.provider.const'
 import { ToasterAnimationType, ToasterTypes } from '../toaster.provider.type'
 // animations
@@ -19,7 +19,7 @@ export const ToasterContainer = styled.div`
 `
 
 export const ToasterStyled = styled.div<{
-  theme: MavrykTheme
+  theme: MavenTheme
   distance: number
   delay: number
   animationType: ToasterAnimationType
@@ -46,7 +46,7 @@ export const ToasterStyled = styled.div<{
   animation-timing-function: ease-in-out;
 `
 
-export const ToasterCountdown = styled.div<{ status?: ToasterTypes; theme: MavrykTheme }>`
+export const ToasterCountdown = styled.div<{ status?: ToasterTypes; theme: MavenTheme }>`
   position: absolute;
   bottom: 0;
   right: 0;
@@ -66,7 +66,7 @@ export const ToasterCountdown = styled.div<{ status?: ToasterTypes; theme: Mavry
     `}
 `
 
-export const ToasterIcon = styled.div<{ status?: ToasterTypes; theme: MavrykTheme }>`
+export const ToasterIcon = styled.div<{ status?: ToasterTypes; theme: MavenTheme }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,7 +86,7 @@ export const ToasterIcon = styled.div<{ status?: ToasterTypes; theme: MavrykThem
   }
 `
 
-export const ToasterContent = styled.div<{ status?: ToasterTypes; theme: MavrykTheme }>`
+export const ToasterContent = styled.div<{ status?: ToasterTypes; theme: MavenTheme }>`
   padding: 8px;
   max-width: calc(100% - 60px);
   width: 100%;

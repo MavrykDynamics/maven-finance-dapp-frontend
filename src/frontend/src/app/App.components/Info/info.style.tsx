@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import {
   INFO_DEFAULT,
   INFO_ERROR,
@@ -10,7 +10,7 @@ import {
   INFO_SMALL,
 } from './info.constants'
 
-export const InfoBlock = styled.blockquote<{ theme: MavrykTheme }>`
+export const InfoBlock = styled.blockquote<{ theme: MavenTheme }>`
   border-radius: 10px;
   margin: 0;
   padding: 10px 20px;

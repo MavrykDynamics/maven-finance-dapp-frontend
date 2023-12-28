@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import { CardHover } from 'styles'
-import { MavrykTheme } from '../../../../styles/interfaces'
+import { MavenTheme } from '../../../../styles/interfaces'
 
-export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavrykTheme }>`
+export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavenTheme }>`
   padding: 0;
   margin: 0;
   position: relative;
@@ -76,7 +76,7 @@ export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavrykTheme }>`
   }
 `
 
-export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: MavrykTheme }>`
+export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: MavenTheme }>`
   border: none;
 
   .expand-header {
@@ -172,7 +172,7 @@ export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Ma
   }
 `
 
-export const VerticalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: MavrykTheme }>`
+export const VerticalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: MavenTheme }>`
   padding: 43px 20px 0 20px;
 
   .double-rewards-tag {

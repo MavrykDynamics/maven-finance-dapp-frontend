@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const ContractCardWrapper = styled.div<{ theme: MavrykTheme }>`
+export const ContractCardWrapper = styled.div<{ theme: MavenTheme }>`
   width: 48%;
   min-height: 135px;
   height: fit-content;
@@ -17,7 +17,7 @@ export const ContractCardWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ContractCardTopSection = styled.div<{ theme: MavrykTheme }>`
+export const ContractCardTopSection = styled.div<{ theme: MavenTheme }>`
   padding: 22px 20px 18px 20px;
   background-color: ${({ theme }) => theme.cards};
   display: flex;

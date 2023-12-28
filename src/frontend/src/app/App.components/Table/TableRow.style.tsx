@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 const HOVERABLE_TABLE_ROW_STYLES = css`
   &.add-hover {
@@ -65,7 +65,7 @@ const PROPOSAL_DETAILS_PAYMENTS_ROW_STYLES = css`
   }
 `
 
-export const TableRow = styled.tr<{ theme: MavrykTheme; borderColor?: string; rowHeight?: number }>`
+export const TableRow = styled.tr<{ theme: MavenTheme; borderColor?: string; rowHeight?: number }>`
   height: ${({ rowHeight = 55 }) => `${rowHeight}px`};
   transition: border-bottom 0.4s;
 

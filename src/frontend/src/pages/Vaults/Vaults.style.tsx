@@ -13,9 +13,9 @@ import {
 } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 // types
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
-export const VaultsStyled = styled.div<{ theme: MavrykTheme }>`
+export const VaultsStyled = styled.div<{ theme: MavenTheme }>`
   .expand-borrow-tab {
     .expand-header {
       padding: 15px 30px 18px 30px;
@@ -72,7 +72,7 @@ export const VaultsFilters = styled.div`
   }
 `
 
-export const VaultsCardDropDown = styled.div<{ theme: MavrykTheme }>`
+export const VaultsCardDropDown = styled.div<{ theme: MavenTheme }>`
   padding: 30px;
   padding-bottom: 0;
 

@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
-export const BecomeSatelliteStyled = styled.div<{ theme: MavrykTheme }>`
+export const BecomeSatelliteStyled = styled.div<{ theme: MavenTheme }>`
   background-color: ${({ theme }) => theme.containerColor};
 `
 
@@ -77,13 +77,13 @@ export const BecomeSatelliteForm = styled(Card)`
   }
 `
 
-export const BecomeSatelliteNavigation = styled.div<{ theme: MavrykTheme }>`
+export const BecomeSatelliteNavigation = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
   column-gap: 20px;
 `
 
-export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; theme: MavrykTheme }>`
+export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; theme: MavenTheme }>`
   color: ${({ balanceOk, theme }) => (balanceOk ? theme.upColor : theme.downColor)};
   display: flex;
   padding-bottom: 20px;
@@ -101,7 +101,7 @@ export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; 
   }
 `
 
-export const BecomeSatelliteOracleText = styled.h3<{ theme: MavrykTheme }>`
+export const BecomeSatelliteOracleText = styled.h3<{ theme: MavenTheme }>`
   font-weight: 500;
   font-size: 14px;
   color: ${({ theme }) => theme.regularText};
@@ -113,7 +113,7 @@ export const BecomeSatelliteOracleText = styled.h3<{ theme: MavrykTheme }>`
     font-weight: 600;
   }
 `
-export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }>`
+export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavenTheme }>`
   padding-top: 20px;
 
   h3 {
@@ -145,7 +145,7 @@ export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavrykTheme }
   }
 `
 
-export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
+export const UnregisterSatelliteModalBase = styled.div<{ theme: MavenTheme }>`
   .buttons {
     margin-top: 40px;
     display: grid;
@@ -227,7 +227,7 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SatelliteDetailsContainer = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteDetailsContainer = styled.div<{ theme: MavenTheme }>`
   .grid-container {
     display: flex;
     align-items: center;

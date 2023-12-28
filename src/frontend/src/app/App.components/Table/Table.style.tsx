@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: number }>`
+export const TableScrollable = styled.div<{ theme: MavenTheme; bodyHeight: number }>`
   overflow-y: auto;
   padding-right: 8px;
   overscroll-behavior: contain;
@@ -26,7 +26,7 @@ export const TableScrollable = styled.div<{ theme: MavrykTheme; bodyHeight: numb
   }
 `
 
-export const Table = styled.table<{ theme: MavrykTheme }>`
+export const Table = styled.table<{ theme: MavenTheme }>`
   width: 100%;
 
   border-collapse: collapse;
@@ -136,7 +136,7 @@ export const Table = styled.table<{ theme: MavrykTheme }>`
   }
 `
 
-export const TableBody = styled.tbody<{ theme: MavrykTheme }>`
+export const TableBody = styled.tbody<{ theme: MavenTheme }>`
   &.treasury {
     th,
     td {

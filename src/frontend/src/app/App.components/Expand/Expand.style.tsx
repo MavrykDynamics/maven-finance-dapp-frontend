@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { CardHover } from 'styles'
 
 export const ExpandStyled = styled(CardHover)`
@@ -74,7 +74,7 @@ export const ExpandStyled = styled(CardHover)`
   }
 `
 
-export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: MavrykTheme }>`
+export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: MavenTheme }>`
   width: 100%;
   max-height: 0;
   height: fit-content;

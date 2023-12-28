@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteCardBottomRow = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   padding: 38px 25px;
@@ -19,7 +19,7 @@ export const SatelliteCardBottomRow = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const BlockName = styled.div<{ theme: MavrykTheme }>`
+export const BlockName = styled.div<{ theme: MavenTheme }>`
   font-weight: 600;
   font-size: 18px;
   margin-bottom: 20px;
@@ -27,7 +27,7 @@ export const BlockName = styled.div<{ theme: MavrykTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
 `
 
-export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteMetricsBlock = styled.div<{ theme: MavenTheme }>`
   display: grid;
   grid-template-columns: 160px 100px;
   row-gap: 7px;
@@ -54,7 +54,7 @@ export const SatelliteMetricsBlock = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SatelliteMetrics = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteMetrics = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -76,7 +76,7 @@ export const SatelliteVotingInfoWrapper = styled.div`
   }
 `
 
-export const SatelliteDescrBlock = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteDescrBlock = styled.div<{ theme: MavenTheme }>`
   margin-bottom: 25px;
 
   p {

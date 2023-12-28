@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const VaultModalStepper = styled.div<{ theme: MavrykTheme }>`
+export const VaultModalStepper = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
 
@@ -28,7 +28,7 @@ export const VaultModalStepperWrapper = styled.div`
   margin-bottom: 20px;
 `
 
-export const ModalStatsBlock = styled.div<{ theme: MavrykTheme }>`
+export const ModalStatsBlock = styled.div<{ theme: MavenTheme }>`
   margin-top: 20px;
   display: flex;
   flex-direction: column;

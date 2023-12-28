@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import { CardHover } from 'styles'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const CouncilMemberStyled = styled(CardHover)<{ theme: MavrykTheme }>`
+export const CouncilMemberStyled = styled(CardHover)<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;

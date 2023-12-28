@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { Card } from 'styles'
 import { BUTTON_RADIUS } from 'styles/constants'
 
@@ -19,7 +19,7 @@ export const SatelliteSideBarStyled = styled(Card)`
   }
 `
 
-export const SideBarSection = styled.aside<{ theme: MavrykTheme }>`
+export const SideBarSection = styled.aside<{ theme: MavenTheme }>`
   padding: 31px 17px;
   position: relative;
 
@@ -43,7 +43,7 @@ export const SideBarSection = styled.aside<{ theme: MavrykTheme }>`
   }
 `
 
-export const FAQLink = styled.div<{ theme: MavrykTheme }>`
+export const FAQLink = styled.div<{ theme: MavenTheme }>`
   font-size: 14px;
   margin: 14px 0;
   padding-left: 20px;
@@ -78,7 +78,7 @@ export const FAQLink = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
+export const SideBarItem = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   font-weight: 600;
@@ -118,13 +118,13 @@ export const SideBarItem = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SideBarFaq = styled.div<{ theme: MavrykTheme }>`
+export const SideBarFaq = styled.div<{ theme: MavenTheme }>`
   padding: 0 20px;
   padding-top: 26px;
   padding-bottom: 21px;
 `
 
-export const SidebarUserButton = styled.div<{ theme: MavrykTheme }>`
+export const SidebarUserButton = styled.div<{ theme: MavenTheme }>`
   border: 2px solid ${({ theme }) => theme.linksAndButtons};
   border-radius: ${BUTTON_RADIUS};
 

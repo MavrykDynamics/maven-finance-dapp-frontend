@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const TreasuryViewStyle = styled(Card)<{ theme: MavrykTheme }>`
+export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
   display: grid;
   grid-template-columns: auto 254px 184px;
   column-gap: 50px;

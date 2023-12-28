@@ -1,7 +1,7 @@
 import { SmallBlockBase } from 'pages/DashboardPersonal/DashboardPersonalComponents/DashboardPersonalComponents.style'
 import styled from 'styled-components'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const LoansDashboardStyled = styled.div`
   margin-top: 30px;
@@ -69,7 +69,7 @@ export const LoansDashboardStyled = styled.div`
   }
 `
 
-export const TotalVolumeStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
+export const TotalVolumeStyled = styled(SmallBlockBase)<{ theme: MavenTheme }>`
   background-image: url('/images/lendBorrowTotalVolume.svg?v=0'), ${({ theme }) => theme.dashboardTvlBackground};
   background-size: cover;
   background-repeat: no-repeat;
@@ -92,7 +92,7 @@ export const TotalVolumeStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
   }
 `
 
-export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }>`
+export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavenTheme }>`
   background-image: ${({ theme }) => theme.dashboardTvlBackground};
   background-size: cover;
   background-repeat: no-repeat;
@@ -131,7 +131,7 @@ export const AccountStyledStyled = styled(SmallBlockBase)<{ theme: MavrykTheme }
   }
 `
 
-export const PositionTableStyled = styled.div<{ theme: MavrykTheme }>`
+export const PositionTableStyled = styled.div<{ theme: MavenTheme }>`
   .no-markets-table-data {
     margin: 20px 0;
 

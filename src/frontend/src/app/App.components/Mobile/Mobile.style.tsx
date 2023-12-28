@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const GlobalStyle = createGlobalStyle`
   body {
@@ -18,7 +18,7 @@ export const MobilePlugBackground = styled.div`
   background-position: center center;
 `
 
-export const MobilePlugWrapper = styled.div<{ theme: MavrykTheme }>`
+export const MobilePlugWrapper = styled.div<{ theme: MavenTheme }>`
   width: 100%;
   max-width: 540px;
   height: fit-content;
@@ -48,7 +48,7 @@ export const MobilePlugWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MobilePlugFooter = styled.div<{ theme: MavrykTheme }>`
+export const MobilePlugFooter = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: flex-start;
   flex-direction: column;

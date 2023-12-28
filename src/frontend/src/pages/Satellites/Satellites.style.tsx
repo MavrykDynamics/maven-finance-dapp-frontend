@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
-export const SatellitesOverviewStyled = styled.div<{ theme: MavrykTheme }>`
+export const SatellitesOverviewStyled = styled.div<{ theme: MavenTheme }>`
   .top-list {
     display: flex;
     width: 100%;
@@ -35,7 +35,7 @@ export const SatelliteListStyled = styled.div`
   }
 `
 
-export const SatelliteSearchFilter = styled(Card)<{ theme: MavrykTheme; oracle?: boolean; dataFeeds?: boolean }>`
+export const SatelliteSearchFilter = styled(Card)<{ theme: MavenTheme; oracle?: boolean; dataFeeds?: boolean }>`
   display: flex;
   align-items: center;
   padding: 16px 26px;

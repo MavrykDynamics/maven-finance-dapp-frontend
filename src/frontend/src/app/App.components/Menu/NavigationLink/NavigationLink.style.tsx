@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components/macro'
 
-import { MavrykTheme } from '../../../../styles/interfaces'
+import { MavenTheme } from '../../../../styles/interfaces'
 
 export const NavigationLinkContainer = styled.div<{
   selected: boolean
   isMobMenuExpanded: boolean
-  theme: MavrykTheme
+  theme: MavenTheme
 }>`
   width: 100%;
 
@@ -56,7 +56,7 @@ export const NavigationLinkContainer = styled.div<{
 export const NavigationLinkItem = styled.div<{
   selected: boolean
   isMobMenuExpanded: boolean
-  theme: MavrykTheme
+  theme: MavenTheme
   disabled?: boolean
 }>`
   width: 100%;
@@ -106,7 +106,7 @@ export const NavigationLinkItem = styled.div<{
         `
       : ''}
 `
-export const NavigationLinkIcon = styled.div<{ selected: boolean; theme: MavrykTheme }>`
+export const NavigationLinkIcon = styled.div<{ selected: boolean; theme: MavenTheme }>`
   width: 35px;
   cursor: pointer;
   text-align: center;
@@ -130,10 +130,10 @@ export const NavigationLinkIcon = styled.div<{ selected: boolean; theme: MavrykT
     `}
 `
 
-export const NavigationSubLinks = styled.div<{ theme: MavrykTheme }>`
+export const NavigationSubLinks = styled.div<{ theme: MavenTheme }>`
   background: ${({ theme }) => theme.backgroundColor};
 `
-export const SubNavLink = styled.div<{ theme: MavrykTheme; disabled?: boolean }>`
+export const SubNavLink = styled.div<{ theme: MavenTheme; disabled?: boolean }>`
   width: 100%;
   height: 50px;
   display: flex;
@@ -153,7 +153,7 @@ export const SubNavLink = styled.div<{ theme: MavrykTheme; disabled?: boolean }>
       : ''}
 `
 
-export const SubLinkText = styled.p<{ selected: boolean; theme: MavrykTheme }>`
+export const SubLinkText = styled.p<{ selected: boolean; theme: MavenTheme }>`
   font-size: 14px;
   line-height: 17px;
   font-weight: 500;

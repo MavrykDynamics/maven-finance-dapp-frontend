@@ -1,9 +1,9 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
 
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const PropSubmissionTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
+export const PropSubmissionTopBarStyled = styled(Card)<{ theme: MavenTheme }>`
   display: grid;
   grid-template-columns: auto auto;
   align-items: center;
@@ -37,7 +37,7 @@ export const PropSubmissionTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
   }
 `
 
-export const CurrentPhaseContainer = styled.div<{ theme: MavrykTheme }>`
+export const CurrentPhaseContainer = styled.div<{ theme: MavenTheme }>`
   display: flex;
   column-gap: 10px;
   align-items: center;

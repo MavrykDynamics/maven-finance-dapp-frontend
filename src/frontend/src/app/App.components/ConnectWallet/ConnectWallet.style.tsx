@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const ConnectWalletBtnWrap = styled.div`
   min-width: 220px;
@@ -14,7 +14,7 @@ export const WalletDetailsStyled = styled.div`
   height: 100%;
 `
 
-export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown: boolean }>`
+export const WalletDetailsHiddenPart = styled.div<{ theme: MavenTheme; isShown: boolean }>`
   width: 375px;
 
   position: absolute;
@@ -171,7 +171,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavrykTheme; isShown:
   }
 `
 
-export const WalletDetailsVisiblePart = styled.div<{ theme: MavrykTheme; isShown: boolean }>`
+export const WalletDetailsVisiblePart = styled.div<{ theme: MavenTheme; isShown: boolean }>`
   width: fit-content;
   height: 100%;
   cursor: pointer;
@@ -242,7 +242,7 @@ export const MobileWalletDetailsStyled = styled.div`
   margin: 0 0 30px 0;
 `
 
-export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ theme: MavrykTheme; isShown: boolean }>`
+export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ theme: MavenTheme; isShown: boolean }>`
   width: 100vw;
   max-height: 90vh;
 
