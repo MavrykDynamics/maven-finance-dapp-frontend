@@ -65,8 +65,8 @@ const Satellites = () => {
 
   const tabsInfo = useMemo(
     () => ({
-      totalDelegetedMVK: (
-        <CommaNumber value={getTotalDelegatedMVN(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
+      totalDelegatedMVN: (
+        <CommaNumber value={getTotalDelegatedMVN(activeSatellitesIds, satelliteMapper)} endingText={'MVN'} />
       ),
       totalSatelliteOracles: activeSatellitesIds.length,
       numberOfDataFeeds: feedsAddresses.length > 50 ? feedsAddresses.length + '+' : feedsAddresses.length,
@@ -97,9 +97,9 @@ const Satellites = () => {
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>
             <SatelliteGovernanceStatsInfo>
-              <h3>Total Delegated MVK</h3>
+              <h3>Total Delegated MVN</h3>
               <div className="value">
-                {tabsInfo.totalDelegetedMVK}
+                {tabsInfo.totalDelegatedMVN}
                 <CustomLink to="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles">
                   <Tooltip>
                     <Tooltip.Trigger className="tooltip-trigger">
