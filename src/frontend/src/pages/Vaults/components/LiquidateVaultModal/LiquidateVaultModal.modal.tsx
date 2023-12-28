@@ -8,20 +8,18 @@ import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
 import Toggle from 'app/App.components/Toggle/Toggle.view'
 import { LiquidateVaultModalStyled } from './LiquidateVaultModal.styles'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { Button } from 'app/App.components/Button/Button.controller'
 
 // consts
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { LIQUIDATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { SECONDARY_TOGGLE } from 'app/App.components/Toggle/Toggle.consts'
-import colors from 'styles/colors'
 
 // types
 import { LiquidateVaultDataType } from 'providers/LoansProvider/helpers/LoansModals.types'
-import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { InputProps } from 'app/App.components/Input/newInput.type'
 
 // utils
@@ -88,11 +86,11 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
           data.ownerAddress,
           Number(inputAmount),
           borrowedToken,
-          lendingControllerAddress
+          lendingControllerAddress,
         )
       },
     }),
-    [borrowedToken, inputAmount, lendingControllerAddress, data.ownerAddress, userAddress, data.vaultId]
+    [borrowedToken, inputAmount, lendingControllerAddress, data.ownerAddress, userAddress, data.vaultId],
   )
 
   const { action: handleLiquidateVault } = useContractAction(contractActionProps)
@@ -157,9 +155,9 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
           <h1>Liquidate Vault</h1>
           <p>
             Foreclosing (liquidating) a vault repays the vault’s debt, by purchasing the vault’s collateral. Liquidators
-            earn an additional 10% yield on top of the debt repaid for helping to secure Mavryk’s lending. Foreclosing
-            on a vault requires repaying the vault debt in the same asset. The most that can be liquidated from a vault
-            is 50%. Input a percentage and then review your liquidation details below.
+            earn an additional 10% yield on top of the debt repaid for helping to secure Maven’s lending. Foreclosing on
+            a vault requires repaying the vault debt in the same asset. The most that can be liquidated from a vault is
+            50%. Input a percentage and then review your liquidation details below.
           </p>
 
           <div className="flex-group">
@@ -293,13 +291,20 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
                 <TableBody>
                   {collateralData.slice(0, -1).map(({ tokenAddress, amount }, index) => {
-                    const collateralToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
+                    const collateralToken = getTokenDataByAddress({
+                      tokenAddress,
+                      tokensMetadata,
+                      tokensPrices,
+                    })
 
                     if (!collateralToken || !collateralToken.rate) return null
 
                     const { symbol, icon, rate, decimals } = collateralToken
 
-                    const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
+                    const convertedAmount = convertNumberForClient({
+                      number: amount,
+                      grade: decimals,
+                    })
                     const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                     return (

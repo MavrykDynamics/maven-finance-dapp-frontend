@@ -147,7 +147,7 @@ export const BorrowingExpandCard = ({
     depositorsFlag,
     depositors,
     xtzDelegatedTo,
-    sMVKDelegatedTo,
+    sMVNDelegatedTo,
     collateralData,
     fee,
     availableLiquidity,
@@ -470,7 +470,7 @@ export const BorrowingExpandCard = ({
                 vaultName={vaultName}
                 vaultAddress={vaultAddress}
                 xtzDelegatedTo={xtzDelegatedTo}
-                sMVKDelegatedTo={sMVKDelegatedTo}
+                sMVKDelegatedTo={sMVNDelegatedTo}
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
                 depositorsFlag={depositorsFlag}
