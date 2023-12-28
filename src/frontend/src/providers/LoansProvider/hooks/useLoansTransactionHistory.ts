@@ -164,11 +164,11 @@ export const useLoansTransactionHistory = ({
         if (!loan_token) return acc
         const loanTokenAddress = loan_token.token.token_address
         const collateralTokenAddress = collateral_token?.token.token_address
-        const isSmvkCollateral = collateral_token?.token.mvk_tokens.length
+        const isSmvnCollateral = collateral_token?.token.mvk_tokens.length
 
         const tokenAddress =
           COLLATERAL_HISTORY_DATA_TYPES.includes(type) && collateralTokenAddress
-            ? isSmvkCollateral
+            ? isSmvnCollateral
               ? SMVN_TOKEN_ADDRESS
               : collateralTokenAddress
             : loanTokenAddress

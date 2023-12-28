@@ -62,7 +62,7 @@ export const BorrowingExpandCard = ({
     openAddExistingCollateralPopup,
     openAddNewCollateralPopup,
     openManagePermissionsPopup,
-    openUpdateMvkOperatorsPopup,
+    openUpdateMvnOperatorsPopup,
     openWithdrawCollateralPopup,
     confirmBorrowAssetPopup,
     confirmRepayFullPopup,
@@ -72,7 +72,7 @@ export const BorrowingExpandCard = ({
     addExistingCollateralPopup,
     addNewCollateralPopup,
     withdrawCollateralPopup,
-    updateMvkOperatorPopup,
+    updateMvnOperatorPopup,
     managePermissionsPopup,
     liquidateVaultPopup,
     createVaultPopup,
@@ -106,7 +106,7 @@ export const BorrowingExpandCard = ({
     addExistingCollateralPopup.showModal ||
     addNewCollateralPopup.showModal ||
     withdrawCollateralPopup.showModal ||
-    updateMvkOperatorPopup.showModal ||
+    updateMvnOperatorPopup.showModal ||
     managePermissionsPopup.showModal ||
     liquidateVaultPopup.showModal ||
     createVaultPopup.showModal ||
@@ -319,8 +319,8 @@ export const BorrowingExpandCard = ({
     })
   }
 
-  const handleClickOpenUpdateMvkOperatorsPopup = () => {
-    openUpdateMvkOperatorsPopup?.({
+  const handleClickOpenUpdateMvnOperatorsPopup = () => {
+    openUpdateMvnOperatorsPopup?.({
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
       // TODO add data to this popup
@@ -462,7 +462,7 @@ export const BorrowingExpandCard = ({
                 openWithdrawCollateralPopup={handleClickOpenWithdrawCollateralPopup}
                 openChangeBakerPopup={handleClickOpenChangeBakerPopup}
                 openManagePermissionsPopup={handleClickOpenManagePermissionsPopup}
-                openUpdateMvkOperatorsPopup={handleClickOpenUpdateMvkOperatorsPopup}
+                openUpdateMvnOperatorsPopup={handleClickOpenUpdateMvnOperatorsPopup}
                 openChangeVaultNamePopup={handleClickOpenChangeVaultNamePopup}
                 collateralData={collateralData}
                 currentToken={currentToken}
@@ -470,7 +470,7 @@ export const BorrowingExpandCard = ({
                 vaultName={vaultName}
                 vaultAddress={vaultAddress}
                 xtzDelegatedTo={xtzDelegatedTo}
-                sMVKDelegatedTo={sMVNDelegatedTo}
+                sMVNDelegatedTo={sMVNDelegatedTo}
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
                 depositorsFlag={depositorsFlag}

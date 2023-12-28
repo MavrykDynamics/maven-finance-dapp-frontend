@@ -37,7 +37,7 @@ import {useUserContext} from 'providers/UserProvider/user.provider'
 import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
-export const UpdateMVKOperator = ({
+export const UpdateMVNOperator = ({
   closePopup,
   show,
   data,
@@ -164,7 +164,7 @@ export const UpdateMVKOperator = ({
           <button onClick={closePopup} className="close-modal" />
 
           <GovRightContainerTitleArea>
-            <h2>Update MVK Operators</h2>
+            <h2>Update MVN Operators</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">
             Add or remove operators from collateralized staked MVN in the vault. Note, this is an advanced feature and
