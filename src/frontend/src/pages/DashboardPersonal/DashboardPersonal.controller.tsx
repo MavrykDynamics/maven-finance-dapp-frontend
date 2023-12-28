@@ -168,7 +168,7 @@ const DashboardPersonal = () => {
       getDbPersonalUserWalletData({
         userTokensBalances,
         mTokens,
-        mvkTokenAddress: mvnTokenAddress,
+        mvnTokenAddress,
         tokensPrices,
         tokensMetadata,
       }),

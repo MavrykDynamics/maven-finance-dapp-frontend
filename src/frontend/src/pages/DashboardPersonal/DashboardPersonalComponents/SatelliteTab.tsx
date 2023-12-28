@@ -127,7 +127,7 @@ const SatelliteTab = ({
                 </div>
 
                 <div className="grid-item ">
-                  <div className="name">Free MVK Space</div>
+                  <div className="name">Free MVN Space</div>
                   <div className="value">
                     <CommaNumber
                       value={Math.max(
@@ -145,7 +145,7 @@ const SatelliteTab = ({
                   </div>
                 </div>
                 <div className="grid-item ">
-                  <div className="name">Delegated MVK</div>
+                  <div className="name">Delegated MVN</div>
                   <div className="value">
                     <CommaNumber value={satelliteRecord.totalDelegatedAmount} />
                   </div>
@@ -168,7 +168,7 @@ const SatelliteTab = ({
                     </Tooltip>
                   </div>
                   <div className="value">
-                    <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVK" />
+                    <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVN" />
                   </div>
                 </div>
                 <div className="grid-item ">

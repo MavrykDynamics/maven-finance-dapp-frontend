@@ -21,9 +21,9 @@ const DashboardPersonalEarningsHistory = ({
   exitRewards,
 }: DashboardPersonalEarningsHistoryProps) => {
   const { tokensPrices } = useTokensContext()
-  const [switcherActive, setSwithcerActive] = useState(true)
+  const [switcherActive, setSwitcherActive] = useState(true)
 
-  const mvkRate = tokensPrices[MVN_TOKEN_SYMBOL]
+  const mvnRate = tokensPrices[MVN_TOKEN_SYMBOL]
   const xtzRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
   return (
@@ -35,7 +35,7 @@ const DashboardPersonalEarningsHistory = ({
           sufix={'MVN'}
           kind={SECONDARY_TOGGLE}
           checked={switcherActive}
-          onChange={() => setSwithcerActive(!switcherActive)}
+          onChange={() => setSwitcherActive(!switcherActive)}
         />
       </div>
       <div className="grid">
@@ -43,7 +43,7 @@ const DashboardPersonalEarningsHistory = ({
           <div className="name">Satellite Rewards</div>
           <div className="value">
             <CommaNumber
-              value={switcherActive ? satelliteRewards : satelliteRewards * mvkRate}
+              value={switcherActive ? satelliteRewards : satelliteRewards * mvnRate}
               endingText={switcherActive ? 'MVN' : 'USD'}
               showDecimal
               decimalsToShow={2}
@@ -54,7 +54,7 @@ const DashboardPersonalEarningsHistory = ({
           <div className="name">Farming Rewards</div>
           <div className="value">
             <CommaNumber
-              value={switcherActive ? farmsRewards : farmsRewards * mvkRate}
+              value={switcherActive ? farmsRewards : farmsRewards * mvnRate}
               endingText={switcherActive ? 'MVN' : 'USD'}
               showDecimal
               decimalsToShow={2}
@@ -65,7 +65,7 @@ const DashboardPersonalEarningsHistory = ({
           <div className="name">Exit Fee Rewards</div>
           <div className="value">
             <CommaNumber
-              value={switcherActive ? exitRewards : exitRewards * mvkRate}
+              value={switcherActive ? exitRewards : exitRewards * mvnRate}
               endingText={switcherActive ? 'MVN' : 'USD'}
               showDecimal
               decimalsToShow={2}

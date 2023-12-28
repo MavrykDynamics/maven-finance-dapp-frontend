@@ -30,13 +30,13 @@ export const getDbPersonalUserWalletData = ({
   tokensMetadata,
   tokensPrices,
   mTokens,
-  mvkTokenAddress,
+  mvnTokenAddress,
 }: {
   userTokensBalances: UserContext['userTokensBalances']
   tokensMetadata: TokensContext['tokensMetadata']
   tokensPrices: TokensContext['tokensPrices']
   mTokens: TokensContext['mTokens']
-  mvkTokenAddress: string | null
+  mvnTokenAddress: string | null
 }) => {
   const mostSuppliedUserToken = (userTokensBalances ? Object.keys(userTokensBalances) : []).reduce<null | {
     address: string
@@ -45,7 +45,7 @@ export const getDbPersonalUserWalletData = ({
   }>((acc, tokenAddress) => {
     // If token is mToken or shown by default return acc, we skip such tokens
     if (
-      tokenAddress === mvkTokenAddress ||
+      tokenAddress === mvnTokenAddress ||
       tokenAddress === SMVN_TOKEN_ADDRESS ||
       tokenAddress === XTZ_TOKEN_ADDRESS ||
       mTokens.includes(tokenAddress)
@@ -86,8 +86,8 @@ export const getDbPersonalUserWalletData = ({
 
   return {
     xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
-    sMVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
-    MVKAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+    sMvnAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
+    mvnAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress }),
     ...(mostSuppliedUserToken
       ? {
           mostSuppliedUserToken: {
