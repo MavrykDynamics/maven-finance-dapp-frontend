@@ -33,17 +33,17 @@ export const DAPP_INITIAL_CONFIG_QUERY = gql(`
       satellite_name_max_length
       satellite_website_max_length
 
-			# min amount of smvk to become a satellite
-			minimum_smvk_balance
+			# min amount of smvn to become a satellite
+			minimum_smvn_balance
     }
 
-		# mvk faucet address
-		mvk_faucet: mvk_faucet{
+		# mvn faucet address
+		mvn_faucet: mvn_faucet{
 			address
 		}
 
     # dapp indexed lvl
-    dipdup_index: dipdup_index(where: {name: {_eq: "mavryk_finance"}}) {
+    dipdup_index: dipdup_index(where: {name: {_eq: "maven_finance"}}) {
 			level
 		}
 	}

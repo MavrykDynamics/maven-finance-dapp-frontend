@@ -130,8 +130,8 @@ const CouncilProvider = ({ children }: Props) => {
   }, [userAddress])
 
   /**
-   * councils memebers:
-   * COUNCIL_MEMBERS_QUERY -> members of mavryk council
+   * councils members:
+   * COUNCIL_MEMBERS_QUERY -> members of maven council
    * BREAK_GLASS_COUNCIL_MEMBERS_QUERY -> members of break glass council
    */
   useQueryWithRefetch(COUNCIL_MEMBERS_QUERY, {
@@ -147,11 +147,11 @@ const CouncilProvider = ({ children }: Props) => {
   })
 
   /**
-   * mavryk council actions:
-   * ALL_PAST_COUNSILS_QUERY -> expired or executed actions
-   * MY_PAST_COUNSILS_QUERY -> expired or executed actions where user is initiator and all ongoing actions,
+   * maven council actions:
+   * ALL_PAST_COUNCILS_QUERY -> expired or executed actions
+   * MY_PAST_COUNCILS_QUERY -> expired or executed actions where user is initiator and all ongoing actions,
    *    where user is not initiator (actions to sign carousel)
-   * ALL_ONGOING_COUNSILS_QUERY -> all actions that are not executed nor expired
+   * ALL_ONGOING_COUNCILS_QUERY -> all actions that are not executed nor expired
    */
   useQueryWithRefetch(
     ALL_PAST_COUNCILS_QUERY,
@@ -240,7 +240,7 @@ const CouncilProvider = ({ children }: Props) => {
     { refetchQueryVariables },
   )
 
-  // mavryk council actions update
+  // maven council actions update
   const updateCouncilActionsData = (data: CouncilActionsQueryType) => {
     const { myPastActions, myPendingActions, actionsToSign, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.council_action, userAddress)
@@ -304,7 +304,7 @@ const CouncilProvider = ({ children }: Props) => {
     }))
   }
 
-  // mavryk council members update
+  // maven council members update
   const updateCouncilMembers = (data: GetCouncilMembersQuery) => {
     const members = normalizeCouncilMembers(data.council[0].members)
 

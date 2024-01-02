@@ -7,7 +7,7 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 
 // types
 import { NullableTreasuryContextStateType, TreasuryContext, TreasurySubsRecordType } from './treasury.provider.types'
-import { GetTreasurySmvkBalancesQuery, GetTreasuryStorageDataQuery } from 'utils/__generated__/graphql'
+import { GetTreasurySmvnBalancesQuery, GetTreasuryStorageDataQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { GET_TREASURY_SMVN_BALANCES, GET_TREASURY_STORAGE_QUERY } from './queries/treasury.queries'
@@ -32,7 +32,7 @@ const TreasuryProvider = ({ children }: Props) => {
   const [allowTreasurySMVNBalances, setAllowTreasurySMVNBalances] = useState(false)
 
   // methods to update context data
-  const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, smvnBalances: GetTreasurySmvkBalancesQuery) => {
+  const updateTreasuryStorage = (treasury: GetTreasuryStorageDataQuery, smvnBalances: GetTreasurySmvnBalancesQuery) => {
     const data = { ...treasury, ...smvnBalances }
     const treasuryMapper = normalizeTreasuryStorage(data)
 
@@ -78,7 +78,7 @@ const TreasuryProvider = ({ children }: Props) => {
       }
 
       //  pass the second part of data -> user balances data
-      treasuryNormalizerDataUpdaterRef.current<GetTreasurySmvkBalancesQuery>(data)
+      treasuryNormalizerDataUpdaterRef.current<GetTreasurySmvnBalancesQuery>(data)
       // reset for future calls
       treasuryNormalizerDataUpdaterRef.current = curry(updateTreasuryStorage)
       // disallow this query until new data for treasury is received

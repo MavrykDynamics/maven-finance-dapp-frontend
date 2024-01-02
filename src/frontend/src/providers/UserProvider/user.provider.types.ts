@@ -78,7 +78,7 @@ export type UserContextStateType = UserMetadataType & {
   userMTokens: Record<TokenAddressType, UserMTokenType>
 }
 
-export type UserIndexerFarmRewardsType = GetUserRewardsDataQuery['mavryk_user'][number]['farm_accounts']
+export type UserIndexerFarmRewardsType = GetUserRewardsDataQuery['maven_user'][number]['farm_accounts']
 
 export type UserRewardsType = {
   gatheredFarmRewards: number

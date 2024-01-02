@@ -31,7 +31,6 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
     averageOracleReward: null,
     oracleRewardsTotal: null,
   })
-  // TODO: rebranding - change all mvk instances to mvn
   useQueryWithRefetch(
     SATELLITES_STATS,
     {
@@ -39,9 +38,9 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
         const totalDelegatedMVN = data.satellite_aggregate.nodes.reduce((acc, node) => {
           const satelliteTotalDelegatedAmount =
             node.delegations.length > 0
-              ? node.delegations.reduce((sum, current) => sum + Number(current.user.smvk_balance), 0)
+              ? node.delegations.reduce((sum, current) => sum + Number(current.user.smvn_balance), 0)
               : 0
-          acc += Number(node.user.smvk_balance + satelliteTotalDelegatedAmount)
+          acc += Number(node.user.smvn_balance + satelliteTotalDelegatedAmount)
           return acc
         }, 0)
 

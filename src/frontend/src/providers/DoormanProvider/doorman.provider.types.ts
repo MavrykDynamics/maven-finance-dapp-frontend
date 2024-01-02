@@ -1,7 +1,7 @@
 import { normalizeDoormanChartsData } from './helpers/doormanCharts.normalizer'
 
 import { DAPP_MVN_SMVN_STATS_SUB, STAKE_ACTION, UNSTAKE_ACTION } from './helpers/doorman.consts'
-import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
+import { SmvnMvnHistoryDataQuery } from 'utils/__generated__/graphql'
 import { ChartPeriodType } from 'types/charts.type'
 
 export type SmvnHistoryData = ReturnType<typeof normalizeDoormanChartsData>
@@ -32,7 +32,7 @@ export type DoormanContext = DoormanContextStateType & {
   isLoading: boolean
 
   changeStakingSubscriptionsList: (skips: Partial<DoormanSubsRecordType>) => void
-  updateStakeHistoryData: (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => void
+  updateStakeHistoryData: (historyData: SmvnMvnHistoryDataQuery, period: ChartPeriodType) => void
 }
 
 export type DoormanActionData = {

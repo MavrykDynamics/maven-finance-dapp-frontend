@@ -38,12 +38,12 @@ export const useUserHistoryData = () => {
     },
     onCompleted: (data) => {
       // newly registered user, means no opearions performed
-      if (!data.mavryk_user[0]) {
+      if (!data.maven_user[0]) {
         setIsNewUser(true)
         return
       }
 
-      const itemsAmount = data.mavryk_user[0].historyItemsAmount.aggregate?.count ?? 0
+      const itemsAmount = data.maven_user[0].historyItemsAmount.aggregate?.count ?? 0
       const maxPage = Math.ceil(itemsAmount / userActionsHistoryItemsPerPage)
 
       // if user updated manually page, and set it wrong, redirect him to 1st page of the list
@@ -58,7 +58,7 @@ export const useUserHistoryData = () => {
         })
         history.replace(redirectToFirstPageOfTheList)
       } else {
-        const normalizedUserHistoryData = normalizeUserHistoryData(data.mavryk_user[0].stakes_history_data)
+        const normalizedUserHistoryData = normalizeUserHistoryData(data.maven_user[0].stakes_history_data)
         setUserHistoryData(currentPage, normalizedUserHistoryData, itemsAmount)
       }
     },

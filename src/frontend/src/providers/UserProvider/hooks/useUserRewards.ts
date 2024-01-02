@@ -31,12 +31,12 @@ export const useUserRewards = () => {
     },
     onCompleted: (data) => {
       // newly registered user, means no operations performed
-      if (!data.mavryk_user[0]) {
+      if (!data.maven_user[0]) {
         setUserRewards(DEFAULT_USER_REWARDS)
         return
       }
 
-      const rewardsIndexerData = data.mavryk_user[0]
+      const rewardsIndexerData = data.maven_user[0]
       const userProposalRewards = data.governance_proposal
 
       const normalizedUserRewards = normalizeUserRewards({ rewardsIndexerData, userProposalRewards })

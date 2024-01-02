@@ -128,7 +128,7 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
     case 'removeCouncilMember':
       return isBreakGlassCouncil ? BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER : MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER
 
-    // ------- MAVRYK COUNCIL VESTEES FORMS
+    // ------- MAVEN COUNCIL VESTEES FORMS
     case 'addVestee':
       return MavenCouncilDdForms.ADD_VESTEE
     case 'updateVestee':
@@ -138,7 +138,7 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
     case 'removeVestee':
       return MavenCouncilDdForms.REMOVE_VESTEE
 
-    // ------- MAVRYK COUNCIL TOKENS FORMS
+    // ------- MAVEN COUNCIL TOKENS FORMS
     case 'requestTokens':
       return MavenCouncilDdForms.REQUEST_TOKENS
     case 'requestMint':
@@ -146,13 +146,13 @@ export const getClientActionIdByIndexerActionType = (actionType: string, isBreak
     case 'transfer':
       return MavenCouncilDdForms.TRANSFER_TOKENS
 
-    // ------- MAVRYK COUNCIL BAKERS FORMS
+    // ------- MAVEN COUNCIL BAKERS FORMS
     case 'setBaker':
       return MavenCouncilDdForms.SET_BAKER
     case 'setContractBaker':
       return MavenCouncilDdForms.SET_CONTRACT_BAKER
 
-    // ------- MAVRYK COUNCIL OTHER FORMS
+    // ------- MAVEN COUNCIL OTHER FORMS
     case 'dropFinancialRequest':
       return MavenCouncilDdForms.DROP_FINANCIAL_REQUEST
 

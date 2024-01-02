@@ -79,10 +79,10 @@ const reduceTvlValue = ({
   } = indexerData
 
   // calculating doorman tvl
-  const smvkToken = getTokenDataByAddress({ tokenAddress: SMVN_TOKEN_ADDRESS, tokensMetadata, tokensPrices })
+  const smvnToken = getTokenDataByAddress({ tokenAddress: SMVN_TOKEN_ADDRESS, tokensMetadata, tokensPrices })
   const doormanTVL =
-    doormanAccount && smvkToken && smvkToken.rate
-      ? convertNumberForClient({ number: doormanAccount.mvk_balance, grade: smvkToken.decimals }) * smvkToken.rate
+    doormanAccount && smvnToken && smvnToken.rate
+      ? convertNumberForClient({ number: doormanAccount.mvn_balance, grade: smvnToken.decimals }) * smvnToken.rate
       : 0
 
   // calculating vaults tvl

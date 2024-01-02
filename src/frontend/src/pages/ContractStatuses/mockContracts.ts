@@ -58,7 +58,7 @@ export const MOCK_CONTRACTS: ContractBreakGlass[] = [
         status: 'PAUSED',
       },
       {
-        name: 'setMvkTokenAddress',
+        name: 'setMvnTokenAddress',
         status: 'PAUSED',
       },
       {
@@ -107,7 +107,7 @@ export const MOCK_CONTRACTS: ContractBreakGlass[] = [
     ],
   },
   {
-    name: 'MVK Token',
+    name: 'MVN Token',
     address: 'KT1Cn6kVR7F9yscbNBx4uRnrra19pcuHniuH',
     status: 'PAUSED',
     entrypoints: [

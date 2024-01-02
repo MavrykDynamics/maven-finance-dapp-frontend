@@ -50,7 +50,7 @@ export type BreakGlassCouncilActions =
   | typeof UNPAUSE_ALL_ENTRYPOINTS_ACTION
   | typeof REMOVE_BG_CONTROL_ACTION
 
-export type MavrykCouncilActions =
+export type MavenCouncilActions =
   | typeof SIGN_MAVEN_COUNCIL_ACTION
   | typeof ADD_VESTEE_ACTION
   | typeof ADD_COUNCIL_MEMBER_ACTION

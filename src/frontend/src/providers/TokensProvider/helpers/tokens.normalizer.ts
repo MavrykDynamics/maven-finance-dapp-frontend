@@ -214,7 +214,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
             acc.farmLpTokens.push(farmLpTokenMetadata.address)
           }
         }
-        // TODO: rebranding - change mvk_tokens to mvn_tokens
+
         const {
           token_id,
           token_address,
@@ -223,7 +223,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
           lending_controller_collateral_tokens,
           lending_controller_loan_tokens,
           m_tokens,
-          mvk_tokens,
+          mvn_tokens,
         } = tokenFromGql
 
         // Validating token type, it should be one of tez | fa2 | fa12
@@ -248,8 +248,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         // we have 2 mvn tokens in indexer one is empty hardcoded and one is token with data, so we need to exclude empty one
-        // TODO: rebranding - change mvk_tokens to mvn_tokens
-        if (symbol === 'MVN' && !mvk_tokens?.[0]?.address) {
+        if (symbol === 'MVN' && !mvn_tokens?.[0]?.address) {
           throw new Error(`Omit hardcoded fake mvn token`)
         }
 
@@ -264,8 +263,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         // if token is mvn we need to add mvn & smvn tokens, it's special case
-        // TODO: rebranding - change mvk_tokens to mvn_tokens
-        if (mvk_tokens?.[0]?.address) {
+        if (mvn_tokens?.[0]?.address) {
           const { smvn, mvn } = handleMvnToken({
             token_id,
             token_address,

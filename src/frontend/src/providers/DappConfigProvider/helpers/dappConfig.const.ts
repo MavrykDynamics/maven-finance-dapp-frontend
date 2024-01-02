@@ -1,7 +1,8 @@
-import {getItemFromStorage} from 'utils/storage'
-import {DappConfigContextStateType, LoadingState, PreferencesState} from '../dappConfig.provider.types'
-import {themeSchema, ThemeType} from 'consts/theme.const'
-import {ecadLabGhostnetRpcNode, marigoldGhostnetRpcNode} from 'consts/rpcNodes.const'
+import { ecadLabGhostnetRpcNode, marigoldGhostnetRpcNode } from 'consts/rpcNodes.const'
+import { themeSchema, ThemeType } from 'consts/theme.const'
+import { getItemFromStorage } from 'utils/storage'
+
+import { DappConfigContextStateType, LoadingState, PreferencesState } from '../dappConfig.provider.types'
 
 // ------ default max length
 export const defaultCouncilMemberImageMaxLength = 500
@@ -13,7 +14,7 @@ export const defaultSatelliteDescriptionMaxLength = 800
 export const defaultSatelliteImageMaxLength = 500
 export const defaultSatelliteNameMaxLength = 20
 export const defaultSatelliteWebsiteMaxLength = 500
-export const defaultSatelliteMinimumStakedMvk = 100
+export const defaultSatelliteMinimumStakedMvn = 100
 export const defaultGovPurposeMaxLength = 800
 export const defaultProposalInvoiceMaxLength = 50
 export const defaultProposalMetadataTitleMaxLength = 110

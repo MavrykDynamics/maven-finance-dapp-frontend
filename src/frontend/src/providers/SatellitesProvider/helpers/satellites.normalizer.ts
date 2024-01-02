@@ -45,14 +45,14 @@ const getSatelliteOracleRewards = (
   >(
     (
       acc,
-      { smvkRewardsAmount, xtzRewardsAmount, aggregator: { address: feedAddress }, observations: [latestObservation] },
+      { smvnRewardsAmount, xtzRewardsAmount, aggregator: { address: feedAddress }, observations: [latestObservation] },
     ) => {
       acc[feedAddress] = {
         lastPredictedPrice: latestObservation?.data ?? null,
         predictionTime: latestObservation?.timestamp ?? null,
         predictionEpoch: latestObservation?.epoch ?? null,
         sMVNReward: convertNumberForClient({
-          number: smvkRewardsAmount.aggregate?.sum?.reward ?? 0,
+          number: smvnRewardsAmount.aggregate?.sum?.reward ?? 0,
           grade: MVN_DECIMALS,
         }),
         XTZReward: convertNumberForClient({
@@ -157,11 +157,11 @@ export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['s
       }),
 
       mvnBalance: convertNumberForClient({
-        number: satelliteRecord?.user.mvk_balance,
+        number: satelliteRecord?.user.mvn_balance,
         grade: MVN_DECIMALS,
       }),
       sMvnBalance: convertNumberForClient({
-        number: satelliteRecord?.user.smvk_balance,
+        number: satelliteRecord?.user.smvn_balance,
         grade: MVN_DECIMALS,
       }),
       participatedFeeds,

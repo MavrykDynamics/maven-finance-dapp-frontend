@@ -37,7 +37,7 @@ export const tokenGqlSchema = z.object({
     ])
     .or(z.tuple([])),
   // TODO: rebranding - nvk_tokens to mvn_tokens
-  mvk_tokens: z
+  mvn_tokens: z
     .tuple([
       z.object({
         address: z.string(),
