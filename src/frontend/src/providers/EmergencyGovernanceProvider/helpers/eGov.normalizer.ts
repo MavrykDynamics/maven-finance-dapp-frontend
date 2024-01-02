@@ -26,7 +26,7 @@ export const normalizeEGovProposal = (
 
   const proposalVoters = indexerProposal.voters.map<eGovProposalVoterType>((voteData) => ({
     voterAddress: voteData.voter.address,
-    voteAmount: convertNumberForClient({ number: voteData.smvk_amount, grade: MVN_DECIMALS }),
+    voteAmount: convertNumberForClient({ number: voteData.smvn_amount, grade: MVN_DECIMALS }),
     voteTime: voteData.timestamp,
   }))
 
@@ -45,12 +45,12 @@ export const normalizeEGovProposal = (
 
     proposerAddress: indexerProposal.proposer.address,
 
-    smvnPercentageRequired: indexerProposal.smvk_percentage_required / 100,
+    smvnPercentageRequired: indexerProposal.smvn_percentage_required / 100,
     smvnRequiredForTrigger: convertNumberForClient({
-      number: indexerProposal.smvk_required_for_trigger,
+      number: indexerProposal.smvn_required_for_trigger,
       grade: MVN_DECIMALS,
     }),
-    totalSmvnVotes: convertNumberForClient({ number: indexerProposal.total_smvk_votes, grade: MVN_DECIMALS }),
+    totalSmvnVotes: convertNumberForClient({ number: indexerProposal.total_smvn_votes, grade: MVN_DECIMALS }),
 
     voters: proposalVoters,
   }

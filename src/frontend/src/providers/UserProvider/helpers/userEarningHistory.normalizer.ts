@@ -50,7 +50,7 @@ const getChartWithOperationSplitByDays = ({
  * 2. to the start - when started claiming with 0 rewards amount
  */
 export const normalizeUserEarningHistory = (indexerData: GetUserEarningHistoryDataQuery) => {
-  const { stakes_history_data, farm_accounts } = indexerData.mavryk_user?.[0]
+  const { stakes_history_data, farm_accounts } = indexerData.maven_user?.[0]
 
   const normalizedStakesHistoryItems = stakes_history_data.reduce<Array<{ value: number; time: string }>>(
     (acc, { timestamp, final_amount }) => {

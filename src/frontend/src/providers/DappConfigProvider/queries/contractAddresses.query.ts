@@ -8,7 +8,7 @@ export const GET_DAPP_CONTRACT_ADDRESSES = gql(`
 		doorman: doorman {
 			address
 		}
-		mvk_token: mvk_token {
+		mvn_token: mvn_token {
 			address
 		}
 		farm: farm {

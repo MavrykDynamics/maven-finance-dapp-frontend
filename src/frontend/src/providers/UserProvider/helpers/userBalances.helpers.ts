@@ -82,7 +82,7 @@ export const normalizeUserIndexerTokensBalances = ({
   tokensMetadata: TokensContext['tokensMetadata']
   mvnTokenAddress: string | null
 }) => {
-  const { smvk_balance, mvk_balance, m_token_accounts } = indexerData.mavryk_user[0]
+  const { smvn_balance, mvn_balance, m_token_accounts } = indexerData.maven_user[0]
 
   const { mTokenBalances, userMTokens, availableLoansRewards } = m_token_accounts.reduce<{
     mTokenBalances: NonNullable<UserContext['userTokensBalances']>
@@ -121,9 +121,9 @@ export const normalizeUserIndexerTokensBalances = ({
   return {
     tokensBalances: {
       ...(mvnTokenAddress
-        ? { [mvnTokenAddress]: convertNumberForClient({ number: mvk_balance, grade: MVN_DECIMALS }) }
+        ? { [mvnTokenAddress]: convertNumberForClient({ number: mvn_balance, grade: MVN_DECIMALS }) }
         : {}),
-      [SMVN_TOKEN_ADDRESS]: convertNumberForClient({ number: smvk_balance, grade: MVN_DECIMALS }),
+      [SMVN_TOKEN_ADDRESS]: convertNumberForClient({ number: smvn_balance, grade: MVN_DECIMALS }),
       ...mTokenBalances,
     },
     userMTokens,
@@ -136,8 +136,8 @@ export const normalizeUserIndexerTokensBalances = ({
  *
  * we can get 2 cases here
  *
- * 1. user don't exist, it will return emptyUserTzktAccountSchema responce and userTzktTokenBalancesSchema will we just [], so we'll return empty object, no tokens means on tzkt
- * 2. user exsts, it will return userTzktAccountSchema with xtz balance data, and userTzktTokenBalancesSchema array of all other tokens, we will normalize them and return
+ * 1. user don't exist, it will return emptyUserTzktAccountSchema response and userTzktTokenBalancesSchema will we just [], so we'll return empty object, no tokens means on tzkt
+ * 2. user exists, it will return userTzktAccountSchema with xtz balance data, and userTzktTokenBalancesSchema array of all other tokens, we will normalize them and return
  */
 export const fetchTzktUserBalances = async ({
   userAddress,

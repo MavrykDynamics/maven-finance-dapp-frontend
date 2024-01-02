@@ -11,11 +11,11 @@ export const ALL_FINANCIAL_REQUESTS_QUERY = gql(`
       request_purpose
       request_type
       requested_datetime
-      smvk_percentage_for_approval
+      smvn_percentage_for_approval
       requester {
         address
       }
-      snapshot_smvk_total_supply
+      snapshot_smvn_total_supply
       status
       token_amount
       token {
@@ -27,9 +27,9 @@ export const ALL_FINANCIAL_REQUESTS_QUERY = gql(`
       treasury {
         address
       }
-      pass_vote_smvk_total
-      nay_vote_smvk_total
-      yay_vote_smvk_total
+      pass_vote_smvn_total
+      nay_vote_smvn_total
+      yay_vote_smvn_total
       votes {
         governance_financial_request_id
         id
@@ -61,11 +61,11 @@ export const ACTIVE_FINANCIAL_REQUESTS_QUERY = gql(`
       request_purpose
       request_type
       requested_datetime
-      smvk_percentage_for_approval
+      smvn_percentage_for_approval
       requester {
         address
       }
-      snapshot_smvk_total_supply
+      snapshot_smvn_total_supply
       status
       token_amount
       token {
@@ -77,9 +77,9 @@ export const ACTIVE_FINANCIAL_REQUESTS_QUERY = gql(`
       treasury {
         address
       }
-      pass_vote_smvk_total
-      nay_vote_smvk_total
-      yay_vote_smvk_total
+      pass_vote_smvn_total
+      nay_vote_smvn_total
+      yay_vote_smvn_total
       votes {
         governance_financial_request_id
         id

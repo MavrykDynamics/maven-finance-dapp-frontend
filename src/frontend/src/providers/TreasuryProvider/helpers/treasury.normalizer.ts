@@ -5,14 +5,14 @@ import { getDiagramSectionColor } from 'app/App.components/PieChart/pieChart.uti
 export const MIN_TREASURY_PERCENT_TO_DISPLAY = 0.1
 
 export const normalizeTreasuryStorage = (data: TreasuryGQLData) => {
-  const { mavryk_user: sMVNAmounts, treasury } = data
+  const { maven_user: sMVNAmounts, treasury } = data
   const treasuryAssetsColors: Record<string, string> = sMVNAmounts?.length ? { smvn: getDiagramSectionColor(0) } : {}
 
   // Parse sMVN amount for each treasury, to make this structure usable
   const sMVNBalancesMapper = sMVNAmounts?.reduce<Record<string, TreasuryBalanceType>>(
-    (acc, { address, smvk_balance }) => {
+    (acc, { address, smvn_balance }) => {
       acc[address] = {
-        balance: smvk_balance,
+        balance: smvn_balance,
         contract: address,
         chartColor: treasuryAssetsColors[SMVN_TOKEN_ADDRESS],
         tokenAddress: SMVN_TOKEN_ADDRESS,

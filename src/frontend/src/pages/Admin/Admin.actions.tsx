@@ -90,7 +90,7 @@
 //   // TODO: Change address used to that of the Farm Factory address when possible
 //   const farmMetadataBase = Buffer.from(
 //     JSON.stringify({
-//       name: 'MAVRYK PLENTY-USDTz Farm',
+//       name: 'MAVEN PLENTY-USDTz Farm',
 //       description: 'MAVRYK Farm Contract',
 //       version: 'v1.0.0',
 //       liquidityPairToken: {

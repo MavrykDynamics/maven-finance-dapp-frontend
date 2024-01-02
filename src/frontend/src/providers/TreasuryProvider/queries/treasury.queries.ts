@@ -18,9 +18,9 @@ query GetTreasuryStorageData {
 `)
 
 export const GET_TREASURY_SMVN_BALANCES = gql(`
-query GetTreasurySmvkBalances($addresses: [String!] = []) {
-  mavryk_user: mavryk_user(where: {address: {_in: $addresses}}) {
-    smvk_balance
+query GetTreasurySmvnBalances($addresses: [String!] = []) {
+  maven_user: maven_user(where: {address: {_in: $addresses}}) {
+    smvn_balance
     address
   }
 }

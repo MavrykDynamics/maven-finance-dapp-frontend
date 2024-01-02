@@ -1,18 +1,17 @@
-// types
-import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
-import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
-import { ProposalIndexerType } from '../proposals.provider.types'
-import { GovernanceConfigForProposalsNormalizationType } from './governanceConfig.normalizer'
-import { ProposalRecordType } from './proposals.types'
-
-// utils
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { getProposalStatus } from './proposals.utils'
-
 // consts
 import { satelliteVoteSchema } from 'providers/SatellitesProvider/satellites.const'
+import { SatelliteVoteType } from 'providers/SatellitesProvider/satellites.provider.types'
+// types
+import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
+// utils
+import { convertNumberForClient } from 'utils/calcFunctions'
 import { MVN_DECIMALS } from 'utils/constants'
+
+import { ProposalIndexerType } from '../proposals.provider.types'
+import { GovernanceConfigForProposalsNormalizationType } from './governanceConfig.normalizer'
 import { GovPhases, ProposalStatus } from './proposals.const'
+import { ProposalRecordType } from './proposals.types'
+import { getProposalStatus } from './proposals.utils'
 
 export const normalizeProposal = (
   item: ProposalsDataQueryQuery['governance_proposal'][number],
@@ -62,11 +61,11 @@ export const normalizeProposal = (
     // voting data - Re-doing proposal votes naming
     // proposalUpVotesMvnTotal - up votes for a proposal during the PROPOSAL round
     // yayVotesMvnTotal, nayVotesMvnTotal, & passVotesMvnTotal - votes during the VOTING round
-    proposalUpVotesMvnTotal: convertNumberForClient({ number: item.proposal_vote_smvk_total, grade: MVN_DECIMALS }),
-    yayVotesMvnTotal: convertNumberForClient({ number: item.yay_vote_smvk_total, grade: MVN_DECIMALS }),
-    nayVotesMvnTotal: convertNumberForClient({ number: item.nay_vote_smvk_total, grade: MVN_DECIMALS }),
-    passVotesMvnTotal: convertNumberForClient({ number: item.pass_vote_smvk_total, grade: MVN_DECIMALS }),
-    quorumMvnTotal: convertNumberForClient({ number: item.quorum_smvk_total, grade: MVN_DECIMALS }),
+    proposalUpVotesMvnTotal: convertNumberForClient({ number: item.proposal_vote_smvn_total, grade: MVN_DECIMALS }),
+    yayVotesMvnTotal: convertNumberForClient({ number: item.yay_vote_smvn_total, grade: MVN_DECIMALS }),
+    nayVotesMvnTotal: convertNumberForClient({ number: item.nay_vote_smvn_total, grade: MVN_DECIMALS }),
+    passVotesMvnTotal: convertNumberForClient({ number: item.pass_vote_smvn_total, grade: MVN_DECIMALS }),
+    quorumMvnTotal: convertNumberForClient({ number: item.quorum_smvn_total, grade: MVN_DECIMALS }),
     minQuorumPercentage: convertNumberForClient({ number: item.min_quorum_percentage, grade: 4 }),
 
     votes: item.votes.reduce<

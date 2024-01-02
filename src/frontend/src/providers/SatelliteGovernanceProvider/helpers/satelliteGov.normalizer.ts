@@ -1,10 +1,10 @@
 // consts
 import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
-
 // types
 import { GetGovernanceSatelliteConfigQuery } from 'utils/__generated__/graphql'
-import { SatelliteGovActionStatusType } from './satellitesGov.types'
+
 import { SatelliteGovernanceActionsIndexerType } from '../satelliteGovernance.provider.types'
+import { SatelliteGovActionStatusType } from './satellitesGov.types'
 
 type SatelliteGovernanceActionType = {
   id: number
@@ -117,12 +117,12 @@ export const normalizerSatelliteGovernanceAction = (
     expirationDatetime: actionData.executed ? actionData.execution_datetime : actionData.expiration_datetime ?? null,
     startDatetime: actionData.start_datetime ?? null,
     droppedTime: statusFlag === ProposalStatus.DROPPED ? actionData.dropped_datetime : null,
-    smvnPercentageForApproval: actionData.smvk_percentage_for_approval,
-    smvnRequiredForApproval: actionData.smvk_required_for_approval,
-    snapshotSmvnTotalSupply: actionData.snapshot_smvk_total_supply,
-    yayVotesSmvnTotal: actionData.yay_vote_smvk_total,
-    nayVotesSmvnTotal: actionData.nay_vote_smvk_total,
-    passVotesSmvnTotal: actionData.pass_vote_smvk_total,
+    smvnPercentageForApproval: actionData.smvn_percentage_for_approval,
+    smvnRequiredForApproval: actionData.smvn_required_for_approval,
+    snapshotSmvnTotalSupply: actionData.snapshot_smvn_total_supply,
+    yayVotesSmvnTotal: actionData.yay_vote_smvn_total,
+    nayVotesSmvnTotal: actionData.nay_vote_smvn_total,
+    passVotesSmvnTotal: actionData.pass_vote_smvn_total,
     parameters,
     votes,
   }

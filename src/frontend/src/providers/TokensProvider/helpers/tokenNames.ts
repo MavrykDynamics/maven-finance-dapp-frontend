@@ -32,11 +32,8 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
     case 'meurl':
       return { name: 'mEURL', symbol: 'mEURL', icon: '/images/mEURL.svg' }
 
-    // TODO: rebranding - Remove mvk & smvk cases. Change links to valid ones
-    case 'mvk':
     case 'mvn':
       return { name: 'Maven', symbol: 'MVN', icon: 'https://mavryk.finance/logo192.png' }
-    case 'smvk':
     case 'smvn':
       return { name: 'Staked Maven', symbol: 'sMVN', icon: 'https://mavryk.finance/logo192.png' }
   }

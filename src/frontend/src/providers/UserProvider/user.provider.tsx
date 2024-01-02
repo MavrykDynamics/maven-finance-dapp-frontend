@@ -193,7 +193,7 @@ export const UserProvider = ({ children }: Props) => {
   const setUserIndexerData = useCallback(
     (indexerData: GetUserDataQuery) => {
       // if user does not exists
-      if (indexerData.mavryk_user.length === 0) {
+      if (indexerData.maven_user.length === 0) {
         setUserLoading(false)
         return
       }

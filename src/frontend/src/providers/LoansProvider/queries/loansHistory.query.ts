@@ -1,6 +1,5 @@
-import { DocumentNode } from 'graphql'
 import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
-
+import { DocumentNode } from 'graphql'
 import { gql } from 'utils/__generated__'
 import { GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 
@@ -93,7 +92,7 @@ export function getLoansTransactionsHistory({
           collateral_token {
             token {
               token_address
-              mvk_tokens {
+              mvn_tokens {
                 address
               }
             }
@@ -149,7 +148,7 @@ export function getDevLoansTransactionsHistory({
           collateral_token {
             token {
               token_address
-              mvk_tokens {
+              mvn_tokens {
                 address
               }
             }

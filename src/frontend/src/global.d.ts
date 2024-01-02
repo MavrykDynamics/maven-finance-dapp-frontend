@@ -10,8 +10,8 @@ declare global {
       REACT_APP_TZKT_LINK: 'https://ghostnet.tzkt.io' | 'https://tzkt.io'
       REACT_APP_TZKT_SERVICE_API: 'https://services.tzkt.io'
       REACT_APP_WERT_API: 'https://sandbox.wert.io'
-      REACT_APP_GRAPHQL_API: 'https://api-v2.mavryk.finance/v1/graphql'
-      REACT_APP_GRAPHQL_WSS_API: 'wss://api-v2.mavryk.finance/v1/graphql'
+      REACT_APP_GRAPHQL_API: 'https://api.mavenfinance.io/v1/graphql'
+      REACT_APP_GRAPHQL_WSS_API: 'wss://api.mavenfinance.io/v1/graphql'
 
       REACT_APP_NAME: string
       REACT_APP_NETWORK: 'mainnet' | 'ghostnet'

@@ -832,7 +832,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
   },
 
-  // mavryk council actions -------------------------------------------------
+  // maven council actions -------------------------------------------------
   [SIGN_MAVEN_COUNCIL_ACTION]: {
     start: {
       title: 'Sign...',

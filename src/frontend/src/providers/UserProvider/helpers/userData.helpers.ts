@@ -22,7 +22,7 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
     vesting_vestees: [vestee],
     governance_satellite_snapshots,
     governance_satellite_action_initiators_aggregate,
-  } = indexerData.mavryk_user[0]
+  } = indexerData.maven_user[0]
 
   const satelliteAvatar = satellite?.image ?? null
   const councilAvatar = councilMember?.image ?? null
@@ -31,7 +31,7 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
   const satelliteMvnIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
   const isSatellite = satellite?.status === 0 && satellite?.currently_registered
   const isVestee = vestee?.end_vesting_timestamp && dayjs().diff(vestee.end_vesting_timestamp) <= 0
-  const isMavrykCouncil = Boolean(councilMember?.user?.address)
+  const isMavenCouncil = Boolean(councilMember?.user?.address)
   const isBreakGlassCouncil = Boolean(bgCouncilMember?.user?.address)
 
   return {
@@ -42,7 +42,7 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
       breakGlassAvatar,
     },
     isVestee,
-    isMavenCouncil: isMavrykCouncil,
+    isMavenCouncil: isMavenCouncil,
     isBreakGlassCouncil,
     isSatellite,
     userSatelliteName: satellite?.name ?? null,
@@ -57,20 +57,20 @@ export const normalizeUserRewards = ({
   rewardsIndexerData,
   userProposalRewards,
 }: {
-  rewardsIndexerData: GetUserRewardsDataQuery['mavryk_user'][number]
+  rewardsIndexerData: GetUserRewardsDataQuery['maven_user'][number]
   userProposalRewards: GetUserRewardsDataQuery['governance_proposal']
 }): UserRewardsType => {
-  const { doorman_stake_accounts, satellite_rewardss, smvk_balance, farm_accounts } = rewardsIndexerData
+  const { doorman_stake_accounts, satellite_rewardss, smvn_balance, farm_accounts } = rewardsIndexerData
 
   const availableDoormanRewards = doorman_stake_accounts[0]
     ? getUserDoormanRewards({
         userDoormanRewardsDataFromIndexer: doorman_stake_accounts[0],
-        userSmvnBalance: smvk_balance,
+        userSmvnBalance: smvn_balance,
       })
     : 0
   const availableSatellitesRewards = satellite_rewardss[0]
     ? getUserSatelliteRewards({
-        userSmvnBalance: smvk_balance,
+        userSmvnBalance: smvn_balance,
         userSatelliteRewardsDataFromIndexer: satellite_rewardss[0],
       })
     : 0
@@ -128,7 +128,7 @@ const getOperationName = (operation: number) => {
 }
 
 export const normalizeUserHistoryData = (
-  userHistoryFromIndexer: GetUserActionsHistoryDataQuery['mavryk_user'][number]['stakes_history_data'],
+  userHistoryFromIndexer: GetUserActionsHistoryDataQuery['maven_user'][number]['stakes_history_data'],
 ) => {
   return userHistoryFromIndexer.reduce<
     Array<{
@@ -165,7 +165,7 @@ export const normalizeUserHistoryData = (
  * TODO: @Sam-M-Israel, please verify conditions, if you will keep it as it is, update query to fetch only latest snapshot (add limit: 1)
  */
 const checkWhetherUserNewlyRegisteredSatellite = (
-  userSatelliteSnapshots: GetUserDataQuery['mavryk_user'][number]['governance_satellite_snapshots'],
+  userSatelliteSnapshots: GetUserDataQuery['maven_user'][number]['governance_satellite_snapshots'],
 ) => {
   const lastSatelliteSnapshot = userSatelliteSnapshots[0]
 
