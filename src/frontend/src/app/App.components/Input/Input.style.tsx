@@ -450,8 +450,9 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const NewInputLabel = styled.label`
+export const NewInputLabel = styled.label<{ disabled?: boolean; theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
+  opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
   display: block;
   white-space: nowrap;
   font-weight: 700;

@@ -102,13 +102,13 @@ export const IPFSUploaderView = ({
 
   return (
     <IPFSUploaderStyled className={className} id={'ipfsUploaderContainer'}>
-      {title && (
-        <label>
-          {listNumber ? `${listNumber} - ` : null}
-          {title}
-        </label>
-      )}
-      <div style={{ opacity: disabled ? 0.4 : 1 }}>
+      <div style={{ opacity: disabled ? 0.6 : 1 }}>
+        {title && (
+          <label>
+            {listNumber ? `${listNumber} - ` : null}
+            {title}
+          </label>
+        )}
         <UploaderFileSelector
           validation={validationStatus ?? ''}
           className={`${disabled ? 'disabled' : ''} ${validationStatus}`}
