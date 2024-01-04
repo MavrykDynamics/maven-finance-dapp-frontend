@@ -50,11 +50,11 @@ export const SlidingTabButtons = ({
 
   const clickHandler = useCallback(
     (tabId: number) => {
-      if (disabled) return
+      if (disabled || tabItems.find((tab) => tab.id === tabId)?.disabled) return
       setActiveTab(tabId)
       onClick(tabId)
     },
-    [disabled, onClick],
+    [disabled, onClick, tabItems],
   )
 
   return (

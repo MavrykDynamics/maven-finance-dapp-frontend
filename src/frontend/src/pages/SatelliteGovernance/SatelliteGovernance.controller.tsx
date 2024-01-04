@@ -191,7 +191,7 @@ export const SatelliteGovernance = () => {
     const foundTab = tabsList.find((item) => item.id === id)
     const currentTabId = tabsList.find((item) => item.path === tabId)?.id
 
-    if (!foundTab?.path || currentTabId === id) return
+    if (foundTab?.disabled || !foundTab?.path || currentTabId === id) return
     history.replace(`${SATELLITE_GOVERNANCE_PATHNAME}/${foundTab.path}`)
   }
 
