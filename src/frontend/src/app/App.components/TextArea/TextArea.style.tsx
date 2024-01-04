@@ -171,4 +171,9 @@ export const TextareaStyled = styled.textarea`
     font-weight: 400;
     font-size: 12px;
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `
