@@ -10,6 +10,7 @@ export const BGStyled = styled.div<{ theme: MavenTheme }>`
   column-gap: calc((100% - (31.5% * 3)) / 2);
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: 65px auto;
+  margin-top: 30px;
 `
 
 export const BGTop = styled.div<{ theme: MavenTheme }>`

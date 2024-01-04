@@ -163,7 +163,7 @@ export const ContractStatuses = () => {
           </BGTop>
 
           <BGMiddleWrapper>
-            <BGPrimaryTitle>Contract Status</BGPrimaryTitle>
+            <BGPrimaryTitle>Contract Status 2</BGPrimaryTitle>
             <div className="buttons-selector">
               {uniqueContracts.map((item) => (
                 <NewButton

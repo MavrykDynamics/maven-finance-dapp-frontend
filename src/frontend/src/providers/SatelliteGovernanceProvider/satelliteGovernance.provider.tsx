@@ -165,8 +165,9 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
         satelliteGovCtxState,
         changeSatelliteGovSubscriptionsList,
         activeSubs,
+        userAddress,
       }),
-    [activeSubs, satelliteGovCtxState],
+    [activeSubs, satelliteGovCtxState, userAddress],
   )
 
   return (
