@@ -7,14 +7,14 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // consts
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { STATUS_FLAG_DOWN, STATUS_FLAG_WARNING } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import {
-  BUTTON_WIDE,
   BUTTON_PRIMARY,
-  BUTTON_SIMPLE,
   BUTTON_SECONDARY,
+  BUTTON_SIMPLE,
+  BUTTON_WIDE,
 } from 'app/App.components/Button/Button.constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 import {
@@ -30,7 +30,7 @@ import {
 
 // helpers
 import {
-  getSatelliteParticipations,
+  getSatelliteParticipation,
   getStatusColorBasedOnOracleType,
 } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -52,15 +52,15 @@ import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.pro
 //styles
 import {
   SatelliteCard,
-  SatelliteCardInner,
-  SatelliteProfileImageContainer,
-  SatelliteTextGroup,
-  SatelliteMainText,
-  SatelliteProfileDetails,
-  SatelliteSubText,
-  SatelliteOracleStatusComponent,
   SatelliteCardButtons,
+  SatelliteCardInner,
   SatelliteCardRow,
+  SatelliteMainText,
+  SatelliteOracleStatusComponent,
+  SatelliteProfileDetails,
+  SatelliteProfileImageContainer,
+  SatelliteSubText,
+  SatelliteTextGroup,
 } from './SatelliteCard.style'
 
 // hooks
@@ -103,18 +103,18 @@ const SatelliteLastProposalVote = ({
 }
 
 export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
-  const { userTokensBalances, isSatellite: isUserSatellite, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
+  const { userTokensBalances, isSatellite: isUserSatellite, satelliteMvnIsDelegatedTo, userAddress } = useUserContext()
   const { availableProposalRewards } = useUserRewards()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
   const {
-    contractAddresses: { delegationAddress, mvkTokenAddress, governanceAddress },
+    contractAddresses: { delegationAddress, mvnTokenAddress, governanceAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
   const { bug } = useToasterContext()
 
   const { oracleStatus, satelliteStatus } = useSatelliteStatuses(satellite)
 
-  const { proposalParticipation, votingPartisipation } = getSatelliteParticipations({
+  const { proposalParticipation, votingParticipation } = getSatelliteParticipation({
     satellite,
     proposalsAmount,
     satelliteGovActionsAmount,
@@ -123,21 +123,21 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
 
   const {
     currentlyRegistered,
-    sMvkBalance,
+    sMvnBalance,
     delegationRatio,
     totalDelegatedAmount,
     address: satelliteAddress,
   } = satellite
 
-  const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
-  const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvkIsDelegatedTo
-  const balanceOver1SMvk = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) >= 1
+  const freesMVNSpace = Math.max(sMvnBalance * delegationRatio - totalDelegatedAmount, 0)
+  const isUserDelegatedToThisSatellite = satelliteAddress === satelliteMvnIsDelegatedTo
+  const balanceOver1SMvn = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) >= 1
   const isSatelliteActive = satelliteStatus === ACTIVE_SATELLITE_STATUS && currentlyRegistered
 
   // Actions ---------------------------------------------------------
 
   // delegate action --------------
-  const delegeteAction = useCallback(async () => {
+  const delegateAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
@@ -147,34 +147,34 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    const mvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
-    const sMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+    const mvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
+    const sMvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
-    if (mvkTokenBalance === 0) {
-      bug('Unable to Delegate', 'Please buy MVK and stake it')
+    if (mvnTokenBalance === 0) {
+      bug('Unable to Delegate', 'Please buy MVN and stake it')
       return null
     }
 
-    if (sMvkTokenBalance === 0) {
-      bug('Unable to Delegate', 'Please stake your MVK')
+    if (sMvnTokenBalance === 0) {
+      bug('Unable to Delegate', 'Please stake your MVN')
       return null
     }
 
     return await delegate(userAddress, satelliteAddress, delegationAddress)
-  }, [bug, delegationAddress, mvkTokenAddress, satelliteAddress, userAddress, userTokensBalances])
+  }, [bug, delegationAddress, mvnTokenAddress, satelliteAddress, userAddress, userTokensBalances])
 
   const delegateContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: DELEGATE_ACTION,
-      actionFn: delegeteAction,
+      actionFn: delegateAction,
     }),
-    [delegeteAction],
+    [delegateAction],
   )
 
   const { action: delegateCallback } = useContractAction(delegateContractActionProps)
 
   // undelegate action --------------
-  const undelegeteAction = useCallback(async () => {
+  const undelegateAction = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
       return null
@@ -197,9 +197,9 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const unDelegateContractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: UNDELEGATE_ACTION,
-      actionFn: undelegeteAction,
+      actionFn: undelegateAction,
     }),
-    [undelegeteAction],
+    [undelegateAction],
   )
 
   const { action: undelegateCallback } = useContractAction(unDelegateContractActionProps)
@@ -216,7 +216,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
       return null
     }
 
-    const satelliteAddressToDistribute = isUserSatellite ? userAddress : satelliteMvkIsDelegatedTo
+    const satelliteAddressToDistribute = isUserSatellite ? userAddress : satelliteMvnIsDelegatedTo
 
     if (!satelliteAddressToDistribute) {
       bug('Wrong satellite address to distribute rewards')
@@ -224,7 +224,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
     }
 
     return await distributeProposalRewards(governanceAddress, satelliteAddressToDistribute, availableProposalRewards)
-  }, [userAddress, governanceAddress, isUserSatellite, satelliteMvkIsDelegatedTo, availableProposalRewards, bug])
+  }, [userAddress, governanceAddress, isUserSatellite, satelliteMvnIsDelegatedTo, availableProposalRewards, bug])
 
   const distributeRewardsContractActionProps: HookContractActionArgs = useMemo(
     () => ({
@@ -264,9 +264,9 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           </div>
           <div className="grid-item">
             <SatelliteTextGroup>
-              <SatelliteMainText>Free sMVK Space</SatelliteMainText>
+              <SatelliteMainText>Free sMVN Space</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={freesMVKSpace} />
+                <CommaNumber value={freesMVNSpace} />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
@@ -293,7 +293,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
                   </Tooltip>
                 </div>
                 <SatelliteSubText>
-                  <CommaNumber value={satellite.totalVotingPower} endingText="sMVK" />
+                  <CommaNumber value={satellite.totalVotingPower} endingText="sMVN" />
                 </SatelliteSubText>
               </SatelliteTextGroup>
             )}
@@ -303,7 +303,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             <SatelliteTextGroup>
               <SatelliteMainText>Participation</SatelliteMainText>
               <SatelliteSubText>
-                <CommaNumber value={(proposalParticipation + votingPartisipation) / 2} endingText="%" />
+                <CommaNumber value={(proposalParticipation + votingParticipation) / 2} endingText="%" />
               </SatelliteSubText>
             </SatelliteTextGroup>
           </div>
@@ -339,7 +339,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
              * show on of them is current user is not satellite, cuz satellite can't delegate only be delegated, also is current card is for inactive satellite
              * such type of satellites can't be delegated
              *
-             * Delegate button if user is not delegated to satellite on card, but it's disabled if user don't have smvk to delegate
+             * Delegate button if user is not delegated to satellite on card, but it's disabled if user don't have smvn to delegate
              *
              * Undelegate button shown if user is delegated to satellite on card
              */}
@@ -353,7 +353,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
                 kind={BUTTON_PRIMARY}
                 form={BUTTON_WIDE}
                 onClick={delegateCallback}
-                disabled={isActionActive || !balanceOver1SMvk}
+                disabled={isActionActive || !balanceOver1SMvn}
               >
                 <Icon id="man-check" />
                 Delegate

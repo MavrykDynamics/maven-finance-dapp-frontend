@@ -2,7 +2,7 @@ import { VestingRecord } from './vesting.types'
 import { GetVestingQueryQuery, Vesting_Vestee } from 'utils/__generated__/graphql'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 
 export function normalizeVestingStorage(storage: GetVestingQueryQuery) {
   const vesteeRecord = storage.vesting[0]
@@ -16,8 +16,8 @@ export function normalizeVestingStorage(storage: GetVestingQueryQuery) {
         acc.vesteesAddresses.push(vestee.vestee.address)
         acc.vesteesMapper[vestee.vestee.address] = {
           address: vestee.vestee.address,
-          totalRemainded: convertNumberForClient({ number: vestee.total_remainder, grade: MVK_DECIMALS }),
-          totalAllocated: convertNumberForClient({ number: vestee.total_allocated_amount, grade: MVK_DECIMALS }),
+          totalRemainded: convertNumberForClient({ number: vestee.total_remainder, grade: MVN_DECIMALS }),
+          totalAllocated: convertNumberForClient({ number: vestee.total_allocated_amount, grade: MVN_DECIMALS }),
           rewardPerMonth: vestee.claim_amount_per_month,
           cliffMonth: vestee.cliff_months,
           vestingMonth: vestee.vesting_months,

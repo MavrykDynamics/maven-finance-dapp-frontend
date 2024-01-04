@@ -1,14 +1,14 @@
 import dayjs from 'dayjs'
 import { UTCTimestamp } from 'lightweight-charts'
 
-import { SmvkMvkHistoryDataQuery } from 'utils/__generated__/graphql'
+import { SmvnMvnHistoryDataQuery } from 'utils/__generated__/graphql'
 
 // calc
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { ChartPeriodType } from 'types/charts.type'
 import { ALL_TIME } from 'consts/charts.const'
 import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 
 type HistoryItemType = {
   value: number
@@ -24,7 +24,7 @@ function createChartHistoryItemFromInitValue(
   const convertedValueToClient = parseFloat(
     convertNumberForClient({
       number: value,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }).toFixed(2),
   )
   return {
@@ -36,44 +36,44 @@ function createChartHistoryItemFromInitValue(
 }
 
 function getStartEndPlotsForPeriod(
-  lastOperationBeforePeriod: SmvkMvkHistoryDataQuery['lastOperationBeforePeriod'],
-  operationsInPeriod: SmvkMvkHistoryDataQuery['operationsInPeriod'],
+  lastOperationBeforePeriod: SmvnMvnHistoryDataQuery['lastOperationBeforePeriod'],
+  operationsInPeriod: SmvnMvnHistoryDataQuery['operationsInPeriod'],
   period: ChartPeriodType,
 ) {
   const firstPlotInPeriod = lastOperationBeforePeriod.at(0)
   // if period don't have data (at(-1) does not exists), make last plot same as first one
   const lastPlotInPeriod = operationsInPeriod.at(-1) ?? firstPlotInPeriod
 
-  // mvk default chart points
-  const MVK_PeriodStartPoint = createChartHistoryItemFromInitValue(
-    Number(firstPlotInPeriod?.mvk_total_supply) - Number(firstPlotInPeriod?.smvk_total_supply),
+  // mvn default chart points
+  const MVN_PeriodStartPoint = createChartHistoryItemFromInitValue(
+    Number(firstPlotInPeriod?.mvn_total_supply) - Number(firstPlotInPeriod?.smvn_total_supply),
     'first',
     period,
   )
-  const MVK_PeriodEndPoint = createChartHistoryItemFromInitValue(
-    Number(lastPlotInPeriod?.mvk_total_supply) - Number(lastPlotInPeriod?.smvk_total_supply),
+  const MVN_PeriodEndPoint = createChartHistoryItemFromInitValue(
+    Number(lastPlotInPeriod?.mvn_total_supply) - Number(lastPlotInPeriod?.smvn_total_supply),
     'last',
   )
 
-  // sMvk default chart points
-  const SMVK_PeriodStartPoint = createChartHistoryItemFromInitValue(
-    Number(firstPlotInPeriod?.smvk_total_supply),
+  // sMvn default chart points
+  const SMVN_PeriodStartPoint = createChartHistoryItemFromInitValue(
+    Number(firstPlotInPeriod?.smvn_total_supply),
     'first',
     period,
   )
-  const SMVK_PeriodEndPoint = createChartHistoryItemFromInitValue(Number(lastPlotInPeriod?.smvk_total_supply), 'last')
+  const SMVN_PeriodEndPoint = createChartHistoryItemFromInitValue(Number(lastPlotInPeriod?.smvn_total_supply), 'last')
 
   return {
-    SMVK_PeriodEndPoint,
-    SMVK_PeriodStartPoint,
-    MVK_PeriodEndPoint,
-    MVK_PeriodStartPoint,
+    SMVN_PeriodEndPoint,
+    SMVN_PeriodStartPoint,
+    MVN_PeriodEndPoint,
+    MVN_PeriodStartPoint,
   }
 }
 
 // ---------------------------------------------------------------------------------------------
 
-export function normalizeDoormanChartsData(storage: SmvkMvkHistoryDataQuery, period: ChartPeriodType) {
+export function normalizeDoormanChartsData(storage: SmvnMvnHistoryDataQuery, period: ChartPeriodType) {
   const {
     operationsInPeriod,
     lastOperationBeforePeriod,
@@ -85,66 +85,66 @@ export function normalizeDoormanChartsData(storage: SmvkMvkHistoryDataQuery, per
 
   if (amountOfOperationsBeforePeriod === 0 && !hasOperationsForPeriod) {
     return {
-      mvkHistoryData: [],
-      smvkHistoryData: [],
+      mvnHistoryData: [],
+      smvnHistoryData: [],
       noChartData: true,
     }
   }
 
-  const { SMVK_PeriodEndPoint, SMVK_PeriodStartPoint, MVK_PeriodEndPoint, MVK_PeriodStartPoint } =
+  const { SMVN_PeriodEndPoint, SMVN_PeriodStartPoint, MVN_PeriodEndPoint, MVN_PeriodStartPoint } =
     getStartEndPlotsForPeriod(lastOperationBeforePeriod, operationsInPeriod, period)
 
   const history = operationsInPeriod.reduce<{
-    mvkHistoryData: HistoryItemType[]
-    smvkHistoryData: HistoryItemType[]
+    mvnHistoryData: HistoryItemType[]
+    smvnHistoryData: HistoryItemType[]
     noChartData: boolean
   }>(
-    (acc, { timestamp, mvk_total_supply, smvk_total_supply }) => {
+    (acc, { timestamp, mvn_total_supply, smvn_total_supply }) => {
       // converted values for chart data points
       const _time = dayjs(timestamp).valueOf() as UTCTimestamp
 
-      const _mvkAmount = mvk_total_supply - smvk_total_supply
-      const mvkValue = parseFloat(convertNumberForClient({ number: _mvkAmount, grade: MVK_DECIMALS }).toFixed(2))
-      const sMvkValue = parseFloat(
-        convertNumberForClient({ number: smvk_total_supply, grade: MVK_DECIMALS }).toFixed(2),
+      const _mvnAmount = mvn_total_supply - smvn_total_supply
+      const mvnValue = parseFloat(convertNumberForClient({ number: _mvnAmount, grade: MVN_DECIMALS }).toFixed(2))
+      const sMvnValue = parseFloat(
+        convertNumberForClient({ number: smvn_total_supply, grade: MVN_DECIMALS }).toFixed(2),
       )
 
-      acc.mvkHistoryData.push({
-        value: mvkValue,
+      acc.mvnHistoryData.push({
+        value: mvnValue,
         time: _time,
       })
 
-      acc.smvkHistoryData.push({
-        value: sMvkValue,
+      acc.smvnHistoryData.push({
+        value: sMvnValue,
         time: _time,
       })
 
       return acc
     },
     {
-      mvkHistoryData: [],
-      smvkHistoryData: [],
+      mvnHistoryData: [],
+      smvnHistoryData: [],
       noChartData: false,
     },
   )
 
   if (period !== ALL_TIME) {
     // to avoid duplicated timestamps for charts data
-    const { mvkHistoryData, smvkHistoryData } = history
+    const { mvnHistoryData, smvnHistoryData } = history
     if (
-      mvkHistoryData[0]?.time !== MVK_PeriodStartPoint.time &&
-      smvkHistoryData[0]?.time !== SMVK_PeriodStartPoint.time
+      mvnHistoryData[0]?.time !== MVN_PeriodStartPoint.time &&
+      smvnHistoryData[0]?.time !== SMVN_PeriodStartPoint.time
     ) {
       // add chart start points
-      history.mvkHistoryData.unshift(MVK_PeriodStartPoint)
-      history.smvkHistoryData.unshift(SMVK_PeriodStartPoint)
+      history.mvnHistoryData.unshift(MVN_PeriodStartPoint)
+      history.smvnHistoryData.unshift(SMVN_PeriodStartPoint)
     }
 
-    // add endPoint only when there is no items in smvk_history_data to have 2 points
+    // add endPoint only when there is no items in smvn_history_data to have 2 points
     if (operationsInPeriod.length === 0) {
       // add chart end points
-      history.mvkHistoryData.push(MVK_PeriodEndPoint)
-      history.smvkHistoryData.push(SMVK_PeriodEndPoint)
+      history.mvnHistoryData.push(MVN_PeriodEndPoint)
+      history.smvnHistoryData.push(SMVN_PeriodEndPoint)
     }
   }
 

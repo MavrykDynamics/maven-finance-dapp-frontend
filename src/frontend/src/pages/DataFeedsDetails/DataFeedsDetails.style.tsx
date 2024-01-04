@@ -1,9 +1,9 @@
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import styled from 'styled-components'
 import { Card } from 'styles'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
-export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
+export const DataFeedsStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
 
@@ -56,7 +56,7 @@ export const DataFeedsStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
+export const FeedInfo = styled.div<{ theme: MavenTheme }>`
   max-width: 745px;
   height: 100%;
   width: 100%;
@@ -148,7 +148,7 @@ export const FeedInfo = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ContractDetails = styled.div<{ theme: MavrykTheme }>`
+export const ContractDetails = styled.div<{ theme: MavenTheme }>`
   max-width: 315px;
   height: 100%;
   width: 100%;
@@ -186,7 +186,7 @@ export const ContractDetails = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const DataFeedInfoBlock = styled.div<{ justifyContent?: string; theme: MavrykTheme }>`
+export const DataFeedInfoBlock = styled.div<{ justifyContent?: string; theme: MavenTheme }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -195,7 +195,7 @@ export const DataFeedInfoBlock = styled.div<{ justifyContent?: string; theme: Ma
   min-height: 56px;
 `
 
-export const DataFeedValueText = styled.div<{ fontWeidth?: number; fontSize?: number; theme: MavrykTheme }>`
+export const DataFeedValueText = styled.div<{ fontWeidth?: number; fontSize?: number; theme: MavenTheme }>`
   font-weight: ${({ fontWeidth }) => fontWeidth || 400};
   font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '12px')};
   color: ${({ theme }) => theme.primaryText};
@@ -225,7 +225,7 @@ export const DataFeedValueText = styled.div<{ fontWeidth?: number; fontSize?: nu
 `
 
 // User page that is not implemented yet
-export const UsersListWrapper = styled.div<{ theme: MavrykTheme }>`
+export const UsersListWrapper = styled.div<{ theme: MavenTheme }>`
   margin-top: 30px;
 
   .see-all-link {
@@ -233,14 +233,14 @@ export const UsersListWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const UsersListCardsWrapper = styled.div<{ theme: MavrykTheme }>`
+export const UsersListCardsWrapper = styled.div<{ theme: MavenTheme }>`
   display: flex;
   column-gap: 20px;
   margin-top: 30px;
   overflow: hidden;
 `
 
-export const FeedDetailsChartWrapper = styled(Card)<{ theme: MavrykTheme }>`
+export const FeedDetailsChartWrapper = styled(Card)<{ theme: MavenTheme }>`
   padding: 52px 12px 0px 20px;
   height: 420px;
   position: relative;

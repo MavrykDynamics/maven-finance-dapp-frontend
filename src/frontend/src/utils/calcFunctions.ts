@@ -1,29 +1,29 @@
-import { PRECISION_NUMBER, SECONDS_PER_BLOCK, MVK_DECIMALS, DECIMALS_TO_SHOW } from './constants'
+import {DECIMALS_TO_SHOW, MVN_DECIMALS, PRECISION_NUMBER, SECONDS_PER_BLOCK} from './constants'
 
 /**
- * Calculates the MVK Loyalty Index (MLI) per the function in the litepaper
- * @param totalStakedMVK
- * @param totalMvkSupply
+ * Calculates the MVN Loyalty Index (MLI) per the function in the litepaper
+ * @param totalStakedMVN
+ * @param totalMvnSupply
  */
-export function calcMLI(totalMvkSupply: number | undefined, totalStakedMVK: number | undefined): number {
-  const mvkSupplyActual = totalMvkSupply ?? 0
-  const stakedMvkSupplyActual = totalStakedMVK ?? 0
-  const mli = (stakedMvkSupplyActual / (mvkSupplyActual | 1)) * 100
+export function calcMLI(totalMvnSupply: number | undefined, totalStakedMVN: number | undefined): number {
+  const mvnSupplyActual = totalMvnSupply ?? 0
+  const stakedMvnSupplyActual = totalStakedMVN ?? 0
+  const mli = (stakedMvnSupplyActual / (mvnSupplyActual | 1)) * 100
   return mli
 }
 
-export function calcExitFee(totalMvkSupply: number | undefined, totalStakedMVK: number | undefined): number {
-  const mli = calcMLI(totalMvkSupply, totalStakedMVK)
+export function calcExitFee(totalMvnSupply: number | undefined, totalStakedMVN: number | undefined): number {
+  const mli = calcMLI(totalMvnSupply, totalStakedMVN)
   const fee = 30 - 0.525 * mli + 0.0025 * mli ** 2
   return fee
 }
 
 /**
- * @param amount: nubmer we want to remove over decimals
+ * @param amount: number we want to remove over decimals
  * @param decimals: decimals amount need to left
  * @returns number with specified amount of decimals
  */
-export const removeUnnessesaryDecimals = (amount: number = 0, decimals: number) => {
+export const removeUnnecessaryDecimals = (amount: number = 0, decimals: number) => {
   if (!amount) return 0
 
   const blockchainNumberWithoutDecimals = Math.trunc(convertNumberForContractCall({ number: amount, grade: decimals }))
@@ -32,15 +32,15 @@ export const removeUnnessesaryDecimals = (amount: number = 0, decimals: number) 
 }
 
 /**
- * @param number -> number in regular form that we wan't to convert for usage in contract call
+ * @param number -> number in regular form that we want to convert for usage in contract call
  * @param grade -> grade for 10, that we'll need to multiply number to convert it for usage in contract call
  *
- * By default fn will use MVK decimals amount
+ * By default fn will use MVN decimals amount
  * Math.trunc is used to remove decimals that are more that allowed amount for token
  */
 export const convertNumberForContractCall = ({
   number,
-  grade = MVK_DECIMALS,
+  grade = MVN_DECIMALS,
 }: {
   number: number
   grade?: number
@@ -54,11 +54,11 @@ export const convertNumberForContractCall = ({
  *
  * contract number form is number without decimals, this form is reached by multiplying reqular number by 10^(decimals amount different between different types of tokens)
  *
- * By default fn will use MVK decimals amount
+ * By default fn will use MVN decimals amount
  */
 export const convertNumberForClient = ({
   number,
-  grade = MVK_DECIMALS,
+  grade = MVN_DECIMALS,
 }: {
   number: number
   grade?: number
@@ -68,11 +68,11 @@ export const convertNumberForClient = ({
 
 /**
  *
- * @param number number we want to get it's persent
- * @param wholeSum number we wan't to get persent from
- * @returns persent of number in whole sum
+ * @param number number we want to get it's percent
+ * @param wholeSum number we want to get percent from
+ * @returns percent of number in whole sum
  */
-export const calcPersent = (number: number, wholeSum: number) => {
+export const calcPercent = (number: number, wholeSum: number) => {
   const divider = wholeSum / 100
   return divider === 0 ? 0 : getNumberInBounds(0, 100, number / divider)
 }

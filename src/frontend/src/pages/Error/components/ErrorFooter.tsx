@@ -1,4 +1,4 @@
-import { ErrorFooterWrapper, ErrorFooterMiddle, ErrorFooterRight } from '../ErrorPage.style'
+import { ErrorFooterMiddle, ErrorFooterRight, ErrorFooterWrapper } from '../ErrorPage.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { mavrykLinks } from 'app/App.components/Footer/footer.const'
 import { ThemeType } from 'consts/theme.const'
@@ -12,7 +12,7 @@ export const ErrorFooter = ({ handleRedirect, themeSelected }: ErrorFooterProps)
   return (
     <ErrorFooterWrapper>
       <span onClick={handleRedirect}>
-        <ImageWithPlug plugSrc={`/images/${themeSelected}/mavryk-logo-small.svg`} alt="logo-small" />
+        <ImageWithPlug plugSrc={`/images/${themeSelected}/maven-logo-small.svg`} alt="logo-small" />
       </span>
       <ErrorFooterMiddle>
         Powered by&nbsp;

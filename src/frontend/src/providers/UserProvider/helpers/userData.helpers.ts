@@ -6,10 +6,10 @@ import { UserMetadataType, UserRewardsType } from '../user.provider.types'
 
 // utils
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getUserDoomanRewards, getUserSatelliteRewards, getUsersFarmRewards } from './userRewards.helpers'
+import { getUserDoormanRewards, getUserSatelliteRewards, getUsersFarmRewards } from './userRewards.helpers'
 
 // consts
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 import { DEFAULT_USER_AVATAR } from './user.consts'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
@@ -17,36 +17,36 @@ export const normalizeUser = ({ indexerData }: { indexerData: GetUserDataQuery }
   const {
     delegations,
     satellites: [satellite],
-    council_council_members: [counsilMember],
-    break_glass_council_members: [bgCounsilMember],
+    council_council_members: [councilMember],
+    break_glass_council_members: [bgCouncilMember],
     vesting_vestees: [vestee],
     governance_satellite_snapshots,
     governance_satellite_action_initiators_aggregate,
-  } = indexerData.mavryk_user[0]
+  } = indexerData.maven_user[0]
 
   const satelliteAvatar = satellite?.image ?? null
-  const counsilAvatar = counsilMember?.image ?? null
-  const breakGlassAvatar = bgCounsilMember?.image ?? null
+  const councilAvatar = councilMember?.image ?? null
+  const breakGlassAvatar = bgCouncilMember?.image ?? null
 
-  const satelliteMvkIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
+  const satelliteMvnIsDelegatedTo = delegations[0]?.satellite.user.address ?? null
   const isSatellite = satellite?.status === 0 && satellite?.currently_registered
   const isVestee = vestee?.end_vesting_timestamp && dayjs().diff(vestee.end_vesting_timestamp) <= 0
-  const isMavrykCouncil = Boolean(counsilMember?.user?.address)
-  const isBreakGlassCouncil = Boolean(bgCounsilMember?.user?.address)
+  const isMavenCouncil = Boolean(councilMember?.user?.address)
+  const isBreakGlassCouncil = Boolean(bgCouncilMember?.user?.address)
 
   return {
     userAvatars: {
-      mainAvatar: satelliteAvatar ?? counsilAvatar ?? breakGlassAvatar ?? DEFAULT_USER_AVATAR,
+      mainAvatar: satelliteAvatar ?? councilAvatar ?? breakGlassAvatar ?? DEFAULT_USER_AVATAR,
       satelliteAvatar,
-      counsilAvatar,
+      councilAvatar: councilAvatar,
       breakGlassAvatar,
     },
     isVestee,
-    isMavrykCouncil,
+    isMavenCouncil: isMavenCouncil,
     isBreakGlassCouncil,
     isSatellite,
     userSatelliteName: satellite?.name ?? null,
-    satelliteMvkIsDelegatedTo,
+    satelliteMvnIsDelegatedTo: satelliteMvnIsDelegatedTo,
 
     isNewlyRegisteredSatellite: checkWhetherUserNewlyRegisteredSatellite(governance_satellite_snapshots),
     govActionsCount: governance_satellite_action_initiators_aggregate.aggregate?.count ?? 0,
@@ -57,20 +57,20 @@ export const normalizeUserRewards = ({
   rewardsIndexerData,
   userProposalRewards,
 }: {
-  rewardsIndexerData: GetUserRewardsDataQuery['mavryk_user'][number]
+  rewardsIndexerData: GetUserRewardsDataQuery['maven_user'][number]
   userProposalRewards: GetUserRewardsDataQuery['governance_proposal']
 }): UserRewardsType => {
-  const { doorman_stake_accounts, satellite_rewardss, smvk_balance, farm_accounts } = rewardsIndexerData
+  const { doorman_stake_accounts, satellite_rewardss, smvn_balance, farm_accounts } = rewardsIndexerData
 
   const availableDoormanRewards = doorman_stake_accounts[0]
-    ? getUserDoomanRewards({
+    ? getUserDoormanRewards({
         userDoormanRewardsDataFromIndexer: doorman_stake_accounts[0],
-        userSmvkBalance: smvk_balance,
+        userSmvnBalance: smvn_balance,
       })
     : 0
   const availableSatellitesRewards = satellite_rewardss[0]
     ? getUserSatelliteRewards({
-        userSmvkBalance: smvk_balance,
+        userSmvnBalance: smvn_balance,
         userSatelliteRewardsDataFromIndexer: satellite_rewardss[0],
       })
     : 0
@@ -79,16 +79,16 @@ export const normalizeUserRewards = ({
   return {
     gatheredDoormanRewards: convertNumberForClient({
       number: doorman_stake_accounts[0]?.total_exit_fee_rewards_claimed ?? 0,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }),
     gatheredSatellitesRewards: convertNumberForClient({
       number: doorman_stake_accounts[0]?.total_satellite_rewards_claimed ?? 0,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }),
     gatheredFarmRewards: farm_accounts.reduce((acc, { claimed_rewards }) => {
       return (acc += convertNumberForClient({
         number: claimed_rewards,
-        grade: MVK_DECIMALS,
+        grade: MVN_DECIMALS,
       }))
     }, 0),
     availableFarmRewards: getUsersFarmRewards({
@@ -128,7 +128,7 @@ const getOperationName = (operation: number) => {
 }
 
 export const normalizeUserHistoryData = (
-  userHistoryFromIndexer: GetUserActionsHistoryDataQuery['mavryk_user'][number]['stakes_history_data'],
+  userHistoryFromIndexer: GetUserActionsHistoryDataQuery['maven_user'][number]['stakes_history_data'],
 ) => {
   return userHistoryFromIndexer.reduce<
     Array<{
@@ -139,8 +139,8 @@ export const normalizeUserHistoryData = (
       id: number
     }>
   >((acc, { type, final_amount, desired_amount, id }) => {
-    const convertedFinalAmount = convertNumberForClient({ number: final_amount, grade: MVK_DECIMALS })
-    const convertedDesiredAmount = convertNumberForClient({ number: desired_amount, grade: MVK_DECIMALS })
+    const convertedFinalAmount = convertNumberForClient({ number: final_amount, grade: MVN_DECIMALS })
+    const convertedDesiredAmount = convertNumberForClient({ number: desired_amount, grade: MVN_DECIMALS })
 
     const isUnstake = type === USER_ACTIONS_TYPES.UNSTAKE
     const actionName = getOperationName(type)
@@ -165,7 +165,7 @@ export const normalizeUserHistoryData = (
  * TODO: @Sam-M-Israel, please verify conditions, if you will keep it as it is, update query to fetch only latest snapshot (add limit: 1)
  */
 const checkWhetherUserNewlyRegisteredSatellite = (
-  userSatelliteSnapshots: GetUserDataQuery['mavryk_user'][number]['governance_satellite_snapshots'],
+  userSatelliteSnapshots: GetUserDataQuery['maven_user'][number]['governance_satellite_snapshots'],
 ) => {
   const lastSatelliteSnapshot = userSatelliteSnapshots[0]
 

@@ -17,7 +17,7 @@ import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.contr
 import { StageOneFormProps } from '../ProposalSubmission.types'
 
 // helpers
-import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
+import { isValidHttpUrl, isValidLength } from '../../../utils/validatorFunctions'
 import { containSpaces } from 'app/App.utils/input'
 
 // consts
@@ -139,7 +139,7 @@ export const StageOneForm = ({
 
         <div className="submitted-data vert-center">
           <div className="label">2 - Proposal Success Reward</div>
-          <CommaNumber className="value" value={successReward} endingText="MVK" />
+          <CommaNumber className="value" value={successReward} endingText="MVN" />
         </div>
 
         <div className="submitted-data vert-center">

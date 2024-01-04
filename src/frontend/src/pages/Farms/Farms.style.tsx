@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 import { Card } from 'styles'
 
-export const FarmsStyled = styled.div<{ theme: MavrykTheme }>`
+export const FarmsStyled = styled.div<{ theme: MavenTheme }>`
   section {
     display: grid;
     gap: 20px;
@@ -15,7 +15,7 @@ export const FarmsStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const FarmTopBarStyled = styled(Card)<{ theme: MavrykTheme }>`
+export const FarmTopBarStyled = styled(Card)<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 // helpers
-import { addVestee } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { addVestee } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { validateFormAddress } from 'utils/validatorFunctions'
 
 // consts
@@ -10,7 +10,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/B
 // types
 import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../../../../app/App.components/Input/Input.constants'
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 // view
@@ -239,7 +239,7 @@ export const MavCouncilFormAddVestee = () => {
   ])
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.ADD_VESTEE}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.ADD_VESTEE}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

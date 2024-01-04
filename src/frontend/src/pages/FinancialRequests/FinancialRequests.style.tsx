@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro'
 import { Card, CardHover } from 'styles'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
-export const FinancialRequestsStyled = styled.div<{ theme: MavrykTheme }>`
+export const FinancialRequestsStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   margin-top: 30px;
 
@@ -16,7 +16,7 @@ export const FinancialRequestsStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme }>`
+export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavenTheme }>`
   width: calc(50% - 25px);
   padding: 28px 30px;
   border-radius: 10px;
@@ -53,10 +53,12 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
 
   .fr-voting {
     margin-bottom: 20px;
+
     > div {
       justify-content: space-between;
       column-gap: 15px;
       padding-top: 0px;
+
       button {
         width: 50%;
       }
@@ -94,6 +96,7 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
         display: flex;
         width: 100%;
         justify-content: space-between;
+
         p {
           margin: 0;
         }
@@ -102,14 +105,14 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavrykTheme
   }
 `
 
-export const InfoBlockTitle = styled.div<{ theme: MavrykTheme }>`
+export const InfoBlockTitle = styled.div<{ theme: MavenTheme }>`
   font-weight: 600;
   font-size: 18px;
   line-height: 18px;
   color: ${({ theme }) => theme.mainHeadingText};
 `
 
-export const InfoBlockName = styled.div<{ theme: MavrykTheme }>`
+export const InfoBlockName = styled.div<{ theme: MavenTheme }>`
   font-weight: 500;
   font-size: 14px;
   line-height: 24px;
@@ -123,7 +126,7 @@ export const InfoBlockValue = styled(InfoBlockName)`
   color: ${({ theme }) => theme.primaryText};
 `
 
-export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTheme }>`
+export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavenTheme }>`
   min-height: 57px;
   width: 100%;
   display: flex;
@@ -142,8 +145,7 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavrykTh
       border-color: ${({ theme }) => theme.linksAndButtons};
       box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
     `}
-
-  .proposal-voted-mvk {
+  .proposal-voted-mvn {
     font-weight: 600;
     font-size: 14px;
     color: ${({ theme }) => theme.primaryText};

@@ -1,6 +1,6 @@
 import { OpKind, TransferParams, WalletParamsWithKind } from '@taquito/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { WalletOperationError, unknownToError } from 'errors/error'
+import { unknownToError, WalletOperationError } from 'errors/error'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 
@@ -85,16 +85,16 @@ export const rewardsCompound = async (
   }
 }
 
-export const getMVKTokensFromFaucet = async (
-  mvkFaucetAddress: string,
+export const getMVNTokensFromFaucet = async (
+  mvnFaucetAddress: string,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(mvkFaucetAddress)
-    const requestMVKMetaData = await contract.methods.requestMvk()
+    const contract = await tezos.wallet.at(mvnFaucetAddress)
+    const requestMVNMetaData = await contract.methods.requestMvn()
 
-    return await getEstimationResult(requestMVKMetaData)
+    return await getEstimationResult(requestMVNMetaData)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

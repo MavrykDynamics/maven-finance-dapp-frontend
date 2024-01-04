@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 
 // helpers
-import { removeCouncilMember } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { removeCouncilMember } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { getShortTzAddress } from '../../../../utils/tzAdress'
 
 // consts
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { REMOVE_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 
@@ -107,7 +107,7 @@ export const MavCouncilFormRemoveCouncilMember = ({
   const isButtonDisabled = isActionActive || !chosenDdItem
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

@@ -1,15 +1,15 @@
-import { calcPersent } from 'utils/calcFunctions'
+import {calcPercent} from 'utils/calcFunctions'
 
 import {
-  RESPONDED_ORACLE_STATUS,
+  EMPTY_SATELLITES_CONTEXT,
   NO_RESPONSE_ORACLE_STATUS,
   NOT_AN_ORACLE_ORACLE_STATUS,
-  EMPTY_SATELLITES_CONTEXT,
-  SATELLITE_PARTICIPATION_DATA_SUB,
+  RESPONDED_ORACLE_STATUS,
   SATELLITE_DATA_SUB,
-  SATELLITES_DATA_ORACLES_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
   SATELLITES_DATA_ALL_SUB,
+  SATELLITES_DATA_ORACLES_SUB,
   SATELLITES_DATA_SINGLE_SUB,
 } from '../satellites.const'
 
@@ -20,7 +20,7 @@ import {
   SatellitesContextState,
   SatellitesSubsRecordType,
 } from '../satellites.provider.types'
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
 import {
   STATUS_FLAG_DOWN,
   STATUS_FLAG_UP,
@@ -33,9 +33,9 @@ import {
  * @param proposalsAmount – total amount of created gov proposals
  * @param satelliteGovActionsAmount – total amount of created satellite gov actions
  * @param satellite – data of satellite
- * @returns @votingPartisipation – how many votes satellite has participied and @proposalParticipation – how many proposals, requests, actions has user initiated to all their amount
+ * @returns @votingParticipation – how many votes satellite has participated and @proposalParticipation – how many proposals, requests, actions has user initiated to all their amount
  */
-export const getSatelliteParticipations = ({
+export const getSatelliteParticipation = ({
   finRequestsAmount,
   proposalsAmount,
   satelliteGovActionsAmount,
@@ -49,7 +49,7 @@ export const getSatelliteParticipations = ({
   if (!satellite)
     return {
       proposalParticipation: 0,
-      votingPartisipation: 0,
+      votingParticipation: 0,
     }
 
   const {
@@ -68,19 +68,19 @@ export const getSatelliteParticipations = ({
   const satelliteVotingPeriods =
     satelliteActionVotingPeriods + governanceProposalsVotingPeriods + financialRequestsVotingPeriods
 
-  const votingPartisipation =
-    !satelliteVotesAmount || !satelliteVotingPeriods ? 0 : calcPersent(satelliteVotesAmount, satelliteVotingPeriods)
+  const votingParticipation =
+    !satelliteVotesAmount || !satelliteVotingPeriods ? 0 : calcPercent(satelliteVotesAmount, satelliteVotingPeriods)
 
   const initiatedProposalsAmount =
     createdFinProposalsAmount + createdGovProposalsAmount + createdSatelliteGovProposalsAmount
   const totalProposalCreated = finRequestsAmount + proposalsAmount + satelliteGovActionsAmount
 
   const proposalParticipation =
-    !initiatedProposalsAmount || !totalProposalCreated ? 0 : calcPersent(initiatedProposalsAmount, totalProposalCreated)
+    !initiatedProposalsAmount || !totalProposalCreated ? 0 : calcPercent(initiatedProposalsAmount, totalProposalCreated)
 
   return {
     proposalParticipation,
-    votingPartisipation,
+    votingParticipation,
   }
 }
 
@@ -92,7 +92,7 @@ export const getStatusColorBasedOnOracleType = (statusType: SatelliteOracleStatu
     : STATUS_FLAG_WARNING
 }
 
-export function getTotalDelegatedMVK(
+export function getTotalDelegatedMVN(
   satelliteIds: Array<SatelliteRecordType['address']>,
   satellitesMapper: Record<string, SatelliteRecordType>,
 ): number {
@@ -100,23 +100,23 @@ export function getTotalDelegatedMVK(
   return satelliteIds.reduce(
     (sum, currentAddress) =>
       sum +
-      Number(satellitesMapper[currentAddress].totalDelegatedAmount + satellitesMapper[currentAddress].sMvkBalance),
+      Number(satellitesMapper[currentAddress].totalDelegatedAmount + satellitesMapper[currentAddress].sMvnBalance),
     0,
   )
 }
 
 export const getSatellitesProviderReturnValue = ({
   satellitesCtxState,
-  satelliteAddressToSubsctibe,
+  satelliteAddressToSubscribe,
   activeSubs,
   changeSatellitesSubscriptionsList,
-  setSatelliteAddressToSubsctibe,
+  setSatelliteAddressToSubscribe,
 }: {
   satellitesCtxState: DeepNullable<SatellitesContextState>
-  satelliteAddressToSubsctibe: string | null
+  satelliteAddressToSubscribe: string | null
   activeSubs: SatellitesSubsRecordType
   changeSatellitesSubscriptionsList: SatellitesContext['changeSatellitesSubscriptionsList']
-  setSatelliteAddressToSubsctibe: SatellitesContext['setSatelliteAddressToSubsctibe']
+  setSatelliteAddressToSubscribe: SatellitesContext['setSatelliteAddressToSubscribe']
 }) => {
   const {
     satelliteGovActionsAmount,
@@ -128,7 +128,7 @@ export const getSatellitesProviderReturnValue = ({
     oraclesIds,
   } = satellitesCtxState
   const commonToReturn = {
-    setSatelliteAddressToSubsctibe,
+    setSatelliteAddressToSubscribe,
     changeSatellitesSubscriptionsList,
   }
 
@@ -146,15 +146,15 @@ export const getSatellitesProviderReturnValue = ({
   // check if we loading single satellite NOTE: checking whether satellite exists should be on component, not in provider
   const isLoadingSingleSatellite =
     activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_SINGLE_SUB &&
-    satelliteAddressToSubsctibe &&
-    !satelliteMapper?.[satelliteAddressToSubsctibe]
+    satelliteAddressToSubscribe &&
+    !satelliteMapper?.[satelliteAddressToSubscribe]
 
   // when we first visit page it will return empty satellites ctx and then apge will subscribe, so we need this cond to prevent empty page blinking
   const isAnySatellitesTypeInitialLoading =
     (activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper) || (!activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper)
 
   /**
-   * isLoading indicates whethet provider is loading smth, so we need to show loader, not load in background, cases:
+   * isLoading indicates whether provider is loading smth, so we need to show loader, not load in background, cases:
    * 1. handling initial loading, when provider returned value before component subscribed
    * 2. handling oracles satellites loading
    * 3. handling active satellites loading

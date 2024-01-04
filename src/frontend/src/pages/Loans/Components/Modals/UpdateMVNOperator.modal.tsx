@@ -1,43 +1,43 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLockBodyScroll } from 'react-use'
+import {useCallback, useEffect, useMemo, useState} from 'react'
+import {useLockBodyScroll} from 'react-use'
 
 // consts
-import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
-import { BUTTON_PRIMARY, BUTTON_SIMPLE_SMALL, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { UPDATE_OPERATORS_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType} from 'app/App.components/Input/Input.constants'
+import {BUTTON_PRIMARY, BUTTON_SIMPLE_SMALL, BUTTON_WIDE} from 'app/App.components/Button/Button.constants'
+import {UPDATE_OPERATORS_ACTION} from 'providers/VaultsProvider/helpers/vaults.const'
 
 // helpers
-import { validateTzAddress } from 'utils/validatorFunctions'
-import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import {validateTzAddress} from 'utils/validatorFunctions'
+import {checkWhetherTokenIsLoanToken, getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
 
 // types
-import { UpdateOperatorsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import {UpdateOperatorsPopupDataType} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 // actions
-import { UpdateTokenOperator, updateOperatorsAction } from 'providers/VaultsProvider/actions/vaultPermissions.actions'
+import {updateOperatorsAction, UpdateTokenOperator} from 'providers/VaultsProvider/actions/vaultPermissions.actions'
 
 // components
 import Icon from 'app/App.components/Icon/Icon.view'
-import { Input } from 'app/App.components/Input/NewInput'
+import {Input} from 'app/App.components/Input/NewInput'
 import Button from 'app/App.components/Button/NewButton'
-import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
+import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
+import {AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow} from 'app/App.components/Table'
 
 // styles
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { LoansModalBase } from './Modals.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
+import {GovRightContainerTitleArea} from 'pages/Governance/Governance.style'
+import {LoansModalBase} from './Modals.style'
+import {PopupContainer, PopupContainerWrapper} from 'app/App.components/popup/PopupMain.style'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction'
 
 // providers
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
+import {useUserContext} from 'providers/UserProvider/user.provider'
+import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
-export const UpdateMVKOperator = ({
+export const UpdateMVNOperator = ({
   closePopup,
   show,
   data,
@@ -99,7 +99,10 @@ export const UpdateMVKOperator = ({
     } else {
       const { operators } = data
 
-      const currentOperators: { address: string; validationStatus: InputStatusType }[] = operators.map((item) => ({
+      const currentOperators: {
+        address: string
+        validationStatus: InputStatusType
+      }[] = operators.map((item) => ({
         address: item,
         validationStatus: INPUT_STATUS_SUCCESS,
       }))
@@ -121,7 +124,7 @@ export const UpdateMVKOperator = ({
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
     setTableData(
-      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item))
+      tableData.map((item, idx) => (idx === rowIdx ? { address: String(newValue), validationStatus } : item)),
     )
   }
 
@@ -144,7 +147,7 @@ export const UpdateMVKOperator = ({
       actionType: UPDATE_OPERATORS_ACTION,
       actionFn: updateOperatorsActionCb,
     }),
-    [updateOperatorsActionCb]
+    [updateOperatorsActionCb],
   )
 
   const { action: updateHandler } = useContractAction(contractActionProps)
@@ -161,10 +164,10 @@ export const UpdateMVKOperator = ({
           <button onClick={closePopup} className="close-modal" />
 
           <GovRightContainerTitleArea>
-            <h2>Update MVK Operators</h2>
+            <h2>Update MVN Operators</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">
-            Add or remove operators from collateralized staked MVK in the vault. Note, this is an advanced feature and
+            Add or remove operators from collateralized staked MVN in the vault. Note, this is an advanced feature and
             should only be done by experienced DeFi users.
           </div>
 

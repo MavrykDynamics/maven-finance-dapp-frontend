@@ -265,14 +265,14 @@ export const DEFAULT_MANAGE_PERMISSIONS_POPUP_DATA: ManagePermissionsPopupDataTy
   depositors: [],
 }
 
-// --- update MVK operators popup
+// --- update MVN operators popup
 export type UpdateOperatorsPopupDataType = {
   vaultAddress: string
   tokenAddress: TokenAddressType
   operators: string[]
 }
 
-export const DEFAULT_UPDATE_MVK_OPERATORS_DATA: UpdateOperatorsPopupDataType = {
+export const DEFAULT_UPDATE_MVN_OPERATORS_DATA: UpdateOperatorsPopupDataType = {
   vaultAddress: '',
   tokenAddress: '',
   operators: [],
@@ -293,7 +293,7 @@ export type LoansPopupsContextStateType = {
   addExistingCollateralPopup: ModalStateType<AddCollateralPopupDataType>
   addNewCollateralPopup: ModalStateType<AddNewCollateralDataProps>
   withdrawCollateralPopup: ModalStateType<WithdrawCollateralPopupDataType>
-  updateMvkOperatorPopup: ModalStateType<UpdateOperatorsPopupDataType>
+  updateMvnOperatorPopup: ModalStateType<UpdateOperatorsPopupDataType>
   managePermissionsPopup: ModalStateType<ManagePermissionsPopupDataType>
   changeVaultNamePopup: ModalStateType<ChangeVaultNamePopupDataType>
   createVaultPopup: ModalStateType<CreateVaultPopupDataType>
@@ -318,8 +318,8 @@ export type LoansPopupsContextStateType = {
   closeAddExistingCollateralPopup: InstanceType<typeof LoansPopupsProvider>['closeAddExistingCollateralPopup']
   openAddNewCollateralPopup: InstanceType<typeof LoansPopupsProvider>['openAddNewCollateralPopup']
   closeAddNewCollateralPopup: InstanceType<typeof LoansPopupsProvider>['closeAddNewCollateralPopup']
-  openUpdateMvkOperatorsPopup: InstanceType<typeof LoansPopupsProvider>['openUpdateMvkOperatorsPopup']
-  closeUpdateMvkOperatorsPopup: InstanceType<typeof LoansPopupsProvider>['closeUpdateMvkOperatorsPopup']
+  openUpdateMvnOperatorsPopup: InstanceType<typeof LoansPopupsProvider>['openUpdateMvnOperatorsPopup']
+  closeUpdateMvnOperatorsPopup: InstanceType<typeof LoansPopupsProvider>['closeUpdateMvnOperatorsPopup']
   openManagePermissionsPopup: InstanceType<typeof LoansPopupsProvider>['openManagePermissionsPopup']
   closeManagePermissionsPopup: InstanceType<typeof LoansPopupsProvider>['closeManagePermissionsPopup']
   openChangeVaultNamePopup: InstanceType<typeof LoansPopupsProvider>['openChangeVaultNamePopup']
@@ -369,9 +369,9 @@ export const DEFAULT_LOANS_POPUPS_STATE = {
     showModal: false,
     data: DEFAULT_WITHDRAW_COLLATERAL_POPUP_DATA,
   },
-  updateMvkOperatorPopup: {
+  updateMvnOperatorPopup: {
     showModal: false,
-    data: DEFAULT_UPDATE_MVK_OPERATORS_DATA,
+    data: DEFAULT_UPDATE_MVN_OPERATORS_DATA,
   },
   managePermissionsPopup: {
     showModal: false,

@@ -11,7 +11,6 @@ export const ACTION_PRIMARY = 'actionPrimary'
 export const ACTION_SIMPLE = 'actionSimple'
 export const NAV_SIMPLE = 'navigationSimple'
 export const ACTION_SECONDARY = 'actionSecondary'
-export const VOTING_ABSTAIN = 'votingAbstain'
 
 export type ButtonStyle =
   | typeof PRIMARY
@@ -19,9 +18,8 @@ export type ButtonStyle =
   | typeof TRANSPARENT
   | typeof TRANSPARENT_WITH_BORDER
   | typeof NAV_SIMPLE
-  | typeof VOTING_FOR
-  | typeof VOTING_AGAINST
-  | typeof VOTING_ABSTAIN
+  | typeof VOTING_YAY
+  | typeof VOTING_NAY
   | typeof ACTION_PRIMARY
   | typeof ACTION_SECONDARY
   | typeof ACTION_SIMPLE
@@ -36,9 +34,9 @@ export const BUTTON_THIRD = 'third'
 export const BUTTON_SIMPLE = 'simple'
 export const BUTTON_SIMPLE_SMALL = 'simpleSmall'
 export const BUTTON_NAVIGATION = 'navigation'
-export const VOTING_FOR = `for`
+export const VOTING_YAY = `for`
 export const VOTING_PASS = `pass`
-export const VOTING_AGAINST = `against`
+export const VOTING_NAY = `nay`
 
 export type ButtonKind =
   | typeof BUTTON_PRIMARY
@@ -49,9 +47,9 @@ export type ButtonKind =
   | typeof BUTTON_SIMPLE
   | typeof BUTTON_SIMPLE_SMALL
   | typeof BUTTON_NAVIGATION
-  | typeof VOTING_AGAINST
+  | typeof VOTING_NAY
   | typeof VOTING_PASS
-  | typeof VOTING_FOR
+  | typeof VOTING_YAY
 
 export const BUTTON_ROUND = 'round'
 export const BUTTON_WIDE = 'wide'

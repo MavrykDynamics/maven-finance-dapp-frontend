@@ -5,12 +5,12 @@ import { visit } from 'graphql'
 const INDEXER_TABLES = {
   // STAKING
   doorman: true,
-  smvk_history_data_aggregate: true,
-  smvk_history_data: true,
-  mvk_token: true,
+  smvn_history_data_aggregate: true,
+  smvn_history_data: true,
+  mvn_token: true,
 
   // DAPP CONFIG
-  mvk_faucet: true,
+  mvn_faucet: true,
   dipdup_index: true,
 
   // FEEDS
@@ -67,7 +67,7 @@ const INDEXER_TABLES = {
   vesting: true,
 
   // USER
-  mavryk_user: true,
+  maven_user: true,
   delegation: true,
 
   // TOKENS

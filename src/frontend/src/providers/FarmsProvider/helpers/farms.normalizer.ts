@@ -1,7 +1,7 @@
 import { FarmCtxStateType, FarmDepositorType, FarmsIndexerDataType } from '../farms.provider.types'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 
 export const normalizeFarm = (indexerFarm: FarmsIndexerDataType['farm'][number]) => {
   return {
@@ -25,7 +25,7 @@ export const normalizeFarm = (indexerFarm: FarmsIndexerDataType['farm'][number])
     // other
     currentRewardPerBlock: convertNumberForClient({
       number: indexerFarm.current_reward_per_block,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     }),
     farmDepositors: indexerFarm.farm_accounts.reduce<Record<string, FarmDepositorType>>((acc, farmDepositor) => {
       acc[farmDepositor.user.address] = {

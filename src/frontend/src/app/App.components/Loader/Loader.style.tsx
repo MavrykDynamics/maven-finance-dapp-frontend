@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components/macro'
 import { shine, ellipsis } from 'styles/animations'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { SPINNER_LOADER_LARGE, SPINNER_LOADER_MEDIUM, SPINNER_LOADER_SMALL } from './loader.const'
 
-export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdropAlpha?: number; isActive: boolean }>`
+export const LoaderStyledWithBackdrop = styled.div<{ theme: MavenTheme; backdropAlpha?: number; isActive: boolean }>`
   position: fixed;
   z-index: 12;
   inset: 0;
@@ -48,7 +48,7 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavrykTheme; backdro
   }
 `
 
-export const LoaderShineTextAnimation = styled.div<{ theme: MavrykTheme }>`
+export const LoaderShineTextAnimation = styled.div<{ theme: MavenTheme }>`
   background-image: ${({ theme }) => theme.shineAnimationGradient};
   background-size: auto auto;
   background-clip: border-box;
@@ -64,7 +64,7 @@ export const LoaderShineTextAnimation = styled.div<{ theme: MavrykTheme }>`
   white-space: nowrap;
 `
 
-export const SpinnerCircleLoaderStyled = styled.div<{ theme: MavrykTheme }>`
+export const SpinnerCircleLoaderStyled = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
   font-size: 20px;
   width: 1em;
@@ -98,7 +98,7 @@ export const ClockLoaderWrapper = styled.svg<{ width: number; height: number }>`
   display: inline-block;
 `
 
-export const DataLoaderWrapper = styled.div<{ theme: MavrykTheme; margin?: string }>`
+export const DataLoaderWrapper = styled.div<{ theme: MavenTheme; margin?: string }>`
   width: 100%;
   display: flex;
   flex-direction: column;

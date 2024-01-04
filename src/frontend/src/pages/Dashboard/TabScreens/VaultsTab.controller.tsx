@@ -200,7 +200,7 @@ export const VaultsTab = () => {
       <div className="descr">
         <div className="title">What is a Vault?</div>
         <div className="text">
-          Mavryk Finance’s vaults are non-custodial smart contracts and are direct between the vault owner and smart
+          Maven Finance’s vaults are non-custodial smart contracts and are direct between the vault owner and smart
           contract. In order to borrow, users must open a vault and deposit collateral.{' '}
           <a href="https://docs.mavryk.finance/mavryk-finance/earn-and-borrow" target="_blank" rel="noreferrer">
             Read More

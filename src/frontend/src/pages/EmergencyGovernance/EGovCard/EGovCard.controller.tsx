@@ -7,7 +7,7 @@ import { parseDate } from 'utils/time'
 import { voteForEGovProposal } from 'providers/EmergencyGovernanceProvider/actions/eGovActions'
 
 // consts
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { VOTE_FOR_EGOV_PROPOSAL_ACTION } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
 import { COLON_VIEW } from 'app/App.components/Timer/Timer.view'
 import colors from 'styles/colors'
@@ -37,10 +37,10 @@ type Props = {
 
 export const EGovCard = ({ proposal }: Props) => {
   const { bug } = useToasterContext()
-  const { totalStakedMvk } = useDoormanContext()
+  const { totalStakedMvn } = useDoormanContext()
   const { userTokensBalances, userAddress } = useUserContext()
   const {
-    config: { minStakedMvkRequiredToVote },
+    config: { minStakedMvnRequiredToVote },
   } = useEGovContext()
   const {
     globalLoadingState: { isActionActive },
@@ -52,8 +52,8 @@ export const EGovCard = ({ proposal }: Props) => {
     voters,
     isActive,
     status,
-    totalSmvkVotes,
-    smvkPercentageRequired,
+    totalSmvnVotes,
+    smvnPercentageRequired,
     title,
     description,
     expirationTimestamp,
@@ -61,17 +61,18 @@ export const EGovCard = ({ proposal }: Props) => {
     proposerAddress,
   } = proposal
 
+  // In emergency governance there are only yay votes so no need to include the other voting fields here
   const votingStatistic = useMemo(
     () => ({
-      forVotesMVKTotal: totalSmvkVotes,
-      unusedVotesMVKTotal: totalStakedMvk - totalSmvkVotes,
-      quorum: smvkPercentageRequired,
+      yayVotesMvnTotal: totalSmvnVotes,
+      unusedVotesMvnTotal: totalStakedMvn - totalSmvnVotes,
+      quorum: smvnPercentageRequired,
     }),
-    [smvkPercentageRequired, totalSmvkVotes, totalStakedMvk],
+    [smvnPercentageRequired, totalSmvnVotes, totalStakedMvn],
   )
 
   const isUserVoter = voters.find(({ voterAddress }) => userAddress === voterAddress)
-  const userSmvkAmount = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+  const userSmvnAmount = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
   const voteForEGovProposalProps: HookContractActionArgs = useMemo(
     () => ({
@@ -84,7 +85,7 @@ export const EGovCard = ({ proposal }: Props) => {
           }
 
           if (!emergencyGovernanceAddress) {
-            bug('Wrong evergency governance address')
+            bug('Wrong emergency governance address')
             return null
           }
 
@@ -122,9 +123,9 @@ export const EGovCard = ({ proposal }: Props) => {
         <VotingArea
           voteStatistics={votingStatistic}
           isVotingActive
-          disableVotingButtons={Boolean(isUserVoter) || userSmvkAmount < minStakedMvkRequiredToVote || isActionActive}
+          disableVotingButtons={Boolean(isUserVoter) || userSmvnAmount < minStakedMvnRequiredToVote || isActionActive}
           handleVote={handleEGovProposalVote}
-          buttonsToShow={{ forBtn: { text: 'Vote to Trigger' } }}
+          buttonsToShow={{ yayBtn: { text: 'Vote to Trigger' } }}
           className="eGov-voting"
         />
       </div>

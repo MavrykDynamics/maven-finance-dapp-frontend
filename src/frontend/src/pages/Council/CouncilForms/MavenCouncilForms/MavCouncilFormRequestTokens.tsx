@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 // consts
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { REQUEST_TOKENS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { DEFAULT_TREASURY_SUBS, TREASURY_STORAGE_DATA_SUB } from 'providers/TreasuryProvider/helpers/treasury.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
@@ -19,7 +19,7 @@ import type { TokenMetadataType } from 'providers/TokensProvider/tokens.provider
 import type { InputProps } from 'app/App.components/Input/newInput.type'
 
 // helpers
-import { requestTokens } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { requestTokens } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { validateFormField } from 'utils/validatorFunctions'
@@ -302,7 +302,7 @@ export const MavCouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   }
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.REQUEST_TOKENS}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.REQUEST_TOKENS}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

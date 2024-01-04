@@ -30,7 +30,7 @@ export const fullFeedSchema = z.object({
 
   heart_beat_seconds: z.number(),
   reward_amount_xtz: z.number(),
-  reward_amount_smvk: z.number(),
+  reward_amount_smvn: z.number(),
   pct_oracle_threshold: z.number(),
   alpha_pct_per_thousand: z.number(),
 

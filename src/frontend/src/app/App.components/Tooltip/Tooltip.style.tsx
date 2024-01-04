@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme: MavrykTheme }>`
+export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme: MavenTheme }>`
   display: block;
   max-width: 330px;
 
@@ -26,7 +26,7 @@ export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme
   }
 `
 
-export const TooltipTriggerStyled = styled.div<{ theme: MavrykTheme }>`
+export const TooltipTriggerStyled = styled.div<{ theme: MavenTheme }>`
   transition: opacity 250ms;
   display: inline-flex;
   align-items: center;

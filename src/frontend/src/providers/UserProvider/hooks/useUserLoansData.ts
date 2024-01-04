@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 
 // hooks
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useUserContext } from '../user.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
+import {useApolloContext} from 'providers/ApolloProvider/apollo.provider'
+import {useUserContext} from '../user.provider'
+import {useQueryWithRefetch} from 'providers/common/hooks/useQueryWithRefetch'
 
 // utils
-import { normalizeUserLoansData } from '../helpers/userLoansData.normalizer'
+import {normalizeUserLoansData} from '../helpers/userLoansData.normalizer'
 
 // consts
-import { DEFAULT_USER_LOANS_DATA } from '../helpers/user.consts'
-import { GET_USER_LOANS_DATA } from '../queries/userLoans.query'
+import {DEFAULT_USER_LOANS_DATA} from '../helpers/user.consts'
+import {GET_USER_LOANS_DATA} from '../queries/userLoans.query'
 
 // types
-import { GetUserLoansDataQuery } from 'utils/__generated__/graphql'
+import {GetUserLoansDataQuery} from 'utils/__generated__/graphql'
 
 /**
  *
@@ -31,7 +31,7 @@ const useUserLoansData = () => {
   useEffect(() => {
     if (!indexerData) return
 
-    if (!indexerData.mavryk_user[0]) {
+    if (!indexerData.maven_user[0]) {
       setUserLoansData(DEFAULT_USER_LOANS_DATA)
       return
     }

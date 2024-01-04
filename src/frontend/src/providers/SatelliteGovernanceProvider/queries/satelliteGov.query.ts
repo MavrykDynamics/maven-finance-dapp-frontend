@@ -32,14 +32,14 @@ export const ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY = gql(`
       initiator {
         address
       }
-      nay_vote_smvk_total
-      pass_vote_smvk_total
-      smvk_percentage_for_approval
-      smvk_required_for_approval
-      snapshot_smvk_total_supply
+      nay_vote_smvn_total
+      pass_vote_smvn_total
+      smvn_percentage_for_approval
+      smvn_required_for_approval
+      snapshot_smvn_total_supply
       start_datetime
       status
-      yay_vote_smvk_total
+      yay_vote_smvn_total
 
       parameters {
         name
@@ -76,14 +76,14 @@ export const PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY = gql(`
       initiator {
         address
       }
-      nay_vote_smvk_total
-      pass_vote_smvk_total
-      smvk_percentage_for_approval
-      smvk_required_for_approval
-      snapshot_smvk_total_supply
+      nay_vote_smvn_total
+      pass_vote_smvn_total
+      smvn_percentage_for_approval
+      smvn_required_for_approval
+      snapshot_smvn_total_supply
       start_datetime
       status
-      yay_vote_smvk_total
+      yay_vote_smvn_total
 
       parameters {
         name
@@ -120,14 +120,14 @@ export const USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY = gql(`
       initiator {
         address
       }
-      nay_vote_smvk_total
-      pass_vote_smvk_total
-      smvk_percentage_for_approval
-      smvk_required_for_approval
-      snapshot_smvk_total_supply
+      nay_vote_smvn_total
+      pass_vote_smvn_total
+      smvn_percentage_for_approval
+      smvn_required_for_approval
+      snapshot_smvn_total_supply
       start_datetime
       status
-      yay_vote_smvk_total
+      yay_vote_smvn_total
 
       parameters {
         name

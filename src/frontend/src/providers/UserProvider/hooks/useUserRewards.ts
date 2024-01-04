@@ -10,7 +10,7 @@ import { normalizeUserRewards } from '../helpers/userData.helpers'
 
 // consts
 import { USER_REWARDS_DATA_QUERY } from '../queries/userData.query'
-import { LIST_NAMES_MAPPER, USER_ACTIONS_HISTORY, getPageNumber } from 'app/App.components/Pagination/pagination.consts'
+import { getPageNumber, LIST_NAMES_MAPPER, USER_ACTIONS_HISTORY } from 'app/App.components/Pagination/pagination.consts'
 import { DEFAULT_USER_REWARDS } from '../helpers/user.consts'
 
 const userActionsHistoryItemsPerPage = LIST_NAMES_MAPPER[USER_ACTIONS_HISTORY]
@@ -30,13 +30,13 @@ export const useUserRewards = () => {
       limit: userActionsHistoryItemsPerPage,
     },
     onCompleted: (data) => {
-      // newly registered user, means no opearions performed
-      if (!data.mavryk_user[0]) {
+      // newly registered user, means no operations performed
+      if (!data.maven_user[0]) {
         setUserRewards(DEFAULT_USER_REWARDS)
         return
       }
 
-      const rewardsIndexerData = data.mavryk_user[0]
+      const rewardsIndexerData = data.maven_user[0]
       const userProposalRewards = data.governance_proposal
 
       const normalizedUserRewards = normalizeUserRewards({ rewardsIndexerData, userProposalRewards })

@@ -14,12 +14,12 @@ import { getSatellitesProviderReturnValue } from './helpers/satellites.utils'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   DEFAULT_SATELLITES_CONTEXT,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
   SATELLITES_DATA_ALL_SUB,
   SATELLITES_DATA_ORACLES_SUB,
   SATELLITES_DATA_SINGLE_SUB,
-  SATELLITE_DATA_SUB,
-  SATELLITE_PARTICIPATION_DATA_SUB,
 } from './satellites.const'
 import { SATELLITES_METRICS_DATA } from './queries/satellitesMetricsData.query'
 
@@ -39,10 +39,10 @@ export type Props = {
 /**
  * NOTES:
  *
- * Single satellite sub: need to use SATELLITES_DATA_SINGLE_SUB sub type along with providing satellite addres
- * via setSatelliteAddressToSubsctibe, if this address is from indexer (userAddress, when isSatelliteTrue, or satelliteDelegatedTo)
+ * Single satellite sub: need to use SATELLITES_DATA_SINGLE_SUB sub type along with providing satellite address
+ * via setSatelliteAddressToSubscribe, if this address is from indexer (userAddress, when isSatelliteTrue, or satelliteDelegatedTo)
  * you don't need to check whether satellite exists, if address can be modified by user, or we not sure whether satellite exists, we need to check it first
- * with apolloClient and CHECK_WHETHER_SATELLITE_EXISTS query, othervise if satellite is not exists it will show infinity loader
+ * with apolloClient and CHECK_WHETHER_SATELLITE_EXISTS query, otherwise if satellite is not exists it will show infinity loader
  */
 export const SatellitesProvider = ({ children }: Props) => {
   const { handleApolloError } = useApolloContext()
@@ -50,7 +50,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [satellitesCtxState, setSatellitesCtxState] =
     useState<DeepNullable<SatellitesContextState>>(DEFAULT_SATELLITES_CONTEXT)
 
-  const [satelliteAddressToSubsctibe, setSatelliteAddressToSubsctibe] = useState<string | null>(null)
+  const [satelliteAddressToSubscribe, setSatelliteAddressToSubscribe] = useState<string | null>(null)
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
 
   /**
@@ -74,16 +74,16 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(SATELLITE_DATA_QUERY, {
-    skip: !satelliteAddressToSubsctibe || activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_SINGLE_SUB,
+    skip: !satelliteAddressToSubscribe || activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_SINGLE_SUB,
     variables: {
-      userAddress: satelliteAddressToSubsctibe ?? '',
+      userAddress: satelliteAddressToSubscribe ?? '',
     },
     onCompleted: (data) => {
       const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper: satelliteAddressToSubsctibe
+        satelliteMapper: satelliteAddressToSubscribe
           ? { ...prev.satelliteMapper, ...satelliteMapper }
           : satelliteMapper,
         allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
@@ -150,12 +150,12 @@ export const SatellitesProvider = ({ children }: Props) => {
     () =>
       getSatellitesProviderReturnValue({
         satellitesCtxState,
-        satelliteAddressToSubsctibe,
+        satelliteAddressToSubscribe,
         activeSubs,
         changeSatellitesSubscriptionsList,
-        setSatelliteAddressToSubsctibe,
+        setSatelliteAddressToSubscribe,
       }),
-    [satellitesCtxState, activeSubs, satelliteAddressToSubsctibe],
+    [satellitesCtxState, activeSubs, satelliteAddressToSubscribe],
   )
 
   return <satellitesContext.Provider value={providerValue}>{children}</satellitesContext.Provider>

@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const EmergencyGovProposalModalContent = styled.div<{ theme: MavrykTheme }>`
+export const EmergencyGovProposalModalContent = styled.div<{ theme: MavenTheme }>`
   width: 750px;
 
   > h1 {

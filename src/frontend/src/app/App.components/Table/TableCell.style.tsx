@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 const TABLE_CELL_DEFAULT_TAGS_STYLES = css`
   svg,
@@ -171,7 +171,7 @@ const CELL_CONTENT_STYLES = css`
 `
 
 type TableCellStyledProps = {
-  theme: MavrykTheme
+  theme: MavenTheme
   width?: string
   contentPosition?: 'left' | 'center' | 'right'
 }

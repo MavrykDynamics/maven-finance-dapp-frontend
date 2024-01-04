@@ -22,7 +22,7 @@ export type ProposalValidityObj = {
   title: ValidationResult
   invoice: ValidationResult
   description: ValidationResult
-  successMVKReward: ValidationResult
+  successMVNReward: ValidationResult
   invoiceTable: ValidationResult
   sourceCode: ValidationResult
   bytesValidation: Array<{

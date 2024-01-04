@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { Card } from 'styles'
 
 export const Wrapper = styled.div`
@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
   margin-top: 30px;
 `
 
-export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
+export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 10px;
@@ -40,7 +40,7 @@ export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme; isExitFeeChart: boolean }>`
+export const DoormanChartCard = styled(Card)<{ theme: MavenTheme; isExitFeeChart: boolean }>`
   padding: ${({ isExitFeeChart }) => (isExitFeeChart ? '40px 15px 5px 15px' : '50px 15px 5px 15px')};
   margin-top: 20px;
   height: 100%;
@@ -90,13 +90,13 @@ export const DoormanChartCard = styled(Card)<{ theme: MavrykTheme; isExitFeeChar
       font-size: 12px;
       color: ${({ theme }) => theme.subHeadingText};
 
-      &.mvk {
+      &.mvn {
         .circle {
           background: ${({ theme }) => theme.primaryChartColor};
         }
       }
 
-      &.smvk {
+      &.smvn {
         .circle {
           // constant color for all theme
           background: #86d4c9;

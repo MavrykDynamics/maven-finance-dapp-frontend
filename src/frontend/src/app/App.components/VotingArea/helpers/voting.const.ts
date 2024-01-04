@@ -1,14 +1,12 @@
 export enum VotingTypes {
-  NO = 'nay',
-  YES = 'yay',
+  NAY = 'nay',
+  YAY = 'yay',
   PASS = 'pass',
 }
 
-// TODO: clarify with Tristan, cuz in indexer schema says: no - 0, yes - 1, pass 2
+// TODO: clarify with Tristan, cuz in indexer schema says: NAY - 0, YAY - 1, PASS - 2
 export const VoteList = {
-  // NO: 0,
-  PASS: 0,
-  YES: 1,
-  // PASS: 2,
-  NO: 2,
+  NAY: 0,
+  PASS: 2,
+  YAY: 1,
 }

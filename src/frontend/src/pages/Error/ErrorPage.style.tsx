@@ -1,10 +1,10 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 import { hangInSpace } from 'styles/animations'
 import { Z_INDEX_DEFAULT } from 'styles/constants'
 import { ThemeType } from 'consts/theme.const'
 
-export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme; themeSelected: ThemeType }>`
+export const ErrorPageWrapper = styled.div<{ theme: MavenTheme; themeSelected: ThemeType }>`
   font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   margin: auto;
   width: 100vw;
@@ -24,7 +24,7 @@ export const ErrorPageWrapper = styled.div<{ theme: MavrykTheme; themeSelected: 
   }
 `
 
-export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
+export const ErrorPageInner = styled.div<{ theme: MavenTheme }>`
   display: inline-block;
   position: relative;
   display: flex;
@@ -48,7 +48,7 @@ export const ErrorPageInner = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`
+export const ErrorTopHeader = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
   font-size: 18px;
   font-style: normal;
@@ -57,7 +57,7 @@ export const ErrorTopHeader = styled.div<{ theme: MavrykTheme }>`
   text-transform: uppercase;
 `
 
-export const ErrorMidHeader = styled.div<{ theme: MavrykTheme }>`
+export const ErrorMidHeader = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
   font-size: 25px;
   font-style: normal;
@@ -65,7 +65,7 @@ export const ErrorMidHeader = styled.div<{ theme: MavrykTheme }>`
   line-height: 30px;
 `
 
-export const ErrorParagraph = styled.div<{ theme: MavrykTheme }>`
+export const ErrorParagraph = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
   text-align: center;
   font-size: 14px;
@@ -74,14 +74,14 @@ export const ErrorParagraph = styled.div<{ theme: MavrykTheme }>`
   margin: 20px 0;
   line-height: 21px;
 `
-export const ErrorLogoImage = styled.img<{ theme: MavrykTheme }>`
+export const ErrorLogoImage = styled.img<{ theme: MavenTheme }>`
   width: 602px;
   height: 213px;
   margin: 20px 0;
   object-fit: cover;
 `
 
-export const Vector1 = styled.img<{ theme: MavrykTheme }>`
+export const Vector1 = styled.img<{ theme: MavenTheme }>`
   position: absolute;
   left: -158px;
   bottom: 95px;
@@ -89,14 +89,14 @@ export const Vector1 = styled.img<{ theme: MavrykTheme }>`
   animation: ${hangInSpace} 110s ease-in-out infinite alternate;
 `
 
-export const Vector2 = styled.img<{ theme: MavrykTheme }>`
+export const Vector2 = styled.img<{ theme: MavenTheme }>`
   position: absolute;
   right: -100px;
   top: 20px;
   z-index: 1;
   animation: ${hangInSpace} 120s ease-in-out infinite alternate;
 `
-export const ErrorFooterWrapper = styled.div<{ theme: MavrykTheme }>`
+export const ErrorFooterWrapper = styled.div<{ theme: MavenTheme }>`
   width: 90%;
   position: absolute;
   bottom: 0;
@@ -116,7 +116,7 @@ export const ErrorFooterWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ErrorFooterMiddle = styled.div<{ theme: MavrykTheme }>`
+export const ErrorFooterMiddle = styled.div<{ theme: MavenTheme }>`
   text-align: center;
   font-size: 12px;
   font-style: normal;
@@ -132,7 +132,7 @@ export const ErrorFooterMiddle = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ErrorFooterRight = styled.div<{ theme: MavrykTheme }>`
+export const ErrorFooterRight = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
   column-gap: 10px;
@@ -149,7 +149,7 @@ export const ErrorFooterRight = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ErrorMenuTopStyled = styled.div<{ theme: MavrykTheme }>`
+export const ErrorMenuTopStyled = styled.div<{ theme: MavenTheme }>`
   position: fixed;
   top: 0;
   left: 0;

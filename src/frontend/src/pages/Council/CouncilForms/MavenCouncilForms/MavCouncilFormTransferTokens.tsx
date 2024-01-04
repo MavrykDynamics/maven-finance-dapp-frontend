@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 
 // consts
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { TRANSFER_TOKENS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from 'app/App.components/Button/Button.constants'
 import type { InputStatusType } from '../../../../app/App.components/Input/Input.constants'
@@ -17,7 +17,7 @@ import type { InputProps } from 'app/App.components/Input/newInput.type'
 import type { CouncilMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // helpers
-import { transferTokens } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { transferTokens } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { validateFormAddress, validateFormField } from 'utils/validatorFunctions'
@@ -243,7 +243,7 @@ export const MavCouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
   }
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.TRANSFER_TOKENS}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.TRANSFER_TOKENS}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

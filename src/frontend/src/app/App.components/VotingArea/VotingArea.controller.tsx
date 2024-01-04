@@ -1,6 +1,6 @@
 // types
 import { VotingProposalsProps, VotingProps } from './helpers/voting'
-import { VotingTypes, VoteList } from './helpers/voting.const'
+import { VoteList, VotingTypes } from './helpers/voting.const'
 
 // view
 import { VotingBar } from './VotingBar.controller'
@@ -12,7 +12,7 @@ import Button from '../Button/NewButton'
 
 // consts
 import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
-import { VOTING_AGAINST, BUTTON_PRIMARY, VOTING_FOR, VOTING_PASS, BUTTON_WIDE } from '../Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE, VOTING_NAY, VOTING_PASS, VOTING_YAY } from '../Button/Button.constants'
 import { INFO_DEFAULT } from '../Info/info.constants'
 import { NEWLY_REGISTERED_SATELLITE_BANNER_TEXT } from 'texts/banners/satellite.text'
 
@@ -36,7 +36,7 @@ export const VotingArea = ({
   buttonsToShow,
   disableButtonByVote,
 }: VotingType) => {
-  const { forBtn, againsBtn, passBtn } = buttonsToShow ?? { forBtn: {}, againsBtn: {}, passBtn: {} }
+  const { yayBtn, nayBtn, passBtn } = buttonsToShow ?? { yayBtn: {}, nayBtn: {}, passBtn: {} }
 
   const { userAddress, isSatellite, isNewlyRegisteredSatellite } = useUserContext()
   const {
@@ -46,19 +46,19 @@ export const VotingArea = ({
   const votingButtons = userAddress ? (
     isSatellite && handleVote ? (
       <VotingButtonsContainer className="voting-buttons-wrapper">
-        {forBtn && (
+        {yayBtn && (
           <Button
-            onClick={() => handleVote(VotingTypes.YES)}
-            kind={VOTING_FOR}
+            onClick={() => handleVote(VotingTypes.YAY)}
+            kind={VOTING_YAY}
             form={BUTTON_WIDE}
             disabled={
               disableVotingButtons ||
               isActionActive ||
-              disableButtonByVote === VoteList.YES ||
+              disableButtonByVote === VoteList.YAY ||
               isNewlyRegisteredSatellite
             }
           >
-            {forBtn.text ?? 'Vote YES'}
+            {yayBtn.text ?? 'Vote YES'}
           </Button>
         )}
         {passBtn && (
@@ -76,19 +76,19 @@ export const VotingArea = ({
             {passBtn.text ?? 'Vote PASS'}
           </Button>
         )}
-        {againsBtn && (
+        {nayBtn && (
           <Button
-            onClick={() => handleVote(VotingTypes.NO)}
-            kind={VOTING_AGAINST}
+            onClick={() => handleVote(VotingTypes.NAY)}
+            kind={VOTING_NAY}
             form={BUTTON_WIDE}
             disabled={
               disableVotingButtons ||
               isActionActive ||
-              disableButtonByVote === VoteList.NO ||
+              disableButtonByVote === VoteList.NAY ||
               isNewlyRegisteredSatellite
             }
           >
-            {againsBtn.text ?? 'Vote NO'}
+            {nayBtn.text ?? 'Vote NO'}
           </Button>
         )}
       </VotingButtonsContainer>
@@ -129,9 +129,9 @@ export const VotingProposalsArea = ({
   if (!isVoteActive) {
     // if we have voting round votes
     if (
-      selectedProposal.upvoteMvkTotal > 0 ||
-      selectedProposal.abstainMvkTotal > 0 ||
-      selectedProposal.downvoteMvkTotal > 0
+      selectedProposal.yayVotesMvnTotal > 0 ||
+      selectedProposal.passVotesMvnTotal > 0 ||
+      selectedProposal.nayVotesMvnTotal > 0
     ) {
       return (
         <VotingAreaStyled>
@@ -143,14 +143,14 @@ export const VotingProposalsArea = ({
     }
 
     // if only proposal round votes
-    if (selectedProposal.passVoteMvkTotal > 0) {
+    if (selectedProposal.proposalUpVotesMvnTotal > 0) {
       return (
         <VotingAreaStyled>
           <div className="voted-block">
             <CommaNumber
               className="voted-label"
-              value={voteStatistics.passVotesMVKTotal ?? 0}
-              endingText={'voted MVK'}
+              value={voteStatistics.proposalUpVotesMvnTotal ?? 0}
+              endingText={'voted MVN'}
             />
           </div>
         </VotingAreaStyled>
@@ -165,7 +165,11 @@ export const VotingProposalsArea = ({
     return (
       <VotingAreaStyled>
         <div className="voted-block">
-          <CommaNumber className="voted-label" value={voteStatistics.passVotesMVKTotal ?? 0} endingText={'voted MVK'} />
+          <CommaNumber
+            className="voted-label"
+            value={voteStatistics.proposalUpVotesMvnTotal ?? 0}
+            endingText={'voted MVN'}
+          />
           {isNewlyRegisteredSatellite && (
             <div className="banner-area">
               <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />

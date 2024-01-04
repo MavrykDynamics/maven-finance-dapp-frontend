@@ -12,13 +12,13 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
 
   return (
     <PopupContainerWrapper onClick={(e: React.MouseEvent) => e.stopPropagation()} className="policy">
-      <h1>Welcome to the Mavryk Finance Public Beta!</h1>
+      <h1>Welcome to the Maven Finance Public Beta!</h1>
 
       <p>
-        TLDR: We’re super excited to present Mavryk Finance’s Beta v2.0!! This stage is to showcase our platform to the
+        TLDR: We’re super excited to present Maven Finance’s Beta v2.0!! This stage is to showcase our platform to the
         community and for public testing & feedback. Please keep in mind we are undergoing continuous internal testing &
         bug fixes, and we are constantly updating the Dapp. That being said, we would love for you explore, test, and
-        become familiar with Mavryk Finance, and everything our team is building. We only ask that you reach out to us
+        become familiar with Maven Finance, and everything our team is building. We only ask that you reach out to us
         about any issues you may have ASAP via the form on the site, and are more than happy to hop on a call and
         discuss them. If you love it, we would greatly appreciate your support in the community, tweets on Twitter, and
         wider social media.
@@ -37,7 +37,7 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
       {/*</ol>*/}
 
       <Checkbox id="policy" onChangeHandler={() => setCheckbox(!checkbox)} checked={checkbox}>
-        I understand that Mavryk Finance is in Beta and want to have some fun.
+        I understand that Maven Finance is in Beta and want to have some fun.
       </Checkbox>
 
       <div className="procced-btn">

@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const SatelliteOracleStatusComponent = styled.div`
   & > div {
@@ -12,7 +12,7 @@ export const SatelliteOracleStatusComponent = styled.div`
   }
 `
 
-export const SatelliteCard = styled(Card)<{ theme: MavrykTheme }>`
+export const SatelliteCard = styled(Card)<{ theme: MavenTheme }>`
   padding: 0;
   margin: 0;
 `
@@ -53,7 +53,7 @@ export const SatelliteCardButtons = styled.div`
   justify-content: space-around;
 `
 
-export const SatelliteCardRow = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteCardRow = styled.div<{ theme: MavenTheme }>`
   display: flex;
   padding: 15px;
   justify-content: center;
@@ -108,7 +108,7 @@ export const SatelliteProfileInfoWrapper = styled.div`
   display: flex;
 `
 
-export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteTextGroup = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -129,7 +129,7 @@ export const SatelliteTextGroup = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SatelliteMainText = styled.div<{ theme: MavrykTheme; hasEmptyRightSection?: boolean }>`
+export const SatelliteMainText = styled.div<{ theme: MavenTheme; hasEmptyRightSection?: boolean }>`
   color: ${({ theme }) => theme.subHeadingText};
   font-weight: 600;
   font-size: 14px;
@@ -147,7 +147,7 @@ export const SatelliteMainText = styled.div<{ theme: MavrykTheme; hasEmptyRightS
   }
 `
 
-export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteSubText = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.primaryText};
   font-weight: 600;
   font-size: 16px;
@@ -163,7 +163,7 @@ export const SatelliteSubText = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SatelliteProfileDetails = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteProfileDetails = styled.div<{ theme: MavenTheme }>`
   display: flex;
   margin-left: 7px;
   margin-top: 5px;

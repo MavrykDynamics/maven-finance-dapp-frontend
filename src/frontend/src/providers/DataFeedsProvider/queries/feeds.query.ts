@@ -33,7 +33,7 @@ export const FEEDS_QUERY = gql(`
 
       heart_beat_seconds
       reward_amount_xtz
-      reward_amount_smvk
+      reward_amount_smvn
       pct_oracle_threshold
       alpha_pct_per_thousand
 

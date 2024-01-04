@@ -1,12 +1,12 @@
 // utils & consts
-import { WalletOperationError, unknownToError } from 'errors/error'
-import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
-import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
+import {unknownToError, WalletOperationError} from 'errors/error'
+import {getEstimationBatchResult, getEstimationResult} from 'errors/helpers/estimateAction.helper'
+import {DAPP_INSTANCE} from 'providers/UserProvider/user.provider'
 
 // types
-import { SatelliteGovernanceTransfer } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
-import { UserContext } from 'providers/UserProvider/user.provider.types'
-import { OpKind, TransferParams } from '@taquito/taquito'
+import {SatelliteGovernanceTransfer} from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider.types'
+import {UserContext} from 'providers/UserProvider/user.provider.types'
+import {OpKind, TransferParams} from '@taquito/taquito'
 
 // Suspend Satellite
 export const suspendSatellite = async (

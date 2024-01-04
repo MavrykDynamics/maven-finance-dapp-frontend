@@ -1,25 +1,25 @@
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
-import { WalletOperationError, unknownToError } from 'errors/error'
+import { unknownToError, WalletOperationError } from 'errors/error'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { OpKind } from '@taquito/taquito'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 
-export const stakeMVK = async (
+export const stakeMVN = async (
   amount: number,
   accountPkh: string,
   doormanAddress: string,
-  mvkTokenAddress: string,
+  mvnTokenAddress: string,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
-    const mvkTokenContract = await tezos?.wallet.at(mvkTokenAddress)
+    const mvnTokenContract = await tezos?.wallet.at(mvnTokenAddress)
     const doormanContract = await tezos?.wallet.at(doormanAddress)
 
     const approveBatchItemMetaData = {
       kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-      ...mvkTokenContract.methods
+      ...mvnTokenContract.methods
         .update_operators([
           {
             add_operator: {
@@ -34,7 +34,7 @@ export const stakeMVK = async (
 
     const removeBatchItemMetaData = {
       kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-      ...mvkTokenContract.methods
+      ...mvnTokenContract.methods
         .update_operators([
           {
             remove_operator: {
@@ -49,7 +49,7 @@ export const stakeMVK = async (
 
     const stakeBatchItemMetaData = {
       kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-      ...doormanContract.methods.stake(convertNumberForContractCall({ number: amount })).toTransferParams(),
+      ...doormanContract.methods.stakeMvn(convertNumberForContractCall({ number: amount })).toTransferParams(),
     }
 
     const batchArr = [approveBatchItemMetaData, stakeBatchItemMetaData, removeBatchItemMetaData]
@@ -61,7 +61,7 @@ export const stakeMVK = async (
   }
 }
 
-export const unstakeMVK = async (
+export const unstakeMVN = async (
   amount: number,
   doormanAddress: string,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
@@ -69,7 +69,7 @@ export const unstakeMVK = async (
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(doormanAddress)
-    const unstakeOperationMetaData = contract?.methods.unstake(convertNumberForContractCall({ number: amount }))
+    const unstakeOperationMetaData = contract?.methods.unstakeMvn(convertNumberForContractCall({ number: amount }))
 
     return await getEstimationResult(unstakeOperationMetaData)
   } catch (error) {

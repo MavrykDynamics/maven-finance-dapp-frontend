@@ -1,3 +1,3 @@
-export interface MavrykTheme {
+export interface MavenTheme {
   [key: string]: string
 }

@@ -100,7 +100,7 @@ export type VaultType = {
 
   // permissions
   xtzDelegatedTo: string | null // if vault has xtz, as collateral, those xtz can be delegated to baker, here's the address of the delegated baker
-  sMVKDelegatedTo?: string // if vault has smvk, as collateral, those smvk can be delegated to satellite, here's the address of the delegated satellite
+  sMVNDelegatedTo?: string // if vault has sMVN, as collateral, those sMVN can be delegated to satellite, here's the address of the delegated satellite
   ownerAddress: string // address of the vault owner
   depositors: Array<string> // list of people who are allowed to deposit in the vault
   depositorsFlag: DepositorsFlagType // vault has 3 permissions states any -≥ anyone can deposit in it, none -> only owner can, whitelist -> only allowed users can deposit

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { CardHover } from 'styles'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { getCouncilActionsBodiesGridSettings } from './CouncilAction.consts'
 import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 
@@ -127,7 +127,7 @@ const COUNCIL_CARD_BODY_AREA_NAMES = css`
   }
 `
 
-export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
+export const CouncilActionStyled = styled(CardHover)<{ theme: MavenTheme }>`
   padding: 0;
   margin-top: 0;
 
@@ -160,7 +160,7 @@ export const CouncilActionStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   ${COUNCIL_CARD_BODY_AREA_NAMES}
 `
 
-export const CouncilActionBodyStyled = styled.div<{ theme: MavrykTheme; cardActionId: CouncilsActionsIds | null }>`
+export const CouncilActionBodyStyled = styled.div<{ theme: MavenTheme; cardActionId: CouncilsActionsIds | null }>`
   display: grid;
 
   align-items: center;

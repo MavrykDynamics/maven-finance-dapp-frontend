@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const SatellitePaginationStyled = styled.div<{ theme: MavrykTheme }>`
+export const SatellitePaginationStyled = styled.div<{ theme: MavenTheme }>`
   margin-top: 0;
   margin-bottom: 20px;
   display: flex;

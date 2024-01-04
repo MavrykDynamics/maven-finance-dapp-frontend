@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const TimeLeftAreaWrap = styled.div<{ showBorder: boolean }>`
   position: relative;
@@ -26,7 +26,7 @@ export const TimeLeftAreaWrap = styled.div<{ showBorder: boolean }>`
   }
 `
 
-export const MoveNextRoundModalBase = styled.div<{ theme: MavrykTheme }>`
+export const MoveNextRoundModalBase = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 20px;

@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro'
 import { Card, CardHover } from '../../styles'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
-export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
+export const ProposalSubmissionForm = styled(Card)<{ theme: MavenTheme }>`
   padding-bottom: 30px;
   position: relative;
   margin-top: 20px;
@@ -32,7 +32,7 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavrykTheme }>`
 `
 
 // Proposal submittion stage 1 styles
-export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; isProposalSubmitted?: boolean }>`
+export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavenTheme; isProposalSubmitted?: boolean }>`
   margin-top: 40px;
 
   display: grid;
@@ -136,7 +136,7 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavrykTheme; i
 `
 
 // Proposal submittion stage 2 styles
-export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
+export const SubmitProposalBytes = styled.div<{ theme: MavenTheme }>`
   margin-top: 15px;
   position: relative;
   padding-bottom: 15px;
@@ -171,7 +171,7 @@ export const SubmitProposalBytes = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>`
+export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 50px;
@@ -233,7 +233,7 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavrykTheme }>
 // Proposal submittion stage 3 styles
 
 // Proposal submittion general styles
-export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
+export const ProposalSubmittionButtons = styled.div<{ theme: MavenTheme }>`
   margin-top: 40px;
   display: flex;
   justify-content: flex-end;
@@ -255,19 +255,19 @@ export const ProposalSubmittionButtons = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const SubmitProposalHeader = styled.div<{ theme: MavrykTheme }>`
+export const SubmitProposalHeader = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
 `
 
-export const SubmitProposalGeneralData = styled(ProposalSubmittionStageOneBody)<{ theme: MavrykTheme }>`
+export const SubmitProposalGeneralData = styled(ProposalSubmittionStageOneBody)<{ theme: MavenTheme }>`
   grid-template-columns: 32% 35% 15%;
   grid-template-rows: 40px;
   margin-bottom: 20px;
 `
 
 // Created proposals swither styles
-export const MultyProposalsStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultyProposalsStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   column-gap: 15px;
   margin-top: 30px;

@@ -28,7 +28,7 @@ const DashboardPersonalMyRewards = ({
   const { userAddress } = useUserContext()
   return (
     <MyRewardsStyled>
-      <H2Title>My MVK Earnings</H2Title>
+      <H2Title>My MVN Earnings</H2Title>
       <div className="claim-rewards">
         <Button
           disabled={rewardsToClaim === 0 || isActionActive || !userAddress}
@@ -41,13 +41,13 @@ const DashboardPersonalMyRewards = ({
       <div className="stat-block">
         <div className="name">Earned to Date</div>
         <div className="value">
-          <CommaNumber value={earnedRewards} endingText="sMVK" />
+          <CommaNumber value={earnedRewards} endingText="sMVN" />
         </div>
       </div>
       <div className="stat-block">
         <div className="name">Claimable Rewards</div>
         <div className="value">
-          <CommaNumber value={rewardsToClaim} endingText="sMVK" />
+          <CommaNumber value={rewardsToClaim} endingText="sMVN" />
         </div>
       </div>
     </MyRewardsStyled>

@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const FooterStyled = styled.div<{ theme: MavrykTheme }>`
+export const FooterStyled = styled.div<{ theme: MavenTheme }>`
   position: relative;
   display: flex;
   align-items: end;

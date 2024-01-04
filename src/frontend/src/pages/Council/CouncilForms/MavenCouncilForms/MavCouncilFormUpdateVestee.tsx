@@ -9,11 +9,11 @@ import {
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
 } from '../../../../app/App.components/Input/Input.constants'
-import { MavrykCounsilDdForms } from '../../helpers/council.consts'
+import { MavenCouncilDdForms } from '../../helpers/council.consts'
 import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 
 // helpers
-import { updateVestee } from 'providers/CouncilProvider/actions/mavrykCounsil.actions'
+import { updateVestee } from 'providers/CouncilProvider/actions/mavenCouncil.actions'
 import { validateFormAddress } from 'utils/validatorFunctions'
 
 // view
@@ -252,7 +252,7 @@ export const MavCouncilFormUpdateVestee = () => {
   ])
 
   return (
-    <CouncilFormStyled formName={MavrykCounsilDdForms.UPDATE_VESTEE}>
+    <CouncilFormStyled formName={MavenCouncilDdForms.UPDATE_VESTEE}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

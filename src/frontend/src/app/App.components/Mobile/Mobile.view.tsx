@@ -14,7 +14,7 @@ export default function Mobile() {
       <GlobalStyle />
       <MobilePlugWrapper>
         <MobilePlugLogoWrapper>
-          <img src="./mobile-plug-logo.png" alt="mavryk logo" />
+          <img src="./mobile-plug-logo.png" alt="maven logo" />
         </MobilePlugLogoWrapper>
 
         <div className="plug-message">
@@ -43,11 +43,11 @@ export default function Mobile() {
           </div>
 
           <div className="dapp-descr">
-            Mavryk Finance is a DAO operated financial ecosystem that lets users borrow and earn on their terms, while
+            Maven Finance is a DAO operated financial ecosystem that lets users borrow and earn on their terms, while
             participating in the governance of the platform.
           </div>
 
-          <div className="copyright">© Mavryk Finance 2023</div>
+          <div className="copyright">© Maven Finance 2023</div>
         </MobilePlugFooter>
       </MobilePlugWrapper>
     </MobilePlugBackground>

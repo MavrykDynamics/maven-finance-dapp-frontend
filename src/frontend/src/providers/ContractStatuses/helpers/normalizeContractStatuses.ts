@@ -16,8 +16,8 @@ export function normalizeContractStatuses(storage: GetAllContractStatusesDataQue
               methods: {
                 compound: item.compound_paused,
                 'farm claim': item.farm_claim_paused,
-                unstake: item.unstake_paused,
-                stake: item.stake_paused,
+                unstake: item.unstake_mvn_paused,
+                stake: item.stake_mvn_paused,
                 exit: item.exit_paused,
                 'on vault deposit stake': item.on_vault_deposit_stake_paused,
                 'on vault liquidate stake': item.on_vault_liquidate_stake_paused,
@@ -100,7 +100,7 @@ export function normalizeContractStatuses(storage: GetAllContractStatusesDataQue
               admin: item.admin,
               lastUpdated: item.last_updated_at,
               methods: {
-                'mint mvk and transfer': item.mint_mvk_and_transfer_paused,
+                'mint mvn and transfer': item.mint_mvn_and_transfer_paused,
                 'stake tokens': item.stake_tokens_paused,
                 transfer: item.transfer_paused,
                 'unstake tokens': item.unstake_tokens_paused,
@@ -140,7 +140,7 @@ export function normalizeContractStatuses(storage: GetAllContractStatusesDataQue
               lastUpdated: item.last_updated_at,
               admin: item.admin,
               methods: {
-                'withdraw reward smvk': item.withdraw_reward_smvk_paused,
+                'withdraw reward smvn': item.withdraw_reward_smvn_paused,
                 'withdraw reward xtz': item.withdraw_reward_xtz_paused,
               },
             }
@@ -159,7 +159,7 @@ export function normalizeContractStatuses(storage: GetAllContractStatusesDataQue
               admin: item.admin,
               methods: {
                 'distribute reward xtz': item.distribute_reward_xtz_paused,
-                'distribute reward smvk': item.distribute_reward_smvk_paused,
+                'distribute reward smvn': item.distribute_reward_smvn_paused,
                 'untrack aggregator': item.untrack_aggregator_paused,
                 'track aggregator': item.track_aggregator_paused,
                 'create aggregator': item.create_aggregator_paused,

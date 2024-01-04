@@ -12,7 +12,7 @@ export const normalizeUserLoansData = (
   tokensPrices: TokensContext['tokensPrices'],
 ) => {
   const { userLendings, totalUserLended, userBorrowings, totalUserBorrowed } =
-    indexerData.mavryk_user[0].lending_controller_history_data_sender?.reduce<Omit<UserLoansData, 'userVaultsData'>>(
+    indexerData.maven_user[0].lending_controller_history_data_sender?.reduce<Omit<UserLoansData, 'userVaultsData'>>(
       (
         acc,
         {
@@ -39,7 +39,7 @@ export const normalizeUserLoansData = (
           date: timestamp,
           tokenAddress: address,
           operationHash: operation_hash,
-          annualPecentage: calcLendingAPY(
+          annualPercentage: calcLendingAPY(
             convertNumberForClient({ number: loan_token.utilisation_rate, grade: interest_rate_decimals }),
             convertNumberForClient({ number: loan_token.current_interest_rate, grade: interest_rate_decimals }),
             convertNumberForClient({ number: interest_treasury_share, grade: decimals }),
@@ -89,7 +89,7 @@ export const normalizeUserLoansData = (
     ) ?? { userBorrowings: [], totalUserBorrowed: 0, userLendings: [], totalUserLended: 0 }
 
   const userVaultsData =
-    indexerData.mavryk_user[0].lending_controller_vaults?.reduce<UserLoansData['userVaultsData']>(
+    indexerData.maven_user[0].lending_controller_vaults?.reduce<UserLoansData['userVaultsData']>(
       (acc, { collateral_balances, loan_token, loan_principal_total, loan_interest_total }) => {
         const borrowedToken = getTokenDataByAddress({
           tokenAddress: loan_token?.token.token_address,

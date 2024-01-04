@@ -2,14 +2,14 @@ import styled, { css } from 'styled-components'
 import { Card } from 'styles'
 
 // types
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 
 // consts
 import { CouncilActionsToSignGridSettingsMapper } from './CouncilActionsToSign.consts'
 import { COUNCIL_COLUMN_STYLES } from '../CouncilAction/CouncilAction.style'
 
-export const CouncilActionsToSignStyled = styled.div<{ theme: MavrykTheme }>`
+export const CouncilActionsToSignStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
 
@@ -160,7 +160,7 @@ const ACTION_TO_SIGN_AREAS_NAMES = css`
   }
 `
 
-export const CouncilActionToSignBodyStyled = styled.div<{ theme: MavrykTheme; actionId: CouncilsActionsIds }>`
+export const CouncilActionToSignBodyStyled = styled.div<{ theme: MavenTheme; actionId: CouncilsActionsIds }>`
   display: grid;
   grid-template-columns: ${({ actionId }) => CouncilActionsToSignGridSettingsMapper[actionId].columnsTemplate};
   grid-template-rows: ${({ actionId }) => CouncilActionsToSignGridSettingsMapper[actionId].rowsTemplate};

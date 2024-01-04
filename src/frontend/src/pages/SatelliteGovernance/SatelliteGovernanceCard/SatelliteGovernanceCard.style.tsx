@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -33,7 +33,7 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavrykT
   }
 `
 
-export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavrykTheme }>`
+export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavenTheme }>`
   width: 100%;
   justify-content: space-between;
   display: flex;
