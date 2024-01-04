@@ -149,9 +149,10 @@ export const SatelliteGovernance = () => {
         id: 3,
         active: SATELLITE_GOVERNANCE_MENU_TABS.MY === tabId,
         path: SATELLITE_GOVERNANCE_MENU_TABS.MY,
+        disabled: !userAddress,
       },
     ]
-  }, [tabId])
+  }, [tabId, userAddress])
 
   const ongoingActionsLength = ongoingSatelliteGovIds.length
 
@@ -200,6 +201,12 @@ export const SatelliteGovernance = () => {
     if (!foundItem) return
     setChosenDdItem(foundItem)
   }
+
+  useEffect(() => {
+    if (!userAddress && tabsList[2].path === tabId) {
+      handleChangeTabs(1)
+    }
+  }, [userAddress, tabId])
 
   return (
     <Page>
