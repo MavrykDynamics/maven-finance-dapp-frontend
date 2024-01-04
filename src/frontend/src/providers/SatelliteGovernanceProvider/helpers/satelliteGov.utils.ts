@@ -19,12 +19,14 @@ type SatelliteGovernanceContextReturnValueArgs = {
   satelliteGovCtxState: NullableSatelliteGovernanceContextStateType
   changeSatelliteGovSubscriptionsList: SatelliteGovernanceContext['changeSatelliteGovSubscriptionsList']
   activeSubs: SatelliteGovernanceSubsRecordType
+  userAddress: string | null
 }
 
 export const getSatelliteGovernanceProviderReturnValue = ({
   satelliteGovCtxState,
   changeSatelliteGovSubscriptionsList,
   activeSubs,
+  userAddress,
 }: SatelliteGovernanceContextReturnValueArgs) => {
   const {
     satelliteGovIdsMapper,
@@ -67,7 +69,7 @@ export const getSatelliteGovernanceProviderReturnValue = ({
     (isPastActionsSub && pastSatelliteGovIds === null) || // 2
     (isOngoingActionsSub && ongoingSatelliteGovIds === null) || // 3
     (isAllActionsSub && allSatelliteGovIds === null) || // 4
-    (isCurrentUserActionsSub && mySatelliteGovIds === null) || // 5
+    (isCurrentUserActionsSub && mySatelliteGovIds === null && userAddress) || // 5
     (!activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && config === null) || // 6
     (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null && isSatelliteGovActionsDataEmpty) // 7
 
