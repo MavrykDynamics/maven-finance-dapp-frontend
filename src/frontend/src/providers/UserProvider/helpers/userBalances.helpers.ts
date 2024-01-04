@@ -1,15 +1,15 @@
 import * as signalR from '@microsoft/signalr'
 
 // types
-import {UserContext, UserTzktTokensBalancesType} from './../user.provider.types'
-import {GetUserDataQuery} from 'utils/__generated__/graphql'
-import {TokenAddressType, TokensContext, UserMTokenType} from 'providers/TokensProvider/tokens.provider.types'
+import { UserContext, UserTzktTokensBalancesType } from './../user.provider.types'
+import { GetUserDataQuery } from 'utils/__generated__/graphql'
+import { TokenAddressType, TokensContext, UserMTokenType } from 'providers/TokensProvider/tokens.provider.types'
 
 // helpers
-import {getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
-import {api} from 'utils/api/api'
-import {convertNumberForClient} from 'utils/calcFunctions'
-import {ApiError, unknownToError} from 'errors/error'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { api } from 'utils/api/api'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { ApiError, unknownToError } from 'errors/error'
 import {
   emptyUserTzktAccountSchema,
   userTzktAccountSchema,
@@ -18,8 +18,8 @@ import {
 } from './user.schemes'
 
 // consts
-import {MVN_DECIMALS, SMVN_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS} from 'utils/constants'
-import {mTokenMetadataSchema} from 'providers/TokensProvider/helpers/tokens.schemes'
+import { MVN_DECIMALS, SMVN_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { mTokenMetadataSchema } from 'providers/TokensProvider/helpers/tokens.schemes'
 
 /**
  * function to get token balance of the user

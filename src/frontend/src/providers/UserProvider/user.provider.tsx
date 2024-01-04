@@ -205,6 +205,7 @@ export const UserProvider = ({ children }: Props) => {
       })
 
       const normalizedUserData = normalizeUser({ indexerData })
+
       setUserCtxState((prev) => ({
         ...prev,
         userTokensBalances: {
