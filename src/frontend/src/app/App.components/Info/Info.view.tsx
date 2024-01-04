@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import classNames from 'classnames'
 import Icon from '../Icon/Icon.view'
 import { getIconForInfoTyType, infoType, InfoSize } from './info.constants'
@@ -26,7 +27,7 @@ type Props = {
  * }
  * @returns
  */
-export const Info = ({ children, text, type, showIcon = true, size = 'medium' }: Props) => {
+export const Info = memo(({ children, text, type, showIcon = true, size = 'medium' }: Props) => {
   const iconToUse = getIconForInfoTyType(type)
 
   const bannerClasses = classNames(type, {
@@ -42,4 +43,4 @@ export const Info = ({ children, text, type, showIcon = true, size = 'medium' }:
       {children ? <div className="child">{children}</div> : null}
     </InfoBlock>
   )
-}
+})
