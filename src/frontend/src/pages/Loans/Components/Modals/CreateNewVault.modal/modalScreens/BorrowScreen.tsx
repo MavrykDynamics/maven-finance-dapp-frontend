@@ -84,7 +84,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
 
   const { inputData, settings, inputProps, rate, icon, symbol, decimals } = useBorrowInputData(
     borrowedTokenAddress,
-    borrowCapacity
+    borrowCapacity,
   )
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
@@ -140,14 +140,14 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
         } else {
           bug(
             "Can't fetch new vault data, try reload the page and find your newly created vault in the the list of vaults",
-            'Update Vault Error'
+            'Update Vault Error',
           )
         }
       } catch (e) {
         bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
       }
     },
-    [apolloClient, bug, info, setCreatedVaultAddress, updateNewVault, userAddress, vaultInputState.name]
+    [apolloClient, bug, info, setCreatedVaultAddress, updateNewVault, userAddress, vaultInputState.name],
   )
 
   useEffect(() => {
@@ -170,7 +170,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
       ...settings,
       validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     }),
-    [settings]
+    [settings],
   )
 
   return (
@@ -178,7 +178,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
       <div className="borrow-screen-top-stats">
         <ThreeLevelListItem>
           <div className="name">Borrow Capacity</div>
-          <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
+          <CommaNumber beginningText={'$'} value={borrowCapacity} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Collateral Utilization</div>

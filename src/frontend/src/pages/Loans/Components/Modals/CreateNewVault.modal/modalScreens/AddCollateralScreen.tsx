@@ -337,7 +337,7 @@ export const AddCollateralScreen = () => {
           </div>
         </div>
 
-        {/* button for depositting more than 1 collateral */}
+        {/* button for depositing more than 1 collateral */}
         <Button
           kind={BUTTON_SIMPLE}
           disabled={!Boolean(nextAvaliableCollateralToAdd)}
@@ -363,7 +363,7 @@ export const AddCollateralScreen = () => {
                       <Tooltip.Content>{COLLATERAL_VALUE}</Tooltip.Content>
                     </Tooltip>
                   </div>
-                  <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" />
+                  <CommaNumber beginningText={'$'} value={collateralsBalance} decimalsToShow={2} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -375,7 +375,7 @@ export const AddCollateralScreen = () => {
                       <Tooltip.Content>{BORROW_CAPACITY}</Tooltip.Content>
                     </Tooltip>
                   </div>
-                  <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
+                  <CommaNumber beginningText={'$'} value={borrowCapacity} decimalsToShow={2} className="value" />
                 </ThreeLevelListItem>
               </div>
             </VaultOverview>
