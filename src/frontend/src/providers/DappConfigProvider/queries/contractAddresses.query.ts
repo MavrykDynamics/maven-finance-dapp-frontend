@@ -1,7 +1,7 @@
 import { gql } from 'utils/__generated__'
 
 export const GET_DAPP_CONTRACT_ADDRESSES = gql(`
-	query getContractAddressesQuery($isMockTime: Boolean) {
+	query getContractAddressesQuery {
 		delegation: delegation {
 			address
 		}
@@ -53,7 +53,7 @@ export const GET_DAPP_CONTRACT_ADDRESSES = gql(`
 		governance_financial: governance_financial {
 			address
 		}
-		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+		lending_controller: lending_controller {
 			address
 		}
 		vault_factory: vault_factory {

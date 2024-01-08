@@ -157,9 +157,7 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // TODO: addresses that are general, not page specific load in DAPP_INITIAL_CONFIG_QUERY other addresses load only on pages that requires them
   const { loading: contractAddressesLoading } = useQuery(GET_DAPP_CONTRACT_ADDRESSES, {
-    variables: {
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
-    },
+    variables: {},
     onCompleted: (data) => {
       setDappConfigCtxState((prev) => ({
         ...prev,

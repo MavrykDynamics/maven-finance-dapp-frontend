@@ -56,9 +56,7 @@ const ContractStatusesProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(CONTRACT_STATUSES_ALL_DATA_QUERY, {
     skip: !activeSubs[CONTRACT_STATUSES_ALL_SUB],
-    variables: {
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
-    },
+    variables: {},
     onCompleted: (data) => {
       const normalizedContractStatuses = normalizeContractStatuses(data)
       const areContractMethodsPaused = getContractMethodsPausedStatus(normalizedContractStatuses, 85)

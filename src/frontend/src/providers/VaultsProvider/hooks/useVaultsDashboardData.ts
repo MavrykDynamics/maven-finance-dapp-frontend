@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
@@ -24,9 +24,7 @@ export const useVaultsDashboardData = () => {
   const [indexerData, setIndexerData] = useState<null | DashboardVaultsTabDataQuery>(null)
 
   useQueryWithRefetch(GET_VAULTS_DASHBOARD_DATA, {
-    variables: {
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
-    },
+    variables: {},
     onCompleted: (data) => {
       setIndexerData(data)
     },
