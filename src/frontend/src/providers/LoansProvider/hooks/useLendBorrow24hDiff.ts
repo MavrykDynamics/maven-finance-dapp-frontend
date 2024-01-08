@@ -47,7 +47,6 @@ const useLendBorrow24hDiff = (): {
     {
       variables: {
         currentTimestamp: hookInitIsoTime.current,
-        isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
       },
       onCompleted: (data) => setIndexerData(data),
       onError: (error) => handleApolloError(error, 'LEND_BORROW_24H_DIFF'),

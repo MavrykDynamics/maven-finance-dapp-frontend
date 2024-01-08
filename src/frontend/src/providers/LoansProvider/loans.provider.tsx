@@ -6,11 +6,11 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { LoansContext, NullableLoansContextState, LoansSubsRecordType, LoansChartsType } from './loans.provider.types'
+import { LoansChartsType, LoansContext, LoansSubsRecordType, NullableLoansContextState } from './loans.provider.types'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 
 // consts
-import { GET_ALL_MARKETS_QUERY, GET_MARKET_BY_ADDRESS_QUERY, GET_LOANS_CONFIG } from './queries/loansMarkets.query'
+import { GET_ALL_MARKETS_QUERY, GET_LOANS_CONFIG, GET_MARKET_BY_ADDRESS_QUERY } from './queries/loansMarkets.query'
 import {
   DEFAULT_LOANS_ACTIVE_SUBS,
   DEFAULT_LOANS_CONTEXT,
@@ -49,9 +49,7 @@ export const LoansProvider = ({ children }: Props) => {
    */
   useQuery(GET_LOANS_CONFIG, {
     skip: !activeSubs[LOANS_CONFIG],
-    variables: {
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
-    },
+    variables: {},
     onCompleted: (data) => {
       setLoansCtxState((prev) => ({
         ...prev,
@@ -65,7 +63,6 @@ export const LoansProvider = ({ children }: Props) => {
     skip: !activeSubs[LOANS_MARKETS_DATA] || !marketAddressToSubscribe,
     variables: {
       marketTokenAddress: marketAddressToSubscribe ?? '',
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
     },
     onCompleted: (data) => {
       const newMarkets = normalizeLoansMarkets({ indexerData: data })
@@ -84,9 +81,7 @@ export const LoansProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(GET_ALL_MARKETS_QUERY, {
     skip: !activeSubs[LOANS_MARKETS_DATA],
-    variables: {
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
-    },
+    variables: {},
     onCompleted: (data) => {
       const newMarkets = normalizeLoansMarkets({ indexerData: data })
 

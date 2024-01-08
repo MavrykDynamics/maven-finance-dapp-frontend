@@ -6,9 +6,9 @@ import { Link } from 'react-router-dom'
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
 import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
 import {
-  LOANS_MARKETS_DATA,
   DEFAULT_LOANS_ACTIVE_SUBS,
   LOANS_CONFIG,
+  LOANS_MARKETS_DATA,
 } from 'providers/LoansProvider/helpers/loans.const'
 import { FatalError } from 'errors/error'
 
@@ -104,7 +104,6 @@ export const Market = () => {
           query: CHECK_WHETHER_MARKET_EXISTS,
           variables: {
             marketAddress: currentMarketAddress ?? '',
-            isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
           },
         })
 
@@ -132,7 +131,7 @@ export const Market = () => {
 
   const [prevMarketAddress, nextMarketAddress] = useMemo(() => {
     const currentTokenIdx = allMarketsAddresses.findIndex(
-      (marketTokenAddress) => marketTokenAddress === currentMarketAddress
+      (marketTokenAddress) => marketTokenAddress === currentMarketAddress,
     )
     return [
       allMarketsAddresses.at(currentTokenIdx - 1) ?? allMarketsAddresses.at(-1),
@@ -157,7 +156,10 @@ export const Market = () => {
           const convertedInterestAmount =
             convertNumberForClient({ number: vault.fee, grade: loanTokenDecimals }) * loanTokenRate
           const convertedMarketAvailableLiquidity =
-            convertNumberForClient({ number: vault.availableLiquidity, grade: loanTokenDecimals }) * loanTokenRate
+            convertNumberForClient({
+              number: vault.availableLiquidity,
+              grade: loanTokenDecimals,
+            }) * loanTokenRate
 
           acc.userTotalBorrowed += convertedBorrowedAmount
           acc.userTotalCollateral += vaultCollateralBalance
@@ -165,7 +167,7 @@ export const Market = () => {
           acc.userAvailableBorrow += getVaultBorrowCapacity(
             convertedMarketAvailableLiquidity,
             convertedBorrowedAmount + convertedInterestAmount,
-            vaultCollateralBalance
+            vaultCollateralBalance,
           )
           return acc
         },
@@ -174,9 +176,9 @@ export const Market = () => {
           userTotalCollateral: 0,
           userAccruedInterest: 0,
           userAvailableBorrow: 0,
-        }
+        },
       ),
-    [myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper]
+    [myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
   )
 
   const selectedMarket = currentMarketAddress ? marketsMapper[currentMarketAddress] : null
@@ -188,7 +190,7 @@ export const Market = () => {
             number: selectedMarket.availableLiquidity,
             grade: loanToken.decimals,
           }),
-          0
+          0,
         )
       : 0
 
@@ -200,7 +202,7 @@ export const Market = () => {
               number: selectedMarket.reserveAmount,
               grade: loanToken.decimals,
             }),
-          0
+          0,
         )
       : 0
 
@@ -287,8 +289,10 @@ export const Market = () => {
                   <div className="name">Total Earning</div>
                   <CommaNumber
                     value={
-                      convertNumberForClient({ number: selectedMarket.totalLended, grade: loanToken.decimals }) *
-                      loanToken.rate
+                      convertNumberForClient({
+                        number: selectedMarket.totalLended,
+                        grade: loanToken.decimals,
+                      }) * loanToken.rate
                     }
                     beginningText="$"
                     className="value"

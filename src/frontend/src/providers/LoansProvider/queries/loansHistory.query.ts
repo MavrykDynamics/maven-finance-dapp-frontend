@@ -1,12 +1,12 @@
-import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
-import { DocumentNode } from 'graphql'
-import { gql } from 'utils/__generated__'
-import { GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
+import {gql as apolloGql, OperationVariables, TypedDocumentNode} from '@apollo/client'
+import {DocumentNode} from 'graphql'
+import {gql} from 'utils/__generated__'
+import {GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery} from 'utils/__generated__/graphql'
 
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
-query getLending24hDiff($currentTimestamp: timestamptz, $isMockTime: Boolean) {
-  lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+query getLending24hDiff($currentTimestamp: timestamptz) {
+  lending_controller: lending_controller {
     history_data(where: {type: {_in: ["0", "1", "2", "3"]}, timestamp: {_gte: $currentTimestamp}}, order_by: {timestamp: asc}) {
       type
       amount
@@ -31,8 +31,8 @@ query getLending24hDiff($currentTimestamp: timestamptz, $isMockTime: Boolean) {
 
 // Loans history data
 export const GET_LOANS_HISTORY_DATA = gql(`
-query getLoansHistoryData($isMockTime: Boolean) {
-  lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+query getLoansHistoryData {
+  lending_controller: lending_controller {
     history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, order_by: {timestamp: asc}) {
       type
       amount
@@ -77,8 +77,8 @@ export function getLoansTransactionsHistory({
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
   return apolloGql(`
-    query getLoansTransactionsHistory($marketTokenAddress: String, $isMockTime: Boolean, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
-      lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+    query getLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
+      lending_controller: lending_controller {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
           type
           amount
@@ -117,6 +117,7 @@ export function getLoansTransactionsHistory({
     }
 `)
 }
+
 export function getDevLoansTransactionsHistory({
   userAddress,
   vaultAddress,
@@ -133,8 +134,8 @@ export function getDevLoansTransactionsHistory({
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
   return apolloGql(`
-    query getDevLoansTransactionsHistory($marketTokenAddress: String, $isMockTime: Boolean, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
-      lending_controller: dev_lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+    query getDevLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
+      lending_controller: dev_lending_controller {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
           type
           amount
