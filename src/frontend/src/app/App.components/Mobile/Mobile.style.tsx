@@ -67,8 +67,8 @@ export const MobilePlugFooter = styled.div<{ theme: MavenTheme }>`
 
     #twitter {
       svg {
-        width: 48px;
-        height: 48px;
+        width: 30px;
+        height: 30px;
       }
     }
 

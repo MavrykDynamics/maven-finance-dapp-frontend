@@ -55,7 +55,7 @@ export const SocialIcons = () => (
     <a href="https://docs.mavryk.finance" target="_blank" rel="noreferrer">
       <Icon id="faqIcon" />
     </a>
-    <a href="https://github.com/mavrykfinance/" target="_blank" rel="noreferrer">
+    <a href="https://github.com/mavenfinance" target="_blank" rel="noreferrer">
       <Icon id="socialGitHub" />
     </a>
   </div>

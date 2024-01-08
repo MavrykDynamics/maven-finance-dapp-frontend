@@ -177,6 +177,11 @@ export const MenuFooter = styled.div<{ theme: MavenTheme }>`
         fill: ${({ theme }) => theme.linksAndButtons};
       }
     }
+
+    a:first-of-type svg {
+      width: 22px;
+      height: 23px;
+    }
   }
 
   @media screen and (max-width: 1460px) {
