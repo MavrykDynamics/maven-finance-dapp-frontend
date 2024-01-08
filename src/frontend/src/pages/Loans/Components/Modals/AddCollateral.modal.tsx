@@ -320,7 +320,7 @@ const AddCollateralTableStats = ({
             <Tooltip.Content>
               The available to borrow metric takes 2 separate values into account. The borrow capacity of your vault AND
               the availableLiquidity of the asset pool your vault is borrowing from. The equation used is:
-              min(availableLiquidityuidity, vaultCollateralValue / 2 - borrowedAmount)
+              min(availableLiquidity, vaultCollateralValue / 2 - borrowedAmount)
             </Tooltip.Content>
           </Tooltip>
         </div>
