@@ -31,23 +31,23 @@ export const PRODUCTS_LINKS = [
     name: 'Dapp',
     href:
       process.env.REACT_APP_IS_DEMO === 'true'
-        ? 'https://ghostnet.mavryk.finance/'
+        ? 'https://ghostnet.mavenfinance.io/'
         : 'https://front-dev.mavryk-dapp.pages.dev',
     disabled: false,
     path: '/',
   },
   {
     name: 'Liquidity Baking',
-    href: 'https://mavryk.finance/liquidity-baking',
+    href: 'https://mavenfinance.io/liquidity-baking',
     disabled: false,
     path: '/liquidity-baking',
   },
-  { name: 'Mavryk Bakeries', href: 'https://mavryk.finance/bakery', disabled: false },
+  { name: 'Mavryk Bakeries', href: 'https://mavenfinance.io/bakery', disabled: false },
 ]
 
 export const ABOUT_LINKS = [
   { name: 'MVN Token (Soon)', href: '/', disabled: true },
-  { name: 'Team', href: 'https://mavryk.finance/#team', disabled: false, path: 'https://mavryk.finance/#team' },
+  { name: 'Team', href: 'https://mavenfinance.io/#team', disabled: false, path: 'https://mavenfinance.io/#team' },
   // TODO: [MAV-501]
   // { name: 'Who we are', href: 'https://mavryk.finance/', disabled: false },
   // { name: 'Roadmap', href: 'https://mavryk.finance/#roadmap', disabled: false },
@@ -58,13 +58,13 @@ export const BLOG_LINKS = []
 export const DOCS_LINKS = [
   {
     name: 'Litepaper',
-    href: 'https://mavryk.finance/litepaper',
+    href: 'https://mavenfinance.io/litepaper',
     disabled: false,
-    path: 'https://mavryk.finance/litepaper',
+    path: 'https://mavenfinance.io/litepaper',
   },
-  { name: 'DAO Docs', href: 'https://docs.mavryk.finance/', disabled: false },
+  { name: 'DAO Docs', href: 'https://docs.mavenfinance.io/', disabled: false },
   { name: 'Security Audits (Soon)', href: '/', disabled: true },
-  { name: 'Github', href: 'https://github.com/mavrykfinance/', disabled: false },
+  { name: 'Github', href: 'https://github.com/mavenfinance/', disabled: false },
 ]
 
 export const MenuTopBar = ({ burgerClickHandler, isExpandedMenu, openChangeNodePopupHandler }: MenuTopBarProps) => {

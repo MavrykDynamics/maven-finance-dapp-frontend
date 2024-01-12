@@ -60,7 +60,7 @@ export const StakingTab = () => {
             <StatBlock>
               <div className="name flexbox">
                 Exit Fee
-                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
+                <CustomLink to="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking#exit-fee">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
@@ -80,7 +80,7 @@ export const StakingTab = () => {
             <StatBlock>
               <div className="name flexbox">
                 Maven Loyalty Index
-                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking">
+                <CustomLink to="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
@@ -128,7 +128,7 @@ export const StakingTab = () => {
           Satellite fee. Satellites can never move or spend your tokens, and you may re-delegate to a new Satellite at
           any time.{' '}
           <a
-            href="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking"
+            href="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking"
             target="_blank"
             rel="noreferrer"
           >

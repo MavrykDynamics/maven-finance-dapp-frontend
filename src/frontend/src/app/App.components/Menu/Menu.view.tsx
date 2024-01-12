@@ -52,7 +52,7 @@ export const SocialIcons = () => (
     <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
       <Icon id="socialDiscord" />
     </a>
-    <a href="https://docs.mavryk.finance" target="_blank" rel="noreferrer">
+    <a href="https://docs.mavenfinance.io" target="_blank" rel="noreferrer">
       <Icon id="faqIcon" />
     </a>
     <a href="https://github.com/mavenfinance" target="_blank" rel="noreferrer">
@@ -199,7 +199,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             <SocialIcons />
             <span>
               DAPP v2.0
-              <br />© Maven Finance 2023
+              <br />© Maven Finance 2024
             </span>
           </MenuFooter>
         </MenuSidebarContent>

@@ -136,7 +136,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount 
           <div className="value">
             <CommaNumber value={xtzAmount} />
             <a
-              href={userAddress ? 'https://mavryk.finance/bakery' : '#'}
+              href={userAddress ? 'https://mavenfinance.io/bakery' : '#'}
               target={userAddress ? '_blank' : undefined}
               rel="noreferrer"
             >

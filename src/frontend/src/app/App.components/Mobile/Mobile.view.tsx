@@ -34,7 +34,7 @@ export default function Mobile() {
             <a href="https://t.me/Mavryk_Finance" id="telegram">
               <Icon id="telegram" />
             </a>
-            <a href="https://medium.com/@Mavryk_Finance" id="medium">
+            <a href="https://blog.mavrykdynamics.com/" id="medium">
               <Icon id="medium" />
             </a>
             <a href="https://github.com/mavenfinance" id="gitHub">
@@ -47,7 +47,7 @@ export default function Mobile() {
             participating in the governance of the platform.
           </div>
 
-          <div className="copyright">© Maven Finance 2023</div>
+          <div className="copyright">© Maven Finance 2024</div>
         </MobilePlugFooter>
       </MobilePlugWrapper>
     </MobilePlugBackground>

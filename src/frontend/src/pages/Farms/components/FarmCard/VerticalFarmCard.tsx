@@ -65,7 +65,7 @@ export const VerticalFarmCard = ({
 
       <a
         className="info-link"
-        href="https://docs.mavryk.finance/mavryk-finance/yield-farms/mavryk-finances-yield-farms"
+        href="https://docs.mavenfinance.io/maven-finance/yield-farms/maven-finances-yield-farms"
         target="_blank"
         rel="noreferrer"
       >

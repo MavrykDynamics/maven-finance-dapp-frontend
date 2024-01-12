@@ -136,7 +136,7 @@ export const SatellitesTab = () => {
           <br />
           To operate a Maven Finance Satellite, a users needs to stake a security deposit in MVN, and operate an oracle
           node for signing data feeds. For more information about starting & operating a Satellite.{' '}
-          <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavenfinance.io/maven-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>
