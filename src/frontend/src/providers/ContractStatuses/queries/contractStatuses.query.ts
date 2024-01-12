@@ -1,4 +1,4 @@
-import {gql} from 'utils/__generated__'
+import {gql} from 'utils/__generated__' // TODO for future separate queries and subs
 
 // TODO for future separate queries and subs
 // DO NOT REMOVE IT!
@@ -63,11 +63,11 @@ import {gql} from 'utils/__generated__'
 //   subscription breakGlassTreasury {
 //     treasury(where: {admin: {_neq: ""}}) {
 //       name
-//       mint_mvk_and_transfer_paused
-//       stake_mvk_paused
+//       mint_mvn_and_transfer_paused
+//       stake_mvn_paused
 //       transfer_paused
 //       address
-//       unstake_mvk_paused
+//       unstake_mvn_paused
 //       admin
 //       last_updated_at
 //     }
@@ -91,7 +91,7 @@ import {gql} from 'utils/__generated__'
 //     aggregator(where: {admin: {_neq: ""}}) {
 //       address
 //       name
-//       withdraw_reward_smvk_paused
+//       withdraw_reward_smvn_paused
 //       withdraw_reward_xtz_paused
 //       admin
 //       last_updated_at
@@ -106,7 +106,7 @@ import {gql} from 'utils/__generated__'
 //       untrack_aggregator_paused
 //       track_aggregator_paused
 //       distribute_reward_xtz_paused
-//       distribute_reward_smvk_paused
+//       distribute_reward_smvn_paused
 //       create_aggregator_paused
 //       admin
 //       last_updated_at
@@ -115,7 +115,7 @@ import {gql} from 'utils/__generated__'
 // `)
 
 export const CONTRACT_STATUSES_ALL_DATA_QUERY = gql(`
-query getAllContractStatusesData($isMockTime: Boolean) {
+query getAllContractStatusesData {
   farm: farm(where: {admin: {_neq: ""}}) {
     name
     address
@@ -150,8 +150,8 @@ query getAllContractStatusesData($isMockTime: Boolean) {
     address
     compound_paused
     farm_claim_paused
-    stake_paused
-    unstake_paused
+    stake_mvn_paused
+    unstake_mvn_paused
     exit_paused
     on_vault_deposit_stake_paused
     on_vault_liquidate_stake_paused
@@ -163,7 +163,7 @@ query getAllContractStatusesData($isMockTime: Boolean) {
     name
     address
     admin
-    mint_mvk_and_transfer_paused
+    mint_mvn_and_transfer_paused
     stake_tokens_paused
     transfer_paused
     unstake_tokens_paused
@@ -182,7 +182,7 @@ query getAllContractStatusesData($isMockTime: Boolean) {
   aggregator: aggregator(where: {admin: {_neq: ""}}) {
     address
     name
-    withdraw_reward_smvk_paused
+    withdraw_reward_smvn_paused
     withdraw_reward_xtz_paused
     admin
     last_updated_at
@@ -193,11 +193,11 @@ query getAllContractStatusesData($isMockTime: Boolean) {
     untrack_aggregator_paused
     track_aggregator_paused
     distribute_reward_xtz_paused
-    distribute_reward_smvk_paused
+    distribute_reward_smvn_paused
     create_aggregator_paused
     last_updated_at
   }
-  lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+  lending_controller: lending_controller {
     address
     admin
     last_updated_at

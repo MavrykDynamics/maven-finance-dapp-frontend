@@ -5,7 +5,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'doorman',
     {
       title: 'Staking',
-      subText: 'Lock your MVK and earn rewards through loan income.',
+      subText: 'Lock your MVN and earn rewards through loan income.',
       foregroundImageSrc: '/images/staking-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -59,7 +59,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'personal',
     {
       title: 'Your Finances',
-      subText: 'Don’t follow the herd, be a Mavryk.',
+      subText: 'Don’t follow the herd, be a Maven.',
       foregroundImageSrc: '/images/dash-main-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -140,7 +140,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'financial requests',
     {
       title: 'Financial Requests',
-      subText: 'Vote on the Mavryk Council financial actions',
+      subText: 'Vote on the Maven Council financial actions',
       foregroundImageSrc: '/images/gov-main-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -148,8 +148,8 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
   [
     'council',
     {
-      title: 'Mavryk Council',
-      subText: 'Responsible for performing operations to develop the Mavryk Finance ecosystem',
+      title: 'Maven Council',
+      subText: 'Responsible for performing operations to develop the Maven Finance ecosystem',
       foregroundImageSrc: '/images/gov-main-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -221,7 +221,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'treasury',
     {
       title: 'Treasury',
-      subText: 'The treasury holds assets for the development of the Mavryk Finance ecosystem.',
+      subText: 'The treasury holds assets for the development of the Maven Finance ecosystem.',
       foregroundImageSrc: '/images/treasury-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -248,7 +248,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'farms',
     {
       title: 'Yield Farms',
-      subText: 'Provide LP and MVK Tokens to the liquidity pools and gain rewards.',
+      subText: 'Provide LP and MVN Tokens to the liquidity pools and gain rewards.',
       foregroundImageSrc: '/images/farms-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },
@@ -275,7 +275,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
     'oracles-users',
     {
       title: 'Oracles Users',
-      subText: 'Decentralized oracles powered by Mavryk Finance',
+      subText: 'Decentralized oracles powered by Maven Finance',
       foregroundImageSrc: '/images/data-feeds-header.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
     },

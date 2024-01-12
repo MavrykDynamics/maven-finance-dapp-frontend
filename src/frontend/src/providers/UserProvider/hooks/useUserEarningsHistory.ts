@@ -23,8 +23,8 @@ export const useUserEarningsHistory = () => {
       userAddress: userAddress ?? '',
     },
     onCompleted: (data) => {
-      // newly registered user, means no opearions performed
-      if (!data.mavryk_user[0]) {
+      // newly registered user, means no operations performed
+      if (!data.maven_user[0]) {
         setIsNewUser(true)
         return
       }

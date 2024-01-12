@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
 // consts
-import { BUTTON_SECONDARY, BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { UNREGISTER_SATELLITE_ACTION } from 'providers/SatellitesProvider/satellites.const'
 
 // components
@@ -86,9 +86,9 @@ export const UnregisterPopup = ({
           <H2Title>Unregister Satellite</H2Title>
 
           <div className="descr">
-            Please note, you are unregistering as a satellite from the Mavryk Finance network. You will no longer be
-            able to participate in governance through voting and will have to delegate to a different satellite to take
-            part in the ecosystem.
+            Please note, you are unregistering as a satellite from the Maven Finance network. You will no longer be able
+            to participate in governance through voting and will have to delegate to a different satellite to take part
+            in the ecosystem.
           </div>
 
           {delegatorCount > 0 ? (
@@ -96,7 +96,7 @@ export const UnregisterPopup = ({
               <div className="descr-big">Your delegate status:</div>
               <div className="card">
                 <div className="col">
-                  <div className="name">Total Delegated sMVK</div>
+                  <div className="name">Total Delegated sMVN</div>
                   <CommaNumber value={totalDelegatedAmount} className="value" />
                 </div>
                 <div className="col">
@@ -105,7 +105,7 @@ export const UnregisterPopup = ({
                 </div>
               </div>
               <div className="descr">
-                Before unregistering, please consider posting in the Mavryk Finance discord and telegram that you are
+                Before unregistering, please consider posting in the Maven Finance discord and telegram that you are
                 unregistering as a Satellite so your delegators will be aware that they need to re-delegate to an active
                 Satellite.
               </div>

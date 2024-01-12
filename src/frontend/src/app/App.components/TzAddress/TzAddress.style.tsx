@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { SECONDARY_TZ_ADDRESS_COLOR, PRIMARY_TZ_ADDRESS_COLOR } from './TzAddress.constants'
 
 export const TzAddressContainer = styled.div`
@@ -16,7 +16,7 @@ export const TzAddressContainer = styled.div`
     opacity: 0.8;
   }
 `
-export const TzAddressStyled = styled.div<{ theme: MavrykTheme }>`
+export const TzAddressStyled = styled.div<{ theme: MavenTheme }>`
   &.${PRIMARY_TZ_ADDRESS_COLOR} {
     color: ${({ theme }) => theme.primaryText};
   }
@@ -30,7 +30,7 @@ export const TzAddressStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const TzAddressIcon = styled.svg<{ theme: MavrykTheme }>`
+export const TzAddressIcon = styled.svg<{ theme: MavenTheme }>`
   // TODO: remove important after clearing all cases of usage for this icon
   width: 13px !important;
   height: 13px !important;

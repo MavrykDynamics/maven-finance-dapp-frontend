@@ -1,6 +1,6 @@
-import { WalletOperationError, unknownToError } from 'errors/error'
-import { getEstimationResult } from 'errors/helpers/estimateAction.helper'
-import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
+import {unknownToError, WalletOperationError} from 'errors/error'
+import {getEstimationResult} from 'errors/helpers/estimateAction.helper'
+import {DAPP_INSTANCE} from 'providers/UserProvider/user.provider'
 
 // Set Single Contract Admin
 export const setSelectedContractsAdmin = async (
@@ -175,7 +175,7 @@ export const unpauseAllEntrypoints = async (breakGlassAddress: string, contracts
 }
 
 // TODO: create form and use action, when design will be ready
-// Remove Break Glass Controll
+// Remove Break Glass Control
 export const removeBreakGlassControl = async (breakGlassAddress: string, contracts: Array<string>) => {
   try {
     // prepare and send transaction

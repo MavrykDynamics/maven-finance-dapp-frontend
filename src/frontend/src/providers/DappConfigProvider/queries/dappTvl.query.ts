@@ -1,13 +1,13 @@
 import { gql } from 'utils/__generated__'
 
 export const GET_DAPP_TVL = gql(`
-	query DashboardTVL($doormanContractAddress: String = "", $isMockTime: Boolean) {
-		doormanTVL: mavryk_user(where: {address: {_eq: $doormanContractAddress}}) {
-			smvk_balance
-			mvk_balance
+	query DashboardTVL($doormanContractAddress: String = "") {
+		doormanTVL: maven_user(where: {address: {_eq: $doormanContractAddress}}) {
+			smvn_balance
+			mvn_balance
 		}
 
-		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+		lending_controller: lending_controller {
 			vaultsLvl: collateral_tokens {
 				token {
 					token_address

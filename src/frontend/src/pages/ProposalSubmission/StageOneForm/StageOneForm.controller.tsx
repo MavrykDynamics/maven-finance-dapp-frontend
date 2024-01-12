@@ -17,7 +17,7 @@ import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.contr
 import { StageOneFormProps } from '../ProposalSubmission.types'
 
 // helpers
-import { isValidLength, isValidHttpUrl } from '../../../utils/validatorFunctions'
+import { isValidHttpUrl, isValidLength } from '../../../utils/validatorFunctions'
 import { containSpaces } from 'app/App.utils/input'
 
 // consts
@@ -106,6 +106,8 @@ export const StageOneForm = ({
     }
   }
 
+  const disabled = isProposalSubmitted || !isProposalPeriod || isFormDisabled
+
   return (
     <>
       <div className="stage-descr">{STAGE_1_DESCRIPTION}</div>
@@ -126,7 +128,7 @@ export const StageOneForm = ({
               inputSize: INPUT_SMALL,
             }}
             inputProps={{
-              disabled: isProposalSubmitted || !isProposalPeriod || isFormDisabled,
+              disabled: disabled,
               value: currentProposal.title,
               type: 'text',
               placeholder: 'Proposal Title',
@@ -139,7 +141,7 @@ export const StageOneForm = ({
 
         <div className="submitted-data vert-center">
           <div className="label">2 - Proposal Success Reward</div>
-          <CommaNumber className="value" value={successReward} endingText="MVK" />
+          <CommaNumber className="value" value={successReward} endingText="MVN" />
         </div>
 
         <div className="submitted-data vert-center">
@@ -162,7 +164,7 @@ export const StageOneForm = ({
             onChange={inputHandler}
             onBlur={handleOnBlur}
             inputStatus={currentProposalValidation.description}
-            disabled={isProposalSubmitted || !isProposalPeriod || isFormDisabled}
+            disabled={disabled}
             textAreaMaxLimit={proposalDescriptionMaxLength}
           />
         )}
@@ -180,7 +182,7 @@ export const StageOneForm = ({
               inputSize: INPUT_SMALL,
             }}
             inputProps={{
-              disabled: isProposalSubmitted || !isProposalPeriod || isFormDisabled,
+              disabled,
               value: currentProposal.sourceCode,
               type: 'text',
               placeholder: 'Source code link',
@@ -222,7 +224,7 @@ export const StageOneForm = ({
                 })
               }}
               title={'Add an Invoice Image'}
-              disabled={isProposalSubmitted || !isProposalPeriod || isFormDisabled}
+              disabled={disabled}
               listNumber={6}
             />
           </div>

@@ -21,7 +21,7 @@ import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.
 import Button from 'app/App.components/Button/NewButton'
 import { Input } from 'app/App.components/Input/NewInput'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { DDItemId, DropDown, DropDownItemType, DropdownInputCustomChild } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
@@ -40,12 +40,12 @@ import {
 } from 'app/App.components/Button/Button.constants'
 import {
   ERR_MSG_INPUT,
+  getOnBlurValue,
+  getOnFocusValue,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
   InputStatusType,
-  getOnBlurValue,
-  getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
 import { CONFIRM_STATS_SCREEN_ID, INITIAL_SCREEN_ID } from '../helpers/createNewVault.consts'
 import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
@@ -54,7 +54,7 @@ import { BORROW_CAPACITY, COLLATERAL_VALUE } from 'texts/tooltips/vault.text'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import { useXTZMaxAmountValidator } from '../../hooks/Market/useXTZMaxValidator'
 import { XTZLimitInfoBanner } from '../../components/XTZLimitInfoBanner'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 
 export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
@@ -79,7 +79,7 @@ export const AddCollateralScreen = () => {
 
   const { isTezosToken, updateMaxedXTZData, willExceedXTZTheLimit } = useXTZMaxAmountValidator(
     selectedCollateralsAddresses,
-    selectedCollaterals
+    selectedCollaterals,
   )
 
   useEffect(() => {
@@ -101,14 +101,18 @@ export const AddCollateralScreen = () => {
     const reducedCollaterals = collateralTokens.reduce<
       Record<DDItemId, DropDownItemType & { tokenAddress: TokenAddressType }>
     >((acc, collateralTokenAddress) => {
-      const collateral = getTokenDataByAddress({ tokenAddress: collateralTokenAddress, tokensMetadata, tokensPrices })
+      const collateral = getTokenDataByAddress({
+        tokenAddress: collateralTokenAddress,
+        tokensMetadata,
+        tokensPrices,
+      })
       if (collateral && checkWhetherTokenIsCollateralToken(collateral)) {
         const { address, icon, symbol } = collateral
 
         const isCollateralDisabled = Boolean(
           collateral.loanData.isPausedCollateral ||
             selectedCollaterals[collateralTokenAddress] ||
-            collateralTokenAddress === SMVK_TOKEN_ADDRESS
+            collateralTokenAddress === SMVN_TOKEN_ADDRESS,
         )
 
         if (!isCollateralDisabled && !firstNotDisabledCollateralAddress)
@@ -133,13 +137,13 @@ export const AddCollateralScreen = () => {
   }, [collateralTokens, selectedCollaterals, selectedCollateralsAddresses.length, tokensMetadata, tokensPrices])
 
   const nextAvaliableCollateralToAdd = Object.values(mappedAvaliableCollaterals).find(
-    ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress)
+    ({ disabled, tokenAddress }) => !disabled && !selectedCollateralsAddresses.includes(tokenAddress),
   )
 
   const isAddCollateralContinueDisabled =
     (hasXTZTokenSelected && !selectedBaker) ||
     selectedCollateralsAddresses.some(
-      (tokenAddress) => selectedCollaterals[tokenAddress].validation !== INPUT_STATUS_SUCCESS
+      (tokenAddress) => selectedCollaterals[tokenAddress].validation !== INPUT_STATUS_SUCCESS,
     )
 
   // handlers
@@ -170,7 +174,7 @@ export const AddCollateralScreen = () => {
     newInputAmount: string,
     userCollateralBalance: number,
     collateralAddress: TokenAddressType,
-    collateralDecimals: number
+    collateralDecimals: number,
   ) => {
     const validationStatus: InputStatusType = loansInputValidation({
       inputAmount: newInputAmount,
@@ -333,7 +337,7 @@ export const AddCollateralScreen = () => {
           </div>
         </div>
 
-        {/* button for depositting more than 1 collateral */}
+        {/* button for depositing more than 1 collateral */}
         <Button
           kind={BUTTON_SIMPLE}
           disabled={!Boolean(nextAvaliableCollateralToAdd)}
@@ -359,7 +363,7 @@ export const AddCollateralScreen = () => {
                       <Tooltip.Content>{COLLATERAL_VALUE}</Tooltip.Content>
                     </Tooltip>
                   </div>
-                  <CommaNumber value={collateralsBalance} decimalsToShow={2} className="value" />
+                  <CommaNumber beginningText={'$'} value={collateralsBalance} decimalsToShow={2} className="value" />
                 </ThreeLevelListItem>
                 <ThreeLevelListItem>
                   <div className="name">
@@ -371,7 +375,7 @@ export const AddCollateralScreen = () => {
                       <Tooltip.Content>{BORROW_CAPACITY}</Tooltip.Content>
                     </Tooltip>
                   </div>
-                  <CommaNumber value={borrowCapacity} decimalsToShow={2} className="value" />
+                  <CommaNumber beginningText={'$'} value={borrowCapacity} decimalsToShow={2} className="value" />
                 </ThreeLevelListItem>
               </div>
             </VaultOverview>

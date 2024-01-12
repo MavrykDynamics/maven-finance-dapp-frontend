@@ -1,11 +1,11 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const AccordionWrapper = styled.div<{ theme: MavrykTheme }>`
+export const AccordionWrapper = styled.div<{ theme: MavenTheme }>`
   transition: 0.5s all;
 `
 
-export const AccordionToggler = styled.div<{ theme: MavrykTheme }>`
+export const AccordionToggler = styled.div<{ theme: MavenTheme }>`
   display: flex;
 
   justify-content: center;
@@ -33,7 +33,7 @@ export const AccordionToggler = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const AccordionContent = styled.div<{ theme: MavrykTheme }>`
+export const AccordionContent = styled.div<{ theme: MavenTheme }>`
   display: flex;
   height: 100%;
   max-height: 0;
@@ -56,7 +56,7 @@ export const AccordionContent = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const AccordionItem = styled.div<{ status: boolean; theme: MavrykTheme }>`
+export const AccordionItem = styled.div<{ status: boolean; theme: MavenTheme }>`
   font-weight: 500;
   font-size: 14px;
   margin: 5px 0;

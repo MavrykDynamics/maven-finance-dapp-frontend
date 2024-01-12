@@ -24,9 +24,7 @@ const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
 
   useQueryWithRefetch(GET_LOANS_HISTORY_DATA, {
     skip: !marketsAddresses.length,
-    variables: {
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
-    },
+    variables: {},
     onCompleted: (data) => {
       const newChartsData = normalizeLoansCharts({
         indexerData: data,

@@ -50,7 +50,7 @@ export const UserProvider = ({ children }: Props) => {
   const { handleApolloError } = useApolloContext()
   const { tokensMetadata } = useTokensContext()
   const {
-    contractAddresses: { mvkTokenAddress },
+    contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()
 
   // track whether we've loaded user on init, if we have his wallet data in local storage
@@ -69,14 +69,14 @@ export const UserProvider = ({ children }: Props) => {
    * we can start restoring user from localStorage if:
    *    1. we have his data in localStorage
    *    2. we have tokensAddresses we need to load balances for
-   *    3. we have mvkToken address, so set it's balance
+   *    3. we have mvnToken address, so set its balance
    *    4. we haven't loaded user data previously in this app mount
    *    5. we have tzktSocket started to attach listeners to it
    */
   const canRestoreUser =
     hasUserInLocalStorage &&
     Object.keys(tokensMetadata).length &&
-    mvkTokenAddress &&
+    mvnTokenAddress &&
     !isUserRestored.current &&
     tzktSocket.current
 
@@ -111,7 +111,7 @@ export const UserProvider = ({ children }: Props) => {
     userCtxState,
   })
 
-  // effect to perform resotring user from localStorage
+  // effect to perform restoring user from localStorage
   useEffect(() => {
     if (canRestoreUser) connect()
   }, [canRestoreUser, connect])
@@ -127,8 +127,8 @@ export const UserProvider = ({ children }: Props) => {
   })
 
   /**
-   * User farm rewards depends on current indexed level, and every time level updates we need to recalc farm rewards
-   * to reduce amount of needed rerenders, we recalc farm rewards every 3rd level change
+   * User farm rewards depends on current indexed level, and every time level updates we need to re-calc farm rewards
+   * to reduce amount of needed re-renders, we re-calc farm rewards every 3rd level change
    *
    * skip when user don't participated any farms
    */
@@ -169,7 +169,10 @@ export const UserProvider = ({ children }: Props) => {
   const setUserHistoryData = useCallback((page: number, userHistoryData: UserHistoryData, itemsAmount: number) => {
     setUserCtxState((prev) => ({
       ...prev,
-      actionsHistory: { paginatedList: { ...prev.actionsHistory.paginatedList, [page]: userHistoryData }, itemsAmount },
+      actionsHistory: {
+        paginatedList: { ...prev.actionsHistory.paginatedList, [page]: userHistoryData },
+        itemsAmount,
+      },
     }))
   }, [])
 
@@ -190,7 +193,7 @@ export const UserProvider = ({ children }: Props) => {
   const setUserIndexerData = useCallback(
     (indexerData: GetUserDataQuery) => {
       // if user does not exists
-      if (indexerData.mavryk_user.length === 0) {
+      if (indexerData.maven_user.length === 0) {
         setUserLoading(false)
         return
       }
@@ -198,10 +201,11 @@ export const UserProvider = ({ children }: Props) => {
       const { tokensBalances, availableLoansRewards, userMTokens } = normalizeUserIndexerTokensBalances({
         indexerData,
         tokensMetadata,
-        mvkTokenAddress,
+        mvnTokenAddress: mvnTokenAddress,
       })
 
       const normalizedUserData = normalizeUser({ indexerData })
+
       setUserCtxState((prev) => ({
         ...prev,
         userTokensBalances: {
@@ -214,7 +218,7 @@ export const UserProvider = ({ children }: Props) => {
       }))
       setUserLoading(false)
     },
-    [mvkTokenAddress, tokensMetadata],
+    [mvnTokenAddress, tokensMetadata],
   )
 
   const providerValue = useMemo(() => {
@@ -222,7 +226,7 @@ export const UserProvider = ({ children }: Props) => {
 
     /**
      * set isUserRestored to true, when:
-     *    1. we have't restored user
+     *    1. we haven't restored user
      *    2. we have user address set in context (user data loading started)
      *    3. loading are false, means, that user has been loaded
      *    or 4. we don't have user's wallet in localStorage, and we can't restore him
@@ -268,7 +272,7 @@ export const useUserContext = () => {
   const context = useContext(userContext)
 
   if (!context) {
-    throw new Error('userContext should be used withing UserProvider')
+    throw new Error('userContext should be used within UserProvider')
   }
 
   return context

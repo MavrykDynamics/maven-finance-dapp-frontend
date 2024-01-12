@@ -1,6 +1,6 @@
 import {
-  ACTION_START_MESSAGE_TEXT,
   ACTION_COMPLETION_MESSAGE_TEXT,
+  ACTION_START_MESSAGE_TEXT,
   DEFAULT_REQUEST_COMPLETION_MESSAGE_TEXT,
 } from 'providers/ToasterProvider/toaster.provider.const'
 
@@ -11,7 +11,7 @@ import { STAKE_ACTION, UNSTAKE_ACTION } from 'providers/DoormanProvider/helpers/
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
-  GET_MVK_FROM_FAUCET_ACTION,
+  GET_MVN_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from 'providers/UserProvider/helpers/user.consts'
 
@@ -81,36 +81,36 @@ import {
   UNSUSPEND_SATELLITE_ACTION,
   UPDATE_AGGREGATOR_STATUS_ACTION,
   VOTE_FOR_ACTION,
-} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+} from 'providers/SatelliteGovernanceProvider/helpers/satellitesGov.consts'
 
 // council
 import {
   ADD_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-  CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-  DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION,
-  PROPAGATE_BREAK_GLASS_ACTION,
-  REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-  SET_SELECTED_CONTRACTS_ADMIN_ACTION,
-  UNPAUSE_ALL_ENTRYPOINTS_ACTION,
-  REMOVE_BG_CONTROLL_ACTION,
-  SIGN_BREAK_GLASS_COUNCIL_ACTION,
-  UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
-  SIGN_MAVRYK_COUNCIL_ACTION,
+  ADD_COUNCIL_MEMBER_ACTION,
   ADD_VESTEE_ACTION,
-  ADD_COUNSIL_MEMBER_ACTION,
-  UPDATE_VESTEE_ACTION,
-  TOGGLE_VESTEE_LOCK_ACTION,
+  CHANGE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   CHANGE_COUNCIL_MEMBER_ACTION,
+  DROP_BREAK_GLASS_COUNCIL_REQUEST_ACTION,
+  DROP_FIN_REQUEST_ACTION,
+  DROP_MAVEN_COUNCIL_REQUEST_ACTION,
+  PROPAGATE_BREAK_GLASS_ACTION,
+  REMOVE_BG_CONTROL_ACTION,
+  REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
   REMOVE_COUNCIL_MEMBER_ACTION,
-  UPDATE_COUNSIL_MEMBER_INFO_ACTION,
-  TRANSFER_TOKENS_ACTION,
+  REMOVE_VESTEE_ACTION,
   REQUEST_TOKENS_ACTION,
   REQUEST_TOKENS_MINT_ACTION,
-  DROP_FIN_REQUEST_ACTION,
-  REMOVE_VESTEE_ACTION,
   SET_BAKER_ACTION,
   SET_CONTRACT_BAKER_ACTION,
-  DROP_MAVRYK_COUNCIL_REQUEST_ACTION,
+  SET_SELECTED_CONTRACTS_ADMIN_ACTION,
+  SIGN_BREAK_GLASS_COUNCIL_ACTION,
+  SIGN_MAVEN_COUNCIL_ACTION,
+  TOGGLE_VESTEE_LOCK_ACTION,
+  TRANSFER_TOKENS_ACTION,
+  UNPAUSE_ALL_ENTRYPOINTS_ACTION,
+  UPDATE_BREAK_GLASS_COUNCIL_MEMBER_ACTION,
+  UPDATE_COUNCIL_MEMBER_INFO_ACTION,
+  UPDATE_VESTEE_ACTION,
 } from 'providers/CouncilProvider/helpers/council.consts'
 
 // farms
@@ -176,14 +176,14 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [GET_MVK_FROM_FAUCET_ACTION]: {
+  [GET_MVN_FROM_FAUCET_ACTION]: {
     start: {
-      title: 'Requesting MVK...',
+      title: 'Requesting MVN...',
       message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
-      title: 'Received 1,000 MVK...',
-      message: 'Enjoy using Mavryk Finance :)',
+      title: 'Received 1,000 MVN...',
+      message: 'Enjoy using Maven Finance :)',
     },
   },
 
@@ -801,7 +801,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [REMOVE_BG_CONTROLL_ACTION]: {
+  [REMOVE_BG_CONTROL_ACTION]: {
     start: {
       title: 'Remove Break Glass Controll...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -832,8 +832,8 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
   },
 
-  // mavryk council actions -------------------------------------------------
-  [SIGN_MAVRYK_COUNCIL_ACTION]: {
+  // maven council actions -------------------------------------------------
+  [SIGN_MAVEN_COUNCIL_ACTION]: {
     start: {
       title: 'Sign...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -853,7 +853,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [ADD_COUNSIL_MEMBER_ACTION]: {
+  [ADD_COUNCIL_MEMBER_ACTION]: {
     start: {
       title: 'Add Member...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -903,7 +903,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [UPDATE_COUNSIL_MEMBER_INFO_ACTION]: {
+  [UPDATE_COUNCIL_MEMBER_INFO_ACTION]: {
     start: {
       title: 'Update Council Member Info...',
       message: ACTION_START_MESSAGE_TEXT,
@@ -983,7 +983,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
-  [DROP_MAVRYK_COUNCIL_REQUEST_ACTION]: {
+  [DROP_MAVEN_COUNCIL_REQUEST_ACTION]: {
     start: {
       title: 'Drop Request...',
       message: ACTION_START_MESSAGE_TEXT,

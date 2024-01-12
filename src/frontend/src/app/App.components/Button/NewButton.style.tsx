@@ -1,23 +1,23 @@
 import styled, { css } from 'styled-components'
 import { BUTTON_RADIUS } from 'styles/constants'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import {
+  BUTTON_LARGE,
   BUTTON_NAVIGATION,
   BUTTON_PRIMARY,
   BUTTON_PULSE,
+  BUTTON_REGULAR,
   BUTTON_ROUND,
   BUTTON_SECONDARY,
-  BUTTON_THIRD,
+  BUTTON_SECONDARY_CYAN,
+  BUTTON_SECONDARY_PURPLE,
   BUTTON_SIMPLE,
   BUTTON_SIMPLE_SMALL,
+  BUTTON_THIRD,
   BUTTON_WIDE,
-  VOTING_AGAINST,
-  VOTING_FOR,
+  VOTING_NAY,
   VOTING_PASS,
-  BUTTON_LARGE,
-  BUTTON_REGULAR,
-  BUTTON_SECONDARY_PURPLE,
-  BUTTON_SECONDARY_CYAN,
+  VOTING_YAY,
 } from './Button.constants'
 
 const BUTTONS_KIND_STYLES = css`
@@ -39,6 +39,7 @@ const BUTTONS_KIND_STYLES = css`
       fill: ${({ theme }) => theme.linksAndButtons};
     }
   }
+
   &.${BUTTON_SECONDARY_PURPLE} {
     color: ${({ theme }) => theme.regularText};
     background-color: transparent;
@@ -48,6 +49,7 @@ const BUTTONS_KIND_STYLES = css`
       fill: ${({ theme }) => theme.strokeColor};
     }
   }
+
   &.${BUTTON_SECONDARY_CYAN} {
     color: ${({ theme }) => theme.rpcNodeSelecledColor};
     background-color: transparent;
@@ -57,6 +59,7 @@ const BUTTONS_KIND_STYLES = css`
       fill: ${({ theme }) => theme.rpcNodeSelecledColor};
     }
   }
+
   &.${BUTTON_THIRD} {
     width: fit-content;
     height: fit-content;
@@ -117,11 +120,12 @@ const BUTTONS_KIND_STYLES = css`
         height: 1px;
         background-color: ${({ theme }) => theme.selectedColor};
       }
+
       color: ${({ theme }) => theme.selectedColor};
     }
   }
 
-  &.${VOTING_FOR} {
+  &.${VOTING_YAY} {
     color: ${({ theme }) => theme.cards};
     background-color: ${({ theme }) => theme.upColor};
   }
@@ -131,7 +135,7 @@ const BUTTONS_KIND_STYLES = css`
     background-color: ${({ theme }) => theme.neutralColor};
   }
 
-  &.${VOTING_AGAINST} {
+  &.${VOTING_NAY} {
     color: ${({ theme }) => theme.cards};
     background-color: ${({ theme }) => theme.downColor};
   }
@@ -179,7 +183,7 @@ const BUTTONS_ANIMATIONS_STYLES = css`
 `
 
 // TODO: refactor colors with theme implementation
-export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
+export const ButtonStyled = styled.button<{ theme: MavenTheme }>`
   font-weight: 600;
   font-size: 16px;
   line-height: 16px;
@@ -197,17 +201,14 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   border-radius: ${BUTTON_RADIUS};
 
   /* styling for buttons sizes */
-  ${BUTTONS_SIZES_STYLES}
 
+  ${BUTTONS_SIZES_STYLES}
   /* styling for buttons forms */
   ${BUTTONS_FORMS_STYLES}
-
-  /* styling for main button kinds */
+    /* styling for main button kinds */
   ${BUTTONS_KIND_STYLES}
-
-  /* additional kinds */
+    /* additional kinds */
   ${BUTTONS_ANIMATIONS_STYLES}
-
   .child {
     display: flex;
     align-items: center;
@@ -223,6 +224,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 
   /* Icon styling */
+
   svg {
     transition: 0.3s all;
     width: 24px;

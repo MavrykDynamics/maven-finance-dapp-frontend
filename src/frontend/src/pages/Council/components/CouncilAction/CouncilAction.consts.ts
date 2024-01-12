@@ -1,7 +1,7 @@
-import { MavrykCounsilDdForms, BgCounsilDdForms } from 'pages/Council/helpers/council.consts'
-import { CouncilActionsParamsColumnsType } from 'pages/Council/helpers/council.types'
-import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
-import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
+import {BgCouncilDdForms, MavenCouncilDdForms} from 'pages/Council/helpers/council.consts'
+import {CouncilActionsParamsColumnsType} from 'pages/Council/helpers/council.types'
+import {COUNCIL_ACTIONS_PARAMS_MAPPER} from 'providers/CouncilProvider/helpers/council.consts'
+import {CouncilsActionsIds} from 'providers/CouncilProvider/helpers/council.types' // grid setting for council card bodies
 
 // grid setting for council card bodies
 export const getCouncilActionsBodiesGridSettings = (
@@ -12,8 +12,8 @@ export const getCouncilActionsBodiesGridSettings = (
   areaTemplate: string
 } => {
   switch (formId) {
-    case MavrykCounsilDdForms.ADD_COUNCIL_MEMBER:
-    case BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER:
+    case MavenCouncilDdForms.ADD_COUNCIL_MEMBER:
+    case BgCouncilDdForms.BG_ADD_COUNCIL_MEMBER:
       return {
         columnsTemplate: `1fr 1fr 250px`,
         rowsTemplate: `auto auto`,
@@ -23,8 +23,8 @@ export const getCouncilActionsBodiesGridSettings = (
         `,
       }
 
-    case MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER:
-    case BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER:
+    case MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER:
+    case BgCouncilDdForms.BG_CHANGE_COUNCIL_MEMBER:
       return {
         columnsTemplate: `1fr 1fr 250px`,
         rowsTemplate: `auto auto`,
@@ -34,8 +34,8 @@ export const getCouncilActionsBodiesGridSettings = (
         `,
       }
 
-    case MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER:
-    case BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER:
+    case MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER:
+    case BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER:
       return {
         columnsTemplate: `1fr 250px`,
         rowsTemplate: `auto`,
@@ -56,8 +56,8 @@ export const getCouncilActionsBodiesGridSettings = (
 
 // mapper for showing only allowed cells on user's ongoing action card
 export const CouncilUserOngoingActionGridCellsMapper: CouncilActionsParamsColumnsType = {
-  // ------- MAVRYK COUNCIL MEMBERS FORMS
-  [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
+  // ------- MAVEN COUNCIL MEMBERS FORMS
+  [MavenCouncilDdForms.ADD_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
       className: 'member-address',
       type: 'address',
@@ -79,7 +79,7 @@ export const CouncilUserOngoingActionGridCellsMapper: CouncilActionsParamsColumn
       cellName: 'Council Member Image',
     },
   },
-  [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCouncilMemberAddress]: {
       className: 'member-address',
       type: 'address',
@@ -106,7 +106,7 @@ export const CouncilUserOngoingActionGridCellsMapper: CouncilActionsParamsColumn
       cellName: 'Council Member Image',
     },
   },
-  [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
       className: 'member-address',
       type: 'address',

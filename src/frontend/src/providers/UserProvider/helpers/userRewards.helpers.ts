@@ -1,14 +1,14 @@
-import { GetUserRewardsDataQuery } from 'utils/__generated__/graphql'
-import { convertNumberForClient } from 'utils/calcFunctions'
-import { FIXED_POINT_ACCURACY, MVK_DECIMALS } from 'utils/constants'
+import {GetUserRewardsDataQuery} from 'utils/__generated__/graphql'
+import {convertNumberForClient} from 'utils/calcFunctions'
+import {FIXED_POINT_ACCURACY, MVN_DECIMALS} from 'utils/constants' // TODO: check on back-end why unclaimed rewards are not changing with compound
 
 // TODO: check on back-end why unclaimed rewards are not changing with compound
-export function getUserDoomanRewards({
-  userSmvkBalance,
+export function getUserDoormanRewards({
+  userSmvnBalance,
   userDoormanRewardsDataFromIndexer,
 }: {
-  userSmvkBalance: number
-  userDoormanRewardsDataFromIndexer: GetUserRewardsDataQuery['mavryk_user'][number]['doorman_stake_accounts'][number]
+  userSmvnBalance: number
+  userDoormanRewardsDataFromIndexer: GetUserRewardsDataQuery['maven_user'][number]['doorman_stake_accounts'][number]
 }): number {
   const {
     participation_fees_per_share,
@@ -16,26 +16,26 @@ export function getUserDoomanRewards({
   } = userDoormanRewardsDataFromIndexer
 
   const currentFeesPerShare = accumulated_fees_per_share - participation_fees_per_share
-  const usersRewardsForStaking = (userSmvkBalance * currentFeesPerShare) / FIXED_POINT_ACCURACY
+  const usersRewardsForStaking = (userSmvnBalance * currentFeesPerShare) / FIXED_POINT_ACCURACY
 
-  // return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking + unclaimed_rewards), grade: MVK_DECIMALS })
-  return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking), grade: MVK_DECIMALS })
+  // return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking + unclaimed_rewards), grade: MVN_DECIMALS })
+  return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking), grade: MVN_DECIMALS })
 }
 
 export function getUserSatelliteRewards({
-  userSmvkBalance,
+  userSmvnBalance,
   userSatelliteRewardsDataFromIndexer,
 }: {
-  userSmvkBalance: number
-  userSatelliteRewardsDataFromIndexer: GetUserRewardsDataQuery['mavryk_user'][number]['satellite_rewardss'][number]
+  userSmvnBalance: number
+  userSatelliteRewardsDataFromIndexer: GetUserRewardsDataQuery['maven_user'][number]['satellite_rewardss'][number]
 }): number {
   const { unpaid, participation_rewards_per_share, reference } = userSatelliteRewardsDataFromIndexer
   const { satellite_accumulated_reward_per_share } = reference ?? { satellite_accumulated_reward_per_share: 0 }
 
   const satelliteRewardRatio = satellite_accumulated_reward_per_share - participation_rewards_per_share
-  const usersAvailableSatelliteRewards = (unpaid + satelliteRewardRatio * userSmvkBalance) / FIXED_POINT_ACCURACY
+  const usersAvailableSatelliteRewards = (unpaid + satelliteRewardRatio * userSmvnBalance) / FIXED_POINT_ACCURACY
 
-  return convertNumberForClient({ number: Math.trunc(usersAvailableSatelliteRewards), grade: MVK_DECIMALS })
+  return convertNumberForClient({ number: Math.trunc(usersAvailableSatelliteRewards), grade: MVN_DECIMALS })
 }
 
 export function getUsersFarmRewards({
@@ -43,7 +43,7 @@ export function getUsersFarmRewards({
   userFarmsRewardsDataFromIndexer,
 }: {
   currentLvl: number
-  userFarmsRewardsDataFromIndexer: GetUserRewardsDataQuery['mavryk_user'][number]['farm_accounts']
+  userFarmsRewardsDataFromIndexer: GetUserRewardsDataQuery['maven_user'][number]['farm_accounts']
 }) {
   return userFarmsRewardsDataFromIndexer.reduce<Record<string, number>>((acc, farmAccount) => {
     const {
@@ -78,7 +78,7 @@ export function getUsersFarmRewards({
 
     const userReward = convertNumberForClient({
       number: (currentRewardsPerShareRatio * deposited_amount) / FIXED_POINT_ACCURACY,
-      grade: MVK_DECIMALS,
+      grade: MVN_DECIMALS,
     })
 
     if (userReward) {

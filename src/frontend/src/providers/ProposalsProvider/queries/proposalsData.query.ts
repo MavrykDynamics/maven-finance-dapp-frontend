@@ -32,11 +32,11 @@ export const PAST_PROPOSALS_QUERY = gql(`
 			status
 			payment_processed
 			min_quorum_percentage
-			quorum_smvk_total
-			nay_vote_smvk_total
-			pass_vote_smvk_total
-			yay_vote_smvk_total
-			proposal_vote_smvk_total
+			quorum_smvn_total
+			nay_vote_smvn_total
+			pass_vote_smvn_total
+			yay_vote_smvn_total
+			proposal_vote_smvn_total
 			source_code
 			votes {
 				round
@@ -106,11 +106,11 @@ export const CURRENT_PROPOSALS_QUERY = gql(`
 				status
 				payment_processed
 				min_quorum_percentage
-				quorum_smvk_total
-				nay_vote_smvk_total
-				pass_vote_smvk_total
-				yay_vote_smvk_total
-				proposal_vote_smvk_total
+				quorum_smvn_total
+				nay_vote_smvn_total
+				pass_vote_smvn_total
+				yay_vote_smvn_total
+				proposal_vote_smvn_total
 				source_code
 				votes {
 					round
@@ -180,11 +180,11 @@ export const PROPOSALS_SUBMISSION_QUERY = gql(`
 			status
 			payment_processed
 			min_quorum_percentage
-			quorum_smvk_total
-			nay_vote_smvk_total
-			pass_vote_smvk_total
-			yay_vote_smvk_total
-			proposal_vote_smvk_total
+			quorum_smvn_total
+			nay_vote_smvn_total
+			pass_vote_smvn_total
+			yay_vote_smvn_total
+			proposal_vote_smvn_total
 			source_code
 			votes {
 				round

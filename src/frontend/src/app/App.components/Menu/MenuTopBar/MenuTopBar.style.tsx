@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components/macro'
 import { MENU_Z_INDEX } from 'styles/constants'
-import { MavrykTheme } from '../../../../styles/interfaces'
+import { MavenTheme } from '../../../../styles/interfaces'
 
-export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
+export const MenuTopStyled = styled.div<{ theme: MavenTheme }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -108,7 +108,7 @@ export const MenuTopStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MenuMobileBurger = styled.div<{ theme: MavrykTheme }>`
+export const MenuMobileBurger = styled.div<{ theme: MavenTheme }>`
   display: block;
   width: fit-content;
   margin: 0 auto;

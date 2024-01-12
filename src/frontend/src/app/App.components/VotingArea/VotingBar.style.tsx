@@ -1,10 +1,10 @@
 import styled, { css } from 'styled-components/macro'
 import { dropShadow } from 'styles/animations'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { getNumberInBounds } from 'utils/calcFunctions'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 
-export const VotingContainer = styled.aside<{ theme: MavrykTheme; showButtons?: boolean }>`
+export const VotingContainer = styled.aside<{ theme: MavenTheme; showButtons?: boolean }>`
   display: flex;
   flex-direction: column;
   margin-top: 30px;
@@ -17,7 +17,7 @@ export const VotingContainer = styled.aside<{ theme: MavrykTheme; showButtons?: 
 /**
  * @width – represent quorum persent, if it's <= 50 we display persent pointer line on the left, otherwise on the right
  */
-export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
+export const QuorumBar = styled.div<{ width: number; theme: MavenTheme }>`
   width: 100%;
 
   .text {
@@ -45,7 +45,7 @@ export const QuorumBar = styled.div<{ width: number; theme: MavrykTheme }>`
     }
   }
 `
-export const VotingBarStyled = styled.div<{ theme: MavrykTheme }>`
+export const VotingBarStyled = styled.div<{ theme: MavenTheme }>`
   z-index: ${DEFAULT_Z_INDEX_FOR_OVERLAP};
   height: 4px;
   display: flex;
@@ -78,7 +78,7 @@ export const VotingBarStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const VotingFor = styled.div<{ width: number; theme: MavrykTheme }>`
+export const VotingYay = styled.div<{ width: number; theme: MavenTheme }>`
   border-radius: 10px 0 0 10px;
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.upColor};
@@ -94,7 +94,7 @@ export const VotingFor = styled.div<{ width: number; theme: MavrykTheme }>`
   }
 `
 
-export const VotingAgainst = styled.div<{ width: number; theme: MavrykTheme }>`
+export const VotingNay = styled.div<{ width: number; theme: MavenTheme }>`
   border-radius: 0 10px 10px 0;
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.downColor};
@@ -108,7 +108,7 @@ export const VotingAgainst = styled.div<{ width: number; theme: MavrykTheme }>`
     }
   }
 `
-export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }>`
+export const VotingPass = styled.div<{ width: number; theme: MavenTheme }>`
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.neutralColor};
   color: ${({ theme }) => theme.neutralColor};
@@ -121,7 +121,7 @@ export const VotingAbstention = styled.div<{ width: number; theme: MavrykTheme }
     }
   }
 `
-export const NotYetVoted = styled.div<{ width: number; theme: MavrykTheme }>`
+export const UnusedVote = styled.div<{ width: number; theme: MavenTheme }>`
   width: ${({ width }) => width}%;
   background-color: ${({ theme }) => theme.neutralSecondaryColor};
   color: ${({ theme }) => theme.neutralSecondaryColor};

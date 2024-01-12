@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import {
   INPUT_BIG,
   INPUT_LARGE,
@@ -15,7 +15,7 @@ export const InputStyled = styled.div`
   width: 100%;
 `
 
-export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
+export const InputComponentContainer = styled.div<{ theme: MavenTheme }>`
   display: block;
   position: relative;
 
@@ -103,7 +103,7 @@ export const InputComponentContainer = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const InputLabel = styled.div<{ theme: MavrykTheme }>`
+export const InputLabel = styled.div<{ theme: MavenTheme }>`
   position: absolute;
   right: 16px;
   top: 18px;
@@ -151,7 +151,7 @@ export const InputStatus = styled.div`
   }
 `
 
-export const InputIcon = styled.svg<{ theme: MavrykTheme }>`
+export const InputIcon = styled.svg<{ theme: MavenTheme }>`
   display: block;
   position: absolute;
   top: 20px;
@@ -168,7 +168,7 @@ export const InputIcon = styled.svg<{ theme: MavrykTheme }>`
   stroke: ${({ theme }) => theme.placeholders};
 `
 
-export const InputErrorMessage = styled.div<{ theme: MavrykTheme }>`
+export const InputErrorMessage = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.downColor};
   line-height: 12px;
   font-size: 12px;
@@ -194,7 +194,7 @@ export const InputSpacer = styled.div`
 
 // New input styles
 // TODO: refactor colors with theme implementation
-export const StyledInput = styled.input<{ theme: MavrykTheme }>`
+export const StyledInput = styled.input<{ theme: MavenTheme }>`
   width: 100%;
   height: 100%;
   background-color: ${({ theme }) => theme.backgroundColor};
@@ -229,7 +229,7 @@ export const StyledInput = styled.input<{ theme: MavrykTheme }>`
   }
 `
 
-export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
+export const InputPinnedChild = styled.div<{ theme: MavenTheme }>`
   height: 100%;
   border-left: 1px solid ${({ theme }) => theme.strokeColor};
   background-color: ${({ theme }) => theme.backgroundColor};
@@ -249,7 +249,7 @@ export const InputPinnedChild = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
+export const InputWrapper = styled.div<{ theme: MavenTheme }>`
   position: relative;
   display: flex;
   border: 1px solid ${({ theme }) => theme.strokeForForms};
@@ -450,8 +450,9 @@ export const InputWrapper = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const NewInputLabel = styled.label`
+export const NewInputLabel = styled.label<{ disabled?: boolean; theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
+  opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
   display: block;
   white-space: nowrap;
   font-weight: 700;
@@ -469,7 +470,7 @@ export const NewInputLabel = styled.label`
   }
 `
 
-export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
+export const InputStyledStatus = styled.div<{ theme: MavenTheme }>`
   display: block;
   position: absolute;
   top: 50%;
@@ -497,7 +498,7 @@ export const InputStyledStatus = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
+export const InputPinnedTokenInfo = styled.div<{ theme: MavenTheme }>`
   display: flex;
   column-gap: 10px;
   min-width: max-content;
@@ -524,7 +525,7 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const InputPinnedDropDown = styled.div<{ theme: MavrykTheme }>`
+export const InputPinnedDropDown = styled.div<{ theme: MavenTheme }>`
   display: flex;
   min-width: max-content;
   align-items: center;

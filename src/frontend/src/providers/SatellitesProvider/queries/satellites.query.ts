@@ -48,8 +48,8 @@ export const SATELLITE_DATA_QUERY = gql(`
 
       user {
 				address
-        smvk_balance
-        mvk_balance
+        smvn_balance
+        mvn_balance
 
         # get latest observation for every feed, then need to get latest of all feeds
         aggregator_oracles {
@@ -66,8 +66,8 @@ export const SATELLITE_DATA_QUERY = gql(`
             data
           }
 
-          # feeds smvk rewards amount
-          smvkRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
+          # feeds smvn rewards amount
+          smvnRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
             aggregate {
               sum {
                 reward
@@ -202,8 +202,8 @@ export const ACTIVE_SATELLITES_DATA_QUERY = gql(`
 
       user {
 				address
-        smvk_balance
-        mvk_balance
+        smvn_balance
+        mvn_balance
 
         # get latest observation for every feed, then need to get latest of all feeds
         aggregator_oracles {
@@ -220,8 +220,8 @@ export const ACTIVE_SATELLITES_DATA_QUERY = gql(`
             data
           }
 
-          # feeds smvk rewards amount
-          smvkRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
+          # feeds smvn rewards amount
+          smvnRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
             aggregate {
               sum {
                 reward
@@ -356,8 +356,8 @@ export const ALL_SATELLITES_DATA_QUERY = gql(`
 
       user {
 				address
-        smvk_balance
-        mvk_balance
+        smvn_balance
+        mvn_balance
 
         # get latest observation for every feed, then need to get latest of all feeds
         aggregator_oracles {
@@ -374,8 +374,8 @@ export const ALL_SATELLITES_DATA_QUERY = gql(`
             data
           }
 
-          # feeds smvk rewards amount
-          smvkRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
+          # feeds smvn rewards amount
+          smvnRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
             aggregate {
               sum {
                 reward
@@ -510,8 +510,8 @@ export const ORACLES_SATELLITES_DATA_QUERY = gql(`
 
       user {
         address
-        smvk_balance
-        mvk_balance
+        smvn_balance
+        mvn_balance
 
         # get latest observation for every feed, then need to get latest of all feeds
         aggregator_oracles {
@@ -528,8 +528,8 @@ export const ORACLES_SATELLITES_DATA_QUERY = gql(`
             data
           }
 
-          # feeds smvk rewards amount
-          smvkRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
+          # feeds smvn rewards amount
+          smvnRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
             aggregate {
               sum {
                 reward

@@ -15,6 +15,7 @@ import { NewInputLabel } from '../Input/Input.style'
 import { ValidatorFnType } from '../Input/newInput.type'
 import { validateInput } from 'app/App.utils/input'
 import { ERR_MSG_INPUT } from '../Input/Input.constants'
+import classNames from 'classnames'
 
 export type TextAreaStatusType = 'success' | 'error' | '' | undefined
 type TextAreaProps = {
@@ -74,7 +75,7 @@ export const TextArea = ({
 
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
-      {label ? <NewInputLabel>{label}</NewInputLabel> : null}
+      {label ? <NewInputLabel disabled={disabled}>{label}</NewInputLabel> : null}
       {icon && (
         <TextAreaIcon>
           <use xlinkHref={`/icons/sprites.svg#${icon}`} />

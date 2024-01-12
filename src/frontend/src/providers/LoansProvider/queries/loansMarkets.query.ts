@@ -1,8 +1,8 @@
 import { gql } from 'utils/__generated__'
 
 export const GET_MARKET_BY_ADDRESS_QUERY = gql(`
-	query loansMarketByAddressQuery($marketTokenAddress: String = "", $isMockTime: Boolean) {
-		allMarketsAddresses: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+	query loansMarketByAddressQuery($marketTokenAddress: String = "") {
+		allMarketsAddresses: lending_controller {
 			loan_tokens {
 				token {
 					token_address
@@ -10,7 +10,7 @@ export const GET_MARKET_BY_ADDRESS_QUERY = gql(`
 			}
 		}
 
-		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+		lending_controller: lending_controller {
 			collateral_ratio
 			interest_treasury_share
 			interest_rate_decimals
@@ -59,8 +59,8 @@ export const GET_MARKET_BY_ADDRESS_QUERY = gql(`
 `)
 
 export const GET_ALL_MARKETS_QUERY = gql(`
-	query allLoansMarketsQuery($isMockTime: Boolean) {
-		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+	query allLoansMarketsQuery {
+		lending_controller: lending_controller {
 			collateral_ratio
 			interest_treasury_share
 			interest_rate_decimals
@@ -109,8 +109,8 @@ export const GET_ALL_MARKETS_QUERY = gql(`
 `)
 
 export const GET_LOANS_CONFIG = gql(`
-	query getLoansConfig($currentTimestamp: timestamptz, $isMockTime: Boolean) {
-		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+	query getLoansConfig($currentTimestamp: timestamptz) {
+		lending_controller: lending_controller {
 			minimum_loan_fee_pct
 			collateral_ratio
 		}
@@ -118,8 +118,8 @@ export const GET_LOANS_CONFIG = gql(`
 `)
 
 export const CHECK_WHETHER_MARKET_EXISTS = gql(`
-	query checkWitherMarketExists($marketAddress: String = "", $isMockTime: Boolean) {
-		lending_controller: lending_controller(where: {mock_time: {_eq: $isMockTime}}) {
+	query checkWitherMarketExists($marketAddress: String = "") {
+		lending_controller: lending_controller {
 			loan_tokens(where: {token: {token_address: {_eq: $marketAddress}}}) {
 				token {
 					token_address

@@ -11,7 +11,7 @@ import Expand from '../../../app/App.components/Expand/Expand.view'
 import { VotingArea } from 'app/App.components/VotingArea/VotingArea.controller'
 
 // actions
-import { dropAction, voteForAction } from 'providers/SatellitesGovernanceProvider/actions/satellitesGov.actions'
+import { dropAction, voteForAction } from 'providers/SatelliteGovernanceProvider/actions/satellitesGov.actions'
 
 // utils
 import { getSeparateSnakeCase } from '../../../utils/parse'
@@ -26,7 +26,7 @@ import {
 } from './SatelliteGovernanceCard.style'
 
 // consts
-import { DROP_ACTION, VOTE_FOR_ACTION } from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+import { DROP_ACTION, VOTE_FOR_ACTION } from 'providers/SatelliteGovernanceProvider/helpers/satellitesGov.consts'
 import { PRECISION_NUMBER } from 'utils/constants'
 import { StatusFlagKind } from 'app/App.components/StatusFlag/StatusFlag.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
@@ -40,7 +40,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // types
-import { SatelliteGovNormalizerReturnType } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider.types'
+import { SatelliteGovNormalizerReturnType } from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider.types'
 
 type Props = {
   satelliteId: string
@@ -52,11 +52,11 @@ type Props = {
   id: number
   purpose: string
   governanceType: string
-  smvkPercentageForApproval: number
-  yayVotesSmvkTotal: number
-  nayVotesSmvkTotal: number
-  passVoteSmvkTotal: number
-  snapshotSmvkTotalSupply: number
+  smvnPercentageForApproval: number
+  yayVotesSmvnTotal: number
+  nayVotesSmvnTotal: number
+  passVoteSmvnTotal: number
+  snapshotSmvnTotalSupply: number
   accountPkh: string | null
   isActionActive: boolean
   votes: SatelliteGovNormalizerReturnType['satelliteGovIdsMapper'][0]['votes']
@@ -72,11 +72,11 @@ export const SatelliteGovernanceCard = ({
   statusFlag,
   purpose,
   governanceType,
-  smvkPercentageForApproval,
-  yayVotesSmvkTotal,
-  nayVotesSmvkTotal,
-  passVoteSmvkTotal,
-  snapshotSmvkTotalSupply,
+  smvnPercentageForApproval,
+  yayVotesSmvnTotal,
+  nayVotesSmvnTotal,
+  passVoteSmvnTotal,
+  snapshotSmvnTotalSupply,
   accountPkh,
   isActionActive,
   votes,
@@ -92,18 +92,18 @@ export const SatelliteGovernanceCard = ({
 
   const voteStatistic = useMemo(
     () => ({
-      forVotesMVKTotal: yayVotesSmvkTotal / PRECISION_NUMBER,
-      againstVotesMVKTotal: nayVotesSmvkTotal / PRECISION_NUMBER,
-      abstainVotesMVKTotal: passVoteSmvkTotal / PRECISION_NUMBER,
-      unusedVotesMVKTotal: Math.round(
-        snapshotSmvkTotalSupply / PRECISION_NUMBER -
-          yayVotesSmvkTotal / PRECISION_NUMBER -
-          nayVotesSmvkTotal / PRECISION_NUMBER -
-          passVoteSmvkTotal / PRECISION_NUMBER,
+      yayVotesMvnTotal: yayVotesSmvnTotal / PRECISION_NUMBER,
+      nayVotesMvnTotal: nayVotesSmvnTotal / PRECISION_NUMBER,
+      passVotesMvnTotal: passVoteSmvnTotal / PRECISION_NUMBER,
+      unusedVotesMvnTotal: Math.round(
+        snapshotSmvnTotalSupply / PRECISION_NUMBER -
+          yayVotesSmvnTotal / PRECISION_NUMBER -
+          nayVotesSmvnTotal / PRECISION_NUMBER -
+          passVoteSmvnTotal / PRECISION_NUMBER,
       ),
-      quorum: smvkPercentageForApproval / 100,
+      quorum: smvnPercentageForApproval / 100,
     }),
-    [yayVotesSmvkTotal, nayVotesSmvkTotal, passVoteSmvkTotal, snapshotSmvkTotalSupply, smvkPercentageForApproval],
+    [yayVotesSmvnTotal, nayVotesSmvnTotal, passVoteSmvnTotal, snapshotSmvnTotalSupply, smvnPercentageForApproval],
   )
 
   //   voteFor action ---------------------------------------------------------------------------
@@ -221,7 +221,14 @@ export const SatelliteGovernanceCard = ({
           <h3>Vote Statistics</h3>
           <b className="voting-ends">
             {actionDroppedDate ? (
-              <>Action was dropped on {parseDate({ time: actionDroppedDate, timeFormat: 'MMM DD, HH:mm' })} CEST</>
+              <>
+                Action was dropped on{' '}
+                {parseDate({
+                  time: actionDroppedDate,
+                  timeFormat: 'MMM DD, HH:mm',
+                })}{' '}
+                CEST
+              </>
             ) : (
               <>
                 Voting {!isEndingVotingTime ? 'ended' : 'ending'} on{' '}

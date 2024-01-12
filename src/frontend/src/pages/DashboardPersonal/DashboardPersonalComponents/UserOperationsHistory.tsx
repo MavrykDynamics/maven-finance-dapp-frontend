@@ -1,10 +1,10 @@
 import { useUserHistoryData } from 'providers/UserProvider/hooks/useUserHistoryData'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Table, TableHeader, TableRow, TableHeaderCell, TableBody, TableCell } from 'app/App.components/Table'
+import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 
-import { USER_ACTIONS_HISTORY, PAGINATION_SIDE_CENTER } from 'app/App.components/Pagination/pagination.consts'
+import { PAGINATION_SIDE_CENTER, USER_ACTIONS_HISTORY } from 'app/App.components/Pagination/pagination.consts'
 
 import { HistoryBlock } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -29,16 +29,16 @@ export const UserActionHistory = () => {
           <TableHeader className="treasury">
             <TableRow>
               <TableHeaderCell>Action</TableHeaderCell>
-              <TableHeaderCell>Amount: MVK</TableHeaderCell>
+              <TableHeaderCell>Amount: MVN</TableHeaderCell>
               <TableHeaderCell>
-                Total: MVK
+                Total: MVN
                 <Tooltip>
                   <Tooltip.Trigger className="ml-3">
                     <Icon id="info" />
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    For unstake, this is the amount received in MVK after the fee is deducted. For the rest, same as the
-                    "Amount, MVK" column.
+                    For unstake, this is the amount received in MVN after the fee is deducted. For the rest, same as the
+                    "Amount, MVN" column.
                   </Tooltip.Content>
                 </Tooltip>
               </TableHeaderCell>

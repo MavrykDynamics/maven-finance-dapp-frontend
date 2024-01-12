@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 // TODO: extract all classname styles to it's own bases af for farms
-export const PopupContainerWrapper = styled.div<{ theme: MavrykTheme; widthSize?: 586 | 750 | 395 | 950 | 420 }>`
+export const PopupContainerWrapper = styled.div<{ theme: MavenTheme; widthSize?: 586 | 750 | 395 | 950 | 420 }>`
   display: flex;
   flex-direction: column;
   padding: 40px;
@@ -193,7 +193,7 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
       : ''}
 `
 
-export const PopupContentWrapperBase = styled.div<{ theme: MavrykTheme }>`
+export const PopupContentWrapperBase = styled.div<{ theme: MavenTheme }>`
   background: ${({ theme }) => theme.cards};
   border: 1px solid ${({ theme }) => theme.linksAndButtons};
   border-radius: 10px;

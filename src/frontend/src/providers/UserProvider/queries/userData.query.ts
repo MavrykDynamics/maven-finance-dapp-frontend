@@ -2,10 +2,10 @@ import { gql } from 'utils/__generated__/gql'
 
 export const USER_DATA_QUERY = gql(`
   query getUserData($userAddress: String = "") {
-    mavryk_user: mavryk_user(where: {address: {_eq: $userAddress}}) {
+    maven_user: maven_user(where: {address: {_eq: $userAddress}}) {
       address
-      smvk_balance
-      mvk_balance
+      smvn_balance
+      mvn_balance
   
       # Getting user mToken balances
       m_token_accounts {
@@ -79,7 +79,7 @@ export const USER_DATA_QUERY = gql(`
 
 export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
   query getUserActionsHistoryData($userAddress: String, $offset: Int = 0, $limit: Int = 8) {
-    mavryk_user: mavryk_user(where: {address: {_eq: $userAddress}}) {
+    maven_user: maven_user(where: {address: {_eq: $userAddress}}) {
       # actions history
       stakes_history_data(where: {type: {_in: ["0", "1", "2", "3", "4"]}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
         type
@@ -88,8 +88,8 @@ export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
         desired_amount
         final_amount
         from_ {
-          mvk_balance
-          smvk_balance
+          mvn_balance
+          smvn_balance
         }
       }
 
@@ -104,7 +104,7 @@ export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
 
 export const USER_ACTIONS_EARNING_HISTORY_DATA_QUERY = gql(`
   query getUserEarningHistoryData($userAddress: String) {
-    mavryk_user: mavryk_user(where: {address: {_eq: $userAddress}}) {
+    maven_user: maven_user(where: {address: {_eq: $userAddress}}) {
       # earning history
       stakes_history_data(where: {type: {_in: ["3", "4"]}}, order_by: {timestamp: desc}) {
         timestamp
@@ -126,15 +126,15 @@ export const USER_REWARDS_DATA_QUERY = gql(`
       id
     }
 
-    mavryk_user: mavryk_user(where: {address: {_eq: $userAddress}}) {
-      smvk_balance
+    maven_user: maven_user(where: {address: {_eq: $userAddress}}) {
+      smvn_balance
 
       # user doorman rewards, satellite claimed rewards, doorman claimed rewards
       doorman_stake_accounts {
         total_satellite_rewards_claimed
         total_exit_fee_rewards_claimed
         participation_fees_per_share
-        smvk_balance
+        smvn_balance
         doorman {
           unclaimed_rewards
           accumulated_fees_per_share

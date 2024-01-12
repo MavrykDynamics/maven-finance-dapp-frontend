@@ -1,7 +1,7 @@
-import { z } from 'zod'
-import { finRequestVote } from './financialRequests.schema'
+import {z} from 'zod'
+import {finRequestVote} from './financialRequests.schema'
 
-// Financical request types
+// Financial request types
 export type FinancialRequestRecord = {
   tokenAddress: string
   id: number
@@ -20,9 +20,9 @@ export type FinancialRequestRecord = {
 
   // Votes data
   votes: FinRequestVoteType[]
-  forVotesMVKTotal: number
-  againstVotesMVKTotal: number
-  sMVKTotakSupply: number
+  yayVotesMvnTotal: number
+  nayVotesMvnTotal: number
+  sMVNTotalSupply: number
   quorum: number
 }
 

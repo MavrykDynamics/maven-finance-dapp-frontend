@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
-import { BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { TOTAL_VOTING_POWER_TOOLTIP_TEXT } from 'texts/tooltips/satellite'
 
 // view
@@ -24,14 +24,14 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 
 // helpers
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getSatelliteParticipations } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
-  SATELLITE_DATA_SUB,
-  SATELLITES_DATA_SINGLE_SUB,
-  SATELLITE_PARTICIPATION_DATA_SUB,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 
 const DelegationTab = ({
@@ -47,12 +47,12 @@ const DelegationTab = ({
     satelliteGovActionsAmount,
     finRequestsAmount,
     changeSatellitesSubscriptionsList,
-    setSatelliteAddressToSubsctibe,
+    setSatelliteAddressToSubscribe,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
-  const { userTokensBalances, satelliteMvkIsDelegatedTo, userAddress } = useUserContext()
+  const { userTokensBalances, satelliteMvnIsDelegatedTo, userAddress } = useUserContext()
 
-  const userSmvkBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS })
+  const userSmvnBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS })
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -66,14 +66,14 @@ const DelegationTab = ({
   }, [])
 
   useEffect(() => {
-    if (satelliteMvkIsDelegatedTo) {
-      setSatelliteAddressToSubsctibe(satelliteMvkIsDelegatedTo)
+    if (satelliteMvnIsDelegatedTo) {
+      setSatelliteAddressToSubscribe(satelliteMvnIsDelegatedTo)
     }
-    return () => setSatelliteAddressToSubsctibe(null)
-  }, [satelliteMvkIsDelegatedTo])
+    return () => setSatelliteAddressToSubscribe(null)
+  }, [satelliteMvnIsDelegatedTo])
 
-  const satelliteRecord = satelliteMvkIsDelegatedTo ? satelliteMapper[satelliteMvkIsDelegatedTo] : null
-  const { proposalParticipation } = getSatelliteParticipations({
+  const satelliteRecord = satelliteMvnIsDelegatedTo ? satelliteMapper[satelliteMvnIsDelegatedTo] : null
+  const { proposalParticipation } = getSatelliteParticipation({
     satellite: satelliteRecord,
     proposalsAmount,
     satelliteGovActionsAmount,
@@ -96,7 +96,7 @@ const DelegationTab = ({
             Distribute Gov. Rewards
           </NewButton>
         </DashboardCardHeader>
-        {satelliteMvkIsDelegatedTo && isSatellitesLoading ? (
+        {satelliteMvnIsDelegatedTo && isSatellitesLoading ? (
           <DataLoaderWrapper margin="20px 0 0 0">
             <ClockLoader width={75} height={75} />
             <div className="text">Loading your delegation data</div>
@@ -125,17 +125,17 @@ const DelegationTab = ({
                   </Tooltip>
                 </div>
                 <div className="value">
-                  <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVK" />
+                  <CommaNumber value={satelliteRecord.totalVotingPower} endingText="sMVN" />
                 </div>
               </div>
               <div className="grid-item space">
-                <div className="name">Free MVK Space</div>
+                <div className="name">Free MVN Space</div>
                 <div className="value">
                   <CommaNumber
                     value={Math.max(
-                      satelliteRecord.sMvkBalance * satelliteRecord.delegationRatio -
+                      satelliteRecord.sMvnBalance * satelliteRecord.delegationRatio -
                         satelliteRecord.totalDelegatedAmount,
-                      0
+                      0,
                     )}
                   />
                 </div>
@@ -147,9 +147,9 @@ const DelegationTab = ({
                 </div>
               </div>
               <div className="grid-item delegated">
-                <div className="name">Delegated MVK</div>
+                <div className="name">Delegated MVN</div>
                 <div className="value">
-                  <CommaNumber value={satelliteRecord.totalDelegatedAmount + satelliteRecord.sMvkBalance} />
+                  <CommaNumber value={satelliteRecord.totalDelegatedAmount + satelliteRecord.sMvnBalance} />
                 </div>
               </div>
               <div className="grid-item fee">
@@ -170,18 +170,18 @@ const DelegationTab = ({
               <Link to={`/satellites/satellite-details/${satelliteRecord.address}`}>My Satellite</Link>
             </DashboardPersonalSatellitesBottomLinks>
           </>
-        ) : userSmvkBalance === 0 && userAddress ? (
+        ) : userSmvnBalance === 0 && userAddress ? (
           <div className="no-data">
-            <span>You don't have SMVK</span>
+            <span>You don't have sMVN</span>
             <div className="nav-button">
               <Link to="/staking">
                 <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
-                  <Icon id="menu-staking" /> Stake MVK
+                  <Icon id="menu-staking" /> Stake MVN
                 </NewButton>
               </Link>
             </div>
           </div>
-        ) : userAddress && userSmvkBalance ? (
+        ) : userAddress && userSmvnBalance ? (
           <div className="no-data">
             <span>You are not delegated at this time</span>
             <div className="nav-button">

@@ -28,7 +28,7 @@ import { Market } from 'pages/Loans/Market.controller'
 import { LoansBorrow } from 'pages/LoansEarnBorrow/LoansBorrow.controller'
 import { DataFeeds } from 'pages/DataFeeds/DataFeeds.controller'
 import DataFeedDetails from 'pages/DataFeedsDetails/DataFeedsDetails.controller'
-import { FinancialRequests } from 'pages/FinacialRequests/FinancialRequests.controller'
+import { FinancialRequests } from 'pages/FinancialRequests/FinancialRequests.controller'
 import SatelliteNodes from 'pages/SatelliteNodes/SatelliteNodes.controller'
 import Satellites from 'pages/Satellites/Satellites.controller'
 
@@ -100,7 +100,7 @@ export const AppRoutes = () => {
       <Route exact path="/emergency-governance">
         <EmergencyGovernance />
       </Route>
-      <Route exact path="/mavryk-council/:tabId?">
+      <Route exact path="/maven-council/:tabId?">
         <Council />
       </Route>
       <Route exact path="/break-glass-council/:tabId?">

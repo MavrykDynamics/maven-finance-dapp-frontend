@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Redirect, Route, Switch, useParams } from 'react-router'
 
 // Consts
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
@@ -44,12 +44,12 @@ const pageTexts = {
 
 export const BecomeSatellite = () => {
   const {
-    contractAddresses: { mvkTokenAddress },
-    minimumStakedMvkBalance,
+    contractAddresses: { mvnTokenAddress },
+    minimumStakedMvnBalance,
   } = useDappConfigContext()
   const {
     satelliteMapper,
-    setSatelliteAddressToSubsctibe,
+    setSatelliteAddressToSubscribe,
     changeSatellitesSubscriptionsList,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
@@ -65,17 +65,17 @@ export const BecomeSatellite = () => {
   const { tabId } = useParams<{ tabId: SatelliteTabType }>()
 
   // local states
-  const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
-  const [isSatelliteExistanseError, setIsSatelliteExistanseError] = useState(false)
+  const [isSatelliteExistenceLoading, setIsSatelliteExistenceLoading] = useState(false)
+  const [isSatelliteExistenceError, setIsSatelliteExistenceError] = useState(false)
 
   // derived states
-  const { usersSatelliteProfile, userSmvkBalance, userMvkBalance } = useMemo(
+  const { usersSatelliteProfile, userSmvnBalance, userMvnBalance } = useMemo(
     () => ({
       usersSatelliteProfile: userAddress ? satelliteMapper[userAddress] : null,
-      userSmvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
-      userMvkBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress }),
+      userSmvnBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
+      userMvnBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress }),
     }),
-    [mvkTokenAddress, satelliteMapper, userAddress, userTokensBalances],
+    [mvnTokenAddress, satelliteMapper, userAddress, userTokensBalances],
   )
 
   useEffect(() => {
@@ -91,11 +91,11 @@ export const BecomeSatellite = () => {
 
   // check whether satellite exists, cuz address is stored in url and user can change it
   useLayoutEffect(() => {
-    setIsSatelliteExistanseError(false)
+    setIsSatelliteExistenceError(false)
 
     if ((userAddress && satelliteMapper[userAddress]) || !userAddress) return
 
-    setIsSatelliteExistanseLoading(true)
+    setIsSatelliteExistenceLoading(true)
 
     const checkWhetherSatelliteExists = async () => {
       try {
@@ -107,25 +107,25 @@ export const BecomeSatellite = () => {
         })
 
         if (satelliteFromGql.data.satellite[0]?.user.address === userAddress) {
-          setSatelliteAddressToSubsctibe(userAddress)
+          setSatelliteAddressToSubscribe(userAddress)
           return
         }
 
-        setIsSatelliteExistanseError(true)
+        setIsSatelliteExistenceError(true)
       } catch (e) {
-        setIsSatelliteExistanseError(true)
+        setIsSatelliteExistenceError(true)
       } finally {
-        setIsSatelliteExistanseLoading(false)
+        setIsSatelliteExistenceLoading(false)
       }
     }
 
     checkWhetherSatelliteExists()
 
-    return () => setSatelliteAddressToSubsctibe(null)
+    return () => setSatelliteAddressToSubscribe(null)
   }, [userAddress])
 
   const isPageLoading =
-    (!isSatelliteExistanseError && isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistanseLoading
+    (!isSatelliteExistenceError && isSatellitesLoading && userAddress) || isUserLoading || isSatelliteExistenceLoading
 
   return (
     <>
@@ -134,10 +134,10 @@ export const BecomeSatellite = () => {
 
         {!isPageLoading ? (
           <BecomeSatelliteBanners
-            smvkBalance={userSmvkBalance}
-            requiredSmvkAmount={minimumStakedMvkBalance}
+            smvnBalance={userSmvnBalance}
+            requiredSmvnAmount={minimumStakedMvnBalance}
             userAddress={userAddress}
-            mvkBalance={userMvkBalance}
+            mvnBalance={userMvnBalance}
             isSatellite={isSatellite}
           />
         ) : null}
@@ -205,7 +205,7 @@ export const BecomeSatellite = () => {
                   <Route exact path={`/become-satellite/${SATELLITE_TAB_EDIT}`}>
                     <BecomeSatelliteScreen
                       usersSatelliteProfile={usersSatelliteProfile}
-                      userSmvkBalance={userSmvkBalance}
+                      userSmvnBalance={userSmvnBalance}
                     />
                   </Route>
 

@@ -31,11 +31,11 @@ query SatellitesStatsQuery{
   satellite_aggregate: satellite_aggregate(where: {currently_registered: {_eq: true}, status: {_eq: "0"}}) {
     nodes {
       user {
-        smvk_balance,
+        smvn_balance,
       }
       delegations {
         user {
-          smvk_balance
+          smvn_balance
         }
       }
     }

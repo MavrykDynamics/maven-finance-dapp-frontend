@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
 export const TextAreaStyled = styled.div`
   position: relative;
@@ -113,7 +113,7 @@ export const TextAreaStatus = styled.div`
   }
 `
 
-export const TextAreaIcon = styled.svg<{ theme: MavrykTheme }>`
+export const TextAreaIcon = styled.svg<{ theme: MavenTheme }>`
   display: block;
   position: absolute;
   top: 20px;
@@ -130,7 +130,7 @@ export const TextAreaIcon = styled.svg<{ theme: MavrykTheme }>`
   stroke: ${({ theme }) => theme.strokeForForms};
 `
 
-export const TextAreaErrorMessage = styled.div<{ theme: MavrykTheme }>`
+export const TextAreaErrorMessage = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.downColor};
   font-size: 14px;
   font-weight: 600;
@@ -170,5 +170,10 @@ export const TextareaStyled = styled.textarea`
     color: ${({ theme }) => theme.placeholders};
     font-weight: 400;
     font-size: 12px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `

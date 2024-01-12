@@ -1,9 +1,9 @@
 import { GetContractAddressesQueryQuery } from 'utils/__generated__/graphql'
-import { DappMaxLengths } from '../dappConfig.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
+
+import { DappMaxLengths } from '../dappConfig.provider.types'
 import { DappConfigGqlType } from './dappConfig.schemes'
-import { CAPITALIZE_CASE, parseCamelCaseString } from 'utils/parse'
 
 export const normalizerMaxLenghts = (data: DappConfigGqlType): DappMaxLengths => {
   const {
@@ -59,11 +59,11 @@ export const normalizerMaxLenghts = (data: DappConfigGqlType): DappMaxLengths =>
 
 export const normalizeInitialConfigData = (indexerData: DappConfigGqlType) => {
   return {
-    maxLenghts: normalizerMaxLenghts(indexerData),
-    mvkFaucetAddress: indexerData.mvk_faucet[0]?.address ?? null,
-    minimumStakedMvkBalance: convertNumberForClient({
-      number: indexerData.delegation[0].minimum_smvk_balance,
-      grade: MVK_DECIMALS,
+    maxLengths: normalizerMaxLenghts(indexerData),
+    mvnFaucetAddress: indexerData.mvn_faucet[0]?.address ?? null,
+    minimumStakedMvnBalance: convertNumberForClient({
+      number: indexerData.delegation[0].minimum_smvn_balance,
+      grade: MVN_DECIMALS,
     }),
   }
 }
@@ -73,13 +73,13 @@ export const normalizeContractAddresses = (data: GetContractAddressesQueryQuery)
     farmsFactoryAddress: data.farm_factory[0].address,
     delegationAddress: data.delegation[0].address,
     doormanAddress: data.doorman[0].address,
-    mvkTokenAddress: data.mvk_token[0].address,
+    mvnTokenAddress: data.mvn_token[0].address,
     governanceAddress: data.governance[0].address,
     governanceFinancialAddress: data.governance_financial[0].address,
     emergencyGovernanceAddress: data.emergency_governance[0].address,
     breakGlassAddress: data.break_glass[0].address,
     councilAddress: data.council[0].address,
-    treasuryAddress: data.mvk_token[0].address,
+    treasuryAddress: data.mvn_token[0].address,
     treasuryFactoryAddress: data.treasury_factory[0].address,
     vestingAddress: data.vesting[0].address,
     governanceSatelliteAddress: data.governance_satellite[0].address,

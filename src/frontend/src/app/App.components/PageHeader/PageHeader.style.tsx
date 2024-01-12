@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const PageHeaderStyled = styled.div<{ backgroundImageSrc: string }>`
   width: 100%;
@@ -40,7 +40,7 @@ export const PageHeaderStyled = styled.div<{ backgroundImageSrc: string }>`
   }
 `
 
-export const PageHeaderTextArea = styled.div<{ theme: MavrykTheme }>`
+export const PageHeaderTextArea = styled.div<{ theme: MavenTheme }>`
   max-width: 45%;
   width: max-content;
   overflow: visible;

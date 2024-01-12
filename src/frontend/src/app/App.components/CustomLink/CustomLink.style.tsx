@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { LinkWide } from './CustomLink.const'
 
 const navLinkBeforeItem = css`
@@ -77,7 +77,7 @@ const linkAppearanceStyles = css`
   }
 `
 
-export const LinkStyled = styled(Link)<{ theme: MavrykTheme }>`
+export const LinkStyled = styled(Link)<{ theme: MavenTheme }>`
   display: inline;
   padding: 0;
   margin: 0;

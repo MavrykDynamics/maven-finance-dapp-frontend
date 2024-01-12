@@ -1,8 +1,8 @@
 import {
-  MavrykCounsilDdForms,
-  BgCounsilDdForms,
-  PROPAGATE_BREAK_GLASS_ACTION_FORM,
+  BgCouncilDdForms,
   DROP_COUNCIL_ACTION_FORM,
+  MavenCouncilDdForms,
+  PROPAGATE_BREAK_GLASS_ACTION_FORM,
 } from 'pages/Council/helpers/council.consts'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
 import { CouncilActionParamsNames, CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
@@ -16,7 +16,7 @@ export type CouncilActionsToSignColumnsType = Record<
         className: string
         cellName: string
         type: 'number' | 'address' | 'image' | 'url' | 'default'
-        sufix?: string
+        suffix?: string
       }
     >
   >
@@ -24,9 +24,9 @@ export type CouncilActionsToSignColumnsType = Record<
 
 // mapper for showing only allowed cells on sign action card
 export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsType = {
-  // MAVRYK COUNCIL MEMBERS FORMS
+  // MAVEN COUNCIL MEMBERS FORMS
   // ------------------------------------------------------------------------------------
-  [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.ADD_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
       className: 'member-address',
       type: 'address',
@@ -48,7 +48,7 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       cellName: 'Council Member Image',
     },
   },
-  [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress]: {
       className: 'old-member-address',
       type: 'address',
@@ -80,7 +80,7 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       cellName: 'Member Image',
     },
   },
-  [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
       className: 'member-address',
       type: 'address',
@@ -88,9 +88,9 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     },
   },
 
-  // MAVRYK COUNCIL VESTEES FORMS
+  // MAVEN COUNCIL VESTEES FORMS
   // ------------------------------------------------------------------------------------
-  [MavrykCounsilDdForms.ADD_VESTEE]: {
+  [MavenCouncilDdForms.ADD_VESTEE]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.vesteeAddress]: {
       className: 'vestee-address',
       type: 'address',
@@ -99,23 +99,23 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     [COUNCIL_ACTIONS_PARAMS_MAPPER.cliffInMonths]: {
       className: 'vestee-cliff-period',
       type: 'number',
-      sufix: 'month',
+      suffix: 'month',
       cellName: 'Cliff Period',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.vestingInMonths]: {
       className: 'vesting-period',
       type: 'number',
-      sufix: 'month',
+      suffix: 'month',
       cellName: 'Vesting Period',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.totalAllocatedAmount]: {
       className: 'vestee-allocated-amount',
       type: 'number',
-      sufix: 'MVK',
+      suffix: 'MVN',
       cellName: 'Total Allocated Amount',
     },
   },
-  [MavrykCounsilDdForms.UPDATE_VESTEE]: {
+  [MavenCouncilDdForms.UPDATE_VESTEE]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.vesteeAddress]: {
       className: 'vestee-address',
       type: 'address',
@@ -124,30 +124,30 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newCliffInMonths]: {
       className: 'vestee-cliff-period',
       type: 'number',
-      sufix: 'month',
+      suffix: 'month',
       cellName: 'New Cliff Period',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newVestingInMonths]: {
       className: 'vesting-period',
       type: 'number',
-      sufix: 'month',
+      suffix: 'month',
       cellName: 'New Vesting Period',
     },
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newTotalAllocatedAmount]: {
       className: 'vestee-allocated-amount',
       type: 'number',
-      sufix: 'MVK',
+      suffix: 'MVN',
       cellName: 'New Total Allocated Amount',
     },
   },
-  [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {
+  [MavenCouncilDdForms.TOGGLE_VESTEE_LOCK]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.vesteeAddress]: {
       className: 'vestee-address',
       type: 'address',
       cellName: 'Vestee Address',
     },
   },
-  [MavrykCounsilDdForms.REMOVE_VESTEE]: {
+  [MavenCouncilDdForms.REMOVE_VESTEE]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.vesteeAddress]: {
       className: 'vestee-address',
       type: 'address',
@@ -155,9 +155,9 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     },
   },
 
-  // MAVRYK COUNCIL TOKENS FORMS
+  // MAVEN COUNCIL TOKENS FORMS
   // ------------------------------------------------------------------------------------
-  [MavrykCounsilDdForms.REQUEST_TOKENS]: {
+  [MavenCouncilDdForms.REQUEST_TOKENS]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.treasuryAddress]: {
       className: 'treasury-address',
       type: 'address',
@@ -183,9 +183,13 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       type: 'default',
       cellName: 'Token Name',
     },
-    [COUNCIL_ACTIONS_PARAMS_MAPPER.purpose]: { className: 'purpose', type: 'default', cellName: 'Purpose for Request' },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.purpose]: {
+      className: 'purpose',
+      type: 'default',
+      cellName: 'Purpose for Request',
+    },
   },
-  [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
+  [MavenCouncilDdForms.REQUEST_TOKEN_MINT]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.treasuryAddress]: {
       className: 'treasury-address',
       type: 'address',
@@ -194,12 +198,16 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     [COUNCIL_ACTIONS_PARAMS_MAPPER.tokenAmount]: {
       className: 'token-amount',
       type: 'number',
-      sufix: 'MVK',
+      suffix: 'MVN',
       cellName: 'Token Amount',
     },
-    [COUNCIL_ACTIONS_PARAMS_MAPPER.purpose]: { className: 'purpose', type: 'default', cellName: 'Purpose for Request' },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.purpose]: {
+      className: 'purpose',
+      type: 'default',
+      cellName: 'Purpose for Request',
+    },
   },
-  [MavrykCounsilDdForms.TRANSFER_TOKENS]: {
+  [MavenCouncilDdForms.TRANSFER_TOKENS]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.receiverAddress]: {
       className: 'receiver-address',
       type: 'address',
@@ -220,19 +228,23 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       type: 'default',
       cellName: 'Token Type',
     },
-    [COUNCIL_ACTIONS_PARAMS_MAPPER.purpose]: { className: 'purpose', type: 'default', cellName: 'Purpose for Request' },
+    [COUNCIL_ACTIONS_PARAMS_MAPPER.purpose]: {
+      className: 'purpose',
+      type: 'default',
+      cellName: 'Purpose for Request',
+    },
   },
 
-  // MAVRYK COUNCIL BAKERS FORMS
+  // MAVEN COUNCIL BAKERS FORMS
   // ------------------------------------------------------------------------------------
-  [MavrykCounsilDdForms.SET_BAKER]: {
+  [MavenCouncilDdForms.SET_BAKER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.keyHash]: {
       className: 'admin-address',
       type: 'address',
       cellName: 'New Baker Address',
     },
   },
-  [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
+  [MavenCouncilDdForms.SET_CONTRACT_BAKER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.keyHash]: {
       className: 'admin-address',
       type: 'address',
@@ -245,9 +257,9 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
     },
   },
 
-  // MAVRYK COUNCIL OTHER FORMS
+  // MAVEN COUNCIL OTHER FORMS
   // ------------------------------------------------------------------------------------
-  [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {
+  [MavenCouncilDdForms.DROP_FINANCIAL_REQUEST]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.requestId]: {
       className: 'request-id',
       type: 'default',
@@ -257,7 +269,7 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
 
   // BREAG GLASS COUNCIL MEMBERS FORMS
   // ------------------------------------------------------------------------------------
-  [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {
+  [BgCouncilDdForms.BG_ADD_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
       className: 'member-address',
       type: 'address',
@@ -279,7 +291,7 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       cellName: 'Council Member Image',
     },
   },
-  [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
+  [BgCouncilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.oldCouncilMemberAddress]: {
       className: 'old-member-address',
       type: 'address',
@@ -306,7 +318,7 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
       cellName: 'Member Image',
     },
   },
-  [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
+  [BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.councilMemberAddress]: {
       className: 'member-address',
       type: 'address',
@@ -316,7 +328,7 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
 
   // BREAG GLASS COUNCIL CONTRACTS ADMIN FORM
   // ------------------------------------------------------------------------------------
-  [BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
+  [BgCouncilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.newAdminAddress]: {
       className: 'admin-address',
       type: 'address',
@@ -331,14 +343,14 @@ export const CouncilActionsToSignGridCellsMapper: CouncilActionsToSignColumnsTyp
 
   // BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
   // ------------------------------------------------------------------------------------
-  [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
+  [BgCouncilDdForms.REMOVE_BREAK_GLASS_CONTROL]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet]: {
       className: 'list-of-contracts',
       type: 'default',
       cellName: 'Contract Addresses',
     },
   },
-  [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
+  [BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
     [COUNCIL_ACTIONS_PARAMS_MAPPER.contractAddressSet]: {
       className: 'list-of-contracts',
       type: 'default',
@@ -370,8 +382,8 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     areaTemplate: string
   }
 > = {
-  // ------- MAVRYK COUNCIL MEMBERS FORMS
-  [MavrykCounsilDdForms.ADD_COUNCIL_MEMBER]: {
+  // ------- MAVEN COUNCIL MEMBERS FORMS
+  [MavenCouncilDdForms.ADD_COUNCIL_MEMBER]: {
     columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -379,7 +391,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "member-image member-url sign-btn"
     `,
   },
-  [MavrykCounsilDdForms.CHANGE_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER]: {
     columnsTemplate: `auto auto auto 150px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -387,7 +399,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "member-image member-url member-url sign-btn"
     `,
   },
-  [MavrykCounsilDdForms.REMOVE_COUNCIL_MEMBER]: {
+  [MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER]: {
     columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -396,8 +408,8 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
 
-  // ------- MAVRYK COUNCIL VESTEES FORMS
-  [MavrykCounsilDdForms.ADD_VESTEE]: {
+  // ------- MAVEN COUNCIL VESTEES FORMS
+  [MavenCouncilDdForms.ADD_VESTEE]: {
     columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -405,7 +417,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "vestee-cliff-period vesting-period sign-btn"
     `,
   },
-  [MavrykCounsilDdForms.UPDATE_VESTEE]: {
+  [MavenCouncilDdForms.UPDATE_VESTEE]: {
     columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -413,7 +425,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "vestee-cliff-period vesting-period sign-btn"
     `,
   },
-  [MavrykCounsilDdForms.TOGGLE_VESTEE_LOCK]: {
+  [MavenCouncilDdForms.TOGGLE_VESTEE_LOCK]: {
     columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -421,7 +433,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "sign-btn sign-btn"
     `,
   },
-  [MavrykCounsilDdForms.REMOVE_VESTEE]: {
+  [MavenCouncilDdForms.REMOVE_VESTEE]: {
     columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -430,8 +442,8 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
 
-  // ------- MAVRYK COUNCIL TOKENS FORMS
-  [MavrykCounsilDdForms.REQUEST_TOKENS]: {
+  // ------- MAVEN COUNCIL TOKENS FORMS
+  [MavenCouncilDdForms.REQUEST_TOKENS]: {
     columnsTemplate: `auto auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -439,7 +451,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "purpose token-type token-name sign-btn"
     `,
   },
-  [MavrykCounsilDdForms.REQUEST_TOKEN_MINT]: {
+  [MavenCouncilDdForms.REQUEST_TOKEN_MINT]: {
     columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -447,7 +459,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     "purpose . sign-btn"
     `,
   },
-  [MavrykCounsilDdForms.TRANSFER_TOKENS]: {
+  [MavenCouncilDdForms.TRANSFER_TOKENS]: {
     columnsTemplate: `auto auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -456,8 +468,8 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
 
-  // ------- MAVRYK COUNCIL BAKERS FORMS
-  [MavrykCounsilDdForms.SET_BAKER]: {
+  // ------- MAVEN COUNCIL BAKERS FORMS
+  [MavenCouncilDdForms.SET_BAKER]: {
     columnsTemplate: `1fr 1fr`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -465,7 +477,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "sign-btn sign-btn"
     `,
   },
-  [MavrykCounsilDdForms.SET_CONTRACT_BAKER]: {
+  [MavenCouncilDdForms.SET_CONTRACT_BAKER]: {
     columnsTemplate: `1fr 150px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -474,8 +486,8 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
 
-  // ------- MAVRYK COUNCIL OTHER FORMS
-  [MavrykCounsilDdForms.DROP_FINANCIAL_REQUEST]: {
+  // ------- MAVEN COUNCIL OTHER FORMS
+  [MavenCouncilDdForms.DROP_FINANCIAL_REQUEST]: {
     columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -484,8 +496,8 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
     `,
   },
 
-  // ------- BREAG GLASS COUNCIL MEMBERS FORMS
-  [BgCounsilDdForms.BG_ADD_COUNCIL_MEMBER]: {
+  // ------- BREAK GLASS COUNCIL MEMBERS FORMS
+  [BgCouncilDdForms.BG_ADD_COUNCIL_MEMBER]: {
     columnsTemplate: `auto auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -493,7 +505,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "member-image member-url sign-btn"
     `,
   },
-  [BgCounsilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
+  [BgCouncilDdForms.BG_CHANGE_COUNCIL_MEMBER]: {
     columnsTemplate: `auto auto auto 150px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -501,7 +513,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "member-image member-url member-url sign-btn"
     `,
   },
-  [BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
+  [BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER]: {
     columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -511,7 +523,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
   },
 
   // ------- BREAG GLASS COUNCIL CONTRACTS ADMIN FORM
-  [BgCounsilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
+  [BgCouncilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN]: {
     columnsTemplate: `auto 180px`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -521,7 +533,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
   },
 
   // ------- BREAG GLASS COUNCIL CONTRACTS OTHER FORMS
-  [BgCounsilDdForms.REMOVE_BREAK_GLASS_CONTROLL]: {
+  [BgCouncilDdForms.REMOVE_BREAK_GLASS_CONTROL]: {
     columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `
@@ -529,7 +541,7 @@ export const CouncilActionsToSignGridSettingsMapper: Record<
       "sign-btn sign-btn"
     `,
   },
-  [BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
+  [BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS]: {
     columnsTemplate: `auto auto`,
     rowsTemplate: `1fr 1fr`,
     areaTemplate: `

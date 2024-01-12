@@ -2,7 +2,7 @@ import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { GovernanceConfigQueryQuery } from 'utils/__generated__/graphql'
 import { ProposalIndexerType, ProposalsContext } from '../proposals.provider.types'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { XTZ_DECIMALS, MVK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
 
 const calcGovPhase = (round: number, hasProposalToExecute?: boolean) => {
   if (round === 0) {
@@ -31,7 +31,7 @@ export const normalizeGovernanceConfig = (dataFromIndexer: GovernanceConfigQuery
 
   return {
     fee: convertNumberForClient({ number: proposal_submission_fee_mutez, grade: XTZ_DECIMALS }),
-    successReward: convertNumberForClient({ number: success_reward, grade: MVK_DECIMALS }),
+    successReward: convertNumberForClient({ number: success_reward, grade: MVN_DECIMALS }),
     currentRoundEndLevel: current_round_end_level,
     cycle: cycle_id,
     timelockProposalId: timelock_proposal_id ?? null,

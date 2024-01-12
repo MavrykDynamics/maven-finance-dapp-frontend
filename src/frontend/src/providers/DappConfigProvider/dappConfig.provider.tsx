@@ -130,17 +130,17 @@ const DappConfigProvider = ({ children }: Props) => {
     if (currentIndexedLevel >= operationLvl) turnOffAction()
   }, [action, indexerLevel])
 
-  // Load initial data for dapp (max lenghts, mvkFaucet, minSmvkAmount)
+  // Load initial data for dapp (max lengths, mvnFaucet, minSmvnAmount)
   const { loading: initialConfigLoading } = useQuery(DAPP_INITIAL_CONFIG_QUERY, {
     onCompleted: (data) => {
       try {
         const parsedConfig = dappConfigSchema.parse(data)
-        const { maxLenghts, minimumStakedMvkBalance, mvkFaucetAddress } = normalizeInitialConfigData(parsedConfig)
+        const { maxLengths, minimumStakedMvnBalance, mvnFaucetAddress } = normalizeInitialConfigData(parsedConfig)
         setDappConfigCtxState((prev) => ({
           ...prev,
-          maxLenghts,
-          minimumStakedMvkBalance,
-          mvkFaucetAddress,
+          maxLengths: maxLengths,
+          minimumStakedMvnBalance: minimumStakedMvnBalance,
+          mvnFaucetAddress: mvnFaucetAddress,
         }))
 
         // Load lvl on dapp init, and then update it with subscription
@@ -157,9 +157,7 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // TODO: addresses that are general, not page specific load in DAPP_INITIAL_CONFIG_QUERY other addresses load only on pages that requires them
   const { loading: contractAddressesLoading } = useQuery(GET_DAPP_CONTRACT_ADDRESSES, {
-    variables: {
-      isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
-    },
+    variables: {},
     onCompleted: (data) => {
       setDappConfigCtxState((prev) => ({
         ...prev,

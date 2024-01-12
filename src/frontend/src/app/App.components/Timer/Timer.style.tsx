@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { LETTER_VIEW, COLON_VIEW } from './Timer.view'
 
 export const TimerStyled = styled.div<{
@@ -55,7 +55,7 @@ export const TimerStyled = styled.div<{
   }
 `
 
-export const ShortTimer = styled.div<{ theme: MavrykTheme }>`
+export const ShortTimer = styled.div<{ theme: MavenTheme }>`
   font-weight: 600;
   font-size: 16px;
   line-height: 25px;

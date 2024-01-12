@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import { PRIMARY_TOGGLE, SECONDARY_TOGGLE } from './Toggle.consts'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const ToggleStyle = styled.div<{ theme: MavrykTheme }>`
+export const ToggleStyle = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
 

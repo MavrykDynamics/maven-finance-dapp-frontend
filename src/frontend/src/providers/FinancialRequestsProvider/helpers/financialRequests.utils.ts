@@ -1,23 +1,11 @@
-import { FinRequestVoteType, FinancialRequestRecord } from './financialRequests.types'
-import {
-  FinRequestsSubsRecordType,
-  FinancialRequestsContext,
-  FinancialRequestsIndexerType,
-  FinancialRequestsStateType,
-  NullableFinancialRequestsContextStateType,
-} from '../financialRequests.provider.types'
-
-import {
-  ALL_FIN_REQUESTS_SUB,
-  EMPTY_FINANCIAL_REQUESTS_CTX,
-  FIN_REQUESTS_DATA,
-  ONGOING_FIN_REQUESTS_SUB,
-} from './financialRequests.consts'
-import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
-
 import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { convertNumberForClient } from 'utils/calcFunctions'
+
+import { FinancialRequestsContext, FinancialRequestsIndexerType, FinancialRequestsStateType, FinRequestsSubsRecordType, NullableFinancialRequestsContextStateType } from '../financialRequests.provider.types'
+import { ALL_FIN_REQUESTS_SUB, EMPTY_FINANCIAL_REQUESTS_CTX, FIN_REQUESTS_DATA, ONGOING_FIN_REQUESTS_SUB } from './financialRequests.consts'
 import { finRequestVote } from './financialRequests.schema'
+import { FinancialRequestRecord, FinRequestVoteType } from './financialRequests.types'
 
 /**
  *
@@ -106,10 +94,10 @@ export const normalizeFinancialRequests = (storage: {
         }, []),
 
         // Votes data
-        forVotesMVKTotal: convertNumberForClient({ number: item.yay_vote_smvk_total }),
-        againstVotesMVKTotal: convertNumberForClient({ number: item.nay_vote_smvk_total }),
-        sMVKTotakSupply: convertNumberForClient({ number: item.snapshot_smvk_total_supply }),
-        quorum: item.smvk_percentage_for_approval / 100,
+        yayVotesMvnTotal: convertNumberForClient({ number: item.yay_vote_smvn_total }),
+        nayVotesMvnTotal: convertNumberForClient({ number: item.nay_vote_smvn_total }),
+        sMVNTotalSupply: convertNumberForClient({ number: item.snapshot_smvn_total_supply }),
+        quorum: item.smvn_percentage_for_approval / 100,
       }
 
       acc.frIds.push(frItem.id.toString())

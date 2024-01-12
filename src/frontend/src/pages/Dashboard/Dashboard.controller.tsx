@@ -1,46 +1,46 @@
-import { useEffect, useMemo } from 'react'
-import { Redirect, useLocation } from 'react-router'
+import {useEffect, useMemo} from 'react'
+import {Redirect, useLocation} from 'react-router'
 import QueryString from 'qs'
 
 // view
-import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
-import { Page } from 'styles'
-import { SatellitesTab } from './TabScreens/SatellitesTab.controller'
-import { DashboardStyled, BGPrimaryTitleStyled, StatBlock } from './Dashboard.style'
-import { FarmsTab } from './TabScreens/FarmsTab.controller'
-import { LendingTab } from './TabScreens/LendingTab.controller'
-import { OraclesTab } from './TabScreens/OraclesTab.controller'
-import { StakingTab } from './TabScreens/StakingTab.controller'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { TreasuryTab } from './TabScreens/TreasuryTab.controller'
-import { VaultsTab } from './TabScreens/VaultsTab.controller'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { Impact } from 'app/App.components/Impact/Impact'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import {PageHeader} from '../../app/App.components/PageHeader/PageHeader.controller'
+import {Page} from 'styles'
+import {SatellitesTab} from './TabScreens/SatellitesTab.controller'
+import {BGPrimaryTitleStyled, DashboardStyled, StatBlock} from './Dashboard.style'
+import {FarmsTab} from './TabScreens/FarmsTab.controller'
+import {LendingTab} from './TabScreens/LendingTab.controller'
+import {OraclesTab} from './TabScreens/OraclesTab.controller'
+import {StakingTab} from './TabScreens/StakingTab.controller'
+import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
+import {TreasuryTab} from './TabScreens/TreasuryTab.controller'
+import {VaultsTab} from './TabScreens/VaultsTab.controller'
+import {DataLoaderWrapper} from 'app/App.components/Loader/Loader.style'
+import {Impact} from 'app/App.components/Impact/Impact'
+import {ClockLoader} from 'app/App.components/Loader/Loader.view'
 
 // const
 import {
-  mvkStatsType,
+  FARMS_TAB_ID,
   isValidPersonalDashboardTabId,
   LENDING_TAB_ID,
-  FARMS_TAB_ID,
+  mvnStatsType,
   ORACLES_TAB_ID,
   SATELLITES_TAB_ID,
   STAKING_TAB_ID,
+  TabId,
   TREASURY_TAB_ID,
   VAULTS_TAB_ID,
-  TabId,
 } from './Dashboard.utils'
-import { MVK_TOKEN_SYMBOL } from 'utils/constants'
-import { DEFAULT_STAKING_ACTIVE_SUBS, DAPP_MVK_SMVK_STATS_SUB } from 'providers/DoormanProvider/helpers/doorman.consts'
+import {MVN_TOKEN_SYMBOL} from 'utils/constants'
+import {DAPP_MVN_SMVN_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS} from 'providers/DoormanProvider/helpers/doorman.consts'
 
 // hooks
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
-import { useDappTvl } from 'providers/DappConfigProvider/hooks/useDappTvl'
+import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
+import {useDoormanContext} from 'providers/DoormanProvider/doorman.provider'
+import {useDappTvl} from 'providers/DappConfigProvider/hooks/useDappTvl'
 
 // utils
-import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
+import {calcDiffBetweenTwoNumbersInPersentage} from 'utils/calcFunctions'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 // TODO: add farms when their data loading will be fixed and up
@@ -58,7 +58,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [DAPP_MVK_SMVK_STATS_SUB]: true,
+      [DAPP_MVN_SMVN_STATS_SUB]: true,
     })
 
     return () => {
@@ -80,11 +80,11 @@ export const Dashboard = () => {
           <>
             <div className="top">
               <div className="tvlBlock">
-                <BGPrimaryTitleStyled>Mavryk TVL</BGPrimaryTitleStyled>
+                <BGPrimaryTitleStyled>Maven TVL</BGPrimaryTitleStyled>
                 <CommaNumber beginningText="$" value={DAPP_TVL} />
               </div>
 
-              <DashboardMvkData />
+              <DashboardMvnData />
             </div>
 
             <div className="dashboard-navigation">
@@ -188,48 +188,48 @@ const TabById = ({ activeTab }: { activeTab: TabId }) => {
   }
 }
 
-const DashboardMvkData = () => {
+const DashboardMvnData = () => {
   const { tokensPrices } = useTokensContext()
   // staking stats loading is handled in <Dashboard /> component
-  const { totalStakedMvk, totalSupply, maximumTotalSupply } = useDoormanContext()
+  const { totalStakedMvn, totalSupply, maximumTotalSupply } = useDoormanContext()
 
-  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
-  const mvkStatsBlock: mvkStatsType = {
-    marketCap: mvkExchangeRate * totalSupply,
-    stakedMvk: totalStakedMvk,
-    circuatingSupply: totalSupply,
+  const mvnExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
+  const mvnStatsBlock: mvnStatsType = {
+    marketCap: mvnExchangeRate * totalSupply,
+    stakedMvn: totalStakedMvn,
+    circulatingSupply: totalSupply,
     maxSupply: maximumTotalSupply,
-    livePrice: mvkExchangeRate,
-    // TODO: remove when mvk rate will be dynamic
-    prevPrice: mvkExchangeRate - 0.00999,
+    livePrice: mvnExchangeRate,
+    // TODO: remove when mvn rate will be dynamic
+    prevPrice: mvnExchangeRate - 0.00999,
   }
 
-  const mvkRateChange = calcDiffBetweenTwoNumbersInPersentage(mvkStatsBlock.livePrice, mvkStatsBlock.prevPrice)
+  const mvnRateChange = calcDiffBetweenTwoNumbersInPersentage(mvnStatsBlock.livePrice, mvnStatsBlock.prevPrice)
 
   return (
-    <div className="mvkStats">
-      <BGPrimaryTitleStyled>MVK</BGPrimaryTitleStyled>
+    <div className="mvnStats">
+      <BGPrimaryTitleStyled>MVN</BGPrimaryTitleStyled>
       <div className="statsWrapper">
         <StatBlock>
           <div className="name">Market Cap</div>
           <div className="value">
-            <CommaNumber value={mvkStatsBlock.marketCap} endingText="USD" />
+            <CommaNumber value={mvnStatsBlock.marketCap} endingText="USD" />
           </div>
         </StatBlock>
 
         <StatBlock>
-          <div className="name">Staked MVK</div>
+          <div className="name">Staked MVN</div>
           <div className="value">
-            <CommaNumber value={mvkStatsBlock.stakedMvk} endingText="MVK" />
+            <CommaNumber value={mvnStatsBlock.stakedMvn} endingText="MVN" />
           </div>
         </StatBlock>
 
         <StatBlock>
           <div className="name">Live Price</div>
           <div className="value">
-            <CommaNumber beginningText="$" value={mvkStatsBlock.livePrice} />
+            <CommaNumber beginningText="$" value={mvnStatsBlock.livePrice} />
             <div className="impact-wrapper">
-              <Impact value={mvkRateChange} endingText="% 24h" />
+              <Impact value={mvnRateChange} endingText="% 24h" />
             </div>
           </div>
         </StatBlock>
@@ -237,14 +237,14 @@ const DashboardMvkData = () => {
         <StatBlock>
           <div className="name">Circulating Supply</div>
           <div className="value">
-            <CommaNumber value={mvkStatsBlock.circuatingSupply} endingText="MVK" />
+            <CommaNumber value={mvnStatsBlock.circulatingSupply} endingText="MVN" />
           </div>
         </StatBlock>
 
         <StatBlock>
           <div className="name">Max Supply</div>
           <div className="value">
-            <CommaNumber value={mvkStatsBlock.maxSupply} endingText="MVK" />
+            <CommaNumber value={mvnStatsBlock.maxSupply} endingText="MVN" />
           </div>
         </StatBlock>
       </div>

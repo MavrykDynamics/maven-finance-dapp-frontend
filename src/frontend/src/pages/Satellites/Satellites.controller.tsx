@@ -16,10 +16,10 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 
 // consts, helpers, actions
 import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { NOT_STAKING_MVK_TEXT } from 'app/App.components/Info/Banners/banners.texts'
-import { getTotalDelegatedMVK } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { NOT_STAKING_MVN_TEXT } from 'app/App.components/Info/Banners/banners.texts'
+import { getTotalDelegatedMVN } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // styles
 import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -65,8 +65,8 @@ const Satellites = () => {
 
   const tabsInfo = useMemo(
     () => ({
-      totalDelegetedMVK: (
-        <CommaNumber value={getTotalDelegatedMVK(activeSatellitesIds, satelliteMapper)} endingText={'MVK'} />
+      totalDelegatedMVN: (
+        <CommaNumber value={getTotalDelegatedMVN(activeSatellitesIds, satelliteMapper)} endingText={'MVN'} />
       ),
       totalSatelliteOracles: activeSatellitesIds.length,
       numberOfDataFeeds: feedsAddresses.length > 50 ? feedsAddresses.length + '+' : feedsAddresses.length,
@@ -78,10 +78,10 @@ const Satellites = () => {
     <Page>
       <PageHeader page={'satellites'} />
       {!isSatellite &&
-      getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }) === 0 &&
+      getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }) === 0 &&
       userAddress ? (
         <NotStakingBannerStyled>
-          <Info text={NOT_STAKING_MVK_TEXT} type={INFO_ERROR}>
+          <Info text={NOT_STAKING_MVN_TEXT} type={INFO_ERROR}>
             <div className="link-btn">
               <Link to="/staking">
                 <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
@@ -97,15 +97,15 @@ const Satellites = () => {
         <SatellitesOverviewStyled>
           <InfoBlockWrapper>
             <SatelliteGovernanceStatsInfo>
-              <h3>Total Delegated MVK</h3>
+              <h3>Total Delegated MVN</h3>
               <div className="value">
-                {tabsInfo.totalDelegetedMVK}
+                {tabsInfo.totalDelegatedMVN}
                 <CustomLink to="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles">
                   <Tooltip>
                     <Tooltip.Trigger className="tooltip-trigger">
                       <Icon id="info" />
                     </Tooltip.Trigger>
-                    <Tooltip.Content>All staked MVK that is delegated to satellites by users.</Tooltip.Content>
+                    <Tooltip.Content>All staked MVN that is delegated to satellites by users.</Tooltip.Content>
                   </Tooltip>
                 </CustomLink>
               </div>

@@ -30,7 +30,7 @@ import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { VESTING_STORAGE_DATA_SUB, DEFAULT_VESTING_SUBS } from 'providers/VestingProvider/helpers/vesting.consts'
+import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
@@ -74,7 +74,7 @@ const VestingTab = () => {
       actionType: CLAIM_VESTING_REWARD_ACTION,
       actionFn: vestingAction,
     }),
-    [vestingAction]
+    [vestingAction],
   )
 
   const { action: handleClaimVestingReward } = useContractAction(contractActionProps)
@@ -131,21 +131,21 @@ const VestingTab = () => {
             <div className="column">
               <div className="name">Total Vesting Amount</div>
               <div className="value">
-                <CommaNumber value={totalAllocated} endingText="MVK" />
+                <CommaNumber value={totalAllocated} endingText="MVN" />
               </div>
             </div>
 
             <div className="column">
               <div className="name">Amount Left to Vest</div>
               <div className="value">
-                <CommaNumber value={totalRemainded} endingText="MVK" />
+                <CommaNumber value={totalRemainded} endingText="MVN" />
               </div>
             </div>
 
             <div className="column">
               <div className="name">Ready to Claim</div>
               <div className="value">
-                <CommaNumber value={rewardPerMonth * hasRewardsFor} endingText="MVK" />
+                <CommaNumber value={rewardPerMonth * hasRewardsFor} endingText="MVN" />
               </div>
             </div>
 

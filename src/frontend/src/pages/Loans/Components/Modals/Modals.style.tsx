@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
+export const LoansModalBase = styled.div<{ theme: MavenTheme }>`
   h2 {
     font-size: 22px;
   }
@@ -185,7 +185,7 @@ export const LoansModalBase = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const VaultModalOverview = styled.div<{ theme: MavrykTheme }>`
+export const VaultModalOverview = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   border: 1px solid ${({ theme }) => theme.strokeCards};

@@ -7,14 +7,14 @@ import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controll
 import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { ProposalListContainer, ProposalListItem, ProposalItemLeftSide } from './Proposals.style'
+import { ProposalItemLeftSide, ProposalListContainer, ProposalListItem } from './Proposals.style'
 
 // helpers
 import {
-  getPageNumber,
   calculateSlicePositions,
-  LIST_NAMES_MAPPER,
+  getPageNumber,
   HISTORY_PROPOSALS_LIST_NAME,
+  LIST_NAMES_MAPPER,
 } from 'app/App.components/Pagination/pagination.consts'
 
 // consts
@@ -60,15 +60,15 @@ export const Proposals = ({
       <div className="proposals-list-wrapper">
         {paginatedItemsList.map((proposalId, index) => {
           const proposal = proposalsMapper[proposalId]
-          const proposalVotedMvk =
+          const proposalVotedMvn =
             // if proposal is history show voting round or if it's 0 show proposal round votes
             listName === HISTORY_PROPOSALS_LIST_NAME
-              ? proposal.quorumMvkTotal || proposal.passVoteMvkTotal
+              ? proposal.quorumMvnTotal || proposal.proposalUpVotesMvnTotal
               : // if it's alive round proposal and phase is Proposal show proposals round votes
               governancePhase === GovPhases.PROPOSAL || governancePhase === GovPhases.EXECUTION
-              ? proposal.passVoteMvkTotal
+              ? proposal.proposalUpVotesMvnTotal
               : // if round is more than proposal show voting round votes
-                proposal.quorumMvkTotal
+                proposal.quorumMvnTotal
 
           return (
             <ProposalListItem
@@ -81,9 +81,9 @@ export const Proposals = ({
                 <h4>{proposal.title}</h4>
               </ProposalItemLeftSide>
               <CommaNumber
-                className="proposal-voted-mvk"
-                value={proposalVotedMvk}
-                endingText={'voted MVK'}
+                className="proposal-voted-mvn"
+                value={proposalVotedMvn}
+                endingText={'voted MVN'}
                 showDecimal={false}
               />
               <StatusFlag text={proposal.status} status={proposal.status} />

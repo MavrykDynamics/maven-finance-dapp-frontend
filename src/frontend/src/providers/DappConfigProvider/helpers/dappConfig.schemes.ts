@@ -37,10 +37,10 @@ export const dappConfigSchema = z.object({
       satellite_description_max_length: z.number(),
       satellite_name_max_length: z.number(),
       satellite_website_max_length: z.number(),
-      minimum_smvk_balance: z.number(),
+      minimum_smvn_balance: z.number(),
     }),
   ]),
-  mvk_faucet: z.tuple([
+  mvn_faucet: z.tuple([
     z.object({
       address: z.string(),
     }),

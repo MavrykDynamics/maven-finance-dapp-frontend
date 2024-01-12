@@ -16,7 +16,7 @@ import { DashboardTvlQuery } from 'utils/__generated__/graphql'
 
 // consts
 import { GET_DAPP_TVL } from '../queries/dappTvl.query'
-import { SMVK_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 
 export const useDappTvl = () => {
   const { handleApolloError } = useApolloContext()
@@ -35,7 +35,6 @@ export const useDappTvl = () => {
       skip: !doormanAddress,
       variables: {
         doormanContractAddress: doormanAddress ?? '',
-        isMockTime: process.env.REACT_APP_DATA_ENV === 'dev',
       },
       onCompleted: (data) => setIndexerData(data),
       onError: (error) => handleApolloError(error, 'GET_DAPP_TVL'),
@@ -79,10 +78,10 @@ const reduceTvlValue = ({
   } = indexerData
 
   // calculating doorman tvl
-  const smvkToken = getTokenDataByAddress({ tokenAddress: SMVK_TOKEN_ADDRESS, tokensMetadata, tokensPrices })
+  const smvnToken = getTokenDataByAddress({ tokenAddress: SMVN_TOKEN_ADDRESS, tokensMetadata, tokensPrices })
   const doormanTVL =
-    doormanAccount && smvkToken && smvkToken.rate
-      ? convertNumberForClient({ number: doormanAccount.mvk_balance, grade: smvkToken.decimals }) * smvkToken.rate
+    doormanAccount && smvnToken && smvnToken.rate
+      ? convertNumberForClient({ number: doormanAccount.mvn_balance, grade: smvnToken.decimals }) * smvnToken.rate
       : 0
 
   // calculating vaults tvl
@@ -139,7 +138,11 @@ const reduceTvlValue = ({
         })
 
         if (treasuryToken && treasuryToken.rate) {
-          acc += convertNumberForClient({ number: Number(balance), grade: treasuryToken.decimals }) * treasuryToken.rate
+          acc +=
+            convertNumberForClient({
+              number: Number(balance),
+              grade: treasuryToken.decimals,
+            }) * treasuryToken.rate
         }
 
         return acc

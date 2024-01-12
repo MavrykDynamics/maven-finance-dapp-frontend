@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import {z} from 'zod'
 
 import {
   ActiveSatellitesDataQueryQuery,
@@ -7,26 +7,26 @@ import {
   SatelliteDataQueryQuery,
 } from './../../utils/__generated__/graphql'
 
-import { normalizeSatelliteVotings, normallizeSatellite } from './helpers/satellites.normalizer'
+import {normalizeSatellite, normalizeSatelliteVotes} from './helpers/satellites.normalizer'
 
 import {
-  INACTIVE_SATELLITE_STATUS,
-  satelliteStatusSchema,
-  satelliteVoteSchema,
-  SATELLITE_ORACLE_STATUSES,
-  SATELLITE_STATUSES,
-  SATELLITE_DATA_SUB,
-  SATELLITE_PARTICIPATION_DATA_SUB,
   DELEGATE_ACTION,
-  UNDELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
+  INACTIVE_SATELLITE_STATUS,
   REGISTER_SATELLITE_ACTION,
-  UNREGISTER_SATELLITE_ACTION,
-  UPDATE_SATELLITE_ACTION,
+  SATELLITE_DATA_SUB,
+  SATELLITE_ORACLE_STATUSES,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITE_STATUSES,
   SATELLITES_DATA_ACTIVE_SUB,
   SATELLITES_DATA_ALL_SUB,
   SATELLITES_DATA_ORACLES_SUB,
   SATELLITES_DATA_SINGLE_SUB,
+  satelliteStatusSchema,
+  satelliteVoteSchema,
+  UNDELEGATE_ACTION,
+  UNREGISTER_SATELLITE_ACTION,
+  UPDATE_SATELLITE_ACTION,
 } from './satellites.const'
 
 // ------- context types
@@ -37,7 +37,7 @@ export type SatellitesContextState = {
   allSatellitesIds: string[]
   oraclesIds: string[]
 
-  // values to calc satellite metrix
+  // values to calc satellite metrics
   proposalsAmount: number
   satelliteGovActionsAmount: number
   finRequestsAmount: number
@@ -47,7 +47,7 @@ export type SatellitesContext = SatellitesContextState & {
   isLoading: boolean
 
   // api
-  setSatelliteAddressToSubsctibe: (satelliteAddress: string | null) => void
+  setSatelliteAddressToSubscribe: (satelliteAddress: string | null) => void
   changeSatellitesSubscriptionsList: (skips: Partial<SatellitesSubsRecordType>) => void
 }
 
@@ -70,7 +70,7 @@ export type SatellitesSubsRecordType = {
 }
 
 // ------- satellite general types
-export type SatelliteRecordType = NonNullable<ReturnType<typeof normallizeSatellite>>
+export type SatelliteRecordType = NonNullable<ReturnType<typeof normalizeSatellite>>
 export type SatelliteMapper = Record<string, SatelliteRecordType>
 
 // Satellite status
@@ -84,7 +84,7 @@ export type SatelliteConvertedOracleStatusType =
 
 // Satellite votes
 export type SatelliteVoteType = z.infer<typeof satelliteVoteSchema>
-export type SatelliteVotesType = ReturnType<typeof normalizeSatelliteVotings>
+export type SatelliteVotesType = ReturnType<typeof normalizeSatelliteVotes>
 
 export type SatelliteActionsType =
   | typeof DELEGATE_ACTION

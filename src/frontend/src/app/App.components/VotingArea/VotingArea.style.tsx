@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const VotingAreaStyled = styled.article<{ theme: MavrykTheme }>`
+export const VotingAreaStyled = styled.article<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;

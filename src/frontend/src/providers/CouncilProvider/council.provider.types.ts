@@ -1,4 +1,4 @@
-import { normalizeCouncilActions, normalizeCouncilMembers } from './helpers/council.normalizer'
+import {normalizeCouncilActions, normalizeCouncilMembers} from './helpers/council.normalizer'
 import {
   ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
   ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
@@ -19,7 +19,7 @@ import {
   GetBgMyPastCouncilActionsQuery,
   GetMyPastCouncilActionsQuery,
 } from 'utils/__generated__/graphql'
-import { CouncilActionParamsNames, CouncilsActionsIds } from './helpers/council.types'
+import {CouncilActionParamsNames, CouncilsActionsIds} from './helpers/council.types'
 
 // ----- normalizer types
 export type CouncilActionType = {
@@ -36,7 +36,7 @@ export type CouncilActionType = {
   startDatetime: string | null
   expirationTime: string | null
   councilSize: number
-  counsilAddress: string
+  councilAddress: string
   signers: Array<string>
   parameters: Array<{ id: number; name: CouncilActionParamsNames; value: string }>
 }
@@ -44,16 +44,16 @@ export type CouncilMembersType = ReturnType<typeof normalizeCouncilMembers>
 export type CouncilActionsType = ReturnType<typeof normalizeCouncilActions>
 
 // ----- queries types
-export type CounsilActionsQueryType =
+export type CouncilActionsQueryType =
   | GetMyPastCouncilActionsQuery
   | GetAllPastCouncilActionsQuery
   | GetAllOngoingCouncilActionsQuery
-export type BgCounsilActionsQueryType =
+export type BgCouncilActionsQueryType =
   | GetBgMyPastCouncilActionsQuery
   | GetBgAllPastCouncilActionsQuery
   | GetBgAllOngoingCouncilActionsQuery
 
-// ----- counsils subs types
+// ----- councils subs types
 export type BreakGlassCouncilActionsSubsType =
   | typeof MY_BG_PAST_COUNCIL_ACTIONS_SUB
   | typeof ALL_BG_PAST_COUNCIL_ACTIONS_SUB
@@ -71,7 +71,7 @@ export type CouncilSubsRecordType = {
   [BG_COUNCIL_MEMBERS_SUB]: boolean
 }
 
-// ----- counsils context types
+// ----- councils context types
 export type CouncilActionsRecordType = {
   allPendingActions: CouncilActionsType['allPendingActions']
   actionsToSign: CouncilActionsType['actionsToSign']

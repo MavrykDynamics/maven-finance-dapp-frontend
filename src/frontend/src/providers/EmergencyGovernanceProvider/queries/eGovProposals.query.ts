@@ -12,9 +12,9 @@ export const EGOV_ALL_PROPOSALS = gql(`
 			execution_datetime
 			expiration_timestamp
 			
-			smvk_percentage_required
-			smvk_required_for_trigger
-			total_smvk_votes
+			smvn_percentage_required
+			smvn_required_for_trigger
+			total_smvn_votes
 
 			proposer {
 				address
@@ -24,7 +24,7 @@ export const EGOV_ALL_PROPOSALS = gql(`
 				voter {
 					address
 				}
-				smvk_amount
+				smvn_amount
 				timestamp
 			}
 		}

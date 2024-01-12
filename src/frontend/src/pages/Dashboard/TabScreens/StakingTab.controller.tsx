@@ -30,12 +30,12 @@ import CustomLink from 'app/App.components/CustomLink/CustomLink'
  * TODO: will need only to subscribe to staking chart, and get it's loading here, as staking stats data is subscribed in controller
  */
 export const StakingTab = () => {
-  const { totalSupply, totalStakedMvk, isLoading: isStakingLoading } = useDoormanContext()
+  const { totalSupply, totalStakedMvn, isLoading: isStakingLoading } = useDoormanContext()
 
-  const { smvkHistoryData, isLoading: isChartsDataLoading, noChartData } = useDoormanHistory(TWENTY_FOUR_HOURS)
+  const { smvnHistoryData, isLoading: isChartsDataLoading, noChartData } = useDoormanHistory(TWENTY_FOUR_HOURS)
 
-  const mli = calcMLI(totalSupply, totalStakedMvk)
-  const fee = calcExitFee(totalSupply, totalStakedMvk)
+  const mli = calcMLI(totalSupply, totalStakedMvn)
+  const fee = calcExitFee(totalSupply, totalStakedMvn)
 
   return (
     <TabWrapperStyled backgroundImage="dashboard_stakingTab_bg.png">
@@ -67,7 +67,7 @@ export const StakingTab = () => {
                     </Tooltip.Trigger>
                     <Tooltip.Content>
                       The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit
-                      fees are paid directly to sMVK stakeholders for remaining active participants in securing the
+                      fees are paid directly to sMVN stakeholders for remaining active participants in securing the
                       network. Click to read more.
                     </Tooltip.Content>
                   </Tooltip>
@@ -79,16 +79,16 @@ export const StakingTab = () => {
             </StatBlock>
             <StatBlock>
               <div className="name flexbox">
-                MVK Loyalty Index
+                Maven Loyalty Index
                 <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
                     </Tooltip.Trigger>
                     <Tooltip.Content>
-                      The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK,
-                      the higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the
-                      MLI, and the exit fee will rise. Click to read more.
+                      The Maven Loyalty Index is a metric that balances MVN & sMVN. The more MVN is staked v.s. MVN, the
+                      higher the MLI, and the lower the exit fee is. The less MVN staked v.s. MVN, the lower the MLI,
+                      and the exit fee will rise. Click to read more.
                     </Tooltip.Content>
                   </Tooltip>
                 </CustomLink>
@@ -103,16 +103,16 @@ export const StakingTab = () => {
             <StakingHistoryChartWrapper>
               <Chart
                 isLoading={isChartsDataLoading}
-                numberOfItemsToDisplay={smvkHistoryData.length && !noChartData ? smvkHistoryData.length : 10}
+                numberOfItemsToDisplay={smvnHistoryData.length && !noChartData ? smvnHistoryData.length : 10}
                 data={{
                   type: AREA_CHART_TYPE,
-                  plots: smvkHistoryData,
+                  plots: smvnHistoryData,
                 }}
                 settings={{
                   height: 100,
                   tickDateFormatter: (date: number) => getChartXAxisTicks(date, TWENTY_FOUR_HOURS),
                 }}
-                tooltipAsset={'sMVK'}
+                tooltipAsset={'sMVN'}
               />
             </StakingHistoryChartWrapper>
           </div>
@@ -120,10 +120,10 @@ export const StakingTab = () => {
       )}
 
       <div className="descr">
-        <div className="title">Why stake MVK on Mavryk?</div>
+        <div className="title">Why stake MVN on Maven?</div>
         <div className="text">
-          You can earn rewards by staking your MVK & delegating your voting rights to a Satellite. Staked MVK helps
-          secure Mavryk Finance’s governance & decentralized oracles, by allowing Satellites to vote on business
+          You can earn rewards by staking your MVN & delegating your voting rights to a Satellite. Staked MVN helps
+          secure Maven Finance’s governance & decentralized oracles, by allowing Satellites to vote on business
           decisions & sign data feeds on your behalf. The earned rewards are paid directly to you, minus a small
           Satellite fee. Satellites can never move or spend your tokens, and you may re-delegate to a new Satellite at
           any time.{' '}

@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from '../../styles/interfaces'
+import { MavenTheme } from '../../styles/interfaces'
 
-export const EmergencyGovernanceCard = styled(Card)<{ theme: MavrykTheme }>`
+export const EmergencyGovernanceCard = styled(Card)<{ theme: MavenTheme }>`
   padding-top: 28px;
   position: relative;
 
@@ -29,7 +29,7 @@ export const EmergencyGovernanceCard = styled(Card)<{ theme: MavrykTheme }>`
   }
 `
 
-export const CardContentLeftSide = styled.div<{ theme: MavrykTheme }>`
+export const CardContentLeftSide = styled.div<{ theme: MavenTheme }>`
   width: 80%;
   align-items: center;
   justify-content: center;
@@ -49,14 +49,14 @@ export const CardContentLeftSide = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const CardContent = styled.div<{ theme: MavrykTheme }>`
+export const CardContent = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: center;
 
   column-gap: 75px;
 `
 
-export const CardContentRightSide = styled.div<{ theme: MavrykTheme }>`
+export const CardContentRightSide = styled.div<{ theme: MavenTheme }>`
   width: 20%;
   align-items: center;
   justify-content: flex-end;
@@ -75,7 +75,7 @@ export const CardContentRightSide = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const EmergencyGovernHistory = styled.div<{ theme: MavrykTheme }>`
+export const EmergencyGovernHistory = styled.div<{ theme: MavenTheme }>`
   padding-top: 39px;
 
   > h1 {

@@ -9,7 +9,7 @@ import {GetUserRewardsDataQuery} from 'utils/__generated__/graphql'
 import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
-  GET_MVK_FROM_FAUCET_ACTION,
+  GET_MVN_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from './helpers/user.consts'
 import {userTzktTokenBalancesSchema, userTzktWSAccountSchema} from './helpers/user.schemes'
@@ -21,7 +21,7 @@ import {normalizeUserHistoryData} from './helpers/userData.helpers'
 export type UserLendBorrowItem = {
   amount: number
   id: number
-  annualPecentage: number
+  annualPercentage: number
   date: string
   operationHash: string
   tokenAddress: TokenAddressType
@@ -78,7 +78,7 @@ export type UserContextStateType = UserMetadataType & {
   userMTokens: Record<TokenAddressType, UserMTokenType>
 }
 
-export type UserIndexerFarmRewardsType = GetUserRewardsDataQuery['mavryk_user'][number]['farm_accounts']
+export type UserIndexerFarmRewardsType = GetUserRewardsDataQuery['maven_user'][number]['farm_accounts']
 
 export type UserRewardsType = {
   gatheredFarmRewards: number
@@ -92,18 +92,18 @@ export type UserRewardsType = {
 }
 
 export type UserMetadataType = {
-  satelliteMvkIsDelegatedTo: string | null
+  satelliteMvnIsDelegatedTo: string | null
   isSatellite: boolean
   userSatelliteName: string | null
   isVestee: boolean
-  isMavrykCouncil: boolean
+  isMavenCouncil: boolean
   isBreakGlassCouncil: boolean
   isNewlyRegisteredSatellite: boolean
   govActionsCount: number
   userAvatars: {
     mainAvatar: string
     satelliteAvatar: string | null
-    counsilAvatar: string | null
+    councilAvatar: string | null
     breakGlassAvatar: string | null
   }
 }
@@ -114,4 +114,4 @@ export type UserActionsType =
   | typeof CLAIM_VESTING_REWARD_ACTION
   | typeof CLAIM_ALL_REWARDS_ACTION
   | typeof REWARDS_COMPOUND_ACTION
-  | typeof GET_MVK_FROM_FAUCET_ACTION
+  | typeof GET_MVN_FROM_FAUCET_ACTION

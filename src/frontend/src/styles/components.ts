@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from './interfaces'
+import { MavenTheme } from './interfaces'
 
-export const Page = styled.div<{ theme: MavrykTheme }>`
+export const Page = styled.div<{ theme: MavenTheme }>`
   margin: auto;
   padding: 40px;
   width: 100%;
@@ -55,7 +55,7 @@ export const Message = styled.div`
   height: 50vh;
 `
 
-export const Card = styled.div<{ theme: MavrykTheme }>`
+export const Card = styled.div<{ theme: MavenTheme }>`
   margin-top: 30px;
   background-color: ${({ theme }) => theme.cards};
   border-radius: 10px;
@@ -73,7 +73,7 @@ export const CardHover = styled(Card)`
   }
 `
 
-export const CardHeader = styled.h2<{ theme: MavrykTheme }>`
+export const CardHeader = styled.h2<{ theme: MavenTheme }>`
   font-weight: 700;
   font-size: 14px;
   line-height: 21px;

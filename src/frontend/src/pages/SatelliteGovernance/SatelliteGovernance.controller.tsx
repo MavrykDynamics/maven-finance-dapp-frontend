@@ -1,39 +1,39 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Page } from 'styles'
-import { useLocation, useParams, useHistory } from 'react-router'
+import { useHistory, useLocation, useParams } from 'react-router'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useSatelliteGovernanceContext } from 'providers/SatellitesGovernanceProvider/satelliteGovernance.provider'
+import { useSatelliteGovernanceContext } from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider'
 
 // const
 import {
+  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   ONGOING_ACTIONS_SATELLITE_GOVERNANCE_LIST,
   PAST_ACTIONS_SATELLITE_GOVERNANCE_LIST,
-  MY_ACTIONS_SATELLITE_GOVERNANCE_LIST,
 } from '../../app/App.components/Pagination/pagination.consts'
 import {
   SATELLITE_GOVERNANCE_ACTIONS,
   SATELLITE_GOVERNANCE_MENU_TABS,
   SATELLITE_GOVERNANCE_PATHNAME,
 } from './SatelliteGovernance.consts'
-import { TAB_ID_ONGOING, TabIdType, getSatelliteGovSub } from './utils/tabsHelper'
+import { getSatelliteGovSub, TAB_ID_ONGOING, TabIdType } from './utils/tabsHelper'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
-import { TOTAL_DELEGATED_MVK } from 'texts/tooltips/satellite'
+import { TOTAL_DELEGATED_MVN } from 'texts/tooltips/satellite'
 import {
   DEFAULT_SATELLITE_GOVERNANCE_SUBS,
-  SATELLITES_GOVERNANCE_CONFIG_SUB,
   SATELLITE_GOV_ACTIONS_DATA,
-} from 'providers/SatellitesGovernanceProvider/helpers/satellitesGov.consts'
+  SATELLITES_GOVERNANCE_CONFIG_SUB,
+} from 'providers/SatelliteGovernanceProvider/helpers/satellitesGov.consts'
 
 // style
 import {
   SatelliteGovernanceAvailableActions,
-  SatelliteGovernanceStats,
-  SatelliteGovernanceStyled,
-  SatelliteGovernanceStatsInfo,
   SatelliteGovernanceMenuCards,
+  SatelliteGovernanceStats,
+  SatelliteGovernanceStatsInfo,
+  SatelliteGovernanceStyled,
 } from './SatelliteGovernance.style'
 import { EmptyContainer } from '../../app/App.style'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -86,7 +86,7 @@ export const SatelliteGovernance = () => {
 
   const { tabId = SATELLITE_GOVERNANCE_MENU_TABS.ONGOING } = useParams<{ tabId: TabIdType }>()
 
-  const { totalDelegatedMVK, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
+  const { totalDelegatedMVN, totalActiveSatellites, totalOracleNetworks } = useSatelliteStatistics()
   const {
     maxLengths: {
       governanceSatellite: { purposeMaxLength },
@@ -149,9 +149,10 @@ export const SatelliteGovernance = () => {
         id: 3,
         active: SATELLITE_GOVERNANCE_MENU_TABS.MY === tabId,
         path: SATELLITE_GOVERNANCE_MENU_TABS.MY,
+        disabled: !userAddress,
       },
     ]
-  }, [tabId])
+  }, [tabId, userAddress])
 
   const ongoingActionsLength = ongoingSatelliteGovIds.length
 
@@ -174,7 +175,7 @@ export const SatelliteGovernance = () => {
           return ongoingSatelliteGovIds
       }
     },
-    [mySatelliteGovIds, ongoingSatelliteGovIds, pastSatelliteGovIds]
+    [mySatelliteGovIds, ongoingSatelliteGovIds, pastSatelliteGovIds],
   )
 
   const currentListName = getCurrentListNameById(tabId)
@@ -190,7 +191,7 @@ export const SatelliteGovernance = () => {
     const foundTab = tabsList.find((item) => item.id === id)
     const currentTabId = tabsList.find((item) => item.path === tabId)?.id
 
-    if (!foundTab?.path || currentTabId === id) return
+    if (foundTab?.disabled || !foundTab?.path || currentTabId === id) return
     history.replace(`${SATELLITE_GOVERNANCE_PATHNAME}/${foundTab.path}`)
   }
 
@@ -200,6 +201,12 @@ export const SatelliteGovernance = () => {
     if (!foundItem) return
     setChosenDdItem(foundItem)
   }
+
+  useEffect(() => {
+    if (!userAddress && tabsList[2].path === tabId) {
+      handleChangeTabs(1)
+    }
+  }, [userAddress, tabId])
 
   return (
     <Page>
@@ -216,14 +223,14 @@ export const SatelliteGovernance = () => {
             <div className="value">{totalOracleNetworks}</div>
           </SatelliteGovernanceStatsInfo>
           <SatelliteGovernanceStatsInfo>
-            <h3>Total Delegated MVK</h3>
+            <h3>Total Delegated MVN</h3>
             <div className="value">
-              <CommaNumber value={totalDelegatedMVK} endingText={'MVK'} />
+              <CommaNumber value={totalDelegatedMVN} endingText={'MVN'} />
               <Tooltip>
                 <Tooltip.Trigger className="ml-3 mt-3 tooltip-trigger">
                   <Icon id="info" />
                 </Tooltip.Trigger>
-                <Tooltip.Content>{TOTAL_DELEGATED_MVK}</Tooltip.Content>
+                <Tooltip.Content>{TOTAL_DELEGATED_MVN}</Tooltip.Content>
               </Tooltip>
             </div>
           </SatelliteGovernanceStatsInfo>
@@ -283,11 +290,11 @@ export const SatelliteGovernance = () => {
                         statusFlag={action.statusFlag}
                         purpose={action.purpose}
                         governanceType={action.type}
-                        snapshotSmvkTotalSupply={action.snapshotSmvkTotalSupply}
-                        smvkPercentageForApproval={action.smvkPercentageForApproval}
-                        yayVotesSmvkTotal={action.yayVoteSmvkTotal}
-                        nayVotesSmvkTotal={action.nayVoteSmvkTotal}
-                        passVoteSmvkTotal={action.passVoteSmvkTotal}
+                        snapshotSmvnTotalSupply={action.snapshotSmvnTotalSupply}
+                        smvnPercentageForApproval={action.smvnPercentageForApproval}
+                        yayVotesSmvnTotal={action.yayVotesSmvnTotal}
+                        nayVotesSmvnTotal={action.nayVotesSmvnTotal}
+                        passVoteSmvnTotal={action.passVotesSmvnTotal}
                         accountPkh={userAddress}
                         isActionActive={isActionActive}
                         votes={action.votes}

@@ -1,10 +1,10 @@
 import { createGlobalStyle } from 'styled-components/macro'
 import { css } from 'styled-components'
-import { MavrykTheme } from './interfaces'
+import { MavenTheme } from './interfaces'
 
 // TODO: remove link styles from here, when all link will be using CustomLink component
 
-export const GlobalStyle = createGlobalStyle<{ theme: MavrykTheme }>`
+export const GlobalStyle = createGlobalStyle<{ theme: MavenTheme }>`
 * {
   box-sizing: border-box;
 }

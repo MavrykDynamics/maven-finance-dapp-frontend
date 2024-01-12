@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 import { Multiselect } from 'app/App.components/Multiselect/Multiselect'
 
 // utils
@@ -12,7 +12,7 @@ import { unpauseAllEntrypoints } from 'providers/CouncilProvider/actions/breakGl
 import { handleBgCouncilContractSearch } from '../../helpers/commonCouncil.utils'
 
 // consts
-import { BgCounsilDdForms } from '../../helpers/council.consts'
+import { BgCouncilDdForms } from '../../helpers/council.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
 import { MULTISELECT_SELECT_ALL_OPTION_VALUE } from 'app/App.components/Multiselect/Multiselect.consts'
 import { UNPAUSE_ALL_ENTRYPOINTS_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
@@ -127,12 +127,12 @@ export function BgCouncilFormUnpauseAllEntrypoints() {
     contractsToUnpause.length === 0 ||
     Boolean(
       allPendingActions.find(
-        (actionId) => actionsMapper[actionId].actionClientId === BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS,
+        (actionId) => actionsMapper[actionId].actionClientId === BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS,
       ),
     )
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.UNPAUSE_ALL_ENTRYPOINTS}>
+    <CouncilFormStyled formName={BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

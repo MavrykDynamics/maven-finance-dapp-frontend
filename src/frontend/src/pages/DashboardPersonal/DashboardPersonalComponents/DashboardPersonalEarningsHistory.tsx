@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { EarnHistoryStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { MVK_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
 import { SECONDARY_TOGGLE } from 'app/App.components/Toggle/Toggle.consts'
 
 export type DashboardPersonalEarningsHistoryProps = {
@@ -21,9 +21,9 @@ const DashboardPersonalEarningsHistory = ({
   exitRewards,
 }: DashboardPersonalEarningsHistoryProps) => {
   const { tokensPrices } = useTokensContext()
-  const [switcherActive, setSwithcerActive] = useState(true)
+  const [switcherActive, setSwitcherActive] = useState(true)
 
-  const mvkRate = tokensPrices[MVK_TOKEN_SYMBOL]
+  const mvnRate = tokensPrices[MVN_TOKEN_SYMBOL]
   const xtzRate = tokensPrices[XTZ_TOKEN_SYMBOL]
 
   return (
@@ -32,10 +32,10 @@ const DashboardPersonalEarningsHistory = ({
         <H2Title>Earnings History</H2Title>
         <Toggle
           prefix={'USD'}
-          sufix={'MVK'}
+          sufix={'MVN'}
           kind={SECONDARY_TOGGLE}
           checked={switcherActive}
-          onChange={() => setSwithcerActive(!switcherActive)}
+          onChange={() => setSwitcherActive(!switcherActive)}
         />
       </div>
       <div className="grid">
@@ -43,8 +43,8 @@ const DashboardPersonalEarningsHistory = ({
           <div className="name">Satellite Rewards</div>
           <div className="value">
             <CommaNumber
-              value={switcherActive ? satelliteRewards : satelliteRewards * mvkRate}
-              endingText={switcherActive ? 'MVK' : 'USD'}
+              value={switcherActive ? satelliteRewards : satelliteRewards * mvnRate}
+              endingText={switcherActive ? 'MVN' : 'USD'}
               showDecimal
               decimalsToShow={2}
             />
@@ -54,8 +54,8 @@ const DashboardPersonalEarningsHistory = ({
           <div className="name">Farming Rewards</div>
           <div className="value">
             <CommaNumber
-              value={switcherActive ? farmsRewards : farmsRewards * mvkRate}
-              endingText={switcherActive ? 'MVK' : 'USD'}
+              value={switcherActive ? farmsRewards : farmsRewards * mvnRate}
+              endingText={switcherActive ? 'MVN' : 'USD'}
               showDecimal
               decimalsToShow={2}
             />
@@ -65,8 +65,8 @@ const DashboardPersonalEarningsHistory = ({
           <div className="name">Exit Fee Rewards</div>
           <div className="value">
             <CommaNumber
-              value={switcherActive ? exitRewards : exitRewards * mvkRate}
-              endingText={switcherActive ? 'MVK' : 'USD'}
+              value={switcherActive ? exitRewards : exitRewards * mvnRate}
+              endingText={switcherActive ? 'MVN' : 'USD'}
               showDecimal
               decimalsToShow={2}
             />

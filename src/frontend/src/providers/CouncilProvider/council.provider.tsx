@@ -13,11 +13,11 @@ import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
 import {
+  BgCouncilActionsQueryType,
+  CouncilActionsQueryType,
   CouncilContext,
   CouncilSubsRecordType,
   NullableCouncilContextStateType,
-  CounsilActionsQueryType,
-  BgCounsilActionsQueryType,
 } from './council.provider.types'
 import { GetBreakGlassCouncilMembersQuery, GetCouncilMembersQuery } from 'utils/__generated__/graphql'
 
@@ -37,16 +37,16 @@ import {
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from './helpers/council.consts'
 import {
-  ALL_BG_ONGOING_COUNSILS_QUERY,
-  ALL_BG_PAST_COUNSILS_QUERY,
+  ALL_BG_ONGOING_COUNCILS_QUERY,
+  ALL_BG_PAST_COUNCILS_QUERY,
   BREAK_GLASS_COUNCIL_MEMBERS_QUERY,
-  MY_BG_PAST_COUNSILS_QUERY,
+  MY_BG_PAST_COUNCILS_QUERY,
 } from './queries/breakGlassCouncil.query'
 import {
+  ALL_ONGOING_COUNCILS_QUERY,
+  ALL_PAST_COUNCILS_QUERY,
   COUNCIL_MEMBERS_QUERY,
-  ALL_ONGOING_COUNSILS_QUERY,
-  ALL_PAST_COUNSILS_QUERY,
-  MY_PAST_COUNSILS_QUERY,
+  MY_PAST_COUNCILS_QUERY,
 } from './queries/council.query'
 
 export const councilContext = React.createContext<CouncilContext>(undefined!)
@@ -130,8 +130,8 @@ const CouncilProvider = ({ children }: Props) => {
   }, [userAddress])
 
   /**
-   * councils memebers:
-   * COUNCIL_MEMBERS_QUERY -> members of mavryk council
+   * councils members:
+   * COUNCIL_MEMBERS_QUERY -> members of maven council
    * BREAK_GLASS_COUNCIL_MEMBERS_QUERY -> members of break glass council
    */
   useQueryWithRefetch(COUNCIL_MEMBERS_QUERY, {
@@ -147,14 +147,14 @@ const CouncilProvider = ({ children }: Props) => {
   })
 
   /**
-   * mavryk council actions:
-   * ALL_PAST_COUNSILS_QUERY -> expired or executed actions
-   * MY_PAST_COUNSILS_QUERY -> expired or executed actions where user is initiator and all ongoing actions,
+   * maven council actions:
+   * ALL_PAST_COUNCILS_QUERY -> expired or executed actions
+   * MY_PAST_COUNCILS_QUERY -> expired or executed actions where user is initiator and all ongoing actions,
    *    where user is not initiator (actions to sign carousel)
-   * ALL_ONGOING_COUNSILS_QUERY -> all actions that are not executed nor expired
+   * ALL_ONGOING_COUNCILS_QUERY -> all actions that are not executed nor expired
    */
   useQueryWithRefetch(
-    ALL_PAST_COUNSILS_QUERY,
+    ALL_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_PAST_COUNCIL_ACTIONS_SUB,
       variables: {
@@ -167,7 +167,7 @@ const CouncilProvider = ({ children }: Props) => {
   )
 
   useQueryWithRefetch(
-    MY_PAST_COUNSILS_QUERY,
+    MY_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== MY_PAST_COUNCIL_ACTIONS_SUB,
       variables: {
@@ -181,7 +181,7 @@ const CouncilProvider = ({ children }: Props) => {
   )
 
   useQueryWithRefetch(
-    ALL_ONGOING_COUNSILS_QUERY,
+    ALL_ONGOING_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_ONGOING_COUNCIL_ACTIONS_SUB,
       variables: {
@@ -201,7 +201,7 @@ const CouncilProvider = ({ children }: Props) => {
    * ALL_BG_ONGOING_COUNSILS_QUERY -> all actions that are not executed nor expired
    */
   useQueryWithRefetch(
-    ALL_BG_PAST_COUNSILS_QUERY,
+    ALL_BG_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
       variables: {
@@ -214,7 +214,7 @@ const CouncilProvider = ({ children }: Props) => {
   )
 
   useQueryWithRefetch(
-    MY_BG_PAST_COUNSILS_QUERY,
+    MY_BG_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== MY_BG_PAST_COUNCIL_ACTIONS_SUB,
       variables: {
@@ -228,7 +228,7 @@ const CouncilProvider = ({ children }: Props) => {
   )
 
   useQueryWithRefetch(
-    ALL_BG_ONGOING_COUNSILS_QUERY,
+    ALL_BG_ONGOING_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
       variables: {
@@ -240,8 +240,8 @@ const CouncilProvider = ({ children }: Props) => {
     { refetchQueryVariables },
   )
 
-  // mavryk council actions update
-  const updateCouncilActionsData = (data: CounsilActionsQueryType) => {
+  // maven council actions update
+  const updateCouncilActionsData = (data: CouncilActionsQueryType) => {
     const { myPastActions, myPendingActions, actionsToSign, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.council_action, userAddress)
 
@@ -271,7 +271,7 @@ const CouncilProvider = ({ children }: Props) => {
   }
 
   // break glass council actions update
-  const updateBreakGlassCouncilActionsData = (data: BgCounsilActionsQueryType) => {
+  const updateBreakGlassCouncilActionsData = (data: BgCouncilActionsQueryType) => {
     const { myPastActions, myPendingActions, actionsToSign, allPastActions, allPendingActions, actionsMapper } =
       normalizeCouncilActions(data.break_glass_action, userAddress)
 
@@ -304,7 +304,7 @@ const CouncilProvider = ({ children }: Props) => {
     }))
   }
 
-  // mavryk council members update
+  // maven council members update
   const updateCouncilMembers = (data: GetCouncilMembersQuery) => {
     const members = normalizeCouncilMembers(data.council[0].members)
 

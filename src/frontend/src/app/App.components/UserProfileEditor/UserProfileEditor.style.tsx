@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const UserProfileEditorStyled = styled.div<{ theme: MavrykTheme }>`
+export const UserProfileEditorStyled = styled.div<{ theme: MavenTheme }>`
   padding: 10px 10px 0 10px;
 
   .avatar {

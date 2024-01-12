@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { Card, CardHover } from 'styles'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
 export const DataFeedsStyled = styled.section`
   .list-wrapper {
@@ -11,7 +11,7 @@ export const DataFeedsStyled = styled.section`
   }
 `
 
-export const DataFeedsCardStyled = styled(CardHover)<{ theme: MavrykTheme; isExtendedCard?: boolean }>`
+export const DataFeedsCardStyled = styled(CardHover)<{ theme: MavenTheme; isExtendedCard?: boolean }>`
   display: grid;
   padding: 16px 30px;
   transition: 0.5s all;
@@ -22,7 +22,7 @@ export const DataFeedsCardStyled = styled(CardHover)<{ theme: MavrykTheme; isExt
   column-gap: ${({ isExtendedCard }) => (isExtendedCard ? '50px' : '30px')};
 `
 
-export const FeedsOraclesCardStyled = styled(DataFeedsCardStyled)<{ theme: MavrykTheme }>`
+export const FeedsOraclesCardStyled = styled(DataFeedsCardStyled)<{ theme: MavenTheme }>`
   grid-template-columns: 1fr 1fr 1fr 0.8fr 0.65fr 75px;
   max-height: 80px;
   column-gap: 30px;
@@ -30,7 +30,7 @@ export const FeedsOraclesCardStyled = styled(DataFeedsCardStyled)<{ theme: Mavry
   padding: 15px 30px 8px 30px;
 `
 
-export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
+export const FeedsListItem = styled.div<{ theme: MavenTheme }>`
   width: 100%;
 
   &.with-img {
@@ -114,7 +114,7 @@ export const FeedsListItem = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const DataFeedsSearchFilter = styled(Card)<{ theme: MavrykTheme }>`
+export const DataFeedsSearchFilter = styled(Card)<{ theme: MavenTheme }>`
   background-color: ${({ theme }) => theme.cards};
   display: flex;
   align-items: center;
@@ -146,7 +146,7 @@ export const DataFeedsSearchFilter = styled(Card)<{ theme: MavrykTheme }>`
   }
 `
 
-export const DataFeedListItemTextTruncated = styled.var<{ theme: MavrykTheme }>`
+export const DataFeedListItemTextTruncated = styled.var<{ theme: MavenTheme }>`
   max-width: 180px;
   white-space: nowrap;
   overflow: hidden;

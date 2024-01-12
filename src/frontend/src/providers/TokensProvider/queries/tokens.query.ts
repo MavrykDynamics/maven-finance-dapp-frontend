@@ -28,8 +28,8 @@ export const QUERY_TOKENS_METADATA = gql(`
         address
       }
 
-      # check that it's real MVK token
-      mvk_tokens {
+      # check that it's real MVN token
+      mvn_tokens {
         address
       }
 

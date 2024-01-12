@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
 // view
-import { ProposalSubmissionBannerStyled } from './ProposalSubmissionBanner.style'
+import { LoaderWrapper, ProposalSubmissionBannerStyled } from './ProposalSubmissionBanner.style'
 import { Info } from 'app/App.components/Info/Info.view'
 
 // consts
@@ -24,6 +24,8 @@ import {
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { sleep } from 'utils/api/sleep'
 
 export const ProposalSubmissionBanner = () => {
   const { isNewlyRegisteredSatellite } = useUserContext()
@@ -33,6 +35,7 @@ export const ProposalSubmissionBanner = () => {
   const { bug } = useToasterContext()
 
   const [needRefreshCycle, setNeedRefreshCycle] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (governancePhase !== GovPhases.PROPOSAL && governancePhase !== GovPhases.EXECUTION) return
@@ -47,6 +50,10 @@ export const ProposalSubmissionBanner = () => {
         )
 
         setNeedRefreshCycle(dayjs(votingEndTimestamp).diff() <= 0)
+
+        // human delay
+        await sleep(200)
+        setIsLoading(false)
       } catch (e) {
         // TODO: handle fetch errors when error boundary will be ready
         if (!isAbortError(e)) {
@@ -59,21 +66,41 @@ export const ProposalSubmissionBanner = () => {
     return () => abortController.abort()
   }, [currentRoundEndLevel])
 
-  if (needRefreshCycle) {
-    return (
-      <ProposalSubmissionBannerStyled>
-        <Info text={MOVE_CYCLE_BANNER_TEXT} type={INFO_DEFAULT} />
-      </ProposalSubmissionBannerStyled>
-    )
-  }
+  // if (isLoading) return <ClockLoader width={50} height={50} />
 
-  if (isNewlyRegisteredSatellite) {
-    return (
-      <ProposalSubmissionBannerStyled>
-        <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
-      </ProposalSubmissionBannerStyled>
-    )
-  }
+  // if (needRefreshCycle) {
+  //   return (
+  //     <ProposalSubmissionBannerStyled>
+  //       <Info text={MOVE_CYCLE_BANNER_TEXT} type={INFO_DEFAULT} />
+  //     </ProposalSubmissionBannerStyled>
+  //   )
+  // }
 
-  return null
+  // if (isNewlyRegisteredSatellite) {
+  //   return (
+  //     <ProposalSubmissionBannerStyled>
+  //       <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
+  //     </ProposalSubmissionBannerStyled>
+  //   )
+  // }
+
+  return (
+    <>
+      {isNewlyRegisteredSatellite && (
+        <ProposalSubmissionBannerStyled>
+          <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
+        </ProposalSubmissionBannerStyled>
+      )}
+
+      {isLoading ? (
+        <LoaderWrapper>
+          <ClockLoader width={50} height={50} />
+        </LoaderWrapper>
+      ) : needRefreshCycle ? (
+        <ProposalSubmissionBannerStyled>
+          <Info text={MOVE_CYCLE_BANNER_TEXT} type={INFO_DEFAULT} />
+        </ProposalSubmissionBannerStyled>
+      ) : null}
+    </>
+  )
 }

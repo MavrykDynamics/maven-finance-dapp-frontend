@@ -1,9 +1,9 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { STATUS_FLAG_INFO } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
-export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
+export const NoItemsInTabStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 10px;
@@ -30,7 +30,7 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const LendingTabStyled = styled.div<{ theme: MavrykTheme }>`
+export const LendingTabStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 40px;
@@ -57,7 +57,7 @@ export const BorrowingTabStyled = styled.div`
   }
 `
 
-export const VaultsList = styled.div<{ theme: MavrykTheme }>`
+export const VaultsList = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 10px;
@@ -75,7 +75,7 @@ export const VaultsList = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const BorrowingExpandedCard = styled.div<{ theme: MavrykTheme }>`
+export const BorrowingExpandedCard = styled.div<{ theme: MavenTheme }>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -229,7 +229,7 @@ export const LoansActionsSection = styled.div`
   }
 `
 
-export const LoansValuesSection = styled.div<{ theme: MavrykTheme }>`
+export const LoansValuesSection = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   padding: 30px;
@@ -262,7 +262,7 @@ export const LoansValuesSection = styled.div<{ theme: MavrykTheme }>`
 `
 
 export const LoansValuesSectionInfo = styled.div<{
-  theme: MavrykTheme
+  theme: MavenTheme
   hasRate?: boolean
   customColor?: string
 }>`
@@ -332,7 +332,7 @@ export const LoansValuesSectionInfo = styled.div<{
   }
 `
 
-export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
+export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   padding: 30px;
@@ -421,7 +421,7 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const VaultOverview = styled.div<{ theme: MavrykTheme }>`
+export const VaultOverview = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   row-gap: 25px;
@@ -445,7 +445,7 @@ export const VaultOverview = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const StatusMessageStyled = styled.div<{ theme: MavrykTheme }>`
+export const StatusMessageStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
   column-gap: 20px;

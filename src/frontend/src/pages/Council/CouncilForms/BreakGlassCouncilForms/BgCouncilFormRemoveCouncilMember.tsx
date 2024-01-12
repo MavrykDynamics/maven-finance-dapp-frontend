@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 
 // view
 import NewButton from 'app/App.components/Button/NewButton'
-import { DropDown, DDItemId } from 'app/App.components/DropDown/NewDropdown'
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import Icon from '../../../../app/App.components/Icon/Icon.view'
-import { CouncilFormStyled, CouncilFormHeaderStyled } from '../CouncilForm.style'
+import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // types
 import { CouncilContext } from 'providers/CouncilProvider/council.provider.types'
@@ -22,7 +22,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE, SUBMIT } from '../../../../app/App.components/Button/Button.constants'
-import { BgCounsilDdForms } from '../../helpers/council.consts'
+import { BgCouncilDdForms } from '../../helpers/council.consts'
 import { REMOVE_BREAK_GLASS_COUNCIL_MEMBER_ACTION } from 'providers/CouncilProvider/helpers/council.consts'
 
 type DdItemType = {
@@ -110,7 +110,7 @@ export function BgCouncilFormRemoveCouncilMember({
   const isButtonDisabled = isActionActive || !chosenDdItem
 
   return (
-    <CouncilFormStyled formName={BgCounsilDdForms.BG_REMOVE_COUNCIL_MEMBER}>
+    <CouncilFormStyled formName={BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

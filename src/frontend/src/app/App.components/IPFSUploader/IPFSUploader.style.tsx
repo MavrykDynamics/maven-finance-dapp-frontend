@@ -1,9 +1,9 @@
 import styled from 'styled-components/macro'
 import { zoomIn, slideDown } from 'styles/animations'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../Input/Input.constants'
 
-export const IPFSUploaderStyled = styled.div<{ theme: MavrykTheme }>`
+export const IPFSUploaderStyled = styled.div<{ theme: MavenTheme }>`
   margin-bottom: 5px;
   margin-top: 19px;
 
@@ -17,7 +17,7 @@ export const IPFSUploaderStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const UploaderFileSelector = styled.div<{ validation: string; theme: MavrykTheme }>`
+export const UploaderFileSelector = styled.div<{ validation: string; theme: MavenTheme }>`
   cursor: pointer;
   height: 107px;
   width: 100%;
@@ -93,7 +93,7 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mavr
 
 export const UploadIconContainer = styled.div<{
   uploadIsFailed: boolean
-  theme: MavrykTheme
+  theme: MavenTheme
 }>`
   position: absolute;
   top: 50%;
@@ -216,7 +216,7 @@ export const IpfsUploadedImageContainer = styled.figure`
   }
 `
 
-export const IPFSUploaderErrorMessage = styled.div<{ theme: MavrykTheme }>`
+export const IPFSUploaderErrorMessage = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.downColor};
   line-height: 24px;
   will-change: transform, opacity;

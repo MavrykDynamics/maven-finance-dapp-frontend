@@ -1,12 +1,12 @@
 import styled from 'styled-components'
 import { CardHover } from 'styles'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const LoansEarnBorrowStyled = styled.div<{ theme: MavrykTheme }>`
+export const LoansEarnBorrowStyled = styled.div<{ theme: MavenTheme }>`
   margin-top: 30px;
 `
 
-export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme; isChartLoading: boolean }>`
+export const EarnBorrowChartStyled = styled.div<{ theme: MavenTheme; isChartLoading: boolean }>`
   position: relative;
   margin: 23px 0 30px 0;
   height: 152px;
@@ -49,21 +49,21 @@ export const EarnBorrowChartStyled = styled.div<{ theme: MavrykTheme; isChartLoa
   }
 `
 
-export const EarnBorrowCards = styled.div<{ theme: MavrykTheme }>`
+export const EarnBorrowCards = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-wrap: wrap;
   margin-top: 20px;
   gap: 20px;
 `
 
-export const EarnBorrowCardStyled = styled(CardHover)<{ theme: MavrykTheme }>`
+export const EarnBorrowCardStyled = styled(CardHover)<{ theme: MavenTheme }>`
   padding: 0;
   margin: 0;
 
   width: 350px;
 `
 
-export const EarnBorrowCardHeader = styled.div<{ theme: MavrykTheme }>`
+export const EarnBorrowCardHeader = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -108,7 +108,7 @@ export const EarnBorrowCardHeader = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const EarnBorrowCardBody = styled.div<{ theme: MavrykTheme }>`
+export const EarnBorrowCardBody = styled.div<{ theme: MavenTheme }>`
   padding: 20px 20px 30px 20px;
 
   .info {

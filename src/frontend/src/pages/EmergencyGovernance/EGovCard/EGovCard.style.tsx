@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 import { CardHover } from 'styles'
 
-export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavrykTheme }>`
+export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavenTheme }>`
   width: 100%;
   border-radius: 10px;
   margin: 30px 0;
@@ -64,7 +64,7 @@ export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavrykTheme }>`
   }
 `
 
-export const EGovPastCardTopColumnStyled = styled.div<{ theme: MavrykTheme }>`
+export const EGovPastCardTopColumnStyled = styled.div<{ theme: MavenTheme }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -94,7 +94,7 @@ export const EGovPastCardTopColumnStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const EGovPastCardBodyStyled = styled.div<{ theme: MavrykTheme }>`
+export const EGovPastCardBodyStyled = styled.div<{ theme: MavenTheme }>`
   position: relative;
   width: 100%;
   padding: 30px;

@@ -31,7 +31,7 @@ const useUserLoansData = () => {
   useEffect(() => {
     if (!indexerData) return
 
-    if (!indexerData.mavryk_user[0]) {
+    if (!indexerData.maven_user[0]) {
       setUserLoansData(DEFAULT_USER_LOANS_DATA)
       return
     }

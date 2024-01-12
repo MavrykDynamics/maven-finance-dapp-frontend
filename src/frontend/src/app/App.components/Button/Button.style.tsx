@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components/macro'
 import { clickWave, turn } from 'styles/animations'
 import { BUTTON_RADIUS } from '../../../styles/constants'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
-export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
+export const ButtonStyled = styled.button<{ theme: MavenTheme }>`
   padding: 0;
   height: 50px;
   border: none;
@@ -248,7 +248,7 @@ export const ButtonStyled = styled.button<{ theme: MavrykTheme }>`
   }
 `
 
-export const ButtonText = styled.div<{ theme: MavrykTheme }>`
+export const ButtonText = styled.div<{ theme: MavenTheme }>`
   > div {
     text-align: center;
     margin: auto;
@@ -279,7 +279,7 @@ export const ButtonText = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number }>`
+export const ButtonIcon = styled.svg<{ theme: MavenTheme; strokeWidth?: number }>`
   width: 24px;
   height: 24px;
   display: inline-block;
@@ -322,7 +322,7 @@ export const ButtonIcon = styled.svg<{ theme: MavrykTheme; strokeWidth?: number 
       : ''}
 `
 
-export const ButtonLoadingIcon = styled.svg<{ theme: MavrykTheme }>`
+export const ButtonLoadingIcon = styled.svg<{ theme: MavenTheme }>`
   width: 16px;
   height: 16px;
   margin-top: 4px;

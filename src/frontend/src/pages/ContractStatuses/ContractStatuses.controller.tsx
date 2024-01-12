@@ -132,7 +132,7 @@ export const ContractStatuses = () => {
               </BGStatusIndicator>
 
               <p>
-                The breakglass protocol (BGP) allows MVK holders to shutdown the system without waiting for a central
+                The breakglass protocol (BGP) allows MVN holders to shutdown the system without waiting for a central
                 authority. The BGP is triggered through the Emergency governance vote.
               </p>
 
@@ -163,7 +163,7 @@ export const ContractStatuses = () => {
           </BGTop>
 
           <BGMiddleWrapper>
-            <BGPrimaryTitle>Contract Status</BGPrimaryTitle>
+            <BGPrimaryTitle>Contract Status 2</BGPrimaryTitle>
             <div className="buttons-selector">
               {uniqueContracts.map((item) => (
                 <NewButton

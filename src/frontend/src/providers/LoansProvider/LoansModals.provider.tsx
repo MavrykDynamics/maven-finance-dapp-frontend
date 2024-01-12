@@ -12,28 +12,28 @@ import { ConfirmRepay } from 'pages/Loans/Components/Modals/ConfirmRepay.modal'
 import { ConfirmRepayFull } from 'pages/Loans/Components/Modals/ConfirmRepayFull.modal'
 import { CreateNewVault } from 'pages/Loans/Components/Modals/CreateNewVault.modal'
 import { ManagePermissions } from 'pages/Loans/Components/Modals/ManagePermissions.modal'
-import { UpdateMVKOperator } from 'pages/Loans/Components/Modals/UpdateMVKOperator.modal'
+import { UpdateMVNOperator } from 'pages/Loans/Components/Modals/UpdateMVNOperator.modal'
 import { WithdrawCollateral } from 'pages/Loans/Components/Modals/WithdrawCollateral.modal'
 import { LiquidateVaultModal } from 'pages/Vaults/components/LiquidateVaultModal/LiquidateVaultModal.modal'
 
 import {
-  LoansPopupsContextStateType,
-  DEFAULT_LOANS_POPUPS_STATE,
-  ConfirmAddLendingAssetDataType,
-  ConfirmRemoveLendingAssetDataType,
-  ConfirmBorrowPopupDataType,
-  ConfirmRepayPartPopupDataType,
-  ConfirmRepayFullPopupDataType,
-  ChangeBakerPopupDataType,
-  WithdrawCollateralPopupDataType,
   AddCollateralPopupDataType,
-  AddNewCollateralDataProps,
-  UpdateOperatorsPopupDataType,
-  ManagePermissionsPopupDataType,
-  ChangeVaultNamePopupDataType,
-  CreateVaultPopupDataType,
   AddLendingAssetDataType,
+  AddNewCollateralDataProps,
+  ChangeBakerPopupDataType,
+  ChangeVaultNamePopupDataType,
+  ConfirmAddLendingAssetDataType,
+  ConfirmBorrowPopupDataType,
+  ConfirmRemoveLendingAssetDataType,
+  ConfirmRepayFullPopupDataType,
+  ConfirmRepayPartPopupDataType,
+  CreateVaultPopupDataType,
+  DEFAULT_LOANS_POPUPS_STATE,
   LiquidateVaultDataType,
+  LoansPopupsContextStateType,
+  ManagePermissionsPopupDataType,
+  UpdateOperatorsPopupDataType,
+  WithdrawCollateralPopupDataType,
 } from 'providers/LoansProvider/helpers/LoansModals.types'
 
 export const loansPopupsContext = createContext<LoansPopupsContextStateType>(undefined!)
@@ -76,8 +76,8 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       openManagePermissionsPopup: this.openManagePermissionsPopup,
       closeManagePermissionsPopup: this.closeManagePermissionsPopup,
 
-      openUpdateMvkOperatorsPopup: this.openUpdateMvkOperatorsPopup,
-      closeUpdateMvkOperatorsPopup: this.closeUpdateMvkOperatorsPopup,
+      openUpdateMvnOperatorsPopup: this.openUpdateMvnOperatorsPopup,
+      closeUpdateMvnOperatorsPopup: this.closeUpdateMvnOperatorsPopup,
 
       openWithdrawCollateralPopup: this.openWithdrawCollateralPopup,
       closeWithdrawCollateralPopup: this.closeWithdrawCollateralPopup,
@@ -276,21 +276,21 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
     })
   }
 
-  openUpdateMvkOperatorsPopup = (popupData: UpdateOperatorsPopupDataType) => {
+  openUpdateMvnOperatorsPopup = (popupData: UpdateOperatorsPopupDataType) => {
     this.setState({
       ...this.state,
-      updateMvkOperatorPopup: {
+      updateMvnOperatorPopup: {
         showModal: true,
         data: popupData,
       },
     })
   }
 
-  closeUpdateMvkOperatorsPopup = () => {
+  closeUpdateMvnOperatorsPopup = () => {
     this.setState({
       ...this.state,
-      updateMvkOperatorPopup: {
-        ...this.state.updateMvkOperatorPopup,
+      updateMvnOperatorPopup: {
+        ...this.state.updateMvnOperatorPopup,
         showModal: false,
       },
     })
@@ -412,7 +412,7 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       addExistingCollateralPopup,
       addNewCollateralPopup,
       managePermissionsPopup,
-      updateMvkOperatorPopup,
+      updateMvnOperatorPopup,
       withdrawCollateralPopup,
       changeVaultNamePopup,
       createVaultPopup,
@@ -431,7 +431,7 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
       closeAddNewCollateralPopup,
       closeWithdrawCollateralPopup,
       closeManagePermissionsPopup,
-      closeUpdateMvkOperatorsPopup,
+      closeUpdateMvnOperatorsPopup,
       closeChangeVaultNamePopup,
       closeCreateVaultPopup,
       closeAddLendingAssetPopup,
@@ -491,10 +491,10 @@ export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextS
           data={withdrawCollateralPopup.data}
         />
 
-        <UpdateMVKOperator
-          closePopup={closeUpdateMvkOperatorsPopup}
-          show={updateMvkOperatorPopup.showModal}
-          data={updateMvkOperatorPopup.data}
+        <UpdateMVNOperator
+          closePopup={closeUpdateMvnOperatorsPopup}
+          show={updateMvnOperatorPopup.showModal}
+          data={updateMvnOperatorPopup.data}
         />
         <ManagePermissions
           closePopup={closeManagePermissionsPopup}

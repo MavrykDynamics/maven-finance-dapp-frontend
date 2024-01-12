@@ -12,52 +12,52 @@ import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 
 type DoormanStatsPropsType = {
-  mvkExchangeRate: number
+  mvnExchangeRate: number
   maximumTotalSupply: number
-  totalStakedMvk: number
+  totalStakedMvn: number
   totalSupply: number
   doormanAddress: string | null
-  mvkTokenAddress: string | null
+  mvnTokenAddress: string | null
 }
 
 export const DoormanStats = ({
-  mvkExchangeRate,
+  mvnExchangeRate,
   maximumTotalSupply,
-  totalStakedMvk,
+  totalStakedMvn,
   totalSupply,
   doormanAddress,
-  mvkTokenAddress,
+  mvnTokenAddress,
 }: DoormanStatsPropsType) => {
-  const mli = calcMLI(totalSupply, totalStakedMvk)
-  const fee = calcExitFee(totalSupply, totalStakedMvk)
-  const marketCapValue = mvkExchangeRate ? mvkExchangeRate * totalSupply : 0
+  const mli = calcMLI(totalSupply, totalStakedMvn)
+  const fee = calcExitFee(totalSupply, totalStakedMvn)
+  const marketCapValue = mvnExchangeRate ? mvnExchangeRate * totalSupply : 0
 
   return (
     <DoormanStatsStyled>
-      <DoormanStatsHeader>Key MVK Metrics</DoormanStatsHeader>
+      <DoormanStatsHeader>Key MVN Metrics</DoormanStatsHeader>
       <DoormanList>
         <div>
           <h4>
-            MVK Price
+            MVN Price
             <Tooltip>
               <Tooltip.Trigger className="ml-5">
                 <Icon id="info" />
               </Tooltip.Trigger>
               <Tooltip.Content>
-                Once launched, the price will be taken from the exchange MVK is listed on, not from our Oracle price
+                Once launched, the price will be taken from the exchange MVN is listed on, not from our Oracle price
                 feeds.
               </Tooltip.Content>
             </Tooltip>
           </h4>
           <var>
-            <CommaNumber value={mvkExchangeRate} beginningText={'$'} />
+            <CommaNumber value={mvnExchangeRate} beginningText={'$'} />
           </var>
         </div>
 
         <div>
-          <h4>MVK Token Address</h4>
+          <h4>MVN Token Address</h4>
           <var className="click-address">
-            <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={mvkTokenAddress} hasIcon />
+            <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={mvnTokenAddress} hasIcon />
           </var>
         </div>
 
@@ -70,7 +70,7 @@ export const DoormanStats = ({
               </Tooltip.Trigger>
               <Tooltip.Content>
                 <>
-                  The Doorman contract controls the staking mechanism for MVK. Handles all actions connected to it and
+                  The Doorman contract controls the staking mechanism for MVN. Handles all actions connected to it and
                   interacts with the other relevant contracts.{' '}
                   <a
                     href="https://docs.mavryk.finance/smart-contracts/smart-contracts-overview/doorman-contract"
@@ -90,15 +90,15 @@ export const DoormanStats = ({
 
         <div>
           <h4>
-            MVK Loyalty Index
+            MVN Loyalty Index
             <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking">
               <Tooltip>
                 <Tooltip.Trigger>
                   <Icon id="info" />
                 </Tooltip.Trigger>
                 <Tooltip.Content>
-                  The Mavryk Loyalty Index is a metric that balances MVK & sMVK. The more MVK is staked v.s. MVK, the
-                  higher the MLI, and the lower the exit fee is. The less MVK staked v.s. MVK, the lower the MLI, and
+                  The Maven Loyalty Index is a metric that balances MVN & sMVN. The more MVN is staked v.s. MVN, the
+                  higher the MLI, and the lower the exit fee is. The less MVN staked v.s. MVN, the lower the MLI, and
                   the exit fee will rise. Click to read more.
                 </Tooltip.Content>
               </Tooltip>
@@ -119,7 +119,7 @@ export const DoormanStats = ({
                 </Tooltip.Trigger>
                 <Tooltip.Content>
                   The Exit Fee is dynamic, adjusts according to the MLI, and may modified by governance vote. Exit fees
-                  are paid directly to sMVK stakeholders for remaining active participants in securing the network.
+                  are paid directly to sMVN stakeholders for remaining active participants in securing the network.
                   Click to read more.
                 </Tooltip.Content>
               </Tooltip>
@@ -131,23 +131,23 @@ export const DoormanStats = ({
         </div>
 
         <div>
-          <h4>Total Staked MVK</h4>
+          <h4>Total Staked MVN</h4>
           <var>
-            <CommaNumber value={totalStakedMvk} endingText={'MVK'} />
+            <CommaNumber value={totalStakedMvn} endingText={'MVN'} />
           </var>
         </div>
 
         <div>
           <h4>Total Circulating</h4>
           <var>
-            <CommaNumber value={totalSupply} endingText={'MVK'} />
+            <CommaNumber value={totalSupply} endingText={'MVN'} />
           </var>
         </div>
 
         <div>
           <h4>Max Supply</h4>
           <var>
-            <CommaNumber value={maximumTotalSupply} endingText={'MVK'} />
+            <CommaNumber value={maximumTotalSupply} endingText={'MVN'} />
           </var>
         </div>
 
@@ -161,7 +161,7 @@ export const DoormanStats = ({
         {/* <div>
           <h4>Total supply</h4>
           <var>
-            <CommaNumber value={maximumTotalSupply}  endingText={'MVK'} />
+            <CommaNumber value={maximumTotalSupply}  endingText={'MVN'} />
           </var>
         </div> */}
       </DoormanList>

@@ -21,7 +21,7 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 
 // utils
 import {
-  getSatelliteParticipations,
+  getSatelliteParticipation,
   getStatusColorBasedOnOracleType,
 } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
@@ -51,7 +51,7 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
 
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
 
-  const { proposalParticipation, votingPartisipation: votingParticipation } = getSatelliteParticipations({
+  const { proposalParticipation, votingParticipation: votingParticipation } = getSatelliteParticipation({
     satellite: usersSatelliteProfile,
     proposalsAmount,
     satelliteGovActionsAmount,
@@ -71,8 +71,8 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
   }, [])
 
   // calcs
-  const { sMvkBalance, delegationRatio, totalDelegatedAmount } = usersSatelliteProfile
-  const freesMVKSpace = Math.max(sMvkBalance * delegationRatio - totalDelegatedAmount, 0)
+  const { sMvnBalance, delegationRatio, totalDelegatedAmount } = usersSatelliteProfile
+  const freesMVNSpace = Math.max(sMvnBalance * delegationRatio - totalDelegatedAmount, 0)
 
   return (
     <SatelliteDetailsContainer>
@@ -92,8 +92,8 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
         </ThreeLevelListItem>
 
         <ThreeLevelListItem>
-          <div className="name">Free sMVK Space</div>
-          <CommaNumber value={freesMVKSpace} decimalsToShow={2} className="value" />
+          <div className="name">Free sMVN Space</div>
+          <CommaNumber value={freesMVNSpace} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Oracle Status</div>
@@ -127,9 +127,9 @@ export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: S
         </div>
 
         <SatelliteMetricsBlock>
-          <h5>Satellite’s sMVK</h5>
+          <h5>Satellite’s sMVN</h5>
           <p>
-            <CommaNumber value={usersSatelliteProfile.sMvkBalance} showDecimal />
+            <CommaNumber value={usersSatelliteProfile.sMvnBalance} showDecimal />
           </p>
           <h5># Delegators</h5>
           <p>

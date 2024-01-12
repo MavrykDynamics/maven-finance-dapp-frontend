@@ -1,13 +1,13 @@
-import {AreaChartPlotType} from 'app/App.components/Chart/helpers/Chart.types'
+import { AreaChartPlotType } from 'app/App.components/Chart/helpers/Chart.types'
 
-import {INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS} from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
 
-import {convertNumberForClient, convertNumberForContractCall} from '../../utils/calcFunctions'
-import {assetDecimalsToShow} from './Loans.const'
-import {SingleValueData} from 'lightweight-charts'
-import {TokenMetadataType} from 'providers/TokensProvider/tokens.provider.types'
-import {checkWhetherTokenIsLoanToken} from 'providers/TokensProvider/helpers/tokens.utils'
-import {DEFAULT_MIN_COLLATERAL_AMOUNT} from 'utils/constants'
+import { convertNumberForClient, convertNumberForContractCall } from '../../utils/calcFunctions'
+import { assetDecimalsToShow } from './Loans.const'
+import { SingleValueData } from 'lightweight-charts'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
+import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
+import { DEFAULT_MIN_COLLATERAL_AMOUNT } from 'utils/constants'
 
 // HELPER FOR BORROW FEE
 export const calculateAccruedInterest = (

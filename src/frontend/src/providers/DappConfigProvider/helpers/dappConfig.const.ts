@@ -1,8 +1,8 @@
-import { getItemFromStorage } from 'utils/storage'
-import { DappConfigContextStateType } from '../dappConfig.provider.types'
-import { PreferencesState, LoadingState } from '../dappConfig.provider.types'
-import { ThemeType, themeSchema } from 'consts/theme.const'
 import { ecadLabGhostnetRpcNode, marigoldGhostnetRpcNode } from 'consts/rpcNodes.const'
+import { themeSchema, ThemeType } from 'consts/theme.const'
+import { getItemFromStorage } from 'utils/storage'
+
+import { DappConfigContextStateType, LoadingState, PreferencesState } from '../dappConfig.provider.types'
 
 // ------ default max length
 export const defaultCouncilMemberImageMaxLength = 500
@@ -14,7 +14,7 @@ export const defaultSatelliteDescriptionMaxLength = 800
 export const defaultSatelliteImageMaxLength = 500
 export const defaultSatelliteNameMaxLength = 20
 export const defaultSatelliteWebsiteMaxLength = 500
-export const defaultSatelliteMinimumStakedMvk = 100
+export const defaultSatelliteMinimumStakedMvn = 100
 export const defaultGovPurposeMaxLength = 800
 export const defaultProposalInvoiceMaxLength = 50
 export const defaultProposalMetadataTitleMaxLength = 110
@@ -63,7 +63,7 @@ export const DAPP_DEFAULT_CONTRACT_ADDRESSES = {
   farmsFactoryAddress: null,
   delegationAddress: null,
   doormanAddress: null,
-  mvkTokenAddress: null,
+  mvnTokenAddress: null,
   governanceAddress: null,
   governanceFinancialAddress: null,
   emergencyGovernanceAddress: null,
@@ -109,12 +109,12 @@ export const defaultLoadingState: LoadingState = {
 export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
   maxLengths: DAPP_DEFAULT_MAX_LENGHTS,
   canUseIpfs: false,
-  minimumStakedMvkBalance: 0,
+  minimumStakedMvnBalance: 0,
   dappTotalValueLocked: null,
   xtzBakers: null,
   contractAddresses: DAPP_DEFAULT_CONTRACT_ADDRESSES,
   // TODO: set default address to null, when contracts are updated
-  mvkFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
+  mvnFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',
   preferences: preferencesDefaultState,
   globalLoadingState: defaultLoadingState,
 }

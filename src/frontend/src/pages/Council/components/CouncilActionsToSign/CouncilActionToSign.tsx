@@ -5,11 +5,7 @@ import { CouncilActionType } from 'providers/CouncilProvider/council.provider.ty
 import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
 import { CouncilActionParamCellType } from 'pages/Council/helpers/council.types'
 import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
-import {
-  ACTION_READ_MORE_CONTRACTS_LIST,
-  ACTION_READ_MORE_PURPOSE,
-  ActionReadMorePopupDataType,
-} from '../popups/CouncilActionReadMorePopupPopup'
+import { ACTION_READ_MORE_PURPOSE, ActionReadMorePopupDataType } from '../popups/CouncilActionReadMorePopupPopup'
 
 // view
 import { CouncilActionToSignBodyStyled, CouncilActionToSignStyled } from './CouncilActionsToSign.styles'
@@ -18,11 +14,11 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // consts
-import { BUTTON_WIDE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { CouncilActionsToSignGridCellsMapper } from './CouncilActionsToSign.consts'
 import { COUNCIL_ACTIONS_PARAMS_MAPPER } from 'providers/CouncilProvider/helpers/council.consts'
-import { MVK_DECIMALS } from 'utils/constants'
-import { MavrykCounsilDdForms } from 'pages/Council/helpers/council.consts'
+import { MVN_DECIMALS } from 'utils/constants'
+import { MavenCouncilDdForms } from 'pages/Council/helpers/council.consts'
 
 // utils
 import { convertNumberForClient } from 'utils/calcFunctions'
@@ -55,7 +51,7 @@ export const CouncilActionToSign = ({
   const { tokensMetadata } = useTokensContext()
 
   const { actionName, id, parameters, councilSize, signersCount, actionClientId } = action
-  const gridCells = getCardToSignBodyCels(parameters, actionClientId, tokensMetadata)
+  const gridCells = getCardToSignBodyCells(parameters, actionClientId, tokensMetadata)
 
   const handleSignAction = () => signActionHandler(id)
 
@@ -134,18 +130,18 @@ export const CouncilActionToSign = ({
  * @param tokensMetadata metadata of tokens
  * @returns data for action to sign cells
  */
-const getCardToSignBodyCels = (
+const getCardToSignBodyCells = (
   actionParams: CouncilActionType['parameters'],
   actionId: CouncilsActionsIds,
   tokensMetadata: TokensContext['tokensMetadata'],
 ): CouncilActionParamCellType => {
   const actionParamsCells = CouncilActionsToSignGridCellsMapper[actionId]
 
-  // for actions add vestee, update vestee, request tokens mint we need to convert mvk tokens amount (totalAllocatedAmount | tokenAmount fields)
+  // for actions add vestee, update vestee, request tokens mint we need to convert mvn tokens amount (totalAllocatedAmount | tokenAmount fields)
   if (
-    actionId === MavrykCounsilDdForms.ADD_VESTEE ||
-    actionId === MavrykCounsilDdForms.UPDATE_VESTEE ||
-    actionId === MavrykCounsilDdForms.REQUEST_TOKEN_MINT
+    actionId === MavenCouncilDdForms.ADD_VESTEE ||
+    actionId === MavenCouncilDdForms.UPDATE_VESTEE ||
+    actionId === MavenCouncilDdForms.REQUEST_TOKEN_MINT
   ) {
     return actionParams.reduce<CouncilActionParamCellType>((acc, actionParam) => {
       const { name, parsedValue, columnData } = getCellData(actionParam, actionParamsCells)
@@ -155,7 +151,7 @@ const getCardToSignBodyCels = (
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.totalAllocatedAmount ||
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.newTotalAllocatedAmount ||
           name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenAmount
-            ? String(convertNumberForClient({ number: parseFloat(parsedValue), grade: MVK_DECIMALS }))
+            ? String(convertNumberForClient({ number: parseFloat(parsedValue), grade: MVN_DECIMALS }))
             : parsedValue
 
         acc.push({
@@ -172,7 +168,7 @@ const getCardToSignBodyCels = (
   }
 
   // for actions transfer tokens & request tokens we need to convert tokens amount (tokenAmount field)
-  if (actionId === MavrykCounsilDdForms.TRANSFER_TOKENS || actionId === MavrykCounsilDdForms.REQUEST_TOKENS) {
+  if (actionId === MavenCouncilDdForms.TRANSFER_TOKENS || actionId === MavenCouncilDdForms.REQUEST_TOKENS) {
     const tokenUsedInAction = getTokenDataByAddress({
       tokenAddress: convertBytes(
         actionParams.find(({ name }) => name === COUNCIL_ACTIONS_PARAMS_MAPPER.tokenContractAddress)?.value ?? '',
@@ -210,7 +206,13 @@ const getCardToSignBodyCels = (
           )
 
           acc.push({
-            valueContent: getCellValueContent({ ...columnData, sufix: tokenUsedInAction.symbol }, columnValue),
+            valueContent: getCellValueContent(
+              {
+                ...columnData,
+                suffix: tokenUsedInAction.symbol,
+              },
+              columnValue,
+            ),
             className: columnData.className,
             value: columnValue,
             paramName: name,

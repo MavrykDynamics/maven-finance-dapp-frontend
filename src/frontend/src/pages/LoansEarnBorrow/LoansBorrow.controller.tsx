@@ -86,7 +86,6 @@ export const LoansBorrow = () => {
       marketsAddresses.reduce<MarketType[]>((acc, marketTokenAddress) => {
         const market = marketsMapper[marketTokenAddress]
         const chartData = marketBorrowChart[marketTokenAddress] ?? {}
-        console.log('Logging market here:', market)
         const token = getTokenDataByAddress({
           tokenAddress: marketTokenAddress,
           tokensPrices,

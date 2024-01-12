@@ -114,7 +114,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
           target="_blank"
           rel="noreferrer"
         >
-          Learn more at the Mavryk Finance Docs
+          Learn more at the Maven Finance Docs
         </a>
       </LoansValuesSectionInfo>
     </LoansValuesSection>

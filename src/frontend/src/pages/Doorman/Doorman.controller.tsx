@@ -18,16 +18,16 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 
 // actions
-import { SMVK_TOKEN_ADDRESS, MVK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
+import { DAPP_MVN_SMVN_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from 'providers/DoormanProvider/helpers/doorman.consts'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITES_DATA_SINGLE_SUB,
   SATELLITE_DATA_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -41,11 +41,11 @@ export const Doorman = () => {
   const { tokensPrices } = useTokensContext()
   const { userTokensBalances, userAddress } = useUserContext()
   const {
-    contractAddresses: { doormanAddress, mvkTokenAddress },
+    contractAddresses: { doormanAddress, mvnTokenAddress },
   } = useDappConfigContext()
   const { changeSatellitesSubscriptionsList } = useSatellitesContext()
   const {
-    totalStakedMvk,
+    totalStakedMvn,
     maximumTotalSupply,
     totalSupply,
     isLoading: isDoormanLoading,
@@ -54,7 +54,7 @@ export const Doorman = () => {
 
   useEffect(() => {
     changeStakingSubscriptionsList({
-      [DAPP_MVK_SMVK_STATS_SUB]: true,
+      [DAPP_MVN_SMVN_STATS_SUB]: true,
     })
 
     changeSatellitesSubscriptionsList({ [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB })
@@ -65,9 +65,9 @@ export const Doorman = () => {
     }
   }, [])
 
-  const mvkExchangeRate = tokensPrices[MVK_TOKEN_SYMBOL] ?? 0
-  const mySMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVK_TOKEN_ADDRESS }),
-    myMvkTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvkTokenAddress })
+  const mvnExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
+  const mySMvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
+    myMvnTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress })
 
   const [unstakePopupActive, setUnstakePopupActive] = useState(false)
 
@@ -77,11 +77,11 @@ export const Doorman = () => {
   const openExitFeePopup = () => setUnstakePopupActive(true)
 
   const exitFeeModal = {
-    mvkExchangeRate,
-    totalMVKSupply: totalSupply,
-    mySMvkTokenBalance,
-    myMvkTokenBalance,
-    totalStakedMvk,
+    mvnExchangeRate: mvnExchangeRate,
+    totalMVNSupply: totalSupply,
+    mySMvnTokenBalance: mySMvnTokenBalance,
+    myMvnTokenBalance: myMvnTokenBalance,
+    totalStakedMvn,
     userAddress,
   }
 
@@ -112,7 +112,7 @@ export const Doorman = () => {
             closePopup={closeExitFeePopup}
           />
           <StakeUnstakeView
-            mvkExchangeRate={mvkExchangeRate}
+            mvnExchangeRate={mvnExchangeRate}
             openExitFeePopup={openExitFeePopup}
             inputData={stakeUnstakeInput}
             setInputData={setStakeUnstakeInput}
@@ -120,12 +120,12 @@ export const Doorman = () => {
           <DoormanInfoStyled>
             <DoormanChart />
             <DoormanStats
-              mvkExchangeRate={mvkExchangeRate}
+              mvnExchangeRate={mvnExchangeRate}
               maximumTotalSupply={maximumTotalSupply}
-              totalStakedMvk={totalStakedMvk}
+              totalStakedMvn={totalStakedMvn}
               totalSupply={totalSupply}
               doormanAddress={doormanAddress}
-              mvkTokenAddress={mvkTokenAddress}
+              mvnTokenAddress={mvnTokenAddress}
             />
           </DoormanInfoStyled>
         </>

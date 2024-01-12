@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { Card } from 'styles'
-import { MavrykTheme } from '../../../styles/interfaces'
+import { MavenTheme } from '../../../styles/interfaces'
 
 export const StakeUnstakeStyled = styled.div`
   position: relative;
@@ -14,7 +14,7 @@ export const StakeUnstakeStyled = styled.div`
   }
 `
 
-export const StakeUnstakeCard = styled.div<{ theme: MavrykTheme }>`
+export const StakeUnstakeCard = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
   min-width: 130px;
@@ -23,7 +23,7 @@ export const StakeUnstakeCard = styled.div<{ theme: MavrykTheme }>`
   font-weight: 600;
 `
 
-export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
+export const StakeUnstakeCards = styled(Card)<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -37,7 +37,7 @@ export const StakeUnstakeCards = styled(Card)<{ theme: MavrykTheme }>`
   border-radius: 10px;
 `
 
-export const StakeUnstakeActionCard = styled(Card)<{ theme: MavrykTheme }>`
+export const StakeUnstakeActionCard = styled(Card)<{ theme: MavenTheme }>`
   border-radius: 10px;
 
   text-align: center;
@@ -134,13 +134,13 @@ export const StakeUnstakeRate = styled(StakeUnstakeAmount)`
   }
 `
 
-export const StakeUnstakeErrorMessage = styled.div<{ inputOk: boolean; accountPkh?: string; theme: MavrykTheme }>`
+export const StakeUnstakeErrorMessage = styled.div<{ inputOk: boolean; accountPkh?: string; theme: MavenTheme }>`
   color: ${({ inputOk, theme }) => (inputOk ? theme.upColor : theme.downColor)};
   font-size: 12px;
   font-weight: 600;
 `
 
-export const StakeUnstakeInputLabel = styled.div<{ theme: MavrykTheme }>`
+export const StakeUnstakeInputLabel = styled.div<{ theme: MavenTheme }>`
   position: absolute;
   right: 17px;
   color: ${({ theme }) => theme.subTextColor};
@@ -155,7 +155,7 @@ export const StakeUnstakeButtonGrid = styled.div`
   column-gap: 10px;
 `
 
-export const StakeUnstakeBalance = styled.div<{ theme: MavrykTheme }>`
+export const StakeUnstakeBalance = styled.div<{ theme: MavenTheme }>`
   position: relative;
   display: flex;
   align-items: center;

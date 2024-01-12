@@ -11,14 +11,14 @@ import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
-import { DoormanContext, NullableDoormanContextStateType, DoormanSubsRecordType } from './doorman.provider.types'
-import { SmvkMvkHistoryDataQuery, GetDappSmvkMvkStatsQuery } from 'utils/__generated__/graphql'
+import { DoormanContext, DoormanSubsRecordType, NullableDoormanContextStateType } from './doorman.provider.types'
+import { GetDappSmvnMvnStatsQuery, SmvnMvnHistoryDataQuery } from 'utils/__generated__/graphql'
 import { ChartPeriodType } from 'types/charts.type'
 
 // consts
-import { MVK_DECIMALS } from 'utils/constants'
-import { DEFAULT_STAKING_CTX, DAPP_MVK_SMVK_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS } from './helpers/doorman.consts'
-import { DAPP_MVK_SMVK_STATS } from './queries/doorman.query'
+import { MVN_DECIMALS } from 'utils/constants'
+import { DAPP_MVN_SMVN_STATS_SUB, DEFAULT_STAKING_ACTIVE_SUBS, DEFAULT_STAKING_CTX } from './helpers/doorman.consts'
+import { DAPP_MVN_SMVN_STATS } from './queries/doorman.query'
 
 export const doormanContext = React.createContext<DoormanContext>(undefined!)
 
@@ -36,40 +36,43 @@ const DoormanProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<DoormanSubsRecordType>(DEFAULT_STAKING_ACTIVE_SUBS)
 
   // subscribes
-  useQueryWithRefetch(DAPP_MVK_SMVK_STATS, {
-    skip: !activeSubs[DAPP_MVK_SMVK_STATS_SUB] || !doormanAddress,
+  useQueryWithRefetch(DAPP_MVN_SMVN_STATS, {
+    skip: !activeSubs[DAPP_MVN_SMVN_STATS_SUB] || !doormanAddress,
     variables: {
       doormanContractAddress: doormanAddress,
     },
-    onCompleted: (data) => updateMvkSmvkStats(data),
-    onError: (error) => handleApolloError(error, 'DAPP_MVK_SMVK_STATS_SUB'),
+    onCompleted: (data) => updateMvnSmvnStats(data),
+    onError: (error) => handleApolloError(error, 'DAPP_MVN_SMVN_STATS_SUB'),
   })
 
   // methods to update context data
-  const updateStakeHistoryData = (historyData: SmvkMvkHistoryDataQuery, period: ChartPeriodType) => {
-    const { smvkHistoryData, mvkHistoryData, noChartData } = normalizeDoormanChartsData(historyData, period)
+  const updateStakeHistoryData = (historyData: SmvnMvnHistoryDataQuery, period: ChartPeriodType) => {
+    const { smvnHistoryData, mvnHistoryData, noChartData } = normalizeDoormanChartsData(historyData, period)
 
     setStakingCtxState((prevState) => ({
       ...prevState,
-      smvkHistoryData: { ...prevState.smvkHistoryData, [period]: smvkHistoryData },
-      mvkHistoryData: { ...prevState.mvkHistoryData, [period]: mvkHistoryData },
+      smvnHistoryData: { ...prevState.smvnHistoryData, [period]: smvnHistoryData },
+      mvnHistoryData: { ...prevState.mvnHistoryData, [period]: mvnHistoryData },
       noChartData,
     }))
   }
 
-  const updateMvkSmvkStats = (storage: GetDappSmvkMvkStatsQuery) => {
+  const updateMvnSmvnStats = (storage: GetDappSmvnMvnStatsQuery) => {
     const {
-      mavryk_user: [doormanContractBalances],
-      mvk_token: [mvkTokenData],
+      maven_user: [doormanContractBalances],
+      mvn_token: [mvnTokenData],
     } = storage
     setStakingCtxState((prevState) => ({
       ...prevState,
-      totalStakedMvk: convertNumberForClient({
-        number: doormanContractBalances?.mvk_balance ?? 0,
-        grade: MVK_DECIMALS,
+      totalStakedMvn: convertNumberForClient({
+        number: doormanContractBalances?.mvn_balance ?? 0,
+        grade: MVN_DECIMALS,
       }),
-      totalSupply: convertNumberForClient({ number: mvkTokenData?.total_supply ?? 0, grade: MVK_DECIMALS }),
-      maximumTotalSupply: convertNumberForClient({ number: mvkTokenData?.maximum_supply ?? 0, grade: MVK_DECIMALS }),
+      totalSupply: convertNumberForClient({ number: mvnTokenData?.total_supply ?? 0, grade: MVN_DECIMALS }),
+      maximumTotalSupply: convertNumberForClient({
+        number: mvnTokenData?.maximum_supply ?? 0,
+        grade: MVN_DECIMALS,
+      }),
     }))
   }
 

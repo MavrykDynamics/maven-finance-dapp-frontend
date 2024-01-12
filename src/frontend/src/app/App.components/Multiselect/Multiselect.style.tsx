@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { MavrykTheme } from 'styles/interfaces'
+import { MavenTheme } from 'styles/interfaces'
 
-export const MultiselectStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectStyled = styled.div<{ theme: MavenTheme }>`
   width: 100%;
   position: relative;
 
@@ -14,7 +14,7 @@ export const MultiselectStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MultiselectOptionsControlStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectOptionsControlStyled = styled.div<{ theme: MavenTheme }>`
   position: relative;
   cursor: pointer;
 
@@ -115,7 +115,7 @@ export const MultiselectOptionsControlStyled = styled.div<{ theme: MavrykTheme }
   }
 `
 
-export const MultiselectMenuOptionStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectMenuOptionStyled = styled.div<{ theme: MavenTheme }>`
   cursor: pointer;
   width: 100%;
   column-gap: 10px;
@@ -159,7 +159,7 @@ export const MultiselectMenuOptionStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MultiselectHeaderOptionStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectHeaderOptionStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
 
@@ -196,7 +196,7 @@ export const MultiselectHeaderOptionStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MultiselectHeaderStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectHeaderStyled = styled.div<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
 
@@ -308,7 +308,7 @@ export const MultiselectHeaderStyled = styled.div<{ theme: MavrykTheme }>`
   }
 `
 
-export const MultiselectMenuStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectMenuStyled = styled.div<{ theme: MavenTheme }>`
   .space {
     width: 100%;
     height: 5px;
@@ -321,7 +321,7 @@ export const MultiselectMenuStyled = styled.div<{ theme: MavrykTheme }>`
   z-index: 2;
 `
 
-export const MultiselectBackdropStyled = styled.div<{ theme: MavrykTheme }>`
+export const MultiselectBackdropStyled = styled.div<{ theme: MavenTheme }>`
   position: fixed;
   z-index: 1;
 
