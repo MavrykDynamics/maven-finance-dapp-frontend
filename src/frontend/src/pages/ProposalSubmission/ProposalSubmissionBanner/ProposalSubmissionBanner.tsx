@@ -66,32 +66,8 @@ export const ProposalSubmissionBanner = () => {
     return () => abortController.abort()
   }, [currentRoundEndLevel])
 
-  // if (isLoading) return <ClockLoader width={50} height={50} />
-
-  // if (needRefreshCycle) {
-  //   return (
-  //     <ProposalSubmissionBannerStyled>
-  //       <Info text={MOVE_CYCLE_BANNER_TEXT} type={INFO_DEFAULT} />
-  //     </ProposalSubmissionBannerStyled>
-  //   )
-  // }
-
-  // if (isNewlyRegisteredSatellite) {
-  //   return (
-  //     <ProposalSubmissionBannerStyled>
-  //       <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
-  //     </ProposalSubmissionBannerStyled>
-  //   )
-  // }
-
   return (
     <>
-      {isNewlyRegisteredSatellite && (
-        <ProposalSubmissionBannerStyled>
-          <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
-        </ProposalSubmissionBannerStyled>
-      )}
-
       {isLoading ? (
         <LoaderWrapper>
           <ClockLoader width={50} height={50} />
@@ -99,6 +75,10 @@ export const ProposalSubmissionBanner = () => {
       ) : needRefreshCycle ? (
         <ProposalSubmissionBannerStyled>
           <Info text={MOVE_CYCLE_BANNER_TEXT} type={INFO_DEFAULT} />
+        </ProposalSubmissionBannerStyled>
+      ) : isNewlyRegisteredSatellite ? (
+        <ProposalSubmissionBannerStyled>
+          <Info text={NEWLY_REGISTERED_SATELLITE_BANNER_TEXT} type={INFO_DEFAULT} />
         </ProposalSubmissionBannerStyled>
       ) : null}
     </>
