@@ -7,11 +7,8 @@
     "details": "The MIT License"
   },
   "homepage": "https://mavenfinance.io/",
-  "interfaces": [
-    "TZIP-012",
-    "TZIP-016"
-  ],
-  "source-repository": "https://github.com/mavrykfinance/Mavryk",
+  "interfaces": ["TZIP-012", "TZIP-016"],
+  "source-repository": "https://github.com/mavenfinance/maven-finance-dapp-frontend",
   "views": [
     {
       "name": "token_metadata",
@@ -246,15 +243,11 @@
               "args": [
                 {
                   "prim": "address",
-                  "annots": [
-                    "%owner"
-                  ]
+                  "annots": ["%owner"]
                 },
                 {
                   "prim": "nat",
-                  "annots": [
-                    "%token_id"
-                  ]
+                  "annots": ["%token_id"]
                 }
               ]
             },

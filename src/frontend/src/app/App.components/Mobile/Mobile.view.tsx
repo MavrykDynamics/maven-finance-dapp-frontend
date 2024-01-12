@@ -37,7 +37,7 @@ export default function Mobile() {
             <a href="https://medium.com/@Mavryk_Finance" id="medium">
               <Icon id="medium" />
             </a>
-            <a href="https://github.com/mavrykfinance/" id="gitHub">
+            <a href="https://github.com/mavenfinance" id="gitHub">
               <Icon id="gitHub" />
             </a>
           </div>
