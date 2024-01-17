@@ -25,7 +25,7 @@ export default function Mobile() {
 
         <MobilePlugFooter>
           <div className="socials">
-            <a href="https://twitter.com/Mavryk_Finance" id="twitter">
+            <a href="https://twitter.com/MavenFinanceDAO" id="twitter">
               <Icon id="twitter" />
             </a>
             <a href="https://discord.com/invite/7VXPR4gkT6" id="discord">

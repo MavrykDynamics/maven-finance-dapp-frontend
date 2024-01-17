@@ -20,8 +20,8 @@ export const PolicyPopupContent = ({ proccedPolicy }: { proccedPolicy: () => voi
         bug fixes, and we are constantly updating the Dapp. That being said, we would love for you explore, test, and
         become familiar with Maven Finance, and everything our team is building. We only ask that you reach out to us
         about any issues you may have ASAP via the form on the site, and are more than happy to hop on a call and
-        discuss them. If you love it, we would greatly appreciate your support in the community, tweets on Twitter, and
-        wider social media.
+        discuss them. If you love it, we would greatly appreciate your support in the community, posts on X, and wider
+        social media.
       </p>
 
       {/*<h3>Incoming Updates & Fixes:</h3>*/}

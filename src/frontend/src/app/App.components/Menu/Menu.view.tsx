@@ -36,7 +36,7 @@ type MenuViewProps = {
 
 export const SocialIcons = () => (
   <div className="social-wrapper">
-    <a href="https://twitter.com/Mavryk_Finance" target="_blank" rel="noreferrer">
+    <a href="https://twitter.com/MavenFinanceDAO" target="_blank" rel="noreferrer">
       <Icon id="socialTwitter" />
     </a>
     <a href="https://t.me/Mavryk_Finance" target="_blank" rel="noreferrer">
