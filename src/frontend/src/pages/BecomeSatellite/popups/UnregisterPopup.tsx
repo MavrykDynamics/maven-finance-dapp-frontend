@@ -113,7 +113,7 @@ export const UnregisterPopup = ({
                 <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
                   <Icon id="discord" className="discord" />
                 </a>
-                <a href="https://t.me/Mavryk_Finance" target="_blank" rel="noreferrer">
+                <a href="https://t.me/MavenFinance" target="_blank" rel="noreferrer">
                   <Icon id="telegram" className="telegram" />
                 </a>
               </div>

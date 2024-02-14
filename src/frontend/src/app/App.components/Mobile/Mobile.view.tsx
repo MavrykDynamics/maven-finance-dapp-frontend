@@ -14,7 +14,7 @@ export default function Mobile() {
       <GlobalStyle />
       <MobilePlugWrapper>
         <MobilePlugLogoWrapper>
-          <img src="./mobile-plug-logo.png" alt="maven logo" />
+          <img src="/mobile-plug-logo.png" alt="maven logo" />
         </MobilePlugLogoWrapper>
 
         <div className="plug-message">
@@ -31,7 +31,7 @@ export default function Mobile() {
             <a href="https://discord.com/invite/7VXPR4gkT6" id="discord">
               <Icon id="discord" />
             </a>
-            <a href="https://t.me/Mavryk_Finance" id="telegram">
+            <a href="https://t.me/MavenFinance" id="telegram">
               <Icon id="telegram" />
             </a>
             <a href="https://blog.mavrykdynamics.com/" id="medium">

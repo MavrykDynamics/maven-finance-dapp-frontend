@@ -39,7 +39,7 @@ export const SocialIcons = () => (
     <a href="https://twitter.com/MavenFinanceDAO" target="_blank" rel="noreferrer">
       <Icon id="socialTwitter" />
     </a>
-    <a href="https://t.me/Mavryk_Finance" target="_blank" rel="noreferrer">
+    <a href="https://t.me/MavenFinance" target="_blank" rel="noreferrer">
       <Icon id="socialTelegram" />
     </a>
     {/* // TODO: delete after approval  */}
