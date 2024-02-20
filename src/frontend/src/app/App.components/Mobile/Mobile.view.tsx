@@ -34,7 +34,7 @@ export default function Mobile() {
             <a href="https://t.me/MavenFinance" id="telegram">
               <Icon id="telegram" />
             </a>
-            <a href="https://blog.mavrykdynamics.com/" id="medium">
+            <a href="https://blog.mavenfinance.io/" id="medium">
               <Icon id="medium" />
             </a>
             <a href="https://github.com/mavenfinance" id="gitHub">

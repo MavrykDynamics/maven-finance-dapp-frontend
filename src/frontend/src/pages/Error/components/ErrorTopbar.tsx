@@ -28,7 +28,7 @@ export const ErrorTopbar = ({ themeSelected, handleRedirect }: ErrorTopbarProps)
       <div className="grouped-links">
         <TopBarLinks groupName={'Products'} groupLinks={PRODUCTS_LINKS} />
         <TopBarLinks groupName={'About'} groupLinks={ABOUT_LINKS} />
-        <TopBarLinks groupName={'Blog 🔥'} groupLinks={BLOG_LINKS} groupNameLink="https://blog.mavrykdynamics.com/" />
+        <TopBarLinks groupName={'Blog 🔥'} groupLinks={BLOG_LINKS} groupNameLink="https://blog.mavenfinance.io/" />
         <TopBarLinks groupName={'Docs'} groupLinks={DOCS_LINKS} />
       </div>
     </ErrorMenuTopStyled>
