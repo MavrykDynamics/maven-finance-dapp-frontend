@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import qs from 'qs'
 import classNames from 'classnames'
@@ -58,7 +58,7 @@ import Pagination from 'app/App.components/Pagination/Pagination.view'
 import { FarmCard } from './components/FarmCard/FarmCard.controller'
 
 export const Farms = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search, pathname } = useLocation()
   const { userAddress } = useUserContext()
   const {
@@ -184,9 +184,9 @@ export const Farms = () => {
       if (filterType === 'openCard' && newOpenCardAddress !== undefined)
         newFiltersForQP.openedFarmsCards = getNewOpenedCardsAddresses(farmsFilers.openedFarmsCards, newOpenCardAddress)
 
-      history.replace(`${pathname}${qs.stringify(newFiltersForQP, { addQueryPrefix: true })}`)
+      navigate(`${pathname}${qs.stringify(newFiltersForQP, { addQueryPrefix: true })}`, { replace: true })
     },
-    [farmsFilers, pathname],
+    [farmsFilers, pathname, navigate],
   )
 
   return (

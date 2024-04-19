@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom'
+import * as ReactDOM from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { ThemeProvider } from 'styled-components'
@@ -46,6 +46,7 @@ import themeColors from 'styles/colors'
 import './styles/fonts.css'
 import './styles/animations.css'
 import './styles/index.css'
+import React from 'react'
 
 const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
   const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
@@ -153,8 +154,13 @@ export const Root = () => {
   )
 }
 
-const rootElement = document.getElementById('root')
-ReactDOM.render(<Root />, rootElement)
+const root = ReactDOM.createRoot(document.getElementById('root')!)
+
+root.render(
+  <React.StrictMode>
+    <Root />
+  </React.StrictMode>,
+)
 
 unregister()
 reportWebVitals()

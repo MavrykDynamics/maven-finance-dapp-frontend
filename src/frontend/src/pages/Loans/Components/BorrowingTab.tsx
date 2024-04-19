@@ -1,4 +1,3 @@
-import { useHistory, useLocation } from 'react-router'
 import { useMemo, useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -20,6 +19,7 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -27,7 +27,7 @@ type BorrowingTabPropsType = {
 }
 
 export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: BorrowingTabPropsType) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const { openCreateVaultPopup } = useLoansPopupsContext()
@@ -66,7 +66,7 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
     const params = new URLSearchParams(location.search)
     params.append('vaultAddress', address)
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   return (

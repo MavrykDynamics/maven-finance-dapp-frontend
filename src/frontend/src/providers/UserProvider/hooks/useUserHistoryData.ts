@@ -1,6 +1,6 @@
 import qs from 'qs'
 import { useState } from 'react'
-import { useHistory, useLocation } from 'react-router' // hooks
+import { useNavigate, useLocation } from 'react-router-dom' // hooks
 import { useUserContext } from '../user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
@@ -22,7 +22,7 @@ export const useUserHistoryData = () => {
   const { bug } = useToasterContext()
 
   // stuff for handling page out of limits
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search, pathname } = useLocation()
   const { page = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
   const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
@@ -56,7 +56,7 @@ export const useUserHistoryData = () => {
           pathname,
           restQP,
         })
-        history.replace(redirectToFirstPageOfTheList)
+        navigate(redirectToFirstPageOfTheList, { replace: true })
       } else {
         const normalizedUserHistoryData = normalizeUserHistoryData(data.maven_user[0].stakes_history_data)
         setUserHistoryData(currentPage, normalizedUserHistoryData, itemsAmount)

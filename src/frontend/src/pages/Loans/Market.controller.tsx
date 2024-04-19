@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { useHistory, useParams } from 'react-router'
-import { Link } from 'react-router-dom'
+import { useParams } from 'react-router'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -49,10 +49,10 @@ import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loa
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 export const Market = () => {
-  const history = useHistory<{ from?: string }>()
-  const {
-    location: { state: historyState },
-  } = history
+  const navigate = useNavigate()
+  const { state } = useLocation()
+  const historyState = state as { from?: string }
+
   const { assetAddress: currentMarketAddress, tabId } = useParams<{
     assetAddress: string
     tabId: string
@@ -209,7 +209,7 @@ export const Market = () => {
   const marketPagination = (
     <MarketPagination>
       <Button
-        onClick={() => history.push(historyState?.from ?? '/loans')}
+        onClick={() => navigate(historyState?.from ?? '/loans')}
         text="Go Back"
         icon="arrowRight"
         className="arrow"
@@ -221,8 +221,8 @@ export const Market = () => {
           <Link
             to={{
               pathname: `/loans/${prevMarketAddress}/${tabId}`,
-              state: { from: historyState?.from },
             }}
+            state={{ from: historyState?.from }}
           >
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
@@ -234,8 +234,8 @@ export const Market = () => {
           <Link
             to={{
               pathname: `/loans/${nextMarketAddress}/${tabId}`,
-              state: { from: historyState?.from },
             }}
+            state={{ from: historyState?.from }}
           >
             <span className="right">
               Next Market
