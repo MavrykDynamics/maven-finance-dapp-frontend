@@ -218,12 +218,7 @@ export const Market = () => {
 
       <div className="right-side-wrapper">
         {prevMarketAddress ? (
-          <Link
-            to={{
-              pathname: `/loans/${prevMarketAddress}/${tabId}`,
-            }}
-            state={{ from: historyState?.from }}
-          >
+          <Link to={`/loans/${prevMarketAddress}/${tabId}`} state={{ from: historyState?.from }}>
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
             </span>
@@ -231,12 +226,7 @@ export const Market = () => {
         ) : null}
 
         {nextMarketAddress ? (
-          <Link
-            to={{
-              pathname: `/loans/${nextMarketAddress}/${tabId}`,
-            }}
-            state={{ from: historyState?.from }}
-          >
+          <Link to={`/loans/${nextMarketAddress}/${tabId}`} state={{ from: historyState?.from }}>
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />

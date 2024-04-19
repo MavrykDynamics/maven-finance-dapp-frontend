@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from '../../styles/interfaces'
 import { hangInSpace } from 'styles/animations'
 import { Z_INDEX_DEFAULT } from 'styles/constants'

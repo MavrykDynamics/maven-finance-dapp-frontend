@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { BUTTON_RADIUS } from '../../../styles/constants'
 import {
   MEDIUM_SLIDING_TAB_BUTTONS,

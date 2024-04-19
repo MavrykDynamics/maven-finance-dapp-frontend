@@ -74,10 +74,8 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
           </Button>
 
           <Link
-            to={{
-              pathname: `/loans/${address}/${marketTabName}`,
-              state: { from: `/loans/${isBorrowCard ? 'borrow' : 'earn'}` },
-            }}
+            to={`/loans/${address}/${marketTabName}`}
+            state={{ from: `/loans/${isBorrowCard ? 'borrow' : 'earn'}` }}
           >
             <Button kind={BUTTON_SIMPLE}>
               View Stats

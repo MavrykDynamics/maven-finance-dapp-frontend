@@ -1,5 +1,5 @@
 import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 import { CouncilFormsGridMapper } from './CouncilForms.consts'
 

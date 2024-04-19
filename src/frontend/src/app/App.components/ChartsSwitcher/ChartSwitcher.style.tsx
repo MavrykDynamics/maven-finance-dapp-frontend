@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { ChartSwitcherAlignmentType } from './chartSwitcher.types'
 
 export const ChartsSwitcherWrapper = styled.div<{ space: number; align: ChartSwitcherAlignmentType }>`

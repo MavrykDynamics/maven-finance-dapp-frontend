@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { clickWave, turn } from 'styles/animations'
 import { BUTTON_RADIUS } from '../../../styles/constants'
 import { MavenTheme } from '../../../styles/interfaces'

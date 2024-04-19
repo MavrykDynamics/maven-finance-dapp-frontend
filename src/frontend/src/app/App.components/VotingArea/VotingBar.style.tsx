@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { dropShadow } from 'styles/animations'
 import { MavenTheme } from 'styles/interfaces'
 import { getNumberInBounds } from 'utils/calcFunctions'

@@ -108,7 +108,7 @@ export const AppRoutes = () => {
       </Route>
       <ProtectedRoute
         path="/submit-proposal"
-        component={ProposalSubmission}
+        element={<ProposalSubmission />}
         isAuthorized={Boolean(userAddress)}
         hasAccess={Boolean(isSatellite)}
         redirectPath={'/governance'}

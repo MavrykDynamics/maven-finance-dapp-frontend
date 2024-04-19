@@ -4,6 +4,7 @@ import { useLockBodyScroll, useScroll } from 'react-use'
 
 // view
 import Portal from 'app/App.components/popup/Portal'
+import { createPortal } from 'react-dom'
 import { PopupContainer } from 'app/App.components/popup/PopupMain.style'
 import { CouncilActionReadMorePopupContent } from 'app/App.components/popup/bases/CouncilPopup.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'

@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
 import { LETTER_VIEW, COLON_VIEW } from './Timer.view'
 

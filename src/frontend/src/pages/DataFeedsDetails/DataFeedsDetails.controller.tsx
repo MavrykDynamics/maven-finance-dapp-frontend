@@ -78,7 +78,7 @@ const tabsList = [
 
 const DataFeedDetails = () => {
   const { search } = useLocation()
-  const { feedId } = useParams<{ feedId: string }>()
+  const { feedId = '' } = useParams<{ feedId: string }>()
 
   const { feedsMapper } = useDataFeedsContext()
   const {

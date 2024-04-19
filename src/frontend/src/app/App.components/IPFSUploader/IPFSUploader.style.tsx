@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavenTheme } from '../../../styles/interfaces'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../Input/Input.constants'

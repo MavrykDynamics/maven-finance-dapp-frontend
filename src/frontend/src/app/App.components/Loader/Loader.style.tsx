@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { shine, ellipsis } from 'styles/animations'
 import { MavenTheme } from 'styles/interfaces'
 import { SPINNER_LOADER_LARGE, SPINNER_LOADER_MEDIUM, SPINNER_LOADER_SMALL } from './loader.const'

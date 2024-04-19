@@ -141,22 +141,12 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                               <CommaNumber value={lendingAPY} endingText="%" />
                               <CommaNumber value={lendValue * rate} beginningText="$" />
                               <CommaNumber value={interestEarned} />
-                              <Link
-                                to={{
-                                  pathname: `/loans/${address}/${LEND_TAB_ID}`,
-                                  state: { from: pathname },
-                                }}
-                              >
+                              <Link to={`/loans/${address}/${LEND_TAB_ID}`} state={{ from: pathname }}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>
                             </>
                           ) : (
-                            <Link
-                              to={{
-                                pathname: `/loans/${address}/${LEND_TAB_ID}`,
-                                state: { from: pathname },
-                              }}
-                            >
+                            <Link to={`/loans/${address}/${LEND_TAB_ID}`} state={{ from: pathname }}>
                               <Button
                                 kind={BUTTON_SIMPLE}
                                 onClick={() => {
@@ -186,22 +176,12 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                               <div className={`vault-status ${averageVaultStatus.status}`}>
                                 {averageVaultStatus.text}
                               </div>
-                              <Link
-                                to={{
-                                  pathname: `/loans/${address}/${BORROW_TAB_ID}`,
-                                  state: { from: pathname },
-                                }}
-                              >
+                              <Link to={`/loans/${address}/${BORROW_TAB_ID}`} state={{ from: pathname }}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>
                             </>
                           ) : (
-                            <Link
-                              to={{
-                                pathname: `/loans/${address}/${BORROW_TAB_ID}`,
-                                state: { from: pathname },
-                              }}
-                            >
+                            <Link to={`/loans/${address}/${BORROW_TAB_ID}`} state={{ from: pathname }}>
                               <Button
                                 kind={BUTTON_SIMPLE}
                                 onClick={() =>

@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { decreaseBar } from 'styles/animations'
 import { MavenTheme } from '../../../styles/interfaces'
 import { TOASTER_LOADING, TOASTER_REVEAL, getColorByToasterStatus } from '../toaster.provider.const'

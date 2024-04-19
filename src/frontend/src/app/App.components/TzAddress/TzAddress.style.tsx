@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
 import { SECONDARY_TZ_ADDRESS_COLOR, PRIMARY_TZ_ADDRESS_COLOR } from './TzAddress.constants'
 

@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
 export const TimeLeftAreaWrap = styled.div<{ showBorder: boolean }>`

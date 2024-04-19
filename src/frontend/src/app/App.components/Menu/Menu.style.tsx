@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MENU_Z_INDEX, Z_INDEX_DEFAULT } from 'styles/constants'
 
 import { MavenTheme } from '../../../styles/interfaces'

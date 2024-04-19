@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
 import { CardHover } from 'styles'
 

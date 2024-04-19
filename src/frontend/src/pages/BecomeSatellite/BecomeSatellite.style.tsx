@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { Card } from 'styles'
 import { MavenTheme } from '../../styles/interfaces'
 

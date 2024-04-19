@@ -66,7 +66,10 @@ const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) =
           <DataFeedsProvider>
             <dappConfigContext.Consumer>
               {({ preferences: { themeSelected } }) => (
-                <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
+                <>
+                  <ThemeProvider theme={themeColors[themeSelected]}>{children}</ThemeProvider>
+                  <GlobalStyle theme={themeColors[themeSelected]} />
+                </>
               )}
             </dappConfigContext.Consumer>
           </DataFeedsProvider>
@@ -130,7 +133,6 @@ const AppContainer = () => {
   return (
     <>
       <LoansPopupsProvider>
-        <GlobalStyle />
         <ToasterMessages />
         <App />
       </LoansPopupsProvider>

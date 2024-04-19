@@ -106,7 +106,7 @@ export const TransactionHistory = ({
                       </TableCell>
                       <TableCell width={`30%`}>{date}</TableCell>
                       <TableCell contentPosition="right">
-                        <Link to={{ pathname: `${process.env.REACT_APP_TZKT_LINK}/${operationHash}` }} target="_blank">
+                        <Link to={`${process.env.REACT_APP_TZKT_LINK}/${operationHash}`} target="_blank">
                           <Button text="View TX" kind={TRANSPARENT} className="link" />
                         </Link>
                       </TableCell>

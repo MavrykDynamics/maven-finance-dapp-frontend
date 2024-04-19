@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from 'styled-components/macro'
+import styled, { createGlobalStyle } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
 export const GlobalStyle = createGlobalStyle`

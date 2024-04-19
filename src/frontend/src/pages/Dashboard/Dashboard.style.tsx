@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from '../../styles/interfaces'
 import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'

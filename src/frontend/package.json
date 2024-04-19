@@ -73,7 +73,7 @@
     "eslint-plugin-jsdoc": "^46.0.0",
     "prettier": "2.8.7",
     "source-map-explorer": "^2.5.2",
-    "typescript": "^5.0.4"
+    "typescript": "^5.4.5"
   },
   "eslintConfig": {
     "extends": "react-app"

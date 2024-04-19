@@ -9,5 +9,5 @@ export type ProtectedRouteProps = {
 export default function ProtectedRoute({ redirectPath, hasAccess, isAuthorized, ...routeProps }: ProtectedRouteProps) {
   if (hasAccess) return <Route {...routeProps} />
 
-  return <Navigate to={{ pathname: redirectPath }} />
+  return <Navigate to={redirectPath} />
 }

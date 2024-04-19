@@ -1,5 +1,4 @@
-import styled from 'styled-components/macro'
-import { MavenTheme } from 'styles/interfaces'
+import styled from 'styled-components'
 
 export const SatelliteVotingHistoryListItem = styled.div`
   align-items: center;

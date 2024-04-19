@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import AvatarEditor from 'react-avatar-editor'
+
 import { PopupContainer, PopupContainerWrapper } from '../popup/PopupMain.style'
 import {
   UserProfileEditorStyled,
@@ -26,6 +27,7 @@ type Props = {
 export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor }: Props) => {
   const [zoom, setZoom] = useState('1')
   const [rotate, setRotate] = useState('0')
+  // TODO check avatar editor typ and class
   const editor = useRef<AvatarEditor | null>(null)
 
   const handleFile = async () => {
@@ -73,6 +75,7 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
         <button onClick={closeEditor} className="close-modal" />
         <UserProfileEditorStyled>
           <div className="avatar">
+            {/* @ts-ignore */}
             <AvatarEditor
               ref={editor}
               image={file || ''}
