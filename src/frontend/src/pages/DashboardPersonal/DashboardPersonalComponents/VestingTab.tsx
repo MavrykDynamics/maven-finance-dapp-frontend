@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 
 // components
@@ -80,7 +80,7 @@ const VestingTab = () => {
   const { action: handleClaimVestingReward } = useContractAction(contractActionProps)
 
   if (!isVestingLoading && !vesteeRecord)
-    return <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+    return <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
 
   const {
     vestingMonth = 0,

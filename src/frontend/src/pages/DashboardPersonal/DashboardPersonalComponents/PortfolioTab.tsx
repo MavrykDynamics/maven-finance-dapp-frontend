@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
+import { Link, Navigate, Route, Routes as Switch, useParams } from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
@@ -40,7 +40,7 @@ type PortfolioTabProps = {
 }
 
 const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount }: PortfolioTabProps) => {
-  const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
+  const { secondaryTabId = PORTFOLIO_LENDING_TAB_ID } = useParams<{ secondaryTabId: string }>()
 
   const { availableLoansRewards, userAddress } = useUserContext()
   const {
@@ -175,7 +175,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount 
       </div>
 
       <Switch>
-        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+        <Route path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
           <LendBorrowPosition
             totalUserBorrowed={totalUserBorrowed}
             totalUserLended={totalUserLended}
@@ -184,14 +184,14 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount 
             isUserLoansLoading={isUserLoansLoading}
           />
         </Route>
-        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
+        <Route path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
           <LoansTxTab txVariant="lending" userLoansData={userLendings} isUserLoansLoading={isUserLoansLoading} />
         </Route>
-        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
+        <Route path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
           <LoansTxTab txVariant="borrowing" userLoansData={userBorrowings} isUserLoansLoading={isUserLoansLoading} />
         </Route>
 
-        <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+        <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
       </Switch>
     </>
   )
