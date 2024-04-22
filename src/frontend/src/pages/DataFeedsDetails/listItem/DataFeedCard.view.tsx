@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 
 import { parseDate } from 'utils/time'
 

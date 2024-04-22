@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { create } from 'ipfs-http-client'
+import { Buffer } from 'buffer'
 
 // view
 import { IPFSUploaderView } from './IPFSUploader.view'

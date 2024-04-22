@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TopBarLinksStyled } from './TopBarLinks.style'
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import useCollapse from 'react-collapsed'
-import { Link, matchPath } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { Link, matchPath, useLocation } from 'react-router-dom'
 
 // types
 import { SubNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'

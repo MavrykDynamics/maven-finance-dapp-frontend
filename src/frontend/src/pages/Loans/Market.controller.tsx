@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -53,7 +52,7 @@ export const Market = () => {
   const { state } = useLocation()
   const historyState = state as { from?: string }
 
-  const { assetAddress: currentMarketAddress, tabId } = useParams<{
+  const { assetAddress: currentMarketAddress = '', tabId = '' } = useParams<{
     assetAddress: string
     tabId: string
   }>()

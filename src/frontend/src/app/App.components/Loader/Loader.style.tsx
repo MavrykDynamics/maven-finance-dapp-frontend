@@ -3,7 +3,7 @@ import { shine, ellipsis } from 'styles/animations'
 import { MavenTheme } from 'styles/interfaces'
 import { SPINNER_LOADER_LARGE, SPINNER_LOADER_MEDIUM, SPINNER_LOADER_SMALL } from './loader.const'
 
-export const LoaderStyledWithBackdrop = styled.div<{ theme: MavenTheme; backdropAlpha?: number; isActive: boolean }>`
+export const LoaderStyledWithBackdrop = styled.div<{ theme: MavenTheme; $backdropAlpha?: number; $isActive: boolean }>`
   position: fixed;
   z-index: 12;
   inset: 0;
@@ -22,7 +22,7 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavenTheme; backdrop
   &::after {
     content: '';
     background-color: ${({ theme }) => theme.backgroundColor};
-    opacity: ${({ backdropAlpha }) => backdropAlpha ?? 0.5};
+    opacity: ${({ $backdropAlpha }) => $backdropAlpha ?? 0.5};
     position: absolute;
     z-index: -1;
     inset: 0;
@@ -30,8 +30,8 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavenTheme; backdrop
 
   transition: 250ms opacity ease-out, 250ms visibility ease-out;
 
-  ${({ isActive }) =>
-    !isActive
+  ${({ $isActive }) =>
+    !$isActive
       ? css`
           opacity: 0;
           visibility: hidden;

@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 
 // view
 import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletBanner'

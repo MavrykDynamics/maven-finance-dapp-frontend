@@ -71,7 +71,7 @@ export const ClockLoader = (props: { width?: number; height?: number; fillColor?
 
 export const LottieLoader = ({ isActive, backdropAlpha }: { isActive: boolean; backdropAlpha: number }) => {
   return (
-    <LoaderStyledWithBackdrop isActive={isActive} backdropAlpha={backdropAlpha}>
+    <LoaderStyledWithBackdrop $isActive={isActive} $backdropAlpha={backdropAlpha}>
       <figure>
         <div>
           <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
@@ -94,7 +94,7 @@ export const Loaders = () => {
 
   return (
     <>
-      <LoaderStyledWithBackdrop backdropAlpha={0.8} isActive={isWertLoading && !isActiveFullScreenLoader}>
+      <LoaderStyledWithBackdrop $backdropAlpha={0.8} $isActive={isWertLoading && !isActiveFullScreenLoader}>
         <LoaderShineTextAnimation>Initializating Wert IO widget...</LoaderShineTextAnimation>
       </LoaderStyledWithBackdrop>
 
