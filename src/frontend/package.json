@@ -14,6 +14,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'"
   },
   "dependencies": {
