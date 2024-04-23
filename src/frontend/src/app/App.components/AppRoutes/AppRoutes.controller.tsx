@@ -89,14 +89,15 @@ export const AppRoutes = () => {
 
       <Route path="/break-glass-council/:tabId?" element={<BreakGlassCouncil />} />
 
-      <ProtectedRoute
+      <Route
         path="/submit-proposal"
-        element={<ProposalSubmission />}
-        isAuthorized={Boolean(userAddress)}
-        hasAccess={Boolean(isSatellite)}
-      >
-        <Governance />
-      </ProtectedRoute>
+        element={
+          <ProtectedRoute hasAccess={Boolean(isSatellite)} redirectPath={'/governance'}>
+            <ProposalSubmission />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="/treasury" element={<Treasury />} />
 
       <Route path="/yield-farms" element={<Farms />} />

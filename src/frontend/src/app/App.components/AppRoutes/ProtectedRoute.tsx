@@ -1,13 +1,13 @@
-import { Navigate, Route, RouteProps } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 export type ProtectedRouteProps = {
-  children: React.ReactElement | null
-  isAuthorized: boolean
+  redirectPath: string
   hasAccess: boolean
-} & RouteProps
+  children: React.ReactElement
+}
 
-export default function ProtectedRoute({ children, hasAccess, isAuthorized, ...routeProps }: ProtectedRouteProps) {
-  if (hasAccess) return <Route {...routeProps} />
+export default function ProtectedRoute({ redirectPath, hasAccess, children }: ProtectedRouteProps) {
+  if (!hasAccess) return <Navigate to={redirectPath} />
 
   return children
 }
