@@ -229,28 +229,36 @@ const DashboardPersonal = () => {
 
             <div className={`bottom-grid ${activeTab}`}>
               <DashboardPersonalTabStyled>
-                <Switch>
-                  <Route path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
-                    <DelegationTab
-                      distributeProposalRewards={distributeRewardsCallback}
-                      availableProposalRewards={availableProposalRewards}
-                    />
-                  </Route>
-                  <Route path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
-                    <SatelliteTab
-                      distributeProposalRewards={distributeRewardsCallback}
-                      availableProposalRewards={availableProposalRewards}
-                    />
-                  </Route>
-                  <Route path={`/dashboard-personal/${VESTING_TAB_ID}`}>
-                    <VestingTab />
-                  </Route>
-                  <Route path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/:secondaryTabId?`}>
-                    <PortfolioTab {...userWalletData} />
-                  </Route>
+                {/* <Switch>
+                  <Route
+                    path={`/dashboard-personal/${DELEGATION_TAB_ID}`}
+                    element={
+                      <DelegationTab
+                        distributeProposalRewards={distributeRewardsCallback}
+                        availableProposalRewards={availableProposalRewards}
+                      />
+                    }
+                  />
+
+                  <Route
+                    path={`/dashboard-personal/${SATELLITE_TAB_ID}`}
+                    element={
+                      <SatelliteTab
+                        distributeProposalRewards={distributeRewardsCallback}
+                        availableProposalRewards={availableProposalRewards}
+                      />
+                    }
+                  />
+
+                  <Route path={`/dashboard-personal/${VESTING_TAB_ID}`} element={<VestingTab />} />
+
+                  <Route
+                    path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/:secondaryTabId?`}
+                    element={<PortfolioTab {...userWalletData} />}
+                  />
 
                   <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
-                </Switch>
+                </Switch> */}
               </DashboardPersonalTabStyled>
             </div>
           </>

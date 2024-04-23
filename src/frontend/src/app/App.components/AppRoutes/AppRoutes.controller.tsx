@@ -52,105 +52,72 @@ export const AppRoutes = () => {
 
   return (
     <Switch>
-      <Route path="/" element={<div style={{ color: 'white', fontSize: 32 }}>Hello baby</div>} />
+      <Route path="/staking" element={<Doorman />} />
+
+      {/* DASHBOARD */}
+      <Route path="/" element={<Dashboard />} />
+
+      <Route path="/dashboard-personal/:tabId/:secondaryTabId?" element={<DashboardPersonal />} />
+
+      {/* SATELLITES */}
+      <Route path="/satellites" element={<Satellites />} />
+
+      <Route path="/become-satellite/:tabId" element={<BecomeSatellite />} />
+
+      <Route path="/satellite-nodes" element={<SatelliteNodes />} />
+
+      <Route path="/satellites/satellite-details/:satelliteId" element={<SatelliteDetails />} />
+
+      <Route path="/data-feeds" element={<DataFeeds />} />
+
+      <Route path="/satellites/feed-details/:feedId" element={<DataFeedDetails />} />
+
+      {/* GOVERNANCE PAGES */}
+      <Route path="/governance" element={<Governance />} />
+
+      <Route path="/satellite-governance/:tabId?" element={<SatelliteGovernance />} />
+
+      <Route path="/proposal-history" element={<Governance isHistory />} />
+
+      <Route path="/contract-status" element={<ContractStatuses />} />
+
+      <Route path="/financial-requests" element={<FinancialRequests />} />
+
+      <Route path="/emergency-governance" element={<EmergencyGovernance />} />
+
+      <Route path="/maven-council/:tabId?" element={<Council />} />
+
+      <Route path="/break-glass-council/:tabId?" element={<BreakGlassCouncil />} />
+
+      <ProtectedRoute
+        path="/submit-proposal"
+        element={<ProposalSubmission />}
+        isAuthorized={Boolean(userAddress)}
+        hasAccess={Boolean(isSatellite)}
+      >
+        <Governance />
+      </ProtectedRoute>
+      <Route path="/treasury" element={<Treasury />} />
+
+      <Route path="/yield-farms" element={<Farms />} />
+
+      {/* LEND & BORROW */}
+      <Route path="/loans/:assetAddress/:tabId" element={<Market />} />
+
+      <Route path="/loans" element={<Loans />} />
+
+      <Route path="/vaults/:tabId" element={<Vaults />} />
+
+      <Route path="/loans/dashboard" element={<LoansDashboard />} />
+
+      <Route path="/loans/earn" element={<LoansEarn />} />
+
+      <Route path="/loans/borrow" element={<LoansBorrow />} />
+
+      {/* NOT PROD PAGES */}
+      <Route path="/admin" element={<Admin />} />
+
+      <Route path="*" element={<RenderErrorPage />} />
     </Switch>
   )
-
-  // return (
-  //   <Switch>
-  //     <Route path="/staking">
-  //       <Doorman />
-  //     </Route>
-  //     {/* DASHBOARD */}
-  //     <Route path="/">
-  //       <Dashboard />
-  //     </Route>
-  //     <Route path="/dashboard-personal/:tabId/:secondaryTabId?">
-  //       <DashboardPersonal />
-  //     </Route>
-  //     {/* SATELLITES */}
-  //     <Route path="/satellites">
-  //       <Satellites />
-  //     </Route>
-  //     <Route path="/become-satellite/:tabId">
-  //       <BecomeSatellite />
-  //     </Route>
-  //     <Route path="/satellite-nodes">
-  //       <SatelliteNodes />
-  //     </Route>
-  //     <Route path="/satellites/satellite-details/:satelliteId">
-  //       <SatelliteDetails />
-  //     </Route>
-  //     <Route path="/data-feeds">
-  //       <DataFeeds />
-  //     </Route>
-  //     <Route path="/satellites/feed-details/:feedId">
-  //       <DataFeedDetails />
-  //     </Route>
-  //     {/* GOVERNANCE PAGES */}
-  //     <Route path="/governance">
-  //       <Governance />
-  //     </Route>
-  //     <Route path="/satellite-governance/:tabId?">
-  //       <SatelliteGovernance />
-  //     </Route>
-  //     <Route path="/proposal-history">
-  //       <Governance isHistory />
-  //     </Route>
-  //     <Route path="/contract-status">
-  //       <ContractStatuses />
-  //     </Route>
-  //     <Route path="/financial-requests">
-  //       <FinancialRequests />
-  //     </Route>
-  //     <Route path="/emergency-governance">
-  //       <EmergencyGovernance />
-  //     </Route>
-  //     <Route path="/maven-council/:tabId?">
-  //       <Council />
-  //     </Route>
-  //     <Route path="/break-glass-council/:tabId?">
-  //       <BreakGlassCouncil />
-  //     </Route>
-  //     <ProtectedRoute
-  //       path="/submit-proposal"
-  //       element={<ProposalSubmission />}
-  //       isAuthorized={Boolean(userAddress)}
-  //       hasAccess={Boolean(isSatellite)}
-  //       redirectPath={'/governance'}
-  //     />
-  //     <Route path="/treasury">
-  //       <Treasury />
-  //     </Route>
-  //     <Route path="/yield-farms">
-  //       <Farms />
-  //     </Route>
-  //     {/* LEND & BORROW */}
-  //     <Route path="/loans/:assetAddress/:tabId">
-  //       <Market />
-  //     </Route>
-  //     <Route path="/loans">
-  //       <Loans />
-  //     </Route>
-  //     <Route path="/vaults/:tabId">
-  //       <Vaults />
-  //     </Route>
-  //     <Route path="/loans/dashboard">
-  //       <LoansDashboard />
-  //     </Route>
-  //     <Route path="/loans/earn">
-  //       <LoansEarn />
-  //     </Route>
-  //     <Route path="/loans/borrow">
-  //       <LoansBorrow />
-  //     </Route>
-  //     {/* NOT PROD PAGES */}
-  //     <Route path="/admin">
-  //       <Admin />
-  //     </Route>
-  //     <Route path="*">
-  //       <RenderErrorPage />
-  //     </Route>
-  //   </Switch>
-  // )
 }

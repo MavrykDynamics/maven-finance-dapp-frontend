@@ -189,7 +189,7 @@ export const BecomeSatellite = () => {
                     here
                   </CustomLink>
                 </BecomeSatelliteOracleText>
-                <Switch>
+                {/* <Switch>
                   <ProtectedRoute
                     path={`/become-satellite/${SATELLITE_TAB_DETAILS}`}
                     isAuthorized={Boolean(userAddress)}
@@ -200,15 +200,18 @@ export const BecomeSatellite = () => {
                       <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
                     }
                   />
-                  <Route path={`/become-satellite/${SATELLITE_TAB_EDIT}`}>
-                    <BecomeSatelliteScreen
-                      usersSatelliteProfile={usersSatelliteProfile}
-                      userSmvnBalance={userSmvnBalance}
-                    />
-                  </Route>
+                  <Route
+                    path={`/become-satellite/${SATELLITE_TAB_EDIT}`}
+                    element={
+                      <BecomeSatelliteScreen
+                        usersSatelliteProfile={usersSatelliteProfile}
+                        userSmvnBalance={userSmvnBalance}
+                      />
+                    }
+                  />
 
                   <Navigate to={`/become-satellite/${SATELLITE_TAB_EDIT}`} />
-                </Switch>
+                </Switch> */}
               </BecomeSatelliteForm>
             )}
           </div>

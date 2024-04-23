@@ -174,25 +174,36 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount 
         </Link>
       </div>
 
-      <Switch>
-        <Route path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
-          <LendBorrowPosition
-            totalUserBorrowed={totalUserBorrowed}
-            totalUserLended={totalUserLended}
-            userVaultsData={userVaultsData}
-            userLoansRewards={availableLoansRewards}
-            isUserLoansLoading={isUserLoansLoading}
-          />
-        </Route>
-        <Route path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
-          <LoansTxTab txVariant="lending" userLoansData={userLendings} isUserLoansLoading={isUserLoansLoading} />
-        </Route>
-        <Route path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
-          <LoansTxTab txVariant="borrowing" userLoansData={userBorrowings} isUserLoansLoading={isUserLoansLoading} />
-        </Route>
+      {/* <Switch>
+        <Route
+          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}
+          element={
+            <LendBorrowPosition
+              totalUserBorrowed={totalUserBorrowed}
+              totalUserLended={totalUserLended}
+              userVaultsData={userVaultsData}
+              userLoansRewards={availableLoansRewards}
+              isUserLoansLoading={isUserLoansLoading}
+            />
+          }
+        />
+
+        <Route
+          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}
+          element={
+            <LoansTxTab txVariant="lending" userLoansData={userLendings} isUserLoansLoading={isUserLoansLoading} />
+          }
+        />
+
+        <Route
+          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}
+          element={
+            <LoansTxTab txVariant="borrowing" userLoansData={userBorrowings} isUserLoansLoading={isUserLoansLoading} />
+          }
+        />
 
         <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
-      </Switch>
+      </Switch> */}
     </>
   )
 }
