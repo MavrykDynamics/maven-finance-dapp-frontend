@@ -14,7 +14,7 @@ export const WalletDetailsStyled = styled.div`
   height: 100%;
 `
 
-export const WalletDetailsHiddenPart = styled.div<{ theme: MavenTheme; isShown: boolean }>`
+export const WalletDetailsHiddenPart = styled.div<{ theme: MavenTheme; $isShown: boolean }>`
   width: 375px;
 
   position: absolute;
@@ -31,11 +31,11 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavenTheme; isShown: 
   opacity: 0;
   transition: 500ms opacity, 500ms visibility;
 
-  ${({ isShown }) =>
+  ${({ $isShown }) =>
     css`
-      visibility: ${isShown ? 'visible' : 'hidden'};
-      opacity: ${isShown ? 1 : 0};
-      pointer-events: ${isShown ? 'initial' : 'none'};
+      visibility: ${$isShown ? 'visible' : 'hidden'};
+      opacity: ${$isShown ? 1 : 0};
+      pointer-events: ${$isShown ? 'initial' : 'none'};
     `}
 
   hr {
@@ -171,7 +171,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavenTheme; isShown: 
   }
 `
 
-export const WalletDetailsVisiblePart = styled.div<{ theme: MavenTheme; isShown: boolean }>`
+export const WalletDetailsVisiblePart = styled.div<{ theme: MavenTheme; $isShown: boolean }>`
   width: fit-content;
   height: 100%;
   cursor: pointer;
@@ -199,8 +199,8 @@ export const WalletDetailsVisiblePart = styled.div<{ theme: MavenTheme; isShown:
     transform: rotate(-90deg);
     fill: ${({ theme }) => theme.linksAndButtons};
 
-    ${({ isShown }) =>
-      isShown
+    ${({ $isShown }) =>
+      $isShown
         ? css`
             transform: rotate(-270deg);
           `
@@ -242,7 +242,7 @@ export const MobileWalletDetailsStyled = styled.div`
   margin: 0 0 30px 0;
 `
 
-export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ theme: MavenTheme; isShown: boolean }>`
+export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ theme: MavenTheme; $isShown: boolean }>`
   width: 100vw;
   max-height: 90vh;
 
@@ -259,10 +259,10 @@ export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ t
   visibility: visible;
   transition: 1000ms transform;
 
-  ${({ isShown }) =>
+  ${({ $isShown }) =>
     css`
-      ${isShown ? 'transform: translateY(90vh);' : ''};
-      pointer-events: ${isShown ? 'initial' : 'none'};
+      ${$isShown ? 'transform: translateY(90vh);' : ''};
+      pointer-events: ${$isShown ? 'initial' : 'none'};
     `};
 
   .close-details-btn {

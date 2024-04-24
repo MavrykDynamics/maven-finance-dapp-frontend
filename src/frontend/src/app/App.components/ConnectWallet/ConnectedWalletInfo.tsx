@@ -60,7 +60,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   return (
     <WalletDetailsStyled onMouseOver={mouseOverHanlder} onMouseLeave={closeDetailsHandler}>
       <WalletDetailsVisiblePart
-        isShown={detailsShown}
+        $isShown={detailsShown}
         onMouseOver={mouseOverHanlder}
         onMouseLeave={closeDetailsHandler}
       >
@@ -69,7 +69,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
-      <WalletDetailsHiddenPart isShown={detailsShown}>
+      <WalletDetailsHiddenPart $isShown={detailsShown}>
         <div className="top">
           <Icon id="wallet" />
           <TzAddress tzAddress={userAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
@@ -257,13 +257,13 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
   return (
     <MobileWalletDetailsStyled>
-      <WalletDetailsVisiblePart isShown={detailsShown} onClick={clickHander}>
+      <WalletDetailsVisiblePart $isShown={detailsShown} onClick={clickHander}>
         <Icon id="wallet" className="wallet" />
         <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} type={SECONDARY_TZ_ADDRESS_COLOR} />
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
-      <MobileWalletDetailsHiddenPart isShown={detailsShown}>
+      <MobileWalletDetailsHiddenPart $isShown={detailsShown}>
         {detailsShown ? (
           <div className="close-details-btn">
             <Button kind={BUTTON_SIMPLE} onClick={() => setDetailsShown(false)}>

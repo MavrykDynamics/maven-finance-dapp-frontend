@@ -61,7 +61,7 @@ export const App = () => {
   const proccedPolicy = useCallback(() => setCookie('policyPopup', true), [])
 
   return (
-    <AppStyled isExpandedMenu={sidebarOpened}>
+    <AppStyled $isExpandedMenu={sidebarOpened}>
       <Loaders />
 
       <Menu />

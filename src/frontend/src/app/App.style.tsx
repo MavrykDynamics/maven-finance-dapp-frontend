@@ -4,13 +4,13 @@ import { MavenTheme } from '../styles/interfaces'
 
 export const AppStyled = styled.div<{
   theme: MavenTheme
-  isExpandedMenu?: boolean
+  $isExpandedMenu?: boolean
 }>`
   --carousel-button-size: 30px;
   --carousel-button-bg: rgb(22 14 63 / 70%);
   --carousel-button-indent: -15px;
   min-height: 100vh;
-  padding-left: ${({ isExpandedMenu }) => (isExpandedMenu ? '232px' : '72px')};
+  padding-left: ${({ $isExpandedMenu }) => ($isExpandedMenu ? '232px' : '72px')};
 
   @media screen and (max-width: 1399px) {
     padding-left: 72px;

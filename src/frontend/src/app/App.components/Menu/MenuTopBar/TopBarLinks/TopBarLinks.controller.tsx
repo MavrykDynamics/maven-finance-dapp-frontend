@@ -22,7 +22,7 @@ export const TopBarLinks = ({
   const { pathname } = useLocation()
 
   return (
-    <TopBarLinksStyled useClickOpening={useClickOpening} selected={selectedLinksBlock === groupName}>
+    <TopBarLinksStyled $useClickOpening={useClickOpening} $selected={selectedLinksBlock === groupName}>
       <div
         className={`group-name ${selectedLinksBlock === groupName ? 'selected' : ''}`}
         onClick={setSelectedLinksBlock}
