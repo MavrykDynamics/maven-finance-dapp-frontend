@@ -133,7 +133,7 @@ export const MenuMobileBurger = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const MobileTopBarStyled = styled.div<{ show: boolean }>`
+export const MobileTopBarStyled = styled.div<{ $show: boolean }>`
   position: absolute;
   width: 100vw;
   height: calc(100vh - 80px);
@@ -184,8 +184,8 @@ export const MobileTopBarStyled = styled.div<{ show: boolean }>`
     display: none;
   }
 
-  ${({ show }) =>
-    show
+  ${({ $show }) =>
+    $show
       ? css`
           max-height: calc(100vh - 80px);
         `

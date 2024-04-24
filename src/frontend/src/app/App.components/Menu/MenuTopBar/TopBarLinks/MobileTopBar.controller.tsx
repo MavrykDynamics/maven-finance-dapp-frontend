@@ -26,7 +26,7 @@ export const MobileTopBar = ({
 
   const [selectedLinksBlock, setSelectedLinksBlock] = useState<null | string>(null)
   return (
-    <MobileTopBarStyled show={show}>
+    <MobileTopBarStyled $show={show}>
       {userAddress ? (
         <MobileWalletDetails mountWertWiget={mountWertWiget} closeMobileMenu={closeMobileMenu} />
       ) : (

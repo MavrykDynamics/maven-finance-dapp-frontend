@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components'
 import { MavenTheme } from '../../../../styles/interfaces'
 
 export const NavigationLinkContainer = styled.div<{
-  selected: boolean
-  isMobMenuExpanded: boolean
+  $selected: boolean
+  $isMobMenuExpanded: boolean
   theme: MavenTheme
 }>`
   width: 100%;
@@ -15,8 +15,8 @@ export const NavigationLinkContainer = styled.div<{
     }
   }
 
-  ${({ isMobMenuExpanded }) =>
-    !isMobMenuExpanded
+  ${({ $isMobMenuExpanded }) =>
+    !$isMobMenuExpanded
       ? css`
           display: flex;
           justify-content: center;
@@ -30,8 +30,8 @@ export const NavigationLinkContainer = styled.div<{
         `
       : ''}
 
-  ${(props) =>
-    props.selected &&
+  ${({ $selected }) =>
+    $selected &&
     css`
       background: ${({ theme }) => theme.menuBackgroundActiveColor};
       color: ${({ theme }) => theme.menuButtonText};
@@ -54,15 +54,15 @@ export const NavigationLinkContainer = styled.div<{
 `
 
 export const NavigationLinkItem = styled.div<{
-  selected: boolean
-  isMobMenuExpanded: boolean
+  $selected: boolean
+  $isMobMenuExpanded: boolean
   theme: MavenTheme
-  disabled?: boolean
+  $disabled?: boolean
 }>`
   width: 100%;
 
-  ${({ disabled }) =>
-    disabled
+  ${({ $disabled }) =>
+    $disabled
       ? css`
           cursor: not-allowed;
         `
@@ -82,8 +82,8 @@ export const NavigationLinkItem = styled.div<{
       justify-content: space-around;
     }
 
-    ${(props) =>
-      props.selected &&
+    ${({ $selected }) =>
+      $selected &&
       css`
         .navLinkTitle {
           color: ${({ theme }) => theme.menuButtonText};
@@ -91,8 +91,8 @@ export const NavigationLinkItem = styled.div<{
       `}
   }
 
-  ${({ isMobMenuExpanded }) =>
-    !isMobMenuExpanded
+  ${({ $isMobMenuExpanded }) =>
+    !$isMobMenuExpanded
       ? css`
           display: flex;
           justify-content: center;
@@ -106,7 +106,7 @@ export const NavigationLinkItem = styled.div<{
         `
       : ''}
 `
-export const NavigationLinkIcon = styled.div<{ selected: boolean; theme: MavenTheme }>`
+export const NavigationLinkIcon = styled.div<{ $selected: boolean; theme: MavenTheme }>`
   width: 35px;
   cursor: pointer;
   text-align: center;
@@ -121,8 +121,8 @@ export const NavigationLinkIcon = styled.div<{ selected: boolean; theme: MavenTh
     vertical-align: top;
   }
 
-  ${(props) =>
-    props.selected &&
+  ${({ $selected }) =>
+    $selected &&
     css`
       > svg {
         fill: ${({ theme }) => theme.menuButtonText};
@@ -133,7 +133,7 @@ export const NavigationLinkIcon = styled.div<{ selected: boolean; theme: MavenTh
 export const NavigationSubLinks = styled.div<{ theme: MavenTheme }>`
   background: ${({ theme }) => theme.backgroundColor};
 `
-export const SubNavLink = styled.div<{ theme: MavenTheme; disabled?: boolean }>`
+export const SubNavLink = styled.div<{ theme: MavenTheme; $disabled?: boolean }>`
   width: 100%;
   height: 50px;
   display: flex;
@@ -145,15 +145,15 @@ export const SubNavLink = styled.div<{ theme: MavenTheme; disabled?: boolean }>`
     margin-left: 75px;
   }
 
-  ${({ disabled }) =>
-    disabled
+  ${({ $disabled }) =>
+    $disabled
       ? css`
           cursor: not-allowed;
         `
       : ''}
 `
 
-export const SubLinkText = styled.p<{ selected: boolean; theme: MavenTheme }>`
+export const SubLinkText = styled.p<{ $selected: boolean; theme: MavenTheme }>`
   font-size: 14px;
   line-height: 17px;
   font-weight: 500;
@@ -162,8 +162,8 @@ export const SubLinkText = styled.p<{ selected: boolean; theme: MavenTheme }>`
   transition: 0.3s all;
   color: ${({ theme }) => theme.menuButtonText};
 
-  ${(props) =>
-    props.selected &&
+  ${({ $selected }) =>
+    $selected &&
     css`
       &:before {
         position: absolute;
