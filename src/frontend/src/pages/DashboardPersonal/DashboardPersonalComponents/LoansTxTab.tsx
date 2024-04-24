@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
@@ -28,23 +29,18 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { parseDate } from 'utils/time'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
-// types
-import { UserLoansData } from 'providers/UserProvider/user.provider.types'
+// context
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 
-export const LoansTxTab = ({
-  txVariant,
-  userLoansData,
-  isUserLoansLoading,
-}: {
-  txVariant: 'lending' | 'borrowing'
-  isUserLoansLoading: boolean
-  userLoansData: UserLoansData['userLendings'] | UserLoansData['userBorrowings']
-}) => {
+export const LoansTxTab = ({ txVariant }: { txVariant: 'lending' | 'borrowing' }) => {
   const { tokensMetadata } = useTokensContext()
   const { userAddress } = useUserContext()
 
+  const { isLoading: isUserLoansLoading, userLendings, userBorrowings } = useUserLoansData()
+
   const isLending = txVariant === 'lending'
+  const userLoansData = useMemo(() => (isLending ? userLendings : userBorrowings), [])
 
   return (
     <LBHInfoBlock>

@@ -5,9 +5,6 @@ import { Link } from 'react-router-dom'
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansProvider/helpers/loans.const'
 
-// types
-import { UserLoansData } from 'providers/UserProvider/user.provider.types'
-
 // hooks
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useLoansGaugeChartData } from 'providers/LoansProvider/hooks/useLoansGaugeChartData'
@@ -22,21 +19,15 @@ import Button from 'app/App.components/Button/NewButton'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
-export const LendBorrowPosition = ({
-  userLoansRewards,
-  totalUserBorrowed,
-  totalUserLended,
-  userVaultsData,
-  isUserLoansLoading,
-}: {
-  totalUserBorrowed: number
-  totalUserLended: number
-  userVaultsData: UserLoansData['userVaultsData']
-  userLoansRewards: number
-  isUserLoansLoading: boolean
-}) => {
+export const LendBorrowPosition = () => {
   const { changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
+
+  const { availableLoansRewards: userLoansRewards } = useUserContext()
+
+  const { totalUserBorrowed, totalUserLended, userVaultsData, isLoading: isUserLoansLoading } = useUserLoansData()
 
   useEffect(() => {
     changeLoansSubscriptionsList({

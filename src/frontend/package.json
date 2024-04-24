@@ -2,7 +2,7 @@
   "name": "mavryk-finance-dapp-frontend",
   "version": "1.0.0",
   "scripts": {
-    "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
+    "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 node scripts/start.js -r @cypress/instrument-cra start && open http://localhost:3000",
     "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 node scripts/start.js -r @cypress/instrument-cra start && open http://localhost:3000",
     "build": "npm run graphql-compile && DISABLE_ESLINT_PLUGIN=true node scripts/build.js",
     "build:evenlop": "npm run graphql-compile && export NODE_OPTIONS=--openssl-legacy-provider && DISABLE_ESLINT_PLUGIN=true node scripts/build.js",

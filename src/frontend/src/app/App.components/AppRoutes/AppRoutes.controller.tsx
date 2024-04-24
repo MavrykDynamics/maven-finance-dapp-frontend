@@ -41,6 +41,8 @@ import { SatelliteDetailsScreen } from 'pages/BecomeSatellite/screens/SatelliteD
 import { BecomeSatelliteScreen } from 'pages/BecomeSatellite/screens/BecomeSatellite.screen'
 import {
   DELEGATION_TAB_ID,
+  PORTFOLIO_BORROWING_TAB_ID,
+  PORTFOLIO_LENDING_TAB_ID,
   PORTFOLIO_POSITION_TAB_ID,
   PORTFOLIO_TAB_ID,
   SATELLITE_TAB_ID,
@@ -50,6 +52,8 @@ import PortfolioTab from 'pages/DashboardPersonal/DashboardPersonalComponents/Po
 import SatelliteTab from 'pages/DashboardPersonal/DashboardPersonalComponents/SatelliteTab'
 import DelegationTab from 'pages/DashboardPersonal/DashboardPersonalComponents/DelegationTab'
 import VestingTab from 'pages/DashboardPersonal/DashboardPersonalComponents/VestingTab'
+import { LoansTxTab } from 'pages/DashboardPersonal/DashboardPersonalComponents/LoansTxTab'
+import { LendBorrowPosition } from 'pages/DashboardPersonal/DashboardPersonalComponents/LendBorrowPosition'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -71,14 +75,25 @@ export const AppRoutes = () => {
       {/* DASHBOARD */}
       <Route path="/" element={<Dashboard />} />
 
-      <Route path="/dashboard-personal/:tabId/:secondaryTabId?" element={<DashboardPersonal />}>
+      <Route path="/dashboard-personal/" element={<DashboardPersonal />}>
         <Route path={`${DELEGATION_TAB_ID}`} element={<DelegationTab />} />
 
         <Route path={`${SATELLITE_TAB_ID}`} element={<SatelliteTab />} />
 
         <Route path={`${VESTING_TAB_ID}`} element={<VestingTab />} />
 
-        <Route path={`${PORTFOLIO_TAB_ID}/:secondaryTabId?`} element={<PortfolioTab />} />
+        <Route path={`${PORTFOLIO_TAB_ID}/`} element={<PortfolioTab />}>
+          <Route path={`${PORTFOLIO_POSITION_TAB_ID}`} element={<LendBorrowPosition />} />
+
+          <Route path={`${PORTFOLIO_LENDING_TAB_ID}`} element={<LoansTxTab txVariant="lending" />} />
+
+          <Route path={`${PORTFOLIO_BORROWING_TAB_ID}`} element={<LoansTxTab txVariant="borrowing" />} />
+
+          <Route
+            path="*"
+            element={<Navigate replace to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />}
+          />
+        </Route>
 
         <Route
           path="*"

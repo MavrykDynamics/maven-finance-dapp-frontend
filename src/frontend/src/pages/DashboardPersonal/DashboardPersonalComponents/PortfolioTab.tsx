@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link, Navigate, Route, Routes as Switch, useOutletContext, useParams } from 'react-router-dom'
+import { Link, Navigate, Outlet, Route, Routes as Switch, useOutletContext, useParams } from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
@@ -210,6 +210,7 @@ const PortfolioTab = () => {
 
         <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
       </Switch> */}
+      <Outlet />
     </>
   )
 }

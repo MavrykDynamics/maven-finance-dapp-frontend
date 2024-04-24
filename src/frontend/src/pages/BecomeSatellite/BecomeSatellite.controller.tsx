@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Navigate, Outlet, Route, Routes as Switch, useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 
 // Consts
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
@@ -25,7 +25,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
-import ProtectedRoute from 'app/App.components/AppRoutes/ProtectedRoute'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -34,8 +33,6 @@ import { BecomeSatelliteForm, BecomeSatelliteNavigation, BecomeSatelliteOracleTe
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { BecomeSatelliteBanners } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners'
-import { SatelliteDetailsScreen } from './screens/SatelliteDetails.screen'
-import { BecomeSatelliteScreen } from './screens/BecomeSatellite.screen'
 
 const pageTexts = {
   [SATELLITE_TAB_DETAILS]: 'Satellite Details',
@@ -189,29 +186,7 @@ export const BecomeSatellite = () => {
                     here
                   </CustomLink>
                 </BecomeSatelliteOracleText>
-                {/* <Switch>
-                  <ProtectedRoute
-                    path={`/become-satellite/${SATELLITE_TAB_DETAILS}`}
-                    isAuthorized={Boolean(userAddress)}
-                    hasAccess={Boolean(isSatellite) && Boolean(usersSatelliteProfile)}
-                    redirectPath={`/become-satellite/${SATELLITE_TAB_EDIT}`}
-                    element={
-                      // @ts-expect-error
-                      <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
-                    }
-                  />
-                  <Route
-                    path={`/become-satellite/${SATELLITE_TAB_EDIT}`}
-                    element={
-                      <BecomeSatelliteScreen
-                        usersSatelliteProfile={usersSatelliteProfile}
-                        userSmvnBalance={userSmvnBalance}
-                      />
-                    }
-                  />
 
-                  <Navigate to={`/become-satellite/${SATELLITE_TAB_EDIT}`} />
-                </Switch> */}
                 <Outlet context={{ usersSatelliteProfile, satelliteId: userAddress, userSmvnBalance }} />
               </BecomeSatelliteForm>
             )}
