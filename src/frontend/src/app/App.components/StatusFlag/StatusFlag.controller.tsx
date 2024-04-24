@@ -18,7 +18,7 @@ export const StatusFlag = ({ text = '', isFilled = false, status, className }: S
 
   const isCardFilled = useMemo(() => isFilled || themeSelected === LIGHT_THEME, [themeSelected, isFilled])
   return (
-    <StatusFlagStyled kind={status} className={className} isFilled={isCardFilled}>
+    <StatusFlagStyled $kind={status} className={className} $isFilled={isCardFilled}>
       {text}
     </StatusFlagStyled>
   )

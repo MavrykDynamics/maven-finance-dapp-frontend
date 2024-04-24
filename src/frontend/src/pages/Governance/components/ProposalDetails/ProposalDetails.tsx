@@ -465,14 +465,14 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
 
                 return (
                   <TableRow className="editable-row proposal-details-payments" key={payment.id}>
-                    <TableCell width="25%">
+                    <TableCell $width="25%">
                       <TzAddress tzAddress={String(payment.to__id)} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={false} />
                     </TableCell>
-                    <TableCell width="25%">{String(payment.title)}</TableCell>
-                    <TableCell width="25%">
+                    <TableCell $width="25%">{String(payment.title)}</TableCell>
+                    <TableCell $width="25%">
                       <CommaNumber value={tokenAmount} decimalsToShow={decimals} endingText={symbol} />
                     </TableCell>
-                    <TableCell className="no-right-border" width="25%">
+                    <TableCell className="no-right-border" $width="25%">
                       {symbol}
                     </TableCell>
                   </TableRow>

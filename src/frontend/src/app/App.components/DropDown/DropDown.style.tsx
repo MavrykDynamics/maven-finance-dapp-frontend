@@ -172,7 +172,7 @@ export const DropDownList = styled.ul<{ theme: MavenTheme }>`
   z-index: 2;
 `
 
-export const DropDownListItem = styled.li<{ disabled?: boolean }>`
+export const DropDownListItem = styled.li<{ $disabled?: boolean }>`
   list-style: none;
   height: 33px;
   display: flex;
@@ -195,8 +195,8 @@ export const DropDownListItem = styled.li<{ disabled?: boolean }>`
     background-color: ${({ theme }) => theme.selectedColor}33;
   }
 
-  ${({ disabled }) =>
-    disabled
+  ${({ $disabled }) =>
+    $disabled
       ? css`
           opacity: 0.6;
           cursor: not-allowed;

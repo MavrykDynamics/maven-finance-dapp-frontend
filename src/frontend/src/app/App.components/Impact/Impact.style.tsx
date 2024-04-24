@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 import { ImpactValueType, NEGATIVE_IMPACT, POSITIVE_IMPACT } from './Impact.conts'
 
-export const ImpactStyled = styled.div<{ theme: MavenTheme; impact: ImpactValueType }>`
+export const ImpactStyled = styled.div<{ theme: MavenTheme; $impact: ImpactValueType }>`
   height: 18px;
   padding: 3px;
   border-radius: 5px;
@@ -12,13 +12,13 @@ export const ImpactStyled = styled.div<{ theme: MavenTheme; impact: ImpactValueT
   justify-content: center;
   align-items: center;
 
-  ${({ impact }) =>
-    impact === NEGATIVE_IMPACT
+  ${({ $impact }) =>
+    $impact === NEGATIVE_IMPACT
       ? css`
           color: ${({ theme }) => theme.downColor};
           background: ${({ theme }) => theme.downBgColor};
         `
-      : impact === POSITIVE_IMPACT
+      : $impact === POSITIVE_IMPACT
       ? css`
           color: ${({ theme }) => theme.upColor};
           background: ${({ theme }) => theme.upBgColor};

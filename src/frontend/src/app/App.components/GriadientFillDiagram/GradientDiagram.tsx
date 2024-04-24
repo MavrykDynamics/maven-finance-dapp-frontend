@@ -22,10 +22,10 @@ export const GradientDiagram = ({ colorBreakpoints, currentPercentage, className
   const gradient = getGradient({ colorBreakpoints })
 
   return (
-    <GradientDiagramStyled gradient={gradient} gradientWidth={currentPercentage} className={className}>
+    <GradientDiagramStyled $gradient={gradient} $gradientWidth={currentPercentage} className={className}>
       {colorBreakpoints.map(({ color, value }) => (
         <GradientBreakpoint
-          background={`rgb(${color.r}, ${color.g}, ${color.b})`}
+          $background={`rgb(${color.r}, ${color.g}, ${color.b})`}
           key={`rgb(${color.r}, ${color.g}, ${color.b})`}
         >
           <div className="text">

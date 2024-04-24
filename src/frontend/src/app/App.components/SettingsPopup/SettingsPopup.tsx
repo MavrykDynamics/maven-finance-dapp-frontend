@@ -129,7 +129,7 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
               <ChangeNodeNodesListItem
                 key={url}
                 onClick={() => nodeClickHandler(url)}
-                isSelected={selectedNode === url}
+                $isSelected={selectedNode === url}
               >
                 {nodeLogoUrl ? (
                   <ImageWithPlug imageLink={`/images/${nodeLogoUrl}`} alt={`${title ?? url} node logo`} />

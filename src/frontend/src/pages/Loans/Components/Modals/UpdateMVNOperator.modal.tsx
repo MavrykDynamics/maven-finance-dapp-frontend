@@ -176,7 +176,7 @@ export const UpdateMVNOperator = ({
               {tableData.map(({ address, validationStatus }, rowIdx) => {
                 return (
                   <TableRow className="editable-row" key={rowIdx}>
-                    <TableCell width="100%">
+                    <TableCell $width="100%">
                       <Input
                         className={`table-input`}
                         inputProps={{

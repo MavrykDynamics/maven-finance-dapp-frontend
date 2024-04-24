@@ -77,7 +77,7 @@ export default function Expand({
         </div>
         {sufix}
       </header>
-      <ExpandArticleStyled show={expanded}>{children}</ExpandArticleStyled>
+      <ExpandArticleStyled $show={expanded}>{children}</ExpandArticleStyled>
     </ExpandStyled>
   )
 }

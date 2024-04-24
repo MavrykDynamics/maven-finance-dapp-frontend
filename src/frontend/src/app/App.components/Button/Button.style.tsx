@@ -279,7 +279,7 @@ export const ButtonText = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const ButtonIcon = styled.svg<{ theme: MavenTheme; strokeWidth?: number }>`
+export const ButtonIcon = styled.svg<{ theme: MavenTheme; $strokeWidth?: number }>`
   width: 24px;
   height: 24px;
   display: inline-block;
@@ -314,10 +314,10 @@ export const ButtonIcon = styled.svg<{ theme: MavenTheme; strokeWidth?: number }
     margin-left: 11px;
   }
 
-  ${({ strokeWidth }) =>
-    strokeWidth
+  ${({ $strokeWidth }) =>
+    $strokeWidth
       ? css`
-          stroke-width: ${strokeWidth};
+          stroke-width: ${$strokeWidth};
         `
       : ''}
 `

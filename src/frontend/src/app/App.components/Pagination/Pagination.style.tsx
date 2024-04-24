@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 import { PaginationPlacementVariants, PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
-export const PaginationWrapper = styled.div<{ theme: MavenTheme; side?: PaginationPlacementVariants }>`
+export const PaginationWrapper = styled.div<{ theme: MavenTheme; $side?: PaginationPlacementVariants }>`
   display: flex;
   max-height: 36px;
   align-items: center;
@@ -14,12 +14,12 @@ export const PaginationWrapper = styled.div<{ theme: MavenTheme; side?: Paginati
   margin-left: auto;
   margin-top: 20px;
 
-  ${({ side }) =>
-    side === PAGINATION_SIDE_RIGHT
+  ${({ $side }) =>
+    $side === PAGINATION_SIDE_RIGHT
       ? css`
           margin-left: auto;
         `
-      : side === PAGINATION_SIDE_CENTER
+      : $side === PAGINATION_SIDE_CENTER
       ? css`
           margin-right: auto;
           margin-left: auto;
@@ -37,7 +37,7 @@ export const PaginationWrapper = styled.div<{ theme: MavenTheme; side?: Paginati
   }
 `
 
-export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boolean; theme: MavenTheme }>`
+export const PaginationArrow = styled.div<{ $isRight?: boolean; $isDisabled: boolean; theme: MavenTheme }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -54,15 +54,15 @@ export const PaginationArrow = styled.div<{ isRight?: boolean; isDisabled: boole
   -webkit-user-select: none;
   -ms-user-select: none;
 
-  ${({ isRight }) =>
-    isRight
+  ${({ $isRight }) =>
+    $isRight
       ? css`
           transform: rotate(180deg);
         `
       : ''}
 
-  ${({ isDisabled }) =>
-    isDisabled
+  ${({ $isDisabled }) =>
+    $isDisabled
       ? css`
           opacity: 0.5;
         `

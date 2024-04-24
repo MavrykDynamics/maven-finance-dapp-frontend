@@ -170,15 +170,15 @@ export const TreasuryTab = () => {
 
                       return (
                         <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
-                          <TableCell width="33%">{symbol}</TableCell>
-                          <TableCell width="33%">
+                          <TableCell $width="33%">{symbol}</TableCell>
+                          <TableCell $width="33%">
                             {treasuryTokenBalance < 0.01 ? (
                               '<0.01'
                             ) : (
                               <CommaNumber value={treasuryTokenBalance} showDecimal decimalsToShow={2} />
                             )}
                           </TableCell>
-                          <TableCell width="33%" contentPosition="right">
+                          <TableCell $width="33%" $contentPosition="right">
                             {treasuryTokenBalance * rate < 0.01 ? (
                               `<0.01 ${rate ? '$' : symbol}`
                             ) : (

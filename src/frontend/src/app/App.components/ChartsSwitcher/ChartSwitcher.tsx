@@ -57,7 +57,7 @@ export const ChartsSwitcherWithPosition = ({
   ...props
 }: ChartSwitcherWithPositionProps) => {
   return (
-    <ChartsSwitcherWrapper align={align} space={space}>
+    <ChartsSwitcherWrapper $align={align} $space={space}>
       <ChartSwitcher {...props} />
     </ChartsSwitcherWrapper>
   )

@@ -192,7 +192,7 @@ export const ManagePermissions = ({
                 {tableData.map(({ address, validationStatus }, rowIdx) => {
                   return (
                     <TableRow className="editable-row">
-                      <TableCell width="100%">
+                      <TableCell $width="100%">
                         <Input
                           className={`table-input`}
                           inputProps={{

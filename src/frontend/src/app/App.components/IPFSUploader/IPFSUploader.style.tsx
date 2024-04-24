@@ -17,7 +17,7 @@ export const IPFSUploaderStyled = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const UploaderFileSelector = styled.div<{ validation: string; theme: MavenTheme }>`
+export const UploaderFileSelector = styled.div<{ $validation: string; theme: MavenTheme }>`
   cursor: pointer;
   height: 107px;
   width: 100%;
@@ -28,12 +28,12 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mave
   justify-content: center;
   align-items: center;
   position: relative;
-  ${({ validation, theme }) =>
-    validation === INPUT_STATUS_SUCCESS
+  ${({ $validation, theme }) =>
+    $validation === INPUT_STATUS_SUCCESS
       ? `
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='rgb(39, 174, 96)' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
     `
-      : validation === INPUT_STATUS_ERROR
+      : $validation === INPUT_STATUS_ERROR
       ? `
     background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='10' ry='10' stroke='rgb(255, 67, 67)' stroke-width='2' stroke-dasharray='10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
     `
@@ -92,7 +92,7 @@ export const UploaderFileSelector = styled.div<{ validation: string; theme: Mave
 `
 
 export const UploadIconContainer = styled.div<{
-  uploadIsFailed: boolean
+  $uploadIsFailed: boolean
   theme: MavenTheme
 }>`
   position: absolute;
@@ -131,7 +131,7 @@ export const UploadIconContainer = styled.div<{
     }
 
     .tip {
-      color: ${({ uploadIsFailed, theme }) => uploadIsFailed && theme.downColor};
+      color: ${({ $uploadIsFailed, theme }) => $uploadIsFailed && theme.downColor};
     }
   }
 

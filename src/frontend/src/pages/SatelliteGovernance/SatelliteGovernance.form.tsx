@@ -370,7 +370,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
               {table.map(({ to_, token, amount }, rowIdx) => {
                 return (
                   <TableRow className="editable-row">
-                    <TableCell width="33.3%">
+                    <TableCell $width="33.3%">
                       <Input
                         inputProps={{
                           type: 'text',
@@ -381,7 +381,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
                         settings={{ inputStatus: validation.table[rowIdx]?.to_ }}
                       />
                     </TableCell>
-                    <TableCell width="33.3%">
+                    <TableCell $width="33.3%">
                       <Input
                         inputProps={{
                           type: 'number',
@@ -392,7 +392,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
                         settings={{ inputStatus: validation.table[rowIdx]?.amount }}
                       />
                     </TableCell>
-                    <TableCell className="no-right-border" width="33.3%">
+                    <TableCell className="no-right-border" $width="33.3%">
                       <DropDown
                         placeholder=""
                         activeItem={getDdItem(token.toUpperCase())}

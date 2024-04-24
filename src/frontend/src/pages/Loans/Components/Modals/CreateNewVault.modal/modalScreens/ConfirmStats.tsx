@@ -110,7 +110,7 @@ export const ConfirmStats = () => {
         vaultFactoryAddress,
         lendingControllerAddress,
         tokensArr,
-        selectedBaker?.bakerAddress ?? null
+        selectedBaker?.bakerAddress ?? null,
       )
     }
 
@@ -139,7 +139,7 @@ export const ConfirmStats = () => {
       errActionCallback: () => updateVaultCreating(false),
       isSilentAction: true,
     }),
-    [createVaultAction, updateScreenToShow, updateVaultCreating]
+    [createVaultAction, updateScreenToShow, updateVaultCreating],
   )
 
   const { action: createVaultHandler } = useContractAction(createVaultActionProps)
@@ -177,11 +177,11 @@ export const ConfirmStats = () => {
 
                 return (
                   <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
-                    <TableCell width="33%">{symbol}</TableCell>
-                    <TableCell width="33%">
+                    <TableCell $width="33%">{symbol}</TableCell>
+                    <TableCell $width="33%">
                       <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />
                     </TableCell>
-                    <TableCell width="33%" contentPosition="right">
+                    <TableCell $width="33%" $contentPosition="right">
                       <CommaNumber
                         value={balance * rate}
                         beginningText={rate ? '$' : symbol}

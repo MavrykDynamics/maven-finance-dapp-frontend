@@ -71,22 +71,22 @@ export const LoansTxTab = ({ txVariant }: { txVariant: 'lending' | 'borrowing' }
                 const { icon, symbol } = token
                 return (
                   <TableRow rowHeight={55} borderColor="divider" className="add-hover" key={id + operationHash}>
-                    <TableCell width="20%">
+                    <TableCell $width="20%">
                       <div className="cell-content row">
                         <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
                         {symbol}
                       </div>
                     </TableCell>
-                    <TableCell width="20%">
+                    <TableCell $width="20%">
                       <CommaNumber value={amount} />
                     </TableCell>
-                    <TableCell width="20%">
+                    <TableCell $width="20%">
                       <CommaNumber value={annualPercentage} endingText="%" />
                     </TableCell>
-                    <TableCell width="30%">
+                    <TableCell $width="30%">
                       {parseDate({ time: date, timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' })}
                     </TableCell>
-                    <TableCell width="10%" contentPosition="right">
+                    <TableCell $width="10%" $contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
                         <Link
                           to={`${process.env.REACT_APP_TZKT_LINK}/${operationHash}`}

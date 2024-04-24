@@ -50,14 +50,14 @@ export const UserActionHistory = () => {
             {userActionsHistory.map(({ action, amount, fee, totalAmount, id }) => {
               return (
                 <TableRow rowHeight={40} borderColor="divider" className="add-hover" key={id}>
-                  <TableCell width="25%">{action}</TableCell>
-                  <TableCell width="30%">
+                  <TableCell $width="25%">{action}</TableCell>
+                  <TableCell $width="30%">
                     <CommaNumber value={amount} />
                   </TableCell>
-                  <TableCell width="30%">
+                  <TableCell $width="30%">
                     <CommaNumber value={totalAmount} />
                   </TableCell>
-                  <TableCell width="20%" contentPosition="right">
+                  <TableCell $width="20%" $contentPosition="right">
                     <CommaNumber value={fee} endingText="%" />
                   </TableCell>
                 </TableRow>

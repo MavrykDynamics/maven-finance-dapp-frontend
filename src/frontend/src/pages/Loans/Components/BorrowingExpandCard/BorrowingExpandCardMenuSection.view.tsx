@@ -205,14 +205,14 @@ export const BorrowingExpandCardMenuSection = ({
 
                   return (
                     <TableRow rowHeight={65} key={symbol}>
-                      <TableCell width={'22%'} className="vert-middle">
+                      <TableCell $width={'22%'} className="vert-middle">
                         <div className="cell-content row with-icon">
                           <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
                           {symbol}
                         </div>
                       </TableCell>
 
-                      <TableCell width={'22%'}>
+                      <TableCell $width={'22%'}>
                         <div className="cell-content">
                           <CommaNumber
                             value={convertedAmount}
@@ -223,7 +223,7 @@ export const BorrowingExpandCardMenuSection = ({
                           <CommaNumber value={convertedAmount * rate} className="rate" beginningText="$" showDecimal />
                         </div>
                       </TableCell>
-                      <TableCell width={'22%'}>
+                      <TableCell $width={'22%'}>
                         <div className="cell-content">
                           <CommaNumber value={collateralShare} className="value" endingText="%" />
                         </div>
@@ -266,17 +266,17 @@ export const BorrowingExpandCardMenuSection = ({
               {/* Total row */}
               {collateralData.length >= 2 ? (
                 <TableRow rowHeight={44}>
-                  <TableCell width={'22%'} className="vert-middle">
+                  <TableCell $width={'22%'} className="vert-middle">
                     Total
                   </TableCell>
 
-                  <TableCell width={'22%'}>
+                  <TableCell $width={'22%'}>
                     <div className="cell-content">
                       <CommaNumber value={collateralBalance} decimalsToShow={2} beginningText="$" className="balance" />
                     </div>
                   </TableCell>
 
-                  <TableCell width={'22%'}>
+                  <TableCell $width={'22%'}>
                     <CommaNumber value={100} endingText="%" />
                   </TableCell>
                 </TableRow>

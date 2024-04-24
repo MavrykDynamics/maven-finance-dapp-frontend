@@ -309,16 +309,16 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
                     return (
                       <TableRow rowHeight={rowHeight} borderColor="primaryText" key={symbol + '-' + index}>
-                        <TableCell width={columnWidth}>{symbol}</TableCell>
+                        <TableCell $width={columnWidth}>{symbol}</TableCell>
 
-                        <TableCell width={columnWidth}>
+                        <TableCell $width={columnWidth}>
                           <div className="table-amount-group">
                             <div>{collateralShare}%</div>
                             <CommaNumber value={convertedAmount} decimalsToShow={2} showDecimal />
                           </div>
                         </TableCell>
 
-                        <TableCell width={columnWidth} contentPosition="right">
+                        <TableCell $width={columnWidth} $contentPosition="right">
                           <CommaNumber
                             value={convertedAmount * rate}
                             decimalsToShow={2}
@@ -331,9 +331,9 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                   })}
 
                   <TableRow rowHeight={rowHeight}>
-                    <TableCell width={columnWidth}>Total</TableCell>
-                    <TableCell width={columnWidth}></TableCell>
-                    <TableCell width={columnWidth} contentPosition="right">
+                    <TableCell $width={columnWidth}>Total</TableCell>
+                    <TableCell $width={columnWidth}></TableCell>
+                    <TableCell $width={columnWidth} $contentPosition="right">
                       <CommaNumber
                         value={collateralBalance}
                         decimalsToShow={2}

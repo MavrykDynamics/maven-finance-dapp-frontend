@@ -27,7 +27,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
   }, [currentPage])
 
   return pagesCount > 1 ? (
-    <PaginationWrapper className={className} side={side}>
+    <PaginationWrapper className={className} $side={side}>
       Page
       <div className="input_wrapper">
         <Input
@@ -49,7 +49,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
       </div>
       of {pagesCount}
       <PaginationArrow
-        isDisabled={+currentPage === 1}
+        $isDisabled={+currentPage === 1}
         onClick={() => {
           if (currentPage > 1) {
             navigate(generateNewUrl(currentPage - 1))
@@ -59,8 +59,8 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
         <Icon id="paginationArrowLeft" />
       </PaginationArrow>
       <PaginationArrow
-        isDisabled={+currentPage === +pagesCount}
-        isRight
+        $isDisabled={+currentPage === +pagesCount}
+        $isRight
         onClick={() => {
           if (currentPage < pagesCount) {
             navigate(generateNewUrl(+currentPage + 1))

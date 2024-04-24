@@ -75,7 +75,7 @@ export const DropDown = ({ placeholder, clickItem, items, activeItem, className,
                     }
                   }}
                   key={id}
-                  disabled={disabled}
+                  $disabled={disabled}
                 >
                   {content} {activeItem?.id === id ? <Icon id="check-stroke" className="selectedIcon" /> : null}
                 </DropDownListItem>

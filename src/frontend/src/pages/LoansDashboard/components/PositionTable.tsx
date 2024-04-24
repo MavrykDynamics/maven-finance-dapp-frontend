@@ -124,7 +124,7 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
 
                   return (
                     <TableRow rowHeight={60} borderColor="divider" className="add-hover" key={symbol}>
-                      <TableCell width="15%">
+                      <TableCell $width="15%">
                         <div className="cell-content row with-icon asset-name">
                           <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
                           {symbol}
@@ -132,7 +132,7 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                       </TableCell>
 
                       <TableCell
-                        width="43%"
+                        $width="43%"
                         className={classNames('position-multy-cell', 'lending', { 'one-item': !lendingItem })}
                       >
                         <div className="cell-content" style={{ marginRight: '20px' }}>
@@ -208,9 +208,9 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
             ) : (
               <TableBody>
                 <TableRow rowHeight={1}>
-                  <TableCell width="15%" />
-                  <TableCell width="43%" />
-                  <TableCell width="41%" />
+                  <TableCell $width="15%" />
+                  <TableCell $width="43%" />
+                  <TableCell $width="41%" />
                 </TableRow>
               </TableBody>
             )}

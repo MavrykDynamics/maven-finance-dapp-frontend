@@ -172,8 +172,8 @@ const CELL_CONTENT_STYLES = css`
 
 type TableCellStyledProps = {
   theme: MavenTheme
-  width?: string
-  contentPosition?: 'left' | 'center' | 'right'
+  $width?: string
+  $contentPosition?: 'left' | 'center' | 'right'
 }
 export const TableCell = styled.td<TableCellStyledProps>`
   color: ${({ theme }) => theme.primaryText};
@@ -182,15 +182,15 @@ export const TableCell = styled.td<TableCellStyledProps>`
   line-height: 20px;
   transition: color 0.4s;
 
-  ${({ width }) =>
-    width
+  ${({ $width }) =>
+    $width
       ? css`
-          width: ${width};
+          width: ${$width};
         `
       : ''}
 
-  ${({ contentPosition }) => {
-    switch (contentPosition) {
+  ${({ $contentPosition }) => {
+    switch ($contentPosition) {
       case 'left':
         return css`
           text-align: left;
