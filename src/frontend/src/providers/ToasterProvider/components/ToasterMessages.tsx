@@ -46,8 +46,8 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
   }, [deleteToasterFromArray, hide, unique])
 
   return (
-    <ToasterStyled animationType={toastAnimation} delay={ANIMATION_DURATION} distance={500}>
-      <ToasterIcon status={type}>
+    <ToasterStyled $animationType={toastAnimation} $delay={ANIMATION_DURATION} $distance={500}>
+      <ToasterIcon $status={type}>
         {type === TOASTER_LOADING ? (
           <SpinnerCircleLoaderStyled className="toaster-loader" />
         ) : (
@@ -55,12 +55,12 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
         )}
       </ToasterIcon>
 
-      <ToasterContent status={type} lang="en">
+      <ToasterContent $status={type} lang="en">
         <div className="title">{title}</div>
         <div className="message">{message}</div>
       </ToasterContent>
 
-      <ToasterCountdown status={type} />
+      <ToasterCountdown $status={type} />
     </ToasterStyled>
   )
 }
