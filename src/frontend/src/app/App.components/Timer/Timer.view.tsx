@@ -35,9 +35,9 @@ export const TimerView = ({ seconds, minutes, hours, days, options }: TimerViewP
     shownParts = ['d', 'h', 'm', 's'],
     showFullDay = false,
   } = options
-  
+
   return (
-    <TimerStyled negativeColor={negativeColor} defaultColor={defaultColor} timerType={timerView}>
+    <TimerStyled $negativeColor={negativeColor} $defaultColor={defaultColor} $timerType={timerView}>
       {showFullDay && days >= 1 ? (
         <span>{`${days} ${days === 1 ? 'day' : 'days'} ${endText}`}</span>
       ) : (

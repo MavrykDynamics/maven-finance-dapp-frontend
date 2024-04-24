@@ -38,13 +38,13 @@ export const VotingBar = ({
 
   return (
     <VotingContainer>
-      <QuorumBar width={quorum}>
+      <QuorumBar $width={quorum}>
         <div className="text">
           {quorumText} <b>{quorum}%</b>
         </div>
       </QuorumBar>
       <VotingBarStyled>
-        <VotingYay width={yayVotesWidth}>
+        <VotingYay $width={yayVotesWidth}>
           <Tooltip>
             <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
             <Tooltip.Content className="voting-tooltip-content">
@@ -55,7 +55,7 @@ export const VotingBar = ({
         </VotingYay>
 
         {passVotesMvnTotal !== undefined ? (
-          <VotingPass width={passVotesWidth}>
+          <VotingPass $width={passVotesWidth}>
             <Tooltip>
               <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
               <Tooltip.Content className="voting-tooltip-content">
@@ -66,7 +66,7 @@ export const VotingBar = ({
           </VotingPass>
         ) : null}
 
-        <UnusedVote width={unusedVotesWidth}>
+        <UnusedVote $width={unusedVotesWidth}>
           <Tooltip>
             <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
             <Tooltip.Content className="voting-tooltip-content">
@@ -77,7 +77,7 @@ export const VotingBar = ({
         </UnusedVote>
 
         {nayVotesMvnTotal !== undefined ? (
-          <VotingNay width={nayVotesWidth}>
+          <VotingNay $width={nayVotesWidth}>
             <Tooltip>
               <Tooltip.Trigger className="voting-tooltip-trigger"></Tooltip.Trigger>
               <Tooltip.Content className="voting-tooltip-content">
