@@ -257,7 +257,7 @@ export default function RoiCalculator({
   }
 
   return (
-    <PopupContainer onClick={closeHandler} show={show}>
+    <PopupContainer onClick={closeHandler} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <RoiCalculatorStyled>
           <header>

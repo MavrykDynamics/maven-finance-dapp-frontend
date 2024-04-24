@@ -70,7 +70,7 @@ export const UserProfileEditor = ({ file, getFile, show: showEditor, closeEditor
   }
 
   return (
-    <PopupContainer onClick={closeEditor} show={showEditor}>
+    <PopupContainer onClick={closeEditor} $show={showEditor}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()}>
         <button onClick={closeEditor} className="close-modal" />
         <UserProfileEditorStyled>

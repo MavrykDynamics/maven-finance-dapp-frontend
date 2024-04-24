@@ -1,14 +1,14 @@
-import {useCallback, useEffect, useMemo} from 'react'
-import {useLockBodyScroll} from 'react-use'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useLockBodyScroll } from 'react-use'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
-import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import Icon from 'app/App.components/Icon/Icon.view'
-import {Input} from 'app/App.components/Input/NewInput'
-import {ImageWithPlug} from 'app/App.components/Icon/ImageWithPlug'
-import {XTZLimitInfoBanner} from './components/XTZLimitInfoBanner'
-import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
+import { Input } from 'app/App.components/Input/NewInput'
+import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // consts
 import {
@@ -17,36 +17,36 @@ import {
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import {BUTTON_PRIMARY, BUTTON_WIDE} from 'app/App.components/Button/Button.constants'
-import {DEPOSIT_LENDING_ASSET_ACTION} from 'providers/LoansProvider/helpers/loans.const'
+import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { DEPOSIT_LENDING_ASSET_ACTION } from 'providers/LoansProvider/helpers/loans.const'
 
 // types
-import {AddLendingAssetDataType} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import { AddLendingAssetDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 // helpers
-import {getUserTokenBalanceByAddress} from 'providers/UserProvider/helpers/userBalances.helpers'
-import {checkWhetherTokenIsLoanToken, getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
+import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // styles
-import {GovRightContainerTitleArea} from 'pages/Governance/Governance.style'
-import {ThreeLevelListItem} from 'pages/Loans/Loans.style'
-import {InputPinnedTokenInfo} from 'app/App.components/Input/Input.style'
-import {LoansModalBase} from './Modals.style'
-import {PopupContainer, PopupContainerWrapper} from 'app/App.components/popup/PopupMain.style'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
+import { InputPinnedTokenInfo } from 'app/App.components/Input/Input.style'
+import { LoansModalBase } from './Modals.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 
 // actions
-import {depositLendingAssetAction} from 'providers/LoansProvider/actions/loans.actions'
+import { depositLendingAssetAction } from 'providers/LoansProvider/actions/loans.actions'
 
 // providers
-import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
-import {useUserContext} from 'providers/UserProvider/user.provider'
-import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
-import {useDappConfigContext} from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // hooks
-import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction'
-import {useCollateralInputData} from './hooks/Market/useCollateralInputData'
-import {validateInputLength} from 'app/App.utils/input/validateInput'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
+import { validateInputLength } from 'app/App.utils/input/validateInput'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239981&t=Sx2aEpp3ifrGxBtQ-0
 export const AddLendingAsset = ({
@@ -132,13 +132,13 @@ export const AddLendingAsset = ({
   if (!data || !loanToken || !loanToken.rate) return null
 
   const { mBalance, lendingAPY, tokenAddress } = data
-  const { symbol, icon, decimals, rate } = loanToken
+  const { symbol, icon, rate } = loanToken
   const tokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: tokenAddress })
 
   const isDepositDisabled = inputData.validationStatus !== INPUT_STATUS_SUCCESS
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />

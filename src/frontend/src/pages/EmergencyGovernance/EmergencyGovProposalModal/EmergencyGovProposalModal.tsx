@@ -105,7 +105,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
   const { action: handleSubmitEGovProposal } = useContractAction(submitEGovProposalProps)
 
   return (
-    <PopupContainer onClick={closeHandler} show={show}>
+    <PopupContainer onClick={closeHandler} $show={show}>
       {/* TODO: update as farms */}
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans child-width">
         <button onClick={closeHandler} className="close-modal" />

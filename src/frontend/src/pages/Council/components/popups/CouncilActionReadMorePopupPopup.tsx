@@ -4,7 +4,6 @@ import { useLockBodyScroll, useScroll } from 'react-use'
 
 // view
 import Portal from 'app/App.components/popup/Portal'
-import { createPortal } from 'react-dom'
 import { PopupContainer } from 'app/App.components/popup/PopupMain.style'
 import { CouncilActionReadMorePopupContent } from 'app/App.components/popup/bases/CouncilPopup.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
@@ -72,7 +71,7 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
 
   return (
     <Portal>
-      <PopupContainer onClick={closePopup} show={isPopupShown}>
+      <PopupContainer onClick={closePopup} $show={isPopupShown}>
         <CouncilActionReadMorePopupContent onClick={(e) => e.stopPropagation()}>
           <button onClick={closePopup} className="close-modal" />
           <H2Title>{popupTitleText}</H2Title>

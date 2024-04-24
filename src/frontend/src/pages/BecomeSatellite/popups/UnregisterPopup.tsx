@@ -79,8 +79,8 @@ export const UnregisterPopup = ({
   const { delegatorCount = 0, totalDelegatedAmount = 0 } = satellite ?? {}
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} widthSize={586}>
+    <PopupContainer onClick={closePopup} $show={show}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} $widthSize={586}>
         <button className="close-modal" onClick={closePopup} />
         <UnregisterSatelliteModalBase>
           <H2Title>Unregister Satellite</H2Title>

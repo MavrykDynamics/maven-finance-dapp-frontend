@@ -243,7 +243,7 @@ export const UpdateUserCouncilProfileInfoPopup = ({
 
   return (
     <Portal>
-      <PopupContainer onClick={closePopup} show={show}>
+      <PopupContainer onClick={closePopup} $show={show}>
         <CouncilUpdateMemberPopupContent onClick={(e) => e.stopPropagation()}>
           <CouncilFormStyled className="without-divider" formName={UPDATE_USER_COUNCIL_PROFILE_FORM}>
             <a

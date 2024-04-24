@@ -135,7 +135,7 @@ export const ConfirmRepayFull = ({
   if (!data || !borrowedToken || !borrowedToken.rate) return null
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />

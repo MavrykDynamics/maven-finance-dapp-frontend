@@ -130,7 +130,7 @@ export const FarmDepositModal = ({
     : `${selectedFarmToken.farmLpData.token0?.symbol}-${selectedFarmToken.farmLpData.token1?.symbol}`
 
   return (
-    <PopupContainer onClick={closeHandler} show={show}>
+    <PopupContainer onClick={closeHandler} $show={show}>
       <FarmActionsPopupsContent onClick={(e) => e.stopPropagation()}>
         <button onClick={closeHandler} className="close-modal" />
         <div className="popup-header">

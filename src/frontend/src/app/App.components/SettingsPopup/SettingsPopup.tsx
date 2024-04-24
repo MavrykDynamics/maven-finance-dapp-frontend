@@ -117,7 +117,7 @@ export const SettingPopup = ({ isModalOpened, closeModal }: { isModalOpened: boo
     (!inputData.node && REACT_APP_RPC_PROVIDER === selectedNode)
 
   return (
-    <PopupContainer onClick={closeModal} show={isModalOpened}>
+    <PopupContainer onClick={closeModal} $show={isModalOpened}>
       <PopupContainerWrapper onClick={stopPropagation} className="settings">
         <button onClick={closeModal} className="close-modal" />
 

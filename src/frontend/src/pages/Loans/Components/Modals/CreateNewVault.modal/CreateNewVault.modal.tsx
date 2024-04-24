@@ -62,7 +62,7 @@ export const CreateNewVaultConsumer = () => {
   const descrText = screenDescriptions[screenToShow]
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className={classNames('loans')}>
         <button onClick={closePopup} className="close-modal" />
         <LoansModalBase>

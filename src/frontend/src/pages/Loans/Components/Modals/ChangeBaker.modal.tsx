@@ -153,7 +153,7 @@ export const ChangeBaker = ({
   const { action: updateBakerHandler } = useContractAction(contractActionProps)
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />
