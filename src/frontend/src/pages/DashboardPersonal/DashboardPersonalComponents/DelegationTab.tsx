@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useOutletContext } from 'react-router-dom'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -34,13 +34,14 @@ import {
   SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 
-const DelegationTab = ({
-  distributeProposalRewards,
-  availableProposalRewards,
-}: {
+type DelegationtabOutletProps = {
   distributeProposalRewards: () => void
   availableProposalRewards: Array<number>
-}) => {
+}
+
+const DelegationTab = () => {
+  const { distributeProposalRewards, availableProposalRewards }: DelegationtabOutletProps = useOutletContext()
+
   const {
     satelliteMapper,
     proposalsAmount,

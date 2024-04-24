@@ -47,6 +47,7 @@ import {
   BecomeSatelliteRegisterAsOracle,
 } from '../BecomeSatellite.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import { Outlet, useOutletContext } from 'react-router-dom'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck balanceOk={false}>
@@ -62,7 +63,8 @@ type BecomeSatelliteScreenProps = {
   userSmvnBalance: number
 }
 
-export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvnBalance }: BecomeSatelliteScreenProps) => {
+export const BecomeSatelliteScreen = () => {
+  const { usersSatelliteProfile = null, userSmvnBalance = 0 }: BecomeSatelliteScreenProps = useOutletContext() ?? {}
   const { userAddress, isSatellite, satelliteMvnIsDelegatedTo } = useUserContext()
 
   const {

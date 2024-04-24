@@ -275,7 +275,7 @@ module.exports = function (webpackEnv) {
       ],
     },
     resolve: {
-      fallback: { stream: require.resolve('stream-browserify') },
+      fallback: { stream: require.resolve('stream-browserify'), buffer: require.resolve('buffer') },
       // This allows you to set a fallback for where webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.
@@ -554,6 +554,13 @@ module.exports = function (webpackEnv) {
             : undefined,
         ),
       ),
+
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      }),
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+      }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358

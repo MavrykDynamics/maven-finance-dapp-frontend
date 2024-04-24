@@ -81,6 +81,7 @@ export const useContractAction = <G>({
         }
 
         const operationConfirm = await operation.confirmation()
+        // @ts-expect-error
         const operationLvl = operationConfirm.block.header.level
 
         setAction({ actionName: actionType, toasterId, operationLvl, callback: dappActionCallback })

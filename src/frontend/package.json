@@ -17,7 +17,7 @@
     "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "^4.2.1",
+    "@airgap/beacon-sdk": "4.1.2",
     "@apollo/client": "^3.8.3",
     "@babel/core": "^7.16.0",
     "@floating-ui/react": "^0.26.1",
@@ -26,7 +26,7 @@
     "@svgr/webpack": "^5.5.0",
     "@taquito/beacon-wallet": "^19.2.0",
     "@taquito/signer": "^19.2.0",
-    "@taquito/taquito": "^15.0.1",
+    "@taquito/taquito": "19.2.0",
     "@taquito/utils": "^19.2.0",
     "@temple-wallet/dapp": "^8.0.0",
     "@wert-io/widget-initializer": "^2.0.0",
@@ -69,6 +69,7 @@
     "postcss-loader": "^6.2.1",
     "postcss-normalize": "^10.0.1",
     "postcss-preset-env": "^7.0.1",
+    "process": "^0.11.10",
     "prompts": "^2.4.2",
     "qs": "^6.11.0",
     "react": "^18.2.0",

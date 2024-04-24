@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link, Navigate, Route, Routes as Switch, useParams } from 'react-router-dom'
+import { Link, Navigate, Route, Routes as Switch, useOutletContext, useParams } from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
@@ -33,19 +33,25 @@ import { useUserEarningsHistory } from 'providers/UserProvider/hooks/useUserEarn
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type PortfolioTabProps = {
-  xtzAmount: number
-  sMvnAmount: number
-  mvnAmount: number
-  mostSuppliedUserToken?: { amount: number; name: string }
+  userWalletData: {
+    xtzAmount: number
+    sMvnAmount: number
+    mvnAmount: number
+    mostSuppliedUserToken?: { amount: number; name: string }
+  }
 }
 
-const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount }: PortfolioTabProps) => {
+const PortfolioTab = () => {
+  const {
+    userWalletData: { xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount },
+  }: PortfolioTabProps = useOutletContext()
   const { secondaryTabId = PORTFOLIO_LENDING_TAB_ID } = useParams<{ secondaryTabId: string }>()
 
   const { availableLoansRewards, userAddress } = useUserContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
+
   const {
     userBorrowings,
     totalUserBorrowed,

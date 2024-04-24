@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Navigate, Route, Routes as Switch, useParams } from 'react-router-dom'
+import { Navigate, Outlet, Route, Routes as Switch, useParams } from 'react-router-dom'
 
 // Consts
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
@@ -212,6 +212,7 @@ export const BecomeSatellite = () => {
 
                   <Navigate to={`/become-satellite/${SATELLITE_TAB_EDIT}`} />
                 </Switch> */}
+                <Outlet context={{ usersSatelliteProfile, satelliteId: userAddress, userSmvnBalance }} />
               </BecomeSatelliteForm>
             )}
           </div>

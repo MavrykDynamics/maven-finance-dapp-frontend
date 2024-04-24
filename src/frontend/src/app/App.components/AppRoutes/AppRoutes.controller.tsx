@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Routes as Switch, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes as Switch, useLocation } from 'react-router-dom'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -36,6 +36,20 @@ import Satellites from 'pages/Satellites/Satellites.controller'
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
 import { RenderErrorPage } from 'pages/Error/RenderErrorPage'
+import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts'
+import { SatelliteDetailsScreen } from 'pages/BecomeSatellite/screens/SatelliteDetails.screen'
+import { BecomeSatelliteScreen } from 'pages/BecomeSatellite/screens/BecomeSatellite.screen'
+import {
+  DELEGATION_TAB_ID,
+  PORTFOLIO_POSITION_TAB_ID,
+  PORTFOLIO_TAB_ID,
+  SATELLITE_TAB_ID,
+  VESTING_TAB_ID,
+} from 'pages/DashboardPersonal/DashboardPersonal.utils'
+import PortfolioTab from 'pages/DashboardPersonal/DashboardPersonalComponents/PortfolioTab'
+import SatelliteTab from 'pages/DashboardPersonal/DashboardPersonalComponents/SatelliteTab'
+import DelegationTab from 'pages/DashboardPersonal/DashboardPersonalComponents/DelegationTab'
+import VestingTab from 'pages/DashboardPersonal/DashboardPersonalComponents/VestingTab'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -57,12 +71,41 @@ export const AppRoutes = () => {
       {/* DASHBOARD */}
       <Route path="/" element={<Dashboard />} />
 
-      <Route path="/dashboard-personal/:tabId/:secondaryTabId?" element={<DashboardPersonal />} />
+      <Route path="/dashboard-personal/:tabId/:secondaryTabId?" element={<DashboardPersonal />}>
+        <Route path={`${DELEGATION_TAB_ID}`} element={<DelegationTab />} />
+
+        <Route path={`${SATELLITE_TAB_ID}`} element={<SatelliteTab />} />
+
+        <Route path={`${VESTING_TAB_ID}`} element={<VestingTab />} />
+
+        <Route path={`${PORTFOLIO_TAB_ID}/:secondaryTabId?`} element={<PortfolioTab />} />
+
+        <Route
+          path="*"
+          element={<Navigate replace to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />}
+        />
+      </Route>
 
       {/* SATELLITES */}
       <Route path="/satellites" element={<Satellites />} />
 
-      <Route path="/become-satellite/:tabId" element={<BecomeSatellite />} />
+      <Route path="/become-satellite" element={<BecomeSatellite />}>
+        <Route index path=":tabId" />
+        <Route
+          path={`${SATELLITE_TAB_DETAILS}`}
+          element={
+            <ProtectedRoute hasAccess={Boolean(isSatellite)} redirectPath={`/become-satellite/${SATELLITE_TAB_EDIT}`}>
+              <>
+                <SatelliteDetailsScreen />
+              </>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path={`${SATELLITE_TAB_EDIT}`} element={<BecomeSatelliteScreen />} />
+
+        <Route path="*" element={<Navigate replace to={`/become-satellite/${SATELLITE_TAB_EDIT}`} />} />
+      </Route>
 
       <Route path="/satellite-nodes" element={<SatelliteNodes />} />
 
