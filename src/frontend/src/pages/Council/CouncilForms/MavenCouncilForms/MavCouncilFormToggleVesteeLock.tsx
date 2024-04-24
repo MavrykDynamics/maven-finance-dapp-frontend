@@ -136,7 +136,7 @@ export const MavCouncilFormToggleVesteeLock = () => {
   }, [formInputStatus.vesteeAddress, vesteeAddress, isVesteesLoading])
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.TOGGLE_VESTEE_LOCK}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.TOGGLE_VESTEE_LOCK}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

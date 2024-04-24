@@ -302,7 +302,7 @@ export const MavCouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
   }
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.REQUEST_TOKENS}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.REQUEST_TOKENS}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

@@ -30,7 +30,7 @@ export const BGAccordion = ({ methods, accordionClickHandler, accordionId, isExp
       </AccordionToggler>
       <AccordionContent className={`scroll-block ${isExpanded ? 'expanded' : ''}`}>
         {methodsList.map((item) => (
-          <AccordionItem key={item.method} status={methods[item.method]}>
+          <AccordionItem key={item.method} $status={methods[item.method]}>
             <Truncate>{item.methodName}</Truncate>
           </AccordionItem>
         ))}

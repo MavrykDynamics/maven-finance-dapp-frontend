@@ -222,7 +222,7 @@ export const MavCouncilFormChangeCouncilMember = ({
   ])
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.CHANGE_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

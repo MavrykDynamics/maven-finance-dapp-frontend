@@ -245,7 +245,7 @@ export const UpdateUserCouncilProfileInfoPopup = ({
     <Portal>
       <PopupContainer onClick={closePopup} $show={show}>
         <CouncilUpdateMemberPopupContent onClick={(e) => e.stopPropagation()}>
-          <CouncilFormStyled className="without-divider" formName={UPDATE_USER_COUNCIL_PROFILE_FORM}>
+          <CouncilFormStyled className="without-divider" $formName={UPDATE_USER_COUNCIL_PROFILE_FORM}>
             <a
               className="info-link"
               href="https://docs.mavryk.finance/mavryk-finance/council"

@@ -114,7 +114,7 @@ export const MavCouncilFormSetBaker = () => {
   }, [bakerHash, formInputStatus.bakerHash])
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.SET_BAKER}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.SET_BAKER}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

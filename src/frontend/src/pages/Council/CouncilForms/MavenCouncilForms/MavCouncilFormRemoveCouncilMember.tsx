@@ -107,7 +107,7 @@ export const MavCouncilFormRemoveCouncilMember = ({
   const isButtonDisabled = isActionActive || !chosenDdItem
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

@@ -168,7 +168,7 @@ export function BgCouncilFormSetSelectedContractsAdmin() {
   }, [formInputStatus.newAdminAddress, newAdminAddress])
 
   return (
-    <CouncilFormStyled formName={BgCouncilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN}>
+    <CouncilFormStyled $formName={BgCouncilDdForms.SET_MULTIPLE_CONTRACTS_ADMIN}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

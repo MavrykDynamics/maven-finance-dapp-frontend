@@ -130,7 +130,7 @@ export function BgCouncilFormRemoveBreakGlassControl() {
     )
 
   return (
-    <CouncilFormStyled formName={BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS}>
+    <CouncilFormStyled $formName={BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

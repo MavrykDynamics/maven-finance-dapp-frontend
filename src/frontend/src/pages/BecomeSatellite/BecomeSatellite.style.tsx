@@ -83,8 +83,8 @@ export const BecomeSatelliteNavigation = styled.div<{ theme: MavenTheme }>`
   column-gap: 20px;
 `
 
-export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; theme: MavenTheme }>`
-  color: ${({ balanceOk, theme }) => (balanceOk ? theme.upColor : theme.downColor)};
+export const BecomeSatelliteFormBalanceCheck = styled.div<{ $balanceOk: boolean; theme: MavenTheme }>`
+  color: ${({ $balanceOk, theme }) => ($balanceOk ? theme.upColor : theme.downColor)};
   display: flex;
   padding-bottom: 20px;
 
@@ -94,7 +94,7 @@ export const BecomeSatelliteFormBalanceCheck = styled.div<{ balanceOk: boolean; 
   }
 
   svg {
-    stroke: ${({ balanceOk, theme }) => (balanceOk ? theme.upColor : theme.downColor)};
+    stroke: ${({ $balanceOk, theme }) => ($balanceOk ? theme.upColor : theme.downColor)};
     width: 14px;
     height: 14px;
     margin-right: 8px;

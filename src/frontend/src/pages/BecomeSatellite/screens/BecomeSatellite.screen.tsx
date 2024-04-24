@@ -50,7 +50,7 @@ import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { Outlet, useOutletContext } from 'react-router-dom'
 
 const connectWalletMessage = (
-  <BecomeSatelliteFormBalanceCheck balanceOk={false}>
+  <BecomeSatelliteFormBalanceCheck $balanceOk={false}>
     <div>
       <Icon id="close-stroke" />
       Please connect your wallet
@@ -313,7 +313,7 @@ export const BecomeSatelliteScreen = () => {
       />
 
       {userAddress ? (
-        <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvn}>
+        <BecomeSatelliteFormBalanceCheck $balanceOk={balanceOverMinStakedMvn}>
           <Icon id={balanceOverMinStakedMvn ? 'check-stroke' : 'close-stroke'} />
           <CommaNumber value={userSmvnBalance} beginningText={'Currently staking'} endingText={'MVN'} />
         </BecomeSatelliteFormBalanceCheck>
