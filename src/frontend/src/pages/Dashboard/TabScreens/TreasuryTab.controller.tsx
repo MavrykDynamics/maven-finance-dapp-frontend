@@ -97,7 +97,7 @@ export const TreasuryTab = () => {
   )
 
   return (
-    <TabWrapperStyled backgroundImage="dashboard_treasuryTab_bg.png">
+    <TabWrapperStyled $backgroundImage="dashboard_treasuryTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Treasury</BGPrimaryTitle>
         <Link to="/treasury">
@@ -203,9 +203,9 @@ export const TreasuryTab = () => {
                 <BlockName>Token Vesting</BlockName>
 
                 <TreasuryVesting
-                  totalPersent={(totalVestedAmount / amountOfTokens || 0.5) * 100}
-                  claimedColor={'linksAndButtons'}
-                  totalColor={'selectedColor'}
+                  $totalPersent={(totalVestedAmount / amountOfTokens || 0.5) * 100}
+                  $claimedColor={'linksAndButtons'}
+                  $totalColor={'selectedColor'}
                 >
                   <div className="vest-stat">
                     <div className="name">

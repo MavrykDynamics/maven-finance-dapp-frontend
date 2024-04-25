@@ -40,7 +40,7 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
 
   return (
     <>
-      <PageHeaderStyled backgroundImageSrc={'/images/dapp-header-bg.svg'}>
+      <PageHeaderStyled $backgroundImageSrc={'/images/dapp-header-bg.svg'}>
         <PageHeaderTextArea className="loans">
           <div className="asset-wrapper">
             <ImageWithPlug alt={symbol} imageLink={icon} />
@@ -58,7 +58,7 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
           </div>
         </PageHeaderTextArea>
         <PageHeaderForegroundImageContainer>
-          <PageHeaderForegroundImage page={'lending'} src={foregroundImageSrc ?? '/images/portal.svg'} alt="portal" />
+          <PageHeaderForegroundImage $page={'lending'} src={foregroundImageSrc ?? '/images/portal.svg'} alt="portal" />
         </PageHeaderForegroundImageContainer>
       </PageHeaderStyled>
       <ConnectWalletInfo />

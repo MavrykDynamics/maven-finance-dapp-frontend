@@ -61,7 +61,7 @@ export const LendingTab = () => {
   )
 
   return (
-    <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
+    <TabWrapperStyled $backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Earn/Borrow</BGPrimaryTitle>
         <Link to="/loans" className="dashboard-sectionLink">

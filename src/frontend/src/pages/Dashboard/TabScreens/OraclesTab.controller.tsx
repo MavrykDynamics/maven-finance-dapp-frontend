@@ -37,7 +37,7 @@ export const OraclesTab = () => {
   const popularFeeds = feedsAddresses.slice(0, 3)
 
   return (
-    <TabWrapperStyled className="oracles" backgroundImage="dashboard_oraclesTab_bg.png">
+    <TabWrapperStyled className="oracles" $backgroundImage="dashboard_oraclesTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Oracles</BGPrimaryTitle>
         <Link to="/data-feeds" className="dashboard-sectionLink">
