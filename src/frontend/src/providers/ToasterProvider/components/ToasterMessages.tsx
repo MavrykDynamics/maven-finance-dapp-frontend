@@ -68,8 +68,6 @@ const Toast = ({ toast }: { toast: ToasterMessage }) => {
 export const ToasterMessages = () => {
   const { messages, deleteToasterFromArray } = useToasterContext()
 
-  console.log(messages, 'messages')
-
   // remove toasts starting from the oldest if messages limit was passed
   useEffect(() => {
     if (messages.length > TOASTS_LIMIT) {
