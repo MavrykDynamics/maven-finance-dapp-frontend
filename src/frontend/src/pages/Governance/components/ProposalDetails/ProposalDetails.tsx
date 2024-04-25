@@ -248,7 +248,7 @@ export const ProposalDetails = ({ proposal, isHistory }: { proposal: ProposalRec
   const statusTooltipText = getTooltipForStatus(proposal.status)
 
   return (
-    <ProposalDetailsStyled isAuthorized={Boolean(userAddress)}>
+    <ProposalDetailsStyled $isAuthorized={Boolean(userAddress)}>
       <div className="title-status">
         <H2Title>{proposal.title}</H2Title>
         <StatusFlag text={proposal.status} status={proposal.status} />

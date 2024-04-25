@@ -1,12 +1,12 @@
 import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
-export const TimeLeftAreaWrap = styled.div<{ showBorder: boolean }>`
+export const TimeLeftAreaWrap = styled.div<{ $showBorder: boolean }>`
   position: relative;
   padding-left: 15px;
 
-  ${({ showBorder }) =>
-    showBorder
+  ${({ $showBorder }) =>
+    $showBorder
       ? css`
           &::before {
             content: '';

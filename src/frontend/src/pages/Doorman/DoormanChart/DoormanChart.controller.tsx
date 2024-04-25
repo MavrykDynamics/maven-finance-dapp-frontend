@@ -108,7 +108,7 @@ export function DoormanChart() {
     <Wrapper>
       <SlidingTabButtons kind={SECONDARY_SLIDING_TAB_BUTTONS} tabItems={tabsList} onClick={handleChangeTabs} />
 
-      <DoormanChartCard isExitFeeChart={activeTabId === tabsList[1].id}>
+      <DoormanChartCard $isExitFeeChart={activeTabId === tabsList[1].id}>
         {activeTabId === tabsList[0].id ? (
           <>
             <ChartsSwitcherWithPosition

@@ -355,7 +355,7 @@ const RepayTableStats = ({
       <div className="line">
         <ThreeLevelListItem
           className="collateral-diagram"
-          customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
+          $customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
         >
           <div className={`percentage`}>
             Collateral Ratio:

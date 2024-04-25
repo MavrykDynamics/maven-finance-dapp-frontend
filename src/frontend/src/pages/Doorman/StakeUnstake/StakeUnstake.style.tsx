@@ -134,8 +134,8 @@ export const StakeUnstakeRate = styled(StakeUnstakeAmount)`
   }
 `
 
-export const StakeUnstakeErrorMessage = styled.div<{ inputOk: boolean; accountPkh?: string; theme: MavenTheme }>`
-  color: ${({ inputOk, theme }) => (inputOk ? theme.upColor : theme.downColor)};
+export const StakeUnstakeErrorMessage = styled.div<{ $inputOk: boolean; $accountPkh?: string; theme: MavenTheme }>`
+  color: ${({ $inputOk, theme }) => ($inputOk ? theme.upColor : theme.downColor)};
   font-size: 12px;
   font-weight: 600;
 `

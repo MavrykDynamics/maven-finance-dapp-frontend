@@ -144,7 +144,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
+              $customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />

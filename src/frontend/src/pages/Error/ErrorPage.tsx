@@ -52,7 +52,7 @@ export const ErrorPage = ({
   return (
     <Router>
       <ThemeProvider theme={themeColors[themeSelected]}>
-        <ErrorPageWrapper themeSelected={themeSelected}>
+        <ErrorPageWrapper $themeSelected={themeSelected}>
           <ErrorTopbar themeSelected={themeSelected} handleRedirect={handleRedirect} />
           <ErrorPageInner>
             <ErrorTopHeader>Error</ErrorTopHeader>

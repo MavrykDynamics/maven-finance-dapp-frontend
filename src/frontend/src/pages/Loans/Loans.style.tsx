@@ -300,7 +300,7 @@ export const MarketStyled = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; customColor?: string }>`
+export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?: string }>`
   p {
     margin: 0;
   }
@@ -439,7 +439,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; customColor?: 
       font-size: 14px;
       line-height: 21px;
       margin-bottom: 7px;
-      color: ${({ theme, customColor }) => customColor ?? theme.subHeadingText};
+      color: ${({ theme, $customColor }) => $customColor ?? theme.subHeadingText};
 
       p {
         margin-left: 5px;

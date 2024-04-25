@@ -339,7 +339,7 @@ const WithdrawCollateralTableStats = ({
     <VaultModalOverview>
       <ThreeLevelListItem
         className="collateral-diagram"
-        customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
+        $customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
       >
         <div className={`percentage`}>
           Collateral Ratio:{' '}

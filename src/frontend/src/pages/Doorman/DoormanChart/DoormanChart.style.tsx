@@ -40,8 +40,8 @@ export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const DoormanChartCard = styled(Card)<{ theme: MavenTheme; isExitFeeChart: boolean }>`
-  padding: ${({ isExitFeeChart }) => (isExitFeeChart ? '40px 15px 5px 15px' : '50px 15px 5px 15px')};
+export const DoormanChartCard = styled(Card)<{ theme: MavenTheme; $isExitFeeChart: boolean }>`
+  padding: ${({ $isExitFeeChart }) => ($isExitFeeChart ? '40px 15px 5px 15px' : '50px 15px 5px 15px')};
   margin-top: 20px;
   height: 100%;
   display: flex;

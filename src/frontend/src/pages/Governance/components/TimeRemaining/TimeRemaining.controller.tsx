@@ -150,7 +150,7 @@ export default function TimeRemaining() {
   }
 
   return (
-    <TimeLeftAreaWrap showBorder={showTimer}>
+    <TimeLeftAreaWrap $showBorder={showTimer}>
       {showTimer ? (
         <>
           <Timer

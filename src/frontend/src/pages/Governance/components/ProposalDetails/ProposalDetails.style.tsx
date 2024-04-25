@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Card } from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 
-export const ProposalDetailsStyled = styled(Card)<{ isAuthorized?: boolean; theme: MavenTheme }>`
+export const ProposalDetailsStyled = styled(Card)<{ $isAuthorized?: boolean; theme: MavenTheme }>`
   width: calc(50% - 30px);
   padding: 28px 30px;
   border-radius: 10px;
