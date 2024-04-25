@@ -239,7 +239,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const hasEmptyRightSection = isUserSatellite || !isSatelliteActive
   return (
     <SatelliteCard key={String(`satellite${satellite.address}`)}>
-      <SatelliteCardInner isExtendedListItem={isDetailsPage} hasEmptyRightSection={hasEmptyRightSection}>
+      <SatelliteCardInner $isExtendedListItem={isDetailsPage} $hasEmptyRightSection={hasEmptyRightSection}>
         <div className="grid-container">
           <div className="grid-item">
             <SatelliteProfileImageContainer>
@@ -247,7 +247,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
             </SatelliteProfileImageContainer>
 
             <SatelliteTextGroup>
-              <SatelliteMainText hasEmptyRightSection={hasEmptyRightSection}>{satellite.name}</SatelliteMainText>
+              <SatelliteMainText $hasEmptyRightSection={hasEmptyRightSection}>{satellite.name}</SatelliteMainText>
               <SatelliteSubText>
                 <TzAddress tzAddress={satellite.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon isBold />
               </SatelliteSubText>

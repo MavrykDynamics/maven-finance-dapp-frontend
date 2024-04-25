@@ -114,7 +114,7 @@ export const StageOneForm = ({
 
       <ProposalSubmissionBanner />
 
-      <ProposalSubmittionStageOneBody isProposalSubmitted={isProposalSubmitted}>
+      <ProposalSubmittionStageOneBody $isProposalSubmitted={isProposalSubmitted}>
         {isProposalSubmitted ? (
           <div className="submitted-data">
             <div className="label">1 - Proposal Title</div>

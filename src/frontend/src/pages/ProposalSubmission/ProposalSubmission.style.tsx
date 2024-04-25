@@ -32,12 +32,12 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavenTheme }>`
 `
 
 // Proposal submittion stage 1 styles
-export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavenTheme; isProposalSubmitted?: boolean }>`
+export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavenTheme; $isProposalSubmitted?: boolean }>`
   margin-top: 40px;
 
   display: grid;
-  grid-template-columns: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '35% 35% 15%' : '50% 25% 15%')};
-  column-gap: ${({ isProposalSubmitted }) => (isProposalSubmitted ? '30px' : '0')};
+  grid-template-columns: ${({ $isProposalSubmitted }) => ($isProposalSubmitted ? '35% 35% 15%' : '50% 25% 15%')};
+  column-gap: ${({ $isProposalSubmitted }) => ($isProposalSubmitted ? '30px' : '0')};
   grid-template-rows: minmax(40px, max-content) minmax(40px, max-content) 40px minmax(40px, max-content);
 
   justify-content: space-between;
@@ -46,8 +46,8 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavenTheme; is
   .submitted-data {
     display: flex;
     flex-direction: column;
-    ${({ isProposalSubmitted }) =>
-      !isProposalSubmitted
+    ${({ $isProposalSubmitted }) =>
+      !$isProposalSubmitted
         ? css`
             &.vert-center {
               justify-content: center;

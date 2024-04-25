@@ -154,10 +154,10 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
 `
 
 export const TreasuryActiveStyle = styled.section``
-export const TreasurySelectStyle = styled(Card)<{ isSelectedTreasury?: boolean }>`
+export const TreasurySelectStyle = styled(Card)<{ $isSelectedTreasury?: boolean }>`
   display: flex;
-  border-bottom-left-radius: ${({ isSelectedTreasury }) => (isSelectedTreasury ? 0 : '10px')};
-  border-bottom-right-radius: ${({ isSelectedTreasury }) => (isSelectedTreasury ? 0 : '10px')};
+  border-bottom-left-radius: ${({ $isSelectedTreasury }) => ($isSelectedTreasury ? 0 : '10px')};
+  border-bottom-right-radius: ${({ $isSelectedTreasury }) => ($isSelectedTreasury ? 0 : '10px')};
   align-items: center;
   margin-top: 20px;
   padding-top: 17px;

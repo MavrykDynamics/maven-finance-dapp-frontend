@@ -95,7 +95,7 @@ export const Treasury = () => {
         <>
           <TreasuryView treasury={globalTreasury} isGlobal factoryAddress={treasuryFactoryAddress} />
           <TreasuryActiveStyle>
-            <TreasurySelectStyle isSelectedTreasury={Boolean(chosenDdItem)}>
+            <TreasurySelectStyle $isSelectedTreasury={Boolean(chosenDdItem)}>
               <h2>Active Treasuries</h2>
               <DropDown
                 placeholder={ddItems.length === 0 ? 'No Treasuries currently active' : 'Choose treasury'}
