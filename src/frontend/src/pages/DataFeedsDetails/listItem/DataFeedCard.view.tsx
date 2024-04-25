@@ -15,7 +15,7 @@ export const DataFeedCard = ({ feed, oracleNodes }: { feed: Feed; oracleNodes: n
 
   return (
     <Link className="full-opacity" to={`/satellites/feed-details/${feed.address}`}>
-      <DataFeedsCardStyled isExtendedCard={showAllColumns}>
+      <DataFeedsCardStyled $isExtendedCard={showAllColumns}>
         <FeedsListItem className="with-img">
           <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
           <h5>Feed</h5>

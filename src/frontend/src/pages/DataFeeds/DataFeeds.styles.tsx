@@ -11,15 +11,15 @@ export const DataFeedsStyled = styled.section`
   }
 `
 
-export const DataFeedsCardStyled = styled(CardHover)<{ theme: MavenTheme; isExtendedCard?: boolean }>`
+export const DataFeedsCardStyled = styled(CardHover)<{ theme: MavenTheme; $isExtendedCard?: boolean }>`
   display: grid;
   padding: 16px 30px;
   transition: 0.5s all;
   margin: 0;
 
-  grid-template-columns: ${({ isExtendedCard }) =>
-    isExtendedCard ? '1.1fr 0.75fr 1.1fr 0.8fr 1.3fr' : '0.87fr 0.5fr 0.95fr 1.2fr'};
-  column-gap: ${({ isExtendedCard }) => (isExtendedCard ? '50px' : '30px')};
+  grid-template-columns: ${({ $isExtendedCard }) =>
+    $isExtendedCard ? '1.1fr 0.75fr 1.1fr 0.8fr 1.3fr' : '0.87fr 0.5fr 0.95fr 1.2fr'};
+  column-gap: ${({ $isExtendedCard }) => ($isExtendedCard ? '50px' : '30px')};
 `
 
 export const FeedsOraclesCardStyled = styled(DataFeedsCardStyled)<{ theme: MavenTheme }>`
