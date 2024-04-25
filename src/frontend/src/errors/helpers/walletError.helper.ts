@@ -1,4 +1,11 @@
-import { ContractMethod, OpKind, SendParams, TezosOperationError, TransferParams, Wallet } from '@taquito/taquito'
+import {
+  ContractMethod,
+  OpKind,
+  SendParams,
+  TezosOperationError,
+  TransferParams,
+  Wallet,
+} from '@mavrykdynamics/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { SPECIFIC_CONTRACT_ERROR_CODES } from 'errors/consts/customWalletErrorCodes'
 import { DEFAULT_WALLET_ERROR } from 'errors/consts/error.const'
@@ -51,11 +58,11 @@ export const estimateExecution = async (
 ): Promise<EstimatedOperation> => {
   const defaultEstimatedOperation: EstimatedOperation = {
     gasLimit: 0,
-    minimalFeeMutez: 0,
+    minimalFeeMumav: 0,
     storageLimit: 0,
-    suggestedFeeMutez: 0,
+    suggestedFeeMumav: 0,
     totalCost: 0,
-    usingBaseFeeMutez: 0,
+    usingBaseFeeMumav: 0,
   }
   try {
     const tezos = await DAPP_INSTANCE.tezos()
@@ -95,8 +102,8 @@ export const estimateBatchOperation = async (
         acc.batchOperations?.push(estimateData)
         acc.totalGasLimit += estimateData.gasLimit
         acc.totalCost += estimateData.totalCost
-        acc.totalMinimalFeeMutez += estimateData.minimalFeeMutez
-        acc.totalSuggestedFeeMutez += estimateData.suggestedFeeMutez
+        acc.totalMinimalFeeMutez += estimateData.minimalFeeMumav
+        acc.totalSuggestedFeeMutez += estimateData.suggestedFeeMumav
         return acc
       },
       { ...defaultEstimatedBatchCalls },

@@ -49,7 +49,7 @@ export const UserActionHistory = () => {
           <TableBody className="treasury">
             {userActionsHistory.map(({ action, amount, fee, totalAmount, id }) => {
               return (
-                <TableRow rowHeight={40} borderColor="divider" className="add-hover" key={id}>
+                <TableRow $rowHeight={40} $borderColor="divider" className="add-hover" key={id}>
                   <TableCell $width="25%">{action}</TableCell>
                   <TableCell $width="30%">
                     <CommaNumber value={amount} />

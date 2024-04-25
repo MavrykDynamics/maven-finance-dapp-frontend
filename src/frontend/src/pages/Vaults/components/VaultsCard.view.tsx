@@ -270,7 +270,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                   const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                   return (
-                    <TableRow rowHeight={44} key={symbol + '-' + index}>
+                    <TableRow $rowHeight={44} key={symbol + '-' + index}>
                       <TableCell $width={columnWidth} className="vert-middle">
                         <div className="cell-content row collateral-icon">
                           <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
@@ -305,7 +305,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
                 {/* Total row */}
                 {collateralData.length >= 2 ? (
-                  <TableRow rowHeight={44}>
+                  <TableRow $rowHeight={44}>
                     <TableCell $width={columnWidth} className="vert-middle">
                       Total
                     </TableCell>

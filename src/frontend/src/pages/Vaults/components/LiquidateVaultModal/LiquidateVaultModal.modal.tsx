@@ -308,7 +308,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                     const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                     return (
-                      <TableRow rowHeight={rowHeight} borderColor="primaryText" key={symbol + '-' + index}>
+                      <TableRow $rowHeight={rowHeight} $borderColor="primaryText" key={symbol + '-' + index}>
                         <TableCell $width={columnWidth}>{symbol}</TableCell>
 
                         <TableCell $width={columnWidth}>
@@ -330,7 +330,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                     )
                   })}
 
-                  <TableRow rowHeight={rowHeight}>
+                  <TableRow $rowHeight={rowHeight}>
                     <TableCell $width={columnWidth}>Total</TableCell>
                     <TableCell $width={columnWidth}></TableCell>
                     <TableCell $width={columnWidth} $contentPosition="right">

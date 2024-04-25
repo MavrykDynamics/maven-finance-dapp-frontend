@@ -65,12 +65,12 @@ const PROPOSAL_DETAILS_PAYMENTS_ROW_STYLES = css`
   }
 `
 
-export const TableRow = styled.tr<{ theme: MavenTheme; borderColor?: string; rowHeight?: number }>`
-  height: ${({ rowHeight = 55 }) => `${rowHeight}px`};
+export const TableRow = styled.tr<{ theme: MavenTheme; $borderColor?: string; $rowHeight?: number }>`
+  height: ${({ $rowHeight = 55 }) => `${$rowHeight}px`};
   transition: border-bottom 0.4s;
 
   &:not(:last-child) {
-    border-bottom: 0.5px solid ${({ theme, borderColor = 'divider' }) => theme[borderColor]};
+    border-bottom: 0.5px solid ${({ theme, $borderColor = 'divider' }) => theme[$borderColor]};
   }
 
   &.plug-row {

@@ -410,7 +410,7 @@ export const StageThreeForm = ({
               })
             ) : (
               <>
-                <TableRow className="plug-row" rowHeight={43}>
+                <TableRow className="plug-row" $rowHeight={43}>
                   <TableCell $width="25%" />
                   <TableCell $width="25%" />
                   <TableCell $width="25%" />

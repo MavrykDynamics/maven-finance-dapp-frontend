@@ -169,7 +169,7 @@ export const TreasuryTab = () => {
                       })
 
                       return (
-                        <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
+                        <TableRow key={symbol} $rowHeight={25} $borderColor="primaryText" className="add-hover">
                           <TableCell $width="33%">{symbol}</TableCell>
                           <TableCell $width="33%">
                             {treasuryTokenBalance < 0.01 ? (

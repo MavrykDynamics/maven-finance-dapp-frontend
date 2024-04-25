@@ -1,4 +1,4 @@
-import { ContractMethod, OpKind, SendParams, TezosToolkit, TransferParams, Wallet } from '@taquito/taquito'
+import { ContractMethod, OpKind, SendParams, TezosToolkit, TransferParams, Wallet } from '@mavrykdynamics/taquito'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { WalletOperationError, checkWhetherWalletAbortError } from 'errors/error'
 import { estimateExecution, getContractErrorMessage } from './walletError.helper'

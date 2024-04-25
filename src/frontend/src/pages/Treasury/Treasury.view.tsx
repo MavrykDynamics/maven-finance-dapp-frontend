@@ -144,7 +144,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                     })
 
                     return (
-                      <TableRow rowHeight={25} borderColor="primaryText" className="add-hover" key={symbol}>
+                      <TableRow $rowHeight={25} $borderColor="primaryText" className="add-hover" key={symbol}>
                         <TableCell $width="37%">{symbol}</TableCell>
                         <TableCell $width="31%">
                           {treasuryTokenBalance < 0.01 ? (

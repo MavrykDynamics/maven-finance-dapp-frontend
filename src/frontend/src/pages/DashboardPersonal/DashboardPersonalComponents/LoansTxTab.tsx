@@ -70,7 +70,7 @@ export const LoansTxTab = ({ txVariant }: { txVariant: 'lending' | 'borrowing' }
 
                 const { icon, symbol } = token
                 return (
-                  <TableRow rowHeight={55} borderColor="divider" className="add-hover" key={id + operationHash}>
+                  <TableRow $rowHeight={55} $borderColor="divider" className="add-hover" key={id + operationHash}>
                     <TableCell $width="20%">
                       <div className="cell-content row">
                         <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />

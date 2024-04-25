@@ -176,7 +176,7 @@ export const ConfirmStats = () => {
                 const balance = Number(amount)
 
                 return (
-                  <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
+                  <TableRow key={symbol} $rowHeight={25} $borderColor="primaryText" className="add-hover">
                     <TableCell $width="33%">{symbol}</TableCell>
                     <TableCell $width="33%">
                       <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />

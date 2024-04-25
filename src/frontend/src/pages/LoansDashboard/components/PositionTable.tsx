@@ -123,7 +123,7 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                   const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
 
                   return (
-                    <TableRow rowHeight={60} borderColor="divider" className="add-hover" key={symbol}>
+                    <TableRow $rowHeight={60} $borderColor="divider" className="add-hover" key={symbol}>
                       <TableCell $width="15%">
                         <div className="cell-content row with-icon asset-name">
                           <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
@@ -207,7 +207,7 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
               </TableBody>
             ) : (
               <TableBody>
-                <TableRow rowHeight={1}>
+                <TableRow $rowHeight={1}>
                   <TableCell $width="15%" />
                   <TableCell $width="43%" />
                   <TableCell $width="41%" />

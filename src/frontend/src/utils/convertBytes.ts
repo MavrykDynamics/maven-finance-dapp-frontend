@@ -1,4 +1,4 @@
-import { MichelsonType, unpackDataBytes } from '@taquito/michel-codec'
+import { MichelsonType, unpackDataBytes } from '@mavrykdynamics/taquito-michel-codec'
 import { z } from 'zod'
 
 // bytes types

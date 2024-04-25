@@ -1,4 +1,4 @@
-import { OpKind, TransferParams } from '@taquito/taquito'
+import { OpKind, TransferParams } from '@mavrykdynamics/taquito'
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
@@ -99,7 +99,7 @@ export const depositCollateralsAction = async (
             kind: operationKind,
             ...contract.methods.initVaultAction('deposit', amount, 'tez').toTransferParams(),
             amount,
-            mutez: true,
+            mumav: true,
           })
 
           if (bakerAddress) {

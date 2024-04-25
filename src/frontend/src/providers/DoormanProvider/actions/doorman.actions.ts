@@ -2,7 +2,7 @@ import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { unknownToError, WalletOperationError } from 'errors/error'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { OpKind } from '@taquito/taquito'
+import { OpKind } from '@mavrykdynamics/taquito'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 
 export const stakeMVN = async (

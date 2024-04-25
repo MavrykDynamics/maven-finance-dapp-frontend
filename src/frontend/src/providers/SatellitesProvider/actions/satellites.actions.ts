@@ -1,4 +1,4 @@
-import { OpKind, TransferParams } from '@taquito/taquito'
+import { OpKind, TransferParams } from '@mavrykdynamics/taquito'
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'

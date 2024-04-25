@@ -5,7 +5,7 @@ import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/es
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // consts
-import { OpKind, TezosToolkit, TransferParams } from '@taquito/taquito'
+import { OpKind, TezosToolkit, TransferParams } from '@mavrykdynamics/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
@@ -149,7 +149,7 @@ export const repayPartOfVaultAction = async (
             {
               kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
               ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
-              mutez: true,
+              mumav: true,
               amount: convertedAssetAmount,
             },
           ],

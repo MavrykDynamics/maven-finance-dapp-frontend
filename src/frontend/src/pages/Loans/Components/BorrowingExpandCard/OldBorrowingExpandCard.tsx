@@ -257,7 +257,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                       const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                       return (
-                        <TableRow rowHeight={65} key={symbol}>
+                        <TableRow $rowHeight={65} key={symbol}>
                           <TableCell $width={'22%'} className="vert-middle">
                             <div className="cell-content row with-icon">
                               <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
@@ -316,7 +316,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
                     {/* Total row */}
                     {collateralData.length >= 2 ? (
-                      <TableRow rowHeight={44}>
+                      <TableRow $rowHeight={44}>
                         <TableCell $width={'22%'} className="vert-middle">
                           Total
                         </TableCell>

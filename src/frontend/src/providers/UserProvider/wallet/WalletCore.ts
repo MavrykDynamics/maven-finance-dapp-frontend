@@ -1,8 +1,14 @@
-import { NetworkType } from '@airgap/beacon-sdk'
-import { BeaconWallet } from '@taquito/beacon-wallet'
-import { TezosToolkit } from '@taquito/taquito'
-import type { BeaconWallet as BeaconWalletType } from '@taquito/beacon-wallet'
+import { BeaconWallet } from '@mavrykdynamics/taquito-beacon-wallet'
+import { NetworkType } from '@mavrykdynamics/beacon-dapp'
+import { TezosToolkit } from '@mavrykdynamics/taquito'
+import type { BeaconWallet as BeaconWalletType } from '@mavrykdynamics/taquito-beacon-wallet'
 
+// MAINNET = "mainnet",
+// BASENET = "basenet",
+// WEEKLYNET = "weeklynet",
+// DAILYNET = "dailynet",
+// ATLASNET = "atlasnet",
+// CUSTOM = "custom"
 // consts
 import { RPCNodeType, ecadLabGhostnetRpcNode, rpcNodeSchema } from 'consts/rpcNodes.const'
 import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
