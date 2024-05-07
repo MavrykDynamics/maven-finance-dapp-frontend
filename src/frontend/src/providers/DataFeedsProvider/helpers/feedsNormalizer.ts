@@ -8,6 +8,8 @@ import { FullFeedsQueryType, SmallFeedsQueryType, feedMetadataSchema } from './f
 
 export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
   try {
+    if (!feedGql.metadata) return null
+
     const feedMetadata = feedMetadataSchema.parse(feedGql.metadata)
 
     const { category, icon } = feedMetadata
@@ -26,7 +28,7 @@ export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
       icon,
     }
   } catch (e) {
-    console.error('paring feed metadata error: ', { e })
+    console.error('parsing feed metadata error: ', { e })
     return null
   }
 }

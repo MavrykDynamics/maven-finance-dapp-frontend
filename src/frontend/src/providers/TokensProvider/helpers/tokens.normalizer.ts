@@ -1,16 +1,16 @@
 // utils
-import {convertNumberForClient} from 'utils/calcFunctions'
-import {getTokenSymbolAndName} from './tokenNames'
-import {checkWhetherTokenIsCollateralToken} from './tokens.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenSymbolAndName } from './tokenNames'
+import { checkWhetherTokenIsCollateralToken } from './tokens.utils'
 
 // types
-import {TokenMetadataType, TokensContextStateType} from '../tokens.provider.types'
-import {TokenPricesFeedsType} from 'providers/DataFeedsProvider/helpers/feeds.schemas'
-import {isValidTokenType, TokenType} from 'utils/TypesAndInterfaces/General'
-import {TokensMetadataQuery} from 'utils/__generated__/graphql'
+import { TokenMetadataType, TokensContextStateType } from '../tokens.provider.types'
+import { TokenPricesFeedsType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
+import { isValidTokenType, TokenType } from 'utils/TypesAndInterfaces/General'
+import { TokensMetadataQuery } from 'utils/__generated__/graphql'
 
 // consts
-import {DEFAULT_MIN_COLLATERAL_AMOUNT, SMVN_TOKEN_ADDRESS} from 'utils/constants'
+import { DEFAULT_MIN_COLLATERAL_AMOUNT, SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import {
   farmLiquidityPairTokenMetadataSchema,
   farmLiquidityTokenMetadataSchema,
@@ -142,6 +142,8 @@ const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMeta
     // parsing token metadata schema, to have icon and decimals for token
     const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
+    if (!farmLpToken.metadata) return null
+
     // parsing liquidity pair token metadata schema, to have symbol and address for token
     const { symbol } = parseFarmLiquidityToken(farmLpToken.metadata)
 
@@ -236,6 +238,10 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         const parsedMetadata = tokenMetadataSchema.parse(metadata)
 
         const symbolFromIndexer = parsedMetadata.symbol
+
+        if (!symbolFromIndexer) {
+          throw new Error(`symbolFromIndexer is undefined`)
+        }
 
         // getting symbol, name, icon from tokens mapper, cuz metadata from indexer is not valid for display
         const { symbol, name, icon } = getTokenSymbolAndName(symbolFromIndexer) ?? {}
