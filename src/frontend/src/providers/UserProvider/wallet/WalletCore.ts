@@ -10,7 +10,7 @@ import type { BeaconWallet as BeaconWalletType } from '@mavrykdynamics/taquito-b
 // ATLASNET = "atlasnet",
 // CUSTOM = "custom"
 // consts
-import { RPCNodeType, ecadLabGhostnetRpcNode, rpcNodeSchema } from 'consts/rpcNodes.const'
+import { RPCNodeType, atlasNetRpcnode, rpcNodeSchema } from 'consts/rpcNodes.const'
 import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
 
 // utils
@@ -24,7 +24,7 @@ const DAPP_METADATA = {
 }
 
 const getRpcNode = (): RPCNodeType => {
-  const rpcNode = getItemFromStorage<RPCNodeType>(RPC_NODE, rpcNodeSchema) ?? ecadLabGhostnetRpcNode
+  const rpcNode = getItemFromStorage<RPCNodeType>(RPC_NODE, rpcNodeSchema) ?? atlasNetRpcnode
   return rpcNode
 }
 

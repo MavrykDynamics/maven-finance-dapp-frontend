@@ -1,20 +1,20 @@
-import {useCallback, useMemo} from 'react'
+import { useCallback, useMemo } from 'react'
 
 // providers
-import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
-import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // consts
-import {DAPP_INSTANCE} from '../user.provider'
-import {TOASTER_TEXTS} from 'providers/ToasterProvider/helpers/texts/toaster.texts'
-import {TOASTER_SUBSCRIPTION_ERROR} from 'providers/ToasterProvider/toaster.provider.const'
-import {DEFAULT_USER} from '../helpers/user.consts'
+import { DAPP_INSTANCE } from '../user.provider'
+import { TOASTER_TEXTS } from 'providers/ToasterProvider/helpers/texts/toaster.texts'
+import { TOASTER_SUBSCRIPTION_ERROR } from 'providers/ToasterProvider/toaster.provider.const'
+import { DEFAULT_USER } from '../helpers/user.consts'
 
 // types
-import {UserContextStateType, UserTzKtTokenBalances, UserTzktTokensBalancesType} from '../user.provider.types'
+import { UserContextStateType, UserTzKtTokenBalances, UserTzktTokensBalancesType } from '../user.provider.types'
 
 // utils
-import {sleep} from 'utils/api/sleep'
+import { sleep } from 'utils/api/sleep'
 import {
   attachTzktSocketsEventHandlers,
   fetchTzktUserBalances,

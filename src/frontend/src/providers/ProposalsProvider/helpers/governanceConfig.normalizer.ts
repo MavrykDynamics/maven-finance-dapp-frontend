@@ -17,7 +17,7 @@ const calcGovPhase = (round: number, hasProposalToExecute?: boolean) => {
 
 export const normalizeGovernanceConfig = (dataFromIndexer: GovernanceConfigQueryQuery): ProposalsContext['config'] => {
   const {
-    proposal_submission_fee_mutez,
+    proposal_submission_fee_mumav,
     success_reward,
     current_round_end_level,
     cycle_id,
@@ -30,7 +30,7 @@ export const normalizeGovernanceConfig = (dataFromIndexer: GovernanceConfigQuery
   const hasProposalToExecute = Boolean(proposals.find(({ id }) => id === timelock_proposal_id))
 
   return {
-    fee: convertNumberForClient({ number: proposal_submission_fee_mutez, grade: XTZ_DECIMALS }),
+    fee: convertNumberForClient({ number: proposal_submission_fee_mumav, grade: XTZ_DECIMALS }),
     successReward: convertNumberForClient({ number: success_reward, grade: MVN_DECIMALS }),
     currentRoundEndLevel: current_round_end_level,
     cycle: cycle_id,

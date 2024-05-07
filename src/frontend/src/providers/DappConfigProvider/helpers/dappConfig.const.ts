@@ -1,4 +1,4 @@
-import { ecadLabGhostnetRpcNode, marigoldGhostnetRpcNode } from 'consts/rpcNodes.const'
+import { atlasNetRpcnode, marigoldGhostnetRpcNode } from 'consts/rpcNodes.const'
 import { themeSchema, ThemeType } from 'consts/theme.const'
 import { getItemFromStorage } from 'utils/storage'
 
@@ -89,10 +89,10 @@ export const preferencesDefaultState: PreferencesState = {
   changeNodePopupOpen: false,
   sidebarOpened: false,
   RPC_NODES: [
-    { title: 'ECADLABS', url: ecadLabGhostnetRpcNode, nodeLogoUrl: 'ECAD_logo.png', isUser: false },
+    { title: 'ATLASNET', url: atlasNetRpcnode, nodeLogoUrl: 'ECAD_logo.png', isUser: false },
     { title: 'MARIGOLD', url: marigoldGhostnetRpcNode, nodeLogoUrl: 'marigold_logo.png', isUser: false },
   ],
-  REACT_APP_RPC_PROVIDER: ecadLabGhostnetRpcNode,
+  REACT_APP_RPC_PROVIDER: atlasNetRpcnode,
 }
 
 // ------ default loadings

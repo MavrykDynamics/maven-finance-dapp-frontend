@@ -50,7 +50,7 @@ const EGovProvider = ({ children }: Props) => {
         config: {
           emergencyGovActive: eGovCOnfig.current_emergency_record_id !== 0,
           requiredFeeMutez: convertNumberForClient({
-            number: eGovCOnfig.required_fee_mutez,
+            number: eGovCOnfig.required_fee_mumav,
             grade: XTZ_DECIMALS,
           }),
           minStakedMvnRequiredToVote: convertNumberForClient({

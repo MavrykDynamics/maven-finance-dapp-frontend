@@ -23,6 +23,8 @@ export const marigoldMumbainetRpcNode = 'https://mumbainet.tezos.marigold.dev/'
 // tezTools
 export const tezToolsRpcNode = 'https://eu01-node.teztools.net/'
 
+export const atlasNetRpcnode = 'https://atlasnet.rpc.mavryk.network'
+
 export const rpcNodeSchema = z.enum([
   ecadLabsTezMainnetRpcNode,
   ecadLabGhostnetRpcNode,
@@ -35,6 +37,7 @@ export const rpcNodeSchema = z.enum([
   marigoldGhostnetRpcNode,
   marigoldNairobinetRpcNode,
   marigoldMumbainetRpcNode,
+  atlasNetRpcnode,
 ])
 
 export type RPCNodeType = z.infer<typeof rpcNodeSchema>
