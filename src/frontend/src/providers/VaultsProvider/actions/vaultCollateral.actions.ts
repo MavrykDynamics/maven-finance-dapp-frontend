@@ -94,10 +94,10 @@ export const depositCollateralsAction = async (
           return acc
         }
 
-        if (type === 'tez') {
+        if (type === 'mav') {
           acc.push({
             kind: operationKind,
-            ...contract.methods.initVaultAction('deposit', amount, 'tez').toTransferParams(),
+            ...contract.methods.initVaultAction('deposit', amount, 'mav').toTransferParams(),
             amount,
             mumav: true,
           })

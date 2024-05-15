@@ -98,7 +98,7 @@ export const depositToFarm = async (
           },
         ])
 
-      case 'tez':
+      case 'mav':
         return await getEstimationBatchResult(tezos, [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,

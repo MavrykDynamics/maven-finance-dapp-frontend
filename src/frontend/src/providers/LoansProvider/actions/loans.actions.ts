@@ -30,7 +30,7 @@ export const depositLendingAssetAction = async (
     const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grade: decimals })
     const contract = await tezos.wallet.at(lendingControllerAddress)
 
-    if (type === 'tez') {
+    if (type === 'mav') {
       const depositTezMetaData = contract?.methods.addLiquidity(indexerName, convertedAssetAmount)
 
       return await getEstimationResult(depositTezMetaData, {

@@ -142,7 +142,7 @@ export const repayPartOfVaultAction = async (
           callback,
         )
 
-      case 'tez':
+      case 'mav':
         return await getEstimationBatchResult(
           tezos,
           [
@@ -301,7 +301,7 @@ export const createVault = async (
       [],
     )
 
-    const tezCollateral = collateralTokens.find((c) => c.type === 'tez')
+    const tezCollateral = collateralTokens.find((c) => c.type === 'mav')
     const tezTokenData = tezCollateral
       ? {
           amount: tezCollateral.amount,
