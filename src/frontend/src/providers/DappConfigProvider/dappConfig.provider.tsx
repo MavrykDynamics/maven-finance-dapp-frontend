@@ -81,7 +81,7 @@ const DappConfigProvider = ({ children }: Props) => {
         const parsedLevelData = indexerLevelSchema.parse(data.dipdup_index)
 
         if (currentIndexerLevelProxy.currentIndexedLevel < parsedLevelData[0].level) {
-          if (process.env.REACT_APP_ENV === 'dev')
+          if (process.env.REACT_APP_ENV === 'prod')
             console.log(`%cnew indexer level: ${parsedLevelData[0].level}`, 'color: fuchsia')
 
           currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData[0].level

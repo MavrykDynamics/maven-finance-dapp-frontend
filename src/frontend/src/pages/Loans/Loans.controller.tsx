@@ -103,6 +103,8 @@ export const Loans = () => {
       const market = marketsMapper[marketTokenAddress]
       const loanToken = getTokenDataByAddress({ tokenAddress: marketTokenAddress, tokensPrices, tokensMetadata })
 
+      console.log(market, loanToken)
+
       if (!loanToken || !loanToken.rate || !market) return acc
 
       const { totalBorrowed, totalLended } = market
@@ -204,7 +206,6 @@ export const Loans = () => {
                 borrowAPR,
                 lendingAPY,
               } = market
-
               const mToken = getTokenDataByAddress({
                 tokenAddress: loanMTokenAddress,
                 tokensPrices,

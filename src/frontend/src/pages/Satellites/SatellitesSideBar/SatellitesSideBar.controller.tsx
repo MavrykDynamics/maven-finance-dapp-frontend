@@ -99,7 +99,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     <SatelliteSideBarStyled>
       <SideBarSection>
         {isButton ? (
-          <Link to={`/become-satellite/${SATELLITE_TAB_EDIT}}`}>
+          <Link to={`/become-satellite/edit`}>
             {isSatellite && satelliteAvatar && userSatelliteName ? (
               <SidebarUserEditButton name={userSatelliteName} image={satelliteAvatar} />
             ) : (

@@ -45,8 +45,20 @@ export const TokensProvider = ({ children }: Props) => {
           const parsedTokens = tokensGqlSchema.parse(data.token)
 
           initialLoadingStatus.current = false
+          // console.log(
+          //   parsedTokens.filter(
+          //     (token) => token.token_standard !== null && Boolean(token.metadata) && token.metadata?.symbol !== null,
+          //   ),
+          //   'parsedTokens',
+          // )
 
-          const { tokensMetadata, mTokens, farmLpTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
+          const { tokensMetadata, mTokens, farmLpTokens, collateralTokens } = normalizeTokensMetadata(
+            parsedTokens.filter(
+              (token) =>
+                // token.token_address === 'KT1P2NqBYp1JKmEPdAqMSkVCy39V82NaWcGC' ||
+                token.token_address === 'mv2ZZZZZZZZZZZZZZZZZZZZZZZZZZZDXMF2d',
+            ),
+          )
 
           setTokensCtxState((prev) => ({
             ...prev,

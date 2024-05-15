@@ -90,7 +90,7 @@ export const preferencesDefaultState: PreferencesState = {
   sidebarOpened: false,
   RPC_NODES: [
     { title: 'ATLASNET', url: atlasNetRpcnode, nodeLogoUrl: 'ECAD_logo.png', isUser: false },
-    { title: 'MARIGOLD', url: marigoldGhostnetRpcNode, nodeLogoUrl: 'marigold_logo.png', isUser: false },
+    // { title: 'MARIGOLD', url: marigoldGhostnetRpcNode, nodeLogoUrl: 'marigold_logo.png', isUser: false },
   ],
   REACT_APP_RPC_PROVIDER: atlasNetRpcnode,
 }

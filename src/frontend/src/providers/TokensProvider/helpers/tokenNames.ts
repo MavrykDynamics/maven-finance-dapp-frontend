@@ -34,6 +34,7 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
       return { name: 'mEURL', symbol: 'mEURL', icon: '/images/mEURL.svg' }
 
     case 'mvn':
+    case 'mvrk':
       return { name: 'Maven', symbol: 'MVN', icon: 'https://mavryk.finance/logo192.png' }
     case 'smvn':
       return { name: 'Staked Maven', symbol: 'sMVN', icon: 'https://mavryk.finance/logo192.png' }
