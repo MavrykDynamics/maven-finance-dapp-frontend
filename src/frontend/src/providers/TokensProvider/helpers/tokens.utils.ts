@@ -40,7 +40,6 @@ export const getTokenDataByAddress = ({
   if (!tokenAddress) return null
 
   const tokenMetadata = tokensMetadata[tokenAddress]
-  console.log(tokensMetadata, 'tokensMetadata')
 
   if (!tokenMetadata) return null
 

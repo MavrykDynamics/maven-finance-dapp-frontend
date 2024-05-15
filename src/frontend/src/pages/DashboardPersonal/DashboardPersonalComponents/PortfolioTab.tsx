@@ -1,5 +1,14 @@
 import { useMemo } from 'react'
-import { Link, Navigate, Outlet, Route, Routes as Switch, useOutletContext, useParams } from 'react-router-dom'
+import {
+  Link,
+  Navigate,
+  Outlet,
+  Route,
+  Routes as Switch,
+  useLocation,
+  useOutletContext,
+  useParams,
+} from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
@@ -45,7 +54,9 @@ const PortfolioTab = () => {
   const {
     userWalletData: { xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount },
   }: PortfolioTabProps = useOutletContext()
-  const { secondaryTabId = PORTFOLIO_LENDING_TAB_ID } = useParams<{ secondaryTabId: string }>()
+  const location = useLocation()
+
+  const secondaryTabId = location.pathname.split('/').pop() ?? PORTFOLIO_LENDING_TAB_ID
 
   const { availableLoansRewards, userAddress } = useUserContext()
   const {

@@ -115,7 +115,7 @@ export const PageHeaderForegroundImageContainer = styled.div`
   overflow: visible;
 `
 
-export const PageHeaderForegroundImage = styled.img<{ $page: string; $src?: string }>`
+export const PageHeaderForegroundImage = styled.img<{ $page: string; src?: string }>`
   position: absolute;
   right: ${({ $page }) => {
     switch ($page) {

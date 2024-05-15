@@ -38,7 +38,7 @@ export const PageHeaderView = ({
           <p>{subText}</p>
         </PageHeaderTextArea>
         <PageHeaderForegroundImageContainer>
-          <PageHeaderForegroundImage $page={page} $src={foregroundImageSrc ?? '/images/portal.svg'} alt="portal" />
+          <PageHeaderForegroundImage $page={page} src={foregroundImageSrc ?? '/images/portal.svg'} alt="portal" />
         </PageHeaderForegroundImageContainer>
       </PageHeaderStyled>
       <ConnectWalletBanner />
