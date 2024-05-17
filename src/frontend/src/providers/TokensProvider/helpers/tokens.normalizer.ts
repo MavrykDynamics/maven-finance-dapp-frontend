@@ -255,9 +255,9 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         // we have 2 mvn tokens in indexer one is empty hardcoded and one is token with data, so we need to exclude empty one
-        // if (symbol === 'MVN' && !mvn_tokens?.[0]?.address) {
-        //   throw new Error(`Omit hardcoded fake mvn token`)
-        // }
+        if (symbol === 'MVN' && !mvn_tokens?.[0]?.address) {
+          throw new Error(`Omit hardcoded fake mvn token`)
+        }
 
         let tokenMetadata: TokenMetadataType = {
           id: token_id,
