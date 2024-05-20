@@ -227,6 +227,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
+
   const {
     contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()

@@ -110,7 +110,7 @@ export const normalizeUserIndexerTokensBalances = ({
         }
         acc.availableLoansRewards += mTokenInterestEarned
       } catch (e) {
-        if (process.env.REACT_APP_ENV === 'dev') console.error('normalize user mTokens error: ', { e })
+        if (process.env.REACT_APP_ENV === 'prod') console.error('normalize user mTokens error: ', { e })
       } finally {
         return acc
       }
@@ -154,9 +154,13 @@ export const fetchTzktUserBalances = async ({
 
     const isUserEmptyOnTzkt = emptyUserTzktAccountSchema.safeParse(accountData)
 
+    console.log(accountData, 'accountData')
+
     if (isUserEmptyOnTzkt.success) return {}
 
+    // for now empty array
     const parsedUserTzktTokensData = userTzktTokenBalancesSchema.safeParse(tokensData)
+    // user balance from wallet -> Math.trunc(759999389) / Math.pow(10, 9) -> 0.759999389
     const parsedUserXtzTokenBalance = userTzktAccountSchema.safeParse(accountData)
 
     if (parsedUserTzktTokensData.success && parsedUserXtzTokenBalance.success) {
@@ -222,12 +226,12 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'dev')
+      if (process.env.REACT_APP_ENV === 'prod')
         console.log('%ctzktSocket on token_balances msg', 'color: aqua', { data: msg.data })
       const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
       handleTokens(tokensBalances)
     } catch (e) {
-      if (process.env.REACT_APP_ENV === 'dev') console.error('tzkt tokens balance parse error: ', { e, msg })
+      if (process.env.REACT_APP_ENV === 'prod') console.error('tzkt tokens balance parse error: ', { e, msg })
     }
   })
 
@@ -236,7 +240,7 @@ export const attachTzktSocketsEventHandlers = ({
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'dev')
+      if (process.env.REACT_APP_ENV === 'prod')
         console.log('%ctzktSocket on accounts msg', 'color: aqua', { data: msg.data })
       const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
       handleTokens([
@@ -247,7 +251,7 @@ export const attachTzktSocketsEventHandlers = ({
         },
       ])
     } catch (e) {
-      if (process.env.REACT_APP_ENV === 'dev') console.error('tzkt xtz token balance parse error: ', { e, msg })
+      if (process.env.REACT_APP_ENV === 'prod') console.error('tzkt xtz token balance parse error: ', { e, msg })
     }
   })
 
