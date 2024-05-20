@@ -78,9 +78,9 @@ export const LoansDashboard = () => {
         {
           totalLended: 0,
           totalBorrowed: 0,
-        }
+        },
       ),
-    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices]
+    [marketsAddresses, marketsMapper, tokensMetadata, tokensPrices],
   )
 
   return (

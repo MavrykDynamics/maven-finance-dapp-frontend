@@ -240,8 +240,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         const symbolFromIndexer = parsedMetadata.symbol
 
         if (!symbolFromIndexer) {
-          return acc
-          // throw new Error(`symbolFromIndexer is undefined`)
+          throw new Error(`symbolFromIndexer is undefined`)
         }
 
         // getting symbol, name, icon from tokens mapper, cuz metadata from indexer is not valid for display
@@ -327,7 +326,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         if (m_tokens?.[0]?.address) {
           const {
             assets: [{ decimals: interestRateDecimals }],
-          } = mTokenMetadataSchema.parse(m_tokens[0].metadata)
+          } = mTokenMetadataSchema.parse(m_tokens[0]?.metadata)
 
           acc.mTokens.push(token_address)
           tokenMetadata = {

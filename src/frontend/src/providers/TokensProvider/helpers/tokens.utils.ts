@@ -43,7 +43,7 @@ export const getTokenDataByAddress = ({
 
   if (!tokenMetadata) return null
 
-  const tokenRate = tokensPrices?.[tokenMetadata.symbol]
+  const tokenRate = tokensPrices?.[tokenMetadata.symbol] ?? 1
 
   if (!tokenRate) return { ...tokenMetadata, rate: null }
 

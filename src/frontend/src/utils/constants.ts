@@ -4,9 +4,9 @@ export const WERT_IO_LOADER = 'wert-loader'
 
 // User tokens symbols
 export const MVN_TOKEN_SYMBOL = 'MVN'
-export const XTZ_TOKEN_SYMBOL = 'XTZ'
+export const XTZ_TOKEN_SYMBOL = 'MVRK'
 export const SMVN_TOKEN_ADDRESS = 'sMVN'
-export const XTZ_TOKEN_ADDRESS = 'tz1ZZZZZZZZZZZZZZZZZZZZZZZZZZZZNkiRg'
+export const XTZ_TOKEN_ADDRESS = 'mv2ZZZZZZZZZZZZZZZZZZZZZZZZZZZDXMF2d'
 
 // User token types
 export const USER_TOKEN_TYPE_COLLATERAL = 'collateralToken'

@@ -184,6 +184,7 @@ export const Loans = () => {
             <H2Title>Markets</H2Title>
             {marketsAddresses.map((marketAddress) => {
               const market = marketsMapper[marketAddress]
+
               const loanToken = getTokenDataByAddress({
                 tokenAddress: marketAddress,
                 tokensPrices,
