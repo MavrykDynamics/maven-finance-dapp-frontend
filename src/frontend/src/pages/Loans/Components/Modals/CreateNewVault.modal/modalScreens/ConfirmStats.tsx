@@ -110,7 +110,8 @@ export const ConfirmStats = () => {
         vaultFactoryAddress,
         lendingControllerAddress,
         tokensArr,
-        selectedBaker?.bakerAddress ?? null,
+        null,
+        // selectedBaker?.bakerAddress ?? null,
       )
     }
 

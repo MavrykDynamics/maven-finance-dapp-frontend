@@ -42,8 +42,8 @@ export const getXTZBakers = async (): Promise<{
   try {
     // TODO: add dynamic fetching
     // const bakers = await fetch('https://api.tezos-nodes.com/v1/bakers')
-
-    const otherBakers = process.env.REACT_APP_NETWORK === 'ghostnet' ? GHOSTNET_BAKERS : BakersMocked
+    // TODO NETWORK
+    const otherBakers = process.env.REACT_APP_NETWORK === 'atlasnet' ? GHOSTNET_BAKERS : BakersMocked
 
     const [{ data: daoBakerData }, { data: mavrykDynamicsBakerData }] = await Promise.all([
       api<BakeryDelegateDataType>(
@@ -76,21 +76,22 @@ export const getXTZBakers = async (): Promise<{
 }
 
 const DAO_BAKER_STATIC_DATA = {
-  isDisabled: process.env.REACT_APP_NETWORK !== 'mainnet',
+  isDisabled: process.env.REACT_APP_NETWORK !== 'atlasnet',
   logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
   name: 'The DAO',
   address: 'tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV',
-  fee: 10,
+  fee: 2,
   yield: 5.5,
   description: `The Maven DAO Bakery belongs to the Maven Finance network. A small portion of the earnings are used to pay for the Decentralized Oracle’s transaction fees. The DAO Bakery is operated by Mavryk Dynamics on behalf of the Maven Finance network.`,
 }
 
 const MAVRYK_DYNAMICS_BAKER_STATIC_DATA = {
-  isDisabled: process.env.REACT_APP_NETWORK !== 'mainnet',
+  isDisabled: process.env.REACT_APP_NETWORK !== 'atlasnet',
   logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
   name: 'Mavryk Dynamics',
+  // TODO replace with -> mv1V4h45W3p4e1sjSBvRkK2uYbvkTnSuHg8g later
   address: 'tz1NKnczKg77PwF5NxrRohjT5j4PmPXw6hhL',
-  fee: 10,
+  fee: 2,
   yield: 5.5,
   description: `The Mavryk Dynamics Bakery belongs to one of the core teams contributing to Maven Finance. Delegating to this Bakery contributes to the further development of Maven Finance.`,
 }

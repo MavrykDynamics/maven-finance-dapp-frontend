@@ -14,7 +14,8 @@ declare global {
       REACT_APP_GRAPHQL_WSS_API: 'wss://api.mavenfinance.io/v1/graphql'
 
       REACT_APP_NAME: string
-      REACT_APP_NETWORK: 'mainnet' | 'ghostnet'
+      // TODO NETWORK
+      REACT_APP_NETWORK: 'atlasnet'
 
       IPFS_API_KEY: string
       IPFS_PROJECT_ID: string
