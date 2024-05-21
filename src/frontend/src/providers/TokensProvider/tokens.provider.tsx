@@ -49,7 +49,6 @@ export const TokensProvider = ({ children }: Props) => {
           const { tokensMetadata, mTokens, farmLpTokens, collateralTokens } = normalizeTokensMetadata(
             parsedTokens.filter((token) => token.token_standard !== null),
           )
-          // console.log(tokensMetadata, 'tokensMetadata')
 
           setTokensCtxState((prev) => ({
             ...prev,

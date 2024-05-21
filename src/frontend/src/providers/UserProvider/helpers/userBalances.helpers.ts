@@ -156,19 +156,16 @@ export const fetchTzktUserBalances = async ({
 
     if (isUserEmptyOnTzkt.success) return {}
 
-    // for now empty array
     const parsedUserTzktTokensData = userTzktTokenBalancesSchema.safeParse(tokensData)
+    const parsedUserMvrkTokenBalance = userTzktAccountSchema.safeParse(accountData)
 
-    // user balance from wallet -> Math.trunc(759999389) / Math.pow(10, 9) -> 0.759999389
-    const parsedUserXtzTokenBalance = userTzktAccountSchema.safeParse(accountData)
-
-    if (parsedUserTzktTokensData.success && parsedUserXtzTokenBalance.success) {
+    if (parsedUserTzktTokensData.success && parsedUserMvrkTokenBalance.success) {
       return normalizeUserTzktTokensBalances({
         indexerData: parsedUserTzktTokensData.data.concat([
           {
             token: { contract: { address: MVRK_TOKEN_ADDRESS } },
-            balance: parsedUserXtzTokenBalance.data.balance.toString(),
-            account: { address: parsedUserXtzTokenBalance.data.address },
+            balance: parsedUserMvrkTokenBalance.data.balance.toString(),
+            account: { address: parsedUserMvrkTokenBalance.data.address },
           },
         ]),
         userAddress,

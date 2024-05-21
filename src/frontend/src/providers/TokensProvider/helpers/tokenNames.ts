@@ -13,11 +13,11 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
     case 'musdt':
       return { name: 'mUSDT', symbol: 'mUSDT', icon: '/images/mUSDT.svg' }
 
-    case 'xtz/usd':
-    case 'xtz':
-      return { name: 'Tezos', symbol: 'XTZ', icon: '/images/tezos.png' }
-    case 'mxtz':
-      return { name: 'mXTZ', symbol: 'mXTZ', icon: '/images/mXTZ.svg' }
+    case 'mvrk/usd':
+    case 'mvrk':
+      return { name: 'Mavryk', symbol: 'MVRK', icon: '/images/tezos.png' }
+    case 'mmvrk':
+      return { name: 'mMVRK', symbol: 'mMVRK', icon: '/images/mXTZ.svg' }
 
     case 'btc/usd':
     case 'tzbtc':
@@ -34,7 +34,6 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
       return { name: 'mEURL', symbol: 'mEURL', icon: '/images/mEURL.svg' }
 
     case 'mvn':
-    case 'mvrk':
       return { name: 'Maven', symbol: 'MVN', icon: 'https://mavryk.finance/logo192.png' }
     case 'smvn':
       return { name: 'Staked Maven', symbol: 'sMVN', icon: 'https://mavryk.finance/logo192.png' }
