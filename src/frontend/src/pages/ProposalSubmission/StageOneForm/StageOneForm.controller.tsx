@@ -146,7 +146,7 @@ export const StageOneForm = ({
 
         <div className="submitted-data vert-center">
           <div className="label">3 - Fee</div>
-          <CommaNumber className="value" value={fee} endingText="XTZ" />
+          <CommaNumber className="value" value={fee} endingText="MVRK" />
         </div>
 
         {isProposalSubmitted ? (

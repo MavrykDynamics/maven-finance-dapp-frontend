@@ -144,7 +144,7 @@ export const EmergencyGovernance = () => {
                     Initiate an Emergency Governance vote to break the glass by using the button on the right. Any user
                     can trigger this system by initiating an emergency governance action, detailing the cause for the
                     emergency vote in a form for the ecosystem to understand the urgency. In order to reduce spam, there
-                    is a 10 XTZ fee paid to the Treasury.
+                    is a 10 MVRK fee paid to the Treasury.
                   </div>
                 </CardContentLeftSide>
                 <CardContentRightSide>

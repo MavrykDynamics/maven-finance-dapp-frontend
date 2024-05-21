@@ -149,7 +149,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
                   userTokensBalances,
                   tokenAddress: MVRK_TOKEN_ADDRESS,
                 })}
-                endingText={'XTZ'}
+                endingText={'MVRK'}
                 showDecimal
                 className="asset-amount"
               />
@@ -167,8 +167,8 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
 
             <div className="action">
-              <Button onClick={() => mountWertWiget('XTZ')} kind={BUTTON_SIMPLE} disabled>
-                Buy XTZ <Icon id="paginationArrowLeft" />
+              <Button onClick={() => mountWertWiget('MVRK')} kind={BUTTON_SIMPLE} disabled>
+                Buy MVRK <Icon id="paginationArrowLeft" />
               </Button>
             </div>
           </div>
@@ -352,7 +352,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
                   userTokensBalances,
                   tokenAddress: MVRK_TOKEN_ADDRESS,
                 })}
-                endingText={'XTZ'}
+                endingText={'MVRK'}
                 showDecimal
                 className="asset-amount"
               />
@@ -371,7 +371,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
             <div className="action">
               <Button onClick={() => mountWertWiget('XTZ')} kind={BUTTON_SIMPLE} disabled>
-                Buy XTZ <Icon id="paginationArrowLeft" />
+                Buy MVRK <Icon id="paginationArrowLeft" />
               </Button>
             </div>
           </div>

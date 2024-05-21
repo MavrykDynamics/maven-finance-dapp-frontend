@@ -149,7 +149,7 @@ const PortfolioTab = () => {
           </div>
         </div>
         <div className="wallet-info">
-          <div className="name">XTZ in Wallet</div>
+          <div className="name">MVRK in Wallet</div>
           <div className="value">
             <CommaNumber value={xtzAmount} />
             <a

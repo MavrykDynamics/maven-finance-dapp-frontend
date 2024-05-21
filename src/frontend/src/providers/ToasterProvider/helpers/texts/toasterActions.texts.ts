@@ -400,7 +400,7 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
   // vault permission actions -------------------------------------
   [CHANGE_BAKER_ACTION]: {
     start: {
-      title: 'Changing XTZ Baker...',
+      title: 'Changing MVRK Baker...',
       message: ACTION_START_MESSAGE_TEXT,
     },
     end: {

@@ -328,7 +328,7 @@ export const BorrowingExpandCardMenuSection = ({
 
               {vaultHasXtzCollateral ? (
                 <div className="useful-info-line">
-                  <div className="name">XTZ Delegated to</div>
+                  <div className="name">MVRK Delegated to</div>
                   <div className="value">
                     {xtzDelegatedTo ? (
                       <TzAddress tzAddress={xtzDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
@@ -377,8 +377,8 @@ export const BorrowingExpandCardMenuSection = ({
                     <Icon id="info" />
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For
-                    instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a
+                    Depositors are tz and KT addresses that are allowed to deposit tokens and MVRK into your vault. For
+                    instance, if you delegate your MVRK to a bakery, you should add the bakery’s payout address as a a
                     depositor so your vault can receive its delegation rewards.
                   </Tooltip.Content>
                 </Tooltip>

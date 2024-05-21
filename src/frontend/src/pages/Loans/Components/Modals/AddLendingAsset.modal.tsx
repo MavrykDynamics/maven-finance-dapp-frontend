@@ -147,8 +147,8 @@ export const AddLendingAsset = ({
             <h2>Supply Assets to Earn</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">
-            Earn yield by depositing assets to Maven’s lending pools. Loans are secured by 200% collateral. Supplied XTZ
-            is automatically delegated to the Maven Finance DAO Bakery.
+            Earn yield by depositing assets to Maven’s lending pools. Loans are secured by 200% collateral. Supplied
+            MVRK is automatically delegated to the Maven Finance DAO Bakery.
           </div>
 
           <Input
