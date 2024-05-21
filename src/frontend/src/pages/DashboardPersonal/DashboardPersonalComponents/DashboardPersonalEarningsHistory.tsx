@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { EarnHistoryStyled } from './DashboardPersonalComponents.style'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { MVN_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, MVRK_TOKEN_SYMBOL } from 'utils/constants'
 import { SECONDARY_TOGGLE } from 'app/App.components/Toggle/Toggle.consts'
 
 export type DashboardPersonalEarningsHistoryProps = {
@@ -24,7 +24,7 @@ const DashboardPersonalEarningsHistory = ({
   const [switcherActive, setSwitcherActive] = useState(true)
 
   const mvnRate = tokensPrices[MVN_TOKEN_SYMBOL]
-  const xtzRate = tokensPrices[XTZ_TOKEN_SYMBOL]
+  const xtzRate = tokensPrices[MVRK_TOKEN_SYMBOL]
 
   return (
     <EarnHistoryStyled>

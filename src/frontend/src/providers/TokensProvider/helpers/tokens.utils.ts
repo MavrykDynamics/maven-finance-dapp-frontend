@@ -1,4 +1,4 @@
-import { XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { MVRK_TOKEN_ADDRESS } from 'utils/constants'
 import {
   LoansTokenMetadataType,
   LoansCollateralTokenMetadataType,
@@ -26,7 +26,7 @@ export const checkWhetherTokenIsCollateralToken = (
   typeof token.loanData?.isScaled === 'boolean' &&
   typeof token.loanData?.isStaked === 'boolean'
 
-export const isTezosAsset = (tokenAddress?: TokenAddressType) => tokenAddress === XTZ_TOKEN_ADDRESS
+export const isTezosAsset = (tokenAddress?: TokenAddressType) => tokenAddress === MVRK_TOKEN_ADDRESS
 
 export const getTokenDataByAddress = ({
   tokenAddress,

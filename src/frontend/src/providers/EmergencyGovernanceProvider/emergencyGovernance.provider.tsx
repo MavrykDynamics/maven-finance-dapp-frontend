@@ -9,7 +9,7 @@ import { EGovContext, EGovSubsRecordType, NullableEGovContextState } from './eme
 
 // consts
 import { EGOV_ALL_PROPOSALS } from './queries/eGovProposals.query'
-import { MVN_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS, MVRK_DECIMALS } from 'utils/constants'
 import {
   DEFAULT_EGOV_CTX,
   DEFAULT_EGOV_SUBS,
@@ -51,7 +51,7 @@ const EGovProvider = ({ children }: Props) => {
           emergencyGovActive: eGovCOnfig.current_emergency_record_id !== 0,
           requiredFeeMutez: convertNumberForClient({
             number: eGovCOnfig.required_fee_mumav,
-            grade: XTZ_DECIMALS,
+            grade: MVRK_DECIMALS,
           }),
           minStakedMvnRequiredToVote: convertNumberForClient({
             number: eGovCOnfig.min_smvn_required_to_vote,

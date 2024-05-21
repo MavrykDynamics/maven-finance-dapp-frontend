@@ -18,7 +18,7 @@ import {
 } from './user.schemes'
 
 // consts
-import { MVN_DECIMALS, SMVN_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { MVN_DECIMALS, SMVN_TOKEN_ADDRESS, MVRK_TOKEN_ADDRESS } from 'utils/constants'
 import { mTokenMetadataSchema } from 'providers/TokensProvider/helpers/tokens.schemes'
 
 /**
@@ -154,12 +154,11 @@ export const fetchTzktUserBalances = async ({
 
     const isUserEmptyOnTzkt = emptyUserTzktAccountSchema.safeParse(accountData)
 
-    console.log(accountData, 'accountData')
-
     if (isUserEmptyOnTzkt.success) return {}
 
     // for now empty array
     const parsedUserTzktTokensData = userTzktTokenBalancesSchema.safeParse(tokensData)
+
     // user balance from wallet -> Math.trunc(759999389) / Math.pow(10, 9) -> 0.759999389
     const parsedUserXtzTokenBalance = userTzktAccountSchema.safeParse(accountData)
 
@@ -167,7 +166,7 @@ export const fetchTzktUserBalances = async ({
       return normalizeUserTzktTokensBalances({
         indexerData: parsedUserTzktTokensData.data.concat([
           {
-            token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+            token: { contract: { address: MVRK_TOKEN_ADDRESS } },
             balance: parsedUserXtzTokenBalance.data.balance.toString(),
             account: { address: parsedUserXtzTokenBalance.data.address },
           },
@@ -245,7 +244,7 @@ export const attachTzktSocketsEventHandlers = ({
       const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
       handleTokens([
         {
-          token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+          token: { contract: { address: MVRK_TOKEN_ADDRESS } },
           balance: balance.toString(),
           account: { address },
         },

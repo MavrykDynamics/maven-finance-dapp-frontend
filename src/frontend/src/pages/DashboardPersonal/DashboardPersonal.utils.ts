@@ -2,7 +2,7 @@ import { TokensContext } from './../../providers/TokensProvider/tokens.provider.
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { UserContext } from 'providers/UserProvider/user.provider.types'
-import { SMVN_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { SMVN_TOKEN_ADDRESS, MVRK_TOKEN_ADDRESS } from 'utils/constants'
 
 export const PORTFOLIO_TAB_ID = 'portfolio'
 export const SATELLITE_TAB_ID = 'satellite'
@@ -47,7 +47,7 @@ export const getDbPersonalUserWalletData = ({
     if (
       tokenAddress === mvnTokenAddress ||
       tokenAddress === SMVN_TOKEN_ADDRESS ||
-      tokenAddress === XTZ_TOKEN_ADDRESS ||
+      tokenAddress === MVRK_TOKEN_ADDRESS ||
       mTokens.includes(tokenAddress)
     )
       return acc
@@ -85,7 +85,7 @@ export const getDbPersonalUserWalletData = ({
   }, null)
 
   return {
-    xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: XTZ_TOKEN_ADDRESS }),
+    xtzAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: MVRK_TOKEN_ADDRESS }),
     sMvnAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
     mvnAmount: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress }),
     ...(mostSuppliedUserToken

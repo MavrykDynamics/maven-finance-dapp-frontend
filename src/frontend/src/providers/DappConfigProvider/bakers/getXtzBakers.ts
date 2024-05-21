@@ -1,9 +1,9 @@
-import {convertNumberForClient} from 'utils/calcFunctions'
+import { convertNumberForClient } from 'utils/calcFunctions'
 
 import BakersMocked from './bakers.json'
-import {XTZ_DECIMALS} from 'utils/constants'
-import {api} from 'utils/api/api'
-import {z} from 'zod'
+import { MVRK_DECIMALS } from 'utils/constants'
+import { api } from 'utils/api/api'
+import { z } from 'zod'
 
 // types
 export type XtzBakerType = {
@@ -30,7 +30,7 @@ const getFreeSpace = (data: BakeryDelegateDataType) => {
   if (data.balance === -1) return -1
 
   const freeSpace = data.balance * 9 - data.delegatedBalance
-  return Number(convertNumberForClient({ number: freeSpace, grade: XTZ_DECIMALS }).toFixed(2))
+  return Number(convertNumberForClient({ number: freeSpace, grade: MVRK_DECIMALS }).toFixed(2))
 }
 
 // TODO: check why ghostnet tzkt not working for delegates endpoint

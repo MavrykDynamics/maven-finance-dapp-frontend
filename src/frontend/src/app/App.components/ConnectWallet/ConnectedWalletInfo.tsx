@@ -3,7 +3,7 @@ import { useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR, SECONDARY_TZ_ADDRESS_COLOR } from '../TzAddress/TzAddress.constants'
-import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS, XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS, MVRK_TOKEN_ADDRESS, MVRK_TOKEN_SYMBOL } from 'utils/constants'
 
 import Icon from '../Icon/Icon.view'
 import { TzAddress } from '../TzAddress/TzAddress.view'
@@ -37,7 +37,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   } = useDappConfigContext()
 
   const mvnTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
-  const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
+  const xtzTokenRate = tokensPrices[MVRK_TOKEN_SYMBOL]
 
   const { pathname } = useLocation()
 
@@ -147,7 +147,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
               <CommaNumber
                 value={getUserTokenBalanceByAddress({
                   userTokensBalances,
-                  tokenAddress: XTZ_TOKEN_ADDRESS,
+                  tokenAddress: MVRK_TOKEN_ADDRESS,
                 })}
                 endingText={'XTZ'}
                 showDecimal
@@ -157,7 +157,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
                 value={
                   getUserTokenBalanceByAddress({
                     userTokensBalances,
-                    tokenAddress: XTZ_TOKEN_ADDRESS,
+                    tokenAddress: MVRK_TOKEN_ADDRESS,
                   }) * xtzTokenRate
                 }
                 endingText={'USD'}
@@ -233,7 +233,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
   } = useDappConfigContext()
 
   const mvnTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
-  const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
+  const xtzTokenRate = tokensPrices[MVRK_TOKEN_SYMBOL]
 
   const { pathname } = useLocation()
 
@@ -350,7 +350,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
               <CommaNumber
                 value={getUserTokenBalanceByAddress({
                   userTokensBalances,
-                  tokenAddress: XTZ_TOKEN_ADDRESS,
+                  tokenAddress: MVRK_TOKEN_ADDRESS,
                 })}
                 endingText={'XTZ'}
                 showDecimal
@@ -360,7 +360,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
                 value={
                   getUserTokenBalanceByAddress({
                     userTokensBalances,
-                    tokenAddress: XTZ_TOKEN_ADDRESS,
+                    tokenAddress: MVRK_TOKEN_ADDRESS,
                   }) * xtzTokenRate
                 }
                 endingText={'USD'}

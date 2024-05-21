@@ -4,9 +4,9 @@ export const WERT_IO_LOADER = 'wert-loader'
 
 // User tokens symbols
 export const MVN_TOKEN_SYMBOL = 'MVN'
-export const XTZ_TOKEN_SYMBOL = 'MVRK'
+export const MVRK_TOKEN_SYMBOL = 'MVRK'
 export const SMVN_TOKEN_ADDRESS = 'sMVN'
-export const XTZ_TOKEN_ADDRESS = 'mv2ZZZZZZZZZZZZZZZZZZZZZZZZZZZDXMF2d'
+export const MVRK_TOKEN_ADDRESS = 'mv2ZZZZZZZZZZZZZZZZZZZZZZZZZZZDXMF2d'
 
 // User token types
 export const USER_TOKEN_TYPE_COLLATERAL = 'collateralToken'
@@ -16,9 +16,9 @@ export const USER_TOKEN_TYPE_DEFAULT = 'defaultDDtoken'
 
 // Decimals constants
 export const PRECISION_NUMBER = 1_000_000_000 // (10^9) MVN decimals
-export const MU_NUMBER = 1_000_000 // (10^6) XTZ decimals
+export const MU_NUMBER = 1_000_000 // (10^6) MVRK decimals
 export const MVN_DECIMALS = 9
-export const XTZ_DECIMALS = 6
+export const MVRK_DECIMALS = 6
 
 // Decimals parsing constants
 export const DECIMALS_TO_SHOW = 2
