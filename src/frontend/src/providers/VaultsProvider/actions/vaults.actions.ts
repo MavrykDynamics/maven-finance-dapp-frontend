@@ -253,7 +253,7 @@ export const repayFullAndCloseVaultAction = async (
       {
         kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
         ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
-        mutez: true,
+        mumav: true,
         amount: convertedAssetAmount,
       },
       {
@@ -305,7 +305,7 @@ export const createVault = async (
     const tezTokenData = tezCollateral
       ? {
           amount: tezCollateral.amount,
-          mutez: true,
+          mumav: true,
         }
       : {}
 

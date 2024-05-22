@@ -49,7 +49,7 @@ export const getContractErrorMessage = (e: unknown, skipValidation = false): Wal
 /**
  * estimates the operation before the actual contract call
  * @param tezosOperation instance of contact method
- * @param args optional params like ({gas: , mutez. amount} etc) which are used in ".send(SendParams)" method
+ * @param args optional params like ({gas: , mumav. amount} etc) which are used in ".send(SendParams)" method
  * @returns estimation info with OR without error
  */
 export const estimateExecution = async (
