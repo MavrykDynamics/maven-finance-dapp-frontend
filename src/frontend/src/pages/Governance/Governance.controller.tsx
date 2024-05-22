@@ -302,7 +302,7 @@ export const Governance = ({ isHistory = false }: { isHistory?: boolean }) => {
                     return (
                       <VoterListItem key={address}>
                         <div className="left">
-                          <ImageWithPlug imageLink={avatar} alt={`${name} avatar`} />
+                          <ImageWithPlug useRounded imageLink={avatar} alt={`${name} avatar`} />
                           <div className="info">
                             <span>{name}</span>
                             <TzAddress tzAddress={address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />

@@ -339,7 +339,7 @@ export const BorrowingExpandCard = ({
         header={
           <>
             <ThreeLevelListItem className="borrow-asset-header">
-              <ImageWithPlug imageLink={borrowedTokenIcon} alt={`${borrowedTokenSymbol} icon`} />
+              <ImageWithPlug imageLink={borrowedTokenIcon} alt={`${borrowedTokenSymbol} icon`} useRounded />
               <div className="data">
                 <div className="value">{vaultName ? vaultName : borrowedTokenSymbol}</div>
                 <div className="value">

@@ -188,7 +188,11 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             return (
               <div className="row" key={tokenAddress}>
                 <div className="icon">
-                  {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
+                  {icon ? (
+                    <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded />
+                  ) : (
+                    <Icon id={'noImage'} />
+                  )}
                 </div>
                 <div className="values">
                   <CommaNumber value={tokenBalance} endingText={symbol} showDecimal className="asset-amount" />
@@ -391,7 +395,11 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             return (
               <div className="row" key={tokenAddress}>
                 <div className="icon">
-                  {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
+                  {icon ? (
+                    <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded />
+                  ) : (
+                    <Icon id={'noImage'} />
+                  )}
                 </div>
                 <div className="values">
                   <CommaNumber value={tokenBalance} endingText={symbol} showDecimal className="asset-amount" />

@@ -116,7 +116,7 @@ const SatelliteTab = () => {
             <div className="container">
               <div className="grid-container">
                 <div className="grid-item info">
-                  <ImageWithPlug imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
+                  <ImageWithPlug useRounded imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
 
                   <div className="text">
                     <div className="name">{satelliteRecord.name}</div>

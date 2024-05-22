@@ -134,7 +134,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
         header={
           <>
             <ThreeLevelListItem className="borrow-asset-header">
-              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+              <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} icon`} />
               <div className="data">
                 <div className="value">{name ? name : symbol}</div>
                 <div className="value">
@@ -191,7 +191,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               <ThreeLevelListItem>
                 <div className="name">Asset</div>
                 <div className="value">
-                  <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                  <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} icon`} />
                   {symbol}
                 </div>
               </ThreeLevelListItem>
@@ -260,7 +260,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                         <TableRow $rowHeight={65} key={symbol}>
                           <TableCell $width={'22%'} className="vert-middle">
                             <div className="cell-content row with-icon">
-                              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                              <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} icon`} />
                               {symbol}
                             </div>
                           </TableCell>

@@ -33,7 +33,7 @@ export const PageHeaderView = ({
         <PageHeaderTextArea>
           <h1>
             {title}
-            {avatar && <ImageWithPlug alt={title} imageLink={avatar} plugSrc="/images/default-user.png" />}
+            {avatar && <ImageWithPlug useRounded alt={title} imageLink={avatar} plugSrc="/images/default-user.png" />}
           </h1>
           <p>{subText}</p>
         </PageHeaderTextArea>

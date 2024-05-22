@@ -85,7 +85,7 @@ export const OraclesTab = () => {
                   <Link key={feed.address} className="full-opacity" to={`/satellites/feed-details/${feed.address}`}>
                     <PopularFeed className="row">
                       <StatBlock className="icon-first">
-                        <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
+                        <ImageWithPlug useRounded imageLink={feed.icon} alt={`${feed.name} logo`} />
                         <div className="name">Feed</div>
                         <div className="value">
                           <Trim title={feed.name} />

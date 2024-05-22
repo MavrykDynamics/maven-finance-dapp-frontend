@@ -43,7 +43,7 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
       <PageHeaderStyled $backgroundImageSrc={'/images/dapp-header-bg.svg'}>
         <PageHeaderTextArea className="loans">
           <div className="asset-wrapper">
-            <ImageWithPlug alt={symbol} imageLink={icon} />
+            <ImageWithPlug useRounded alt={symbol} imageLink={icon} />
           </div>
           <div className="text-container">
             <h1>

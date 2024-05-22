@@ -58,7 +58,7 @@ export const getCellValueContent = (
   ) : type === 'address' ? (
     <TzAddress tzAddress={convertedParamValue} hasIcon />
   ) : type === 'image' ? (
-    <ImageWithPlug imageLink={convertedParamValue} alt={`${cellName} image`} />
+    <ImageWithPlug imageLink={convertedParamValue} alt={`${cellName} image`} useRounded />
   ) : (
     <div className="text">{convertedParamValue}</div>
   )

@@ -37,7 +37,20 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
       return { name: 'Maven', symbol: 'MVN', icon: 'https://mavryk.finance/logo192.png' }
     case 'smvn':
       return { name: 'Staked Maven', symbol: 'sMVN', icon: 'https://mavryk.finance/logo192.png' }
-  }
 
-  return null
+    case 'ocean/usd':
+    case 'ocean':
+      return {
+        name: 'Ocean',
+        symbol: 'OCEAN',
+        icon: '/images/ocean_token.png',
+      }
+
+    case 'mars1/usd':
+    case 'mars1':
+      return { name: 'Mars1', symbol: 'MARS1', icon: '/images/mars_token.jpeg' }
+
+    default:
+      return null
+  }
 }
