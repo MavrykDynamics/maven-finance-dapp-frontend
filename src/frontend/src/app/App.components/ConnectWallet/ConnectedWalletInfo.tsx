@@ -6,6 +6,7 @@ import { PRIMARY_TZ_ADDRESS_COLOR, SECONDARY_TZ_ADDRESS_COLOR } from '../TzAddre
 import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS, MVRK_TOKEN_ADDRESS, MVRK_TOKEN_SYMBOL } from 'utils/constants'
 
 import Icon from '../Icon/Icon.view'
+
 import { TzAddress } from '../TzAddress/TzAddress.view'
 import Button from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
@@ -83,7 +84,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         <div className="tokens scroll-block">
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenGold'} />
+              <img src="/icons/MVN.svg" alt="MVN" />
             </div>
             <div className="values">
               <CommaNumber
@@ -141,7 +142,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
           <div className="row">
             <div className="icon">
-              <Icon id={'xtzTezos'} />
+              <img src="/icons/MVRK.svg" alt="MVRK" />
             </div>
             <div className="values">
               <CommaNumber
@@ -344,7 +345,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
           <div className="row">
             <div className="icon">
-              <Icon id={'xtzTezos'} />
+              <Icon id={'mvrkIcon'} />
             </div>
             <div className="values">
               <CommaNumber

@@ -27,9 +27,9 @@ export type DappConfigContextStateType = {
   dappTotalValueLocked: number | null
   contractAddresses: Record<DappContractAddressesKeysType, string | null>
   xtzBakers: {
-    dao: XtzBakerType
+    dao?: XtzBakerType
     mavrykDynamics: XtzBakerType
-    otherBakers: Array<XtzBakerType>
+    otherBakers?: Array<XtzBakerType>
   } | null
   preferences: PreferencesState
   globalLoadingState: LoadingState
