@@ -166,7 +166,7 @@ const DataFeedDetails = () => {
               <FeedInfo>
                 <div className="top">
                   <div className="name-part">
-                    <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
+                    <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} useRounded />
                     <div className="text">
                       <div className="name">{feed.name}</div>
                       <a

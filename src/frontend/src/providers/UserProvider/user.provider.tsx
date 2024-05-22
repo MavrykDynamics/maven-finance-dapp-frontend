@@ -75,10 +75,9 @@ export const UserProvider = ({ children }: Props) => {
    */
   const canRestoreUser =
     hasUserInLocalStorage &&
-    // Object.keys(tokensMetadata).length &&
-    // mvnTokenAddress &&
+    Object.keys(tokensMetadata).length !== 0 &&
+    mvnTokenAddress !== null &&
     !isUserRestored.current
-  // tzktSocket.current
 
   // open socket for tzkt without listeners, cuz don't have user address to subscribe
   useEffect(() => {

@@ -277,7 +277,7 @@ export const Loans = () => {
               return (
                 <MarketOverview key={symbol}>
                   <div className="asset-info">
-                    <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
+                    <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} logo`} />
                     <div className="name">{symbol}</div>
                     <div className="rate">
                       <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />

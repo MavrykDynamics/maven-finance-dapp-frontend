@@ -107,7 +107,7 @@ const DelegationTab = () => {
             <div className="delegated-to">Delegated To</div>
             <div className="top-row">
               <div className="grid-item info">
-                <ImageWithPlug imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
+                <ImageWithPlug imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} useRounded />
                 <div className="text">
                   <div className="name">{satelliteRecord.name}</div>
                   <div className="value">

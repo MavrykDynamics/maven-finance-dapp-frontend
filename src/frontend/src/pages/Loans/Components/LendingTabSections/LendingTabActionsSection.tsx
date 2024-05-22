@@ -183,7 +183,7 @@ export const LendingTabActionsSection = ({
           settings={settings}
         >
           <InputPinnedTokenInfo>
-            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
+            <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} icon`} /> {symbol}
           </InputPinnedTokenInfo>
         </Input>
       </div>

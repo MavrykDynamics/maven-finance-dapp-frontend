@@ -243,7 +243,12 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
         <div className="grid-container">
           <div className="grid-item">
             <SatelliteProfileImageContainer>
-              <ImageWithPlug alt={satellite.name} imageLink={satellite.image} plugSrc="/images/default-user.png" />
+              <ImageWithPlug
+                useRounded
+                alt={satellite.name}
+                imageLink={satellite.image}
+                plugSrc="/images/default-user.png"
+              />
             </SatelliteProfileImageContainer>
 
             <SatelliteTextGroup>

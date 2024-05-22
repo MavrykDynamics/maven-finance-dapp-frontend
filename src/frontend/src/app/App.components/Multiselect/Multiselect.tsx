@@ -159,7 +159,7 @@ export const Multiselect = <ItemType extends MultiselectItemType = MultiselectIt
       return (
         <MultiselectMenuOptionStyled>
           <Checkbox checked={isOptionSelected} onChangeHandler={() => null} id={option.value} />
-          {option.image ? <ImageWithPlug imageLink={option.image} alt={`${option.label} image`} /> : null}
+          {option.image ? <ImageWithPlug useRounded imageLink={option.image} alt={`${option.label} image`} /> : null}
           <div className="option-text">{option.label}</div>
         </MultiselectMenuOptionStyled>
       )

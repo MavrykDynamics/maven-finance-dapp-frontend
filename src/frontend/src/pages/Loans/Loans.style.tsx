@@ -340,10 +340,6 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?:
       justify-content: space-between;
 
       > .value {
-        &:first-child {
-          text-transform: capitalize;
-        }
-
         font-weight: 600;
         font-size: 18px;
 

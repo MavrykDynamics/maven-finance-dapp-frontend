@@ -112,7 +112,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
           settings={newSettings}
         >
           <InputPinnedTokenInfo>
-            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
+            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded /> {symbol}
           </InputPinnedTokenInfo>
         </Input>
       </div>

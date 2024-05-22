@@ -56,6 +56,7 @@ export const DataFeeds = () => {
     setFilteredFeeds(
       feedsAddresses.filter((feedAddress) => {
         const { category, name, address } = feedsMapper[feedAddress]
+
         if (chosenDdItem.toLowerCase() === 'all') {
           return (
             name.toLowerCase().includes(searchInputValue.toLowerCase()) ||

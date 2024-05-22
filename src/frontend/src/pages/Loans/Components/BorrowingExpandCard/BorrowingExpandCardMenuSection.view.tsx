@@ -207,7 +207,7 @@ export const BorrowingExpandCardMenuSection = ({
                     <TableRow $rowHeight={65} key={symbol}>
                       <TableCell $width={'22%'} className="vert-middle">
                         <div className="cell-content row with-icon">
-                          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded />
                           {symbol}
                         </div>
                       </TableCell>

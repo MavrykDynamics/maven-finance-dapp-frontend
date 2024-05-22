@@ -71,7 +71,7 @@ export const SatelliteSideBarFAQ = () => (
 const SidebarUserEditButton = ({ image, name }: { image: string; name: string }) => {
   return (
     <SidebarUserButton title={name}>
-      <ImageWithPlug imageLink={image} alt="your satellite profile avatar" />
+      <ImageWithPlug useRounded imageLink={image} alt="your satellite profile avatar" />
       <div>
         <div className="name">{name}</div>
         <div className="link">View Satellite Profile</div>
