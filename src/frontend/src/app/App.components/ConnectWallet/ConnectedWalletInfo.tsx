@@ -84,7 +84,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         <div className="tokens scroll-block">
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenGold'} />
+              <ImageWithPlug imageLink={'/images/MVN_token.svg'} alt="MVN coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -118,7 +118,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenSilver'} />
+              <ImageWithPlug imageLink={'/images/sMVN_token.svg'} alt="sMVN coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -142,7 +142,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
           <div className="row">
             <div className="icon">
-              <Icon id={'xtzTezos'} />
+              <ImageWithPlug imageLink={'/images/MVRK_token.svg'} alt="MVRK coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -291,7 +291,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         <div className="tokens scroll-block">
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenGold'} />
+              <ImageWithPlug imageLink={'/images/MVN_token.svg'} alt="MVN coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -325,7 +325,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenSilver'} />
+              <ImageWithPlug imageLink={'/images/sMVN_token.svg'} alt="sMVN coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -349,7 +349,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
           <div className="row">
             <div className="icon">
-              <Icon id={'mvrkIcon'} />
+              <ImageWithPlug imageLink={'/images/MVRK_token.svg'} alt="MVRK coin" />
             </div>
             <div className="values">
               <CommaNumber
