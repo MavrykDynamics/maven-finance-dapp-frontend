@@ -84,7 +84,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         <div className="tokens scroll-block">
           <div className="row">
             <div className="icon">
-              <img src="/icons/MVN.svg" alt="MVN" />
+              <Icon id={'mvnTokenGold'} />
             </div>
             <div className="values">
               <CommaNumber
@@ -142,7 +142,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
           <div className="row">
             <div className="icon">
-              <img src="/icons/MVRK.svg" alt="MVRK" />
+              <Icon id={'xtzTezos'} />
             </div>
             <div className="values">
               <CommaNumber
