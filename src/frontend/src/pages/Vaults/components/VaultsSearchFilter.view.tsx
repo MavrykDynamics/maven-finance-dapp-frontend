@@ -91,13 +91,13 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
 
   const [searchInputValue, setSearchInput] = useState('')
 
+  console.log({ searchInputValue })
+
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
   const [chosenDdItem, setChosenDdItem] = useState<Filters>({
     [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
     [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
   })
-
-  const [filteredData, setFilteredData] = useState<string[]>([])
 
   const handleSearch = (searchValue: string, searchData: string[]) => {
     const searchQuery = searchValue.toLowerCase()
@@ -113,7 +113,7 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
         return isIncludedInLoanAddress || isIncludedInOwnerAddress
       })
     } else {
-      filteredVaultsIds = filteredData
+      filteredVaultsIds = searchData
     }
 
     setSearchInput(searchValue)
@@ -139,7 +139,7 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
 
   const applyFilters = useCallback(
     async (filtersList: Filters, searchString: string) => {
-      const data = searchString ? handleSearch(searchString, currentVaultsIds) : [...currentVaultsIds]
+      const data = handleSearch(searchString, currentVaultsIds)
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
@@ -260,7 +260,6 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
       navigate(`${vaultsPathname}/${tabId}?${stringifiedQP}`, { replace: true })
 
       setChosenDdItem(withoutEmptyFilters)
-      setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
     },
     [currentVaultsIds.join(','), restQP, tabId, vaultsMapper, tokensMetadata, tokensPrices],
@@ -274,7 +273,6 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
   // apply filter to new data or clean data
   useEffect(() => {
     if (currentVaultsIds.length === 0) {
-      setFilteredData([])
       setVaultsIds([])
       return
     }
