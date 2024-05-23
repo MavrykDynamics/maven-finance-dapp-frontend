@@ -91,8 +91,6 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
 
   const [searchInputValue, setSearchInput] = useState('')
 
-  console.log({ searchInputValue })
-
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
   const [chosenDdItem, setChosenDdItem] = useState<Filters>({
     [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
