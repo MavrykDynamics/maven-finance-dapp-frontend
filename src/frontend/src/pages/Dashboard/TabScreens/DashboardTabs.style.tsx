@@ -102,6 +102,7 @@ export const LendingContentStyled = styled.div<{ theme: MavenTheme }>`
     position: absolute;
     top: 100%;
     right: -30px;
+    text-wrap: nowrap;
   }
 
   .left,
