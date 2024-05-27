@@ -65,6 +65,7 @@ export const useContractAction = <G>({
         toggleActionCompletion(true)
 
         successActionCallback?.()
+
         if (!isSilentAction) {
           toggleActionFullScreenLoader(true)
 
