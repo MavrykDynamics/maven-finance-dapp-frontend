@@ -12,7 +12,7 @@ import {
   INPUT_LARGE,
   INPUT_STATUS_SUCCESS,
 } from 'app/App.components/Input/Input.constants'
-import { ADD_COLLATERAL_SCREEN_ID } from '../helpers/createNewVault.consts'
+import { ADD_COLLATERAL_SCREEN_ID, SAME_VAULT_NAME_ERROR } from '../helpers/createNewVault.consts'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 
 // providers
@@ -33,7 +33,7 @@ export const CreateVaultScreen = () => {
   // handlers
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
-    updateInputVaultState({ name: value, validationStatus: INPUT_STATUS_SUCCESS })
+    updateInputVaultState({ name: value })
   }
 
   const handleVaultNameOnBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -58,12 +58,13 @@ export const CreateVaultScreen = () => {
           placeholder: 'e.g. Satoshi’s Personal Vault',
         }}
         settings={{
+          updateInputStatus: (status) => updateInputVaultState({ validationStatus: status }),
           inputStatus: vaultInputState.validationStatus,
           inputSize: INPUT_LARGE,
           errorMessage: vaultInputState.errorMessage,
           validationFns: [
             [validateInputLength, ERR_MSG_INPUT, [15]],
-            [validateVaultName, ERR_MSG_NONE, [vaultNames]],
+            [validateVaultName, ERR_MSG_INPUT, [vaultNames]],
             [validateEmptyInput, ERR_MSG_INPUT],
           ],
           allowInputAfterError: true,

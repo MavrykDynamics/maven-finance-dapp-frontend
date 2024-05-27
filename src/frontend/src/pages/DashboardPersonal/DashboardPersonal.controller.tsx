@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { usePrevious } from 'react-use'
 import qs from 'qs'
-import { Link, Navigate, Outlet, Route, Routes as Switch, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, Outlet, Route, Routes as Switch, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // components
 import Button from 'app/App.components/Button/NewButton'
@@ -47,8 +47,9 @@ import { USER_ACTIONS_HISTORY } from 'app/App.components/Pagination/pagination.c
 import { DISTRIBUTE_PROPOSALS_REWARDS_ACTION } from 'providers/SatellitesProvider/satellites.const'
 
 const DashboardPersonal = () => {
-  const { tabId = '' } = useParams<{ tabId: string }>()
+  const { pathname } = useLocation()
   const navigate = useNavigate()
+  const tabId: string = useMemo(() => pathname.split('/')[2], [pathname])
 
   const { bug } = useToasterContext()
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()

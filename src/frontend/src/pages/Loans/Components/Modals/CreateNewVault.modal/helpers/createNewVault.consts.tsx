@@ -61,3 +61,5 @@ export const stepperItemsObj = {
 }
 
 export const stepperItems = Object.values(stepperItemsObj)
+
+export const SAME_VAULT_NAME_ERROR = 'Vault with current name already exists'
