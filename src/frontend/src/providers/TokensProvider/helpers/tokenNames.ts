@@ -15,9 +15,9 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
 
     case 'mvrk/usd':
     case 'mvrk':
-      return { name: 'Mavryk', symbol: 'MVRK', icon: '/images/tezos.png' }
+      return { name: 'Mavryk', symbol: 'MVRK', icon: '/images/MVRK_token.svg' }
     case 'mmvrk':
-      return { name: 'mMVRK', symbol: 'mMVRK', icon: '/images/mXTZ.svg' }
+      return { name: 'mMVRK', symbol: 'mMVRK', icon: '/images/mMVRK_token.svg' }
 
     case 'btc/usd':
     case 'tzbtc':
@@ -34,10 +34,23 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
       return { name: 'mEURL', symbol: 'mEURL', icon: '/images/mEURL.svg' }
 
     case 'mvn':
-      return { name: 'Maven', symbol: 'MVN', icon: 'https://mavryk.finance/logo192.png' }
+      return { name: 'Maven', symbol: 'MVN', icon: '/images/MVN_token.svg' }
     case 'smvn':
-      return { name: 'Staked Maven', symbol: 'sMVN', icon: 'https://mavryk.finance/logo192.png' }
-  }
+      return { name: 'Staked Maven', symbol: 'sMVN', icon: '/images/sMVN_token.svg' }
 
-  return null
+    case 'ocean/usd':
+    case 'ocean':
+      return {
+        name: 'Ocean',
+        symbol: 'OCEAN',
+        icon: '/images/ocean_token.png',
+      }
+
+    case 'mars1/usd':
+    case 'mars1':
+      return { name: 'Mars1', symbol: 'MARS1', icon: '/images/mars_token.jpeg' }
+
+    default:
+      return null
+  }
 }

@@ -251,7 +251,7 @@ export const Market = () => {
         <MarketStyled>
           <div className="gen-info">
             <div className="asset-info">
-              <ImageWithPlug imageLink={loanToken.icon} alt={`${loanToken.icon} icon`} />
+              <ImageWithPlug useRounded imageLink={loanToken.icon} alt={`${loanToken.icon} icon`} />
 
               <div className="text-wrapper">
                 <div className="symbol">{loanToken.name}</div>

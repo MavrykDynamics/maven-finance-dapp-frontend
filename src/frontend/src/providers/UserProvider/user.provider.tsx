@@ -6,6 +6,7 @@ import * as signalR from '@microsoft/signalr'
 import { USER_DATA_QUERY } from './queries/userData.query'
 import { DEFAULT_USER, DEFAULT_USER_TZKT_TOKENS } from './helpers/user.consts'
 import { dappClient } from 'providers/UserProvider/wallet/WalletCore'
+import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -75,10 +76,9 @@ export const UserProvider = ({ children }: Props) => {
    */
   const canRestoreUser =
     hasUserInLocalStorage &&
-    // Object.keys(tokensMetadata).length &&
-    // mvnTokenAddress &&
+    Object.keys(tokensMetadata).length !== 0 &&
+    mvnTokenAddress !== null &&
     !isUserRestored.current
-  // tzktSocket.current
 
   // open socket for tzkt without listeners, cuz don't have user address to subscribe
   useEffect(() => {
@@ -208,13 +208,13 @@ export const UserProvider = ({ children }: Props) => {
 
       setUserCtxState((prev) => ({
         ...prev,
+        ...normalizedUserData,
+        availableLoansRewards,
+        userMTokens,
         userTokensBalances: {
           ...prev.userTokensBalances,
           ...tokensBalances,
         },
-        ...normalizedUserData,
-        availableLoansRewards,
-        userMTokens,
       }))
       setUserLoading(false)
     },
@@ -235,11 +235,19 @@ export const UserProvider = ({ children }: Props) => {
       isUserRestored.current = true
     }
 
+    // need to remove m[MVN] token from userTzktTokens, cuz value is always outdated
+    // and for that tokens values are used from our indexer, not tzkt socket
+    const {
+      [SMVN_TOKEN_ADDRESS]: smvn_balance,
+      [mvnTokenAddress ?? '']: mvn_balance,
+      ...tzktTokensWithoutMVNToken
+    } = userTzktTokens.tokens
+
     return {
       ...userCtxState,
       userTokensBalances: {
         ...userCtxState.userTokensBalances,
-        ...(userCtxState.userAddress === userTzktTokens.userAddress ? userTzktTokens.tokens : {}),
+        ...(userCtxState.userAddress === userTzktTokens.userAddress ? tzktTokensWithoutMVNToken : {}),
       },
       isUserRestored: isUserRestored.current,
       isLoading,
@@ -256,6 +264,7 @@ export const UserProvider = ({ children }: Props) => {
     userTzktTokens,
     isUserLoading,
     isTzktBalancesLoading,
+    mvnTokenAddress,
     connect,
     signOut,
     changeUser,

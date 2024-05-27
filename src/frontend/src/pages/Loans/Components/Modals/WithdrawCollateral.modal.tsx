@@ -288,7 +288,7 @@ export const WithdrawCollateral = ({
               }}
             >
               <InputPinnedTokenInfo>
-                <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
+                <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} icon`} /> {symbol}
               </InputPinnedTokenInfo>
             </Input>
           ) : null}

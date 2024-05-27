@@ -73,7 +73,7 @@ export const LoansTxTab = ({ txVariant }: { txVariant: 'lending' | 'borrowing' }
                   <TableRow $rowHeight={55} $borderColor="divider" className="add-hover" key={id + operationHash}>
                     <TableCell $width="20%">
                       <div className="cell-content row">
-                        <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
+                        <ImageWithPlug useRounded imageLink={icon} alt={`lended asset logo`} />
                         {symbol}
                       </div>
                     </TableCell>

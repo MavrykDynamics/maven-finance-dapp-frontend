@@ -171,7 +171,7 @@ export const AddLendingAsset = ({
             }}
           >
             <InputPinnedTokenInfo>
-              <ImageWithPlug imageLink={icon} alt={`${loanToken.symbol} icon`} />
+              <ImageWithPlug imageLink={icon} alt={`${loanToken.symbol} icon`} useRounded />
               {symbol}
             </InputPinnedTokenInfo>
           </Input>

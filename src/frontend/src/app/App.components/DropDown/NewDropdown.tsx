@@ -91,7 +91,7 @@ export const DropDown = ({ placeholder, clickItem, items, activeItem, className,
 export const DropdownInputCustomChild = ({ iconSrc, symbol }: { iconSrc: string; symbol: string }) => (
   <DropDownJsxChild>
     <div className="flex-row with-image">
-      <ImageWithPlug alt={symbol + ' logo'} imageLink={iconSrc} />
+      <ImageWithPlug useRounded alt={symbol + ' logo'} imageLink={iconSrc} />
       {symbol}
     </div>
   </DropDownJsxChild>

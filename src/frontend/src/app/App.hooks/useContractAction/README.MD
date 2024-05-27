@@ -8,6 +8,8 @@
 
 `afterActionCallback` - callback that is invoked immidiately after action was executed (it doesnt matter if action succeed or failed)
 
+`successActionCallback` - callback that is if action was done successfuly (in widget, data is not updated, app is waiting for indexer level to change, so it can load new data)
+
 `errActionCallback` - callback that is invoked inside catch block (f.e. to change status from loading true - to false)
 if some error occured
 

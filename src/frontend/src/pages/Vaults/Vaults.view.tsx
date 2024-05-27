@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
+import { useState, useMemo, useEffect, useLayoutEffect, useDeferredValue } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // context
@@ -190,6 +190,8 @@ export const VaultsView = () => {
 
   const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
 
+  const deferredVaultIds = useDeferredValue(paginatedVaultsList)
+
   return (
     <VaultsStyled>
       <SlidingTabButtons
@@ -213,7 +215,7 @@ export const VaultsView = () => {
         </DataLoaderWrapper>
       ) : vaultsIds.length ? (
         <VaultsList>
-          {paginatedVaultsList.map((item) => {
+          {deferredVaultIds.map((item) => {
             const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
 
             return (

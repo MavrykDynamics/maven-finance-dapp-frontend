@@ -37,6 +37,7 @@ type Props = {
   setVaultsIds: (arg: string[]) => void
 }
 
+// TODO: need to refactor filters logic
 export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsIds, setVaultsIds }: Props) => {
   const navigate = useNavigate()
   const { search } = useLocation()
@@ -96,8 +97,6 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
     [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
   })
 
-  const [filteredData, setFilteredData] = useState<string[]>([])
-
   const handleSearch = (searchValue: string, searchData: string[]) => {
     const searchQuery = searchValue.toLowerCase()
 
@@ -112,11 +111,10 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
         return isIncludedInLoanAddress || isIncludedInOwnerAddress
       })
     } else {
-      filteredVaultsIds = filteredData
+      filteredVaultsIds = searchData
     }
 
     setSearchInput(searchValue)
-    setVaultsIds(filteredVaultsIds)
 
     return filteredVaultsIds
   }
@@ -134,12 +132,12 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
 
     if (selectedOption === chosenDdItem[name]) return
 
-    applyFilters(updatedChosenDdItem)
+    applyFilters(updatedChosenDdItem, searchInputValue)
   }
 
   const applyFilters = useCallback(
-    async (filtersList: Filters) => {
-      const data = searchInputValue ? handleSearch(searchInputValue, currentVaultsIds) : [...currentVaultsIds]
+    async (filtersList: Filters, searchString: string) => {
+      const data = handleSearch(searchString, currentVaultsIds)
       let filteredVaultsIds: string[] = data
 
       // sort by statuses
@@ -260,10 +258,9 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
       navigate(`${vaultsPathname}/${tabId}?${stringifiedQP}`, { replace: true })
 
       setChosenDdItem(withoutEmptyFilters)
-      setFilteredData(filteredVaultsIds)
       setVaultsIds(filteredVaultsIds)
     },
-    [currentVaultsIds, navigate, restQP, searchInputValue, tabId, vaultsMapper, tokensMetadata, tokensPrices],
+    [currentVaultsIds.join(','), restQP, tabId, vaultsMapper, tokensMetadata, tokensPrices],
   )
 
   const handleClickCheckbox = () => {
@@ -274,7 +271,6 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
   // apply filter to new data or clean data
   useEffect(() => {
     if (currentVaultsIds.length === 0) {
-      setFilteredData([])
       setVaultsIds([])
       return
     }
@@ -285,8 +281,8 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
       zero,
     } as Filters
 
-    applyFilters(filtersFromQp)
-  }, [currentVaultsIds])
+    applyFilters(filtersFromQp, searchInputValue)
+  }, [currentVaultsIds.join(',')])
 
   return (
     <VaultsSearchFilterWrapper>
@@ -295,8 +291,16 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
           type="text"
           kind={'search'}
           placeholder="Search by address"
-          // use filteredData to search because one of the sorting items is selected all the time
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearch(e.target.value, filteredData)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            applyFilters(
+              {
+                sort,
+                assets,
+                zero,
+              } as Filters,
+              e.target.value,
+            )
+          }
           value={searchInputValue}
         />
         <VaultsFilters>

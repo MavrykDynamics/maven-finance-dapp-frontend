@@ -273,7 +273,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                     <TableRow $rowHeight={44} key={symbol + '-' + index}>
                       <TableCell $width={columnWidth} className="vert-middle">
                         <div className="cell-content row collateral-icon">
-                          <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
+                          <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} logo`} />
                           {symbol}
                         </div>
                       </TableCell>

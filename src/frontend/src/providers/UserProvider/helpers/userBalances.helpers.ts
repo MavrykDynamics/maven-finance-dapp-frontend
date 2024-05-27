@@ -219,11 +219,11 @@ export const attachTzktSocketsEventHandlers = ({
   handleOnReconnected: (userAddress: string) => void
 }) => {
   tzktSocket.on('token_balances', (msg) => {
+    console.log('%ctzktSocket on token_balances msg', 'color: aqua', { msg })
+
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'prod')
-        console.log('%ctzktSocket on token_balances msg', 'color: aqua', { data: msg.data })
       const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
       handleTokens(tokensBalances)
     } catch (e) {
@@ -233,11 +233,11 @@ export const attachTzktSocketsEventHandlers = ({
 
   // handle xtz token balance update message
   tzktSocket.on('accounts', (msg) => {
+    console.log('%ctzktSocket on accounts msg', 'color: aqua', { msg })
+
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'prod')
-        console.log('%ctzktSocket on accounts msg', 'color: aqua', { data: msg.data })
       const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
       handleTokens([
         {
