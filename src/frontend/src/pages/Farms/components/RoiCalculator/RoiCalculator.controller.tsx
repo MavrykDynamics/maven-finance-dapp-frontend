@@ -172,8 +172,6 @@ export default function RoiCalculator({
       const toggleBtn = TOGGLE_BALANCE_TABS.find(({ actualValue }) => +value === actualValue)
 
       if (name === 'amount') {
-        console.log('toggleBtn', toggleBtn)
-
         toggleDisablingBalanceTabs(!toggleBtn)
         selectTab({
           ...tabsSelected,

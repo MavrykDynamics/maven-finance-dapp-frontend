@@ -40,7 +40,10 @@ export const LoansTxTab = ({ txVariant }: { txVariant: 'lending' | 'borrowing' }
   const { isLoading: isUserLoansLoading, userLendings, userBorrowings } = useUserLoansData()
 
   const isLending = txVariant === 'lending'
-  const userLoansData = useMemo(() => (isLending ? userLendings : userBorrowings), [])
+  const userLoansData = useMemo(
+    () => (isLending ? userLendings : userBorrowings),
+    [isLending, userBorrowings, userLendings],
+  )
 
   return (
     <LBHInfoBlock>

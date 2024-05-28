@@ -46,7 +46,6 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   }, [])
 
   const updateInputVaultState = useCallback((vaultData: Partial<VaultInputState>) => {
-    console.log(vaultData, 'vaultData')
     setModalState((prev) => ({
       ...prev,
       vaultInputState: { ...prev.vaultInputState, ...vaultData },
