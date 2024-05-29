@@ -76,12 +76,14 @@ export const EarnBorrowCardHeader = styled.div<{ theme: MavenTheme }>`
   border-top-right-radius: inherit;
   border-bottom: 1px solid ${({ theme }) => theme.divider};
 
+  .img-wrapper {
+    margin-right: 10px;
+  }
+
   img,
   svg {
     width: 36px;
     height: 36px;
-
-    margin-right: 10px;
   }
 
   svg {
