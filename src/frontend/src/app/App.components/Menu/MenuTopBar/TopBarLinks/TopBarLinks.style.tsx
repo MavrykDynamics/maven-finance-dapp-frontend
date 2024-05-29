@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
-export const TopBarLinksStyled = styled.div<{ useClickOpening?: boolean; selected?: boolean; theme: MavenTheme }>`
+export const TopBarLinksStyled = styled.div<{ $useClickOpening?: boolean; $selected?: boolean; theme: MavenTheme }>`
   margin: 0 25px;
   height: 100%;
   position: relative;
@@ -121,8 +121,8 @@ export const TopBarLinksStyled = styled.div<{ useClickOpening?: boolean; selecte
     }
   }
 
-  ${({ useClickOpening, selected }) =>
-    useClickOpening
+  ${({ $useClickOpening, $selected }) =>
+    $useClickOpening
       ? css`
           display: flex;
           flex-direction: column;
@@ -186,7 +186,7 @@ export const TopBarLinksStyled = styled.div<{ useClickOpening?: boolean; selecte
             }
 
             ${() =>
-              selected &&
+              $selected &&
               css`
                 display: flex;
                 max-height: fit-content;

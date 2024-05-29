@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Redirect, Route, Switch, useParams } from 'react-router'
+import { Outlet, useParams } from 'react-router-dom'
 
 // Consts
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
@@ -25,7 +25,6 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import SatellitesSideBar from 'pages/Satellites/SatellitesSideBar/SatellitesSideBar.controller'
-import ProtectedRoute from 'app/App.components/AppRoutes/ProtectedRoute'
 
 // Styled components
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
@@ -34,8 +33,6 @@ import { BecomeSatelliteForm, BecomeSatelliteNavigation, BecomeSatelliteOracleTe
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { BecomeSatelliteBanners } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners'
-import { SatelliteDetailsScreen } from './screens/SatelliteDetails.screen'
-import { BecomeSatelliteScreen } from './screens/BecomeSatellite.screen'
 
 const pageTexts = {
   [SATELLITE_TAB_DETAILS]: 'Satellite Details',
@@ -62,7 +59,7 @@ export const BecomeSatellite = () => {
   } = useUserContext()
   const { apolloClient } = useApolloContext()
 
-  const { tabId } = useParams<{ tabId: SatelliteTabType }>()
+  const { tabId = 'details' } = useParams<{ tabId: SatelliteTabType }>()
 
   // local states
   const [isSatelliteExistenceLoading, setIsSatelliteExistenceLoading] = useState(false)
@@ -189,28 +186,8 @@ export const BecomeSatellite = () => {
                     here
                   </CustomLink>
                 </BecomeSatelliteOracleText>
-                <Switch>
-                  <ProtectedRoute
-                    exact
-                    path={`/become-satellite/${SATELLITE_TAB_DETAILS}`}
-                    isAuthorized={Boolean(userAddress)}
-                    hasAccess={Boolean(isSatellite) && Boolean(usersSatelliteProfile)}
-                    redirectPath={`/become-satellite/${SATELLITE_TAB_EDIT}`}
-                    component={() => (
-                      // need this ts off, cuz we check for this params beeing present with isAuthorized & hasAccess inside ProtectedRoute TODO: mb find a solution for this
-                      // @ts-expect-error
-                      <SatelliteDetailsScreen usersSatelliteProfile={usersSatelliteProfile} satelliteId={userAddress} />
-                    )}
-                  />
-                  <Route exact path={`/become-satellite/${SATELLITE_TAB_EDIT}`}>
-                    <BecomeSatelliteScreen
-                      usersSatelliteProfile={usersSatelliteProfile}
-                      userSmvnBalance={userSmvnBalance}
-                    />
-                  </Route>
 
-                  <Redirect to={`/become-satellite/${SATELLITE_TAB_EDIT}`} />
-                </Switch>
+                <Outlet context={{ usersSatelliteProfile, satelliteId: userAddress, userSmvnBalance }} />
               </BecomeSatelliteForm>
             )}
           </div>

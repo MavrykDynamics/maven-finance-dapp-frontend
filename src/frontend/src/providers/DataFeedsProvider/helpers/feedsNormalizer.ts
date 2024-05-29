@@ -5,12 +5,21 @@ import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
 import { convertNumberForClient, percentageDifference } from 'utils/calcFunctions'
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { FullFeedsQueryType, SmallFeedsQueryType, feedMetadataSchema } from './feeds.schemas'
+import { getTokenSymbolAndName } from 'providers/TokensProvider/helpers/tokenNames'
 
 export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
   try {
-    const feedMetadata = feedMetadataSchema.parse(feedGql.metadata)
+    const feedClientMetadata = {
+      category: 'all',
+      icon: getTokenSymbolAndName(feedGql.name)?.icon,
+    }
 
-    const { category, icon } = feedMetadata
+    const feedMetadata = feedMetadataSchema.safeParse(feedGql.metadata ?? feedClientMetadata)
+
+    // if feed's metadata is not present in indexer, and can not be filled in client, return null
+    if (!feedMetadata.success) return null
+
+    const { category, icon } = feedMetadata.data
     const network = feedGql.network
 
     const { oracles, metadata, ...restOfTheItem } = feedGql
@@ -26,7 +35,7 @@ export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
       icon,
     }
   } catch (e) {
-    console.error('paring feed metadata error: ', { e })
+    console.error('parsing feed metadata error: ', { e })
     return null
   }
 }

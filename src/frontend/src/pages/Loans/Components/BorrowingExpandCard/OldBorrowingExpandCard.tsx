@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useClickAway } from 'react-use'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import classNames from 'classnames'
 
 import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from '../../Loans.const'
@@ -62,7 +62,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const ref = useRef<HTMLDivElement | null>(null)
   useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const params = useMemo(() => new URLSearchParams(location.search), [location.search])
@@ -109,14 +109,14 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     if (isExpanded) return
 
     params.append('vaultAddress', address)
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   const handleCloseVault = () => {
     if (!isExpanded) return
 
     params.delete('vaultAddress')
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   const handleClickExpand = () => {
@@ -134,7 +134,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
         header={
           <>
             <ThreeLevelListItem className="borrow-asset-header">
-              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+              <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} icon`} />
               <div className="data">
                 <div className="value">{name ? name : symbol}</div>
                 <div className="value">
@@ -144,7 +144,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
+              $customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio: <CommaNumber value={collateralRatio} endingText="%" showDecimal decimalsToShow={2} />
@@ -191,7 +191,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               <ThreeLevelListItem>
                 <div className="name">Asset</div>
                 <div className="value">
-                  <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                  <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} icon`} />
                   {symbol}
                 </div>
               </ThreeLevelListItem>
@@ -257,15 +257,15 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                       const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                       return (
-                        <TableRow rowHeight={65} key={symbol}>
-                          <TableCell width={'22%'} className="vert-middle">
+                        <TableRow $rowHeight={65} key={symbol}>
+                          <TableCell $width={'22%'} className="vert-middle">
                             <div className="cell-content row with-icon">
-                              <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                              <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} icon`} />
                               {symbol}
                             </div>
                           </TableCell>
 
-                          <TableCell width={'22%'}>
+                          <TableCell $width={'22%'}>
                             <div className="cell-content">
                               <CommaNumber
                                 value={convertedAmount}
@@ -281,7 +281,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                               />
                             </div>
                           </TableCell>
-                          <TableCell width={'22%'}>
+                          <TableCell $width={'22%'}>
                             <div className="cell-content">
                               <CommaNumber value={collateralShare} className="value" endingText="%" />
                             </div>
@@ -316,12 +316,12 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
                     {/* Total row */}
                     {collateralData.length >= 2 ? (
-                      <TableRow rowHeight={44}>
-                        <TableCell width={'22%'} className="vert-middle">
+                      <TableRow $rowHeight={44}>
+                        <TableCell $width={'22%'} className="vert-middle">
                           Total
                         </TableCell>
 
-                        <TableCell width={'22%'}>
+                        <TableCell $width={'22%'}>
                           <div className="cell-content">
                             <CommaNumber
                               value={collateralBalance}
@@ -332,7 +332,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                           </div>
                         </TableCell>
 
-                        <TableCell width={'22%'}>
+                        <TableCell $width={'22%'}>
                           <CommaNumber value={100} endingText="%" />
                         </TableCell>
                       </TableRow>

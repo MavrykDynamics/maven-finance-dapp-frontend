@@ -1,4 +1,4 @@
-import {z} from 'zod'
+import { z } from 'zod'
 
 // full token schema
 export const tokenGqlSchema = z.object({
@@ -70,9 +70,9 @@ export type TokensGqlSchemaType = z.infer<typeof tokensGqlSchema>
 
 // token collection metadata schema type
 export const tokenMetadataSchema = z.object({
-  icon: z.string().optional(),
-  symbol: z.string(),
-  decimals: z.string(),
+  icon: z.string().optional().nullable(),
+  symbol: z.string().nullable(),
+  decimals: z.string().nullable(),
 })
 export type TokenIndexerMetadataType = z.infer<typeof tokenMetadataSchema>
 

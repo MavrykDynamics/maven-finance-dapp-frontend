@@ -12,7 +12,7 @@ const Portal = ({ children }: { children: React.ReactNode }) => {
     }
   }, [])
 
-  return createPortal(children, container)
+  return createPortal(children, container) as React.ReactPortal
 }
 
 export default Portal

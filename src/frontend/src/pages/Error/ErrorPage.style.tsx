@@ -1,17 +1,17 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from '../../styles/interfaces'
 import { hangInSpace } from 'styles/animations'
 import { Z_INDEX_DEFAULT } from 'styles/constants'
 import { ThemeType } from 'consts/theme.const'
 
-export const ErrorPageWrapper = styled.div<{ theme: MavenTheme; themeSelected: ThemeType }>`
+export const ErrorPageWrapper = styled.div<{ theme: MavenTheme; $themeSelected: ThemeType }>`
   font-family: 'Metropolis', Helvetica, Arial, sans-serif;
   margin: auto;
   width: 100vw;
   position: relative;
   height: 100vh;
   padding-top: 80px;
-  background: ${({ themeSelected }) => `url(/images/${themeSelected}/error-bg.svg)`};
+  background: ${({ $themeSelected }) => `url(/images/${$themeSelected}/error-bg.svg)`};
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

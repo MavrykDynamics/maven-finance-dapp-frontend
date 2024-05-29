@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components/macro'
+import { createGlobalStyle } from 'styled-components'
 import { css } from 'styled-components'
 import { MavenTheme } from './interfaces'
 
@@ -211,6 +211,6 @@ p {
       .mr-${n} {
         margin-right: ${n}px;
       }
-    `
+    `,
   )}
 `

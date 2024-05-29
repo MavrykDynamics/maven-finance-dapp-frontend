@@ -71,12 +71,12 @@ const CustomLink = ({
   const finalToAttr = useMemo(() => {
     if (isExternalLink)
       return {
-        to: { pathname: to.toString() },
+        to: to.toString(),
         target: '_blank',
         rel: 'noreferrer',
       }
 
-    return { to: `${generatePath(to.toString(), params)}${qs.stringify(queryParams, { addQueryPrefix: true })}` }
+    return { to: `${generatePath(to.toString(), { ...params })}${qs.stringify(queryParams, { addQueryPrefix: true })}` }
   }, [isExternalLink, params, queryParams, to])
 
   const linkClassName = classNames(kind, { ...styling, disabled, useHover: styling.useHover ?? true })

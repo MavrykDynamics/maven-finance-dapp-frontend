@@ -130,7 +130,7 @@ export const ConfirmRepay = ({
   if (!data || !borrowedToken || !borrowedToken.rate) return null
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />
@@ -159,7 +159,7 @@ export const ConfirmRepay = ({
           <VaultModalOverview>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
+              $customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}

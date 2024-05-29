@@ -1,13 +1,13 @@
-import {useParams} from 'react-router'
-import {useEffect, useMemo} from 'react' // hooks
-import {useCouncilContext} from 'providers/CouncilProvider/council.provider'
-import {useUserContext} from 'providers/UserProvider/user.provider' // utils
-import {parseCouncilTab} from './helpers/commonCouncil.utils' // view
-import {Page} from 'styles'
-import {PageHeader} from '../../app/App.components/PageHeader/PageHeader.controller'
-import {CouncilView} from 'pages/Council/Council.view'
-import {DataLoaderWrapper} from 'app/App.components/Loader/Loader.style'
-import {ClockLoader} from 'app/App.components/Loader/Loader.view' // consts
+import { useParams } from 'react-router-dom'
+import { useEffect, useMemo } from 'react' // hooks
+import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider' // utils
+import { parseCouncilTab } from './helpers/commonCouncil.utils' // view
+import { Page } from 'styles'
+import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
+import { CouncilView } from 'pages/Council/Council.view'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view' // consts
 import {
   ALL_ONGOING_COUNCIL_ACTIONS_SUB,
   ALL_PAST_COUNCIL_ACTIONS_SUB,
@@ -16,7 +16,7 @@ import {
   DEFAULT_COUNCIL_ACTIVE_SUBS,
   MY_PAST_COUNCIL_ACTIONS_SUB,
 } from 'providers/CouncilProvider/helpers/council.consts'
-import {ALL_PAST_COUNCIL_TAB, ALL_PENDING_COUNCIL_TAB, MY_PENDING_COUNCIL_TAB} from './helpers/council.consts' // TODO: validate tab in url?
+import { ALL_PAST_COUNCIL_TAB, ALL_PENDING_COUNCIL_TAB, MY_PENDING_COUNCIL_TAB } from './helpers/council.consts' // TODO: validate tab in url?
 
 // TODO: validate tab in url?
 export const Council = () => {

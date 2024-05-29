@@ -138,7 +138,7 @@ export const FarmCardCoinIcons = ({ isMFarm, farmToken, size }: CoinIconsPropsTy
   if (isMFarm) {
     return (
       <FarmCardCoinIconsStyled className={classNames('mFarm', size)}>
-        <ImageWithPlug imageLink={farmToken.icon} plugSrc={'/images/coin-gold.svg'} alt={farmToken.symbol + ' icon'} />
+        <ImageWithPlug useRounded imageLink={farmToken.icon} plugSrc={'/images/coin-gold.svg'} alt={farmToken.symbol + ' icon'} />
       </FarmCardCoinIconsStyled>
     )
   }
@@ -152,6 +152,7 @@ export const FarmCardCoinIcons = ({ isMFarm, farmToken, size }: CoinIconsPropsTy
   return (
     <FarmCardCoinIconsStyled className={classNames(size)}>
       <ImageWithPlug
+			useRounded
         imageLink={token0Icon}
         plugSrc={'/images/coin-gold.svg'}
         alt={`${farmToken.farmLpData.token0?.symbol ?? 'gold'} - logo`}
@@ -159,6 +160,7 @@ export const FarmCardCoinIcons = ({ isMFarm, farmToken, size }: CoinIconsPropsTy
       />
 
       <ImageWithPlug
+			useRounded
         imageLink={token1Icon}
         plugSrc={'/images/coin-silver.svg'}
         alt={`${farmToken.farmLpData.token1?.symbol ?? 'silver'} - logo`}

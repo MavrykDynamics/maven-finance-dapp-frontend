@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, useHistory, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
 // styles
@@ -109,7 +109,7 @@ export const BorrowingExpandCardMenuSection = ({
   } = useDappConfigContext()
 
   const { pathname, search } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { page, ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const menuTabs = useMemo(
@@ -133,7 +133,7 @@ export const BorrowingExpandCardMenuSection = ({
   const handleSwitchTab = (setActiveTab: (tab?: SlidingTabButtonType) => void) => (newTabId: number) => {
     // condition to set list page to 1, when change tab
     if (activeMenuTab?.id === loansTabNames.TX_HISTORY && activeMenuTab?.id !== newTabId) {
-      history.replace(`${pathname}${qs.stringify(restQP, { addQueryPrefix: true })}`)
+      navigate(`${pathname}${qs.stringify(restQP, { addQueryPrefix: true })}`, { replace: true })
     }
 
     setActiveTab(menuTabs.find((item) => item.id === newTabId))
@@ -204,15 +204,15 @@ export const BorrowingExpandCardMenuSection = ({
                   const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                   return (
-                    <TableRow rowHeight={65} key={symbol}>
-                      <TableCell width={'22%'} className="vert-middle">
+                    <TableRow $rowHeight={65} key={symbol}>
+                      <TableCell $width={'22%'} className="vert-middle">
                         <div className="cell-content row with-icon">
-                          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+                          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded />
                           {symbol}
                         </div>
                       </TableCell>
 
-                      <TableCell width={'22%'}>
+                      <TableCell $width={'22%'}>
                         <div className="cell-content">
                           <CommaNumber
                             value={convertedAmount}
@@ -223,7 +223,7 @@ export const BorrowingExpandCardMenuSection = ({
                           <CommaNumber value={convertedAmount * rate} className="rate" beginningText="$" showDecimal />
                         </div>
                       </TableCell>
-                      <TableCell width={'22%'}>
+                      <TableCell $width={'22%'}>
                         <div className="cell-content">
                           <CommaNumber value={collateralShare} className="value" endingText="%" />
                         </div>
@@ -265,18 +265,18 @@ export const BorrowingExpandCardMenuSection = ({
 
               {/* Total row */}
               {collateralData.length >= 2 ? (
-                <TableRow rowHeight={44}>
-                  <TableCell width={'22%'} className="vert-middle">
+                <TableRow $rowHeight={44}>
+                  <TableCell $width={'22%'} className="vert-middle">
                     Total
                   </TableCell>
 
-                  <TableCell width={'22%'}>
+                  <TableCell $width={'22%'}>
                     <div className="cell-content">
                       <CommaNumber value={collateralBalance} decimalsToShow={2} beginningText="$" className="balance" />
                     </div>
                   </TableCell>
 
-                  <TableCell width={'22%'}>
+                  <TableCell $width={'22%'}>
                     <CommaNumber value={100} endingText="%" />
                   </TableCell>
                 </TableRow>
@@ -328,7 +328,7 @@ export const BorrowingExpandCardMenuSection = ({
 
               {vaultHasXtzCollateral ? (
                 <div className="useful-info-line">
-                  <div className="name">XTZ Delegated to</div>
+                  <div className="name">MVRK Delegated to</div>
                   <div className="value">
                     {xtzDelegatedTo ? (
                       <TzAddress tzAddress={xtzDelegatedTo} type={PRIMARY_TZ_ADDRESS_COLOR} />
@@ -377,8 +377,8 @@ export const BorrowingExpandCardMenuSection = ({
                     <Icon id="info" />
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    Depositors are tz and KT addresses that are allowed to deposit tokens and XTZ into your vault. For
-                    instance, if you delegate your XTZ to a bakery, you should add the bakery’s payout address as a a
+                    Depositors are tz and KT addresses that are allowed to deposit tokens and MVRK into your vault. For
+                    instance, if you delegate your MVRK to a bakery, you should add the bakery’s payout address as a a
                     depositor so your vault can receive its delegation rewards.
                   </Tooltip.Content>
                 </Tooltip>

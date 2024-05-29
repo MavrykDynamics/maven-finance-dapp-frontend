@@ -235,7 +235,7 @@ export function BgCouncilFormChangeCouncilMember({
   ])
 
   return (
-    <CouncilFormStyled formName={BgCouncilDdForms.BG_CHANGE_COUNCIL_MEMBER}>
+    <CouncilFormStyled $formName={BgCouncilDdForms.BG_CHANGE_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

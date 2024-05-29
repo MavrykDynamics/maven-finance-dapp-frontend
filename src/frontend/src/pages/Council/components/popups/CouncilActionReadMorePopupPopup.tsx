@@ -71,7 +71,7 @@ export const ActionReadMorePopup = ({ closePopup, popupContentData }: Props) => 
 
   return (
     <Portal>
-      <PopupContainer onClick={closePopup} show={isPopupShown}>
+      <PopupContainer onClick={closePopup} $show={isPopupShown}>
         <CouncilActionReadMorePopupContent onClick={(e) => e.stopPropagation()}>
           <button onClick={closePopup} className="close-modal" />
           <H2Title>{popupTitleText}</H2Title>

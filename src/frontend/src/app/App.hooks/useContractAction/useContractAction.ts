@@ -31,6 +31,7 @@ export type HookContractActionArgs<G = unknown> = {
   dappActionCallback?: () => void
   afterActionCallback?: () => void
   errActionCallback?: () => void
+  successActionCallback?: () => void
   willUseSharedError?: boolean
   isSilentAction?: boolean
 }
@@ -41,6 +42,7 @@ export const useContractAction = <G>({
   dappActionCallback,
   afterActionCallback,
   errActionCallback,
+  successActionCallback,
   willUseSharedError = false,
   isSilentAction = false,
 }: HookContractActionArgs<G>): { action: () => Promise<void>; actionWithArgs: (args: G) => Promise<void> } => {
@@ -61,6 +63,9 @@ export const useContractAction = <G>({
         const { operation } = actionResult
 
         toggleActionCompletion(true)
+
+        successActionCallback?.()
+
         if (!isSilentAction) {
           toggleActionFullScreenLoader(true)
 
@@ -81,6 +86,7 @@ export const useContractAction = <G>({
         }
 
         const operationConfirm = await operation.confirmation()
+        // @ts-expect-error
         const operationLvl = operationConfirm.block.header.level
 
         setAction({ actionName: actionType, toasterId, operationLvl, callback: dappActionCallback })

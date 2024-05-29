@@ -43,7 +43,7 @@ export const loansPopupsContext = createContext<LoansPopupsContextStateType>(und
  * @class
  * @augments {React.Component}
  */
-export class LoansPopupsProvider extends React.Component<{}, LoansPopupsContextStateType> {
+export class LoansPopupsProvider extends React.Component<{ children?: React.ReactNode }, LoansPopupsContextStateType> {
   constructor(props: {}) {
     super(props)
 

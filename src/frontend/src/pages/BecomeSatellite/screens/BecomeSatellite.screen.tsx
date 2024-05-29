@@ -47,9 +47,10 @@ import {
   BecomeSatelliteRegisterAsOracle,
 } from '../BecomeSatellite.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import { Outlet, useOutletContext } from 'react-router-dom'
 
 const connectWalletMessage = (
-  <BecomeSatelliteFormBalanceCheck balanceOk={false}>
+  <BecomeSatelliteFormBalanceCheck $balanceOk={false}>
     <div>
       <Icon id="close-stroke" />
       Please connect your wallet
@@ -62,7 +63,8 @@ type BecomeSatelliteScreenProps = {
   userSmvnBalance: number
 }
 
-export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvnBalance }: BecomeSatelliteScreenProps) => {
+export const BecomeSatelliteScreen = () => {
+  const { usersSatelliteProfile = null, userSmvnBalance = 0 }: BecomeSatelliteScreenProps = useOutletContext() ?? {}
   const { userAddress, isSatellite, satelliteMvnIsDelegatedTo } = useUserContext()
 
   const {
@@ -311,7 +313,7 @@ export const BecomeSatelliteScreen = ({ usersSatelliteProfile, userSmvnBalance }
       />
 
       {userAddress ? (
-        <BecomeSatelliteFormBalanceCheck balanceOk={balanceOverMinStakedMvn}>
+        <BecomeSatelliteFormBalanceCheck $balanceOk={balanceOverMinStakedMvn}>
           <Icon id={balanceOverMinStakedMvn ? 'check-stroke' : 'close-stroke'} />
           <CommaNumber value={userSmvnBalance} beginningText={'Currently staking'} endingText={'MVN'} />
         </BecomeSatelliteFormBalanceCheck>

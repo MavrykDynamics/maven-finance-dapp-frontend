@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { CardHover } from 'styles'
 import { MavenTheme } from '../../../../styles/interfaces'
 
@@ -20,7 +20,7 @@ export const ProposalListContainer = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const ProposalListItem = styled(CardHover)<{ selected: boolean; theme: MavenTheme }>`
+export const ProposalListItem = styled(CardHover)<{ $selected: boolean; theme: MavenTheme }>`
   height: 57px;
   margin: 0;
   width: 100%;
@@ -33,8 +33,8 @@ export const ProposalListItem = styled(CardHover)<{ selected: boolean; theme: Ma
   padding: 8px 28px;
   cursor: pointer;
 
-  ${({ selected }) =>
-    selected &&
+  ${({ $selected }) =>
+    $selected &&
     css`
       border-color: ${({ theme }) => theme.linksAndButtons};
       box-shadow: ${({ theme }) => theme.cardHoverColor};

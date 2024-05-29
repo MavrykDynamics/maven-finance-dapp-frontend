@@ -1,5 +1,14 @@
 import { useMemo } from 'react'
-import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
+import {
+  Link,
+  Navigate,
+  Outlet,
+  Route,
+  Routes as Switch,
+  useLocation,
+  useOutletContext,
+  useParams,
+} from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
@@ -33,19 +42,27 @@ import { useUserEarningsHistory } from 'providers/UserProvider/hooks/useUserEarn
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 type PortfolioTabProps = {
-  xtzAmount: number
-  sMvnAmount: number
-  mvnAmount: number
-  mostSuppliedUserToken?: { amount: number; name: string }
+  userWalletData: {
+    xtzAmount: number
+    sMvnAmount: number
+    mvnAmount: number
+    mostSuppliedUserToken?: { amount: number; name: string }
+  }
 }
 
-const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount }: PortfolioTabProps) => {
-  const { secondaryTabId } = useParams<{ secondaryTabId: string }>()
+const PortfolioTab = () => {
+  const {
+    userWalletData: { xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount },
+  }: PortfolioTabProps = useOutletContext()
+  const location = useLocation()
+
+  const secondaryTabId = location.pathname.split('/').pop() ?? PORTFOLIO_LENDING_TAB_ID
 
   const { availableLoansRewards, userAddress } = useUserContext()
   const {
     preferences: { themeSelected },
   } = useDappConfigContext()
+
   const {
     userBorrowings,
     totalUserBorrowed,
@@ -132,7 +149,7 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount 
           </div>
         </div>
         <div className="wallet-info">
-          <div className="name">XTZ in Wallet</div>
+          <div className="name">MVRK in Wallet</div>
           <div className="value">
             <CommaNumber value={xtzAmount} />
             <a
@@ -174,25 +191,37 @@ const PortfolioTab = ({ xtzAmount, mostSuppliedUserToken, sMvnAmount, mvnAmount 
         </Link>
       </div>
 
-      <Switch>
-        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
-          <LendBorrowPosition
-            totalUserBorrowed={totalUserBorrowed}
-            totalUserLended={totalUserLended}
-            userVaultsData={userVaultsData}
-            userLoansRewards={availableLoansRewards}
-            isUserLoansLoading={isUserLoansLoading}
-          />
-        </Route>
-        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
-          <LoansTxTab txVariant="lending" userLoansData={userLendings} isUserLoansLoading={isUserLoansLoading} />
-        </Route>
-        <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
-          <LoansTxTab txVariant="borrowing" userLoansData={userBorrowings} isUserLoansLoading={isUserLoansLoading} />
-        </Route>
+      {/* <Switch>
+        <Route
+          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}
+          element={
+            <LendBorrowPosition
+              totalUserBorrowed={totalUserBorrowed}
+              totalUserLended={totalUserLended}
+              userVaultsData={userVaultsData}
+              userLoansRewards={availableLoansRewards}
+              isUserLoansLoading={isUserLoansLoading}
+            />
+          }
+        />
 
-        <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
-      </Switch>
+        <Route
+          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}
+          element={
+            <LoansTxTab txVariant="lending" userLoansData={userLendings} isUserLoansLoading={isUserLoansLoading} />
+          }
+        />
+
+        <Route
+          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}
+          element={
+            <LoansTxTab txVariant="borrowing" userLoansData={userBorrowings} isUserLoansLoading={isUserLoansLoading} />
+          }
+        />
+
+        <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+      </Switch> */}
+      <Outlet />
     </>
   )
 }

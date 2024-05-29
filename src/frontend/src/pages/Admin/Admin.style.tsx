@@ -1,5 +1,4 @@
-import styled from 'styled-components/macro'
-import { MavenTheme } from '../../styles/interfaces'
+import styled from 'styled-components'
 import { Card } from 'styles'
 
 export const AdminStyled = styled(Card)`

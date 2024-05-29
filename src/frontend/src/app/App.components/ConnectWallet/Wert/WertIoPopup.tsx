@@ -6,7 +6,7 @@ const WertIoPopup = ({ closePopup, isOpened }: { closePopup: () => void; isOpene
   useLockBodyScroll(isOpened)
 
   return (
-    <PopupContainer onClick={closePopup} show={isOpened}>
+    <PopupContainer onClick={closePopup} $show={isOpened}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="wert-io-wrapper">
         <button onClick={closePopup} className="close-modal" />
         <WertIo id="wert-io-popup-wrapper" />

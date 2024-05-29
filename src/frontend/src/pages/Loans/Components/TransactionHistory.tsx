@@ -91,11 +91,11 @@ export const TransactionHistory = ({
                   if (!descr) return null
 
                   return (
-                    <TableRow rowHeight={45} className="add-hover" key={`${operationHash}-${date}-${symbol}`}>
-                      <TableCell width={`30%`} className="vert-middle">
+                    <TableRow $rowHeight={45} className="add-hover" key={`${operationHash}-${date}-${symbol}`}>
+                      <TableCell $width={`30%`} className="vert-middle">
                         <span className="descr">{descr}</span>
                       </TableCell>
-                      <TableCell width={`30%`}>
+                      <TableCell $width={`30%`}>
                         <CommaNumber
                           value={amount}
                           className="value"
@@ -104,9 +104,9 @@ export const TransactionHistory = ({
                           decimalsToShow={decimals}
                         />
                       </TableCell>
-                      <TableCell width={`30%`}>{date}</TableCell>
-                      <TableCell contentPosition="right">
-                        <Link to={{ pathname: `${process.env.REACT_APP_TZKT_LINK}/${operationHash}` }} target="_blank">
+                      <TableCell $width={`30%`}>{date}</TableCell>
+                      <TableCell $contentPosition="right">
+                        <Link to={`${process.env.REACT_APP_TZKT_LINK}/${operationHash}`} target="_blank">
                           <Button text="View TX" kind={TRANSPARENT} className="link" />
                         </Link>
                       </TableCell>

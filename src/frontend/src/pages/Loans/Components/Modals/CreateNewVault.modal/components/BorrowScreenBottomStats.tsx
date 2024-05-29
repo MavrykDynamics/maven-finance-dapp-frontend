@@ -76,7 +76,7 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
         <div className="line">
           <ThreeLevelListItem
             className="collateral-diagram right"
-            customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
+            $customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
           >
             <div className={`percentage`}>
               Collateral Ratio:

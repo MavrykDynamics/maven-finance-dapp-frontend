@@ -113,10 +113,10 @@ export const getPaymentsDiff = (
             },
           }
           break
-        case 'tez':
+        case 'mav':
         default:
           token = {
-            tez: 'tez',
+            mav: 'mav',
           }
           break
       }

@@ -159,7 +159,7 @@ export const MavCouncilFormSetContractBaker = () => {
   }, [formInputStatus.keyHash, formInputStatus.targetContractAddress, keyHash, targetContractAddress])
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.SET_CONTRACT_BAKER}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.SET_CONTRACT_BAKER}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

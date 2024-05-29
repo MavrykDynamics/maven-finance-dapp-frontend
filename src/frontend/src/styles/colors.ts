@@ -63,6 +63,7 @@ export const dark = {
   // loader colors
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
   loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
+  primaryBtnSpinnerColor: '#0000007a',
   // tab colors
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
   // const colors
@@ -130,6 +131,7 @@ export const light = {
   // loader colors
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
   loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
+  primaryBtnSpinnerColor: '0000007a',
   // tab colors
   forTabs: 'linear-gradient(90deg, #03C9A3 0.31%, #8D86EB 99.97%)',
   // const colors
@@ -197,6 +199,7 @@ export const space = {
   // loader colors
   shineAnimationGradient: `linear-gradient(to right, #8D86EB 0, #86D4C9 10%, #8D86EB 20%)`,
   loaderBackgroundColor: 'rgba(8, 6, 40, 1)',
+  primaryBtnSpinnerColor: '#0000007a',
   // tab colors
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
   // const colors

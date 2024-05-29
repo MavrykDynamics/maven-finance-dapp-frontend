@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
 // TODO: extract all classname styles to it's own bases af for farms
-export const PopupContainerWrapper = styled.div<{ theme: MavenTheme; widthSize?: 586 | 750 | 395 | 950 | 420 }>`
+export const PopupContainerWrapper = styled.div<{ theme: MavenTheme; $widthSize?: 586 | 750 | 395 | 950 | 420 }>`
   display: flex;
   flex-direction: column;
   padding: 40px;
@@ -10,7 +10,7 @@ export const PopupContainerWrapper = styled.div<{ theme: MavenTheme; widthSize?:
   border: 1px solid ${({ theme }) => theme.linksAndButtons};
   border-radius: 10px;
   height: fit-content;
-  max-width: ${({ widthSize = 395 }) => `${widthSize}px`};
+  max-width: ${({ $widthSize = 395 }) => `${$widthSize}px`};
   width: 100%;
   position: absolute;
   top: 50%;
@@ -155,7 +155,7 @@ export const PopupContainerWrapper = styled.div<{ theme: MavenTheme; widthSize?:
   }
 `
 
-export const PopupContainer = styled.div<{ show?: boolean }>`
+export const PopupContainer = styled.div<{ $show?: boolean }>`
   width: 100vw;
   height: 100vh;
 
@@ -180,8 +180,8 @@ export const PopupContainer = styled.div<{ show?: boolean }>`
     display: none;
   }
 
-  ${({ show }) =>
-    show
+  ${({ $show }) =>
+    $show
       ? css`
           opacity: 1;
           visibility: visible;

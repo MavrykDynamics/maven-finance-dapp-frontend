@@ -1,4 +1,4 @@
-import {gql} from 'utils/__generated__' // TODO for future separate queries and subs
+import { gql } from 'utils/__generated__' // TODO for future separate queries and subs
 
 // TODO for future separate queries and subs
 // DO NOT REMOVE IT!
@@ -92,7 +92,7 @@ import {gql} from 'utils/__generated__' // TODO for future separate queries and 
 //       address
 //       name
 //       withdraw_reward_smvn_paused
-//       withdraw_reward_xtz_paused
+//       withdraw_reward_mvrk_paused
 //       admin
 //       last_updated_at
 //     }
@@ -105,7 +105,7 @@ import {gql} from 'utils/__generated__' // TODO for future separate queries and 
 //       address
 //       untrack_aggregator_paused
 //       track_aggregator_paused
-//       distribute_reward_xtz_paused
+//       distribute_reward_mvrk_paused
 //       distribute_reward_smvn_paused
 //       create_aggregator_paused
 //       admin
@@ -183,7 +183,7 @@ query getAllContractStatusesData {
     address
     name
     withdraw_reward_smvn_paused
-    withdraw_reward_xtz_paused
+    withdraw_reward_mvrk_paused
     admin
     last_updated_at
   }
@@ -192,7 +192,7 @@ query getAllContractStatusesData {
     admin
     untrack_aggregator_paused
     track_aggregator_paused
-    distribute_reward_xtz_paused
+    distribute_reward_mvrk_paused
     distribute_reward_smvn_paused
     create_aggregator_paused
     last_updated_at

@@ -2,56 +2,109 @@
   "name": "mavryk-finance-dapp-frontend",
   "version": "1.0.0",
   "scripts": {
-    "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
-    "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 react-scripts -r @cypress/instrument-cra start && open http://localhost:3000",
-    "build": "npm run graphql-compile && DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "build:evenlop": "npm run graphql-compile && export NODE_OPTIONS=--openssl-legacy-provider && DISABLE_ESLINT_PLUGIN=true react-scripts build",
+    "start": "PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 node scripts/start.js -r @cypress/instrument-cra start && open http://localhost:3000",
+    "start:evenlop": "export NODE_OPTIONS=--openssl-legacy-provider && PORT=3000 NODE_ENV=development REACT_APP_BACKEND_URL=http://localhost:8080 node scripts/start.js -r @cypress/instrument-cra start && open http://localhost:3000",
+    "build": "npm run graphql-compile && DISABLE_ESLINT_PLUGIN=true node scripts/build.js",
+    "build:evenlop": "npm run graphql-compile && export NODE_OPTIONS=--openssl-legacy-provider && DISABLE_ESLINT_PLUGIN=true node scripts/build.js",
     "graphql-compile": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local; true",
     "graphql-compile-watch": "graphql-codegen --require dotenv/config --config ./codegen.ts dotenv_config_path=./.env.local",
     "import-contracts": "rm -Rf src/deployments && cp -R ../contracts/deployments src/deployments",
     "open-explorer": "open https://better-call.dev/hangzhou2net/KT1N4WXRdpxmqKVuukhQXX5kgc6JwJwyJrVH/",
-    "analyze": "react-scripts build && source-map-explorer 'build/static/js/*.js'",
+    "analyze": "node scripts/build.js && source-map-explorer 'build/static/js/*.js'",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "test": "react-scripts test",
+    "test": "node scripts/test.js",
     "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "^3.3.0",
+    "@airgap/beacon-sdk": "4.1.2",
     "@apollo/client": "^3.8.3",
+    "@babel/core": "^7.16.0",
     "@floating-ui/react": "^0.26.1",
+    "@mavrykdynamics/mavryk-wallet-dapp": "^8.0.1",
+    "@mavrykdynamics/taquito": "19.2.3",
+    "@mavrykdynamics/taquito-beacon-wallet": "19.2.3",
+    "@mavrykdynamics/taquito-michel-codec": "19.2.3",
+    "@mavrykdynamics/taquito-rpc": "19.2.3",
+    "@mavrykdynamics/taquito-signer": "19.2.3",
+    "@mavrykdynamics/taquito-utils": "19.2.3",
     "@microsoft/signalr": "^7.0.7",
-    "@taquito/beacon-wallet": "^15.0.1",
-    "@taquito/signer": "^15.0.1",
-    "@taquito/taquito": "^15.0.1",
-    "@taquito/utils": "^15.0.1",
-    "@temple-wallet/dapp": "^6.0.1",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
+    "@svgr/webpack": "^5.5.0",
     "@wert-io/widget-initializer": "^2.0.0",
+    "babel-jest": "^27.4.2",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-named-asset-import": "^0.3.8",
+    "babel-preset-react-app": "^10.0.1",
+    "bfj": "^7.0.2",
     "bignumber.js": "^9.1.0",
+    "browserslist": "^4.18.1",
+    "buffer": "^6.0.3",
+    "camelcase": "^6.2.1",
+    "case-sensitive-paths-webpack-plugin": "^2.4.0",
+    "cipher-base": "^1.0.4",
     "classnames": "^2.3.2",
+    "css-loader": "^6.5.1",
+    "css-minimizer-webpack-plugin": "^3.2.0",
     "dayjs": "^1.11.5",
+    "dotenv": "^10.0.0",
+    "dotenv-expand": "^5.1.0",
     "embla-carousel-react": "^6.2.0",
+    "eslint": "^8.3.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-webpack-plugin": "^3.1.1",
+    "file-loader": "^6.2.0",
+    "fs-extra": "^10.0.0",
     "graphql": "16.5.0",
     "graphql-ws": "^5.12.1",
+    "html-webpack-plugin": "^5.5.0",
+    "identity-obj-proxy": "^3.0.0",
     "ipfs-http-client": "^54.0.1",
     "is-ipfs": "^6.0.2",
-    "lightweight-charts": "^4.0.0",
+    "jest": "^27.4.3",
+    "jest-resolve": "^27.4.2",
+    "jest-watch-typeahead": "^1.0.0",
+    "lightweight-charts": "4.0.0",
+    "mini-css-extract-plugin": "^2.4.5",
+    "postcss": "^8.4.4",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-loader": "^6.2.1",
+    "postcss-normalize": "^10.0.1",
+    "postcss-preset-env": "^7.0.1",
+    "process": "^0.11.10",
+    "prompts": "^2.4.2",
     "qs": "^6.11.0",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
+    "react-app-polyfill": "^3.0.0",
     "react-avatar-editor": "^13.0.0",
     "react-collapsed": "^3.3.0",
     "react-cookie": "^4.1.1",
-    "react-dom": "^17.0.2",
+    "react-dev-utils": "^12.0.1",
+    "react-dom": "^18.2.0",
     "react-ga": "^3.3.0",
     "react-google-recaptcha-v3": "^1.9.5",
-    "react-minimal-pie-chart": "^8.3.0",
-    "react-router": "^5.2.1",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "^4.0.3",
+    "react-minimal-pie-chart": "8.3.0",
+    "react-refresh": "^0.11.0",
+    "react-router": "6.23.0",
+    "react-router-dom": "^6.22.3",
     "react-select": "^5.7.7",
     "react-use": "^17.4.0",
-    "styled-components": "^5.3.1",
+    "resolve": "^1.20.0",
+    "resolve-url-loader": "^4.0.0",
+    "sass-loader": "^12.3.0",
+    "semver": "^7.3.5",
+    "source-map-loader": "^3.0.0",
+    "stream-browserify": "^3.0.0",
+    "style-loader": "^3.3.1",
+    "styled-components": "^6.1.8",
+    "stylis": "^4.3.1",
+    "tailwindcss": "^3.0.2",
+    "terser-webpack-plugin": "^5.2.5",
     "web-vitals": "^2.1.0",
+    "webpack": "^5.64.4",
+    "webpack-dev-server": "^4.6.0",
+    "webpack-manifest-plugin": "^4.0.2",
+    "workbox-webpack-plugin": "^6.4.1",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -59,21 +112,19 @@
     "@cypress/instrument-cra": "^1.4.0",
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
-    "@types/node": "^16.10.1",
+    "@types/node": "^20.12.7",
     "@types/qs": "^6.9.7",
-    "@types/react": "^17.0.24",
+    "@types/react": "^18.2.79",
     "@types/react-avatar-editor": "^13.0.0",
     "@types/react-collapse": "^5.0.1",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-router-dom": "^5.3.0",
-    "@types/styled-components": "^5.1.14",
+    "@types/react-dom": "^18.2.25",
+    "@types/react-router-dom": "^5.3.3",
     "babel-plugin-styled-components": "^1.13.2",
     "cypress": "^8.4.1",
-    "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-jsdoc": "^46.0.0",
     "prettier": "2.8.7",
     "source-map-explorer": "^2.5.2",
-    "typescript": "^5.0.4"
+    "typescript": "^5.1.6"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -88,6 +139,64 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
+    ],
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.ts"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "modulePaths": [
+      "/Users/alexbelz/work/memcrab/projects/mavryk-finance-dapp-frontend/src/frontend/src"
+    ],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web",
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ],
+    "watchPlugins": [
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
+    ],
+    "resetMocks": true
+  },
+  "babel": {
+    "presets": [
+      "react-app"
     ]
   }
 }

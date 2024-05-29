@@ -108,7 +108,7 @@ export const ValueWrapper = styled.div<{ theme: MavenTheme }>`
   z-index: 3;
 `
 
-export const ArrowStyled = styled.div<{ theme: MavenTheme; angle: number }>`
+export const ArrowStyled = styled.div<{ theme: MavenTheme; $angle: number }>`
   width: 82px;
   height: 14px;
   position: absolute;
@@ -117,9 +117,9 @@ export const ArrowStyled = styled.div<{ theme: MavenTheme; angle: number }>`
   z-index: 2;
   transition: transform 500ms ease-in-out;
 
-  ${({ angle }) =>
+  ${({ $angle }) =>
     css`
-      transform: translate(-50%, -50%) rotate(${angle}deg);
+      transform: translate(-50%, -50%) rotate(${$angle}deg);
     `}
 
   svg {

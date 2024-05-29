@@ -6,7 +6,7 @@ declare global {
     interface ProcessEnv extends ProcessEnvType {
       REACT_APP_DATA_ENV: 'dev' | 'prod'
       REACT_APP_ENV: 'dev' | 'prod'
-      REACT_APP_TZKT_API: 'https://api.ghostnet.tzkt.io' | 'https://api.tzkt.io'
+      REACT_APP_TZKT_API: 'https://atlasnet.api.mavryk.network'
       REACT_APP_TZKT_LINK: 'https://ghostnet.tzkt.io' | 'https://tzkt.io'
       REACT_APP_TZKT_SERVICE_API: 'https://services.tzkt.io'
       REACT_APP_WERT_API: 'https://sandbox.wert.io'
@@ -14,7 +14,8 @@ declare global {
       REACT_APP_GRAPHQL_WSS_API: 'wss://api.mavenfinance.io/v1/graphql'
 
       REACT_APP_NAME: string
-      REACT_APP_NETWORK: 'mainnet' | 'ghostnet'
+      // TODO NETWORK
+      REACT_APP_NETWORK: 'atlasnet'
 
       IPFS_API_KEY: string
       IPFS_PROJECT_ID: string

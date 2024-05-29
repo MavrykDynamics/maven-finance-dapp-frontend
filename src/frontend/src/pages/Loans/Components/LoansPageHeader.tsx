@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 
 // view
 import ConnectWalletInfo from 'app/App.components/ConnectWallet/ConnectWalletBanner'
@@ -40,10 +40,10 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
 
   return (
     <>
-      <PageHeaderStyled backgroundImageSrc={'/images/dapp-header-bg.svg'}>
+      <PageHeaderStyled $backgroundImageSrc={'/images/dapp-header-bg.svg'}>
         <PageHeaderTextArea className="loans">
           <div className="asset-wrapper">
-            <ImageWithPlug alt={symbol} imageLink={icon} />
+            <ImageWithPlug useRounded alt={symbol} imageLink={icon} />
           </div>
           <div className="text-container">
             <h1>
@@ -58,7 +58,7 @@ export const MarketPageHeader = ({ assetAddress }: MarketPageHeaderPropsType) =>
           </div>
         </PageHeaderTextArea>
         <PageHeaderForegroundImageContainer>
-          <PageHeaderForegroundImage page={'lending'} src={foregroundImageSrc ?? '/images/portal.svg'} alt="portal" />
+          <PageHeaderForegroundImage $page={'lending'} src={foregroundImageSrc ?? '/images/portal.svg'} alt="portal" />
         </PageHeaderForegroundImageContainer>
       </PageHeaderStyled>
       <ConnectWalletInfo />

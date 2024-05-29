@@ -110,7 +110,7 @@ export function BgCouncilFormRemoveCouncilMember({
   const isButtonDisabled = isActionActive || !chosenDdItem
 
   return (
-    <CouncilFormStyled formName={BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER}>
+    <CouncilFormStyled $formName={BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER}>
       <a
         className="info-link"
         href="https://mavryk.finance/litepaper#break-glass-council"

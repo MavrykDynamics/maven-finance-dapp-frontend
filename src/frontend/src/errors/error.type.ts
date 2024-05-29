@@ -38,11 +38,11 @@ export type WalletErrorPayload = z.infer<typeof walletErrorPayload>
 
 export type EstimatedOperation = {
   gasLimit: number
-  minimalFeeMutez: number
+  minimalFeeMumav: number
   storageLimit: number
-  suggestedFeeMutez: number
+  suggestedFeeMumav: number
   totalCost: number
-  usingBaseFeeMutez: number
+  usingBaseFeeMumav: number
   error?: WalletErrorPayload
 }
 

@@ -78,7 +78,7 @@ const tabsList = [
 
 const DataFeedDetails = () => {
   const { search } = useLocation()
-  const { feedId } = useParams<{ feedId: string }>()
+  const { feedId = '' } = useParams<{ feedId: string }>()
 
   const { feedsMapper } = useDataFeedsContext()
   const {
@@ -166,7 +166,7 @@ const DataFeedDetails = () => {
               <FeedInfo>
                 <div className="top">
                   <div className="name-part">
-                    <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} />
+                    <ImageWithPlug imageLink={feed.icon} alt={`${feed.name} logo`} useRounded />
                     <div className="text">
                       <div className="name">{feed.name}</div>
                       <a
@@ -179,7 +179,7 @@ const DataFeedDetails = () => {
                     </div>
                   </div>
                   <div className="price-part">
-                    <DataFeedValueText fontSize={22} fontWeidth={600} className="shield">
+                    <DataFeedValueText $fontSize={22} $fontWeidth={600} className="shield">
                       <Icon id={isTrustedAnswer ? 'trustShield' : 'notTrustedShield'} />
                       <CommaNumber beginningText="$" value={feed.amount} showDecimal decimalsToShow={6} />
                     </DataFeedValueText>
@@ -214,12 +214,12 @@ const DataFeedDetails = () => {
 
                     <h4>Deviation Trigger</h4>
 
-                    <DataFeedValueText fontSize={16} fontWeidth={600}>
+                    <DataFeedValueText $fontSize={16} $fontWeidth={600}>
                       {feed.alpha_pct_per_thousand}%
                     </DataFeedValueText>
                   </DataFeedInfoBlock>
 
-                  <DataFeedInfoBlock justifyContent={'space-between'}>
+                  <DataFeedInfoBlock $justifyContent={'space-between'}>
                     <H3TitleSecondary>
                       Heartbeat
                       <Tooltip>
@@ -230,7 +230,7 @@ const DataFeedDetails = () => {
                       </Tooltip>
                     </H3TitleSecondary>
 
-                    <DataFeedValueText fontSize={16} fontWeidth={600}>
+                    <DataFeedValueText $fontSize={16} $fontWeidth={600}>
                       {feed.last_completed_data_last_updated_at ? (
                         <div className="timer">
                           <Timer
@@ -264,7 +264,7 @@ const DataFeedDetails = () => {
                       </Tooltip>
                     </H3TitlePrimary>
                     <h4>Minimum of {feed.pct_oracle_threshold}%</h4>
-                    <DataFeedValueText fontSize={16} fontWeidth={600}>
+                    <DataFeedValueText $fontSize={16} $fontWeidth={600}>
                       {feed.oraclesResponces}%
                     </DataFeedValueText>
                   </DataFeedInfoBlock>
@@ -282,8 +282,8 @@ const DataFeedDetails = () => {
                       </Tooltip>
                     </H3TitlePrimary>
                     <DataFeedValueText
-                      fontSize={14}
-                      fontWeidth={500}
+                      $fontSize={14}
+                      $fontWeidth={500}
                       style={{ padding: '2px 0', color: colors[themeSelected].regularText }}
                     >
                       {parseDate({
@@ -307,7 +307,7 @@ const DataFeedDetails = () => {
                       <Tooltip.Content>Address of this specific data feed</Tooltip.Content>
                     </Tooltip>
                   </H3TitlePrimary>
-                  <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
+                  <DataFeedValueText $fontSize={14} $fontWeidth={600} style={{ lineHeight: '100%' }}>
                     <TzAddress tzAddress={feed.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
                   </DataFeedValueText>
                 </div>
@@ -324,7 +324,7 @@ const DataFeedDetails = () => {
                       </Tooltip.Content>
                     </Tooltip>
                   </H3TitlePrimary>
-                  <DataFeedValueText fontSize={14} fontWeidth={600} style={{ lineHeight: '100%' }}>
+                  <DataFeedValueText $fontSize={14} $fontWeidth={600} style={{ lineHeight: '100%' }}>
                     {feedsFactoryAddress ? (
                       <TzAddress tzAddress={feedsFactoryAddress} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon={true} />
                     ) : (

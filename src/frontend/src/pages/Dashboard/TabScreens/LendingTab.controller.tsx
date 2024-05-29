@@ -61,7 +61,7 @@ export const LendingTab = () => {
   )
 
   return (
-    <TabWrapperStyled backgroundImage="dashboard_lendingTab_bg.png">
+    <TabWrapperStyled $backgroundImage="dashboard_lendingTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Earn/Borrow</BGPrimaryTitle>
         <Link to="/loans" className="dashboard-sectionLink">
@@ -106,7 +106,7 @@ export const LendingTab = () => {
               <StatBlock>
                 <div className="name">Most Supplied Asset</div>
                 <div className="value">
-                  <ImageWithPlug alt={'Most supplied asset'} imageLink={mostLendedAsset?.icon} />
+                  <ImageWithPlug useRounded alt={'Most supplied asset'} imageLink={mostLendedAsset?.icon} />
                   {mostLendedAsset?.symbol ?? ''}
                 </div>
               </StatBlock>
@@ -142,7 +142,7 @@ export const LendingTab = () => {
               <StatBlock>
                 <div className="name">Most Borrowed Asset</div>
                 <div className="value">
-                  <ImageWithPlug alt={'Most borrowed asset'} imageLink={mostBorrowedAsset?.icon} />
+                  <ImageWithPlug useRounded alt={'Most borrowed asset'} imageLink={mostBorrowedAsset?.icon} />
                   {mostBorrowedAsset?.symbol ?? ''}
                 </div>
               </StatBlock>

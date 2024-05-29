@@ -1,11 +1,12 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR, SECONDARY_TZ_ADDRESS_COLOR } from '../TzAddress/TzAddress.constants'
-import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS, XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS, MVRK_TOKEN_ADDRESS, MVRK_TOKEN_SYMBOL } from 'utils/constants'
 
 import Icon from '../Icon/Icon.view'
+
 import { TzAddress } from '../TzAddress/TzAddress.view'
 import Button from '../Button/NewButton'
 import { CommaNumber } from '../CommaNumber/CommaNumber.controller'
@@ -28,7 +29,7 @@ type ConnectWalletProps = {
 }
 
 export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
@@ -37,7 +38,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   } = useDappConfigContext()
 
   const mvnTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
-  const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
+  const xtzTokenRate = tokensPrices[MVRK_TOKEN_SYMBOL]
 
   const { pathname } = useLocation()
 
@@ -46,7 +47,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   const isOnStakingPage = pathname === '/staking'
 
   const handleStakeBtn = () => {
-    if (!isOnStakingPage) history.push('/staking')
+    if (!isOnStakingPage) navigate('/staking')
     setDetailsShown(false)
   }
 
@@ -60,7 +61,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
   return (
     <WalletDetailsStyled onMouseOver={mouseOverHanlder} onMouseLeave={closeDetailsHandler}>
       <WalletDetailsVisiblePart
-        isShown={detailsShown}
+        $isShown={detailsShown}
         onMouseOver={mouseOverHanlder}
         onMouseLeave={closeDetailsHandler}
       >
@@ -69,7 +70,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
-      <WalletDetailsHiddenPart isShown={detailsShown}>
+      <WalletDetailsHiddenPart $isShown={detailsShown}>
         <div className="top">
           <Icon id="wallet" />
           <TzAddress tzAddress={userAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
@@ -83,7 +84,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         <div className="tokens scroll-block">
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenGold'} />
+              <ImageWithPlug imageLink={'/images/MVN_token.svg'} alt="MVN coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -117,7 +118,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenSilver'} />
+              <ImageWithPlug imageLink={'/images/sMVN_token.svg'} alt="sMVN coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -141,15 +142,15 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
 
           <div className="row">
             <div className="icon">
-              <Icon id={'xtzTezos'} />
+              <ImageWithPlug imageLink={'/images/MVRK_token.svg'} alt="MVRK coin" />
             </div>
             <div className="values">
               <CommaNumber
                 value={getUserTokenBalanceByAddress({
                   userTokensBalances,
-                  tokenAddress: XTZ_TOKEN_ADDRESS,
+                  tokenAddress: MVRK_TOKEN_ADDRESS,
                 })}
-                endingText={'XTZ'}
+                endingText={'MVRK'}
                 showDecimal
                 className="asset-amount"
               />
@@ -157,7 +158,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
                 value={
                   getUserTokenBalanceByAddress({
                     userTokensBalances,
-                    tokenAddress: XTZ_TOKEN_ADDRESS,
+                    tokenAddress: MVRK_TOKEN_ADDRESS,
                   }) * xtzTokenRate
                 }
                 endingText={'USD'}
@@ -167,8 +168,8 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             </div>
 
             <div className="action">
-              <Button onClick={() => mountWertWiget('XTZ')} kind={BUTTON_SIMPLE} disabled>
-                Buy XTZ <Icon id="paginationArrowLeft" />
+              <Button onClick={() => mountWertWiget('MVRK')} kind={BUTTON_SIMPLE} disabled>
+                Buy MVRK <Icon id="paginationArrowLeft" />
               </Button>
             </div>
           </div>
@@ -187,7 +188,11 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
             return (
               <div className="row" key={tokenAddress}>
                 <div className="icon">
-                  {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
+                  {icon ? (
+                    <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded />
+                  ) : (
+                    <Icon id={'noImage'} />
+                  )}
                 </div>
                 <div className="values">
                   <CommaNumber value={tokenBalance} endingText={symbol} showDecimal className="asset-amount" />
@@ -223,16 +228,17 @@ type MobileConnectWalletProps = ConnectWalletProps & {
 }
 
 export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileConnectWalletProps) => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const { tokensPrices, tokensMetadata } = useTokensContext()
   const { userAddress, userTokensBalances, signOut, changeUser } = useUserContext()
+
   const {
     contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()
 
   const mvnTokenRate = tokensPrices[MVN_TOKEN_SYMBOL]
-  const xtzTokenRate = tokensPrices[XTZ_TOKEN_SYMBOL]
+  const xtzTokenRate = tokensPrices[MVRK_TOKEN_SYMBOL]
 
   const { pathname } = useLocation()
 
@@ -242,7 +248,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
   const handleStakeBtn = () => {
     if (!isOnStakingPage) {
-      history.push('/staking')
+      navigate('/staking')
     }
 
     setDetailsShown(false)
@@ -257,13 +263,13 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
   return (
     <MobileWalletDetailsStyled>
-      <WalletDetailsVisiblePart isShown={detailsShown} onClick={clickHander}>
+      <WalletDetailsVisiblePart $isShown={detailsShown} onClick={clickHander}>
         <Icon id="wallet" className="wallet" />
         <TzAddress tzAddress={userAddress} hasIcon={false} shouldCopy={false} type={SECONDARY_TZ_ADDRESS_COLOR} />
         <Icon id="paginationArrowLeft" className="end-icon" />
       </WalletDetailsVisiblePart>
 
-      <MobileWalletDetailsHiddenPart isShown={detailsShown}>
+      <MobileWalletDetailsHiddenPart $isShown={detailsShown}>
         {detailsShown ? (
           <div className="close-details-btn">
             <Button kind={BUTTON_SIMPLE} onClick={() => setDetailsShown(false)}>
@@ -285,7 +291,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         <div className="tokens scroll-block">
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenGold'} />
+              <ImageWithPlug imageLink={'/images/MVN_token.svg'} alt="MVN coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -319,7 +325,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
           <div className="row">
             <div className="icon">
-              <Icon id={'mvnTokenSilver'} />
+              <ImageWithPlug imageLink={'/images/sMVN_token.svg'} alt="sMVN coin" />
             </div>
             <div className="values">
               <CommaNumber
@@ -343,15 +349,15 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
           <div className="row">
             <div className="icon">
-              <Icon id={'xtzTezos'} />
+              <ImageWithPlug imageLink={'/images/MVRK_token.svg'} alt="MVRK coin" />
             </div>
             <div className="values">
               <CommaNumber
                 value={getUserTokenBalanceByAddress({
                   userTokensBalances,
-                  tokenAddress: XTZ_TOKEN_ADDRESS,
+                  tokenAddress: MVRK_TOKEN_ADDRESS,
                 })}
-                endingText={'XTZ'}
+                endingText={'MVRK'}
                 showDecimal
                 className="asset-amount"
               />
@@ -359,7 +365,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
                 value={
                   getUserTokenBalanceByAddress({
                     userTokensBalances,
-                    tokenAddress: XTZ_TOKEN_ADDRESS,
+                    tokenAddress: MVRK_TOKEN_ADDRESS,
                   }) * xtzTokenRate
                 }
                 endingText={'USD'}
@@ -370,7 +376,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
 
             <div className="action">
               <Button onClick={() => mountWertWiget('XTZ')} kind={BUTTON_SIMPLE} disabled>
-                Buy XTZ <Icon id="paginationArrowLeft" />
+                Buy MVRK <Icon id="paginationArrowLeft" />
               </Button>
             </div>
           </div>
@@ -389,7 +395,11 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
             return (
               <div className="row" key={tokenAddress}>
                 <div className="icon">
-                  {icon ? <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> : <Icon id={'noImage'} />}
+                  {icon ? (
+                    <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded />
+                  ) : (
+                    <Icon id={'noImage'} />
+                  )}
                 </div>
                 <div className="values">
                   <CommaNumber value={tokenBalance} endingText={symbol} showDecimal className="asset-amount" />

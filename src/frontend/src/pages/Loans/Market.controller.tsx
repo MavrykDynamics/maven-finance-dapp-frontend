@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { useHistory, useParams } from 'react-router'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -49,11 +48,11 @@ import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loa
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 export const Market = () => {
-  const history = useHistory<{ from?: string }>()
-  const {
-    location: { state: historyState },
-  } = history
-  const { assetAddress: currentMarketAddress, tabId } = useParams<{
+  const navigate = useNavigate()
+  const { state } = useLocation()
+  const historyState = state as { from?: string }
+
+  const { assetAddress: currentMarketAddress = '', tabId = '' } = useParams<{
     assetAddress: string
     tabId: string
   }>()
@@ -209,7 +208,7 @@ export const Market = () => {
   const marketPagination = (
     <MarketPagination>
       <Button
-        onClick={() => history.push(historyState?.from ?? '/loans')}
+        onClick={() => navigate(historyState?.from ?? '/loans')}
         text="Go Back"
         icon="arrowRight"
         className="arrow"
@@ -218,12 +217,7 @@ export const Market = () => {
 
       <div className="right-side-wrapper">
         {prevMarketAddress ? (
-          <Link
-            to={{
-              pathname: `/loans/${prevMarketAddress}/${tabId}`,
-              state: { from: historyState?.from },
-            }}
-          >
+          <Link to={`/loans/${prevMarketAddress}/${tabId}`} state={{ from: historyState?.from }}>
             <span className="left">
               <Icon id="paginationArrowLeft" /> Previous Market
             </span>
@@ -231,12 +225,7 @@ export const Market = () => {
         ) : null}
 
         {nextMarketAddress ? (
-          <Link
-            to={{
-              pathname: `/loans/${nextMarketAddress}/${tabId}`,
-              state: { from: historyState?.from },
-            }}
-          >
+          <Link to={`/loans/${nextMarketAddress}/${tabId}`} state={{ from: historyState?.from }}>
             <span className="right">
               Next Market
               <Icon id="paginationArrowLeft" />
@@ -262,7 +251,7 @@ export const Market = () => {
         <MarketStyled>
           <div className="gen-info">
             <div className="asset-info">
-              <ImageWithPlug imageLink={loanToken.icon} alt={`${loanToken.icon} icon`} />
+              <ImageWithPlug useRounded imageLink={loanToken.icon} alt={`${loanToken.icon} icon`} />
 
               <div className="text-wrapper">
                 <div className="symbol">{loanToken.name}</div>

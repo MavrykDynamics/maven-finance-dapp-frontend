@@ -19,7 +19,7 @@ const navLinkBeforeItem = css`
 `
 
 // get styles for default nav link and active
-const getNavLinkStyles = (isActive: boolean) => css`
+const getNavLinkStyles = ($isActive: boolean) => css`
   position: relative;
   transition: 0.3s all;
 
@@ -27,9 +27,9 @@ const getNavLinkStyles = (isActive: boolean) => css`
   font-size: 16px;
   line-height: 22px;
 
-  color: ${({ theme }) => (isActive ? theme.selectedColor : theme.navTitleColor)};
+  color: ${({ theme }) => ($isActive ? theme.selectedColor : theme.navTitleColor)};
 
-  ${isActive
+  ${$isActive
     ? css`
         color: ${({ theme }) => theme.selectedColor};
 

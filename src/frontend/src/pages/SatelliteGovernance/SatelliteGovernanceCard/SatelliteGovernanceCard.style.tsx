@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavenTheme }>`

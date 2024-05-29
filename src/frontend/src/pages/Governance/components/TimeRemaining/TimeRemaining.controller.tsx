@@ -150,7 +150,7 @@ export default function TimeRemaining() {
   }
 
   return (
-    <TimeLeftAreaWrap showBorder={showTimer}>
+    <TimeLeftAreaWrap $showBorder={showTimer}>
       {showTimer ? (
         <>
           <Timer
@@ -172,7 +172,7 @@ export default function TimeRemaining() {
         </Button>
       )}
 
-      <PopupContainer onClick={handleCloseModal} show={showModal}>
+      <PopupContainer onClick={handleCloseModal} $show={showModal}>
         <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
           <button onClick={handleCloseModal} className="close-modal" />
           <MoveNextRoundModalBase>

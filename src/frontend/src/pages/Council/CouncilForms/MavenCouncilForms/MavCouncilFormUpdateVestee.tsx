@@ -252,7 +252,7 @@ export const MavCouncilFormUpdateVestee = () => {
   ])
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.UPDATE_VESTEE}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.UPDATE_VESTEE}>
       <a
         className="info-link"
         href="https://docs.mavenfinance.io/maven-finance/council"

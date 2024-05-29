@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
 import { CardHover } from 'styles'
 
@@ -74,7 +74,7 @@ export const ExpandStyled = styled(CardHover)`
   }
 `
 
-export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: MavenTheme }>`
+export const ExpandArticleStyled = styled.article<{ $show?: boolean; theme: MavenTheme }>`
   width: 100%;
   max-height: 0;
   height: fit-content;
@@ -92,8 +92,8 @@ export const ExpandArticleStyled = styled.article<{ show?: boolean; theme: Maven
     top: 1px;
   }
 
-  ${({ show }) =>
-    show
+  ${({ $show }) =>
+    $show
       ? css`
           max-height: 100%;
           visibility: visible;

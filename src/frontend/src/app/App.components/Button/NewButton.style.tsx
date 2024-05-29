@@ -28,6 +28,12 @@ const BUTTONS_KIND_STYLES = css`
     svg {
       fill: ${({ theme }) => theme.cards};
     }
+
+    .circle-spinner {
+      div {
+        color: ${({ theme }) => theme.primaryBtnSpinnerColor} !important;
+      }
+    }
   }
 
   &.${BUTTON_SECONDARY} {

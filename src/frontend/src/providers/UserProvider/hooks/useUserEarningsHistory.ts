@@ -30,7 +30,6 @@ export const useUserEarningsHistory = () => {
       }
 
       const normalizedEarningHistory = normalizeUserEarningHistory(data)
-      console.log({ data, normalizedEarningHistory })
       setUserEarningHistory(normalizedEarningHistory)
     },
     onError: (error) => handleApolloError(error, 'USER_ACTIONS_EARNING_HISTORY_DATA_QUERY'),

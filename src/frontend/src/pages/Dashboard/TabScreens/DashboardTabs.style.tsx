@@ -3,12 +3,12 @@ import { CardHover, Card } from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 import { EmptyContainer as EmptyContainerBase } from 'app/App.style'
 
-export const TabWrapperStyled = styled.div<{ theme: MavenTheme; backgroundImage?: string }>`
+export const TabWrapperStyled = styled.div<{ theme: MavenTheme; $backgroundImage?: string }>`
   padding: 24px 32px 40px 32px;
   position: relative;
 
-  background: ${({ backgroundImage, theme }) =>
-    backgroundImage ? `url(/images/dashboard/${backgroundImage}), ${theme.cards}` : theme.cards};
+  background: ${({ $backgroundImage, theme }) =>
+    $backgroundImage ? `url(/images/dashboard/${$backgroundImage}), ${theme.cards}` : theme.cards};
   background-size: auto;
   background-repeat: no-repeat;
   background-position: right bottom;
@@ -102,6 +102,7 @@ export const LendingContentStyled = styled.div<{ theme: MavenTheme }>`
     position: absolute;
     top: 100%;
     right: -30px;
+    text-wrap: nowrap;
   }
 
   .left,
@@ -283,9 +284,9 @@ export const TreasuryContentStyled = styled.div<{ theme: MavenTheme }>`
 
 export const TreasuryVesting = styled.div<{
   theme: MavenTheme
-  totalPersent: number
-  claimedColor: string
-  totalColor: string
+  $totalPersent: number
+  $claimedColor: string
+  $totalColor: string
 }>`
   padding: 30px 20px 33px 20px;
   border: 0.5px solid ${({ theme }) => theme.strokeColor};
@@ -311,11 +312,11 @@ export const TreasuryVesting = styled.div<{
         border-radius: 50%;
 
         &.claimed {
-          background-color: ${({ theme, claimedColor }) => theme[claimedColor]};
+          background-color: ${({ theme, $claimedColor }) => theme[$claimedColor]};
         }
 
         &.total {
-          background-color: ${({ theme, totalColor }) => theme[totalColor]};
+          background-color: ${({ theme, $totalColor }) => theme[$totalColor]};
         }
       }
     }
@@ -386,15 +387,15 @@ export const TreasuryVesting = styled.div<{
     }
 
     .claimed {
-      background-color: ${({ theme, claimedColor }) => theme[claimedColor]};
-      width: ${({ totalPersent }) => `${100 - totalPersent}%`};
+      background-color: ${({ theme, $claimedColor }) => theme[$claimedColor]};
+      width: ${({ $totalPersent }) => `${100 - $totalPersent}%`};
       border-top-left-radius: 2px;
       border-bottom-left-radius: 2px;
     }
 
     .total {
-      width: ${({ totalPersent }) => `${totalPersent}%`};
-      background-color: ${({ theme, totalColor }) => theme[totalColor]};
+      width: ${({ $totalPersent }) => `${$totalPersent}%`};
+      background-color: ${({ theme, $totalColor }) => theme[$totalColor]};
       border-top-right-radius: 2px;
       border-bottom-right-radius: 2px;
     }

@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
-export const TooltipTextStyled = styled.div<{ defaultStrokeColor?: string; theme: MavenTheme }>`
+export const TooltipTextStyled = styled.div<{ $defaultStrokeColor?: string; theme: MavenTheme }>`
   display: block;
   max-width: 330px;
 

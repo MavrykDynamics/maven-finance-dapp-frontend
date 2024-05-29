@@ -97,7 +97,7 @@ export const TreasuryTab = () => {
   )
 
   return (
-    <TabWrapperStyled backgroundImage="dashboard_treasuryTab_bg.png">
+    <TabWrapperStyled $backgroundImage="dashboard_treasuryTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Treasury</BGPrimaryTitle>
         <Link to="/treasury">
@@ -169,16 +169,16 @@ export const TreasuryTab = () => {
                       })
 
                       return (
-                        <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
-                          <TableCell width="33%">{symbol}</TableCell>
-                          <TableCell width="33%">
+                        <TableRow key={symbol} $rowHeight={25} $borderColor="primaryText" className="add-hover">
+                          <TableCell $width="33%">{symbol}</TableCell>
+                          <TableCell $width="33%">
                             {treasuryTokenBalance < 0.01 ? (
                               '<0.01'
                             ) : (
                               <CommaNumber value={treasuryTokenBalance} showDecimal decimalsToShow={2} />
                             )}
                           </TableCell>
-                          <TableCell width="33%" contentPosition="right">
+                          <TableCell $width="33%" $contentPosition="right">
                             {treasuryTokenBalance * rate < 0.01 ? (
                               `<0.01 ${rate ? '$' : symbol}`
                             ) : (
@@ -203,9 +203,9 @@ export const TreasuryTab = () => {
                 <BlockName>Token Vesting</BlockName>
 
                 <TreasuryVesting
-                  totalPersent={(totalVestedAmount / amountOfTokens || 0.5) * 100}
-                  claimedColor={'linksAndButtons'}
-                  totalColor={'selectedColor'}
+                  $totalPersent={(totalVestedAmount / amountOfTokens || 0.5) * 100}
+                  $claimedColor={'linksAndButtons'}
+                  $totalColor={'selectedColor'}
                 >
                   <div className="vest-stat">
                     <div className="name">

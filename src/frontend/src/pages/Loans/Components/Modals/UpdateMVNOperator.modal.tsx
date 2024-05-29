@@ -1,40 +1,40 @@
-import {useCallback, useEffect, useMemo, useState} from 'react'
-import {useLockBodyScroll} from 'react-use'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLockBodyScroll } from 'react-use'
 
 // consts
-import {INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType} from 'app/App.components/Input/Input.constants'
-import {BUTTON_PRIMARY, BUTTON_SIMPLE_SMALL, BUTTON_WIDE} from 'app/App.components/Button/Button.constants'
-import {UPDATE_OPERATORS_ACTION} from 'providers/VaultsProvider/helpers/vaults.const'
+import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS, InputStatusType } from 'app/App.components/Input/Input.constants'
+import { BUTTON_PRIMARY, BUTTON_SIMPLE_SMALL, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
+import { UPDATE_OPERATORS_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 
 // helpers
-import {validateTzAddress} from 'utils/validatorFunctions'
-import {checkWhetherTokenIsLoanToken, getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
+import { validateTzAddress } from 'utils/validatorFunctions'
+import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
 // types
-import {UpdateOperatorsPopupDataType} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import { UpdateOperatorsPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 
 // actions
-import {updateOperatorsAction, UpdateTokenOperator} from 'providers/VaultsProvider/actions/vaultPermissions.actions'
+import { updateOperatorsAction, UpdateTokenOperator } from 'providers/VaultsProvider/actions/vaultPermissions.actions'
 
 // components
 import Icon from 'app/App.components/Icon/Icon.view'
-import {Input} from 'app/App.components/Input/NewInput'
+import { Input } from 'app/App.components/Input/NewInput'
 import Button from 'app/App.components/Button/NewButton'
-import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
-import {AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow} from 'app/App.components/Table'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import { AddRowBtn, RemoveRowBtn, Table, TableBody, TableCell, TableRow } from 'app/App.components/Table'
 
 // styles
-import {GovRightContainerTitleArea} from 'pages/Governance/Governance.style'
-import {LoansModalBase} from './Modals.style'
-import {PopupContainer, PopupContainerWrapper} from 'app/App.components/popup/PopupMain.style'
+import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
+import { LoansModalBase } from './Modals.style'
+import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 
 // hooks
-import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
 // providers
-import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
-import {useUserContext} from 'providers/UserProvider/user.provider'
-import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17307%3A226700&t=Sx2aEpp3ifrGxBtQ-0
 export const UpdateMVNOperator = ({
@@ -158,7 +158,7 @@ export const UpdateMVNOperator = ({
     tableData.some(({ validationStatus }) => validationStatus !== INPUT_STATUS_SUCCESS) || updatedOperators.length === 0
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />
@@ -176,7 +176,7 @@ export const UpdateMVNOperator = ({
               {tableData.map(({ address, validationStatus }, rowIdx) => {
                 return (
                   <TableRow className="editable-row" key={rowIdx}>
-                    <TableCell width="100%">
+                    <TableCell $width="100%">
                       <Input
                         className={`table-input`}
                         inputProps={{

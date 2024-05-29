@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const AccordionWrapper = styled.div<{ theme: MavenTheme }>`
@@ -56,11 +56,11 @@ export const AccordionContent = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const AccordionItem = styled.div<{ status: boolean; theme: MavenTheme }>`
+export const AccordionItem = styled.div<{ $status: boolean; theme: MavenTheme }>`
   font-weight: 500;
   font-size: 14px;
   margin: 5px 0;
-  color: ${({ status, theme }) => (status ? theme.downColor : theme.upColor)};
+  color: ${({ $status, theme }) => ($status ? theme.downColor : theme.upColor)};
 
   .truncated_text {
     white-space: nowrap;

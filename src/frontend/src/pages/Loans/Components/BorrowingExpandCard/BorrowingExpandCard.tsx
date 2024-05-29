@@ -28,7 +28,7 @@ import {
   VAULT_CARD_REPAY_SLIDING_BUTTONS,
 } from 'pages/Loans/Loans.const'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
-import { useHistory, useLocation } from 'react-router'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
@@ -83,7 +83,7 @@ export const BorrowingExpandCard = ({
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
 
   const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
@@ -181,14 +181,14 @@ export const BorrowingExpandCard = ({
     if (isExpanded) return
 
     params.append('vaultAddress', vaultAddress)
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   const handleCloseVault = () => {
     if (!isExpanded) return
 
     params.delete('vaultAddress')
-    history.replace({ ...location, search: params.toString() })
+    navigate({ ...location, search: params.toString() }, { replace: true })
   }
 
   const handleClickExpand = () => {
@@ -339,7 +339,7 @@ export const BorrowingExpandCard = ({
         header={
           <>
             <ThreeLevelListItem className="borrow-asset-header">
-              <ImageWithPlug imageLink={borrowedTokenIcon} alt={`${borrowedTokenSymbol} icon`} />
+              <ImageWithPlug imageLink={borrowedTokenIcon} alt={`${borrowedTokenSymbol} icon`} useRounded />
               <div className="data">
                 <div className="value">{vaultName ? vaultName : borrowedTokenSymbol}</div>
                 <div className="value">
@@ -349,7 +349,7 @@ export const BorrowingExpandCard = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem
               className="collateral-diagram"
-              customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
+              $customColor={getCollateralRatioPercentColor(colors[themeSelected], collateralRatio)}
             >
               <div className={`percentage`}>
                 Collateral Ratio:{' '}

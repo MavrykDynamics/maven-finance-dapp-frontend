@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
 
 // components
 import { ErrorTopbar } from './components/ErrorTopbar'
@@ -50,27 +49,25 @@ export const ErrorPage = ({
   }, [])
 
   return (
-    <Router>
-      <ThemeProvider theme={themeColors[themeSelected]}>
-        <ErrorPageWrapper themeSelected={themeSelected}>
-          <ErrorTopbar themeSelected={themeSelected} handleRedirect={handleRedirect} />
-          <ErrorPageInner>
-            <ErrorTopHeader>Error</ErrorTopHeader>
-            <Vector1 src={`/images/${themeSelected}/satellite-error.svg`} />
-            <ErrorLogoImage src="/images/404.svg" alt="404-logo" />
-            <Vector2 src={`/images/${themeSelected}/space-cow.svg`} />
-            <ErrorMidHeader>{headerText}</ErrorMidHeader>
-            <ErrorParagraph>{descText}</ErrorParagraph>
-            {type === ERROR_TYPE_ROUTER && (
-              <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
-                <Icon id="menu-compass" />
-                Go To Dashboard
-              </NewButton>
-            )}
-          </ErrorPageInner>
-          <ErrorFooter themeSelected={themeSelected} handleRedirect={handleRedirect} />
-        </ErrorPageWrapper>
-      </ThemeProvider>
-    </Router>
+    <ThemeProvider theme={themeColors[themeSelected]}>
+      <ErrorPageWrapper $themeSelected={themeSelected}>
+        <ErrorTopbar themeSelected={themeSelected} handleRedirect={handleRedirect} />
+        <ErrorPageInner>
+          <ErrorTopHeader>Error</ErrorTopHeader>
+          <Vector1 src={`/images/${themeSelected}/satellite-error.svg`} />
+          <ErrorLogoImage src="/images/404.svg" alt="404-logo" />
+          <Vector2 src={`/images/${themeSelected}/space-cow.svg`} />
+          <ErrorMidHeader>{headerText}</ErrorMidHeader>
+          <ErrorParagraph>{descText}</ErrorParagraph>
+          {type === ERROR_TYPE_ROUTER && (
+            <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
+              <Icon id="menu-compass" />
+              Go To Dashboard
+            </NewButton>
+          )}
+        </ErrorPageInner>
+        <ErrorFooter themeSelected={themeSelected} handleRedirect={handleRedirect} />
+      </ErrorPageWrapper>
+    </ThemeProvider>
   )
 }

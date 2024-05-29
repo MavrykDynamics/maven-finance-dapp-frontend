@@ -5,7 +5,7 @@ export const EGOV_CONFIG_QUERY = gql(`
 		emergency_governance: emergency_governance {
 			current_emergency_record_id
 			smvn_percentage_required
-			required_fee_mutez
+			required_fee_mumav
 			min_smvn_required_to_vote
 		}
 	}

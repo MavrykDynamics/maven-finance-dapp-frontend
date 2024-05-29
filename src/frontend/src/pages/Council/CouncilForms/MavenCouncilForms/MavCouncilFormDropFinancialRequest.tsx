@@ -147,7 +147,7 @@ export const MavCouncilFormDropFinancialRequest = () => {
   const isButtonDisabled = isActionActive || !chosenDdItem || isFinancialRequestsLoading
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.DROP_FINANCIAL_REQUEST}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.DROP_FINANCIAL_REQUEST}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

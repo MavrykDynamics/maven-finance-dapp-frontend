@@ -136,7 +136,7 @@ export const MavCouncilFormRemoveVestee = () => {
   }, [formInputStatus.vesteeAddress, vesteeAddress, isVesteesLoading])
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.REMOVE_VESTEE}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.REMOVE_VESTEE}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

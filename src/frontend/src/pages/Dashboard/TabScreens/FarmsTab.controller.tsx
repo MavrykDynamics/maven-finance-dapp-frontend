@@ -128,7 +128,7 @@ export const FarmsTab = () => {
   )
 
   return (
-    <TabWrapperStyled backgroundImage="dashboard_farmsTab_bg.png">
+    <TabWrapperStyled $backgroundImage="dashboard_farmsTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Yield Farms</BGPrimaryTitle>
         <Link to="/yield-farms?isLive=1">

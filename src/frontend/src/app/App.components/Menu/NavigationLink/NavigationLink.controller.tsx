@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import useCollapse from 'react-collapsed'
-import { Link, matchPath } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { Link, matchPath, useLocation } from 'react-router-dom'
 
 // types
 import { SubNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
@@ -24,9 +23,9 @@ import Icon from 'app/App.components/Icon/Icon.view'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 const Sublink = ({ subNavLink, isSelected }: { subNavLink: SubNavigationRoute; isSelected: boolean }) => (
-  <SubNavLink disabled={subNavLink.disabled}>
+  <SubNavLink $disabled={subNavLink.disabled}>
     <Link to={`/${subNavLink.subPath}`} className={subNavLink.disabled ? 'disabled' : ''}>
-      <SubLinkText selected={isSelected}>{subNavLink.subTitle}</SubLinkText>
+      <SubLinkText $selected={isSelected}>{subNavLink.subTitle}</SubLinkText>
     </Link>
   </SubNavLink>
 )
@@ -62,7 +61,7 @@ export const NavigationLink = ({
 
   const isMainLinkDisabled = useMemo(() => {
     const paths = subPages.reduce((acc, { routeSubPath }) => acc.concat(routeSubPath), [`/${path}`])
-    return paths.find((path) => matchPath(pathname, { path, exact: true, strict: true }))
+    return paths.find((path) => matchPath({ path }, pathname))
   }, [pathname])
 
   useEffect(() => {
@@ -82,7 +81,7 @@ export const NavigationLink = ({
       onClick={(e: React.MouseEvent | React.TouchEvent) => isMainLinkDisabled && e.preventDefault()}
     >
       {icon && (
-        <NavigationLinkIcon selected={selectedMainLink === id} className="navLinkIcon">
+        <NavigationLinkIcon $selected={selectedMainLink === id} className="navLinkIcon">
           <Icon id={icon} />
         </NavigationLinkIcon>
       )}
@@ -94,16 +93,16 @@ export const NavigationLink = ({
     return (
       <NavigationLinkContainer
         className={`collapsible`}
-        selected={selectedMainLink === id}
-        isMobMenuExpanded={isMobMenuExpanded}
+        $selected={selectedMainLink === id}
+        $isMobMenuExpanded={isMobMenuExpanded}
         key={id}
       >
         <NavigationLinkItem
-          selected={selectedMainLink === id}
-          isMobMenuExpanded={isMobMenuExpanded}
+          $selected={selectedMainLink === id}
+          $isMobMenuExpanded={isMobMenuExpanded}
+          $disabled={disabled}
           className="header"
           {...getToggleProps({ onClick: () => (!disabled ? setShowSubPages(!showSubPages) : null) })}
-          disabled={disabled}
           onClick={navLinkClickHandler}
         >
           {mainLink}
@@ -127,12 +126,12 @@ export const NavigationLink = ({
   }
 
   return (
-    <NavigationLinkContainer key={id} selected={selectedMainLink === id} isMobMenuExpanded={isMobMenuExpanded}>
+    <NavigationLinkContainer key={id} $selected={selectedMainLink === id} $isMobMenuExpanded={isMobMenuExpanded}>
       <NavigationLinkItem
         onClick={navLinkClickHandler}
-        selected={selectedMainLink === id}
-        isMobMenuExpanded={isMobMenuExpanded}
-        disabled={disabled}
+        $selected={selectedMainLink === id}
+        $isMobMenuExpanded={isMobMenuExpanded}
+        $disabled={disabled}
       >
         {mainLink}
       </NavigationLinkItem>

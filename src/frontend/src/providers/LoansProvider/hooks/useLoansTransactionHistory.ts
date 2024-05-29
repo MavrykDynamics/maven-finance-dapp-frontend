@@ -1,5 +1,5 @@
 import qs from 'qs'
-import { useHistory, useLocation } from 'react-router'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 
 // hooks
@@ -69,7 +69,7 @@ export const useLoansTransactionHistory = ({
   const [isHistoryEmpty, setIsHistoryEmpty] = useState(false)
 
   // stuff for handling page out of limims
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search, pathname } = useLocation()
   const { page = '', ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
   const currentPage = useMemo(() => getPageNumber(search, TRANSACTION_HISTORY_TABLE_NAME), [search])
@@ -110,7 +110,7 @@ export const useLoansTransactionHistory = ({
             pathname,
             restQP,
           })
-          history.replace(redirectToFirstPageOfTheList)
+          navigate(redirectToFirstPageOfTheList, { replace: true })
         } else {
           setTransactionHistoryIndexer((prev) => ({
             list: {
@@ -130,7 +130,7 @@ export const useLoansTransactionHistory = ({
           'Loading transactions history error, please reload the page',
         ),
     }
-  }, [currentPage, history, marketTokenAddress, page, pathname, restQP, typeFilter, userAddress, vaultAddress])
+  }, [currentPage, navigate, marketTokenAddress, page, pathname, restQP, typeFilter, userAddress, vaultAddress])
 
   // 2 queries for dev and prod, cuz query is dynamic and codegen can't generate types for it
   // always load new txHistory on market | vault address change

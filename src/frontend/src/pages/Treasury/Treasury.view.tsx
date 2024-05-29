@@ -144,16 +144,16 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
                     })
 
                     return (
-                      <TableRow rowHeight={25} borderColor="primaryText" className="add-hover" key={symbol}>
-                        <TableCell width="37%">{symbol}</TableCell>
-                        <TableCell width="31%">
+                      <TableRow $rowHeight={25} $borderColor="primaryText" className="add-hover" key={symbol}>
+                        <TableCell $width="37%">{symbol}</TableCell>
+                        <TableCell $width="31%">
                           {treasuryTokenBalance < 0.01 ? (
                             '<0.01'
                           ) : (
                             <CommaNumber value={treasuryTokenBalance} showDecimal />
                           )}
                         </TableCell>
-                        <TableCell width="32%" contentPosition="right">
+                        <TableCell $width="32%" $contentPosition="right">
                           {treasuryTokenBalance * rate < 0.01 ? (
                             `<0.01 ${rate ? '$' : symbol}`
                           ) : (

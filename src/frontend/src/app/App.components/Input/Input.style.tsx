@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavenTheme } from '../../../styles/interfaces'
 import {
@@ -450,9 +450,9 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const NewInputLabel = styled.label<{ disabled?: boolean; theme: MavenTheme }>`
+export const NewInputLabel = styled.label<{ $disabled?: boolean; theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
-  opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
+  opacity: ${({ $disabled }) => ($disabled ? '0.6' : '1')};
   display: block;
   white-space: nowrap;
   font-weight: 700;

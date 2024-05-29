@@ -74,7 +74,7 @@ export const Proposals = ({
             <ProposalListItem
               key={proposal.id}
               onClick={() => handleItemSelect(proposal)}
-              selected={selectedProposalId === proposal.id}
+              $selected={selectedProposalId === proposal.id}
             >
               <ProposalItemLeftSide>
                 <span>{index + 1 + (Number(currentPage) - 1) * LIST_NAMES_MAPPER[listName]}</span>

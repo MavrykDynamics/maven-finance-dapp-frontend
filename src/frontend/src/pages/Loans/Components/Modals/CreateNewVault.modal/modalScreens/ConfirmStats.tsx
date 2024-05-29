@@ -110,7 +110,7 @@ export const ConfirmStats = () => {
         vaultFactoryAddress,
         lendingControllerAddress,
         tokensArr,
-        selectedBaker?.bakerAddress ?? null
+        selectedBaker?.bakerAddress ?? null,
       )
     }
 
@@ -134,12 +134,12 @@ export const ConfirmStats = () => {
     () => ({
       actionType: CREATE_VAULT_ACTION,
       actionFn: createVaultAction,
-      afterActionCallback: () => updateScreenToShow(BORROW_SCREEN_ID),
+      successActionCallback: () => updateScreenToShow(BORROW_SCREEN_ID),
       dappActionCallback: () => updateVaultCreating(false),
       errActionCallback: () => updateVaultCreating(false),
       isSilentAction: true,
     }),
-    [createVaultAction, updateScreenToShow, updateVaultCreating]
+    [createVaultAction, updateScreenToShow, updateVaultCreating],
   )
 
   const { action: createVaultHandler } = useContractAction(createVaultActionProps)
@@ -176,12 +176,12 @@ export const ConfirmStats = () => {
                 const balance = Number(amount)
 
                 return (
-                  <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
-                    <TableCell width="33%">{symbol}</TableCell>
-                    <TableCell width="33%">
+                  <TableRow key={symbol} $rowHeight={25} $borderColor="primaryText" className="add-hover">
+                    <TableCell $width="33%">{symbol}</TableCell>
+                    <TableCell $width="33%">
                       <CommaNumber value={balance} decimalsToShow={Number(decimals)} useAccurateParsing={balance < 1} />
                     </TableCell>
-                    <TableCell width="33%" contentPosition="right">
+                    <TableCell $width="33%" $contentPosition="right">
                       <CommaNumber
                         value={balance * rate}
                         beginningText={rate ? '$' : symbol}

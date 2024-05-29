@@ -123,16 +123,16 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                   const averageVaultStatus = getVaultSimpleStatus(collateralRatio)
 
                   return (
-                    <TableRow rowHeight={60} borderColor="divider" className="add-hover" key={symbol}>
-                      <TableCell width="15%">
+                    <TableRow $rowHeight={60} $borderColor="divider" className="add-hover" key={symbol}>
+                      <TableCell $width="15%">
                         <div className="cell-content row with-icon asset-name">
-                          <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
+                          <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} logo`} />
                           {symbol}
                         </div>
                       </TableCell>
 
                       <TableCell
-                        width="43%"
+                        $width="43%"
                         className={classNames('position-multy-cell', 'lending', { 'one-item': !lendingItem })}
                       >
                         <div className="cell-content" style={{ marginRight: '20px' }}>
@@ -141,22 +141,12 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                               <CommaNumber value={lendingAPY} endingText="%" />
                               <CommaNumber value={lendValue * rate} beginningText="$" />
                               <CommaNumber value={interestEarned} />
-                              <Link
-                                to={{
-                                  pathname: `/loans/${address}/${LEND_TAB_ID}`,
-                                  state: { from: pathname },
-                                }}
-                              >
+                              <Link to={`/loans/${address}/${LEND_TAB_ID}`} state={{ from: pathname }}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>
                             </>
                           ) : (
-                            <Link
-                              to={{
-                                pathname: `/loans/${address}/${LEND_TAB_ID}`,
-                                state: { from: pathname },
-                              }}
-                            >
+                            <Link to={`/loans/${address}/${LEND_TAB_ID}`} state={{ from: pathname }}>
                               <Button
                                 kind={BUTTON_SIMPLE}
                                 onClick={() => {
@@ -186,22 +176,12 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
                               <div className={`vault-status ${averageVaultStatus.status}`}>
                                 {averageVaultStatus.text}
                               </div>
-                              <Link
-                                to={{
-                                  pathname: `/loans/${address}/${BORROW_TAB_ID}`,
-                                  state: { from: pathname },
-                                }}
-                              >
+                              <Link to={`/loans/${address}/${BORROW_TAB_ID}`} state={{ from: pathname }}>
                                 <Button kind={BUTTON_SIMPLE}>View</Button>
                               </Link>
                             </>
                           ) : (
-                            <Link
-                              to={{
-                                pathname: `/loans/${address}/${BORROW_TAB_ID}`,
-                                state: { from: pathname },
-                              }}
-                            >
+                            <Link to={`/loans/${address}/${BORROW_TAB_ID}`} state={{ from: pathname }}>
                               <Button
                                 kind={BUTTON_SIMPLE}
                                 onClick={() =>
@@ -227,10 +207,10 @@ export const LoansPositionTable = ({ userVaultsData }: { userVaultsData: UserLoa
               </TableBody>
             ) : (
               <TableBody>
-                <TableRow rowHeight={1}>
-                  <TableCell width="15%" />
-                  <TableCell width="43%" />
-                  <TableCell width="41%" />
+                <TableRow $rowHeight={1}>
+                  <TableCell $width="15%" />
+                  <TableCell $width="43%" />
+                  <TableCell $width="41%" />
                 </TableRow>
               </TableBody>
             )}

@@ -110,7 +110,7 @@ export const IPFSUploaderView = ({
           </label>
         )}
         <UploaderFileSelector
-          validation={validationStatus ?? ''}
+          $validation={validationStatus ?? ''}
           className={`${disabled ? 'disabled' : ''} ${validationStatus}`}
         >
           <div>
@@ -132,7 +132,7 @@ export const IPFSUploaderView = ({
               closeEditor={handleCloseEditor}
             />
 
-            <UploadIconContainer uploadIsFailed={uploadIsFailed} onClick={handleIconClick}>
+            <UploadIconContainer $uploadIsFailed={uploadIsFailed} onClick={handleIconClick}>
               {imageIpfsUrl && !isUploading ? (
                 <>
                   {isDocument ? (

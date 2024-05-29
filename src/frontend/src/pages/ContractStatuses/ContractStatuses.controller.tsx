@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import qs from 'qs'
 
 // components
@@ -54,7 +54,7 @@ export const ContractStatuses = () => {
   } = useContractStatusesContext()
 
   const { search, pathname } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { page = {}, ...rest } = qs.parse(search, { ignoreQueryPrefix: true })
 
   const [selectedContract, setSelectedContract] = useState<string>(ALL)
@@ -101,7 +101,7 @@ export const ContractStatuses = () => {
       pathname,
       restQP: rest,
     })
-    history.push(generateNewUrl)
+    navigate(generateNewUrl)
   }
 
   return (

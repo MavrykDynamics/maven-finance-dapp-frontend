@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // consts
@@ -28,23 +29,21 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { parseDate } from 'utils/time'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 
-// types
-import { UserLoansData } from 'providers/UserProvider/user.provider.types'
+// context
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import useUserLoansData from 'providers/UserProvider/hooks/useUserLoansData'
 
-export const LoansTxTab = ({
-  txVariant,
-  userLoansData,
-  isUserLoansLoading,
-}: {
-  txVariant: 'lending' | 'borrowing'
-  isUserLoansLoading: boolean
-  userLoansData: UserLoansData['userLendings'] | UserLoansData['userBorrowings']
-}) => {
+export const LoansTxTab = ({ txVariant }: { txVariant: 'lending' | 'borrowing' }) => {
   const { tokensMetadata } = useTokensContext()
   const { userAddress } = useUserContext()
 
+  const { isLoading: isUserLoansLoading, userLendings, userBorrowings } = useUserLoansData()
+
   const isLending = txVariant === 'lending'
+  const userLoansData = useMemo(
+    () => (isLending ? userLendings : userBorrowings),
+    [isLending, userBorrowings, userLendings],
+  )
 
   return (
     <LBHInfoBlock>
@@ -74,26 +73,26 @@ export const LoansTxTab = ({
 
                 const { icon, symbol } = token
                 return (
-                  <TableRow rowHeight={55} borderColor="divider" className="add-hover" key={id + operationHash}>
-                    <TableCell width="20%">
+                  <TableRow $rowHeight={55} $borderColor="divider" className="add-hover" key={id + operationHash}>
+                    <TableCell $width="20%">
                       <div className="cell-content row">
-                        <ImageWithPlug imageLink={icon} alt={`lended asset logo`} />
+                        <ImageWithPlug useRounded imageLink={icon} alt={`lended asset logo`} />
                         {symbol}
                       </div>
                     </TableCell>
-                    <TableCell width="20%">
+                    <TableCell $width="20%">
                       <CommaNumber value={amount} />
                     </TableCell>
-                    <TableCell width="20%">
+                    <TableCell $width="20%">
                       <CommaNumber value={annualPercentage} endingText="%" />
                     </TableCell>
-                    <TableCell width="30%">
+                    <TableCell $width="30%">
                       {parseDate({ time: date, timeFormat: 'MMM Do, YYYY, HH:mm:ss UTC' })}
                     </TableCell>
-                    <TableCell width="10%" contentPosition="right">
+                    <TableCell $width="10%" $contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
                         <Link
-                          to={{ pathname: `${process.env.REACT_APP_TZKT_LINK}/${operationHash}` }}
+                          to={`${process.env.REACT_APP_TZKT_LINK}/${operationHash}`}
                           target="_blank"
                           className="isCyan"
                         >

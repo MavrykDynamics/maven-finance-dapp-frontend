@@ -63,7 +63,7 @@ export const SatellitesTab = () => {
   )
 
   return (
-    <TabWrapperStyled backgroundImage="dashboard_satelliteTab_bg.png">
+    <TabWrapperStyled $backgroundImage="dashboard_satelliteTab_bg.png">
       <div className="top">
         <BGPrimaryTitle>Satellites</BGPrimaryTitle>
         <Link to="/satellites">

@@ -71,7 +71,7 @@ export const SatelliteSideBarFAQ = () => (
 const SidebarUserEditButton = ({ image, name }: { image: string; name: string }) => {
   return (
     <SidebarUserButton title={name}>
-      <ImageWithPlug imageLink={image} alt="your satellite profile avatar" />
+      <ImageWithPlug useRounded imageLink={image} alt="your satellite profile avatar" />
       <div>
         <div className="name">{name}</div>
         <div className="link">View Satellite Profile</div>
@@ -99,7 +99,7 @@ const SatellitesSideBar = ({ isButton = true }: { isButton?: boolean }) => {
     <SatelliteSideBarStyled>
       <SideBarSection>
         {isButton ? (
-          <Link to={`/become-satellite/${SATELLITE_TAB_EDIT}}`}>
+          <Link to={`/become-satellite/edit`}>
             {isSatellite && satelliteAvatar && userSatelliteName ? (
               <SidebarUserEditButton name={userSatelliteName} image={satelliteAvatar} />
             ) : (

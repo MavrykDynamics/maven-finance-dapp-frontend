@@ -6,7 +6,7 @@ export const Impact = ({ value, endingText }: { value: number; endingText?: stri
   const sign = value < 0 ? '-' : value > 0 ? '+' : ''
 
   return (
-    <ImpactStyled impact={ImpactSignMapper[sign]}>
+    <ImpactStyled $impact={ImpactSignMapper[sign]}>
       {<CommaNumber value={Math.abs(value)} beginningText={sign} endingText={endingText} />}
     </ImpactStyled>
   )

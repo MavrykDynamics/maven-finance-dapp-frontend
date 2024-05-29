@@ -39,15 +39,19 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // types
 import { SatelliteMapper } from 'providers/SatellitesProvider/satellites.provider.types'
+import { Outlet, useOutletContext } from 'react-router-dom'
 
 type SatelliteDetailsScreenProps = {
   satelliteId: string
   usersSatelliteProfile: SatelliteMapper[0]
 }
-export const SatelliteDetailsScreen = ({ satelliteId, usersSatelliteProfile }: SatelliteDetailsScreenProps) => {
+
+export const SatelliteDetailsScreen = () => {
   const {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
+
+  const { satelliteId, usersSatelliteProfile }: SatelliteDetailsScreenProps = useOutletContext()
 
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
 

@@ -41,7 +41,7 @@ import { FatalError } from 'errors/error'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
 export const SatelliteDetails = () => {
-  const { satelliteId } = useParams<{ satelliteId: string }>()
+  const { satelliteId = '' } = useParams<{ satelliteId: string }>()
   const { apolloClient } = useApolloContext()
   const { fatal } = useToasterContext()
   const {

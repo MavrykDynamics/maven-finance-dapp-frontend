@@ -1,38 +1,38 @@
-import React, {useMemo} from 'react'
+import React, { useMemo } from 'react'
 
 // context
-import {useProposalsContext} from 'providers/ProposalsProvider/proposals.provider'
-import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
-import {useDappConfigContext} from 'providers/DappConfigProvider/dappConfig.provider'
-import {useTreasuryContext} from 'providers/TreasuryProvider/treasury.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useTreasuryContext } from 'providers/TreasuryProvider/treasury.provider'
 
 // types
-import {StageThreeFormProps, StageThreeValidityItem, ValidationResult} from '../ProposalSubmission.types'
+import { StageThreeFormProps, StageThreeValidityItem, ValidationResult } from '../ProposalSubmission.types'
 
 // helpers
-import {convertNumberForClient} from 'utils/calcFunctions'
-import {getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
-import {getValidityStageThreeTable} from '../helpers/proposalSubmissionValidation.utils'
-import {reduceTreasuryAssets} from 'providers/TreasuryProvider/helpers/treasury.utils'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getValidityStageThreeTable } from '../helpers/proposalSubmissionValidation.utils'
+import { reduceTreasuryAssets } from 'providers/TreasuryProvider/helpers/treasury.utils'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import {TzAddress} from 'app/App.components/TzAddress/TzAddress.view'
-import {DDItemId, DropDown, DropDownItemType} from 'app/App.components/DropDown/NewDropdown'
-import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
-import {Input} from 'app/App.components/Input/NewInput'
-import {ProposalSubmissionBanner} from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
+import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
+import { DDItemId, DropDown, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { Input } from 'app/App.components/Input/NewInput'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
 import Button from 'app/App.components/Button/NewButton'
 
 // const
-import {INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS} from 'app/App.components/Input/Input.constants'
-import {BUTTON_SIMPLE_SMALL} from 'app/App.components/Button/Button.constants'
-import {PRIMARY_TZ_ADDRESS_COLOR} from 'app/App.components/TzAddress/TzAddress.constants'
-import {STAGE_3_DESCRIPTION} from 'texts/tooltips/governance'
-import {GovPhases} from 'providers/ProposalsProvider/helpers/proposals.const'
+import { INPUT_SMALL, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
+import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
+import { STAGE_3_DESCRIPTION } from 'texts/tooltips/governance'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // styles
-import {SubmitProposalGeneralData} from '../ProposalSubmission.style'
+import { SubmitProposalGeneralData } from '../ProposalSubmission.style'
 import {
   AddRowBtn,
   RemoveRowBtn,
@@ -43,8 +43,8 @@ import {
   TableHeaderCell,
   TableRow,
 } from 'app/App.components/Table'
-import {DropDownJsxChild} from 'app/App.components/DropDown/DropDown.style'
-import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
+import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // NOTE: isLoading is handled in <ProposalSubmission.controller>
 export const StageThreeForm = ({
@@ -216,7 +216,7 @@ export const StageThreeForm = ({
 
         <div className="submitted-data">
           <div className="label">3 - Fee</div>
-          <CommaNumber className="value" value={fee} endingText="XTZ" />
+          <CommaNumber className="value" value={fee} endingText="MVRK" />
         </div>
       </SubmitProposalGeneralData>
       <div className="payments-table">
@@ -285,7 +285,7 @@ export const StageThreeForm = ({
 
                 return (
                   <TableRow className="editable-row" key={payment.id}>
-                    <TableCell width="25%" className="hide-overflow tz-address-cell-center">
+                    <TableCell $width="25%" className="hide-overflow tz-address-cell-center">
                       {isTableDisabled ? (
                         payment.to__id ? (
                           <TzAddress tzAddress={String(payment.to__id)} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon />
@@ -310,7 +310,7 @@ export const StageThreeForm = ({
                       )}
                     </TableCell>
 
-                    <TableCell width="25%" className="hide-overflow">
+                    <TableCell $width="25%" className="hide-overflow">
                       {isTableDisabled ? (
                         String(payment.title)
                       ) : (
@@ -331,7 +331,7 @@ export const StageThreeForm = ({
                       )}
                     </TableCell>
 
-                    <TableCell width="25%" className="hide-overflow">
+                    <TableCell $width="25%" className="hide-overflow">
                       {isTableDisabled ? (
                         <CommaNumber value={tokenAmount} endingText={symbol} />
                       ) : (
@@ -351,7 +351,7 @@ export const StageThreeForm = ({
                       )}
                     </TableCell>
 
-                    <TableCell width="25%">
+                    <TableCell $width="25%">
                       {isTableDisabled ? (
                         symbol
                       ) : (
@@ -410,11 +410,11 @@ export const StageThreeForm = ({
               })
             ) : (
               <>
-                <TableRow className="plug-row" rowHeight={43}>
-                  <TableCell width="25%" />
-                  <TableCell width="25%" />
-                  <TableCell width="25%" />
-                  <TableCell width="25%" />
+                <TableRow className="plug-row" $rowHeight={43}>
+                  <TableCell $width="25%" />
+                  <TableCell $width="25%" />
+                  <TableCell $width="25%" />
+                  <TableCell $width="25%" />
                   <div className="plug-row-text">
                     {locked ? 'Proposal is locked without payments' : 'Add payments to your proposal'}
                   </div>

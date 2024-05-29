@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
-import { useLocation, useHistory, useParams } from 'react-router'
+import { useState, useMemo, useEffect, useLayoutEffect, useDeferredValue } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -57,9 +57,9 @@ export const vaultTabs = {
 }
 
 export const VaultsView = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search } = useLocation()
-  const { tabId } = useParams<{ tabId: string }>()
+  const { tabId = 'all' } = useParams<{ tabId: string }>()
 
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -153,7 +153,7 @@ export const VaultsView = () => {
 
     if (!foundTab?.path || currentTabId === id) return
 
-    history.replace(`${pathname}/${foundTab.path}`)
+    navigate(`${pathname}/${foundTab.path}`)
     setVaultsIds(
       foundTab.path === vaultTabs.ALL
         ? allVaultsIds
@@ -190,6 +190,8 @@ export const VaultsView = () => {
 
   const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
 
+  const deferredVaultIds = useDeferredValue(paginatedVaultsList)
+
   return (
     <VaultsStyled>
       <SlidingTabButtons
@@ -213,7 +215,7 @@ export const VaultsView = () => {
         </DataLoaderWrapper>
       ) : vaultsIds.length ? (
         <VaultsList>
-          {paginatedVaultsList.map((item) => {
+          {deferredVaultIds.map((item) => {
             const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
 
             return (

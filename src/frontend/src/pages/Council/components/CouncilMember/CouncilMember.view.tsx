@@ -36,7 +36,7 @@ export const CouncilMemberView = (props: Props) => {
   const memberContent = (
     <CouncilMemberStyled>
       <div className="inner">
-        <ImageWithPlug alt={name} imageLink={image} plugSrc="/images/default-user.png" />
+        <ImageWithPlug alt={name} imageLink={image} plugSrc="/images/default-user.png" useRounded />
         <figcaption>
           <h4>{name}</h4>
           {memberAddress ? <TzAddress type={PRIMARY_TZ_ADDRESS_COLOR} tzAddress={memberAddress} hasIcon /> : null}

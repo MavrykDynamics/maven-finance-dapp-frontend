@@ -1,7 +1,7 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
-export const PageHeaderStyled = styled.div<{ backgroundImageSrc: string }>`
+export const PageHeaderStyled = styled.div<{ $backgroundImageSrc: string }>`
   width: 100%;
   height: 160px;
   display: flex;
@@ -14,7 +14,7 @@ export const PageHeaderStyled = styled.div<{ backgroundImageSrc: string }>`
   margin-bottom: 30px;
 
   &::before {
-    background-image: url(${({ backgroundImageSrc }) => backgroundImageSrc}),
+    background-image: url(${({ $backgroundImageSrc }) => $backgroundImageSrc}),
       linear-gradient(
         90deg,
         #38237c 0%,
@@ -115,10 +115,10 @@ export const PageHeaderForegroundImageContainer = styled.div`
   overflow: visible;
 `
 
-export const PageHeaderForegroundImage = styled.img<{ page: string; src: string }>`
+export const PageHeaderForegroundImage = styled.img<{ $page: string; src?: string }>`
   position: absolute;
-  right: ${({ page }) => {
-    switch (page) {
+  right: ${({ $page }) => {
+    switch ($page) {
       case 'governance':
       case 'council':
       case 'financial requests':
@@ -131,8 +131,8 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
         return '0'
     }
   }};
-  width: ${({ page }) => {
-    switch (page) {
+  width: ${({ $page }) => {
+    switch ($page) {
       case 'governance':
       case 'council':
       case 'financial requests':
@@ -145,8 +145,8 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
         return 'fit-content'
     }
   }};
-  height: ${({ page }) => {
-    switch (page) {
+  height: ${({ $page }) => {
+    switch ($page) {
       case 'dashboard':
         return '172px'
       case 'break glass':
@@ -170,8 +170,8 @@ export const PageHeaderForegroundImage = styled.img<{ page: string; src: string 
         return '172px'
     }
   }};
-  bottom: ${({ page }) => {
-    switch (page) {
+  bottom: ${({ $page }) => {
+    switch ($page) {
       case 'satellites':
         return '-20px'
       case 'lending':

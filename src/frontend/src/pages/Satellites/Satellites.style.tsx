@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { Card } from 'styles'
 import { MavenTheme } from '../../styles/interfaces'
 
@@ -35,7 +35,7 @@ export const SatelliteListStyled = styled.div`
   }
 `
 
-export const SatelliteSearchFilter = styled(Card)<{ theme: MavenTheme; oracle?: boolean; dataFeeds?: boolean }>`
+export const SatelliteSearchFilter = styled(Card)<{ theme: MavenTheme }>`
   display: flex;
   align-items: center;
   padding: 16px 26px;

@@ -13,7 +13,7 @@ import { Footer } from './App.components/Footer/Footer'
 
 // consts
 import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
-import { ecadLabGhostnetRpcNode } from 'consts/rpcNodes.const'
+import { atlasNetRpcnode } from 'consts/rpcNodes.const'
 
 // utils
 import { setItemInStorage } from 'utils/storage'
@@ -47,7 +47,7 @@ export const App = () => {
   // when user closes the tab - reset RPC node to the dafult one
   useEffect(() => {
     const handleBeforeUnload = () => {
-      setItemInStorage(RPC_NODE, ecadLabGhostnetRpcNode)
+      setItemInStorage(RPC_NODE, atlasNetRpcnode)
     }
 
     window.addEventListener('beforeunload', handleBeforeUnload)
@@ -61,7 +61,7 @@ export const App = () => {
   const proccedPolicy = useCallback(() => setCookie('policyPopup', true), [])
 
   return (
-    <AppStyled isExpandedMenu={sidebarOpened}>
+    <AppStyled $isExpandedMenu={sidebarOpened}>
       <Loaders />
 
       <Menu />

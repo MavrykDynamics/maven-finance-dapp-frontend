@@ -1,4 +1,4 @@
-import { OpKind, TransferParams, WalletParamsWithKind } from '@taquito/taquito'
+import { OpKind, TransferParams, WalletParamsWithKind } from '@mavrykdynamics/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { unknownToError, WalletOperationError } from 'errors/error'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'

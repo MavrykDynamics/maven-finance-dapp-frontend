@@ -186,18 +186,18 @@ export const ContractDetails = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const DataFeedInfoBlock = styled.div<{ justifyContent?: string; theme: MavenTheme }>`
+export const DataFeedInfoBlock = styled.div<{ $justifyContent?: string; theme: MavenTheme }>`
   position: relative;
   display: flex;
   flex-direction: column;
   padding-top: 15px;
-  justify-content: ${({ justifyContent }) => justifyContent || 'flex-start'};
+  justify-content: ${({ $justifyContent }) => $justifyContent || 'flex-start'};
   min-height: 56px;
 `
 
-export const DataFeedValueText = styled.div<{ fontWeidth?: number; fontSize?: number; theme: MavenTheme }>`
-  font-weight: ${({ fontWeidth }) => fontWeidth || 400};
-  font-size: ${({ fontSize }) => (fontSize ? `${fontSize}px` : '12px')};
+export const DataFeedValueText = styled.div<{ $fontWeidth?: number; $fontSize?: number; theme: MavenTheme }>`
+  font-weight: ${({ $fontWeidth }) => $fontWeidth || 400};
+  font-size: ${({ $fontSize }) => ($fontSize ? `${$fontSize}px` : '12px')};
   color: ${({ theme }) => theme.primaryText};
   display: flex;
 

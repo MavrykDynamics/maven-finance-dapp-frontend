@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { usePrevious } from 'react-use'
-import { useHistory, useParams } from 'react-router'
 import qs from 'qs'
-import { Link, Redirect, Route, Switch } from 'react-router-dom'
+import { Link, Navigate, Outlet, Route, Routes as Switch, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // components
 import Button from 'app/App.components/Button/NewButton'
@@ -48,8 +47,9 @@ import { USER_ACTIONS_HISTORY } from 'app/App.components/Pagination/pagination.c
 import { DISTRIBUTE_PROPOSALS_REWARDS_ACTION } from 'providers/SatellitesProvider/satellites.const'
 
 const DashboardPersonal = () => {
-  const { tabId } = useParams<{ tabId: string }>()
-  const history = useHistory()
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const tabId: string = useMemo(() => pathname.split('/')[2], [pathname])
 
   const { bug } = useToasterContext()
   const { tokensPrices, tokensMetadata, mTokens } = useTokensContext()
@@ -71,7 +71,7 @@ const DashboardPersonal = () => {
   // if we change user, redirect him to main screen on dashboard, as he might not have permission to some screens
   useEffect(() => {
     if (prevUserAddress && prevUserAddress !== userAddress) {
-      history.replace(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`)
+      navigate(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`, { replace: true })
     }
   }, [userAddress])
 
@@ -230,28 +230,13 @@ const DashboardPersonal = () => {
 
             <div className={`bottom-grid ${activeTab}`}>
               <DashboardPersonalTabStyled>
-                <Switch>
-                  <Route exact path={`/dashboard-personal/${DELEGATION_TAB_ID}`}>
-                    <DelegationTab
-                      distributeProposalRewards={distributeRewardsCallback}
-                      availableProposalRewards={availableProposalRewards}
-                    />
-                  </Route>
-                  <Route exact path={`/dashboard-personal/${SATELLITE_TAB_ID}`}>
-                    <SatelliteTab
-                      distributeProposalRewards={distributeRewardsCallback}
-                      availableProposalRewards={availableProposalRewards}
-                    />
-                  </Route>
-                  <Route exact path={`/dashboard-personal/${VESTING_TAB_ID}`}>
-                    <VestingTab />
-                  </Route>
-                  <Route exact path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/:secondaryTabId?`}>
-                    <PortfolioTab {...userWalletData} />
-                  </Route>
-
-                  <Redirect to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
-                </Switch>
+                <Outlet
+                  context={{
+                    distributeProposalRewards: distributeRewardsCallback,
+                    availableProposalRewards: availableProposalRewards,
+                    userWalletData,
+                  }}
+                />
               </DashboardPersonalTabStyled>
             </div>
           </>

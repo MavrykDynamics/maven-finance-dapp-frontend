@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { PRIMARY_TOGGLE, SECONDARY_TOGGLE } from './Toggle.consts'
 import { MavenTheme } from 'styles/interfaces'
 

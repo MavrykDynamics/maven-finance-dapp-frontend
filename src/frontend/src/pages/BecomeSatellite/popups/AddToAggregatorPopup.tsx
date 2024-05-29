@@ -79,8 +79,8 @@ const AddToAggregatorPopupBase = ({ show, closePopup }: { show: boolean; closePo
   const { action: addOracleToAggregatorAction } = useContractAction(addOracleToAggregatorContratActionProps)
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
-      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} widthSize={586}>
+    <PopupContainer onClick={closePopup} $show={show}>
+      <PopupContainerWrapper onClick={(e) => e.stopPropagation()} $widthSize={586}>
         <button className="close-modal" onClick={closePopup} />
         <UnregisterSatelliteModalBase>
           <H2Title>Register to an Aggregator</H2Title>

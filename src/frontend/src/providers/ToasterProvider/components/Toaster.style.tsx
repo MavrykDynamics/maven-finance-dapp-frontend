@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { decreaseBar } from 'styles/animations'
 import { MavenTheme } from '../../../styles/interfaces'
 import { TOASTER_LOADING, TOASTER_REVEAL, getColorByToasterStatus } from '../toaster.provider.const'
@@ -20,9 +20,9 @@ export const ToasterContainer = styled.div`
 
 export const ToasterStyled = styled.div<{
   theme: MavenTheme
-  distance: number
-  delay: number
-  animationType: ToasterAnimationType
+  $distance: number
+  $delay: number
+  $animationType: ToasterAnimationType
 }>`
   width: 100%;
   position: relative;
@@ -40,13 +40,13 @@ export const ToasterStyled = styled.div<{
   transition: transform 1s ease-in-out;
   overflow: hidden;
 
-  animation-name: ${({ distance, animationType }) =>
-    animationType === TOASTER_REVEAL ? revealFromRight(distance) : hideToRight(distance)};
-  animation-duration: ${({ delay }) => `${delay}ms`};
+  animation-name: ${({ $distance, $animationType }) =>
+    $animationType === TOASTER_REVEAL ? revealFromRight($distance) : hideToRight($distance)};
+  animation-duration: ${({ $delay }) => `${$delay}ms`};
   animation-timing-function: ease-in-out;
 `
 
-export const ToasterCountdown = styled.div<{ status?: ToasterTypes; theme: MavenTheme }>`
+export const ToasterCountdown = styled.div<{ $status?: ToasterTypes; theme: MavenTheme }>`
   position: absolute;
   bottom: 0;
   right: 0;
@@ -55,10 +55,10 @@ export const ToasterCountdown = styled.div<{ status?: ToasterTypes; theme: Maven
   width: 100%;
   border-radius: 0 0 4px 0;
 
-  background-color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+  background-color: ${({ $status, theme }) => getColorByToasterStatus({ toasterStatus: $status, theme })};
 
-  ${(props) =>
-    props.status !== TOASTER_LOADING &&
+  ${({ $status }) =>
+    $status !== TOASTER_LOADING &&
     css`
       animation: ${decreaseBar} ease-in-out 1;
       animation-fill-mode: forwards;
@@ -66,7 +66,7 @@ export const ToasterCountdown = styled.div<{ status?: ToasterTypes; theme: Maven
     `}
 `
 
-export const ToasterIcon = styled.div<{ status?: ToasterTypes; theme: MavenTheme }>`
+export const ToasterIcon = styled.div<{ $status?: ToasterTypes; theme: MavenTheme }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,11 +82,11 @@ export const ToasterIcon = styled.div<{ status?: ToasterTypes; theme: MavenTheme
   > svg {
     height: 16px;
     width: 16px;
-    fill: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+    fill: ${({ $status, theme }) => getColorByToasterStatus({ toasterStatus: $status, theme })};
   }
 `
 
-export const ToasterContent = styled.div<{ status?: ToasterTypes; theme: MavenTheme }>`
+export const ToasterContent = styled.div<{ $status?: ToasterTypes; theme: MavenTheme }>`
   padding: 8px;
   max-width: calc(100% - 60px);
   width: 100%;
@@ -96,7 +96,7 @@ export const ToasterContent = styled.div<{ status?: ToasterTypes; theme: MavenTh
   }
 
   .title {
-    color: ${({ status, theme }) => getColorByToasterStatus({ toasterStatus: status, theme })};
+    color: ${({ $status, theme }) => getColorByToasterStatus({ toasterStatus: $status, theme })};
     font-weight: 600;
     font-size: 18px;
     margin-bottom: 8px;

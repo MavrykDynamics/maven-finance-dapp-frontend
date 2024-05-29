@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from '../../styles/interfaces'
 import { PRIMARY_TRANSACTION_HISTORY_STYLE, SECONDARY_TRANSACTION_HISTORY_STYLE } from './Loans.const'
 
@@ -300,7 +300,7 @@ export const MarketStyled = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; customColor?: string }>`
+export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?: string }>`
   p {
     margin: 0;
   }
@@ -340,10 +340,6 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; customColor?: 
       justify-content: space-between;
 
       > .value {
-        &:first-child {
-          text-transform: capitalize;
-        }
-
         font-weight: 600;
         font-size: 18px;
 
@@ -439,7 +435,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; customColor?: 
       font-size: 14px;
       line-height: 21px;
       margin-bottom: 7px;
-      color: ${({ theme, customColor }) => customColor ?? theme.subHeadingText};
+      color: ${({ theme, $customColor }) => $customColor ?? theme.subHeadingText};
 
       p {
         margin-left: 5px;

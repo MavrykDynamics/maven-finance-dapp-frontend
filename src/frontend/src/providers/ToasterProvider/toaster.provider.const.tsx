@@ -1,5 +1,5 @@
-import {dark} from 'styles'
-import {ToasterTypes} from './toaster.provider.type'
+import { ToasterTypes } from './toaster.provider.type'
+import { MavenTheme } from 'styles/interfaces'
 
 // Toaster statuses
 export const TOASTER_SUCCESS = 'success'
@@ -31,7 +31,7 @@ export const getColorByToasterStatus = ({
   theme,
 }: {
   toasterStatus?: ToasterTypes
-  theme: typeof dark
+  theme: MavenTheme
 }): string => {
   switch (toasterStatus) {
     case TOASTER_SUCCESS:

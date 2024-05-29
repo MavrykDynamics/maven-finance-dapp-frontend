@@ -131,16 +131,16 @@ export const VaultsTab = () => {
                       })
 
                       return (
-                        <TableRow key={symbol} rowHeight={25} borderColor="primaryText" className="add-hover">
-                          <TableCell width="33%">{symbol}</TableCell>
-                          <TableCell width="33%">
+                        <TableRow key={symbol} $rowHeight={25} $borderColor="primaryText" className="add-hover">
+                          <TableCell $width="33%">{symbol}</TableCell>
+                          <TableCell $width="33%">
                             <CommaNumber
                               value={convertedBalance}
                               decimalsToShow={Number(decimals)}
                               useAccurateParsing={convertedBalance < 1}
                             />
                           </TableCell>
-                          <TableCell width="33%" contentPosition="right">
+                          <TableCell $width="33%" $contentPosition="right">
                             <CommaNumber
                               value={convertedBalance * rate}
                               beginningText={rate ? '$' : symbol}

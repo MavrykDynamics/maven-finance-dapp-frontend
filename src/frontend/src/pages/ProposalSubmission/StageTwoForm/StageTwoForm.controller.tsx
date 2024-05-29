@@ -1,38 +1,38 @@
-import React, {useEffect, useMemo, useState} from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 // context
-import {useProposalsContext} from 'providers/ProposalsProvider/proposals.provider'
-import {useDappConfigContext} from 'providers/DappConfigProvider/dappConfig.provider'
+import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
+import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
 // types
-import {ProposalBytesType, StageTwoFormProps} from '../ProposalSubmission.types'
+import { ProposalBytesType, StageTwoFormProps } from '../ProposalSubmission.types'
 
 // components
 import Icon from '../../../app/App.components/Icon/Icon.view'
-import {Input} from '../../../app/App.components/Input/NewInput'
-import {TextArea} from '../../../app/App.components/TextArea/TextArea.controller'
+import { Input } from '../../../app/App.components/Input/NewInput'
+import { TextArea } from '../../../app/App.components/TextArea/TextArea.controller'
 import Button from 'app/App.components/Button/NewButton'
-import {ProposalSubmissionBanner} from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
-import {Info} from 'app/App.components/Info/Info.view'
-import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
-import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
+import { ProposalSubmissionBanner } from '../ProposalSubmissionBanner/ProposalSubmissionBanner'
+import { Info } from 'app/App.components/Info/Info.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
 // helpers
-import {isHexadecimal} from 'utils/validatorFunctions'
-import {getBytesPairValidationStatus} from '../helpers/proposalSubmissionValidation.utils'
-import {checkBytesPairExists} from '../helpers/ProposalSubmissionDiff.utils'
-import {containSpaces} from 'app/App.utils/input'
+import { isHexadecimal } from 'utils/validatorFunctions'
+import { getBytesPairValidationStatus } from '../helpers/proposalSubmissionValidation.utils'
+import { checkBytesPairExists } from '../helpers/ProposalSubmissionDiff.utils'
+import { containSpaces } from 'app/App.utils/input'
 
 // const
-import {STAGE_2_DESCRIPTION} from 'texts/tooltips/governance'
-import {INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS} from 'app/App.components/Input/Input.constants'
-import {INFO_DEFAULT, INFO_WARNING} from 'app/App.components/Info/info.constants'
-import {BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL} from 'app/App.components/Button/Button.constants'
-import {PROPOSAL_BYTE} from '../helpers/proposalSubmission.const'
-import {GovPhases} from 'providers/ProposalsProvider/helpers/proposals.const'
+import { STAGE_2_DESCRIPTION } from 'texts/tooltips/governance'
+import { INPUT_MEDIUM, INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INFO_DEFAULT, INFO_WARNING } from 'app/App.components/Info/info.constants'
+import { BUTTON_SIMPLE, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'
+import { PROPOSAL_BYTE } from '../helpers/proposalSubmission.const'
+import { GovPhases } from 'providers/ProposalsProvider/helpers/proposals.const'
 
 // styles
-import {SubmitProposalBytes, SubmitProposalBytesPair, SubmitProposalGeneralData} from '../ProposalSubmission.style'
+import { SubmitProposalBytes, SubmitProposalBytesPair, SubmitProposalGeneralData } from '../ProposalSubmission.style'
 
 // valid bytes text for testing: 0502000000c703200743036e0a000000160136047207da50aa1f751393d670b8810457c21d43000655076504620000001525757064617465436f6e6669674e657756616c75650864046c0000001925636f6e6669675661756c744e616d654d61784c656e677468046c0000000625656d7074790000001325757064617465436f6e666967416374696f6e0000000d25757064617465436f6e666967072f0200000008074303620000032702000000000743036a0000034f0533036c0743036200140342034d053d036d034c031b
 export const StageTwoForm = ({
@@ -283,7 +283,7 @@ export const StageTwoForm = ({
 
         <div className="submitted-data">
           <div className="label">3 - Fee</div>
-          <CommaNumber className="value" value={fee} endingText="XTZ" />
+          <CommaNumber className="value" value={fee} endingText="MVRK" />
         </div>
       </SubmitProposalGeneralData>
 

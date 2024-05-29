@@ -18,7 +18,7 @@ import {
 } from './user.schemes'
 
 // consts
-import { MVN_DECIMALS, SMVN_TOKEN_ADDRESS, XTZ_TOKEN_ADDRESS } from 'utils/constants'
+import { MVN_DECIMALS, SMVN_TOKEN_ADDRESS, MVRK_TOKEN_ADDRESS } from 'utils/constants'
 import { mTokenMetadataSchema } from 'providers/TokensProvider/helpers/tokens.schemes'
 
 /**
@@ -110,7 +110,7 @@ export const normalizeUserIndexerTokensBalances = ({
         }
         acc.availableLoansRewards += mTokenInterestEarned
       } catch (e) {
-        if (process.env.REACT_APP_ENV === 'dev') console.error('normalize user mTokens error: ', { e })
+        if (process.env.REACT_APP_ENV === 'prod') console.error('normalize user mTokens error: ', { e })
       } finally {
         return acc
       }
@@ -157,15 +157,15 @@ export const fetchTzktUserBalances = async ({
     if (isUserEmptyOnTzkt.success) return {}
 
     const parsedUserTzktTokensData = userTzktTokenBalancesSchema.safeParse(tokensData)
-    const parsedUserXtzTokenBalance = userTzktAccountSchema.safeParse(accountData)
+    const parsedUserMvrkTokenBalance = userTzktAccountSchema.safeParse(accountData)
 
-    if (parsedUserTzktTokensData.success && parsedUserXtzTokenBalance.success) {
+    if (parsedUserTzktTokensData.success && parsedUserMvrkTokenBalance.success) {
       return normalizeUserTzktTokensBalances({
         indexerData: parsedUserTzktTokensData.data.concat([
           {
-            token: { contract: { address: XTZ_TOKEN_ADDRESS } },
-            balance: parsedUserXtzTokenBalance.data.balance.toString(),
-            account: { address: parsedUserXtzTokenBalance.data.address },
+            token: { contract: { address: MVRK_TOKEN_ADDRESS } },
+            balance: parsedUserMvrkTokenBalance.data.balance.toString(),
+            account: { address: parsedUserMvrkTokenBalance.data.address },
           },
         ]),
         userAddress,
@@ -219,35 +219,35 @@ export const attachTzktSocketsEventHandlers = ({
   handleOnReconnected: (userAddress: string) => void
 }) => {
   tzktSocket.on('token_balances', (msg) => {
+    console.log('%ctzktSocket on token_balances msg', 'color: aqua', { msg })
+
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'dev')
-        console.log('%ctzktSocket on token_balances msg', 'color: aqua', { data: msg.data })
       const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
       handleTokens(tokensBalances)
     } catch (e) {
-      if (process.env.REACT_APP_ENV === 'dev') console.error('tzkt tokens balance parse error: ', { e, msg })
+      if (process.env.REACT_APP_ENV === 'prod') console.error('tzkt tokens balance parse error: ', { e, msg })
     }
   })
 
   // handle xtz token balance update message
   tzktSocket.on('accounts', (msg) => {
+    console.log('%ctzktSocket on accounts msg', 'color: aqua', { msg })
+
     if (!msg.data) return
 
     try {
-      if (process.env.REACT_APP_ENV === 'dev')
-        console.log('%ctzktSocket on accounts msg', 'color: aqua', { data: msg.data })
       const [{ balance, address }] = userTzktWSAccountSchema.parse(msg.data)
       handleTokens([
         {
-          token: { contract: { address: XTZ_TOKEN_ADDRESS } },
+          token: { contract: { address: MVRK_TOKEN_ADDRESS } },
           balance: balance.toString(),
           account: { address },
         },
       ])
     } catch (e) {
-      if (process.env.REACT_APP_ENV === 'dev') console.error('tzkt xtz token balance parse error: ', { e, msg })
+      if (process.env.REACT_APP_ENV === 'prod') console.error('tzkt xtz token balance parse error: ', { e, msg })
     }
   })
 

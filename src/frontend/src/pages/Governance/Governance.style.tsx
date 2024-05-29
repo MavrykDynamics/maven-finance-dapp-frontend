@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from '../../styles/interfaces'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 

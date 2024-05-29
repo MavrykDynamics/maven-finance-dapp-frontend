@@ -1,14 +1,14 @@
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
 import { LETTER_VIEW, COLON_VIEW } from './Timer.view'
 
 export const TimerStyled = styled.div<{
-  negativeColor: string
-  defaultColor: string
-  timerType: typeof LETTER_VIEW | typeof COLON_VIEW
+  $negativeColor: string
+  $defaultColor: string
+  $timerType: typeof LETTER_VIEW | typeof COLON_VIEW
 }>`
   margin: 0;
-  color: ${({ defaultColor }) => defaultColor};
+  color: ${({ $defaultColor }) => $defaultColor};
 
   * {
     font-size: 16px;
@@ -24,8 +24,8 @@ export const TimerStyled = styled.div<{
   li {
     display: inline-block;
     list-style-type: none;
-    ${({ timerType }) =>
-      timerType === LETTER_VIEW
+    ${({ $timerType }) =>
+      $timerType === LETTER_VIEW
         ? css`
             padding-right: 5px;
           `
@@ -38,10 +38,10 @@ export const TimerStyled = styled.div<{
             }
           `}
 
-    color: ${({ defaultColor }) => defaultColor};
+    color: ${({ $defaultColor }) => $defaultColor};
 
     &.negative {
-      color: ${({ negativeColor }) => negativeColor};
+      color: ${({ $negativeColor }) => $negativeColor};
     }
 
     &:last-child {

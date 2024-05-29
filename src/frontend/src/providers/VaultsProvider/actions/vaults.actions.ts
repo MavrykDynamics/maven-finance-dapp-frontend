@@ -5,7 +5,7 @@ import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/es
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // consts
-import { OpKind, TezosToolkit, TransferParams } from '@taquito/taquito'
+import { OpKind, TezosToolkit, TransferParams } from '@mavrykdynamics/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
@@ -142,14 +142,14 @@ export const repayPartOfVaultAction = async (
           callback,
         )
 
-      case 'tez':
+      case 'mav':
         return await getEstimationBatchResult(
           tezos,
           [
             {
               kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
               ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
-              mutez: true,
+              mumav: true,
               amount: convertedAssetAmount,
             },
           ],
@@ -253,7 +253,7 @@ export const repayFullAndCloseVaultAction = async (
       {
         kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
         ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
-        mutez: true,
+        mumav: true,
         amount: convertedAssetAmount,
       },
       {
@@ -301,11 +301,11 @@ export const createVault = async (
       [],
     )
 
-    const tezCollateral = collateralTokens.find((c) => c.type === 'tez')
+    const tezCollateral = collateralTokens.find((c) => c.type === 'mav')
     const tezTokenData = tezCollateral
       ? {
           amount: tezCollateral.amount,
-          mutez: true,
+          mumav: true,
         }
       : {}
 

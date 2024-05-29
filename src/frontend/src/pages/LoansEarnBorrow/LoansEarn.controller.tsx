@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useHistory } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 
 // components
 import { Page } from 'styles'
@@ -26,7 +26,6 @@ import { LOANS_MARKETS_DATA, DEFAULT_LOANS_ACTIVE_SUBS } from 'providers/LoansPr
 
 // helpers
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForClient } from 'utils/calcFunctions'
 import { loansEarnBorrowContext } from './context/loansEarnBorrowContext'
 
 const marketSettings: MarketSettingsType = {
@@ -39,7 +38,7 @@ const marketSettings: MarketSettingsType = {
 }
 
 export const LoansEarn = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const {
     isLoading: isChartsLoading,
@@ -108,7 +107,7 @@ export const LoansEarn = () => {
 
     //  if the user has already supplied to the specific asset pool we will route to asset market
     if (lendItem) {
-      history.push(`/loans/${marketTokenAddress}/lendingTab`, { from: '/loans/earn' })
+      navigate(`/loans/${marketTokenAddress}/lendingTab`, { state: { from: '/loans/earn' } })
       return
     } else {
       openAddLendingAssetPopup({

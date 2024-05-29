@@ -9,7 +9,7 @@ import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/es
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { OpKind } from '@taquito/taquito'
+import { OpKind } from '@mavrykdynamics/taquito'
 
 export const harvestRewards = async (
   farmAddress: string,
@@ -98,12 +98,12 @@ export const depositToFarm = async (
           },
         ])
 
-      case 'tez':
+      case 'mav':
         return await getEstimationBatchResult(tezos, [
           {
             kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
             ...contract?.methods.deposit(depositAmount).toTransferParams(),
-            mutez: true,
+            mumav: true,
             amount: depositAmount,
           },
         ])

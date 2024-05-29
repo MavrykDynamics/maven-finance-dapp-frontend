@@ -13,7 +13,7 @@ export const PolicyPopup = ({
   useLockBodyScroll(isModalOpened)
 
   return (
-    <PopupContainer show={isModalOpened}>
+    <PopupContainer $show={isModalOpened}>
       <PolicyPopupContent proccedPolicy={proccedPolicy} />
     </PopupContainer>
   )

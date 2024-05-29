@@ -1,5 +1,5 @@
 import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
-import styled, { css } from 'styled-components/macro'
+import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 import { CouncilFormsGridMapper } from './CouncilForms.consts'
 
@@ -95,7 +95,7 @@ const FORMS_AREAS_NAMES = css`
   }
 `
 
-export const CouncilFormStyled = styled.div<{ theme: MavenTheme; formName: CouncilsFormsIds }>`
+export const CouncilFormStyled = styled.div<{ theme: MavenTheme; $formName: CouncilsFormsIds }>`
   position: relative;
   padding: 30px 20px;
   border-top: 1px solid ${({ theme }) => theme.divider};
@@ -107,9 +107,9 @@ export const CouncilFormStyled = styled.div<{ theme: MavenTheme; formName: Counc
 
   form {
     display: grid;
-    grid-template-columns: ${({ formName }) => CouncilFormsGridMapper[formName].columnsTemplate};
-    grid-template-rows: ${({ formName }) => CouncilFormsGridMapper[formName].rowsTemplate};
-    grid-template-areas: ${({ formName }) => CouncilFormsGridMapper[formName].areaTemplate};
+    grid-template-columns: ${({ $formName }) => CouncilFormsGridMapper[$formName].columnsTemplate};
+    grid-template-rows: ${({ $formName }) => CouncilFormsGridMapper[$formName].rowsTemplate};
+    grid-template-areas: ${({ $formName }) => CouncilFormsGridMapper[$formName].areaTemplate};
 
     row-gap: 20px;
     column-gap: 20px;

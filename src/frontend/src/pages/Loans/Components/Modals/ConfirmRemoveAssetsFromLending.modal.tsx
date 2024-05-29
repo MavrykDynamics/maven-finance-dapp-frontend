@@ -89,7 +89,7 @@ export const ConfirmRemoveAssetsFromLending = ({
   if (!data || !loanToken || !loanToken.rate) return null
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />

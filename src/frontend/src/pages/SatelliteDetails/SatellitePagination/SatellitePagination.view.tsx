@@ -11,7 +11,7 @@ import { SatellitePaginationStyled } from './SatellitePagination.style'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 const SatellitePagination = () => {
-  const { satelliteId = '' }: { satelliteId: string } = useParams()
+  const { satelliteId } = useParams()
   const { allSatellitesIds } = useSatellitesContext()
 
   const currentSatelliteIndex = allSatellitesIds.findIndex(

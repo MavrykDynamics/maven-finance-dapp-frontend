@@ -72,7 +72,7 @@ export const GaugeChart = ({ children, maxValue, minValue, currentValue, isProgr
         opacity={themeSelected === 'space' ? 0.3 : 1}
       />
       <ValueWrapper>{children}</ValueWrapper>
-      <ArrowStyled angle={arrowAngle}>
+      <ArrowStyled $angle={arrowAngle}>
         <Arrow color={colors[themeSelected].regularText} />
       </ArrowStyled>
     </GaugeChartStyled>

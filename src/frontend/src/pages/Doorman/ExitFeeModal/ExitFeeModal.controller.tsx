@@ -143,7 +143,7 @@ export const ExitFeeModal = ({
   }
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="exitFee">
         <button onClick={closePopup} className="close-modal" />
         <h1>Unstake your MVN</h1>

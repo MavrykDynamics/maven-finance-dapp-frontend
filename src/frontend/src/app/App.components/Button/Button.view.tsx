@@ -43,13 +43,13 @@ export const ButtonView = ({
         ) : (
           <>
             {icon && !iconAfter && (
-              <ButtonIcon className={fullKind} strokeWidth={strokeWidth}>
+              <ButtonIcon className={fullKind} $strokeWidth={strokeWidth}>
                 <use xlinkHref={`/icons/sprites.svg#${icon}`} />
               </ButtonIcon>
             )}
             <div>{text}</div>
             {!loading && icon && iconAfter && (
-              <ButtonIcon className={`${fullKind} ${iconAfter ? 'after' : ''}`} strokeWidth={strokeWidth}>
+              <ButtonIcon className={`${fullKind} ${iconAfter ? 'after' : ''}`} $strokeWidth={strokeWidth}>
                 <use xlinkHref={`/icons/sprites.svg#${icon}`} />
               </ButtonIcon>
             )}

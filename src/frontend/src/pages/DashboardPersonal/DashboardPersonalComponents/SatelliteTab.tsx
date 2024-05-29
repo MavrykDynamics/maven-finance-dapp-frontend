@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useOutletContext } from 'react-router-dom'
 
 // const
 import {
@@ -40,13 +40,13 @@ import { StatusFlag } from 'app/App.components/StatusFlag/StatusFlag.controller'
 import { SatelliteOracleStatusComponent } from 'pages/Satellites/listItem/SatelliteCard.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
-const SatelliteTab = ({
-  distributeProposalRewards,
-  availableProposalRewards,
-}: {
+type SatelliteTabOutletProps = {
   distributeProposalRewards: () => void
   availableProposalRewards: Array<number>
-}) => {
+}
+
+const SatelliteTab = () => {
+  const { distributeProposalRewards, availableProposalRewards }: SatelliteTabOutletProps = useOutletContext()
   const { userAddress } = useUserContext()
   const {
     satelliteMapper,
@@ -116,7 +116,7 @@ const SatelliteTab = ({
             <div className="container">
               <div className="grid-container">
                 <div className="grid-item info">
-                  <ImageWithPlug imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
+                  <ImageWithPlug useRounded imageLink={satelliteRecord.image} alt={satelliteRecord.name + ' avatar'} />
 
                   <div className="text">
                     <div className="name">{satelliteRecord.name}</div>

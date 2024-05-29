@@ -270,15 +270,15 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                   const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
 
                   return (
-                    <TableRow rowHeight={44} key={symbol + '-' + index}>
-                      <TableCell width={columnWidth} className="vert-middle">
+                    <TableRow $rowHeight={44} key={symbol + '-' + index}>
+                      <TableCell $width={columnWidth} className="vert-middle">
                         <div className="cell-content row collateral-icon">
-                          <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
+                          <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} logo`} />
                           {symbol}
                         </div>
                       </TableCell>
 
-                      <TableCell width={columnWidth}>
+                      <TableCell $width={columnWidth}>
                         <div className="cell-content">
                           <CommaNumber
                             value={convertedAmount}
@@ -296,7 +296,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                         </div>
                       </TableCell>
 
-                      <TableCell width={columnWidth}>
+                      <TableCell $width={columnWidth}>
                         <CommaNumber value={collateralShare} decimalsToShow={2} endingText="%" />
                       </TableCell>
                     </TableRow>
@@ -305,12 +305,12 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
                 {/* Total row */}
                 {collateralData.length >= 2 ? (
-                  <TableRow rowHeight={44}>
-                    <TableCell width={columnWidth} className="vert-middle">
+                  <TableRow $rowHeight={44}>
+                    <TableCell $width={columnWidth} className="vert-middle">
                       Total
                     </TableCell>
 
-                    <TableCell width={columnWidth}>
+                    <TableCell $width={columnWidth}>
                       <div className="cell-content">
                         <CommaNumber
                           value={collateralBalance}
@@ -321,7 +321,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                       </div>
                     </TableCell>
 
-                    <TableCell width={columnWidth}>
+                    <TableCell $width={columnWidth}>
                       <CommaNumber value={100} endingText="%" />
                     </TableCell>
                   </TableRow>

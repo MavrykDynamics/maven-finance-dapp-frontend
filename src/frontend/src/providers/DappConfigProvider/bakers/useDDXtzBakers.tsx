@@ -30,7 +30,11 @@ const useXtzBakersForDD = (useMavrykBakers = true) => {
 
     const allBakers = [...otherBakers, ...(useMavrykBakers ? [dao, mavrykDynamics] : [])].reduce<
       Record<string, DropDownXTZBakerType>
-    >((acc, { name, fee, logo, address, yield: bakerYield, freespace, isDisabled }) => {
+    >((acc, baker) => {
+      // temporary check, cuz only mavryk Dynamics baker exists
+      if (baker === undefined) return acc
+
+      const { name, fee, logo, address, yield: bakerYield, freespace, isDisabled } = baker
       if (!firstNonDisabledBakerAddress && !isDisabled) firstNonDisabledBakerAddress = address
       acc[address] = {
         bakerName: name,

@@ -1,6 +1,6 @@
 // validation helper
 
-import { ERR_MSG_NONE } from 'app/App.components/Input/Input.constants'
+import { SAME_VAULT_NAME_ERROR } from './createNewVault.consts'
 
 /**
  *
@@ -10,7 +10,7 @@ import { ERR_MSG_NONE } from 'app/App.components/Input/Input.constants'
  */
 export function validateVaultName(value: string, myVaultNames: string[]) {
   if (myVaultNames.find((vaultName) => vaultName.trim().toLowerCase() === value?.trim().toLowerCase())) {
-    return [true, ERR_MSG_NONE] as const
+    return [true, SAME_VAULT_NAME_ERROR] as const
   }
 
   return [false, null] as const

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -56,6 +56,7 @@ export const DataFeeds = () => {
     setFilteredFeeds(
       feedsAddresses.filter((feedAddress) => {
         const { category, name, address } = feedsMapper[feedAddress]
+
         if (chosenDdItem.toLowerCase() === 'all') {
           return (
             name.toLowerCase().includes(searchInputValue.toLowerCase()) ||

@@ -114,7 +114,7 @@ export const StageOneForm = ({
 
       <ProposalSubmissionBanner />
 
-      <ProposalSubmittionStageOneBody isProposalSubmitted={isProposalSubmitted}>
+      <ProposalSubmittionStageOneBody $isProposalSubmitted={isProposalSubmitted}>
         {isProposalSubmitted ? (
           <div className="submitted-data">
             <div className="label">1 - Proposal Title</div>
@@ -146,7 +146,7 @@ export const StageOneForm = ({
 
         <div className="submitted-data vert-center">
           <div className="label">3 - Fee</div>
-          <CommaNumber className="value" value={fee} endingText="XTZ" />
+          <CommaNumber className="value" value={fee} endingText="MVRK" />
         </div>
 
         {isProposalSubmitted ? (

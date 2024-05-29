@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { useLocation } from 'react-router-dom'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { TopBarLinksStyled } from './TopBarLinks.style'
 
@@ -22,7 +22,7 @@ export const TopBarLinks = ({
   const { pathname } = useLocation()
 
   return (
-    <TopBarLinksStyled useClickOpening={useClickOpening} selected={selectedLinksBlock === groupName}>
+    <TopBarLinksStyled $useClickOpening={useClickOpening} $selected={selectedLinksBlock === groupName}>
       <div
         className={`group-name ${selectedLinksBlock === groupName ? 'selected' : ''}`}
         onClick={setSelectedLinksBlock}

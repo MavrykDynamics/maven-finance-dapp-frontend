@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { MavenTheme } from './interfaces'
 
 export const Page = styled.div<{ theme: MavenTheme }>`

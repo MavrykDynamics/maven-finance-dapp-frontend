@@ -75,7 +75,7 @@ export const TextArea = ({
 
   return (
     <TextAreaStyled className={className} id={'textAreaContainer'}>
-      {label ? <NewInputLabel disabled={disabled}>{label}</NewInputLabel> : null}
+      {label ? <NewInputLabel $disabled={disabled}>{label}</NewInputLabel> : null}
       {icon && (
         <TextAreaIcon>
           <use xlinkHref={`/icons/sprites.svg#${icon}`} />

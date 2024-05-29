@@ -1,5 +1,5 @@
 // consts
-import { OpKind } from '@taquito/taquito'
+import { OpKind } from '@mavrykdynamics/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // helpers
@@ -30,11 +30,11 @@ export const depositLendingAssetAction = async (
     const convertedAssetAmount = convertNumberForContractCall({ number: addLiquidityAmount, grade: decimals })
     const contract = await tezos.wallet.at(lendingControllerAddress)
 
-    if (type === 'tez') {
+    if (type === 'mav') {
       const depositTezMetaData = contract?.methods.addLiquidity(indexerName, convertedAssetAmount)
 
       return await getEstimationResult(depositTezMetaData, {
-        params: { amount: convertedAssetAmount, mutez: true },
+        params: { amount: convertedAssetAmount, mumav: true },
         callback,
       })
     } else if (type === 'fa12') {

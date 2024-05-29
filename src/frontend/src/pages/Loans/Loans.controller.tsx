@@ -184,6 +184,7 @@ export const Loans = () => {
             <H2Title>Markets</H2Title>
             {marketsAddresses.map((marketAddress) => {
               const market = marketsMapper[marketAddress]
+
               const loanToken = getTokenDataByAddress({
                 tokenAddress: marketAddress,
                 tokensPrices,
@@ -204,7 +205,6 @@ export const Loans = () => {
                 borrowAPR,
                 lendingAPY,
               } = market
-
               const mToken = getTokenDataByAddress({
                 tokenAddress: loanMTokenAddress,
                 tokensPrices,
@@ -277,7 +277,7 @@ export const Loans = () => {
               return (
                 <MarketOverview key={symbol}>
                   <div className="asset-info">
-                    <ImageWithPlug imageLink={icon} alt={`${symbol} logo`} />
+                    <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} logo`} />
                     <div className="name">{symbol}</div>
                     <div className="rate">
                       <CommaNumber beginningText="$" value={rate} decimalsToShow={4} showDecimal />
@@ -315,12 +315,7 @@ export const Loans = () => {
                         <div className="name">Utilization Rate</div>
                         <CommaNumber value={utilisationRate} className="value" endingText="%" />
                       </ThreeLevelListItem>
-                      <Link
-                        to={{
-                          pathname: `/loans/${address}/${LEND_TAB_ID}`,
-                          state: { from: '/loans' },
-                        }}
-                      >
+                      <Link to={`/loans/${address}/${LEND_TAB_ID}`} state={{ from: '/loans' }}>
                         <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                           Earn <Icon id="arrowRight" />
                         </Button>
@@ -372,12 +367,7 @@ export const Loans = () => {
                           beginningText="$"
                         />
                       </ThreeLevelListItem>
-                      <Link
-                        to={{
-                          pathname: `/loans/${address}/${BORROW_TAB_ID}`,
-                          state: { from: '/loans' },
-                        }}
-                      >
+                      <Link to={`/loans/${address}/${BORROW_TAB_ID}`} state={{ from: '/loans' }}>
                         <Button kind={BUTTON_PRIMARY} form={BUTTON_WIDE}>
                           Borrow <Icon id="arrowRight" />
                         </Button>

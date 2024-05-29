@@ -34,7 +34,7 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
     <EarnBorrowCardStyled>
       <EarnBorrowCardHeader>
         <div className="flex">
-          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} />
+          <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded />
           <h4 className="truncated-text">{symbol}</h4>
         </div>
 
@@ -74,10 +74,8 @@ export const EarnBorrowCard = ({ market, settings, onClick, isDisabledButton }: 
           </Button>
 
           <Link
-            to={{
-              pathname: `/loans/${address}/${marketTabName}`,
-              state: { from: `/loans/${isBorrowCard ? 'borrow' : 'earn'}` },
-            }}
+            to={`/loans/${address}/${marketTabName}`}
+            state={{ from: `/loans/${isBorrowCard ? 'borrow' : 'earn'}` }}
           >
             <Button kind={BUTTON_SIMPLE}>
               View Stats

@@ -1,4 +1,4 @@
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useCallback, useEffect, useMemo } from 'react'
 
 // context
@@ -79,7 +79,7 @@ export const StakeUnstakeView = ({
   inputData,
   setInputData,
 }: StakeUnstakeViewProps) => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { userTokensBalances, userAddress, satelliteMvnIsDelegatedTo, isSatellite } = useUserContext()
   const { availableDoormanRewards, availableSatellitesRewards, availableFarmRewards } = useUserRewards()
   const {
@@ -253,7 +253,7 @@ export const StakeUnstakeView = ({
   }
 
   const handleDelegate = () => {
-    history.push(
+    navigate(
       satelliteMvnIsDelegatedTo ? `/satellites/satellite-details/${satelliteMvnIsDelegatedTo}` : '/satellite-nodes',
     )
   }
@@ -263,7 +263,7 @@ export const StakeUnstakeView = ({
       <StakeUnstakeCards>
         <StakeUnstakeCard>
           <StakeUnstakeBalance>
-            <ImageWithPlug imageLink={'/images/coin-gold.svg'} alt="coin" />
+            <ImageWithPlug imageLink={'/images/MVN_token.svg'} alt="coin" />
             <div>
               <h3>My MVN Balance</h3>
               <div className="balance-btn-group">
@@ -280,7 +280,7 @@ export const StakeUnstakeView = ({
 
         <StakeUnstakeCard>
           <StakeUnstakeBalance>
-            <ImageWithPlug imageLink={'/images/coin-silver.svg'} alt="coin" />
+            <ImageWithPlug imageLink={'/images/sMVN_token.svg'} alt="coin" />
             <div>
               <h3>My Staked MVN Balance</h3>
               <div className="balance-btn-group">
@@ -326,7 +326,7 @@ export const StakeUnstakeView = ({
 
         <StakeUnstakeCard>
           <StakeUnstakeBalance>
-            <ImageWithPlug imageLink={'/images/coin-bronze.svg'} alt="coin" />
+            <ImageWithPlug imageLink={'/images/sMVN_rewards.svg'} alt="coin" />
             <div>
               <h3>
                 Pending sMVN Rewards

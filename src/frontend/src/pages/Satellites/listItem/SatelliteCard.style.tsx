@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro'
+import styled from 'styled-components'
 import { Card } from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 
@@ -17,10 +17,10 @@ export const SatelliteCard = styled(Card)<{ theme: MavenTheme }>`
   margin: 0;
 `
 
-export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean; hasEmptyRightSection?: boolean }>`
+export const SatelliteCardInner = styled.div<{ $isExtendedListItem?: boolean; $hasEmptyRightSection?: boolean }>`
   display: grid;
-  grid-template-columns: ${({ isExtendedListItem, hasEmptyRightSection }) =>
-    hasEmptyRightSection ? 'auto' : isExtendedListItem ? 'auto 220px' : 'auto 180px'};
+  grid-template-columns: ${({ $isExtendedListItem, $hasEmptyRightSection }) =>
+    $hasEmptyRightSection ? 'auto' : $isExtendedListItem ? 'auto 220px' : 'auto 180px'};
   column-gap: 20px;
   padding: 20px;
 
@@ -39,7 +39,7 @@ export const SatelliteCardInner = styled.div<{ isExtendedListItem?: boolean; has
   }
 
   .grid-item-replaceable {
-    padding-left: ${({ isExtendedListItem }) => (isExtendedListItem ? '55px' : '0')};
+    padding-left: ${({ $isExtendedListItem }) => ($isExtendedListItem ? '55px' : '0')};
   }
 `
 
@@ -129,11 +129,11 @@ export const SatelliteTextGroup = styled.div<{ theme: MavenTheme }>`
   }
 `
 
-export const SatelliteMainText = styled.div<{ theme: MavenTheme; hasEmptyRightSection?: boolean }>`
+export const SatelliteMainText = styled.div<{ theme: MavenTheme; $hasEmptyRightSection?: boolean }>`
   color: ${({ theme }) => theme.subHeadingText};
   font-weight: 600;
   font-size: 14px;
-  max-width: ${({ hasEmptyRightSection }) => (hasEmptyRightSection ? '200px' : '138px')};
+  max-width: ${({ $hasEmptyRightSection }) => ($hasEmptyRightSection ? '200px' : '138px')};
   width: 100%;
   overflow: hidden;
   white-space: nowrap;

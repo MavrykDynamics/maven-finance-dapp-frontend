@@ -184,7 +184,7 @@ export const MavCouncilFormRequestTokenMint = (maxLength: CouncilMaxLength) => {
   const validateText = validateFormField(setFormInputStatus)
 
   return (
-    <CouncilFormStyled formName={MavenCouncilDdForms.REQUEST_TOKEN_MINT}>
+    <CouncilFormStyled $formName={MavenCouncilDdForms.REQUEST_TOKEN_MINT}>
       <a
         className="info-link"
         href="https://docs.mavryk.finance/mavryk-finance/council"

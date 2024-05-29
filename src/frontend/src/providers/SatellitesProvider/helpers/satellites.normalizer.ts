@@ -13,7 +13,7 @@ import { SatelliteVotesQueryQuery } from 'utils/__generated__/graphql'
 import { calcPercent, convertNumberForClient } from '../../../utils/calcFunctions'
 
 // const
-import { MVN_DECIMALS, XTZ_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS, MVRK_DECIMALS } from 'utils/constants'
 import { INACTIVE_SATELLITE_STATUS, satelliteStatusSchema, satelliteVoteSchema } from '../satellites.const'
 
 type SatelliteVoteItemType = {
@@ -57,7 +57,7 @@ const getSatelliteOracleRewards = (
         }),
         XTZReward: convertNumberForClient({
           number: xtzRewardsAmount.aggregate?.sum?.reward ?? 0,
-          grade: XTZ_DECIMALS,
+          grade: MVRK_DECIMALS,
         }),
       }
       return acc

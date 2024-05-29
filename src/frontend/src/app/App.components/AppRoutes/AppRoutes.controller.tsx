@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Switch, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes as Switch, useLocation } from 'react-router-dom'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -36,6 +36,24 @@ import Satellites from 'pages/Satellites/Satellites.controller'
 import { scrollUpPage } from 'utils/scrollUpPage'
 import ProtectedRoute from './ProtectedRoute'
 import { RenderErrorPage } from 'pages/Error/RenderErrorPage'
+import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts'
+import { SatelliteDetailsScreen } from 'pages/BecomeSatellite/screens/SatelliteDetails.screen'
+import { BecomeSatelliteScreen } from 'pages/BecomeSatellite/screens/BecomeSatellite.screen'
+import {
+  DELEGATION_TAB_ID,
+  PORTFOLIO_BORROWING_TAB_ID,
+  PORTFOLIO_LENDING_TAB_ID,
+  PORTFOLIO_POSITION_TAB_ID,
+  PORTFOLIO_TAB_ID,
+  SATELLITE_TAB_ID,
+  VESTING_TAB_ID,
+} from 'pages/DashboardPersonal/DashboardPersonal.utils'
+import PortfolioTab from 'pages/DashboardPersonal/DashboardPersonalComponents/PortfolioTab'
+import SatelliteTab from 'pages/DashboardPersonal/DashboardPersonalComponents/SatelliteTab'
+import DelegationTab from 'pages/DashboardPersonal/DashboardPersonalComponents/DelegationTab'
+import VestingTab from 'pages/DashboardPersonal/DashboardPersonalComponents/VestingTab'
+import { LoansTxTab } from 'pages/DashboardPersonal/DashboardPersonalComponents/LoansTxTab'
+import { LendBorrowPosition } from 'pages/DashboardPersonal/DashboardPersonalComponents/LendBorrowPosition'
 
 export const AppRoutes = () => {
   const { pathname } = useLocation()
@@ -52,99 +70,113 @@ export const AppRoutes = () => {
 
   return (
     <Switch>
-      <Route exact path="/staking">
-        <Doorman />
-      </Route>
+      <Route path="/staking" element={<Doorman />} />
+
       {/* DASHBOARD */}
-      <Route exact path="/">
-        <Dashboard />
+      <Route path="/" element={<Dashboard />} />
+
+      <Route path="/dashboard-personal/" element={<DashboardPersonal />}>
+        <Route path={`${DELEGATION_TAB_ID}`} element={<DelegationTab />} />
+
+        <Route path={`${SATELLITE_TAB_ID}`} element={<SatelliteTab />} />
+
+        <Route path={`${VESTING_TAB_ID}`} element={<VestingTab />} />
+
+        <Route path={`${PORTFOLIO_TAB_ID}/`} element={<PortfolioTab />}>
+          <Route path={`${PORTFOLIO_POSITION_TAB_ID}`} element={<LendBorrowPosition />} />
+
+          <Route path={`${PORTFOLIO_LENDING_TAB_ID}`} element={<LoansTxTab txVariant="lending" />} />
+
+          <Route path={`${PORTFOLIO_BORROWING_TAB_ID}`} element={<LoansTxTab txVariant="borrowing" />} />
+
+          <Route
+            path="*"
+            element={<Navigate replace to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />}
+          />
+        </Route>
+
+        <Route
+          path="*"
+          element={<Navigate replace to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />}
+        />
       </Route>
-      <Route exact path="/dashboard-personal/:tabId/:secondaryTabId?">
-        <DashboardPersonal />
-      </Route>
+
       {/* SATELLITES */}
-      <Route exact path="/satellites">
-        <Satellites />
+      <Route path="/satellites" element={<Satellites />} />
+
+      <Route path="/become-satellite" element={<BecomeSatellite />}>
+        <Route index path=":tabId" />
+        <Route
+          path={`${SATELLITE_TAB_DETAILS}`}
+          element={
+            <ProtectedRoute hasAccess={Boolean(isSatellite)} redirectPath={`/become-satellite/${SATELLITE_TAB_EDIT}`}>
+              <>
+                <SatelliteDetailsScreen />
+              </>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path={`${SATELLITE_TAB_EDIT}`} element={<BecomeSatelliteScreen />} />
+
+        <Route path="*" element={<Navigate replace to={`/become-satellite/${SATELLITE_TAB_EDIT}`} />} />
       </Route>
-      <Route exact path="/become-satellite/:tabId">
-        <BecomeSatellite />
-      </Route>
-      <Route exact path="/satellite-nodes">
-        <SatelliteNodes />
-      </Route>
-      <Route exact path="/satellites/satellite-details/:satelliteId">
-        <SatelliteDetails />
-      </Route>
-      <Route exact path="/data-feeds">
-        <DataFeeds />
-      </Route>
-      <Route exact path="/satellites/feed-details/:feedId">
-        <DataFeedDetails />
-      </Route>
+
+      <Route path="/satellite-nodes" element={<SatelliteNodes />} />
+
+      <Route path="/satellites/satellite-details/:satelliteId" element={<SatelliteDetails />} />
+
+      <Route path="/data-feeds" element={<DataFeeds />} />
+
+      <Route path="/satellites/feed-details/:feedId" element={<DataFeedDetails />} />
+
       {/* GOVERNANCE PAGES */}
-      <Route exact path="/governance">
-        <Governance />
-      </Route>
-      <Route exact path="/satellite-governance/:tabId?">
-        <SatelliteGovernance />
-      </Route>
-      <Route exact path="/proposal-history">
-        <Governance isHistory />
-      </Route>
-      <Route exact path="/contract-status">
-        <ContractStatuses />
-      </Route>
-      <Route exact path="/financial-requests">
-        <FinancialRequests />
-      </Route>
-      <Route exact path="/emergency-governance">
-        <EmergencyGovernance />
-      </Route>
-      <Route exact path="/maven-council/:tabId?">
-        <Council />
-      </Route>
-      <Route exact path="/break-glass-council/:tabId?">
-        <BreakGlassCouncil />
-      </Route>
-      <ProtectedRoute
+      <Route path="/governance" element={<Governance />} />
+
+      <Route path="/satellite-governance/:tabId?" element={<SatelliteGovernance />} />
+
+      <Route path="/proposal-history" element={<Governance isHistory />} />
+
+      <Route path="/contract-status" element={<ContractStatuses />} />
+
+      <Route path="/financial-requests" element={<FinancialRequests />} />
+
+      <Route path="/emergency-governance" element={<EmergencyGovernance />} />
+
+      <Route path="/maven-council/:tabId?" element={<Council />} />
+
+      <Route path="/break-glass-council/:tabId?" element={<BreakGlassCouncil />} />
+
+      <Route
         path="/submit-proposal"
-        component={ProposalSubmission}
-        isAuthorized={Boolean(userAddress)}
-        hasAccess={Boolean(isSatellite)}
-        redirectPath={'/governance'}
+        element={
+          <ProtectedRoute hasAccess={Boolean(isSatellite)} redirectPath={'/governance'}>
+            <ProposalSubmission />
+          </ProtectedRoute>
+        }
       />
-      <Route exact path="/treasury">
-        <Treasury />
-      </Route>
-      <Route exact path="/yield-farms">
-        <Farms />
-      </Route>
+
+      <Route path="/treasury" element={<Treasury />} />
+
+      <Route path="/yield-farms" element={<Farms />} />
+
       {/* LEND & BORROW */}
-      <Route exact path="/loans/:assetAddress/:tabId">
-        <Market />
-      </Route>
-      <Route exact path="/loans">
-        <Loans />
-      </Route>
-      <Route exact path="/vaults/:tabId">
-        <Vaults />
-      </Route>
-      <Route exact path="/loans/dashboard">
-        <LoansDashboard />
-      </Route>
-      <Route exact path="/loans/earn">
-        <LoansEarn />
-      </Route>
-      <Route exact path="/loans/borrow">
-        <LoansBorrow />
-      </Route>
+      <Route path="/loans/:assetAddress/:tabId" element={<Market />} />
+
+      <Route path="/loans" element={<Loans />} />
+
+      <Route path="/vaults/:tabId" element={<Vaults />} />
+
+      <Route path="/loans/dashboard" element={<LoansDashboard />} />
+
+      <Route path="/loans/earn" element={<LoansEarn />} />
+
+      <Route path="/loans/borrow" element={<LoansBorrow />} />
+
       {/* NOT PROD PAGES */}
-      <Route exact path="/admin">
-        <Admin />
-      </Route>
-      <Route path="*">
-        <RenderErrorPage />
-      </Route>
+      <Route path="/admin" element={<Admin />} />
+
+      <Route path="*" element={<RenderErrorPage />} />
     </Switch>
   )
 }

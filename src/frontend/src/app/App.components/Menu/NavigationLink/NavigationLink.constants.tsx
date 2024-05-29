@@ -34,6 +34,6 @@ export const isSubLinkShown = (
 export const checkIfLinkSelected = (pathname: string, routePaths: string | string[]) =>
   Boolean(
     Array.isArray(routePaths)
-      ? routePaths.find((routePath) => matchPath(pathname, { path: routePath, exact: true, strict: true }))
-      : matchPath(pathname, { path: routePaths, exact: true, strict: true }),
+      ? routePaths.find((routePath) => matchPath({ path: routePath }, pathname))
+      : matchPath({ path: routePaths }, pathname),
   )

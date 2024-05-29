@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 // consts
 import { BUTTON_SECONDARY } from '../../app/App.components/Button/Button.constants'
@@ -93,7 +93,7 @@ export function CouncilView({
   actionsMapper,
   members,
 }: Props) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { search } = useLocation()
 
   const {
@@ -190,8 +190,8 @@ export function CouncilView({
   // redirect to review past actions page when member changes or when current user is not council and user is on my request page
   useEffect(() => {
     if (isMyActionsTabs && !isUserLoading && (!userAddress || !isUserCouncil))
-      history.replace(`${pagePathname}/${ALL_PAST_COUNCIL_TAB}`)
-  }, [userAddress, isUserCouncil, isUserLoading, isMyActionsTabs, pagePathname])
+      navigate(`${pagePathname}/${ALL_PAST_COUNCIL_TAB}`, { replace: true })
+  }, [userAddress, isUserCouncil, isUserLoading, isMyActionsTabs, pagePathname, navigate])
 
   // update member popup
   const [isUpdateCouncilMemberInfo, setIsUpdateCouncilMemberInfo] = useState(false)
@@ -212,13 +212,14 @@ export function CouncilView({
 
   const handleChangeTabs = useCallback(
     (tabId?: number) => {
-      history.replace(
+      navigate(
         `${pagePathname}${tabId === 1 ? MY_PENDING_COUNCIL_TAB : `/${MY_PAST_COUNCIL_TAB}`}${
           search ? `?${search}` : ''
         }`,
+        { replace: true },
       )
     },
-    [pagePathname, search],
+    [pagePathname, search, navigate],
   )
 
   // drop action

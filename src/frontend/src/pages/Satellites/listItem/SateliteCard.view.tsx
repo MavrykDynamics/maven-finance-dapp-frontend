@@ -239,15 +239,20 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
   const hasEmptyRightSection = isUserSatellite || !isSatelliteActive
   return (
     <SatelliteCard key={String(`satellite${satellite.address}`)}>
-      <SatelliteCardInner isExtendedListItem={isDetailsPage} hasEmptyRightSection={hasEmptyRightSection}>
+      <SatelliteCardInner $isExtendedListItem={isDetailsPage} $hasEmptyRightSection={hasEmptyRightSection}>
         <div className="grid-container">
           <div className="grid-item">
             <SatelliteProfileImageContainer>
-              <ImageWithPlug alt={satellite.name} imageLink={satellite.image} plugSrc="/images/default-user.png" />
+              <ImageWithPlug
+                useRounded
+                alt={satellite.name}
+                imageLink={satellite.image}
+                plugSrc="/images/default-user.png"
+              />
             </SatelliteProfileImageContainer>
 
             <SatelliteTextGroup>
-              <SatelliteMainText hasEmptyRightSection={hasEmptyRightSection}>{satellite.name}</SatelliteMainText>
+              <SatelliteMainText $hasEmptyRightSection={hasEmptyRightSection}>{satellite.name}</SatelliteMainText>
               <SatelliteSubText>
                 <TzAddress tzAddress={satellite.address} type={PRIMARY_TZ_ADDRESS_COLOR} hasIcon isBold />
               </SatelliteSubText>

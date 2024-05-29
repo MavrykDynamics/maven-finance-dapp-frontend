@@ -54,7 +54,7 @@ export const ChangeNodeNodesList = styled.div`
   padding-right: 10px;
 `
 
-export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean; theme: MavenTheme }>`
+export const ChangeNodeNodesListItem = styled.div<{ $isSelected?: boolean; theme: MavenTheme }>`
   display: flex;
   align-items: center;
 
@@ -63,8 +63,8 @@ export const ChangeNodeNodesListItem = styled.div<{ isSelected?: boolean; theme:
   line-height: 18px;
 
   border-radius: 10px;
-  border: ${({ isSelected, theme }) =>
-    isSelected ? `2px solid ${theme.rpcNodeSelecledColor}` : `1px solid ${theme.strokeColor};`};
+  border: ${({ $isSelected, theme }) =>
+    $isSelected ? `2px solid ${theme.rpcNodeSelecledColor}` : `1px solid ${theme.strokeColor};`};
 
   position: relative;
   height: 75px;

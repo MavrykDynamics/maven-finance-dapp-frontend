@@ -60,7 +60,7 @@ export default function ExpandSimple({
         </div>
         {sufix}
       </header>
-      {isExpanded && <ExpandArticleStyled show={isExpanded}>{children}</ExpandArticleStyled>}
+      {isExpanded && <ExpandArticleStyled $show={isExpanded}>{children}</ExpandArticleStyled>}
     </ExpandStyled>
   )
 }

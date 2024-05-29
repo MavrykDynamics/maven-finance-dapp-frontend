@@ -81,7 +81,7 @@ export const ConfirmAddLendingAsset = ({
       actionType: DEPOSIT_LENDING_ASSET_ACTION,
       actionFn: depositAction,
     }),
-    [depositAction]
+    [depositAction],
   )
 
   const { action: depositHandler } = useContractAction(contractActionProps)
@@ -91,7 +91,7 @@ export const ConfirmAddLendingAsset = ({
   const { symbol } = loanToken
 
   return (
-    <PopupContainer onClick={closePopup} show={show}>
+    <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="loans">
         <LoansModalBase>
           <button onClick={closePopup} className="close-modal" />

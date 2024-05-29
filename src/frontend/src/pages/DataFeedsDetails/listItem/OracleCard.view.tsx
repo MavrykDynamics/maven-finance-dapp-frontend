@@ -6,7 +6,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { Feed } from 'providers/DataFeedsProvider/dataFeeds.provider.types'
 import { SatelliteRecordType } from 'providers/SatellitesProvider/satellites.provider.types'
 
-import { MVN_TOKEN_SYMBOL, XTZ_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, MVRK_TOKEN_SYMBOL } from 'utils/constants'
 import { SATELLITE_ORACLE_STATUSES } from 'providers/SatellitesProvider/satellites.const'
 
 import { calcPercent, convertNumberForClient } from 'utils/calcFunctions'
@@ -25,7 +25,7 @@ export const OracleCard = ({ oracle, feed }: { oracle: SatelliteRecordType; feed
   const { decimals, amount, address: feedAddress } = feed
   const oracleFeedRewards = participatedFeeds[feedAddress]
 
-  const xtzExchangeRate = tokensPrices[XTZ_TOKEN_SYMBOL] ?? 0
+  const xtzExchangeRate = tokensPrices[MVRK_TOKEN_SYMBOL] ?? 0
   const mvnExchangeRate = tokensPrices[MVN_TOKEN_SYMBOL] ?? 0
 
   const oracleLastPredictedPrice = oracle.participatedFeeds[feedAddress].lastPredictedPrice

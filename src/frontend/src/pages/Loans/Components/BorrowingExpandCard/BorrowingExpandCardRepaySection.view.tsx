@@ -254,7 +254,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           settings={settings}
         >
           <InputPinnedTokenInfo>
-            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} /> {symbol}
+            <ImageWithPlug imageLink={icon} alt={`${symbol} icon`} useRounded /> {symbol}
           </InputPinnedTokenInfo>
         </Input>
       </div>
@@ -355,7 +355,7 @@ const RepayTableStats = ({
       <div className="line">
         <ThreeLevelListItem
           className="collateral-diagram"
-          customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
+          $customColor={getCollateralRatioPercentColor(colors[themeSelected], futureCollateralRatio)}
         >
           <div className={`percentage`}>
             Collateral Ratio:
