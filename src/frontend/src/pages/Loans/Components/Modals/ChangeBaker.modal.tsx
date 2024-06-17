@@ -1,34 +1,20 @@
 import { useLockBodyScroll } from 'react-use'
-import { useState, useMemo, useEffect, useCallback } from 'react'
-
-// actions
-import { changeBakerAction } from 'providers/VaultsProvider/actions/vaultPermissions.actions'
-
-// types
-import { ChangeBakerPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
-
-// components
+import { useCallback, useEffect, useMemo, useState } from 'react' // actions
+import { changeBakerAction } from 'providers/VaultsProvider/actions/vaultPermissions.actions' // types
+import { ChangeBakerPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types' // components
 import NewButton from 'app/App.components/Button/NewButton'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown'
-
-// styles
+import { DDItemId, DropDown } from 'app/App.components/DropDown/NewDropdown' // styles
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { LoansModalBase } from './Modals.style'
-
-// consts
+import { LoansModalBase } from './Modals.style' // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-import { CHANGE_BAKER_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-
-// providers
+import { CHANGE_BAKER_ACTION } from 'providers/VaultsProvider/helpers/vaults.const' // hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction' // providers
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -161,7 +147,7 @@ export const ChangeBaker = ({
           <GovRightContainerTitleArea>
             <h2>Change Baker</h2>
           </GovRightContainerTitleArea>
-          <div className="modalDescr">Please choose the Bakery to delegate your XTZ.</div>
+          <div className="modalDescr">Please choose the Validator to delegate your MVRK.</div>
 
           <SlidingTabButtons
             disabled
@@ -184,7 +170,7 @@ export const ChangeBaker = ({
 
           {activeTab === 3 ? (
             <DropDown
-              placeholder="Select Bakery"
+              placeholder="Select Validator"
               activeItem={choosenBaker}
               items={bakers}
               clickItem={(itemId: DDItemId) => {
@@ -201,7 +187,7 @@ export const ChangeBaker = ({
 
           <div className="lending-stats">
             <ThreeLevelListItem>
-              <div className="name">Bakery Address</div>
+              <div className="name">Validator Address</div>
               {activeTab === 1 ? (
                 <TzAddress
                   className="value"
@@ -235,7 +221,7 @@ export const ChangeBaker = ({
             </ThreeLevelListItem>
             {activeTab !== 3 && (
               <ThreeLevelListItem>
-                <div className="name">Bakery Payout Address</div>
+                <div className="name">Validator Payout Address</div>
                 {activeTab === 1 ? (
                   <TzAddress
                     className="value"
@@ -274,14 +260,14 @@ export const ChangeBaker = ({
             <ThreeLevelListItem>
               <div className="name">Free Capacity</div>
               {activeTab === 1 ? (
-                <CommaNumber value={mavrykDynamics?.freespace ?? 0} className="value" endingText="XTZ" />
+                <CommaNumber value={mavrykDynamics?.freespace ?? 0} className="value" endingText="MVRK" />
               ) : null}
 
-              {activeTab === 2 ? <CommaNumber value={dao?.freespace ?? 0} className="value" endingText="XTZ" /> : null}
+              {activeTab === 2 ? <CommaNumber value={dao?.freespace ?? 0} className="value" endingText="MVRK" /> : null}
 
               {activeTab === 3 ? (
                 choosenBaker ? (
-                  <CommaNumber value={choosenBaker.bakerFreeSpace} className="value" endingText="XTZ" />
+                  <CommaNumber value={choosenBaker.bakerFreeSpace} className="value" endingText="MVRK" />
                 ) : (
                   <div className="value">-</div>
                 )

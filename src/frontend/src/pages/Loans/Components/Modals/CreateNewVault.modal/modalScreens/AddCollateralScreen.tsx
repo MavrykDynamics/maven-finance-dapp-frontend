@@ -319,9 +319,9 @@ export const AddCollateralScreen = () => {
                   </div>
                   {isTezosAsset(collateralAddress) && (
                     <div className="xtz-baker">
-                      <div className="block-name">Select Baker</div>
+                      <div className="block-name">Select Validator</div>
                       <DropDown
-                        placeholder="Select Bakery"
+                        placeholder="Select Validator"
                         activeItem={selectedBaker}
                         items={bakers}
                         className="select-xtz-baker"

@@ -1,9 +1,7 @@
-import { convertNumberForClient } from 'utils/calcFunctions'
-
-import BakersMocked from './bakers.json'
-import { MVRK_DECIMALS } from 'utils/constants'
-import { api } from 'utils/api/api'
-import { z } from 'zod'
+import {convertNumberForClient} from 'utils/calcFunctions'
+import {MVRK_DECIMALS} from 'utils/constants'
+import {api} from 'utils/api/api'
+import {z} from 'zod'
 
 // types
 export type XtzBakerType = {
@@ -82,7 +80,7 @@ const DAO_BAKER_STATIC_DATA = {
   address: 'tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV',
   fee: 2,
   yield: 5.5,
-  description: `The Maven DAO Bakery belongs to the Maven Finance network. A small portion of the earnings are used to pay for the Decentralized Oracle’s transaction fees. The DAO Bakery is operated by Mavryk Dynamics on behalf of the Maven Finance network.`,
+  description: `The Maven DAO Validator belongs to the Maven Finance network. A small portion of the earnings are used to pay for the Decentralized Oracle’s transaction fees. The DAO Validator is operated by Mavryk Dynamics on behalf of the Maven Finance network.`,
 }
 
 const MAVRYK_DYNAMICS_BAKER_STATIC_DATA = {
@@ -92,7 +90,7 @@ const MAVRYK_DYNAMICS_BAKER_STATIC_DATA = {
   address: 'mv1V4h45W3p4e1sjSBvRkK2uYbvkTnSuHg8g',
   fee: 2,
   yield: 5.5,
-  description: `The Mavryk Dynamics Bakery belongs to one of the core teams contributing to Maven Finance. Delegating to this Bakery contributes to the further development of Maven Finance.`,
+  description: `The Mavryk Dynamics Validator belongs to one of the core teams contributing to Maven Finance. Delegating to this Validator contributes to the further development of Maven Finance.`,
 }
 
 const GHOSTNET_BAKERS: unknown[] = [

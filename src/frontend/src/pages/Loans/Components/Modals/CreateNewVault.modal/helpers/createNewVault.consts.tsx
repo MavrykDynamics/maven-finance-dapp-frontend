@@ -40,8 +40,8 @@ export const screenDescriptions = {
   [INITIAL_SCREEN_ID]: (
     <>
       Create a personal vault to begin borrowing.
-      <br /> You may only choose one asset (USDT, EURL, or MVRK) to be borrowed per vault. In your vault, you may
-      deposit a basket of assets such as MVRK, tzBTC, USDT, and EURL together as collateral.
+      <br /> You may only choose one asset (USDT or MVRK) to be borrowed per vault. In your vault, you may deposit a
+      basket of assets such as MVRK, wBTC, and USDT together as collateral.
     </>
   ),
 
