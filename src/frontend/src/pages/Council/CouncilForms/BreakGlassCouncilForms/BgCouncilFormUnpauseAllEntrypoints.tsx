@@ -135,7 +135,7 @@ export function BgCouncilFormUnpauseAllEntrypoints() {
     <CouncilFormStyled $formName={BgCouncilDdForms.UNPAUSE_ALL_ENTRYPOINTS}>
       <a
         className="info-link"
-        href="https://mavryk.finance/litepaper#break-glass-council"
+        href="https://mavenfinance.io/litepaper#break-glass-council"
         target="_blank"
         rel="noreferrer"
       >

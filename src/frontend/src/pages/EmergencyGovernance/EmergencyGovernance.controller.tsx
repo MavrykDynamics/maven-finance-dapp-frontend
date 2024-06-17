@@ -114,7 +114,7 @@ export const EmergencyGovernance = () => {
               break glass council members using a multi-sig.
             </div>
             <a
-              href="https://docs.mavryk.finance/mavryk-finance/governance/emergency-governance"
+              href="https://docs.mavenfinance.io/maven-finance/governance/emergency-governance"
               target="_blank"
               rel="noreferrer"
               className="underline"
@@ -131,7 +131,7 @@ export const EmergencyGovernance = () => {
             <EmergencyGovernanceCard>
               <a
                 className="info-link"
-                href="https://mavryk.finance/litepaper#emergency-governance--break-glass "
+                href="https://mavenfinance.io/litepaper#emergency-governance--break-glass "
                 target="_blank"
                 rel="noreferrer"
               >

@@ -1,5 +1,5 @@
-import { ToasterTypes } from './toaster.provider.type'
-import { MavenTheme } from 'styles/interfaces'
+import {ToasterTypes} from './toaster.provider.type'
+import {MavenTheme} from 'styles/interfaces'
 
 // Toaster statuses
 export const TOASTER_SUCCESS = 'success'
@@ -77,7 +77,7 @@ export const errorHeaderDefaultTextWhenError = 'Your spaceship has encountered a
 export const errorDescDefaultTextWhenError = (
   <>
     A significant error has been encountered, please take a look at our{' '}
-    <a href="https://docs.mavryk.finance/" target="_blank" rel="noreferrer">
+    <a href="https://docs.mavenfinance.io/" target="_blank" rel="noreferrer">
       Docs{' '}
     </a>
     or reach out to us through our{' '}

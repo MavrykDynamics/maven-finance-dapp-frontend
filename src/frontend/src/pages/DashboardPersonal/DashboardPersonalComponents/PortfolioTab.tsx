@@ -1,14 +1,5 @@
 import { useMemo } from 'react'
-import {
-  Link,
-  Navigate,
-  Outlet,
-  Route,
-  Routes as Switch,
-  useLocation,
-  useOutletContext,
-  useParams,
-} from 'react-router-dom'
+import { Link, Outlet, useLocation, useOutletContext } from 'react-router-dom'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
@@ -26,8 +17,6 @@ import {
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import { Chart } from 'app/App.components/Chart/Chart'
-import { LoansTxTab } from './LoansTxTab'
-import { LendBorrowPosition } from './LendBorrowPosition'
 import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 import { PortfolioChartStyled, PortfolioWalletStyled } from './DashboardPersonalComponents.style'
 import Button from 'app/App.components/Button/NewButton'
@@ -152,15 +141,16 @@ const PortfolioTab = () => {
           <div className="name">MVRK in Wallet</div>
           <div className="value">
             <CommaNumber value={xtzAmount} />
-            <a
-              href={userAddress ? 'https://mavryk.finance/bakery' : '#'}
-              target={userAddress ? '_blank' : undefined}
-              rel="noreferrer"
-            >
-              <Button kind={BUTTON_SIMPLE} disabled={!userAddress}>
-                Delegate
-              </Button>
-            </a>
+            {/*TODO: Uncomment and update when validator page is up on mavenfinance*/}
+            {/*<a*/}
+            {/*  href={userAddress ? 'https://mavryk.finance/bakery' : '#'}*/}
+            {/*  target={userAddress ? '_blank' : undefined}*/}
+            {/*  rel="noreferrer"*/}
+            {/*>*/}
+            {/*  <Button kind={BUTTON_SIMPLE} disabled={!userAddress}>*/}
+            {/*    Delegate*/}
+            {/*  </Button>*/}
+            {/*</a>*/}
           </div>
         </div>
         {mostSuppliedUserToken ? (

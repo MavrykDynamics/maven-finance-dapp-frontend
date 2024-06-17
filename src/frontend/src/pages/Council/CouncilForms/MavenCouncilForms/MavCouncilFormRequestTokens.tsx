@@ -305,7 +305,7 @@ export const MavCouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     <CouncilFormStyled $formName={MavenCouncilDdForms.REQUEST_TOKENS}>
       <a
         className="info-link"
-        href="https://docs.mavryk.finance/mavryk-finance/council"
+        href="https://docs.mavenfinance.io/maven-finance/council"
         target="_blank"
         rel="noreferrer"
       >

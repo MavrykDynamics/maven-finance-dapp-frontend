@@ -257,7 +257,7 @@ export const TreasuryTab = () => {
           The Treasury is managed by Satellites through on-chain voting. The purpose is to store the income earned from
           Maven Finance for assigned purposes, such as buying back MVN, investing & holding in on-chain assets, and
           more.{' '}
-          <a href="https://docs.mavryk.finance/mavryk-finance/treasury" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavenfinance.io/maven-finance/treasury" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>

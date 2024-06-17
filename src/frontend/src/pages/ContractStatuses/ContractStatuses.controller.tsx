@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import qs from 'qs'
 
 // components
@@ -138,7 +138,7 @@ export const ContractStatuses = () => {
 
               <FAQLink className="BG-faq-link">
                 <a
-                  href="https://docs.mavryk.finance/mavryk-finance/governance/emergency-governance"
+                  href="https://docs.mavenfinance.io/maven-finance/governance/emergency-governance"
                   target="_blank"
                   rel="noreferrer"
                 >

@@ -1,29 +1,29 @@
-import { Link } from 'react-router-dom'
+import {Link} from 'react-router-dom'
 
 // consts
-import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
-import { BUTTON_WIDE, PRIMARY } from 'app/App.components/Button/Button.constants'
-import { TWENTY_FOUR_HOURS } from 'consts/charts.const'
+import {AREA_CHART_TYPE} from 'app/App.components/Chart/helpers/Chart.const'
+import {BUTTON_WIDE, PRIMARY} from 'app/App.components/Button/Button.constants'
+import {TWENTY_FOUR_HOURS} from 'consts/charts.const'
 
 // utils
-import { calcExitFee, calcMLI } from 'utils/calcFunctions'
+import {calcExitFee, calcMLI} from 'utils/calcFunctions'
 
 // hooks
-import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
-import { useDoormanHistory } from 'providers/DoormanProvider/hooks/useDoormanHistory'
+import {useDoormanContext} from 'providers/DoormanProvider/doorman.provider'
+import {useDoormanHistory} from 'providers/DoormanProvider/hooks/useDoormanHistory'
 
 // view
 import Icon from 'app/App.components/Icon/Icon.view'
 import NewButton from 'app/App.components/Button/NewButton'
-import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { Chart } from 'app/App.components/Chart/Chart'
-import { StatBlock } from '../Dashboard.style'
-import { StakingContentStyled, StakingHistoryChartWrapper, TabWrapperStyled } from './DashboardTabs.style'
-import { H2Title } from 'styles/generalStyledComponents/Titles.style'
-import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
-import { getChartXAxisTicks } from 'utils/charts.utils'
-import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import {ClockLoader} from 'app/App.components/Loader/Loader.view'
+import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
+import {Chart} from 'app/App.components/Chart/Chart'
+import {StatBlock} from '../Dashboard.style'
+import {StakingContentStyled, StakingHistoryChartWrapper, TabWrapperStyled} from './DashboardTabs.style'
+import {H2Title} from 'styles/generalStyledComponents/Titles.style'
+import {DataLoaderWrapper} from 'app/App.components/Loader/Loader.style'
+import {getChartXAxisTicks} from 'utils/charts.utils'
+import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
 /**
@@ -60,7 +60,7 @@ export const StakingTab = () => {
             <StatBlock>
               <div className="name flexbox">
                 Exit Fee
-                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
+                <CustomLink to="https://docs.mavenfinance.io/maven-finance//staking/benefits-and-fees-of-staking#exit-fee">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
@@ -80,7 +80,7 @@ export const StakingTab = () => {
             <StatBlock>
               <div className="name flexbox">
                 Maven Loyalty Index
-                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking">
+                <CustomLink to="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
@@ -128,7 +128,7 @@ export const StakingTab = () => {
           Satellite fee. Satellites can never move or spend your tokens, and you may re-delegate to a new Satellite at
           any time.{' '}
           <a
-            href="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking"
+            href="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking"
             target="_blank"
             rel="noreferrer"
           >

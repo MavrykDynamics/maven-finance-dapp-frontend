@@ -140,7 +140,7 @@ export const BorrowingExpandCardValuesSection = ({
       </LoansValuesSectionInfo>
       <LoansValuesSectionInfo className="learn-more">
         <a
-          href="https://docs.mavryk.finance/mavryk-finance/earn-and-borrow/multi-collateral-vaults"
+          href="https://docs.mavenfinance.io/maven-finance/earn-and-borrow/multi-collateral-vaults"
           target="_blank"
           rel="noreferrer"
         >
