@@ -143,7 +143,7 @@ export const OraclesTab = () => {
           assets selected through governance, such as the collateral assets used in vaults and lending. They will then
           receive rewards in sMVN proportionate to their total voting power, and will distribute these rewards to their
           delegates.{' '}
-          <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavenfinance.io/maven-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>

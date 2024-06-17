@@ -113,7 +113,7 @@ export function BgCouncilFormRemoveCouncilMember({
     <CouncilFormStyled $formName={BgCouncilDdForms.BG_REMOVE_COUNCIL_MEMBER}>
       <a
         className="info-link"
-        href="https://mavryk.finance/litepaper#break-glass-council"
+        href="https://mavenfinance.io/litepaper#break-glass-council"
         target="_blank"
         rel="noreferrer"
       >

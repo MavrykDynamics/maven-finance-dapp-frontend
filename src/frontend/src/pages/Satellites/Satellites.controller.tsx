@@ -100,7 +100,7 @@ const Satellites = () => {
               <h3>Total Delegated MVN</h3>
               <div className="value">
                 {tabsInfo.totalDelegatedMVN}
-                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles">
+                <CustomLink to="https://docs.mavenfinance.io/maven-finance/satellites-and-oracles">
                   <Tooltip>
                     <Tooltip.Trigger className="tooltip-trigger">
                       <Icon id="info" />

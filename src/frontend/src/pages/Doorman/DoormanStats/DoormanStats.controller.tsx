@@ -73,7 +73,7 @@ export const DoormanStats = ({
                   The Doorman contract controls the staking mechanism for MVN. Handles all actions connected to it and
                   interacts with the other relevant contracts.{' '}
                   <a
-                    href="https://docs.mavryk.finance/smart-contracts/smart-contracts-overview/doorman-contract"
+                    href="https://docs.mavenfinance.io/smart-contracts/smart-contracts-overview/doorman-contract"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -91,7 +91,7 @@ export const DoormanStats = ({
         <div>
           <h4>
             MVN Loyalty Index
-            <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking">
+            <CustomLink to="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking">
               <Tooltip>
                 <Tooltip.Trigger>
                   <Icon id="info" />
@@ -112,7 +112,7 @@ export const DoormanStats = ({
         <div>
           <h4>
             Exit Fee
-            <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
+            <CustomLink to="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking#exit-fee">
               <Tooltip>
                 <Tooltip.Trigger>
                   <Icon id="info" />

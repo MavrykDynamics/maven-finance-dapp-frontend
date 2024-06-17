@@ -24,8 +24,8 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { LinkWide, LinkWrapper } from '../CustomLink/CustomLink.const'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { getMVNTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
-import { GET_MVN_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
+import { getMVNTokensFromFaucet, getUSDtTokensFromFaucet } from 'providers/UserProvider/actions/user.actions'
+import { GET_MVN_FROM_FAUCET_ACTION, GET_USDT_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
 
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
@@ -52,7 +52,7 @@ export const SocialIcons = () => (
     <a href="https://discord.com/invite/7VXPR4gkT6" target="_blank" rel="noreferrer">
       <Icon id="socialDiscord" />
     </a>
-    <a href="https://docs.mavryk.finance" target="_blank" rel="noreferrer">
+    <a href="https://docs.mavenfinance.io" target="_blank" rel="noreferrer">
       <Icon id="faqIcon" />
     </a>
     <a href="https://github.com/mavenfinance" target="_blank" rel="noreferrer">
@@ -76,6 +76,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
   const { pathname } = useLocation()
   const [canGetInitThouthand, setCanGetInitThouthand] = useState(false)
 
+  const usdtAddress = 'KT1StUZzJ34MhSNjkQMSyvZVrR9ppkHMFdFf'
   useEffect(() => {
     const selectedMainRoute = mainNavigationLinks.find(({ routePath = '', subPages = null }) => {
       if (subPages) {
@@ -133,6 +134,37 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
 
   const { action: handleRequestMVN } = useContractAction(contractActionProps)
 
+  const requestUSDtAction = useCallback(async () => {
+    if (!userAddress) {
+      bug('Click Connect in the left menu', 'Please connect your wallet')
+      return null
+    }
+
+    if (!mvnFaucetAddress) {
+      bug('Wrong USDt Faucet address')
+      return null
+    }
+
+    const usdtTokenBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: usdtAddress })
+
+    if (usdtTokenBalance > 0) {
+      bug('You have already claimed USDt', 'You are unable to claim USDt')
+      return null
+    }
+
+    return await getUSDtTokensFromFaucet(mvnFaucetAddress)
+  }, [bug, mvnFaucetAddress, usdtAddress, userAddress, userTokensBalances])
+
+  const usdtContractActionProps: HookContractActionArgs = useMemo(
+    () => ({
+      actionType: GET_USDT_FROM_FAUCET_ACTION,
+      actionFn: requestUSDtAction,
+    }),
+    [requestMVNAction],
+  )
+
+  const { action: handleRequestUSDT } = useContractAction(usdtContractActionProps)
+
   const burgerClickHandler = useCallback(() => {
     toggleSidebarCollapsing()
   }, [])
@@ -183,12 +215,20 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             >
               {sidebarOpened ? 'MVN Faucet' : 'MVN'}
             </NewButton>
-
-            <CustomLink to="https://faucet.marigold.dev/" kind={sidebarOpened ? LinkWide : LinkWrapper}>
-              <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
-                {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}
-              </NewButton>
-            </CustomLink>
+            <NewButton
+              kind={BUTTON_SECONDARY}
+              form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
+              isThin
+              onClick={handleRequestUSDT}
+              disabled={!canGetInitThouthand || isActionActive}
+            >
+              {sidebarOpened ? 'USDt Faucet' : 'USD'}
+            </NewButton>
+            {/*<CustomLink to="https://faucet.marigold.dev/" kind={sidebarOpened ? LinkWide : LinkWrapper}>*/}
+            {/*  <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>*/}
+            {/*    {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}*/}
+            {/*  </NewButton>*/}
+            {/*</CustomLink>*/}
 
             <CustomLink to="https://forms.gle/bwmTfpoLKBhaf7yD" kind={sidebarOpened ? LinkWide : LinkWrapper}>
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>

@@ -228,7 +228,7 @@ export const FarmsTab = () => {
           Liquidity providers will be able to stake their LP tokens within yield farms to receive sMVN as an incentive.
           DEX LP tokens and Maven Finance mTokens may be staked to available farms. By default, Maven Finance farms are
           spawned for three months.{' '}
-          <a href="https://docs.mavryk.finance/mavryk-finance/yield-farms" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavenfinance.io/maven-finance/yield-farms" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>
