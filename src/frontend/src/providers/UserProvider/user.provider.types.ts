@@ -10,6 +10,7 @@ import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
   GET_MVN_FROM_FAUCET_ACTION,
+  GET_USDT_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from './helpers/user.consts'
 import {userTzktTokenBalancesSchema, userTzktWSAccountSchema} from './helpers/user.schemes'
@@ -115,3 +116,4 @@ export type UserActionsType =
   | typeof CLAIM_ALL_REWARDS_ACTION
   | typeof REWARDS_COMPOUND_ACTION
   | typeof GET_MVN_FROM_FAUCET_ACTION
+  | typeof GET_USDT_FROM_FAUCET_ACTION

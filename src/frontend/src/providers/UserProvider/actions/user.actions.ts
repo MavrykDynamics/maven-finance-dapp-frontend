@@ -100,7 +100,21 @@ export const getMVNTokensFromFaucet = async (
     return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
+export const getUSDtTokensFromFaucet = async (
+  mvnFaucetAddress: string,
+): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
+  try {
+    // prepare and send transaction
+    const tezos = await DAPP_INSTANCE.tezos()
+    const contract = await tezos.wallet.at(mvnFaucetAddress)
+    const requestUSDtMetaData = await contract.methods.requestFakeUsdt()
 
+    return await getEstimationResult(requestUSDtMetaData)
+  } catch (error) {
+    const e = unknownToError(error)
+    return { actionSuccess: false, error: new WalletOperationError(e) }
+  }
+}
 export const distributeProposalRewards = async (
   governanceAddress: string,
   satelliteAddress: string,
