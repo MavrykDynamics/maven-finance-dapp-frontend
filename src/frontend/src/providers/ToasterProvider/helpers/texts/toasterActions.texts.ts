@@ -12,6 +12,7 @@ import {
   CLAIM_ALL_REWARDS_ACTION,
   CLAIM_VESTING_REWARD_ACTION,
   GET_MVN_FROM_FAUCET_ACTION,
+  GET_USDT_FROM_FAUCET_ACTION,
   REWARDS_COMPOUND_ACTION,
 } from 'providers/UserProvider/helpers/user.consts'
 
@@ -183,6 +184,16 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
     },
     end: {
       title: 'Received 1,000 MVN...',
+      message: 'Enjoy using Maven Finance :)',
+    },
+  },
+  [GET_USDT_FROM_FAUCET_ACTION]: {
+    start: {
+      title: 'Requesting USDt...',
+      message: ACTION_START_MESSAGE_TEXT,
+    },
+    end: {
+      title: 'Received 1,000 USDt...',
       message: 'Enjoy using Maven Finance :)',
     },
   },
