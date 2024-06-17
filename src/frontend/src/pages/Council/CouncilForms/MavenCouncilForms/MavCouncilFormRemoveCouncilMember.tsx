@@ -110,7 +110,7 @@ export const MavCouncilFormRemoveCouncilMember = ({
     <CouncilFormStyled $formName={MavenCouncilDdForms.REMOVE_COUNCIL_MEMBER}>
       <a
         className="info-link"
-        href="https://docs.mavryk.finance/mavryk-finance/council"
+        href="https://docs.mavenfinance.io/maven-finance/council"
         target="_blank"
         rel="noreferrer"
       >
