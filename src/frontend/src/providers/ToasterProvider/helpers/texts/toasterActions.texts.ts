@@ -411,11 +411,11 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
   // vault permission actions -------------------------------------
   [CHANGE_BAKER_ACTION]: {
     start: {
-      title: 'Changing MVRK Baker...',
+      title: 'Changing MVRK Validator...',
       message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
-      title: 'Baker changed.',
+      title: 'Validator changed.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
@@ -976,21 +976,21 @@ export const TOASTER_ACTIONS_TEXTS: Record<ActionTypes, ToastMessageFullContent>
   },
   [SET_BAKER_ACTION]: {
     start: {
-      title: 'Set Baker...',
+      title: 'Set Validator...',
       message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
-      title: 'Set Baker is done.',
+      title: 'Set Validator is done.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },
   [SET_CONTRACT_BAKER_ACTION]: {
     start: {
-      title: 'Set Contract Baker...',
+      title: 'Set Contract Validator...',
       message: ACTION_START_MESSAGE_TEXT,
     },
     end: {
-      title: 'Set Contract Baker is done.',
+      title: 'Set Contract Validator is done.',
       message: ACTION_COMPLETION_MESSAGE_TEXT,
     },
   },

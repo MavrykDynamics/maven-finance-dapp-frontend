@@ -139,7 +139,7 @@ export const ConfirmationScreen = () => {
               <div className="value">{name}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Selected Baker</div>
+              <div className="name">Selected Validator</div>
               <div className="value">{selectedBaker?.bakerName ?? 'Not relevant'}</div>
             </ThreeLevelListItem>
             <ThreeLevelListItem>

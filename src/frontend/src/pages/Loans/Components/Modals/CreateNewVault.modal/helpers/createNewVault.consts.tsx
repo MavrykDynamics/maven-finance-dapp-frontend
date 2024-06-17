@@ -46,7 +46,7 @@ export const screenDescriptions = {
   ),
 
   [ADD_COLLATERAL_SCREEN_ID]:
-    'Select an one or multiple assets to add as collateral.  If you are providing XTZ as collateral, make sure you select a baker. ',
+    'Select an one or multiple assets to add as collateral.  If you are providing MVRK as collateral, make sure you select a Validator. ',
   [CONFIRM_STATS_SCREEN_ID]: 'Please confirm the following details.',
   [BORROW_SCREEN_ID]: 'Select the amount you would like to borrow. You cannot borrow more than your borrow capacity.',
   [CONFIRMATION_SCREEN_ID]: 'Please confirm the following details.',

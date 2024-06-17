@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import qs from 'qs'
 
 // styles
@@ -341,7 +341,7 @@ export const BorrowingExpandCardMenuSection = ({
                     disabled={!vaultHasXtzCollateral || isActionActive}
                     onClick={openChangeBakerPopup}
                   >
-                    Change Baker <Icon id="paginationArrowLeft" />
+                    Change Validator <Icon id="paginationArrowLeft" />
                   </Button>
                 </div>
               ) : null}
@@ -377,9 +377,9 @@ export const BorrowingExpandCardMenuSection = ({
                     <Icon id="info" />
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    Depositors are tz and KT addresses that are allowed to deposit tokens and MVRK into your vault. For
-                    instance, if you delegate your MVRK to a bakery, you should add the bakery’s payout address as a a
-                    depositor so your vault can receive its delegation rewards.
+                    Depositors are mv and KT addresses that are allowed to deposit tokens and MVRK into your vault. For
+                    instance, if you delegate your MVRK to a Validator, you should add the Validator’s payout address as
+                    a a depositor so your vault can receive its delegation rewards.
                   </Tooltip.Content>
                 </Tooltip>
               </div>
