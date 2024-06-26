@@ -1,6 +1,6 @@
-import { isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
-import { useCallback, useMemo, useState } from 'react'
-import { SelectedCollateralTokenData } from '../../CreateNewVault.modal/helpers/createNewVault.types'
+import {isMVRKAsset} from 'providers/TokensProvider/helpers/tokens.utils'
+import {useCallback, useMemo, useState} from 'react'
+import {SelectedCollateralTokenData} from '../../CreateNewVault.modal/helpers/createNewVault.types'
 
 /**
  * takes collateral address and Record of them with input data
@@ -21,7 +21,7 @@ export const useXTZMaxAmountValidator = (
   }, [])
 
   const tezCollateralAddress = useMemo(
-    () => selectedCollateralsAddresses.find((address) => isTezosAsset(address ?? '')),
+    () => selectedCollateralsAddresses.find((address) => isMVRKAsset(address ?? '')),
     [selectedCollateralsAddresses],
   )
 

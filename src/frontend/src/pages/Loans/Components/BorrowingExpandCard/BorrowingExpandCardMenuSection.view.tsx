@@ -48,7 +48,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
-  isTezosAsset,
+  isMVRKAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
@@ -126,7 +126,8 @@ export const BorrowingExpandCardMenuSection = ({
 
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs.find((item) => item.active))
 
-  const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
+  const vaultHasMVRKCollateral = collateralData.find(({ tokenAddress }) => isMVRKAsset(tokenAddress))
+
   // TODO: test it when sMVN will be available as collateral
   const vaultHasSmvnCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVN_TOKEN_ADDRESS)
 
@@ -322,11 +323,11 @@ export const BorrowingExpandCardMenuSection = ({
             </div>
           </div>
 
-          {vaultHasXtzCollateral || vaultHasSmvnCollateral ? (
+          {vaultHasMVRKCollateral || vaultHasSmvnCollateral ? (
             <div className="useful-info">
               <div className="useful-info-title">Delegations</div>
 
-              {vaultHasXtzCollateral ? (
+              {vaultHasMVRKCollateral ? (
                 <div className="useful-info-line">
                   <div className="name">MVRK Delegated to</div>
                   <div className="value">
@@ -338,7 +339,7 @@ export const BorrowingExpandCardMenuSection = ({
                   </div>
                   <Button
                     kind={BUTTON_SIMPLE}
-                    disabled={!vaultHasXtzCollateral || isActionActive}
+                    disabled={!vaultHasMVRKCollateral || isActionActive}
                     onClick={openChangeBakerPopup}
                   >
                     Change Validator <Icon id="paginationArrowLeft" />

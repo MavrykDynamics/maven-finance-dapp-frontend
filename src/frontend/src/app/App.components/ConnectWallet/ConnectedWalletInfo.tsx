@@ -1,9 +1,9 @@
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE, BUTTON_WIDE } from '../Button/Button.constants'
 import { PRIMARY_TZ_ADDRESS_COLOR, SECONDARY_TZ_ADDRESS_COLOR } from '../TzAddress/TzAddress.constants'
-import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS, MVRK_TOKEN_ADDRESS, MVRK_TOKEN_SYMBOL } from 'utils/constants'
+import { MVN_TOKEN_SYMBOL, MVRK_TOKEN_ADDRESS, MVRK_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS } from 'utils/constants'
 
 import Icon from '../Icon/Icon.view'
 
@@ -20,7 +20,7 @@ import {
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getTokenDataByAddress, isMVRKAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
@@ -175,7 +175,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
           </div>
 
           {userTokens.map((tokenAddress) => {
-            if (tokenAddress === mvnTokenAddress || tokenAddress === SMVN_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
+            if (tokenAddress === mvnTokenAddress || tokenAddress === SMVN_TOKEN_ADDRESS || isMVRKAsset(tokenAddress))
               return null
 
             const tokenBalance = userTokensBalances[tokenAddress]
@@ -382,7 +382,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
           </div>
 
           {userTokens.map((tokenAddress) => {
-            if (tokenAddress === mvnTokenAddress || tokenAddress === SMVN_TOKEN_ADDRESS || isTezosAsset(tokenAddress))
+            if (tokenAddress === mvnTokenAddress || tokenAddress === SMVN_TOKEN_ADDRESS || isMVRKAsset(tokenAddress))
               return null
 
             const tokenBalance = userTokensBalances[tokenAddress]

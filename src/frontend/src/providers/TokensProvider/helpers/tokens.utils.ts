@@ -1,12 +1,12 @@
 import { MVRK_TOKEN_ADDRESS } from 'utils/constants'
 import {
-  LoansTokenMetadataType,
-  LoansCollateralTokenMetadataType,
-  TokenMetadataType,
-  TokenAddressType,
-  TokensContext,
   FarmsTokenMetadataType,
+  LoansCollateralTokenMetadataType,
+  LoansTokenMetadataType,
   M_TokenMetadataType,
+  TokenAddressType,
+  TokenMetadataType,
+  TokensContext,
 } from '../tokens.provider.types'
 
 export const checkWhetherTokenIsLoanToken = (token: TokenMetadataType): token is LoansTokenMetadataType =>
@@ -26,7 +26,7 @@ export const checkWhetherTokenIsCollateralToken = (
   typeof token.loanData?.isScaled === 'boolean' &&
   typeof token.loanData?.isStaked === 'boolean'
 
-export const isTezosAsset = (tokenAddress?: TokenAddressType) => tokenAddress === MVRK_TOKEN_ADDRESS
+export const isMVRKAsset = (tokenAddress?: TokenAddressType) => tokenAddress === MVRK_TOKEN_ADDRESS
 
 export const getTokenDataByAddress = ({
   tokenAddress,

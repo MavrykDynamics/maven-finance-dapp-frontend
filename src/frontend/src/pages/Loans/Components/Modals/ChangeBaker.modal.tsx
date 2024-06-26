@@ -26,7 +26,7 @@ const OTHER_BAKERY = 3
 type BakersSlidingButtonTab = typeof MAVRYK_DYNAMICS_BAKERY | typeof DAO_BAKERY | typeof OTHER_BAKERY
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A238629&t=Sx2aEpp3ifrGxBtQ-0
-export const ChangeBaker = ({
+export const ChangeValidator = ({
   closePopup,
   show,
   data,
@@ -114,7 +114,7 @@ export const ChangeBaker = ({
     )
   }
 
-  // change baker action ---------------------------------
+  // change validator action ---------------------------------
   const changeBakerActionCb = useCallback(async () => {
     if (!userAddress) {
       bug('Click Connect in the left menu', 'Please connect your wallet')
@@ -145,7 +145,7 @@ export const ChangeBaker = ({
           <button onClick={closePopup} className="close-modal" />
 
           <GovRightContainerTitleArea>
-            <h2>Change Baker</h2>
+            <h2>Change Validator</h2>
           </GovRightContainerTitleArea>
           <div className="modalDescr">Please choose the Validator to delegate your MVRK.</div>
 
@@ -282,7 +282,7 @@ export const ChangeBaker = ({
               form={BUTTON_WIDE}
               disabled={!selectedAddress || selectedAddress === bakerAddress}
             >
-              Update Baker
+              Update Validator
             </NewButton>
           </div>
         </LoansModalBase>

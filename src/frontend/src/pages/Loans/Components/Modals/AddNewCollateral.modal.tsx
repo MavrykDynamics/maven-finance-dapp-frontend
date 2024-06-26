@@ -16,7 +16,7 @@ import {XTZLimitInfoBanner} from './components/XTZLimitInfoBanner'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
-  isTezosAsset,
+  isMVRKAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import {checkNan} from 'utils/checkNan'
 import {getCollateralRatioByPercentage} from 'pages/Loans/Loans.helpers'
@@ -244,7 +244,7 @@ export const AddNewCollateral = ({
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
   const isDepositBtnDisabled =
-    (isTezosAsset(selectedCollateral) && !choosenBaker) ||
+    (isMVRKAsset(selectedCollateral) && !choosenBaker) ||
     inputData.validationStatus === INPUT_STATUS_ERROR ||
     inputData.validationStatus === INPUT_STATUS_DEFAULT
 
@@ -333,7 +333,7 @@ export const AddNewCollateral = ({
                 </InputPinnedDropDown>
               </Input>
 
-              {isTezosAsset(selectedCollateral) ? (
+              {isMVRKAsset(selectedCollateral) ? (
                 <>
                   <div className="block-name">Select Validator</div>
                   <DropDown
