@@ -500,7 +500,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       <ProposalSubmissionForm>
         <a
           className="info-link"
-          href="https://docs.mavryk.finance/mavryk-finance/governance/governance-rounds/proposal-round"
+          href="https://docs.mavenfinance.io/maven-finance/governance/governance-rounds/proposal-round"
           target="_blank"
           rel="noreferrer"
         >

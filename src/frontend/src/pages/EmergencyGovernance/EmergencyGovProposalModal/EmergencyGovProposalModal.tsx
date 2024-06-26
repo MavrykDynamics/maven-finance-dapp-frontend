@@ -9,10 +9,10 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // consts
 import {
-  InputStatusType,
   INPUT_MEDIUM,
   INPUT_STATUS_ERROR,
   INPUT_STATUS_SUCCESS,
+  InputStatusType,
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { SUBMIT_EGOV_PROPOSAL_ACTION } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
@@ -128,7 +128,7 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
 
             <div className="exit-fee">
               <NewInputLabel>Fee</NewInputLabel>
-              <CommaNumber value={requiredFeeMutez} endingText="XTZ" />
+              <CommaNumber value={requiredFeeMutez} endingText="MVRK" />
             </div>
           </div>
 

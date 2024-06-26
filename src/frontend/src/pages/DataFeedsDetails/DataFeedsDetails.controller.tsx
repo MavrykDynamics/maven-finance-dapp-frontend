@@ -170,7 +170,7 @@ const DataFeedDetails = () => {
                     <div className="text">
                       <div className="name">{feed.name}</div>
                       <a
-                        href="https://docs.mavryk.finance/smart-contracts/smart-contracts-overview/aggregator-contract"
+                        href="https://docs.mavenfinance.io/smart-contracts/smart-contracts-overview/aggregator-contract"
                         target="_blank"
                         rel="noreferrer"
                       >

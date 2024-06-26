@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useClickAway } from 'react-use'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import classNames from 'classnames'
 
 import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from '../../Loans.const'
@@ -27,7 +27,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
-  isTezosAsset,
+  isMVRKAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
@@ -102,7 +102,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
   const { symbol, decimals, icon, rate } = borrowedToken
 
-  const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
+  const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isMVRKAsset(tokenAddress))
   const vaultHasSmvnCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVN_TOKEN_ADDRESS)
 
   const handleOpenVault = () => {

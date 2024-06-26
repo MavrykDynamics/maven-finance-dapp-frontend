@@ -1,41 +1,25 @@
-import React, { useCallback, useMemo } from 'react'
-
-// providers
+import React, { useCallback, useMemo } from 'react' // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useCreateVaultContext } from '../context/createVaultModalContext'
-
-// utils
+import { useCreateVaultContext } from '../context/createVaultModalContext' // utils
 import {
   checkWhetherTokenIsCollateralToken,
   checkWhetherTokenIsLoanToken,
   getTokenDataByAddress,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
-
-// types
-import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-
-// actions
-import { createVault } from 'providers/VaultsProvider/actions/vaults.actions'
-
-// hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-
-// consts
+import { convertNumberForContractCall } from 'utils/calcFunctions' // types
+import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types' // actions
+import { createVault } from 'providers/VaultsProvider/actions/vaults.actions' // hooks
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction' // consts
 import { CREATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { ADD_COLLATERAL_SCREEN_ID, BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'
-import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
-
-// styles
+import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text' // styles
 import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { ConfirmStatsVaultOverview } from '../createNewVault.style'
-import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
-
-// components
+import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style' // components
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import Button from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
@@ -197,7 +181,7 @@ export const ConfirmStats = () => {
 
         <div className="confirmation-stats">
           <ThreeLevelListItem>
-            <div className="name">Selected Baker</div>
+            <div className="name">Selected Validator</div>
             <div className="value">{selectedBaker?.bakerName ?? 'Not relevant'}</div>
           </ThreeLevelListItem>
           <ThreeLevelListItem className="align-tree-item-right">

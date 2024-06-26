@@ -10,7 +10,7 @@ import {
   VaultInputState,
 } from '../helpers/createNewVault.types'
 import { DEFAULT_CREATE_VAULT_STATE } from '../helpers/createNewVault.consts'
-import { getTokenDataByAddress, isTezosAsset } from 'providers/TokensProvider/helpers/tokens.utils'
+import { getTokenDataByAddress, isMVRKAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { getVaultBorrowCapacity } from 'providers/VaultsProvider/helpers/vaults.utils'
@@ -73,7 +73,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
       ...prev,
       selectedCollaterals,
       selectedCollateralsAddresses: addresses,
-      hasXTZTokenSelected: addresses.find((tokenAddress) => isTezosAsset(tokenAddress)),
+      hasXTZTokenSelected: addresses.find((tokenAddress) => isMVRKAsset(tokenAddress)),
     }))
   }, [])
 
@@ -94,7 +94,11 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
   const collateralsBalance = useMemo(
     () =>
       modalState.selectedCollateralsAddresses.reduce((acc, collateralAddress) => {
-        const collateralToken = getTokenDataByAddress({ tokenAddress: collateralAddress, tokensPrices, tokensMetadata })
+        const collateralToken = getTokenDataByAddress({
+          tokenAddress: collateralAddress,
+          tokensPrices,
+          tokensMetadata,
+        })
 
         if (!collateralToken || !collateralToken.rate) return acc
 

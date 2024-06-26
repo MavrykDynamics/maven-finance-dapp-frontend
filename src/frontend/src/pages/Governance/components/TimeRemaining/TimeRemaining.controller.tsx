@@ -182,11 +182,11 @@ export default function TimeRemaining() {
             <div className="calcs">
               <div className="row">
                 <div className="name">Minimal Fee</div>
-                <CommaNumber value={estimatedValues.fee} endingText="tez" decimalsToShow={4} className="value" />
+                <CommaNumber value={estimatedValues.fee} endingText="mav" decimalsToShow={4} className="value" />
               </div>
               <div className="row">
                 <div className="name">Estimated total Cost</div>
-                <CommaNumber value={estimatedValues.cost} endingText="tez" decimalsToShow={4} className="value" />
+                <CommaNumber value={estimatedValues.cost} endingText="mav" decimalsToShow={4} className="value" />
               </div>
             </div>
 

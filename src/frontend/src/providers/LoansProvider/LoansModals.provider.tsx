@@ -3,7 +3,7 @@ import React, { createContext, useContext } from 'react'
 import { AddCollateral } from 'pages/Loans/Components/Modals/AddCollateral.modal'
 import { AddLendingAsset } from 'pages/Loans/Components/Modals/AddLendingAsset.modal'
 import { AddNewCollateral } from 'pages/Loans/Components/Modals/AddNewCollateral.modal'
-import { ChangeBaker } from 'pages/Loans/Components/Modals/ChangeBaker.modal'
+import { ChangeValidator } from 'pages/Loans/Components/Modals/ChangeBaker.modal'
 import { ChangeVaultName } from 'pages/Loans/Components/Modals/ChangeVaultName.modal'
 import { ConfirmAddLendingAsset } from 'pages/Loans/Components/Modals/ConfirmAddLendingAsset.modal'
 import { ConfirmBorrowAsset } from 'pages/Loans/Components/Modals/ConfirmBorrowAsset.modal'
@@ -469,7 +469,7 @@ export class LoansPopupsProvider extends React.Component<{ children?: React.Reac
           data={confirmRepayFullPopup.data}
         />
 
-        <ChangeBaker
+        <ChangeValidator
           closePopup={closeChangeBakerPopup}
           show={changeBakerPopup.showModal}
           data={changeBakerPopup.data}

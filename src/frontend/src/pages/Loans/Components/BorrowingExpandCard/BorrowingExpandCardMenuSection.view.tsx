@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import qs from 'qs'
 
 // styles
@@ -48,7 +48,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
-  isTezosAsset,
+  isMVRKAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
@@ -126,7 +126,8 @@ export const BorrowingExpandCardMenuSection = ({
 
   const [activeMenuTab, setActiveMenuTab] = useState(menuTabs.find((item) => item.active))
 
-  const vaultHasXtzCollateral = collateralData.find(({ tokenAddress }) => isTezosAsset(tokenAddress))
+  const vaultHasMVRKCollateral = collateralData.find(({ tokenAddress }) => isMVRKAsset(tokenAddress))
+
   // TODO: test it when sMVN will be available as collateral
   const vaultHasSmvnCollateral = collateralData.find(({ tokenAddress }) => tokenAddress === SMVN_TOKEN_ADDRESS)
 
@@ -322,11 +323,11 @@ export const BorrowingExpandCardMenuSection = ({
             </div>
           </div>
 
-          {vaultHasXtzCollateral || vaultHasSmvnCollateral ? (
+          {vaultHasMVRKCollateral || vaultHasSmvnCollateral ? (
             <div className="useful-info">
               <div className="useful-info-title">Delegations</div>
 
-              {vaultHasXtzCollateral ? (
+              {vaultHasMVRKCollateral ? (
                 <div className="useful-info-line">
                   <div className="name">MVRK Delegated to</div>
                   <div className="value">
@@ -338,10 +339,10 @@ export const BorrowingExpandCardMenuSection = ({
                   </div>
                   <Button
                     kind={BUTTON_SIMPLE}
-                    disabled={!vaultHasXtzCollateral || isActionActive}
+                    disabled={!vaultHasMVRKCollateral || isActionActive}
                     onClick={openChangeBakerPopup}
                   >
-                    Change Baker <Icon id="paginationArrowLeft" />
+                    Change Validator <Icon id="paginationArrowLeft" />
                   </Button>
                 </div>
               ) : null}
@@ -377,9 +378,9 @@ export const BorrowingExpandCardMenuSection = ({
                     <Icon id="info" />
                   </Tooltip.Trigger>
                   <Tooltip.Content>
-                    Depositors are tz and KT addresses that are allowed to deposit tokens and MVRK into your vault. For
-                    instance, if you delegate your MVRK to a bakery, you should add the bakery’s payout address as a a
-                    depositor so your vault can receive its delegation rewards.
+                    Depositors are mv and KT addresses that are allowed to deposit tokens and MVRK into your vault. For
+                    instance, if you delegate your MVRK to a Validator, you should add the Validator’s payout address as
+                    a a depositor so your vault can receive its delegation rewards.
                   </Tooltip.Content>
                 </Tooltip>
               </div>

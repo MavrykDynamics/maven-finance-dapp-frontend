@@ -71,7 +71,7 @@ export default function TreasuryView({ treasury, isGlobal = false, factoryAddres
   return (
     <TreasuryViewStyle ref={ref}>
       <a
-        href="https://docs.mavryk.finance/mavryk-finance/treasury"
+        href="https://docs.mavenfinance.io/maven-finance/treasury"
         target="_blank"
         rel="noreferrer"
         className="info-link"

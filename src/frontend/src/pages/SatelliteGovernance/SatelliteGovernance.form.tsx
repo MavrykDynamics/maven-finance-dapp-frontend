@@ -292,7 +292,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
   return (
     <SatelliteGovernanceAvailableAction onSubmit={handleSubmit}>
       <a
-        href="https://docs.mavryk.finance/mavryk-finance/governance/satellite-governance"
+        href="https://docs.mavenfinance.io/maven-finance/governance/satellite-governance"
         target="_blank"
         rel="noreferrer"
         className="info-link"
@@ -363,7 +363,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
               <TableRow>
                 <TableHeaderCell className="no-right-border">Address</TableHeaderCell>
                 <TableHeaderCell>Purpose</TableHeaderCell>
-                <TableHeaderCell className="right-border">Token Type (FA12/FA2/TEZ)</TableHeaderCell>
+                <TableHeaderCell className="right-border">Token Type (FA12/FA2/MAV)</TableHeaderCell>
               </TableRow>
             </TableHeader>
             <TableBody className="editable-body">

@@ -12,7 +12,7 @@ import { validateInputLength } from 'app/App.utils/input/validateInput'
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
-  isTezosAsset,
+  isMVRKAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
@@ -317,11 +317,11 @@ export const AddCollateralScreen = () => {
                       )}
                     </CollateralInputWrapper>
                   </div>
-                  {isTezosAsset(collateralAddress) && (
+                  {isMVRKAsset(collateralAddress) && (
                     <div className="xtz-baker">
-                      <div className="block-name">Select Baker</div>
+                      <div className="block-name">Select Validator</div>
                       <DropDown
-                        placeholder="Select Bakery"
+                        placeholder="Select Validator"
                         activeItem={selectedBaker}
                         items={bakers}
                         className="select-xtz-baker"

@@ -165,7 +165,7 @@ export const ExitFeeModal = ({
             <div>
               <h4>
                 Maven Loyalty Index
-                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
+                <CustomLink to="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking#exit-fee">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />
@@ -186,7 +186,7 @@ export const ExitFeeModal = ({
             <div>
               <h4>
                 Exit Fee
-                <CustomLink to="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking#exit-fee">
+                <CustomLink to="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking#exit-fee">
                   <Tooltip>
                     <Tooltip.Trigger>
                       <Icon id="info" />

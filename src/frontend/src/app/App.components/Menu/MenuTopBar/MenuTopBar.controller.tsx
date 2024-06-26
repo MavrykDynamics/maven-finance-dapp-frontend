@@ -31,18 +31,18 @@ export const PRODUCTS_LINKS = [
     name: 'Dapp',
     href:
       process.env.REACT_APP_IS_DEMO === 'true'
-        ? 'https://ghostnet.mavenfinance.io/'
+        ? 'https://atlasnet.mavenfinance.io/'
         : 'https://front-dev.mavryk-dapp.pages.dev',
     disabled: false,
     path: '/',
   },
-  {
-    name: 'Liquidity Baking',
-    href: 'https://mavenfinance.io/liquidity-baking',
-    disabled: false,
-    path: '/liquidity-baking',
-  },
-  { name: 'Mavryk Bakeries', href: 'https://mavenfinance.io/bakery', disabled: false },
+  // {
+  //   name: 'Liquidity Baking',
+  //   href: 'https://mavryk.finance/liquidity-baking',
+  //   disabled: false,
+  //   path: '/liquidity-baking',
+  // },
+  // { name: 'Mavryk Bakeries', href: 'https://mavryk.finance/bakery', disabled: false },
 ]
 
 export const ABOUT_LINKS = [

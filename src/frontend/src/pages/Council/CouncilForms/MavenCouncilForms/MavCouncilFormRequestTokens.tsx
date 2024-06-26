@@ -305,7 +305,7 @@ export const MavCouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
     <CouncilFormStyled $formName={MavenCouncilDdForms.REQUEST_TOKENS}>
       <a
         className="info-link"
-        href="https://docs.mavryk.finance/mavryk-finance/council"
+        href="https://docs.mavenfinance.io/maven-finance/council"
         target="_blank"
         rel="noreferrer"
       >
@@ -342,7 +342,7 @@ export const MavCouncilFormRequestTokens = (maxLength: CouncilMaxLength) => {
         </div>
 
         <div className="token-type">
-          <label>Token Type (FA12, FA2, TEZ)</label>
+          <label>Token Type (FA12, FA2, MAV)</label>
           <Input inputProps={tokenTypeProps} settings={tokenContractAddressSettings} />
         </div>
 

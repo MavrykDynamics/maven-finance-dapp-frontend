@@ -277,7 +277,7 @@ export const MavCouncilFormTransferTokens = (maxLength: CouncilMaxLength) => {
         </div>
 
         <div className="token-type">
-          <label>Token Type (FA12, FA2, TEZ)</label>
+          <label>Token Type (FA12, FA2, MAV)</label>
           <Input inputProps={tokenTypeProps} settings={tokenContractAddressSettings} />
         </div>
 

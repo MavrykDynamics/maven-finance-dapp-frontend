@@ -20,11 +20,10 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
       return { name: 'mMVRK', symbol: 'mMVRK', icon: '/images/mMVRK_token.svg' }
 
     case 'btc/usd':
-    case 'tzbtc':
-      return { name: 'tzBTC', symbol: 'tzBTC', icon: '/images/tzBTC.png' }
-    case 'mtzbtc':
-      return { name: 'mTzBTC', symbol: 'mTzBTC', icon: '/images/mTzBTC.svg' }
-
+    case 'wbtc':
+      return { name: 'wBTC', symbol: 'wBTC', icon: '/images/tzBTC.png' }
+    case 'mwbtc':
+      return { name: 'mWBTC', symbol: 'mWBTC', icon: '/images/mTzBTC.svg' }
     case 'eurt/usd':
     case 'euroc/usd':
     case 'eurc/usd':
@@ -32,12 +31,10 @@ export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
       return { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }
     case 'meurl':
       return { name: 'mEURL', symbol: 'mEURL', icon: '/images/mEURL.svg' }
-
     case 'mvn':
       return { name: 'Maven', symbol: 'MVN', icon: '/images/MVN_token.svg' }
     case 'smvn':
       return { name: 'Staked Maven', symbol: 'sMVN', icon: '/images/sMVN_token.svg' }
-
     case 'ocean/usd':
     case 'ocean':
       return {

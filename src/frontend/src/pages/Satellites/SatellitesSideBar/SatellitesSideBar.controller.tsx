@@ -8,7 +8,6 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts'
 
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -29,18 +28,18 @@ export const SatelliteSideBarFAQ = () => (
   <SideBarFaq>
     <h2>Satellite FAQ</h2>
     <FAQLink>
-      <a href="https://docs.mavryk.finance/mavryk-finance/governance" target="_blank" rel="noreferrer">
+      <a href="https://docs.mavenfinance.io/maven-finance/governance" target="_blank" rel="noreferrer">
         Who controls Maven Finance, and how are decisions made?
       </a>
     </FAQLink>
     <FAQLink>
-      <a href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
+      <a href="https://docs.mavenfinance.io/maven-finance/satellites-and-oracles" target="_blank" rel="noreferrer">
         What are Satellite’s and what do they do?
       </a>
     </FAQLink>
     <FAQLink>
       <a
-        href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles/oracle-nodes"
+        href="https://docs.mavenfinance.io/maven-finance/satellites-and-oracles/oracle-nodes"
         target="_blank"
         rel="noreferrer"
       >
@@ -49,7 +48,7 @@ export const SatelliteSideBarFAQ = () => (
     </FAQLink>
     <FAQLink>
       <a
-        href="https://docs.mavryk.finance/mavryk-finance/staking/benefits-and-fees-of-staking"
+        href="https://docs.mavenfinance.io/maven-finance/staking/benefits-and-fees-of-staking"
         target="_blank"
         rel="noreferrer"
       >
@@ -58,7 +57,7 @@ export const SatelliteSideBarFAQ = () => (
     </FAQLink>
     <FAQLink>
       <a
-        href="https://docs.mavryk.finance/mavryk-finance/satellites-and-oracles/delegating-to-satellites"
+        href="https://docs.mavenfinance.io/maven-finance/satellites-and-oracles/delegating-to-satellites"
         target="_blank"
         rel="noreferrer"
       >

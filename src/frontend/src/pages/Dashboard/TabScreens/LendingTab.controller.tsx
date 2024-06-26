@@ -156,7 +156,7 @@ export const LendingTab = () => {
         <div className="text">
           Maven Finance allows its users to put up existing crypto-assets as collateral for a loan, up to a 50%
           loan-to-value ratio. Likewise, suppliers can loan out their crypto-assets to earn interest.{' '}
-          <a href="https://docs.mavryk.finance/mavryk-finance/earn-and-borrow" target="_blank" rel="noreferrer">
+          <a href="https://docs.mavenfinance.io/maven-finance/earn-and-borrow" target="_blank" rel="noreferrer">
             Read More
           </a>
         </div>

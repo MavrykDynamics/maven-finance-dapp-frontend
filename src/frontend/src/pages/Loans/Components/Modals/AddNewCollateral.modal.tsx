@@ -1,68 +1,68 @@
-import { useCallback, useEffect, useMemo } from 'react'
-import { useLockBodyScroll } from 'react-use'
+import {useCallback, useEffect, useMemo} from 'react'
+import {useLockBodyScroll} from 'react-use'
 
 // components
-import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
-import { DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType } from 'app/App.components/DropDown/NewDropdown'
-import { GradientDiagram } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
+import {CommaNumber} from 'app/App.components/CommaNumber/CommaNumber.controller'
+import {DDItemId, DropDown, DropdownInputCustomChild, DropDownItemType} from 'app/App.components/DropDown/NewDropdown'
+import {GradientDiagram} from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import Icon from 'app/App.components/Icon/Icon.view'
-import { TzAddress } from 'app/App.components/TzAddress/TzAddress.view'
-import { Input } from 'app/App.components/Input/NewInput'
+import {TzAddress} from 'app/App.components/TzAddress/TzAddress.view'
+import {Input} from 'app/App.components/Input/NewInput'
 import NewButton from 'app/App.components/Button/NewButton'
-import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { XTZLimitInfoBanner } from './components/XTZLimitInfoBanner'
+import {Tooltip} from 'app/App.components/Tooltip/Tooltip'
+import {XTZLimitInfoBanner} from './components/XTZLimitInfoBanner'
 
 // helpers
 import {
   checkWhetherTokenIsCollateralToken,
   getTokenDataByAddress,
-  isTezosAsset,
+  isMVRKAsset,
 } from 'providers/TokensProvider/helpers/tokens.utils'
-import { checkNan } from 'utils/checkNan'
-import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers'
+import {checkNan} from 'utils/checkNan'
+import {getCollateralRatioByPercentage} from 'pages/Loans/Loans.helpers'
 import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
-import { convertNumberForContractCall } from 'utils/calcFunctions'
-import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
-import { validateInputLength } from 'app/App.utils/input/validateInput'
+import {convertNumberForContractCall} from 'utils/calcFunctions'
+import {getUserTokenBalanceByAddress} from 'providers/UserProvider/helpers/userBalances.helpers'
+import {validateInputLength} from 'app/App.utils/input/validateInput'
 
 // consts
-import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
-import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
-import { COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from 'pages/Loans/Loans.const'
-import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
-import { AddNewCollateralDataProps } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
+import {PRIMARY_TZ_ADDRESS_COLOR} from 'app/App.components/TzAddress/TzAddress.constants'
+import {BUTTON_PRIMARY, BUTTON_WIDE} from 'app/App.components/Button/Button.constants'
+import {COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor} from 'pages/Loans/Loans.const'
+import {AVALIABLE_TO_BORROW} from 'texts/tooltips/vault.text'
+import {AddNewCollateralDataProps} from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import {
   ERR_MSG_INPUT,
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
 } from 'app/App.components/Input/Input.constants'
-import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {DEPOSIT_COLLATERAL_ACTION} from 'providers/VaultsProvider/helpers/vaults.const'
 
 // actions
-import { depositCollateralsAction } from 'providers/VaultsProvider/actions/vaultCollateral.actions'
+import {depositCollateralsAction} from 'providers/VaultsProvider/actions/vaultCollateral.actions'
 
 // styles
-import { InputPinnedDropDown } from 'app/App.components/Input/Input.style'
-import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
-import { GovRightContainerTitleArea } from 'pages/Governance/Governance.style'
-import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
-import { LoansModalBase, VaultModalOverview } from './Modals.style'
+import {InputPinnedDropDown} from 'app/App.components/Input/Input.style'
+import {PopupContainer, PopupContainerWrapper} from 'app/App.components/popup/PopupMain.style'
+import {GovRightContainerTitleArea} from 'pages/Governance/Governance.style'
+import {ThreeLevelListItem} from 'pages/Loans/Loans.style'
+import {LoansModalBase, VaultModalOverview} from './Modals.style'
 import colors from 'styles/colors'
 
 // types
-import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import {TokenAddressType} from 'providers/TokensProvider/tokens.provider.types'
 
 // providers
-import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import {useTokensContext} from 'providers/TokensProvider/tokens.provider'
+import {useUserContext} from 'providers/UserProvider/user.provider'
+import {useDappConfigContext} from 'providers/DappConfigProvider/dappConfig.provider'
+import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
-import { operationAddCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction'
+import {useCollateralInputData} from './hooks/Market/useCollateralInputData'
+import {operationAddCollateral, useVaultFutureStats} from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 // TODO: design: https://www.figma.com/file/wvMt99sibDTpWMiwgP6xCy/Mavryk?node-id=17804%3A239633&t=Sx2aEpp3ifrGxBtQ-0
 export const AddNewCollateral = ({
@@ -244,7 +244,7 @@ export const AddNewCollateral = ({
   const { action: depositCollateralHandler } = useContractAction(contractActionProps)
 
   const isDepositBtnDisabled =
-    (isTezosAsset(selectedCollateral) && !choosenBaker) ||
+    (isMVRKAsset(selectedCollateral) && !choosenBaker) ||
     inputData.validationStatus === INPUT_STATUS_ERROR ||
     inputData.validationStatus === INPUT_STATUS_DEFAULT
 
@@ -324,7 +324,7 @@ export const AddNewCollateral = ({
               >
                 <InputPinnedDropDown>
                   <DropDown
-                    placeholder="Select Bakery"
+                    placeholder="Select Validator"
                     activeItem={selectedCollateral ? mappedAvaliableCollaterals[selectedCollateral] : undefined}
                     items={Object.values(mappedAvaliableCollaterals)}
                     clickItem={clickOnInputDDItem}
@@ -333,11 +333,11 @@ export const AddNewCollateral = ({
                 </InputPinnedDropDown>
               </Input>
 
-              {isTezosAsset(selectedCollateral) ? (
+              {isMVRKAsset(selectedCollateral) ? (
                 <>
-                  <div className="block-name">Select Baker</div>
+                  <div className="block-name">Select Validator</div>
                   <DropDown
-                    placeholder="Select Bakery"
+                    placeholder="Select Validator"
                     activeItem={choosenBaker}
                     items={bakers}
                     clickItem={(bakerAddress: DDItemId) =>
@@ -346,7 +346,7 @@ export const AddNewCollateral = ({
                   />
                   <div className="lending-stats" style={{ margin: '30px 0' }}>
                     <ThreeLevelListItem>
-                      <div className="name">Bakery Address</div>
+                      <div className="name">Validator Address</div>
                       {choosenBaker?.bakerAddress ? (
                         <TzAddress
                           className="value"
@@ -368,7 +368,7 @@ export const AddNewCollateral = ({
                     <ThreeLevelListItem>
                       <div className="name">Free Capacity</div>
                       {choosenBaker?.bakerFreeSpace ? (
-                        <CommaNumber value={choosenBaker.bakerFreeSpace} className="value" endingText="XTZ" />
+                        <CommaNumber value={choosenBaker.bakerFreeSpace} className="value" endingText="MVRK" />
                       ) : (
                         <div className="value">-</div>
                       )}
