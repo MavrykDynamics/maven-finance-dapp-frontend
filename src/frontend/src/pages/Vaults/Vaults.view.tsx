@@ -44,9 +44,16 @@ import {
 } from 'providers/VaultsProvider/vaults.provider.consts'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { MARK_FOR_LIQUIDATION_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { markForLiquidation } from 'providers/VaultsProvider/actions/vaultsLiquidation.actions'
+import {
+  markForLiquidation,
+  mockLendingControllerBlockLevel,
+} from 'providers/VaultsProvider/actions/vaultsLiquidation.actions'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { Button } from 'app/App.components/Button/Button.controller'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 
 const pathname = '/vaults'
 
@@ -194,6 +201,36 @@ export const VaultsView = () => {
 
   return (
     <VaultsStyled>
+      <div className="mock-contract-level-buttons">
+        <Button
+          text={'mock block level (set current indexed + 7y lvl)'}
+          kind={ACTION_PRIMARY}
+          onClick={() => {
+            if (lendingControllerAddress === null) {
+              console.error('no lending controller address')
+              return
+            }
+
+            mockLendingControllerBlockLevel(
+              currentIndexerLevelProxy.currentIndexedLevel + 7 * 10512000,
+              lendingControllerAddress,
+            )
+          }}
+        />
+        <Button
+          text={'reset mocked block level (set current indexed lvl)'}
+          kind={ACTION_PRIMARY}
+          onClick={() => {
+            if (lendingControllerAddress === null) {
+              console.error('no lending controller address')
+              return
+            }
+
+            mockLendingControllerBlockLevel(currentIndexerLevelProxy.currentIndexedLevel, lendingControllerAddress)
+          }}
+        />
+      </div>
+
       <SlidingTabButtons
         kind={SECONDARY_SLIDING_TAB_BUTTONS}
         tabItems={tabsList}

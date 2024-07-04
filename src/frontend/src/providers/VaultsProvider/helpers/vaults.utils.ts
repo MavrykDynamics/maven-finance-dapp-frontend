@@ -1,20 +1,20 @@
 import dayjs from 'dayjs'
 
 // helpers
-import {statusSortPriority, vaultsStatuses} from 'pages/Vaults/Vaults.consts'
-import {api} from 'utils/api/api'
+import { statusSortPriority, vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { api } from 'utils/api/api'
 import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
   TimestampByLevelResponceType,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import {getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
-import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
-import {convertNumberForClient, getNumberInBounds} from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 
 // types
-import {TokensContext} from 'providers/TokensProvider/tokens.provider.types'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import {
   FullLoansVaultType,
   NullableVaultsCtxState,
@@ -25,8 +25,8 @@ import {
 } from '../vaults.provider.types'
 
 // consts
-import {EMPTY_VAULTS_CONTEXT, VAULTS_DATA} from '../vaults.provider.consts'
-import {MINIMUN_COLLATERAL_RATIO_PERSENT} from './vaults.const'
+import { EMPTY_VAULTS_CONTEXT, VAULTS_DATA } from '../vaults.provider.consts'
+import { MINIMUN_COLLATERAL_RATIO_PERSENT } from './vaults.const'
 
 // sort vaults by status
 export const sortVaultsByStatus = async ({
@@ -132,27 +132,24 @@ export const getVaultStatus = ({
   totalOustanding: number
   liquidationTimestamp: number | null
 }): FullLoansVaultType['status'] => {
-  try {
-    if (collateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT && collateralRatio > 150 && totalOustanding > 0)
-      return vaultsStatuses.AT_RISK
-    if (collateralRatio <= 150 && totalOustanding > 0 && !liquidationTimestamp) return vaultsStatuses.MARK
+  const isTotalOutstandingPresent = totalOustanding > 0
+  const isLiquidationTimerPresent = liquidationTimestamp !== null
+  const isLiquidationTimerDone = isLiquidationTimerPresent && dayjs().valueOf() >= dayjs(liquidationTimestamp).valueOf()
 
-    if (
-      collateralRatio <= 150 &&
-      totalOustanding > 0 &&
-      liquidationTimestamp &&
-      dayjs().valueOf() < dayjs(liquidationTimestamp).valueOf()
-    )
-      return vaultsStatuses.GRACE_PERIOD
-    if (
-      collateralRatio <= 150 &&
-      totalOustanding > 0 &&
-      liquidationTimestamp &&
-      dayjs().valueOf() >= dayjs(liquidationTimestamp).valueOf()
-    )
-      return vaultsStatuses.LIQUIDATABLE
-  } catch (e) {
-    return vaultsStatuses.ACTIVE
+  if (collateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT && collateralRatio > 150 && isTotalOutstandingPresent) {
+    return vaultsStatuses.AT_RISK
+  }
+
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && !isLiquidationTimerPresent) {
+    return vaultsStatuses.MARK
+  }
+
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && isLiquidationTimerPresent && !isLiquidationTimerDone) {
+    return vaultsStatuses.GRACE_PERIOD
+  }
+
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && isLiquidationTimerPresent && isLiquidationTimerDone) {
+    return vaultsStatuses.LIQUIDATABLE
   }
 
   return vaultsStatuses.ACTIVE

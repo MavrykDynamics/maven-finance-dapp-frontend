@@ -27,6 +27,11 @@ export const VaultsStyled = styled.div<{ theme: MavenTheme }>`
       }
     }
   }
+
+  .mock-contract-level-buttons {
+    display: flex;
+    column-gap: 20px;
+  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`

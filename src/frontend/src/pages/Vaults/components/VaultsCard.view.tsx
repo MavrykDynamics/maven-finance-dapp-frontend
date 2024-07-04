@@ -164,13 +164,19 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     liquidationPrice,
   } = vaultData
 
-  const isActiveFooter =
-    status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK
+  const { color: statusColor, text: statusText } = findStatusInfo(status)
+  const footerText = findFooterText({
+    status,
+    statusColor,
+    timestamp: timerTimestamp,
+    theme: colors[themeSelected],
+  })
 
   const isMarkStatus = vaultsStatuses.MARK === status
 
-  const { color: statusColor, text: statusText } = findStatusInfo(status)
-  const footerText = findFooterText({ status, statusColor, timestamp: timerTimestamp, theme: colors[themeSelected] })
+  const isLiquidationFooterActive =
+    footerText &&
+    (status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK)
 
   const liquidateModalHandler = () => {
     openLiquidateVaultPopup({
@@ -187,170 +193,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
   const headerSufix = <StatusFlag status={statusColor} text={getStringWithoutUnderline(status)} className="sufix" />
 
-  const generalExpand = (
-    <VaultsCardDropDown>
-      <div className="body">
-        <div className="left-part">
-          <h1>Vault Overview</h1>
-
-          <div className="group">
-            <div>
-              Vault Owner
-              <TzAddress type={SECONDARY_TZ_ADDRESS_COLOR} tzAddress={ownerAddress} hasIcon />
-            </div>
-            <div>
-              <div className="name">
-                Vault Risk
-                <Tooltip>
-                  <Tooltip.Trigger className="ml-3">
-                    <Icon id="info" />
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>{VAULT_RISK}</Tooltip.Content>
-                </Tooltip>
-              </div>
-              <div className={statusColor}>{statusText}</div>
-            </div>
-          </div>
-
-          <div className="group">
-            <div>
-              <div className="name">
-                Liquidation Price
-                <Tooltip>
-                  <Tooltip.Trigger className="ml-3">
-                    <Icon id="info" />
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>{LIQUIDATION_PRICE}</Tooltip.Content>
-                </Tooltip>
-              </div>
-              <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
-            </div>
-
-            <div>
-              <div className="name">
-                Liquidation Cost
-                <Tooltip>
-                  <Tooltip.Trigger className="ml-3">
-                    <Icon id="info" />
-                  </Tooltip.Trigger>
-                  <Tooltip.Content>{LIQUIDATION_COST}</Tooltip.Content>
-                </Tooltip>
-              </div>
-              <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
-            </div>
-          </div>
-        </div>
-
-        <div className="right-part">
-          <h1>Vault Assets</h1>
-
-          <div className="table-size scroll-block">
-            <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
-              <TableHeader className={`simple-header collateral ${collateralData.length === 0 ? 'empty' : ''}`}>
-                <TableRow>
-                  <TableHeaderCell>Asset</TableHeaderCell>
-                  <TableHeaderCell>Balance</TableHeaderCell>
-                  <TableHeaderCell>Collateral %</TableHeaderCell>
-                </TableRow>
-              </TableHeader>
-
-              <TableBody>
-                {collateralData.map(({ tokenAddress, amount }, index) => {
-                  const collateralToken = getTokenDataByAddress({
-                    tokenAddress,
-                    tokensMetadata,
-                    tokensPrices,
-                  })
-
-                  if (!collateralToken || !collateralToken.rate) return null
-
-                  const { symbol, icon, rate, decimals } = collateralToken
-
-                  const convertedAmount = convertNumberForClient({ number: amount, grade: decimals })
-                  const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
-
-                  return (
-                    <TableRow $rowHeight={44} key={symbol + '-' + index}>
-                      <TableCell $width={columnWidth} className="vert-middle">
-                        <div className="cell-content row collateral-icon">
-                          <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} logo`} />
-                          {symbol}
-                        </div>
-                      </TableCell>
-
-                      <TableCell $width={columnWidth}>
-                        <div className="cell-content">
-                          <CommaNumber
-                            value={convertedAmount}
-                            decimalsToShow={assetDecimalsToShow}
-                            className="balance"
-                          />
-                          {rate ? (
-                            <CommaNumber
-                              value={convertedAmount * rate}
-                              decimalsToShow={2}
-                              beginningText="~$"
-                              className="rate"
-                            />
-                          ) : null}
-                        </div>
-                      </TableCell>
-
-                      <TableCell $width={columnWidth}>
-                        <CommaNumber value={collateralShare} decimalsToShow={2} endingText="%" />
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-
-                {/* Total row */}
-                {collateralData.length >= 2 ? (
-                  <TableRow $rowHeight={44}>
-                    <TableCell $width={columnWidth} className="vert-middle">
-                      Total
-                    </TableCell>
-
-                    <TableCell $width={columnWidth}>
-                      <div className="cell-content">
-                        <CommaNumber
-                          value={collateralBalance}
-                          decimalsToShow={2}
-                          beginningText="$"
-                          className="balance"
-                        />
-                      </div>
-                    </TableCell>
-
-                    <TableCell $width={columnWidth}>
-                      <CommaNumber value={100} endingText="%" />
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </div>
-
-      {footerText && isActiveFooter && (
-        <div className="footer">
-          {footerText}
-
-          <Button
-            text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
-            kind={ACTION_PRIMARY}
-            onClick={() => {
-              return isMarkStatus
-                ? handleMarkForLiquidation({ vaultId, vaultOwner: ownerAddress })
-                : liquidateModalHandler()
-            }}
-            disabled={vaultsStatuses.GRACE_PERIOD === status || isActionActive}
-          />
-        </div>
-      )}
-    </VaultsCardDropDown>
-  )
-
+  // view for owner
   if (isOwner || vaultTab === vaultTabs.MY) {
     return (
       <BorrowingExpandCard
@@ -363,6 +206,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     )
   }
 
+  // view for permissioned userd
   if (vaultTab === vaultTabs.PERMISSIONED) {
     return (
       // TODO: use old component, because need old view for permission vaults.
@@ -371,6 +215,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     )
   }
 
+  // view for "guest"
   return (
     <BorrowingExpandCard
       vault={vault}
@@ -379,7 +224,170 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
       isOwner={isOwner}
       hideTransactionHistory
     >
-      {generalExpand}
+      <VaultsCardDropDown>
+        <div className="body">
+          <div className="left-part">
+            <h1>Vault Overview</h1>
+
+            <div className="group">
+              <div>
+                Vault Owner
+                <TzAddress type={SECONDARY_TZ_ADDRESS_COLOR} tzAddress={ownerAddress} hasIcon />
+              </div>
+              <div>
+                <div className="name">
+                  Vault Risk
+                  <Tooltip>
+                    <Tooltip.Trigger className="ml-3">
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>{VAULT_RISK}</Tooltip.Content>
+                  </Tooltip>
+                </div>
+                <div className={statusColor}>{statusText}</div>
+              </div>
+            </div>
+
+            <div className="group">
+              <div>
+                <div className="name">
+                  Liquidation Price
+                  <Tooltip>
+                    <Tooltip.Trigger className="ml-3">
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>{LIQUIDATION_PRICE}</Tooltip.Content>
+                  </Tooltip>
+                </div>
+                <CommaNumber value={liquidationPrice ?? 0} decimalsToShow={2} beginningText="$" className="value" />
+              </div>
+
+              <div>
+                <div className="name">
+                  Liquidation Cost
+                  <Tooltip>
+                    <Tooltip.Trigger className="ml-3">
+                      <Icon id="info" />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>{LIQUIDATION_COST}</Tooltip.Content>
+                  </Tooltip>
+                </div>
+                <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
+              </div>
+            </div>
+          </div>
+
+          <div className="right-part">
+            <h1>Vault Assets</h1>
+
+            <div className="table-size scroll-block">
+              <Table className={`no-margin borrowing-table ${isOwner ? 'show-before' : ''}`}>
+                <TableHeader className={`simple-header collateral ${collateralData.length === 0 ? 'empty' : ''}`}>
+                  <TableRow>
+                    <TableHeaderCell>Asset</TableHeaderCell>
+                    <TableHeaderCell>Balance</TableHeaderCell>
+                    <TableHeaderCell>Collateral %</TableHeaderCell>
+                  </TableRow>
+                </TableHeader>
+
+                <TableBody>
+                  {collateralData.map(({ tokenAddress, amount }, index) => {
+                    const collateralToken = getTokenDataByAddress({
+                      tokenAddress,
+                      tokensMetadata,
+                      tokensPrices,
+                    })
+
+                    if (!collateralToken || !collateralToken.rate) return null
+
+                    const { symbol, icon, rate, decimals } = collateralToken
+
+                    const convertedAmount = convertNumberForClient({
+                      number: amount,
+                      grade: decimals,
+                    })
+                    const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
+
+                    return (
+                      <TableRow $rowHeight={44} key={symbol + '-' + index}>
+                        <TableCell $width={columnWidth} className="vert-middle">
+                          <div className="cell-content row collateral-icon">
+                            <ImageWithPlug useRounded imageLink={icon} alt={`${symbol} logo`} />
+                            {symbol}
+                          </div>
+                        </TableCell>
+
+                        <TableCell $width={columnWidth}>
+                          <div className="cell-content">
+                            <CommaNumber
+                              value={convertedAmount}
+                              decimalsToShow={assetDecimalsToShow}
+                              className="balance"
+                            />
+                            {rate ? (
+                              <CommaNumber
+                                value={convertedAmount * rate}
+                                decimalsToShow={2}
+                                beginningText="~$"
+                                className="rate"
+                              />
+                            ) : null}
+                          </div>
+                        </TableCell>
+
+                        <TableCell $width={columnWidth}>
+                          <CommaNumber value={collateralShare} decimalsToShow={2} endingText="%" />
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+
+                  {/* Total row */}
+                  {collateralData.length >= 2 ? (
+                    <TableRow $rowHeight={44}>
+                      <TableCell $width={columnWidth} className="vert-middle">
+                        Total
+                      </TableCell>
+
+                      <TableCell $width={columnWidth}>
+                        <div className="cell-content">
+                          <CommaNumber
+                            value={collateralBalance}
+                            decimalsToShow={2}
+                            beginningText="$"
+                            className="balance"
+                          />
+                        </div>
+                      </TableCell>
+
+                      <TableCell $width={columnWidth}>
+                        <CommaNumber value={100} endingText="%" />
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </div>
+
+        {isLiquidationFooterActive ? (
+          <div className="footer">
+            {footerText}
+
+            <Button
+              text={isMarkStatus ? 'Mark for Liquidation' : 'Liquidate Vault'}
+              kind={ACTION_PRIMARY}
+              onClick={() => {
+                return isMarkStatus
+                  ? handleMarkForLiquidation({ vaultId, vaultOwner: ownerAddress })
+                  : liquidateModalHandler()
+              }}
+              disabled={vaultsStatuses.GRACE_PERIOD === status || isActionActive}
+            />
+          </div>
+        ) : null}
+      </VaultsCardDropDown>
     </BorrowingExpandCard>
   )
 }
