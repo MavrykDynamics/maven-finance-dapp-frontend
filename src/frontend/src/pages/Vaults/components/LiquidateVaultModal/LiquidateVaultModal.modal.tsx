@@ -10,6 +10,8 @@ import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // consts
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
@@ -39,8 +41,6 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
-import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import Icon from 'app/App.components/Icon/Icon.view'
 
 const columnWidth = '33%'
 const rowHeight = 30
@@ -93,7 +93,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const maxInputTokensAmount = Math.min(userBalance, liquidationMax) // max amount is min from user balance or liquidation max
   const minInputTokensAmount = 1 // min amount is 1 token
   const maxInputPercentageAmount = 100 // max amount is 100%
-  const minInputPercentageAmount = calcPercent(minInputTokensAmount, liquidationMax) // min amount is % of 1 token from liquidation max
+  const minInputPercentageAmount = Math.min(1, calcPercent(minInputTokensAmount, liquidationMax)) // min amount is min from 1% and % of 1 token from liquidation max
 
   // TODO: old values that should be reviewed
   const maxProfit = liquidationMax * liquidationReward
