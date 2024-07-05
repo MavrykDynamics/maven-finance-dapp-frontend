@@ -26,7 +26,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { Settings } from 'app/App.components/Input/newInput.type'
+import { InputSettings } from 'app/App.components/Input/newInput.type'
 
 // styles & components
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -89,7 +89,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     (inputAmount > borrowCapacity / rate || futureCollateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT) &&
     inputAmount !== 0
 
-  const newSettings: Settings = useMemo(
+  const newSettings: InputSettings = useMemo(
     () => ({
       ...settings,
       validationFns: [[validateInputLength, ERR_MSG_INPUT]],

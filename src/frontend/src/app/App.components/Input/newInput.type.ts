@@ -9,7 +9,7 @@ export type ValidatorFnType<T = any> = [
   T[]?,
 ]
 
-export type Settings = {
+export type InputSettings = {
   balance?: number
   balanceAsset?: string
   balanceName?: string
@@ -44,6 +44,6 @@ export type InputProps = {
 export type InputViewProps = {
   children?: React.ReactNode
   className?: string
-  settings: Settings
+  settings: InputSettings
   inputProps: InputProps
 }

@@ -1,46 +1,118 @@
 import styled from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
-export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean; theme: MavenTheme }>`
+export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
   font-weight: 600;
   font-size: 14px;
   line-height: 21px;
 
-  & > h1 {
-    margin: 0;
-  }
-
-  & > h2 {
-    margin-top: 10px;
-
+  h3,
+  h4 {
     font-weight: 600;
+
+    &::after {
+      display: none;
+    }
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  h4 {
     font-size: 18px;
-    line-height: 27px;
+  }
 
-    &::after {
-      content: '';
-      height: 0;
+  .popup-description {
+    margin-bottom: 30px;
+
+    p {
+      margin: 0;
+      color: ${({ theme }) => theme.mainHeadingText};
     }
   }
 
-  .without-underscore {
-    margin-bottom: 0;
+  .numberColor,
+  .upColor,
+  .downColor {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
 
-    &::after {
-      content: '';
-      height: 0;
+    &.numberColor p {
+      color: ${({ theme }) => theme.primaryText};
+    }
+
+    &.upColor p {
+      color: ${({ theme }) => theme.upColor};
+    }
+
+    &.downColor p {
+      color: ${({ theme }) => theme.downColor};
     }
   }
 
-  & > p {
-    margin: 0;
-    margin-bottom: 10px;
-    color: ${({ theme }) => theme.mainHeadingText};
+  .cell {
+    display: flex;
+    flex-direction: column;
+
+    row-gap: 6px;
+
+    p {
+      margin: 0;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+
+      column-gap: 4px;
+
+      line-height: 100%;
+    }
   }
 
-  div[class='g-centering-group'] > button {
+  .input-wrapper {
+    margin-top: 20px;
+
+    .input-title {
+      margin-top: 10px;
+      padding-left: 7px;
+    }
+
+    .input-unit {
+      min-width: 40px;
+      height: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-wrapper {
+      margin-top: 6px;
+    }
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 10px;
-    width: 250px;
+  }
+
+  .stats-wrapper {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+
+      column-gap: 15px;
+      row-gap: 20px;
+    }
   }
 
   hr {
@@ -51,97 +123,24 @@ export const LiquidateVaultModalStyled = styled.div<{ showAsPercentage: boolean;
     border: none;
   }
 
-  .flex-group {
+  .vault-assets-wrapper {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
 
-    p {
-      margin: 0;
-    }
-  }
-
-  .grid-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    column-gap: 15px;
     row-gap: 10px;
+    margin-top: 30px;
 
-    p {
-      margin: 0;
+    .table-amount-group {
+      display: grid;
+      grid-template-columns: 60px auto;
+      column-gap: 8px;
     }
   }
 
-  .flex-group > div,
-  .grid-group > div {
-    color: ${({ theme }) => theme.subHeadingText};
-  }
+  .liquidation-btn-wrapper {
+    max-width: 250px;
 
-  .table-amount-group {
-    display: grid;
-    grid-template-columns: 60px auto;
-    column-gap: 8px;
-  }
-
-  .v-centering-group {
-    display: flex;
-    align-items: center;
-  }
-
-  .g-centering-group {
-    display: flex;
-    justify-content: center;
-  }
-
-  .info-icon {
-    margin-bottom: 5px;
-  }
-
-  .numberColor,
-  .upColor,
-  .downColor {
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 22px;
-  }
-
-  .numberColor {
-    color: ${({ theme }) => theme.primaryText};
-  }
-
-  .upColor {
-    color: ${({ theme }) => theme.upColor};
-  }
-
-  .downColor {
-    color: ${({ theme }) => theme.downColor};
-  }
-
-  .input {
-    margin: 3px 0;
-    height: 56px;
-
-    input {
-      padding-top: 3px;
-    }
-  }
-
-  .input-title {
-    margin-top: 10px;
-    padding-left: 7px;
-  }
-
-  .img-wrapper,
-  .no-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 5px;
-
-    img,
-    svg {
-      fill: ${({ theme }) => theme.primaryText};
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    margin-top: 40px;
+    margin-inline: auto;
   }
 `

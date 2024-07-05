@@ -128,7 +128,7 @@ export const normalizeVaults = ({
         collateralData,
 
         // Liquidation
-        liquidationMax: calculateVaultMaxLiquidationAmount(item.loan_outstanding_total, max_vault_liquidation_pct),
+        liquidationMax: calculateVaultMaxLiquidationAmount(loan_outstanding_total, max_vault_liquidation_pct),
         liquidationReward: convertNumberForClient({
           number: liquidation_fee_pct,
           grade: decimals,

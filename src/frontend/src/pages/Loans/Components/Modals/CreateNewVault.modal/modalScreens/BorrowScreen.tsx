@@ -44,7 +44,7 @@ import { GET_NEW_VAULT } from 'providers/VaultsProvider/queries/newVault.query'
 import { useBorrowInputData } from '../../hooks/Market/useBorrowInputData'
 
 // types
-import { Settings } from 'app/App.components/Input/newInput.type'
+import { InputSettings } from 'app/App.components/Input/newInput.type'
 import { operationBorrow, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
 type BorrowScreenProps = {
@@ -165,7 +165,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
     updateScreenToShow(CONFIRMATION_SCREEN_ID)
   }, [inputData.amount, rate, setFinalBorrowInputAmount, symbol, updateScreenToShow])
 
-  const newSettings: Settings = useMemo(
+  const newSettings: InputSettings = useMemo(
     () => ({
       ...settings,
       validationFns: [[validateInputLength, ERR_MSG_INPUT]],

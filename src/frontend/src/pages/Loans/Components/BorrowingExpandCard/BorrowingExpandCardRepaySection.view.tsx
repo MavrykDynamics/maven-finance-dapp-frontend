@@ -11,7 +11,7 @@ import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 
 // types
-import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
+import { InputProps, InputSettings } from 'app/App.components/Input/newInput.type'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 
 // styles
@@ -214,7 +214,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, totalOutstanding, userAssetBalance],
   )
 
-  const settings: Settings = useMemo(
+  const settings: InputSettings = useMemo(
     () => ({
       balance: userAssetBalance,
       balanceAsset: symbol,
