@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useLayoutEffect, useDeferredValue } from 'react'
+import { useState, useMemo, useEffect, useLayoutEffect, useDeferredValue, ChangeEvent } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // context
@@ -54,6 +54,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import { Button } from 'app/App.components/Button/Button.controller'
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
+import { Input } from 'app/App.components/Input/NewInput'
 
 const pathname = '/vaults'
 
@@ -199,36 +200,54 @@ export const VaultsView = () => {
 
   const deferredVaultIds = useDeferredValue(paginatedVaultsList)
 
+  const [mockLevelToSet, setMockLevelToSet] = useState('')
+
   return (
     <VaultsStyled>
       <div className="mock-contract-level-buttons">
-        <Button
-          text={'mock block level (set current indexed + 7y lvl)'}
-          kind={ACTION_PRIMARY}
-          onClick={() => {
-            if (lendingControllerAddress === null) {
-              console.error('no lending controller address')
-              return
-            }
+        <div className="levels-list">
+          <span>ONE_MINUTE_BLOCKS = 7.5</span>
+          <span>ONE_HOUR_BLOCKS = 450</span>
+          <span>ONE_DAY_BLOCKS = 10800</span>
+          <span>ONE_WEEK_BLOCKS = 75600</span>
+          <span>ONE_MONTH_BLOCKS = 302400</span>
+          <span>ONE_YEAR_BLOCKS = 3628800</span>
+          <span>
+            <b>CURRENT_INDEXED_LEVEL = {currentIndexerLevelProxy.currentIndexedLevel}</b>
+          </span>
+        </div>
 
-            mockLendingControllerBlockLevel(
-              currentIndexerLevelProxy.currentIndexedLevel + 7 * 10512000,
-              lendingControllerAddress,
-            )
-          }}
-        />
-        <Button
-          text={'reset mocked block level (set current indexed lvl)'}
-          kind={ACTION_PRIMARY}
-          onClick={() => {
-            if (lendingControllerAddress === null) {
-              console.error('no lending controller address')
-              return
-            }
+        <div className="action-wrapper">
+          <Input
+            settings={{
+              inputStatus: '',
+            }}
+            inputProps={{
+              value: mockLevelToSet,
+              name: 'mockLevel',
+              onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                setMockLevelToSet(e.target.value)
+              },
+            }}
+          />
 
-            mockLendingControllerBlockLevel(currentIndexerLevelProxy.currentIndexedLevel, lendingControllerAddress)
-          }}
-        />
+          <Button
+            text={'mock block level'}
+            kind={ACTION_PRIMARY}
+            onClick={() => {
+              if (lendingControllerAddress === null) {
+                console.error('no lending controller address')
+                return
+              }
+
+              const newMockLevel = eval(mockLevelToSet)
+
+              console.log({ newMockLevel, mockLevelToSet })
+
+              mockLendingControllerBlockLevel(newMockLevel, lendingControllerAddress)
+            }}
+          />
+        </div>
       </div>
 
       <SlidingTabButtons
