@@ -158,8 +158,8 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     ownerAddress,
     collateralData,
     liquidationMax,
-    liquidationReward,
-    adminLiquidateFee,
+    liquidationRewardCoefficient,
+    adminLiquidateFeeCoefficient,
     borrowedTokenAddress,
     liquidationPrice,
   } = vaultData
@@ -186,8 +186,8 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
       collateralBalance,
       collateralData,
       liquidationMax,
-      liquidationReward,
-      adminLiquidateFee,
+      liquidationRewardCoefficient,
+      adminLiquidateFeeCoefficient,
     })
   }
 
