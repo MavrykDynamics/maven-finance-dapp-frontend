@@ -129,11 +129,14 @@ export const normalizeVaults = ({
 
         // Liquidation
         liquidationMax: calculateVaultMaxLiquidationAmount(loan_outstanding_total, max_vault_liquidation_pct),
-        liquidationReward: convertNumberForClient({
+        liquidationRewardCoefficient: convertNumberForClient({
           number: liquidation_fee_pct,
           grade: decimals,
         }),
-        adminLiquidateFee: admin_liquidation_fee_pct,
+        adminLiquidateFeeCoefficient: convertNumberForClient({
+          number: admin_liquidation_fee_pct,
+          grade: decimals,
+        }),
         liquidationRatio: liquidation_ratio,
         liquidationLvl:
           item.marked_for_liquidation_level === 0

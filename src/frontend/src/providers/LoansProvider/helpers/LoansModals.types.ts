@@ -1,7 +1,7 @@
 import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
 
-import {TokenAddressType} from 'providers/TokensProvider/tokens.provider.types'
-import {DepositorsFlagType, VaultType} from '../../VaultsProvider/vaults.provider.types'
+import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
+import { DepositorsFlagType, VaultType } from '../../VaultsProvider/vaults.provider.types'
 
 // --- confirm borrow popup
 export type ConfirmBorrowPopupDataType = {
@@ -157,8 +157,8 @@ export type LiquidateVaultDataType = {
   collateralBalance: number
   collateralData: VaultType['collateralData']
   liquidationMax: number
-  liquidationReward: number
-  adminLiquidateFee: number
+  liquidationRewardCoefficient: number
+  adminLiquidateFeeCoefficient: number
 }
 
 export const DEFAULT_LIQUIDATE_POPUP_DATA: LiquidateVaultDataType = {
@@ -167,8 +167,8 @@ export const DEFAULT_LIQUIDATE_POPUP_DATA: LiquidateVaultDataType = {
   vaultId: 0,
   collateralBalance: 0,
   liquidationMax: 0,
-  liquidationReward: 0,
-  adminLiquidateFee: 0,
+  liquidationRewardCoefficient: 0,
+  adminLiquidateFeeCoefficient: 0,
   collateralData: [],
 }
 

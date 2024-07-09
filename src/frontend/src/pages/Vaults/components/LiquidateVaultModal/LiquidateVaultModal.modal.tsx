@@ -31,7 +31,7 @@ import { InputProps, InputSettings } from 'app/App.components/Input/newInput.typ
 // utils
 import { calcPercent, convertNumberForClient } from 'utils/calcFunctions'
 import { checkWhetherTokenIsLoanToken, getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { calculateAdminLiquidationFee, calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { calculateCollateralShare } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { liquidateVault } from 'providers/VaultsProvider/actions/vaultsLiquidation.actions'
 
@@ -60,7 +60,14 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const { collateralData, liquidationMax, liquidationReward, adminLiquidateFee, collateralBalance, tokenAddress } = data
+  const {
+    collateralData,
+    liquidationMax,
+    liquidationRewardCoefficient,
+    adminLiquidateFeeCoefficient,
+    collateralBalance,
+    tokenAddress,
+  } = data
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
   const userBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
@@ -84,7 +91,6 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
    * values converted to USD
    */
   const liquidationMaxUsd = liquidationMax * (borrowedToken?.rate ?? 0)
-  const liquidationRewardUsd = liquidationReward * (borrowedToken?.rate ?? 0)
   const enteredTokensUsdAmount = enteredTokensAmount * (borrowedToken?.rate ?? 0)
 
   /**
@@ -95,14 +101,25 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const maxInputPercentageAmount = 100 // max amount is 100%
   const minInputPercentageAmount = Math.min(1, calcPercent(minInputTokensAmount, liquidationMax)) // min amount is min from 1% and % of 1 token from liquidation max
 
-  // TODO: old values that should be reviewed
-  const maxProfit = liquidationMax * liquidationReward
+  /**
+   * liquidation reward values
+   */
+  const liquidationRewardPersent = liquidationRewardCoefficient * 100
+  const liquidationRewardTokensAmount = enteredTokensAmount * liquidationRewardCoefficient
+  const liquidationRewardUsdAmount = liquidationRewardTokensAmount * (borrowedToken?.rate ?? 0)
+  const maxLiquidationRewardUsdAmount = liquidationMax * liquidationRewardCoefficient * (borrowedToken?.rate ?? 0)
 
-  const returnedToLiquidator = enteredTokensAmount + enteredTokensAmount * liquidationReward
+  /**
+   * treasury fee values
+   */
+  const treasuryFeeTokensAmount = enteredTokensAmount * adminLiquidateFeeCoefficient
+  const treasuryFeeUsdAmount = treasuryFeeTokensAmount * (borrowedToken?.rate ?? 0)
 
-  const profit = enteredTokensAmount * liquidationReward
-  const treasuryFee = calculateAdminLiquidationFee(adminLiquidateFee, enteredTokensAmount)
-  const collateralWithdrawn = enteredTokensAmount + profit + treasuryFee
+  const returnedToLiquidatorUsd = enteredTokensUsdAmount + liquidationRewardUsdAmount - treasuryFeeUsdAmount
+
+  const profitUsdAmount = Math.max(0, returnedToLiquidatorUsd - enteredTokensUsdAmount)
+
+  const collateralWithdrawn = enteredTokensUsdAmount + profitUsdAmount + treasuryFeeUsdAmount
 
   /**
    * liquidation contract action
@@ -292,17 +309,23 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
             <div className="cell">
               <div className="title">Liquidation Reward</div>
               <CommaNumber
-                value={liquidationRewardUsd}
+                value={liquidationRewardPersent}
                 decimalsToShow={2}
                 showDecimal
-                beginningText="$"
+                endingText="%"
                 className="numberColor"
               />
             </div>
 
             <div className="cell">
               <div className="title">Max Profit</div>
-              <CommaNumber value={maxProfit} decimalsToShow={2} showDecimal beginningText="$" className="numberColor" />
+              <CommaNumber
+                value={maxLiquidationRewardUsdAmount}
+                decimalsToShow={2}
+                showDecimal
+                beginningText="$"
+                className="numberColor"
+              />
             </div>
           </div>
 
@@ -352,7 +375,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
               <div className="cell">
                 <div className="title">Liquidation Reward</div>
                 <CommaNumber
-                  value={liquidationRewardUsd}
+                  value={liquidationRewardUsdAmount}
                   decimalsToShow={2}
                   showDecimal
                   beginningText="$"
@@ -363,7 +386,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
               <div className="cell">
                 <div className="title">Returned to Liquidator</div>
                 <CommaNumber
-                  value={returnedToLiquidator}
+                  value={returnedToLiquidatorUsd}
                   decimalsToShow={2}
                   showDecimal
                   beginningText="$"
@@ -373,13 +396,19 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
               <div className="cell">
                 <div className="title">Profit</div>
-                <CommaNumber value={profit} decimalsToShow={2} showDecimal beginningText="$" className="numberColor" />
+                <CommaNumber
+                  value={profitUsdAmount}
+                  decimalsToShow={2}
+                  showDecimal
+                  beginningText="$"
+                  className={profitUsdAmount > 0 ? 'upColor' : 'numberColor'}
+                />
               </div>
 
               <div className="cell">
                 <div className="title">Treasury Fee</div>
                 <CommaNumber
-                  value={treasuryFee}
+                  value={treasuryFeeUsdAmount}
                   decimalsToShow={2}
                   showDecimal
                   beginningText="$"
