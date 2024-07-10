@@ -245,15 +245,6 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
   return useMinMax ? getNumberInBounds(0, 1000, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
 }
 
-// TODO: add descr to liquidation utils while testing liquidation functionality and popup
-/**
- * @param totalOutstanding – USD amount of borrowed amount and fee of the vault
- * @param liquidationRatio – ??? TODO: add description
- * @returns liquidation price in USD
- */
-export const getVaultLiquidationPrice = (totalOutstanding: number, liquidationRatio: number) =>
-  totalOutstanding * (liquidationRatio / 1000)
-
 /**
  * @param loanOutstandingTotal – USD amount of borrowed amount and fee of the vault
  * @param maxVaultLiquidationPercent – ??? TODO: add description

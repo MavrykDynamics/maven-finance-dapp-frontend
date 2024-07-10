@@ -158,11 +158,12 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
       collateralBalance,
       ownerAddress,
       collateralData,
+      borrowedToken,
+      borrowedAmount,
       liquidationMax,
       liquidationRewardCoefficient,
       adminLiquidateFeeCoefficient,
       borrowedTokenAddress,
-      liquidationPrice,
       gracePeriodTimestamp,
       liquidationTimestamp,
     },
@@ -179,6 +180,8 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   })
 
   const isMarkStatus = vaultsStatuses.MARK === status
+
+  const liquidationPrice = borrowedAmount === 0 ? 0 : borrowedAmount * borrowedToken.rate * 1.5
 
   const isLiquidationFooterActive =
     footerText &&
@@ -285,7 +288,12 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
                     <Tooltip.Content>{LIQUIDATION_COST}</Tooltip.Content>
                   </Tooltip>
                 </div>
-                <CommaNumber value={liquidationMax} decimalsToShow={2} beginningText="$" className="value" />
+                <CommaNumber
+                  value={liquidationMax * borrowedToken.rate}
+                  decimalsToShow={2}
+                  beginningText="$"
+                  className="value"
+                />
               </div>
             </div>
           </div>

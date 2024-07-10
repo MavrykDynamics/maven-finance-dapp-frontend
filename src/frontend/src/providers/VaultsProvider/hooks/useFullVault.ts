@@ -11,7 +11,6 @@ import {
   getVaultBorrowCapacity,
   getVaultCollateralBalance,
   getVaultCollateralRatio,
-  getVaultLiquidationPrice,
   getVaultStatus,
 } from '../helpers/vaults.utils'
 import {
@@ -98,8 +97,6 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     }
   }, [gracePeriodEndLevel, liquidationEndLevel, address])
 
-  console.log({ isStatusLoading, name: vault.name })
-
   const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
 
   if (!borrowedToken || !borrowedToken.rate || !checkWhetherTokenIsLoanToken(borrowedToken))
@@ -149,7 +146,6 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     liquidationEndLevel,
     gracePeriodTimestamp,
     gracePeriodEndLevel,
-    liquidationPrice: getVaultLiquidationPrice(totalOutstanding * borrowedTokenRate, restVault.liquidationRatio),
     liquidationMax: convertNumberForClient({ number: liquidationMax, grade: borrowedTokenDecimals }),
     minimumRepay: convertedMinRepay,
     ...restVault,

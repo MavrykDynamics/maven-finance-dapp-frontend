@@ -120,7 +120,6 @@ export type FullLoansVaultType = VaultType & {
   totalOutstanding: number // fee + borrowed amount in USD
   collateralBalance: number // sum of collaterals in USD
   borrowCapacity: number // how much user can borrow from vault (available liq | amount of token while collateral ration >= 200%)
-  liquidationPrice: number
   collateralRatio: number // relation of collaterals in vault to borrowed amount
   status: (typeof vaultsStatuses)[keyof typeof vaultsStatuses] // status of the vault, depends on collateralRatio
   borrowedToken: LoansTokenMetadataType & { rate: number } // metadata of borrowed token
