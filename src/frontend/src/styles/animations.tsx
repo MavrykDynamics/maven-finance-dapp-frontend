@@ -9,6 +9,25 @@ export const clickWave = (color: string) => keyframes`
   }
 `
 
+export const loadingDotsAnimation = () => keyframes`
+	0% {
+    box-shadow: 15px 0 rgb(134, 212, 201), -15px 0 rgb(134, 212, 201, 0.3);
+    background: rgb(134, 212, 201);
+  }
+  33% {
+    box-shadow: 15px 0 rgb(134, 212, 201), -15px 0 rgb(134, 212, 201, 0.3);
+    background: rgb(134, 212, 201, 0.3);
+  }
+  66% {
+    box-shadow: 15px 0 rgb(134, 212, 201, 0.3), -15px 0 rgb(134, 212, 201);
+    background: rgb(134, 212, 201, 0.3);
+  }
+  100% {
+    box-shadow: 15px 0 rgb(134, 212, 201, 0.3), -15px 0 rgb(134, 212, 201);
+    background: rgb(134, 212, 201);
+  }
+`
+
 export const clickSlide = keyframes`
   0% {
     transform: translateX(0);

@@ -54,8 +54,6 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
-
   // TODO: test how it works with only 1 popup
   const notHandleClickAway = addExistingCollateralPopup.showModal || isActionActive
 
@@ -69,17 +67,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const vaultAddress = params.get('vaultAddress')
   const isExpanded = vault.address === vaultAddress
 
-  const vaultData = useFullVault(vault)
-
-  useEffect(() => {
-    if (
-      vaultData?.liquidationTimestamp &&
-      isExpanded &&
-      (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
-    ) {
-      setTimerTimestamp(new Date(vaultData?.liquidationTimestamp).getTime())
-    }
-  }, [vaultData, isExpanded])
+  const { vault: vaultData, isStatusLoading } = useFullVault(vault)
 
   if (!vaultData) return null
 
@@ -98,6 +86,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     apr,
     borrowCapacity,
     status,
+    gracePeriodTimestamp,
   } = vaultData
 
   const { symbol, decimals, icon, rate } = borrowedToken
@@ -184,7 +173,14 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               vaultHasXtzCollateral || vaultHasSmvnCollateral ? '' : 'more-padding'
             }`}
           >
-            {status && <StatusMessage status={status} timestamp={timerTimestamp} theme={colors[themeSelected]} />}
+            {status && (
+              <StatusMessage
+                status={status}
+                gracePeriodTimestamp={gracePeriodTimestamp}
+                theme={colors[themeSelected]}
+                isLoading={isStatusLoading}
+              />
+            )}
 
             <div className="block-name">Borrowed</div>
             <div className="borrowed-data">

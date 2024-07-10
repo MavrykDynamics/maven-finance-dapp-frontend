@@ -92,8 +92,9 @@ export type VaultType = {
   vaultId: number // id of the vault
 
   // liquidation data
-  liquidationLvl: number | null // level when vault will be able to liquidate (liquidation delay + liquidation block), to use it we need to convert it to timestamp, if null vault is not liquidatable
-  liquidationMax: number // liquidation cost without fee @Sam-M-Israel?
+  gracePeriodEndLevel: number | null // level when grace perio will finish
+  liquidationEndLevel: number | null // level when liquidation will finish
+  liquidationMax: number // max liquidation amount
   liquidationRewardCoefficient: number // how much the liquidator actually receives after they liquidate a vault and the fee is taken out along with whatever assets are sent to repay the outstanding debt of the loan. This should be the liquidation_fee_pct in the indexer
   liquidationRatio: number // at what ratio is the vault able to be liquidated. so in the indexer it says 1500, so that would be 150% collateral to outstanding debt. same usage as the collateral ratio. If the collateral ratio reaches the value of the liquidation ratio then the vault can be liquidated.
   adminLiquidateFeeCoefficient: number // how much of the reward is sent to the treasury as the admin fee. so when a user liquidates a vault, the adminLiquidationFee and the liquidationReward are taken from the vault, not from one another.
@@ -115,6 +116,7 @@ export type VaultType = {
 // those additional fields can be only calculated after normalization stage, cuz those calcs requiring tokensDecimals & tokensRates
 export type FullLoansVaultType = VaultType & {
   liquidationTimestamp: number | null // same as liquidationLvl but converted to timestamp
+  gracePeriodTimestamp: number | null // same as gracePeriodLvl but converted to timestamp
   totalOutstanding: number // fee + borrowed amount in USD
   collateralBalance: number // sum of collaterals in USD
   borrowCapacity: number // how much user can borrow from vault (available liq | amount of token while collateral ration >= 200%)

@@ -55,6 +55,7 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 				}
 				
 				marked_for_liquidation_level
+				liquidation_end_level
 				loan_outstanding_total
 				loan_principal_total
 				internal_id
@@ -119,6 +120,7 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 				}
 				
 				marked_for_liquidation_level
+				liquidation_end_level
 				loan_outstanding_total
 				loan_principal_total
 				internal_id
@@ -184,6 +186,7 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 				}
 				
 				marked_for_liquidation_level
+				liquidation_end_level
 				loan_outstanding_total
 				loan_principal_total
 				internal_id

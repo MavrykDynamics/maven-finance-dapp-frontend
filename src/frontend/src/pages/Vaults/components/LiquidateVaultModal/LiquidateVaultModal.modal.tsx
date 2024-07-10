@@ -115,11 +115,46 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const treasuryFeeTokensAmount = enteredTokensAmount * adminLiquidateFeeCoefficient
   const treasuryFeeUsdAmount = treasuryFeeTokensAmount * (borrowedToken?.rate ?? 0)
 
-  const returnedToLiquidatorUsd = enteredTokensUsdAmount + liquidationRewardUsdAmount - treasuryFeeUsdAmount
-
-  const profitUsdAmount = Math.max(0, returnedToLiquidatorUsd - enteredTokensUsdAmount)
-
+  const returnedToLiquidatorUsd = enteredTokensUsdAmount + liquidationRewardUsdAmount
+  const profitUsdAmount = Math.max(0, liquidationRewardUsdAmount)
   const collateralWithdrawn = enteredTokensUsdAmount + profitUsdAmount + treasuryFeeUsdAmount
+
+  const receivedCollaterals = collateralData.reduce<
+    Array<{
+      symbol: string
+      amount: number
+      usdAmount: number
+      share: number
+    }>
+  >((acc, collateral) => {
+    const collateralToken = getTokenDataByAddress({
+      tokenAddress: collateral.tokenAddress,
+      tokensMetadata,
+      tokensPrices,
+    })
+
+    if (!collateralToken || !collateralToken.rate) return acc
+
+    const vaultCollateralAmount = convertNumberForClient({
+      number: collateral.amount,
+      grade: collateralToken.decimals,
+    })
+    const vaultCollateralUsdAmount = vaultCollateralAmount * collateralToken.rate
+
+    const collateralReceivedUsdAmount = (returnedToLiquidatorUsd * vaultCollateralUsdAmount) / collateralBalance
+    const collateralReceivedAmount = collateralReceivedUsdAmount / collateralToken.rate
+
+    acc.push({
+      symbol: collateralToken.symbol,
+      amount: collateralReceivedAmount,
+      usdAmount: collateralReceivedUsdAmount,
+      share:
+        collateralReceivedUsdAmount === 0
+          ? 0
+          : calculateCollateralShare(collateralReceivedUsdAmount, returnedToLiquidatorUsd),
+    })
+    return acc
+  }, [])
 
   /**
    * liquidation contract action
@@ -372,7 +407,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                 />
               </div>
 
-              <div className="cell">
+              {/* Commented cuz it hold same value as profit */}
+              {/* <div className="cell">
                 <div className="title">Liquidation Reward</div>
                 <CommaNumber
                   value={liquidationRewardUsdAmount}
@@ -381,12 +417,23 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                   beginningText="$"
                   className="numberColor"
                 />
-              </div>
+              </div> */}
 
               <div className="cell">
                 <div className="title">Returned to Liquidator</div>
                 <CommaNumber
                   value={returnedToLiquidatorUsd}
+                  decimalsToShow={2}
+                  showDecimal
+                  beginningText="$"
+                  className="numberColor"
+                />
+              </div>
+
+              <div className="cell">
+                <div className="title">Collateral Withdrawn</div>
+                <CommaNumber
+                  value={collateralWithdrawn}
                   decimalsToShow={2}
                   showDecimal
                   beginningText="$"
@@ -415,17 +462,6 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                   className="numberColor"
                 />
               </div>
-
-              <div className="cell">
-                <div className="title">Collateral Withdrawn</div>
-                <CommaNumber
-                  value={collateralWithdrawn}
-                  decimalsToShow={2}
-                  showDecimal
-                  beginningText="$"
-                  className="numberColor"
-                />
-              </div>
             </div>
           </div>
 
@@ -442,37 +478,21 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
               </TableHeader>
 
               <TableBody>
-                {collateralData.map(({ tokenAddress, amount }, index) => {
-                  const collateralToken = getTokenDataByAddress({
-                    tokenAddress,
-                    tokensMetadata,
-                    tokensPrices,
-                  })
-
-                  if (!collateralToken || !collateralToken.rate) return null
-
-                  const { symbol, rate, decimals } = collateralToken
-
-                  const convertedAmount = convertNumberForClient({
-                    number: amount,
-                    grade: decimals,
-                  })
-                  const collateralShare = calculateCollateralShare(convertedAmount * rate, collateralBalance)
-
+                {receivedCollaterals.map(({ symbol, amount, usdAmount, share }, index) => {
                   return (
                     <TableRow $rowHeight={rowHeight} $borderColor="primaryText" key={symbol + '-' + index}>
                       <TableCell $width={columnWidth}>{symbol}</TableCell>
 
                       <TableCell $width={columnWidth}>
                         <div className="table-amount-group">
-                          <div>{collateralShare}%</div>
-                          <CommaNumber value={convertedAmount} decimalsToShow={2} showDecimal className="numberColor" />
+                          <div>{share}%</div>
+                          <CommaNumber value={amount} decimalsToShow={2} showDecimal className="numberColor" />
                         </div>
                       </TableCell>
 
                       <TableCell $width={columnWidth} $contentPosition="right">
                         <CommaNumber
-                          value={convertedAmount * rate}
+                          value={usdAmount}
                           decimalsToShow={2}
                           showDecimal
                           beginningText="$"
@@ -488,7 +508,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                   <TableCell $width={columnWidth}></TableCell>
                   <TableCell $width={columnWidth} $contentPosition="right">
                     <CommaNumber
-                      value={collateralBalance}
+                      value={returnedToLiquidatorUsd}
                       decimalsToShow={2}
                       showDecimal
                       beginningText="$"

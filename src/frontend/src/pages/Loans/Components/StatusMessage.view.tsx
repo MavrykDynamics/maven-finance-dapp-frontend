@@ -5,25 +5,19 @@ import { StatusMessageStyled } from './LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { ThemeColorsType } from 'styles'
+import dayjs from 'dayjs'
 
-const findStatusMessage = ({
-  status,
-  timestamp,
-  theme,
-}: {
+type Props = {
   status: string
-  timestamp?: number
   theme: ThemeColorsType
-}) => {
-  const timer = timestamp ? (
-    <div className="timer">
-      <Timer timestamp={timestamp} options={{ defaultColor: theme.primaryText, negativeColor: theme.downColor }} />
-    </div>
-  ) : (
-    <span className="timer no-data">
-      no data
-    </span>
-  )
+  isLoading?: boolean
+  gracePeriodTimestamp: number | null
+}
+
+export const StatusMessage = ({ status, theme, isLoading, gracePeriodTimestamp }: Props) => {
+  if (isLoading) return null
+
+  const timerOptions = { defaultColor: theme.primaryText, negativeColor: theme.downColor }
 
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
@@ -40,7 +34,14 @@ const findStatusMessage = ({
           <Icon id="error-triangle" />
           <div>
             <p>
-              This vault has been marked for liquidation and is in its <span>grace period</span>. You have {timer}{' '}
+              This vault has been marked for liquidation and is in its <span>grace period</span>. You have{' '}
+              {gracePeriodTimestamp && dayjs().valueOf() < dayjs(gracePeriodTimestamp).valueOf() ? (
+                <div className="timer">
+                  <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
+                </div>
+              ) : (
+                'TIMER FINISHED'
+              )}{' '}
               over-collateralize this vault
             </p>
             <p> or repay the loan to prevent liquidation.</p>
@@ -56,14 +57,6 @@ const findStatusMessage = ({
         </StatusMessageStyled>
       )
     default:
-      return <></>
+      return null
   }
 }
-
-type Props = {
-  timestamp?: number
-  status: string
-  theme: ThemeColorsType
-}
-
-export const StatusMessage = (props: Props) => <>{findStatusMessage(props)}</>

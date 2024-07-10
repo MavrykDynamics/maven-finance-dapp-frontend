@@ -138,10 +138,11 @@ export const normalizeVaults = ({
           grade: decimals,
         }),
         liquidationRatio: liquidation_ratio,
-        liquidationLvl:
+        gracePeriodEndLevel:
           item.marked_for_liquidation_level === 0
             ? null
             : item.marked_for_liquidation_level + Number(liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
+        liquidationEndLevel: item.liquidation_end_level === 0 ? null : item.liquidation_end_level,
 
         // Permissions
         // TODO: implement smvn operators

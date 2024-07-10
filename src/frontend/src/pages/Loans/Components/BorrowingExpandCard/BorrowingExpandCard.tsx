@@ -87,7 +87,6 @@ export const BorrowingExpandCard = ({
   const location = useLocation()
 
   const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
-  const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const params = useMemo(() => new URLSearchParams(location.search), [location.search])
   const paramsVaultAddress = params.get('vaultAddress')
@@ -115,23 +114,13 @@ export const BorrowingExpandCard = ({
   const ref = useRef<HTMLDivElement | null>(null)
   useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
-  const vaultData = useFullVault(vault)
+  const { vault: vaultData, isStatusLoading } = useFullVault(vault)
 
   useEffect(() => {
     if (activeRepayBorrowTabId !== loansTabNames.REPAY) return
 
     setActiveRepayTab(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.id === loansTabNames.REPAY_IN_PART))
   }, [activeRepayBorrowTabId])
-
-  useEffect(() => {
-    if (
-      vaultData?.liquidationTimestamp &&
-      isExpanded &&
-      (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
-    ) {
-      setTimerTimestamp(new Date(vaultData?.liquidationTimestamp).getTime())
-    }
-  }, [vaultData, isExpanded])
 
   if (!vaultData) return null
 
@@ -156,6 +145,7 @@ export const BorrowingExpandCard = ({
     apr,
     minimumRepay,
     vaultId,
+    gracePeriodTimestamp,
   } = vaultData
 
   const {
@@ -392,7 +382,14 @@ export const BorrowingExpandCard = ({
       >
         {children || (
           <BorrowingExpandedCard>
-            {status && <StatusMessage status={status} timestamp={timerTimestamp} theme={colors[themeSelected]} />}
+            {status && (
+              <StatusMessage
+                status={status}
+                gracePeriodTimestamp={gracePeriodTimestamp}
+                theme={colors[themeSelected]}
+                isLoading={isStatusLoading}
+              />
+            )}
 
             <div className="stats-and-actions">
               <BorrowingExpandCardValuesSection

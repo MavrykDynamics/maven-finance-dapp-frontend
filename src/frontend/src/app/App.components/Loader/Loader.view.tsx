@@ -1,7 +1,12 @@
 import { useLockBodyScroll } from 'react-use'
 
 import colors from 'styles/colors'
-import { ClockLoaderWrapper, LoaderShineTextAnimation, LoaderStyledWithBackdrop } from './Loader.style'
+import {
+  ClockLoaderWrapper,
+  DotsLoaderWrapper,
+  LoaderShineTextAnimation,
+  LoaderStyledWithBackdrop,
+} from './Loader.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -67,6 +72,10 @@ export const ClockLoader = (props: { width?: number; height?: number; fillColor?
       </line>
     </ClockLoaderWrapper>
   )
+}
+
+export const DotsLoader = () => {
+  return <DotsLoaderWrapper />
 }
 
 export const LottieLoader = ({ isActive, backdropAlpha }: { isActive: boolean; backdropAlpha: number }) => {

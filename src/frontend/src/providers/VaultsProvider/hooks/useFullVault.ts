@@ -22,7 +22,7 @@ import {
 import { isAbortError } from 'errors/error'
 import { api } from 'utils/api/api'
 
-export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
+export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | null; isStatusLoading: boolean } => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
 
@@ -32,47 +32,81 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     borrowedAmount,
     fee,
     availableLiquidity,
-    liquidationLvl,
     address,
     liquidationMax,
     minimumRepay,
+    gracePeriodEndLevel,
+    liquidationEndLevel,
     ...restVault
   } = vault
 
+  const [isStatusLoading, setIsStatusLoading] = useState(true)
   const [liquidationTimestamp, setLiquidationTimestamp] = useState<null | number>(null)
+  const [gracePeriodTimestamp, setGracePeriodTimestamp] = useState<null | number>(null)
 
   useEffect(() => {
-    if (liquidationLvl) {
-      const abortLiquidationController = new AbortController()
-
-      ;(async () => {
-        try {
-          const { data: liquidationTimestamp } = await api(
-            getTimestampByLevelUrl(liquidationLvl),
-            { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
-            getTimestampByLevelSchema,
-          )
-
-          setLiquidationTimestamp(new Date(liquidationTimestamp).getTime())
-        } catch (e) {
-          if (!isAbortError(e)) {
-            console.error('getting timestamp by lvl error: ', e)
-            bug('Unexpected error happened occured, please reload the page')
-          }
-        }
-      })()
-
-      return () => {
-        abortLiquidationController.abort()
-      }
+    if (!liquidationEndLevel && !gracePeriodEndLevel) {
+      setIsStatusLoading(false)
+      return
     }
 
-    return () => {}
-  }, [liquidationLvl, address])
+    const abortLiquidationController = new AbortController()
+
+    ;(async () => {
+      try {
+        setIsStatusLoading(true)
+
+        const [gracePeriodResult, liquidationResult] = await Promise.allSettled([
+          // grace period level to timestamp convert call
+          gracePeriodEndLevel
+            ? api(
+                getTimestampByLevelUrl(gracePeriodEndLevel),
+                { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
+                getTimestampByLevelSchema,
+              )
+            : null,
+
+          // liquidation period level to timestamp convert call
+          liquidationEndLevel
+            ? api(
+                getTimestampByLevelUrl(liquidationEndLevel),
+                { signal: abortLiquidationController.signal, headers: getTimestampByLevelHeaders },
+                getTimestampByLevelSchema,
+              )
+            : null,
+        ])
+
+        if (gracePeriodResult.status === 'fulfilled' && gracePeriodResult.value) {
+          setGracePeriodTimestamp(new Date(gracePeriodResult.value.data).getTime())
+        }
+
+        if (liquidationResult.status === 'fulfilled' && liquidationResult.value) {
+          setLiquidationTimestamp(new Date(liquidationResult.value.data).getTime())
+        }
+      } catch (e) {
+        if (!isAbortError(e)) {
+          console.error('converting vault timestamp by lvl error: ', e)
+          bug('Unexpected error happened occured, please reload the page')
+        }
+      } finally {
+        setIsStatusLoading(false)
+      }
+    })()
+
+    return () => {
+      abortLiquidationController.abort()
+    }
+  }, [gracePeriodEndLevel, liquidationEndLevel, address])
+
+  console.log({ isStatusLoading, name: vault.name })
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
 
-  if (!borrowedToken || !borrowedToken.rate || !checkWhetherTokenIsLoanToken(borrowedToken)) return null
+  if (!borrowedToken || !borrowedToken.rate || !checkWhetherTokenIsLoanToken(borrowedToken))
+    return {
+      vault: null,
+      isStatusLoading,
+    }
 
   const { rate: borrowedTokenRate, decimals: borrowedTokenDecimals } = borrowedToken
 
@@ -94,10 +128,11 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
   const status = getVaultStatus({
     collateralRatio,
     totalOustanding: totalOutstanding * borrowedTokenRate,
-    liquidationTimestamp,
+    liquidationTimestamp: liquidationTimestamp,
+    gracePeriodTimestamp: gracePeriodTimestamp,
   })
 
-  return {
+  const fullVault = {
     address,
     status,
     collateralRatio,
@@ -110,11 +145,18 @@ export const useFullVault = (vault: VaultType): FullLoansVaultType | null => {
     borrowedTokenAddress,
     borrowedToken: { ...borrowedToken, rate: borrowedTokenRate },
     borrowCapacity,
-    liquidationLvl,
     liquidationTimestamp,
+    liquidationEndLevel,
+    gracePeriodTimestamp,
+    gracePeriodEndLevel,
     liquidationPrice: getVaultLiquidationPrice(totalOutstanding * borrowedTokenRate, restVault.liquidationRatio),
     liquidationMax: convertNumberForClient({ number: liquidationMax, grade: borrowedTokenDecimals }),
     minimumRepay: convertedMinRepay,
     ...restVault,
+  }
+
+  return {
+    vault: fullVault,
+    isStatusLoading,
   }
 }

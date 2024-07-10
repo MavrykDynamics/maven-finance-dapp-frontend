@@ -63,7 +63,7 @@ export const ConfirmationScreen = () => {
   } = useLoansContext()
 
   const currentVault = vaultsMapper[newVault.address]
-  const vaultData = useFullVault(currentVault)
+  const { vault: vaultData } = useFullVault(currentVault)
 
   const {
     borrowedTokenAddress = '',
