@@ -99,11 +99,27 @@ export const ClockLoaderWrapper = styled.svg<{ width: number; height: number }>`
 `
 
 export const DotsLoaderWrapper = styled.div<{ theme: MavenTheme }>`
-  margin-left: 15px;
-  width: 10px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  animation: ${({ theme }) => loadingDotsAnimation()} 1s infinite linear alternate;
+  display: flex;
+  column-gap: 5px;
+
+  .dot {
+    display: inline-block;
+
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+
+    background-color: ${({ theme }) => theme.cyanColor};
+    animation: ${({ theme }) => loadingDotsAnimation()} 1.5s infinite ease-in-out;
+
+    &:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 1s;
+    }
+  }
 `
 
 export const DataLoaderWrapper = styled.div<{ theme: MavenTheme; margin?: string }>`

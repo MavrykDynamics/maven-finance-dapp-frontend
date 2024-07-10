@@ -75,7 +75,13 @@ export const ClockLoader = (props: { width?: number; height?: number; fillColor?
 }
 
 export const DotsLoader = () => {
-  return <DotsLoaderWrapper />
+  return (
+    <DotsLoaderWrapper>
+      <div className="dot" />
+      <div className="dot" />
+      <div className="dot" />
+    </DotsLoaderWrapper>
+  )
 }
 
 export const LottieLoader = ({ isActive, backdropAlpha }: { isActive: boolean; backdropAlpha: number }) => {
