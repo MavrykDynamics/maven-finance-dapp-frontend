@@ -147,7 +147,7 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     gracePeriodTimestamp,
     gracePeriodEndLevel,
     liquidationMax: convertNumberForClient({ number: liquidationMax, grade: borrowedTokenDecimals }),
-    minimumRepay: convertedMinRepay,
+    minimumRepay: Math.min(convertedBorrowedAmount, convertedMinRepay),
     ...restVault,
   }
 

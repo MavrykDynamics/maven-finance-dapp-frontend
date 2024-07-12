@@ -68,7 +68,7 @@ export const loansInputValidation = ({
   const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
 
   // check amount by min/max value
-  if (Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount) {
+  if (Number(inputAmount) >= minAmount && Number(inputAmount) <= maxAmount) {
     // check amount by number of decimal places
     if (byDecimalPlaces) {
       return numberOfDecimalPlaces <= byDecimalPlaces ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR
