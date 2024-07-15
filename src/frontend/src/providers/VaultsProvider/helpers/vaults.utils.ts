@@ -133,6 +133,8 @@ export const sortVaultsByStatus = async ({
         gracePeriodTimestamp: vaultsLiquidationTimestamps[b]?.gracePeriod ?? null,
       })
 
+      if (vaultAStatus === null || vaultBStatus === null) return 0
+
       return statusSortPriority[vaultAStatus] - statusSortPriority[vaultBStatus]
     })
   } catch (e) {
@@ -178,7 +180,7 @@ export const getVaultStatus = ({
     return vaultsStatuses.MARK
   }
 
-  if (collateralRatio <= 150 && isTotalOutstandingPresent && isGracePeriodTimerPresent && !isGracePeriodTimerDone) {
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && (!isGracePeriodTimerDone || isLiquidationTimerDone)) {
     return vaultsStatuses.GRACE_PERIOD
   }
 

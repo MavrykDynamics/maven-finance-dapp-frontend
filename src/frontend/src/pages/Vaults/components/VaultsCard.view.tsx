@@ -89,31 +89,34 @@ const findFooterText = ({
 }) => {
   const timerOptions = { defaultColor: theme.primaryText, negativeColor: theme.downColor }
 
+  const isLiquidationTimerFinished = liquidationTimestamp && dayjs().valueOf() >= dayjs(liquidationTimestamp).valueOf()
+  const isGracePeriodTimerFinished = gracePeriodTimestamp && dayjs().valueOf() >= dayjs(gracePeriodTimestamp).valueOf()
+
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
-      return (
+      return isLiquidationTimerFinished || !liquidationTimestamp ? (
+        <p>
+          This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated
+        </p>
+      ) : (
         <p>
           This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next{' '}
-          {liquidationTimestamp && dayjs().valueOf() < dayjs(liquidationTimestamp).valueOf() ? (
-            <div className="timer">
-              <Timer timestamp={liquidationTimestamp} options={timerOptions} />
-            </div>
-          ) : (
-            'TIMER FINISHED'
-          )}{' '}
+          <div className="timer">
+            <Timer timestamp={liquidationTimestamp} options={timerOptions} />
+          </div>
         </p>
       )
     case vaultsStatuses.GRACE_PERIOD:
-      return (
+      return isGracePeriodTimerFinished || !gracePeriodTimestamp ? (
+        <p>
+          This vault is in a <span className={statusColor}>grace period</span>.
+        </p>
+      ) : (
         <p>
           This vault is in a <span className={statusColor}>grace period</span>. The vault owner has{' '}
-          {gracePeriodTimestamp && dayjs().valueOf() < dayjs(gracePeriodTimestamp).valueOf() ? (
-            <div className="timer">
-              <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
-            </div>
-          ) : (
-            'TIMER FINISHED'
-          )}{' '}
+          <div className="timer">
+            <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
+          </div>{' '}
           before liquidation is possible.
         </p>
       )
@@ -170,9 +173,9 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     isStatusLoading,
   } = vaultData
 
-  const { color: statusColor, text: statusText } = findStatusInfo(status)
+  const { color: statusColor, text: statusText } = findStatusInfo(status ?? '')
   const footerText = findFooterText({
-    status,
+    status: status ?? '',
     statusColor,
     gracePeriodTimestamp,
     liquidationTimestamp,
@@ -203,9 +206,9 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const headerSufix = (
     <StatusFlag
       status={statusColor}
-      text={getStringWithoutUnderline(status)}
+      text={getStringWithoutUnderline(status ?? '')}
       className="sufix"
-      isLoading={isStatusLoading}
+      isLoading={isStatusLoading || status === null}
     />
   )
 

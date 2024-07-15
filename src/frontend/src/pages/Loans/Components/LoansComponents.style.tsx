@@ -483,11 +483,11 @@ export const StatusMessageStyled = styled.div<{ theme: MavenTheme }>`
     height: 20px;
   }
 
-  & > div {
-    p {
-      margin: 0;
-    }
+  p {
+    margin: 0;
+  }
 
+  & > div {
     p:first-of-type {
       white-space: nowrap;
     }

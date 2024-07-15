@@ -19,6 +19,8 @@ export const StatusMessage = ({ status, theme, isLoading, gracePeriodTimestamp }
 
   const timerOptions = { defaultColor: theme.primaryText, negativeColor: theme.downColor }
 
+  const isGracePeriodTimerFinished = gracePeriodTimestamp && dayjs().valueOf() >= dayjs(gracePeriodTimestamp).valueOf()
+
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
       return (
@@ -32,20 +34,19 @@ export const StatusMessage = ({ status, theme, isLoading, gracePeriodTimestamp }
       return (
         <StatusMessageStyled className={status}>
           <Icon id="error-triangle" />
-          <div>
+          {isGracePeriodTimerFinished || !gracePeriodTimestamp ? (
+            <p>
+              This vault has been marked for liquidation and is in its <span>grace period</span>.
+            </p>
+          ) : (
             <p>
               This vault has been marked for liquidation and is in its <span>grace period</span>. You have{' '}
-              {gracePeriodTimestamp && dayjs().valueOf() < dayjs(gracePeriodTimestamp).valueOf() ? (
-                <div className="timer">
-                  <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
-                </div>
-              ) : (
-                'TIMER FINISHED'
-              )}{' '}
-              over-collateralize this vault
+              <div className="timer">
+                <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
+              </div>{' '}
+              over-collateralize this vault or repay the loan to prevent liquidation.
             </p>
-            <p> or repay the loan to prevent liquidation.</p>
-          </div>
+          )}
         </StatusMessageStyled>
       )
     case vaultsStatuses.AT_RISK:

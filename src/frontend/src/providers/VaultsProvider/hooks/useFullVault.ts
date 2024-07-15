@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import dayjs from 'dayjs'
 
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -42,6 +43,7 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
   const [isStatusLoading, setIsStatusLoading] = useState(true)
   const [liquidationTimestamp, setLiquidationTimestamp] = useState<null | number>(null)
   const [gracePeriodTimestamp, setGracePeriodTimestamp] = useState<null | number>(null)
+  const [vaultStatus, setVaultStatus] = useState<FullLoansVaultType['status']>(null)
 
   useEffect(() => {
     if (!liquidationEndLevel && !gracePeriodEndLevel) {
@@ -95,17 +97,12 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     return () => {
       abortLiquidationController.abort()
     }
-  }, [gracePeriodEndLevel, liquidationEndLevel, address])
+  }, [gracePeriodEndLevel, liquidationEndLevel])
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
 
-  if (!borrowedToken || !borrowedToken.rate || !checkWhetherTokenIsLoanToken(borrowedToken))
-    return {
-      vault: null,
-      isStatusLoading,
-    }
-
-  const { rate: borrowedTokenRate, decimals: borrowedTokenDecimals } = borrowedToken
+  const borrowedTokenRate = borrowedToken?.rate ?? 0
+  const borrowedTokenDecimals = borrowedToken?.decimals ?? 0
 
   const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals })
   const convertedFee = convertNumberForClient({ number: fee, grade: borrowedTokenDecimals })
@@ -113,7 +110,10 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     number: availableLiquidity,
     grade: borrowedTokenDecimals,
   })
+
   const totalOutstanding = convertedBorrowedAmount + convertedFee
+  const totalOutstandingUsd = totalOutstanding * borrowedTokenRate
+
   const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
   const borrowCapacity = getVaultBorrowCapacity(
     convertedAvailableLiquidity * borrowedTokenRate,
@@ -122,16 +122,74 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
   )
   const collateralRatio = getVaultCollateralRatio(collateralBalance, totalOutstanding * borrowedTokenRate)
   const convertedMinRepay = convertNumberForClient({ number: minimumRepay, grade: borrowedTokenDecimals })
-  const status = getVaultStatus({
-    collateralRatio,
-    totalOustanding: totalOutstanding * borrowedTokenRate,
-    liquidationTimestamp: liquidationTimestamp,
-    gracePeriodTimestamp: gracePeriodTimestamp,
-  })
+
+  /**
+   * vault status calcs and recalculation effect
+   *
+   * run status recalc on:
+   *  - collateral ratio change
+   *  - vault's total oustanding
+   *  - timer time change
+   */
+  useEffect(() => {
+    const newVaultStatus = getVaultStatus({
+      collateralRatio,
+      totalOustanding: totalOutstandingUsd,
+      liquidationTimestamp: liquidationTimestamp,
+      gracePeriodTimestamp: gracePeriodTimestamp,
+    })
+
+    setVaultStatus(newVaultStatus)
+
+    // if liquidation timer present get diff from current time, otherwise -1
+    const vaultLiquidationTimerRestTime = liquidationTimestamp
+      ? dayjs().valueOf() - dayjs(liquidationTimestamp).valueOf()
+      : -1
+
+    // if grace period timer present get diff from current time, otherwise -1
+    const vaultGracePeriodTimerRestTime = gracePeriodTimestamp
+      ? dayjs().valueOf() - dayjs(gracePeriodTimestamp).valueOf()
+      : -1
+
+    // setTimeout timer is grace period timer, if not present try liquidation timer, otherwise timer is not needed
+    const timerMsDelay =
+      vaultGracePeriodTimerRestTime > 0
+        ? vaultGracePeriodTimerRestTime
+        : vaultLiquidationTimerRestTime > 0
+        ? vaultLiquidationTimerRestTime
+        : null
+
+    // if we have delay for the timer schedule setTimeout, otherwise timer is null
+    const timer = timerMsDelay
+      ? setTimeout(() => {
+          const newVaultStatus = getVaultStatus({
+            collateralRatio,
+            totalOustanding: totalOutstandingUsd,
+            liquidationTimestamp: liquidationTimestamp,
+            gracePeriodTimestamp: gracePeriodTimestamp,
+          })
+
+          setVaultStatus(newVaultStatus)
+        }, timerMsDelay)
+      : null
+
+    // clean up timer on deps change
+    return () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
+    }
+  }, [collateralRatio, totalOutstandingUsd, liquidationTimestamp, gracePeriodTimestamp])
+
+  if (!borrowedToken || !borrowedToken.rate || !checkWhetherTokenIsLoanToken(borrowedToken))
+    return {
+      vault: null,
+      isStatusLoading,
+    }
 
   const fullVault = {
     address,
-    status,
+    status: vaultStatus,
     collateralRatio,
     collateralBalance,
     collateralData,
