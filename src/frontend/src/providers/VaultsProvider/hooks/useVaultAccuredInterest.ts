@@ -19,6 +19,7 @@ type Args = {
  * hook to get data for calculating actual accured interest
  *
  * @param vaultAddress – vault's address
+ * @param shouldSkip – boolean value whether we need to skip running a query
  * @returns accured interest of the vault, converted to tokens amount
  */
 export function useVaultAccuredInterest({ vaultAddress, shouldSkip }: Args) {
@@ -36,10 +37,7 @@ export function useVaultAccuredInterest({ vaultAddress, shouldSkip }: Args) {
       const { vaults } = lendingController
 
       const {
-        loan_outstanding_total,
         loan_interest_total,
-        loan_principal_total,
-        last_updated_block_level,
         borrow_index: vaultBorrowIndex,
         loan_token: {
           borrow_index: tokenBorrowIndex,
@@ -49,13 +47,11 @@ export function useVaultAccuredInterest({ vaultAddress, shouldSkip }: Args) {
         },
       } = vaults[0]
 
-      // if outstanding total <= 0 or vault's borrow index <= 0 accured interest is 0
-      if (loan_outstanding_total <= 0 || vaultBorrowIndex <= 0) {
-        setAccuredInterest(0)
-      }
+      // if vault's borrow index <= 0 accured interest is 0
+      if (vaultBorrowIndex <= 0 || tokenBorrowIndex <= 0) setAccuredInterest(0)
 
       const vaultAccuredInterest = convertNumberForClient({
-        number: Math.floor((loan_outstanding_total * tokenBorrowIndex) / vaultBorrowIndex) - loan_principal_total,
+        number: Math.max(0, Math.floor((loan_interest_total * tokenBorrowIndex) / vaultBorrowIndex)),
         grade: decimals,
       })
 
