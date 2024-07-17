@@ -26,7 +26,6 @@ export function useVaultAccuredInterest({ vaultAddress, shouldSkip }: Args) {
 
   const [accuredInterest, setAccuredInterest] = useState<number | null>(null)
 
-  // update feeds price and track whether need to load new feed
   useQueryWithRefetch(GET_VAULT_ACC_INT_INDEXES, {
     skip: shouldSkip,
     variables: {
@@ -58,11 +57,6 @@ export function useVaultAccuredInterest({ vaultAddress, shouldSkip }: Args) {
       const vaultAccuredInterest = convertNumberForClient({
         number: Math.floor((loan_outstanding_total * tokenBorrowIndex) / vaultBorrowIndex) - loan_principal_total,
         grade: decimals,
-      })
-
-      console.log({
-        name: data.lending_controller[0]?.vaults?.[0]?.vault?.name,
-        vaultAccuredInterest,
       })
 
       setAccuredInterest(vaultAccuredInterest)
