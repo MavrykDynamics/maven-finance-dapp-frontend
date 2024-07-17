@@ -16,7 +16,7 @@ type Props = {
   borrowedAmount: number
   borrowCapacity: number
   decimals: number
-  fee: number
+  accuredInterest: number
   apr: number
   rate: number
 }
@@ -27,7 +27,7 @@ export const BorrowingExpandCardValuesSection = ({
   borrowedAmount,
   borrowCapacity,
   decimals,
-  fee,
+  accuredInterest,
   apr,
   rate,
 }: Props) => {
@@ -39,10 +39,15 @@ export const BorrowingExpandCardValuesSection = ({
     <LoansValuesSection className="borrowing-tab">
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber
+            value={borrowedAmount + accuredInterest}
+            className="value"
+            showDecimal
+            decimalsToShow={decimals}
+          />
 
           <CommaNumber
-            value={(borrowedAmount + fee) * rate}
+            value={(borrowedAmount + accuredInterest) * rate}
             beginningText="$"
             className="rate"
             showDecimal
@@ -80,8 +85,8 @@ export const BorrowingExpandCardValuesSection = ({
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
-          <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
+          <CommaNumber value={accuredInterest} decimalsToShow={decimals} className="value" />
+          <CommaNumber value={accuredInterest * rate} decimalsToShow={2} beginningText="$" className="rate" />
           <div className="name">
             Accrued Interest
             <Tooltip>

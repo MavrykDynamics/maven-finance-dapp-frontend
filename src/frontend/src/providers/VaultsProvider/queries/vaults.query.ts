@@ -54,10 +54,12 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 					address
 				}
 				
+				last_updated_block_level
 				marked_for_liquidation_level
 				liquidation_end_level
 				loan_outstanding_total
 				loan_principal_total
+				loan_interest_total
 				internal_id
 				borrow_index
 			}
@@ -119,10 +121,12 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 					address
 				}
 				
+				last_updated_block_level
 				marked_for_liquidation_level
 				liquidation_end_level
 				loan_outstanding_total
 				loan_principal_total
+				loan_interest_total
 				internal_id
 				borrow_index
 			}
@@ -185,10 +189,12 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 					address
 				}
 				
+				last_updated_block_level
 				marked_for_liquidation_level
 				liquidation_end_level
 				loan_outstanding_total
 				loan_principal_total
+				loan_interest_total
 				internal_id
 				borrow_index
 			}

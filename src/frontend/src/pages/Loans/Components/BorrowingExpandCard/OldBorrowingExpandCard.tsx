@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { useClickAway } from 'react-use'
 import { useLocation, useNavigate } from 'react-router-dom'
 import classNames from 'classnames'
@@ -7,7 +7,6 @@ import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPerce
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
@@ -38,6 +37,7 @@ import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import { useVaultAccuredInterest } from 'providers/VaultsProvider/hooks/useVaultAccuredInterest'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -69,6 +69,9 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
   const { vault: vaultData, isStatusLoading } = useFullVault(vault)
 
+  // getting vault actuall accured interest, skip hook execution and query run, if vault is not opened (accured interest is not used)
+  const vaultActuallAccuredInterest = useVaultAccuredInterest({ vaultAddress: vault.address, shouldSkip: !isExpanded })
+
   if (!vaultData) return null
 
   const {
@@ -80,7 +83,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     collateralRatio,
     borrowedAmount,
     borrowedTokenAddress,
-    fee,
+    vaultAccuredInterest,
     totalOutstanding,
     collateralBalance,
     apr,
@@ -88,6 +91,8 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     status,
     gracePeriodTimestamp,
   } = vaultData
+
+  const vaultActualAccuredInterest = vaultActuallAccuredInterest ?? vaultAccuredInterest
 
   const { symbol, decimals, icon, rate } = borrowedToken
 
@@ -206,8 +211,13 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     <Tooltip.Content>Interest, compounded over time every time you borrow</Tooltip.Content>
                   </Tooltip>
                 </div>
-                <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
-                <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                <CommaNumber value={vaultActualAccuredInterest} decimalsToShow={decimals} className="value" />
+                <CommaNumber
+                  value={vaultActualAccuredInterest * rate}
+                  decimalsToShow={2}
+                  beginningText="$"
+                  className="rate"
+                />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">APR</div>

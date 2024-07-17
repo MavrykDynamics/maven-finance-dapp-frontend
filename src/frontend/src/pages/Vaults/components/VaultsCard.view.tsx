@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import dayjs from 'dayjs'
 
 // components
 import { StatusFlag } from '../../../app/App.components/StatusFlag/StatusFlag.controller'
@@ -12,6 +12,7 @@ import { vaultTabs } from '../Vaults.view'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { Button } from 'app/App.components/Button/Button.controller'
+import { DotsLoader } from 'app/App.components/Loader/Loader.view'
 
 // styles
 import { VaultsCardDropDown } from './../Vaults.style'
@@ -46,8 +47,6 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import dayjs from 'dayjs'
-import { DotsLoader } from 'app/App.components/Loader/Loader.view'
 
 const columnWidth = '33%'
 

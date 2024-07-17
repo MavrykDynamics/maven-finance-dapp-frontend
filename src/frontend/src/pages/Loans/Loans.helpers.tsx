@@ -9,25 +9,6 @@ import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.type
 import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
 import { DEFAULT_MIN_COLLATERAL_AMOUNT } from 'utils/constants'
 
-// HELPER FOR BORROW FEE
-export const calculateAccruedInterest = (
-  currentLoanOutstandingTotal: number,
-  vaultBorrowIndex: number,
-  tokenBorrowIndex: number,
-) => {
-  let newLoanOutstandingTotal = currentLoanOutstandingTotal
-  const vBorrowIndex = vaultBorrowIndex
-  const loanTokenBorrowIndex = tokenBorrowIndex
-
-  if (currentLoanOutstandingTotal > 0) {
-    if (vBorrowIndex > 0) {
-      newLoanOutstandingTotal = (currentLoanOutstandingTotal * loanTokenBorrowIndex) / vBorrowIndex
-    }
-  }
-
-  return newLoanOutstandingTotal
-}
-
 // HELPER FOR MAX COLLATERAL WITHDRAW
 export const getMaxCollateralWithdraw = (
   totalCollateralAmount: number,

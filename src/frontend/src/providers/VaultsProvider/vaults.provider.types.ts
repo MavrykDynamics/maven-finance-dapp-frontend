@@ -83,7 +83,7 @@ export type VaultType = {
   // vault tokens data
   borrowedTokenAddress: TokenAddressType // address of borrowed token
   borrowedAmount: number // amount of token that user/s have borrowed from the vault *after normalizer it's not converted to client format*
-  fee: number // amount of token that user will have to pay after he has borrowed from the vault *after normalizer it's not converted to client format*
+  vaultAccuredInterest: number // compounded token amount via vaut's apr till vault's last updated block lvl
   collateralData: Array<CollateralType> // collaterals of the vault in format {amount, tokenAddress} *after normalizer amount is not converted to the client format*
 
   // vault metadata
@@ -111,6 +111,8 @@ export type VaultType = {
   apr: number // interest rate the user is charged for borrowing
   availableLiquidity: number // how much token available in a pool, user to calc borrowCapacity of the vault *after normalizer it's not converted to client format*
   creationTimestamp: number // creation timestamp of the vault
+  vaultBorrowIndex: number
+  vaultTokenBorrowIndex: number
 }
 
 // those additional fields can be only calculated after normalization stage, cuz those calcs requiring tokensDecimals & tokensRates

@@ -8,7 +8,6 @@ import {
   VaultsIndexerDataType,
   VaultType,
 } from 'providers/VaultsProvider/vaults.provider.types'
-import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { calcMarketAvailableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
@@ -82,6 +81,7 @@ export const normalizeVaults = ({
         collateral_balances,
         loan_outstanding_total,
         loan_principal_total: borrowedAmount,
+        loan_interest_total: vaultAccuredInterest,
         borrow_index: vaultBorrowIndex,
         loan_token,
         owner: { address: ownerAddress },
@@ -95,10 +95,6 @@ export const normalizeVaults = ({
 
       // Check whether vault exists
       if (!vault) return acc
-
-      const fee = Math.abs(
-        calculateAccruedInterest(loan_outstanding_total, vaultBorrowIndex, marketBorrowIndex) - borrowedAmount,
-      )
 
       const apr =
         convertNumberForClient({
@@ -124,7 +120,7 @@ export const normalizeVaults = ({
         borrowedAmount,
         availableLiquidity,
         minimumRepay: min_repayment_amount,
-        fee,
+        vaultAccuredInterest,
         collateralData,
 
         // Liquidation
@@ -150,6 +146,8 @@ export const normalizeVaults = ({
         xtzDelegatedTo: vault?.baker?.address ?? null,
         depositors,
         depositorsFlag: deporsitorsFlag,
+        vaultBorrowIndex: vaultBorrowIndex,
+        vaultTokenBorrowIndex: marketBorrowIndex,
       }
 
       acc.vaultsMapper[vault.address] = normallizedVault

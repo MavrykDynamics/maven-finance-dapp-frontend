@@ -19,7 +19,6 @@ import colors from 'styles/colors'
 
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import {
   COLLATERAL_RATIO_GRADIENT,
   getCollateralRatioPercentColor,
@@ -34,6 +33,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { useVaultAccuredInterest } from 'providers/VaultsProvider/hooks/useVaultAccuredInterest'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -116,6 +116,9 @@ export const BorrowingExpandCard = ({
 
   const { vault: vaultData, isStatusLoading } = useFullVault(vault)
 
+  // getting vault actuall accured interest, skip hook execution and query run, if vault is not opened (accured interest is not used)
+  const vaultActuallAccuredInterest = useVaultAccuredInterest({ vaultAddress: vault.address, shouldSkip: !isExpanded })
+
   useEffect(() => {
     if (activeRepayBorrowTabId !== loansTabNames.REPAY) return
 
@@ -138,7 +141,7 @@ export const BorrowingExpandCard = ({
     xtzDelegatedTo,
     sMVNDelegatedTo,
     collateralData,
-    fee,
+    vaultAccuredInterest,
     availableLiquidity,
     totalOutstanding,
     status,
@@ -147,6 +150,8 @@ export const BorrowingExpandCard = ({
     vaultId,
     gracePeriodTimestamp,
   } = vaultData
+
+  const vaultActualAccuredInterest = vaultActuallAccuredInterest ?? vaultAccuredInterest
 
   const {
     symbol: borrowedTokenSymbol,
@@ -398,7 +403,7 @@ export const BorrowingExpandCard = ({
                 borrowedAmount={borrowedAmount}
                 borrowCapacity={borrowCapacity}
                 decimals={borrowedTokenDecimals}
-                fee={fee}
+                accuredInterest={vaultActualAccuredInterest}
                 apr={apr}
                 rate={borrowedTokenRate}
               />
@@ -442,7 +447,7 @@ export const BorrowingExpandCard = ({
                     vaultAddress={vaultAddress}
                     borrowedToken={borrowedToken}
                     borrowedTokenRate={borrowedTokenRate}
-                    fee={fee}
+                    accuredInterest={vaultActualAccuredInterest}
                     borrowedAmount={borrowedAmount}
                     minimumRepay={minimumRepay}
                     collateralBalance={collateralBalance}

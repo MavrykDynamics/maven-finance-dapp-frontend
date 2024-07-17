@@ -104,12 +104,12 @@ export const sortVaultsByStatus = async ({
 
       const vaultATotalOutstanding =
         convertNumberForClient({
-          number: vaultsMapper[a].borrowedAmount + vaultsMapper[a].fee,
+          number: vaultsMapper[a].borrowedAmount + vaultsMapper[a].vaultAccuredInterest,
           grade: vaultAToken.decimals,
         }) * vaultAToken.rate
       const vaultBTotalOutstanding =
         convertNumberForClient({
-          number: vaultsMapper[b].borrowedAmount + vaultsMapper[b].fee,
+          number: vaultsMapper[b].borrowedAmount + vaultsMapper[b].vaultAccuredInterest,
           grade: vaultBToken.decimals,
         }) * vaultBToken.rate
 
@@ -180,11 +180,11 @@ export const getVaultStatus = ({
     return vaultsStatuses.MARK
   }
 
-  if (collateralRatio <= 150 && isTotalOutstandingPresent && (!isGracePeriodTimerDone || isLiquidationTimerDone)) {
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && !isGracePeriodTimerDone) {
     return vaultsStatuses.GRACE_PERIOD
   }
 
-  if (collateralRatio <= 150 && isTotalOutstandingPresent && isGracePeriodTimerDone && !isLiquidationTimerDone) {
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && isGracePeriodTimerDone && isLiquidationTimerPresent) {
     return vaultsStatuses.LIQUIDATABLE
   }
 

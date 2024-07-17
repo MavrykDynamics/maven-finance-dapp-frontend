@@ -58,7 +58,7 @@ type Props = {
   vaultAddress: string
   borrowedToken: TokenMetadataType
   borrowedTokenRate: number
-  fee: number
+  accuredInterest: number
   borrowedAmount: number
   minimumRepay: number
   collateralBalance: number
@@ -82,7 +82,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const {
     vaultId,
     vaultAddress,
-    fee,
+    accuredInterest,
     borrowedToken,
     collateralBalance,
     borrowedTokenRate,
@@ -103,7 +103,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
-  const totalOutstanding = fee + borrowedAmount
+  const totalOutstanding = accuredInterest + borrowedAmount
   const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
 
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
@@ -282,7 +282,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           futureTotalOutstanding={futureTotalOustanding}
           futureCollateralRatio={futureCollateralRatio}
           futureBorrowCapacity={futureBorrowCapacity}
-          fee={fee}
+          accuredInterest={accuredInterest}
         />
       </div>
 
@@ -309,14 +309,14 @@ const RepayTableStats = ({
   futureTotalOutstanding,
   futureCollateralRatio,
   futureBorrowCapacity,
-  fee,
+  accuredInterest,
 }: {
   futureBorrowedAmount: number
   collateralBalance: number
   futureTotalOutstanding: number
   futureCollateralRatio: number
   futureBorrowCapacity: number
-  fee: number
+  accuredInterest: number
 }) => {
   const {
     preferences: { themeSelected },
@@ -337,10 +337,10 @@ const RepayTableStats = ({
               <Tooltip.Trigger className="ml-3">
                 <Icon id="info" />
               </Tooltip.Trigger>
-              <Tooltip.Content>{FEES_DUE(fee)}</Tooltip.Content>
+              <Tooltip.Content>{FEES_DUE(accuredInterest)}</Tooltip.Content>
             </Tooltip>
           </div>
-          <CommaNumber value={Math.ceil(fee)} decimalsToShow={0} className="value" />
+          <CommaNumber value={Math.ceil(accuredInterest)} decimalsToShow={0} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Total Outstanding</div>
