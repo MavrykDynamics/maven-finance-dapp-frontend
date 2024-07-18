@@ -40,6 +40,7 @@ import { ConfirmRepayFullPopupDataType } from '../../../../providers/LoansProvid
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { useLocation, useNavigate } from 'react-router'
 
 export const ConfirmRepayFull = ({
   closePopup,
@@ -54,6 +55,10 @@ export const ConfirmRepayFull = ({
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
 
+  const location = useLocation()
+  const navigate = useNavigate()
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
+
   const {
     preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
@@ -62,6 +67,7 @@ export const ConfirmRepayFull = ({
   useLockBodyScroll(show)
 
   const {
+    repayAmount,
     vaultId,
     vaultAddress,
     collateralBalance,
@@ -80,7 +86,7 @@ export const ConfirmRepayFull = ({
     vaultCurrentCollateralBalance: collateralBalance,
     vaultTokenAddress,
     operationType: operationRepay,
-    inputValue: totalOutstanding,
+    inputValue: repayAmount,
     marketAvailableLiquidity: availableLiquidity,
   })
 
@@ -100,7 +106,7 @@ export const ConfirmRepayFull = ({
         userAddress,
         vaultId,
         vaultAddress,
-        totalOutstanding,
+        repayAmount,
         borrowedToken,
         () => {
           closePopup()
@@ -116,7 +122,7 @@ export const ConfirmRepayFull = ({
     callback,
     closePopup,
     lendingControllerAddress,
-    totalOutstanding,
+    repayAmount,
     userAddress,
     vaultAddress,
     vaultId,
@@ -126,8 +132,12 @@ export const ConfirmRepayFull = ({
     () => ({
       actionType: REPAY_FULL_VAULT_ACTION,
       actionFn: fullRepayAction,
+      afterActionCallback: () => {
+        params.delete('vaultAddress')
+        navigate({ ...location, search: params.toString() }, { replace: true })
+      },
     }),
-    [fullRepayAction],
+    [fullRepayAction, location, navigate, params],
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)
@@ -154,11 +164,11 @@ export const ConfirmRepayFull = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
-              <CommaNumber value={totalOutstanding} className="value" />
+              <CommaNumber value={repayAmount} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>
-              <CommaNumber value={totalOutstanding * rate} className="value" beginningText="$" />
+              <CommaNumber value={repayAmount * rate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 

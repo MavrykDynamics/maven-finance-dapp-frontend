@@ -151,7 +151,7 @@ export const BorrowingExpandCard = ({
     gracePeriodTimestamp,
   } = vaultData
 
-  const vaultActualAccuredInterest = vaultActuallAccuredInterest ?? vaultAccuredInterest
+  const vaultCurrentAccuredInterest = vaultActuallAccuredInterest ?? vaultAccuredInterest
 
   const {
     symbol: borrowedTokenSymbol,
@@ -224,9 +224,9 @@ export const BorrowingExpandCard = ({
     })
   }
 
-  const handleClickOpenConfirmRepayPopup = (inputAmount: number, clearInputData: () => void) => {
+  const handleClickOpenConfirmRepayPopup = (repayAmount: number, clearInputData: () => void) => {
     openConfirmRepayPopup({
-      inputAmount,
+      repayAmount,
       vaultId,
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
@@ -240,8 +240,9 @@ export const BorrowingExpandCard = ({
     })
   }
 
-  const handleClickOpenConfirmRepayFullPopup = (clearInputData: () => void) => {
+  const handleClickOpenConfirmRepayFullPopup = (repayAmount: number, clearInputData: () => void) => {
     openConfirmRepayFullPopup?.({
+      repayAmount,
       vaultId,
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
@@ -403,7 +404,7 @@ export const BorrowingExpandCard = ({
                 borrowedAmount={borrowedAmount}
                 borrowCapacity={borrowCapacity}
                 decimals={borrowedTokenDecimals}
-                accuredInterest={vaultActualAccuredInterest}
+                accuredInterest={vaultCurrentAccuredInterest}
                 apr={apr}
                 rate={borrowedTokenRate}
               />
@@ -447,8 +448,9 @@ export const BorrowingExpandCard = ({
                     vaultAddress={vaultAddress}
                     borrowedToken={borrowedToken}
                     borrowedTokenRate={borrowedTokenRate}
-                    accuredInterest={vaultActualAccuredInterest}
+                    accuredInterest={vaultCurrentAccuredInterest}
                     borrowedAmount={borrowedAmount}
+                    totalOutstanding={totalOutstanding}
                     minimumRepay={minimumRepay}
                     collateralBalance={collateralBalance}
                     availableLiquidity={availableLiquidity}

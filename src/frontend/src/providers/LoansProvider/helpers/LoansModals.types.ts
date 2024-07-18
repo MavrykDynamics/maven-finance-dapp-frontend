@@ -28,7 +28,7 @@ export const DEFAULT_CONFIRM_BORROW_POPUP_DATA: ConfirmBorrowPopupDataType = {
 
 // --- confirm repay popup
 export type ConfirmRepayPartPopupDataType = {
-  inputAmount: number
+  repayAmount: number
   vaultId: number
   vaultAddress: string
   tokenAddress: TokenAddressType
@@ -44,13 +44,14 @@ export const DEFAULT_CONFIRM_REPAY_POPUP_DATA: ConfirmRepayPartPopupDataType = {
   vaultId: 0,
   collateralBalance: 0,
   availableLiquidity: 0,
-  inputAmount: 0,
+  repayAmount: 0,
   totalOutstanding: 0,
   callback: () => {},
 }
 
 // --- confirm repay full popup
 export type ConfirmRepayFullPopupDataType = {
+  repayAmount: number
   vaultId: number
   vaultAddress: string
   tokenAddress: TokenAddressType
@@ -62,6 +63,7 @@ export type ConfirmRepayFullPopupDataType = {
 }
 
 export const DEFAULT_CONFIRM_REPAY_FULL_POPUP_DATA: ConfirmRepayFullPopupDataType = {
+  repayAmount: 0,
   vaultAddress: '',
   tokenAddress: '',
   vaultId: 0,

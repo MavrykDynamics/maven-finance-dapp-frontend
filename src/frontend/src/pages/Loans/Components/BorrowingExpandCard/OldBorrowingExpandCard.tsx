@@ -92,7 +92,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     gracePeriodTimestamp,
   } = vaultData
 
-  const vaultActualAccuredInterest = vaultActuallAccuredInterest ?? vaultAccuredInterest
+  const vaultCurrentAccuredInterest = vaultActuallAccuredInterest ?? vaultAccuredInterest
 
   const { symbol, decimals, icon, rate } = borrowedToken
 
@@ -211,9 +211,9 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     <Tooltip.Content>Interest, compounded over time every time you borrow</Tooltip.Content>
                   </Tooltip>
                 </div>
-                <CommaNumber value={vaultActualAccuredInterest} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={vaultCurrentAccuredInterest} decimalsToShow={decimals} className="value" />
                 <CommaNumber
-                  value={vaultActualAccuredInterest * rate}
+                  value={vaultCurrentAccuredInterest * rate}
                   decimalsToShow={2}
                   beginningText="$"
                   className="rate"

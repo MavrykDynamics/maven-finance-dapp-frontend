@@ -40,7 +40,11 @@ import {
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
-import { CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND, PARTIAL_LOAN_REPAYMENT } from 'texts/banners/vault.text'
+import {
+  CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND,
+  OVER_REPAYING_WARNING_TEXT,
+  PARTIAL_LOAN_REPAYMENT,
+} from 'texts/banners/vault.text'
 
 // urils
 import { getCollateralRatioByPercentage, getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
@@ -52,6 +56,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
 import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { STATUS_FLAG_INFO } from 'app/App.components/StatusFlag/StatusFlag.constants'
 
 type Props = {
   vaultId: number
@@ -59,13 +64,14 @@ type Props = {
   borrowedToken: TokenMetadataType
   borrowedTokenRate: number
   accuredInterest: number
+  totalOutstanding: number
   borrowedAmount: number
   minimumRepay: number
   collateralBalance: number
   availableLiquidity: number
   activeRepayTab?: SlidingTabButtonType
-  openConfirmRepayPopup: (inputAmount: number, callback: () => void) => void
-  openConfirmRepayFullPopup: (callback: () => void) => void
+  openConfirmRepayPopup: (repayAmount: number, callback: () => void) => void
+  openConfirmRepayFullPopup: (repayAmount: number, callback: () => void) => void
 }
 
 type InputDataType = {
@@ -88,6 +94,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     borrowedTokenRate,
     availableLiquidity,
     minimumRepay,
+    totalOutstanding,
     borrowedAmount,
     activeRepayTab,
     openConfirmRepayPopup,
@@ -103,17 +110,68 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
 
-  const totalOutstanding = accuredInterest + borrowedAmount
   const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
 
+  /**
+   * max repay total outstanding is added 1 token if it's pure integer or rounded to next integer,
+   * so user will repay more that total oustanding, and difference will be returned back to his wallet
+   */
+  const roundedTotalOutstanding =
+    Math.floor(totalOutstanding) === 0 ? totalOutstanding + 1 : Math.ceil(totalOutstanding)
+
+  const userMaxRepaymentAmount = Math.min(userAssetBalance, roundedTotalOutstanding)
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
-  // TODO: calc warnings on validation, not here
+
+  /**
+   * condition for minimum repay warning,
+   * when user enters in input amount of tokens,
+   * that less than minimum available repayment amount
+   */
   const isMinimumRepayWarning =
     inputData.validationStatus === INPUT_STATUS_ERROR &&
     inputAmount <= minimumRepay &&
     totalOutstanding !== 0 &&
     inputData.amount !== ''
-  const isNotRepayInFullWarning = isRepayInFull && totalOutstanding !== inputAmount
+
+  /**
+   * condition for not repaying in full amount,
+   * when user repaying in full and input amount is less than vault's total outstanding
+   */
+  const isNotRepayInFullWarning = isRepayInFull && roundedTotalOutstanding > inputAmount
+
+  /**
+   * condition for overRepaing warning,
+   * when input amount is larger than vault's original total outstanding
+   */
+  const isOverRepaingWarning = inputAmount > totalOutstanding
+
+  /**
+   * useEffect to set initial input value on tab change and on first visit
+   */
+  useEffect(() => {
+    if (isRepayInFull) {
+      const validationStatus = loansInputValidation({
+        inputAmount: String(userMaxRepaymentAmount),
+        maxAmount: userMaxRepaymentAmount,
+        minAmount: minimumRepay,
+        options: {
+          byDecimalPlaces: Math.min(decimals || assetDecimalsToShow, assetDecimalsToShow),
+        },
+      })
+
+      setInputData({
+        amount: String(userMaxRepaymentAmount),
+        validationStatus: totalOutstanding === 0 ? INPUT_STATUS_DEFAULT : validationStatus,
+      })
+    }
+
+    if (!isRepayInFull) {
+      setInputData({
+        amount: '0',
+        validationStatus: INPUT_STATUS_DEFAULT,
+      })
+    }
+  }, [isRepayInFull])
 
   const { futureBorrowCapacity, futureCollateralRatio, futureTotalOustanding } = useVaultFutureStats({
     vaultCurrentTotalOutstanding: totalOutstanding,
@@ -124,7 +182,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     inputValue: inputAmount,
   })
 
-  const futureBorrowedAmount = borrowedAmount - inputAmount < 0 ? 0 : borrowedAmount - inputAmount
+  const futureBorrowedAmount = borrowedAmount - inputAmount
 
   const clearData = () => {
     setInputData({
@@ -170,37 +228,10 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const handleClickRepay = async () => {
     if (vaultId && vaultAddress) {
       isRepayInFull && !isNotRepayInFullWarning
-        ? openConfirmRepayFullPopup(clearData)
+        ? openConfirmRepayFullPopup(inputAmount, clearData)
         : openConfirmRepayPopup(inputAmount, clearData)
     }
   }
-
-  useEffect(() => {
-    if (isRepayInFull) {
-      const userMaxRepaymentAmount = Math.min(userAssetBalance, totalOutstanding)
-      const validationStatus =
-        totalOutstanding !== 0
-          ? loansInputValidation({
-              inputAmount: String(userMaxRepaymentAmount),
-              maxAmount: userMaxRepaymentAmount,
-              minAmount: minimumRepay,
-              options: {
-                byDecimalPlaces: decimals || assetDecimalsToShow,
-              },
-            })
-          : ''
-
-      setInputData({
-        amount: String(userMaxRepaymentAmount),
-        validationStatus,
-      })
-    } else {
-      setInputData({
-        amount: '0',
-        validationStatus: INPUT_STATUS_DEFAULT,
-      })
-    }
-  }, [activeRepayTab, decimals, isRepayInFull, minimumRepay, totalOutstanding, userAssetBalance, setInputData])
 
   const inputProps: InputProps = useMemo(
     () => ({
@@ -208,10 +239,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       type: 'number',
       onBlur: inputOnBlurHandle,
       onFocus: onFocusHandler,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-        inputOnChangeHandle(e.target.value, Math.min(userAssetBalance, totalOutstanding)),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => inputOnChangeHandle(e.target.value, userMaxRepaymentAmount),
     }),
-    [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, totalOutstanding, userAssetBalance],
+    [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, userMaxRepaymentAmount],
   )
 
   const settings: InputSettings = useMemo(
@@ -220,31 +250,26 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       balanceAsset: symbol,
       balanceName: 'Wallet Balance',
       useMaxHandler: () =>
-        inputOnChangeHandle(
-          getLoansInputMaxAmount(Math.min(userAssetBalance, totalOutstanding), decimals),
-          Math.min(userAssetBalance, totalOutstanding),
-        ),
+        inputOnChangeHandle(getLoansInputMaxAmount(userMaxRepaymentAmount, decimals), userMaxRepaymentAmount),
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * borrowedTokenRate,
       inputSize: INPUT_LARGE,
       validationFns: [[validateInputLength, ERR_MSG_INPUT]],
     }),
     [
+      userAssetBalance,
       symbol,
       inputData.validationStatus,
       inputAmount,
       borrowedTokenRate,
       inputOnChangeHandle,
-      userAssetBalance,
-      totalOutstanding,
+      userMaxRepaymentAmount,
       decimals,
     ],
   )
 
   return (
     <>
-      {isRepayInFull && <div className="coming-soon">Coming Soon</div>}
-
       <div>
         <div className="tab-text">Select Amount to Repay</div>
 
@@ -260,16 +285,23 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       </div>
 
       {isMinimumRepayWarning ? (
-        <StatusMessageStyled className={`${vaultsStatuses.LIQUIDATABLE}`}>
+        <StatusMessageStyled className={vaultsStatuses.LIQUIDATABLE}>
           <Icon id="error-triangle" />
           {CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND}
         </StatusMessageStyled>
       ) : null}
 
       {isNotRepayInFullWarning ? (
-        <StatusMessageStyled className="repay-in-full">
-          <Icon id="info" />
+        <StatusMessageStyled className={STATUS_FLAG_INFO}>
+          <Icon id="error-triangle" />
           {PARTIAL_LOAN_REPAYMENT}
+        </StatusMessageStyled>
+      ) : null}
+
+      {isOverRepaingWarning ? (
+        <StatusMessageStyled className={STATUS_FLAG_INFO}>
+          <Icon id="info" />
+          {OVER_REPAYING_WARNING_TEXT}
         </StatusMessageStyled>
       ) : null}
 
@@ -277,9 +309,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         <div className="tab-text mb-10">Updated Repay {symbol} Stats</div>
 
         <RepayTableStats
-          futureBorrowedAmount={futureBorrowedAmount}
+          futureBorrowedAmount={Math.max(futureBorrowedAmount, 0)}
           collateralBalance={collateralBalance}
-          futureTotalOutstanding={futureTotalOustanding}
+          futureTotalOutstanding={Math.max(futureTotalOustanding, 0)}
           futureCollateralRatio={futureCollateralRatio}
           futureBorrowCapacity={futureBorrowCapacity}
           accuredInterest={accuredInterest}
@@ -291,9 +323,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           kind={BUTTON_PRIMARY}
           form={BUTTON_WIDE}
           onClick={handleClickRepay}
-          disabled={
-            inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive || isRepayInFull
-          }
+          disabled={inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive}
         >
           <Icon id="okIcon" />
           Repay in {isRepayInFull ? 'Full' : 'Part'}

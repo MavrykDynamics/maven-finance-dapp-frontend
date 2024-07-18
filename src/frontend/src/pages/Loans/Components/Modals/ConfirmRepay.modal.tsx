@@ -36,6 +36,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // types
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { useLocation, useNavigate } from 'react-router'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -55,12 +56,16 @@ export const ConfirmRepay = ({
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
 
+  const location = useLocation()
+  const navigate = useNavigate()
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
+
   const {
     vaultId,
     vaultAddress,
     collateralBalance,
     totalOutstanding,
-    inputAmount,
+    repayAmount,
     availableLiquidity,
     tokenAddress: vaultTokenAddress,
     callback,
@@ -75,7 +80,7 @@ export const ConfirmRepay = ({
     vaultCurrentCollateralBalance: collateralBalance,
     vaultTokenAddress,
     operationType: operationRepay,
-    inputValue: inputAmount,
+    inputValue: repayAmount,
     marketAvailableLiquidity: availableLiquidity,
   })
 
@@ -95,7 +100,7 @@ export const ConfirmRepay = ({
         userAddress,
         vaultId,
         vaultAddress,
-        inputAmount,
+        repayAmount,
         borrowedToken,
         () => {
           closePopup()
@@ -110,7 +115,7 @@ export const ConfirmRepay = ({
     bug,
     callback,
     closePopup,
-    inputAmount,
+    repayAmount,
     lendingControllerAddress,
     userAddress,
     vaultAddress,
@@ -121,8 +126,12 @@ export const ConfirmRepay = ({
     () => ({
       actionType: REPAY_PART_OF_VAULT_ACTION,
       actionFn: partlyRepayAction,
+      afterActionCallback: () => {
+        params.delete('vaultAddress')
+        navigate({ ...location, search: params.toString() }, { replace: true })
+      },
     }),
-    [partlyRepayAction],
+    [location, navigate, params, partlyRepayAction],
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)
@@ -147,11 +156,11 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
-              <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+              <CommaNumber value={repayAmount} decimalsToShow={assetDecimalsToShow} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>
-              <CommaNumber value={inputAmount * rate} className="value" beginningText="$" />
+              <CommaNumber value={repayAmount * rate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 

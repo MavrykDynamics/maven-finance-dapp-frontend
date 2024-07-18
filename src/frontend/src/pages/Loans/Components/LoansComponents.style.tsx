@@ -468,19 +468,14 @@ export const StatusMessageStyled = styled.div<{ theme: MavenTheme }>`
     margin: 40px 0 40px 0;
   }
 
-  &.repay-in-full {
-    border: 1px solid ${({ theme }) => theme.infoColor};
-
-    svg {
-      width: 16px;
-      height: 16px;
-      fill: ${({ theme }) => theme.infoColor};
-    }
-  }
-
   svg {
-    width: 50px;
-    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+
+    > * {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   p {
