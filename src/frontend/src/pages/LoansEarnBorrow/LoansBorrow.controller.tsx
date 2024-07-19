@@ -144,7 +144,7 @@ export const LoansBorrow = () => {
           grade: borrowToken.decimals,
         }),
         convertedInterestAmount = convertNumberForClient({
-          number: vault.vaultAccuredInterest,
+          number: vault.accruedInterest,
           grade: borrowToken.decimals,
         }),
         totalOutstanding = convertedInterestAmount + convertedBorrowedAmount,

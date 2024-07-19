@@ -79,7 +79,7 @@ export const normalizeVaults = ({
       const {
         vault,
         collateral_balances,
-        loan_outstanding_total,
+        loan_outstanding_total: vaultTotalOutstanding,
         loan_principal_total: borrowedAmount,
         loan_interest_total: vaultAccuredInterest,
         borrow_index: vaultBorrowIndex,
@@ -88,7 +88,7 @@ export const normalizeVaults = ({
       } = item
 
       const {
-        borrow_index: marketBorrowIndex,
+        borrow_index: tokenBorrowIndex,
         min_repayment_amount,
         token: { token_address: borrowedTokenAddress },
       } = loan_token
@@ -108,6 +108,12 @@ export const normalizeVaults = ({
       const { depositors, deporsitorsFlag } = getVaultsDepositorsData(vault)
       const collateralData = normalizeCollaterals(collateral_balances)
 
+      // calculating actual accured interest, cuz loan_interest_total is updated when some operation on vault is done, so for afk vaults it's not actual
+      const accruedInterest = Math.max(0, Math.floor((vaultTotalOutstanding * tokenBorrowIndex) / vaultBorrowIndex))
+
+      // calculating actual total outstanding that will use actual accrued interest
+      const totalOutstanding = borrowedAmount + accruedInterest
+
       const normallizedVault: VaultType = {
         borrowedTokenAddress,
         name: vault.name,
@@ -118,13 +124,14 @@ export const normalizeVaults = ({
         creationTimestamp: new Date(vault.creation_timestamp).getTime(),
 
         borrowedAmount,
+        totalOutstanding,
+        collateralData,
         availableLiquidity,
         minimumRepay: min_repayment_amount,
-        vaultAccuredInterest,
-        collateralData,
+        accruedInterest,
 
         // Liquidation
-        liquidationMax: calculateVaultMaxLiquidationAmount(loan_outstanding_total, max_vault_liquidation_pct),
+        liquidationMax: calculateVaultMaxLiquidationAmount(totalOutstanding, max_vault_liquidation_pct),
         liquidationRewardCoefficient: convertNumberForClient({
           number: liquidation_fee_pct,
           grade: decimals,
@@ -146,8 +153,6 @@ export const normalizeVaults = ({
         xtzDelegatedTo: vault?.baker?.address ?? null,
         depositors,
         depositorsFlag: deporsitorsFlag,
-        vaultBorrowIndex: vaultBorrowIndex,
-        vaultTokenBorrowIndex: marketBorrowIndex,
       }
 
       acc.vaultsMapper[vault.address] = normallizedVault

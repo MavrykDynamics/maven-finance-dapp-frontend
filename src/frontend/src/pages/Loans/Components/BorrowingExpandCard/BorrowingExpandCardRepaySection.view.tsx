@@ -35,6 +35,7 @@ import {
   INPUT_LARGE,
   INPUT_STATUS_DEFAULT,
   INPUT_STATUS_ERROR,
+  INPUT_STATUS_SUCCESS,
   InputStatusType,
 } from 'app/App.components/Input/Input.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -63,7 +64,7 @@ type Props = {
   vaultAddress: string
   borrowedToken: TokenMetadataType
   borrowedTokenRate: number
-  accuredInterest: number
+  accruedInterest: number
   totalOutstanding: number
   borrowedAmount: number
   minimumRepay: number
@@ -88,7 +89,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const {
     vaultId,
     vaultAddress,
-    accuredInterest,
+    accruedInterest,
     borrowedToken,
     collateralBalance,
     borrowedTokenRate,
@@ -143,7 +144,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
    * condition for overRepaing warning,
    * when input amount is larger than vault's original total outstanding
    */
-  const isOverRepaingWarning = inputAmount > totalOutstanding
+  const isOverRepaingWarning = inputData.validationStatus === INPUT_STATUS_SUCCESS && inputAmount > totalOutstanding
 
   /**
    * useEffect to set initial input value on tab change and on first visit
@@ -292,7 +293,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       ) : null}
 
       {isNotRepayInFullWarning ? (
-        <StatusMessageStyled className={STATUS_FLAG_INFO}>
+        <StatusMessageStyled className={vaultsStatuses.LIQUIDATABLE}>
           <Icon id="error-triangle" />
           {PARTIAL_LOAN_REPAYMENT}
         </StatusMessageStyled>
@@ -314,7 +315,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
           futureTotalOutstanding={Math.max(futureTotalOustanding, 0)}
           futureCollateralRatio={futureCollateralRatio}
           futureBorrowCapacity={futureBorrowCapacity}
-          accuredInterest={accuredInterest}
+          accruedInterest={accruedInterest}
         />
       </div>
 
@@ -339,14 +340,14 @@ const RepayTableStats = ({
   futureTotalOutstanding,
   futureCollateralRatio,
   futureBorrowCapacity,
-  accuredInterest,
+  accruedInterest,
 }: {
   futureBorrowedAmount: number
   collateralBalance: number
   futureTotalOutstanding: number
   futureCollateralRatio: number
   futureBorrowCapacity: number
-  accuredInterest: number
+  accruedInterest: number
 }) => {
   const {
     preferences: { themeSelected },
@@ -367,10 +368,10 @@ const RepayTableStats = ({
               <Tooltip.Trigger className="ml-3">
                 <Icon id="info" />
               </Tooltip.Trigger>
-              <Tooltip.Content>{FEES_DUE(accuredInterest)}</Tooltip.Content>
+              <Tooltip.Content>{FEES_DUE(accruedInterest)}</Tooltip.Content>
             </Tooltip>
           </div>
-          <CommaNumber value={Math.ceil(accuredInterest)} decimalsToShow={0} className="value" />
+          <CommaNumber value={Math.ceil(accruedInterest)} decimalsToShow={0} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Total Outstanding</div>

@@ -78,12 +78,12 @@ export type VaultsIndexerDataType =
   | GetUserDepositorAllVaultsQueryQuery
   | GetAllVaultsQueryQuery
 
-// TODO: add descr to liquidation fields while testing liquidation functionality and popup
 export type VaultType = {
   // vault tokens data
   borrowedTokenAddress: TokenAddressType // address of borrowed token
   borrowedAmount: number // amount of token that user/s have borrowed from the vault *after normalizer it's not converted to client format*
-  vaultAccuredInterest: number // compounded token amount via vaut's apr till vault's last updated block lvl
+  accruedInterest: number // compounded token amount via vaut's apr till vault's last updated block lvl
+  totalOutstanding: number // borrowed amount + accured interest (total loan of the vault)
   collateralData: Array<CollateralType> // collaterals of the vault in format {amount, tokenAddress} *after normalizer amount is not converted to the client format*
 
   // vault metadata
@@ -92,8 +92,8 @@ export type VaultType = {
   vaultId: number // id of the vault
 
   // liquidation data
-  gracePeriodEndLevel: number | null // level when grace perio will finish
-  liquidationEndLevel: number | null // level when liquidation will finish
+  gracePeriodEndLevel: number | null // level when grace perio will end
+  liquidationEndLevel: number | null // level when liquidation will end
   liquidationMax: number // max liquidation amount
   liquidationRewardCoefficient: number // how much the liquidator actually receives after they liquidate a vault and the fee is taken out along with whatever assets are sent to repay the outstanding debt of the loan. This should be the liquidation_fee_pct in the indexer
   liquidationRatio: number // at what ratio is the vault able to be liquidated. so in the indexer it says 1500, so that would be 150% collateral to outstanding debt. same usage as the collateral ratio. If the collateral ratio reaches the value of the liquidation ratio then the vault can be liquidated.
@@ -111,15 +111,12 @@ export type VaultType = {
   apr: number // interest rate the user is charged for borrowing
   availableLiquidity: number // how much token available in a pool, user to calc borrowCapacity of the vault *after normalizer it's not converted to client format*
   creationTimestamp: number // creation timestamp of the vault
-  vaultBorrowIndex: number
-  vaultTokenBorrowIndex: number
 }
 
 // those additional fields can be only calculated after normalization stage, cuz those calcs requiring tokensDecimals & tokensRates
 export type FullLoansVaultType = VaultType & {
   liquidationTimestamp: number | null // same as liquidationLvl but converted to timestamp
   gracePeriodTimestamp: number | null // same as gracePeriodLvl but converted to timestamp
-  totalOutstanding: number // fee + borrowed amount in USD
   collateralBalance: number // sum of collaterals in USD
   borrowCapacity: number // how much user can borrow from vault (available liq | amount of token while collateral ration >= 200%)
   collateralRatio: number // relation of collaterals in vault to borrowed amount
