@@ -30,7 +30,8 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     borrowedTokenAddress,
     collateralData,
     borrowedAmount,
-    vaultAccuredInterest,
+    accruedInterest,
+    totalOutstanding,
     availableLiquidity,
     address,
     liquidationMax,
@@ -45,6 +46,9 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
   const [gracePeriodTimestamp, setGracePeriodTimestamp] = useState<null | number>(null)
   const [vaultStatus, setVaultStatus] = useState<FullLoansVaultType['status']>(null)
 
+  /**
+   * effect to convert vault block levels to iso time, so we can show it to user
+   */
   useEffect(() => {
     if (!liquidationEndLevel && !gracePeriodEndLevel) {
       setIsStatusLoading(false)
@@ -99,32 +103,36 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     }
   }, [gracePeriodEndLevel, liquidationEndLevel])
 
+  // getting vault token
   const borrowedToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata, tokensPrices })
-
   const borrowedTokenRate = borrowedToken?.rate ?? 0
   const borrowedTokenDecimals = borrowedToken?.decimals ?? 0
 
+  // converting vault values from indexer to client format
   const convertedBorrowedAmount = convertNumberForClient({ number: borrowedAmount, grade: borrowedTokenDecimals })
   const convertedAccuredInterest = convertNumberForClient({
-    number: vaultAccuredInterest,
+    number: accruedInterest,
+    grade: borrowedTokenDecimals,
+  })
+  const convertedTotalOutstanding = convertNumberForClient({
+    number: totalOutstanding,
     grade: borrowedTokenDecimals,
   })
   const convertedAvailableLiquidity = convertNumberForClient({
     number: availableLiquidity,
     grade: borrowedTokenDecimals,
   })
-
-  const totalOutstanding = convertedBorrowedAmount + convertedAccuredInterest
-  const totalOutstandingUsd = totalOutstanding * borrowedTokenRate
-
-  const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
-  const borrowCapacity = getVaultBorrowCapacity(
-    convertedAvailableLiquidity * borrowedTokenRate,
-    totalOutstanding * borrowedTokenRate,
-    collateralBalance,
-  )
-  const collateralRatio = getVaultCollateralRatio(collateralBalance, totalOutstanding * borrowedTokenRate)
   const convertedMinRepay = convertNumberForClient({ number: minimumRepay, grade: borrowedTokenDecimals })
+  const convertedLiquidationMax = convertNumberForClient({ number: liquidationMax, grade: borrowedTokenDecimals })
+
+  // converting some values to usd amount for calcs
+  const availableLiquidityUsd = convertedAvailableLiquidity * borrowedTokenRate
+  const totalOutstandingUsd = convertedTotalOutstanding * borrowedTokenRate
+
+  // some vault calcs
+  const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
+  const borrowCapacity = getVaultBorrowCapacity(availableLiquidityUsd, totalOutstandingUsd, collateralBalance)
+  const collateralRatio = getVaultCollateralRatio(collateralBalance, totalOutstandingUsd)
 
   /**
    * vault status calcs and recalculation effect
@@ -133,6 +141,9 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
    *  - collateral ratio change
    *  - vault's total oustanding
    *  - timer time change
+   *
+   * TODO: consider using block level and original values in blocks to recalc status,
+   *       but block is updated, when some operation on platform happened
    */
   useEffect(() => {
     const newVaultStatus = getVaultStatus({
@@ -184,36 +195,36 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     }
   }, [collateralRatio, totalOutstandingUsd, liquidationTimestamp, gracePeriodTimestamp])
 
-  if (!borrowedToken || !borrowedToken.rate || !checkWhetherTokenIsLoanToken(borrowedToken))
+  // if vault token is invalid, vault considered as invalid as well
+  if (!borrowedToken || !borrowedToken.rate || !checkWhetherTokenIsLoanToken(borrowedToken)) {
     return {
       vault: null,
       isStatusLoading,
     }
-
-  const fullVault = {
-    address,
-    status: vaultStatus,
-    collateralRatio,
-    collateralBalance,
-    collateralData,
-    borrowedAmount: convertedBorrowedAmount,
-    availableLiquidity: convertedAvailableLiquidity,
-    vaultAccuredInterest: convertedAccuredInterest,
-    totalOutstanding,
-    borrowedTokenAddress,
-    borrowedToken: { ...borrowedToken, rate: borrowedTokenRate },
-    borrowCapacity,
-    liquidationTimestamp,
-    liquidationEndLevel,
-    gracePeriodTimestamp,
-    gracePeriodEndLevel,
-    liquidationMax: convertNumberForClient({ number: liquidationMax, grade: borrowedTokenDecimals }),
-    minimumRepay: Math.min(convertedBorrowedAmount, convertedMinRepay),
-    ...restVault,
   }
 
   return {
-    vault: fullVault,
+    vault: {
+      address,
+      status: vaultStatus,
+      collateralRatio,
+      collateralBalance,
+      collateralData,
+      borrowedAmount: convertedBorrowedAmount,
+      accruedInterest: convertedAccuredInterest,
+      totalOutstanding: convertedTotalOutstanding,
+      availableLiquidity: convertedAvailableLiquidity,
+      borrowedTokenAddress,
+      borrowedToken: { ...borrowedToken, rate: borrowedTokenRate },
+      borrowCapacity,
+      liquidationTimestamp,
+      liquidationEndLevel,
+      gracePeriodTimestamp,
+      gracePeriodEndLevel,
+      liquidationMax: convertedLiquidationMax,
+      minimumRepay: Math.min(convertedBorrowedAmount, convertedMinRepay),
+      ...restVault,
+    },
     isStatusLoading,
   }
 }

@@ -37,7 +37,6 @@ import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { useVaultAccuredInterest } from 'providers/VaultsProvider/hooks/useVaultAccuredInterest'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -69,9 +68,6 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
   const { vault: vaultData, isStatusLoading } = useFullVault(vault)
 
-  // getting vault actuall accured interest, skip hook execution and query run, if vault is not opened (accured interest is not used)
-  const vaultActuallAccuredInterest = useVaultAccuredInterest({ vaultAddress: vault.address, shouldSkip: !isExpanded })
-
   if (!vaultData) return null
 
   const {
@@ -83,7 +79,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     collateralRatio,
     borrowedAmount,
     borrowedTokenAddress,
-    vaultAccuredInterest,
+    accruedInterest,
     totalOutstanding,
     collateralBalance,
     apr,
@@ -91,8 +87,6 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     status,
     gracePeriodTimestamp,
   } = vaultData
-
-  const vaultCurrentAccuredInterest = vaultActuallAccuredInterest ?? vaultAccuredInterest
 
   const { symbol, decimals, icon, rate } = borrowedToken
 
@@ -211,13 +205,8 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     <Tooltip.Content>Interest, compounded over time every time you borrow</Tooltip.Content>
                   </Tooltip>
                 </div>
-                <CommaNumber value={vaultCurrentAccuredInterest} decimalsToShow={decimals} className="value" />
-                <CommaNumber
-                  value={vaultCurrentAccuredInterest * rate}
-                  decimalsToShow={2}
-                  beginningText="$"
-                  className="rate"
-                />
+                <CommaNumber value={accruedInterest} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={accruedInterest * rate} decimalsToShow={2} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">APR</div>

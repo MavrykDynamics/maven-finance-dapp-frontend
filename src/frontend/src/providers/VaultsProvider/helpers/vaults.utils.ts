@@ -104,12 +104,12 @@ export const sortVaultsByStatus = async ({
 
       const vaultATotalOutstanding =
         convertNumberForClient({
-          number: vaultsMapper[a].borrowedAmount + vaultsMapper[a].vaultAccuredInterest,
+          number: vaultsMapper[a].borrowedAmount + vaultsMapper[a].accruedInterest,
           grade: vaultAToken.decimals,
         }) * vaultAToken.rate
       const vaultBTotalOutstanding =
         convertNumberForClient({
-          number: vaultsMapper[b].borrowedAmount + vaultsMapper[b].vaultAccuredInterest,
+          number: vaultsMapper[b].borrowedAmount + vaultsMapper[b].accruedInterest,
           grade: vaultBToken.decimals,
         }) * vaultBToken.rate
 
