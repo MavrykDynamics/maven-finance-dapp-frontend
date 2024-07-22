@@ -36,7 +36,6 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 // types
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
-import { useLocation, useNavigate } from 'react-router'
 
 export const ConfirmRepay = ({
   closePopup,
@@ -55,10 +54,6 @@ export const ConfirmRepay = ({
     preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
   } = useDappConfigContext()
-
-  const location = useLocation()
-  const navigate = useNavigate()
-  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
 
   const {
     vaultId,
@@ -126,12 +121,8 @@ export const ConfirmRepay = ({
     () => ({
       actionType: REPAY_PART_OF_VAULT_ACTION,
       actionFn: partlyRepayAction,
-      afterActionCallback: () => {
-        params.delete('vaultAddress')
-        navigate({ ...location, search: params.toString() }, { replace: true })
-      },
     }),
-    [location, navigate, params, partlyRepayAction],
+    [partlyRepayAction],
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)
