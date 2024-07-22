@@ -118,7 +118,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
    * so user will repay more that total oustanding, and difference will be returned back to his wallet
    */
   const roundedTotalOutstanding =
-    Math.floor(totalOutstanding) === 0 ? totalOutstanding + 1 : Math.ceil(totalOutstanding)
+    Math.floor(totalOutstanding) - totalOutstanding === 0 ? totalOutstanding + 1 : Math.ceil(totalOutstanding)
 
   const userMaxRepaymentAmount = Math.min(userAssetBalance, roundedTotalOutstanding)
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
