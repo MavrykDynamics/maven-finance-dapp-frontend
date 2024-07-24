@@ -116,9 +116,15 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   /**
    * max repay total outstanding is added 1 token if it's pure integer or rounded to next integer,
    * so user will repay more that total oustanding, and difference will be returned back to his wallet
+   *
+   * if totalOutstanding is 0, we do not round it, otherwise round
    */
   const roundedTotalOutstanding =
-    Math.floor(totalOutstanding) - totalOutstanding === 0 ? totalOutstanding + 1 : Math.ceil(totalOutstanding)
+    totalOutstanding === 0
+      ? 0
+      : Math.floor(totalOutstanding) - totalOutstanding === 0
+      ? totalOutstanding + 1
+      : Math.ceil(totalOutstanding)
 
   const userMaxRepaymentAmount = Math.min(userAssetBalance, roundedTotalOutstanding)
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
