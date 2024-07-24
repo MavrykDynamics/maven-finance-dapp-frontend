@@ -154,6 +154,8 @@ export const DEFAULT_WITHDRAW_COLLATERAL_POPUP_DATA: WithdrawCollateralPopupData
 // --- liquidate vault popup
 export type LiquidateVaultDataType = {
   vaultId: number
+  vaultAddress: string
+  userAddress: string
   ownerAddress: string
   tokenAddress: TokenAddressType
   collateralBalance: number
@@ -166,6 +168,8 @@ export type LiquidateVaultDataType = {
 export const DEFAULT_LIQUIDATE_POPUP_DATA: LiquidateVaultDataType = {
   tokenAddress: '',
   ownerAddress: '',
+  vaultAddress: '',
+  userAddress: '',
   vaultId: 0,
   collateralBalance: 0,
   liquidationMax: 0,

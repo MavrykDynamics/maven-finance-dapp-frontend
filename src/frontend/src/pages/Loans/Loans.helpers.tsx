@@ -16,7 +16,7 @@ export const getMaxCollateralWithdraw = (
   collarealAssetRate: number,
 ): number => {
   // If vault is not borrowed we can withdraw all amount
-  if (borrowedAmount === 0) return totalCollateralAmount
+  if (borrowedAmount === 0) return totalCollateralAmount / collarealAssetRate
 
   if (collarealAssetRate === 0) throw new Error('token rate is 0')
 

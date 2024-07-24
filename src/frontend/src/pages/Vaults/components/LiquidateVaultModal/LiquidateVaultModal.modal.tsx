@@ -179,6 +179,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
         return await liquidateVault(
           data.vaultId,
+          data.vaultAddress,
+          data.userAddress,
           data.ownerAddress,
           Number(enteredTokensAmount),
           borrowedToken,
@@ -186,7 +188,17 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
         )
       },
     }),
-    [borrowedToken, enteredTokensAmount, lendingControllerAddress, data.ownerAddress, userAddress, data.vaultId],
+    [
+      borrowedToken,
+      userAddress,
+      lendingControllerAddress,
+      data.vaultId,
+      data.vaultAddress,
+      data.userAddress,
+      data.ownerAddress,
+      enteredTokensAmount,
+      bug,
+    ],
   )
 
   const { action: handleLiquidateVault } = useContractAction(contractActionProps)

@@ -47,6 +47,8 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 const columnWidth = '33%'
 
@@ -140,6 +142,8 @@ type Props = {
 
 export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { bug } = useToasterContext()
+  const { userAddress } = useUserContext()
   const { openLiquidateVaultPopup } = useLoansPopupsContext()
   const {
     config: { daoFee },
@@ -156,6 +160,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
   const {
     vault: {
       status,
+      address: vaultAddress,
       vaultId,
       collateralBalance,
       ownerAddress,
@@ -190,8 +195,15 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
     (status === vaultsStatuses.LIQUIDATABLE || status === vaultsStatuses.GRACE_PERIOD || status === vaultsStatuses.MARK)
 
   const liquidateModalHandler = () => {
+    if (!userAddress) {
+      bug('You need to be logged in to liquidate the vault')
+      return
+    }
+
     openLiquidateVaultPopup({
       vaultId,
+      vaultAddress,
+      userAddress: userAddress,
       ownerAddress,
       tokenAddress: borrowedTokenAddress,
       collateralBalance,

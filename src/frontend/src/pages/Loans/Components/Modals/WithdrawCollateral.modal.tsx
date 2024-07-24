@@ -159,10 +159,7 @@ export const WithdrawCollateral = ({
     operationType: operationRemoveCollateral,
   })
 
-  const isActionBtnDisabled =
-    isActionActive ||
-    inputData.validationStatus !== INPUT_STATUS_SUCCESS ||
-    futureCollateralRatio <= MINIMUN_COLLATERAL_RATIO_PERSENT
+  const isActionBtnDisabled = isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS
 
   // withdraw collateral action ----------------------------------------------
   const withdrawAction = useCallback(async () => {
