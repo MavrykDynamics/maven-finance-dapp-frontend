@@ -150,7 +150,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                 beginningText="$"
                 className="value"
                 showDecimal
-                decimalsToShow={decimals}
+                decimalsToShow={2}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -192,7 +192,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
-                <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
                 <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
@@ -205,7 +205,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     <Tooltip.Content>Interest, compounded over time every time you borrow</Tooltip.Content>
                   </Tooltip>
                 </div>
-                <CommaNumber value={accruedInterest} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={accruedInterest} decimalsToShow={2} className="value" />
                 <CommaNumber value={accruedInterest * rate} decimalsToShow={2} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>

@@ -114,16 +114,6 @@ export const normalizeVaults = ({
           ? Math.max(0, Math.floor((vaultTotalOutstanding * tokenBorrowIndex) / vaultBorrowIndex) - borrowedAmount)
           : 0
 
-      // TODO: remove before merge
-      console.log({
-        accruedInterest,
-        vaultAccuredInterest,
-        vaultTotalOutstanding,
-        tokenBorrowIndex,
-        vaultBorrowIndex,
-        name: vault.name,
-      })
-
       // calculating actual total outstanding that will use actual accrued interest
       const totalOutstanding = borrowedAmount + accruedInterest
 

@@ -39,19 +39,14 @@ export const BorrowingExpandCardValuesSection = ({
     <LoansValuesSection className="borrowing-tab">
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber
-            value={borrowedAmount + accruedInterest}
-            className="value"
-            showDecimal
-            decimalsToShow={decimals}
-          />
+          <CommaNumber value={borrowedAmount + accruedInterest} className="value" showDecimal decimalsToShow={2} />
 
           <CommaNumber
             value={(borrowedAmount + accruedInterest) * rate}
             beginningText="$"
             className="rate"
             showDecimal
-            decimalsToShow={decimals}
+            decimalsToShow={2}
           />
 
           <div className="name">
@@ -66,7 +61,7 @@ export const BorrowingExpandCardValuesSection = ({
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
+          <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
           <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
           <div className="name">Principal</div>
         </LoansValuesSectionInfo>
@@ -85,7 +80,7 @@ export const BorrowingExpandCardValuesSection = ({
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={accruedInterest} decimalsToShow={decimals} className="value" />
+          <CommaNumber value={accruedInterest} decimalsToShow={2} className="value" />
           <CommaNumber value={accruedInterest * rate} decimalsToShow={2} beginningText="$" className="rate" />
           <div className="name">
             Accrued Interest

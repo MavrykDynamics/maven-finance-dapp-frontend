@@ -101,7 +101,7 @@ export const TransactionHistory = ({
                           className="value"
                           endingText={symbol}
                           showDecimal
-                          decimalsToShow={decimals}
+                          decimalsToShow={2}
                         />
                       </TableCell>
                       <TableCell $width={`30%`}>{date}</TableCell>
