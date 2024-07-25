@@ -97,32 +97,21 @@ export const ConfirmRepay = ({
         vaultAddress,
         repayAmount,
         borrowedToken,
-        () => {
-          closePopup()
-          callback()
-        },
       )
     }
 
     return null
-  }, [
-    borrowedToken,
-    bug,
-    callback,
-    closePopup,
-    repayAmount,
-    lendingControllerAddress,
-    userAddress,
-    vaultAddress,
-    vaultId,
-  ])
+  }, [borrowedToken, bug, repayAmount, lendingControllerAddress, userAddress, vaultAddress, vaultId])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: REPAY_PART_OF_VAULT_ACTION,
       actionFn: partlyRepayAction,
+      successActionCallback: () => {
+        callback()
+      },
     }),
-    [partlyRepayAction],
+    [callback, partlyRepayAction],
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)

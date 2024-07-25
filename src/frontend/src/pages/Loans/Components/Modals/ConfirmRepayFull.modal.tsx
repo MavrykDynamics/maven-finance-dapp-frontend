@@ -108,36 +108,26 @@ export const ConfirmRepayFull = ({
         vaultAddress,
         repayAmount,
         borrowedToken,
-        () => {
-          closePopup()
-          callback()
-        },
       )
     }
 
     return null
-  }, [
-    borrowedToken,
-    bug,
-    callback,
-    closePopup,
-    lendingControllerAddress,
-    repayAmount,
-    userAddress,
-    vaultAddress,
-    vaultId,
-  ])
+  }, [borrowedToken, bug, lendingControllerAddress, repayAmount, userAddress, vaultAddress, vaultId])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: REPAY_FULL_VAULT_ACTION,
       actionFn: fullRepayAction,
-      afterActionCallback: () => {
+      successActionCallback: () => {
+        closePopup()
+        callback()
+      },
+      dappActionCallback: () => {
         params.delete('vaultAddress')
         navigate({ ...location, search: params.toString() }, { replace: true })
       },
     }),
-    [fullRepayAction, location, navigate, params],
+    [callback, closePopup, fullRepayAction, location, navigate, params],
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)

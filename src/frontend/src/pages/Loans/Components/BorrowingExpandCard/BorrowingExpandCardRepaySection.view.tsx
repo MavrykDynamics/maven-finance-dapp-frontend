@@ -110,8 +110,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   })
 
   const inputAmount = checkNan(parseFloat(inputData.amount))
-
   const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
+  const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
+  const isBtnDisabled = isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS
 
   /**
    * max repay total outstanding is added 1 token if it's pure integer or rounded to next integer,
@@ -127,18 +128,14 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       : Math.ceil(totalOutstanding)
 
   const userMaxRepaymentAmount = Math.min(userAssetBalance, roundedTotalOutstanding)
-  const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
 
   /**
    * condition for minimum repay warning,
    * when user enters in input amount of tokens,
-   * that less than minimum available repayment amount
+   * that is less than minimum available repayment amount
    */
   const isMinimumRepayWarning =
-    inputData.validationStatus === INPUT_STATUS_ERROR &&
-    inputAmount <= minimumRepay &&
-    totalOutstanding !== 0 &&
-    inputData.amount !== ''
+    !isRepayInFull && inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay
 
   /**
    * condition for not repaying in full amount,
@@ -148,9 +145,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   /**
    * condition for overRepaing warning,
-   * when input amount is larger than vault's original total outstanding
+   * when input amount is greater than vault's original total outstanding
    */
-  const isOverRepaingWarning = inputData.validationStatus === INPUT_STATUS_SUCCESS && inputAmount > totalOutstanding
+  const isOverRepayingWarning = inputData.validationStatus === INPUT_STATUS_SUCCESS && inputAmount > totalOutstanding
 
   /**
    * useEffect to set initial input value on tab change and on first visit
@@ -159,8 +156,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
     if (isRepayInFull) {
       const validationStatus = loansInputValidation({
         inputAmount: String(userMaxRepaymentAmount),
-        maxAmount: userMaxRepaymentAmount,
-        minAmount: minimumRepay,
+        maxAmount: roundedTotalOutstanding,
+        minAmount: roundedTotalOutstanding,
         options: {
           byDecimalPlaces: Math.min(decimals || assetDecimalsToShow, assetDecimalsToShow),
         },
@@ -168,7 +165,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
       setInputData({
         amount: String(userMaxRepaymentAmount),
-        validationStatus: totalOutstanding === 0 ? INPUT_STATUS_DEFAULT : validationStatus,
+        validationStatus: validationStatus,
       })
     }
 
@@ -199,11 +196,11 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   }
 
   const inputOnChangeHandle = useCallback(
-    (newInputAmount: string, maxAmount: number) => {
+    (newInputAmount: string, maxAmount: number, minAmount: number) => {
       const validationStatus = loansInputValidation({
         inputAmount: newInputAmount,
         maxAmount,
-        minAmount: minimumRepay,
+        minAmount,
         options: {
           byDecimalPlaces: decimals || assetDecimalsToShow,
         },
@@ -246,9 +243,24 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       type: 'number',
       onBlur: inputOnBlurHandle,
       onFocus: onFocusHandler,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => inputOnChangeHandle(e.target.value, userMaxRepaymentAmount),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+        inputOnChangeHandle(
+          e.target.value,
+          isRepayInFull ? roundedTotalOutstanding : userMaxRepaymentAmount,
+          isRepayInFull ? roundedTotalOutstanding : minimumRepay,
+        )
+      },
     }),
-    [inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler, userMaxRepaymentAmount],
+    [
+      inputData.amount,
+      inputOnBlurHandle,
+      inputOnChangeHandle,
+      isRepayInFull,
+      minimumRepay,
+      onFocusHandler,
+      roundedTotalOutstanding,
+      userMaxRepaymentAmount,
+    ],
   )
 
   const settings: InputSettings = useMemo(
@@ -256,8 +268,13 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       balance: userAssetBalance,
       balanceAsset: symbol,
       balanceName: 'Wallet Balance',
-      useMaxHandler: () =>
-        inputOnChangeHandle(getLoansInputMaxAmount(userMaxRepaymentAmount, decimals), userMaxRepaymentAmount),
+      useMaxHandler: () => {
+        inputOnChangeHandle(
+          getLoansInputMaxAmount(userMaxRepaymentAmount, decimals),
+          isRepayInFull ? roundedTotalOutstanding : userMaxRepaymentAmount,
+          isRepayInFull ? roundedTotalOutstanding : minimumRepay,
+        )
+      },
       inputStatus: inputData.validationStatus,
       convertedValue: inputAmount * borrowedTokenRate,
       inputSize: INPUT_LARGE,
@@ -272,6 +289,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       inputOnChangeHandle,
       userMaxRepaymentAmount,
       decimals,
+      isRepayInFull,
+      roundedTotalOutstanding,
+      minimumRepay,
     ],
   )
 
@@ -305,7 +325,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         </StatusMessageStyled>
       ) : null}
 
-      {isOverRepaingWarning ? (
+      {isOverRepayingWarning ? (
         <StatusMessageStyled className={STATUS_FLAG_INFO}>
           <Icon id="info" />
           {OVER_REPAYING_WARNING_TEXT}
@@ -326,12 +346,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       </div>
 
       <div className="button-wrapper">
-        <NewButton
-          kind={BUTTON_PRIMARY}
-          form={BUTTON_WIDE}
-          onClick={handleClickRepay}
-          disabled={inputData.validationStatus === INPUT_STATUS_ERROR || inputAmount === 0 || isActionActive}
-        >
+        <NewButton kind={BUTTON_PRIMARY} form={BUTTON_WIDE} onClick={handleClickRepay} disabled={isBtnDisabled}>
           <Icon id="okIcon" />
           Repay in {isRepayInFull ? 'Full' : 'Part'}
         </NewButton>
