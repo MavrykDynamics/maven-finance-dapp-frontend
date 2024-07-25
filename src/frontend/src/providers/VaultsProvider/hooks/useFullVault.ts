@@ -50,12 +50,8 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
    * effect to convert vault block levels to iso time, so we can show it to user
    */
   useEffect(() => {
-    if (!liquidationEndLevel && !gracePeriodEndLevel) {
-      setIsStatusLoading(false)
-      return
-    }
-
     const abortLiquidationController = new AbortController()
+    let timerId: null | NodeJS.Timeout = null
 
     ;(async () => {
       try {
@@ -81,13 +77,64 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
             : null,
         ])
 
-        if (gracePeriodResult.status === 'fulfilled' && gracePeriodResult.value) {
-          setGracePeriodTimestamp(new Date(gracePeriodResult.value.data).getTime())
+        const gracePeriodIsoTime =
+          gracePeriodResult.status === 'fulfilled' && gracePeriodResult.value
+            ? dayjs(gracePeriodResult.value.data).valueOf()
+            : null
+        const liquidationIsoTime =
+          liquidationResult.status === 'fulfilled' && liquidationResult.value
+            ? dayjs(liquidationResult.value.data).valueOf()
+            : null
+
+        setGracePeriodTimestamp(gracePeriodIsoTime)
+        setLiquidationTimestamp(liquidationIsoTime)
+
+        // calculating status of the vault, cuz we've got timers loaded
+        setVaultStatus(
+          getVaultStatus({
+            collateralRatio,
+            totalOustanding: totalOutstandingUsd,
+            gracePeriodTimestamp: gracePeriodIsoTime,
+            liquidationTimestamp: liquidationIsoTime,
+          }),
+        )
+
+        // if grace period timer present get diff from current time, otherwise -1
+        const vaultGracePeriodTimerRestTime = gracePeriodIsoTime
+          ? dayjs(gracePeriodIsoTime).valueOf() - dayjs().valueOf()
+          : -1
+
+        // if liquidation timer present get diff from current time, otherwise -1
+        const vaultLiquidationTimerRestTime = liquidationIsoTime
+          ? dayjs(liquidationIsoTime).valueOf() - dayjs().valueOf()
+          : -1
+
+        // setTimeout timer is grace period timer, if not present try liquidation timer, otherwise timer is not needed
+        const timerMsDelay = Math.min(vaultGracePeriodTimerRestTime, vaultLiquidationTimerRestTime)
+
+        // if we have delay for the timer schedule setTimeout, otherwise timer is null
+        if (timerMsDelay > 0) {
+          timerId = setTimeout(() => {
+            console.log('status recalc in timer')
+
+            setVaultStatus(
+              getVaultStatus({
+                collateralRatio,
+                totalOustanding: totalOutstandingUsd,
+                liquidationTimestamp: liquidationIsoTime,
+                gracePeriodTimestamp: gracePeriodIsoTime,
+              }),
+            )
+          }, timerMsDelay)
         }
 
-        if (liquidationResult.status === 'fulfilled' && liquidationResult.value) {
-          setLiquidationTimestamp(new Date(liquidationResult.value.data).getTime())
-        }
+        console.log({
+          vaultLiquidationTimerRestTime,
+          vaultGracePeriodTimerRestTime,
+          timerMsDelay,
+          timerId,
+          vaultName: vault.name,
+        })
       } catch (e) {
         if (!isAbortError(e)) {
           console.error('converting vault timestamp by lvl error: ', e)
@@ -100,6 +147,9 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
 
     return () => {
       abortLiquidationController.abort()
+
+      console.log('clearing timer end level changed', { timerId })
+      if (timerId) clearTimeout(timerId)
     }
   }, [gracePeriodEndLevel, liquidationEndLevel])
 
@@ -133,67 +183,6 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
   const collateralBalance = getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
   const borrowCapacity = getVaultBorrowCapacity(availableLiquidityUsd, totalOutstandingUsd, collateralBalance)
   const collateralRatio = getVaultCollateralRatio(collateralBalance, totalOutstandingUsd)
-
-  /**
-   * vault status calcs and recalculation effect
-   *
-   * run status recalc on:
-   *  - collateral ratio change
-   *  - vault's total oustanding
-   *  - timer time change
-   *
-   * TODO: consider using block level and original values in blocks to recalc status,
-   *       but block is updated, when some operation on platform happened
-   */
-  useEffect(() => {
-    const newVaultStatus = getVaultStatus({
-      collateralRatio,
-      totalOustanding: totalOutstandingUsd,
-      liquidationTimestamp: liquidationTimestamp,
-      gracePeriodTimestamp: gracePeriodTimestamp,
-    })
-
-    setVaultStatus(newVaultStatus)
-
-    // if liquidation timer present get diff from current time, otherwise -1
-    const vaultLiquidationTimerRestTime = liquidationTimestamp
-      ? dayjs().valueOf() - dayjs(liquidationTimestamp).valueOf()
-      : -1
-
-    // if grace period timer present get diff from current time, otherwise -1
-    const vaultGracePeriodTimerRestTime = gracePeriodTimestamp
-      ? dayjs().valueOf() - dayjs(gracePeriodTimestamp).valueOf()
-      : -1
-
-    // setTimeout timer is grace period timer, if not present try liquidation timer, otherwise timer is not needed
-    const timerMsDelay =
-      vaultGracePeriodTimerRestTime > 0
-        ? vaultGracePeriodTimerRestTime
-        : vaultLiquidationTimerRestTime > 0
-        ? vaultLiquidationTimerRestTime
-        : null
-
-    // if we have delay for the timer schedule setTimeout, otherwise timer is null
-    const timer = timerMsDelay
-      ? setTimeout(() => {
-          const newVaultStatus = getVaultStatus({
-            collateralRatio,
-            totalOustanding: totalOutstandingUsd,
-            liquidationTimestamp: liquidationTimestamp,
-            gracePeriodTimestamp: gracePeriodTimestamp,
-          })
-
-          setVaultStatus(newVaultStatus)
-        }, timerMsDelay)
-      : null
-
-    // clean up timer on deps change
-    return () => {
-      if (timer) {
-        clearTimeout(timer)
-      }
-    }
-  }, [collateralRatio, totalOutstandingUsd, liquidationTimestamp, gracePeriodTimestamp])
 
   // if vault token is invalid, vault considered as invalid as well
   if (!borrowedToken || !borrowedToken.rate || !checkWhetherTokenIsLoanToken(borrowedToken)) {

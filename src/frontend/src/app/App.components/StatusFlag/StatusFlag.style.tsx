@@ -38,6 +38,10 @@ export const StatusFlagStyled = styled.div<{ theme: MavenTheme; $kind: StatusFla
           color: ${({ theme }) => ($isFilled ? theme.cards : theme.upColor)};
           background-color: ${({ theme }) => ($isFilled ? theme.upColor : 'initial')};
           border-color: ${({ theme }) => theme.upColor};
+
+          [data-dot-loader='true'] {
+            background-color: ${({ theme }) => theme.upColor};
+          }
         `
       case ProposalStatus.DEFEATED:
       case ProposalStatus.DROPPED:
@@ -47,6 +51,10 @@ export const StatusFlagStyled = styled.div<{ theme: MavenTheme; $kind: StatusFla
           color: ${({ theme }) => ($isFilled ? theme.cards : theme.downColor)};
           background-color: ${({ theme }) => ($isFilled ? theme.downColor : 'initial')};
           border-color: ${({ theme }) => theme.downColor};
+
+          [data-dot-loader='true'] {
+            background-color: ${({ theme }) => theme.downColor};
+          }
         `
       case ProposalStatus.ONGOING:
       case ProposalStatus.UNLOCKED:
@@ -55,6 +63,10 @@ export const StatusFlagStyled = styled.div<{ theme: MavenTheme; $kind: StatusFla
           color: ${({ theme }) => ($isFilled ? theme.cards : theme.infoColor)};
           background-color: ${({ theme }) => ($isFilled ? theme.infoColor : 'initial')};
           border-color: ${({ theme }) => theme.infoColor};
+
+          [data-dot-loader='true'] {
+            background-color: ${({ theme }) => theme.infoColor};
+          }
         `
       case ProposalStatus.WAITING:
       case STATUS_FLAG_WARNING:
@@ -62,6 +74,10 @@ export const StatusFlagStyled = styled.div<{ theme: MavenTheme; $kind: StatusFla
           color: ${({ theme }) => ($isFilled ? theme.cards : theme.warningColor)};
           background-color: ${({ theme }) => ($isFilled ? theme.warningColor : 'initial')};
           border-color: ${({ theme }) => theme.warningColor};
+
+          [data-dot-loader='true'] {
+            background-color: ${({ theme }) => theme.warningColor};
+          }
         `
       case STATUS_FLAG_WAITING:
       default:
@@ -69,6 +85,10 @@ export const StatusFlagStyled = styled.div<{ theme: MavenTheme; $kind: StatusFla
           color: ${({ theme }) => ($isFilled ? theme.cards : theme.riskColor)};
           background-color: ${({ theme }) => ($isFilled ? theme.riskColor : 'initial')};
           border-color: ${({ theme }) => theme.riskColor};
+
+          [data-dot-loader='true'] {
+            background-color: ${({ theme }) => theme.riskColor};
+          }
         `
     }
   }}

@@ -77,9 +77,9 @@ export const ClockLoader = (props: { width?: number; height?: number; fillColor?
 export const DotsLoader = () => {
   return (
     <DotsLoaderWrapper>
-      <div className="dot" />
-      <div className="dot" />
-      <div className="dot" />
+      <div data-dot-loader className="dot" />
+      <div data-dot-loader className="dot" />
+      <div data-dot-loader className="dot" />
     </DotsLoaderWrapper>
   )
 }

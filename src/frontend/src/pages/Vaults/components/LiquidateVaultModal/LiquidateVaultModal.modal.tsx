@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -75,6 +75,15 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const [isUsingPersent, setIsUsingPersent] = useState(true)
   const [inputTokenAmount, setInputTokenAmount] = useState('0')
   const [inputPercentageAmount, setInputPersentageAmount] = useState('0')
+
+  // effect to reset popup input on popup close
+  useEffect(() => {
+    if (!show) {
+      setIsUsingPersent(true)
+      setInputTokenAmount('0')
+      setInputPersentageAmount('0')
+    }
+  }, [show])
 
   /**
    * safe converted input strings to numbers
@@ -536,6 +545,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
             <Button
               text="Liquidate"
               kind={ACTION_PRIMARY}
+              loading={isActionActive}
               disabled={!enteredTokensAmount || isActionActive}
               onClick={handleLiquidateVault}
             />
