@@ -166,6 +166,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
       ownerAddress,
       collateralData,
       borrowedToken,
+      totalOutstanding,
       borrowedAmount,
       liquidationMax,
       liquidationRewardCoefficient,
@@ -188,7 +189,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
   const isMarkStatus = vaultsStatuses.MARK === status
 
-  const liquidationPrice = borrowedAmount === 0 ? 0 : borrowedAmount * borrowedToken.rate * 1.5
+  const liquidationPrice = totalOutstanding === 0 ? 0 : totalOutstanding * borrowedToken.rate * 1.5
 
   const isLiquidationFooterActive =
     footerText &&
