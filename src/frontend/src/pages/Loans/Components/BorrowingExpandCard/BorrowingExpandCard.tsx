@@ -365,7 +365,7 @@ export const BorrowingExpandCard = ({
                 beginningText="$"
                 className="value"
                 showDecimal
-                decimalsToShow={borrowedTokenDecimals}
+                decimalsToShow={2}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>

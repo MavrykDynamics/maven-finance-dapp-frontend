@@ -186,7 +186,7 @@ export const ConfirmationScreen = () => {
       <div className="bottom-stats-wrapper">
         <BorrowScreenBottomStats
           inputAmount={inputAmount}
-          assetDecimalsToShow={assetDecimalsToShow}
+          assetDecimalsToShow={2}
           daoFee={daoFee}
           futureCollateralRatio={futureCollateralRatio}
           futureBorrowCapacity={futureBorrowCapacity}

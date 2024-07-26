@@ -139,7 +139,7 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
-              <CommaNumber value={repayAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+              <CommaNumber value={repayAmount} decimalsToShow={2} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>

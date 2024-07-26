@@ -143,15 +143,11 @@ export const ConfirmBorrowAsset = ({
                   </Tooltip.Content>
                 </Tooltip>
               </div>
-              <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+              <CommaNumber value={inputAmount} decimalsToShow={2} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount Received</div>
-              <CommaNumber
-                value={inputAmount - inputAmount * (DAOFee / 100)}
-                decimalsToShow={assetDecimalsToShow}
-                className="value"
-              />
+              <CommaNumber value={inputAmount - inputAmount * (DAOFee / 100)} decimalsToShow={2} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">
@@ -165,11 +161,7 @@ export const ConfirmBorrowAsset = ({
                   </Tooltip.Content>
                 </Tooltip>
               </div>
-              <CommaNumber
-                value={inputAmount * (DAOFee / 100)}
-                decimalsToShow={assetDecimalsToShow}
-                className="value"
-              />
+              <CommaNumber value={inputAmount * (DAOFee / 100)} decimalsToShow={2} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">USD Value</div>

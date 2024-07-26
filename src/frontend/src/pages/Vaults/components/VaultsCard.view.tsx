@@ -354,11 +354,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
                         <TableCell $width={columnWidth}>
                           <div className="cell-content">
-                            <CommaNumber
-                              value={convertedAmount}
-                              decimalsToShow={assetDecimalsToShow}
-                              className="balance"
-                            />
+                            <CommaNumber value={convertedAmount} decimalsToShow={2} className="balance" />
                             {rate ? (
                               <CommaNumber
                                 value={convertedAmount * rate}
