@@ -11,7 +11,10 @@ import {
   INPUT_STATUS_ERROR,
   InputStatusType,
 } from 'app/App.components/Input/Input.constants'
-import { DEPOSIT_COLLATERAL_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  DEPOSIT_COLLATERAL_ACTION,
+  MAX_SHOWN_COLLATERAL_RATIO_PERSENT,
+} from 'providers/VaultsProvider/helpers/vaults.const'
 
 // types
 import { AddCollateralPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
@@ -296,11 +299,11 @@ const AddCollateralTableStats = ({
         <div className={`percentage`}>
           Collateral Ratio:{' '}
           <CommaNumber
-            value={collateralRatio}
+            value={Math.min(collateralRatio, MAX_SHOWN_COLLATERAL_RATIO_PERSENT)}
             endingText="%"
             showDecimal
             decimalsToShow={2}
-            beginningText={collateralRatio === 1000 ? '+' : ''}
+            beginningText={collateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
           />
         </div>
         <GradientDiagram

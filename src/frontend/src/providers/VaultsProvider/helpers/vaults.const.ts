@@ -18,3 +18,4 @@ export const MARK_FOR_LIQUIDATION_ACTION = 'markForLiquidateionAction'
 export const LIQUIDATE_VAULT_ACTION = 'liquidateVaultAction'
 
 export const MINIMUN_COLLATERAL_RATIO_PERSENT = 200
+export const MAX_SHOWN_COLLATERAL_RATIO_PERSENT = 250

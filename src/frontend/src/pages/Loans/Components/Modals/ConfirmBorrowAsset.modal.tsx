@@ -2,7 +2,10 @@ import { useCallback, useMemo } from 'react'
 import { useLockBodyScroll } from 'react-use'
 
 // consts
-import { BORROW_VAULT_ASSET_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  BORROW_VAULT_ASSET_ACTION,
+  MAX_SHOWN_COLLATERAL_RATIO_PERSENT,
+} from 'providers/VaultsProvider/helpers/vaults.const'
 import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from 'pages/Loans/Loans.const'
 import { ConfirmBorrowPopupDataType } from '../../../../providers/LoansProvider/helpers/LoansModals.types'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -187,11 +190,11 @@ export const ConfirmBorrowAsset = ({
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  value={futureCollateralRatio}
+                  value={Math.min(MAX_SHOWN_COLLATERAL_RATIO_PERSENT, futureCollateralRatio)}
                   endingText="%"
                   showDecimal
                   decimalsToShow={2}
-                  beginningText={futureCollateralRatio === 1000 ? '+' : ''}
+                  beginningText={futureCollateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
                 />
               </div>
               <GradientDiagram

@@ -7,7 +7,10 @@ import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvid
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
-import { REPAY_PART_OF_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  MAX_SHOWN_COLLATERAL_RATIO_PERSENT,
+  REPAY_PART_OF_VAULT_ACTION,
+} from 'providers/VaultsProvider/helpers/vaults.const'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -153,11 +156,11 @@ export const ConfirmRepay = ({
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  value={futureCollateralRatio}
+                  value={Math.min(MAX_SHOWN_COLLATERAL_RATIO_PERSENT, futureCollateralRatio)}
                   endingText="%"
                   showDecimal
                   decimalsToShow={2}
-                  beginningText={futureCollateralRatio === 1000 ? '+' : ''}
+                  beginningText={futureCollateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
                 />
               </div>
               <GradientDiagram

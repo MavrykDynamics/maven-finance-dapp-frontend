@@ -115,7 +115,16 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
         // if we have delay for the timer schedule setTimeout, otherwise timer is null
         if (timerMsDelay > 0) {
           timerId = setTimeout(() => {
-            console.log('status recalc in timer')
+            console.log('status recalc in timer', {
+              vaultName: vault.name,
+              oldStatus: vaultStatus,
+              newStatus: getVaultStatus({
+                collateralRatio,
+                totalOustanding: totalOutstandingUsd,
+                liquidationTimestamp: liquidationIsoTime,
+                gracePeriodTimestamp: gracePeriodIsoTime,
+              }),
+            })
 
             setVaultStatus(
               getVaultStatus({

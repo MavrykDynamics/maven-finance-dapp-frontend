@@ -9,6 +9,7 @@ import colors from 'styles/colors'
 import { ACCRUED_INTEREST, APR, BORROW_CAPACITY, COLLATERAL_VALUE, OUTSTANDING_DEBT } from 'texts/tooltips/vault.text'
 import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers' // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { MAX_SHOWN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 
 type Props = {
   collateralRatio: number
@@ -126,11 +127,11 @@ export const BorrowingExpandCardValuesSection = ({
         <div className="percentage">
           Collateral Ratio:
           <CommaNumber
-            value={collateralRatio}
+            value={Math.min(collateralRatio, MAX_SHOWN_COLLATERAL_RATIO_PERSENT)}
             endingText="%"
             showDecimal
             decimalsToShow={2}
-            beginningText={collateralRatio === 1000 ? '+' : ''}
+            beginningText={collateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
           />
         </div>
         <GradientDiagram

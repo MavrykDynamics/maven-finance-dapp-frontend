@@ -176,7 +176,7 @@ export const getVaultStatus = ({
     return vaultsStatuses.AT_RISK
   }
 
-  if (collateralRatio <= 150 && isTotalOutstandingPresent && !isGracePeriodTimerPresent) {
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && (!isGracePeriodTimerPresent || isLiquidationTimerDone)) {
     return vaultsStatuses.MARK
   }
 
@@ -244,7 +244,7 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
   if (totalOutstanding === 0) return 250
 
   const collateralRatio = (collateralAmount / totalOutstanding) * 100
-  return useMinMax ? getNumberInBounds(0, 1000, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
+  return useMinMax ? getNumberInBounds(0, 251, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
 }
 
 /**

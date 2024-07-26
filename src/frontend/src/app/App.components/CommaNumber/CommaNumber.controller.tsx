@@ -69,16 +69,16 @@ export const CommaNumber = ({
   }
 
   return beginningText || endingText ? (
-    <div className={className} title={titleForNumber}>
-      <p>
+    <div className={className}>
+      <span title={titleForNumber ?? String(value)}>
         {beginningText ? <span className="prefix">{beginningText + ' '}</span> : ''}
         {numberWithCommas}
         {endingText ? <span className="suffix">{' ' + endingText}</span> : ''}
-      </p>
+      </span>
     </div>
   ) : (
-    <div className={className} title={titleForNumber}>
-      {numberWithCommas}
+    <div className={className}>
+      <span title={titleForNumber ?? String(value)}>{numberWithCommas}</span>
     </div>
   )
 }

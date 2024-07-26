@@ -33,6 +33,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { MAX_SHOWN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -344,11 +345,11 @@ export const BorrowingExpandCard = ({
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  value={collateralRatio}
+                  value={Math.min(collateralRatio, MAX_SHOWN_COLLATERAL_RATIO_PERSENT)}
                   endingText="%"
                   showDecimal
                   decimalsToShow={2}
-                  beginningText={collateralRatio === 1000 ? '+' : ''}
+                  beginningText={collateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
                 />
               </div>
               <GradientDiagram
