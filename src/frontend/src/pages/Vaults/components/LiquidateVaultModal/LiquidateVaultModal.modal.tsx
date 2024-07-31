@@ -8,13 +8,13 @@ import Toggle from 'app/App.components/Toggle/Toggle.view'
 import { LiquidateVaultModalStyled } from './LiquidateVaultModal.styles'
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'app/App.components/Table'
-import { Button } from 'app/App.components/Button/Button.controller'
+import Button from 'app/App.components/Button/NewButton'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 // consts
-import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
 import {
   INPUT_LARGE,
   INPUT_STATUS_ERROR,
@@ -543,12 +543,12 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
           <div className="liquidation-btn-wrapper">
             <Button
-              text="Liquidate"
-              kind={ACTION_PRIMARY}
-              loading={isActionActive}
+              kind={BUTTON_PRIMARY}
               disabled={!enteredTokensAmount || isActionActive}
               onClick={handleLiquidateVault}
-            />
+            >
+              Liquidate
+            </Button>
           </div>
         </LiquidateVaultModalStyled>
       </PopupContainerWrapper>
