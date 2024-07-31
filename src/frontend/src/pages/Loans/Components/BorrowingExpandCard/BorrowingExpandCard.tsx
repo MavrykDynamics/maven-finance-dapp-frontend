@@ -42,7 +42,6 @@ type BorrowingExpandCardPropsType = {
   children?: React.ReactNode
   status?: string
   DAOFee: number
-  hideTransactionHistory?: boolean
 }
 
 export const BorrowingExpandCard = ({
@@ -51,7 +50,6 @@ export const BorrowingExpandCard = ({
   headerSuffix,
   children,
   DAOFee,
-  hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
   const {
     openChangeVaultNamePopup,
@@ -473,7 +471,6 @@ export const BorrowingExpandCard = ({
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
                 depositorsFlag={depositorsFlag}
-                hideTransactionHistory={hideTransactionHistory}
               />
             )}
           </BorrowingExpandedCard>

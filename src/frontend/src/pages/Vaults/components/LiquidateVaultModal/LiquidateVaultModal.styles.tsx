@@ -6,6 +6,10 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
   font-size: 14px;
   line-height: 21px;
 
+  h1 {
+    margin: 0;
+  }
+
   h3,
   h4 {
     font-weight: 600;
@@ -140,7 +144,11 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
   .liquidation-btn-wrapper {
     max-width: 250px;
 
-    margin-top: 40px;
+    margin-top: 24px;
     margin-inline: auto;
+
+    button {
+      width: 100%;
+    }
   }
 `

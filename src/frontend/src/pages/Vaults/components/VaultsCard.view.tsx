@@ -226,15 +226,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
   // view for owner
   if (isOwner || vaultTab === vaultTabs.MY) {
-    return (
-      <BorrowingExpandCard
-        vault={vault}
-        headerSuffix={headerSufix}
-        DAOFee={daoFee}
-        isOwner={isOwner}
-        hideTransactionHistory
-      />
-    )
+    return <BorrowingExpandCard vault={vault} headerSuffix={headerSufix} DAOFee={daoFee} isOwner={isOwner} />
   }
 
   // view for permissioned userd
@@ -248,13 +240,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
 
   // view for "guest"
   return (
-    <BorrowingExpandCard
-      vault={vault}
-      headerSuffix={headerSufix}
-      DAOFee={daoFee}
-      isOwner={isOwner}
-      hideTransactionHistory
-    >
+    <BorrowingExpandCard vault={vault} headerSuffix={headerSufix} DAOFee={daoFee} isOwner={isOwner}>
       <VaultsCardDropDown>
         <div className="body">
           <div className="left-part">
