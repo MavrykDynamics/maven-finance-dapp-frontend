@@ -92,41 +92,42 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const inputPersentConvertedToNumber = isNaN(parseFloat(inputPercentageAmount)) ? 0 : parseFloat(inputPercentageAmount)
 
   // tokens amount of user input (% is converted to tokens amount)
-  const enteredTokensAmount = isUsingPersent
+  const enteredLiquidationTokensAmount = isUsingPersent
     ? (liquidationMax / 100) * inputPersentConvertedToNumber
-    : inputTokenAmountConvertedToNumber
+    : Math.min(inputTokenAmountConvertedToNumber, liquidationMax)
 
   /**
    * values converted to USD
    */
   const liquidationMaxUsd = liquidationMax * (borrowedToken?.rate ?? 0)
-  const enteredTokensUsdAmount = enteredTokensAmount * (borrowedToken?.rate ?? 0)
+  const enteredLiquidationTokensUsdAmount = enteredLiquidationTokensAmount * (borrowedToken?.rate ?? 0)
 
   /**
    * input max and min values for token amount and persentage inputs
    */
-  const maxInputTokensAmount = Math.min(userBalance, liquidationMax) // max amount is min from user balance or liquidation max
-  const minInputTokensAmount = 1 // min amount is 1 token
+  const maxInputTokensAmount = userBalance // max amount is min from user balance or liquidation max
+  const minInputTokensAmount = Math.min(1, liquidationMax) // min amount is 1 token
   const maxInputPercentageAmount = 100 // max amount is 100%
-  const minInputPercentageAmount = Math.min(1, calcPercent(minInputTokensAmount, liquidationMax)) // min amount is min from 1% and % of 1 token from liquidation max
+  const minInputPercentageAmount = Math.max(1, calcPercent(minInputTokensAmount, liquidationMax)) // min amount is max from 1% and % of 1 token from liquidation max
+  const inputUseMaxAmount = Math.min(userBalance, liquidationMax)
 
   /**
    * liquidation reward values
    */
   const liquidationRewardPersent = liquidationRewardCoefficient * 100
-  const liquidationRewardTokensAmount = enteredTokensAmount * liquidationRewardCoefficient
+  const liquidationRewardTokensAmount = enteredLiquidationTokensAmount * liquidationRewardCoefficient
   const liquidationRewardUsdAmount = liquidationRewardTokensAmount * (borrowedToken?.rate ?? 0)
   const maxLiquidationRewardUsdAmount = liquidationMax * liquidationRewardCoefficient * (borrowedToken?.rate ?? 0)
 
   /**
    * treasury fee values
    */
-  const treasuryFeeTokensAmount = enteredTokensAmount * adminLiquidateFeeCoefficient
+  const treasuryFeeTokensAmount = enteredLiquidationTokensAmount * adminLiquidateFeeCoefficient
   const treasuryFeeUsdAmount = treasuryFeeTokensAmount * (borrowedToken?.rate ?? 0)
 
-  const returnedToLiquidatorUsd = enteredTokensUsdAmount + liquidationRewardUsdAmount
+  const returnedToLiquidatorUsd = enteredLiquidationTokensUsdAmount + liquidationRewardUsdAmount
   const profitUsdAmount = Math.max(0, liquidationRewardUsdAmount)
-  const collateralWithdrawn = enteredTokensUsdAmount + profitUsdAmount + treasuryFeeUsdAmount
+  const collateralWithdrawn = enteredLiquidationTokensUsdAmount + profitUsdAmount + treasuryFeeUsdAmount
 
   const receivedCollaterals = collateralData.reduce<
     Array<{
@@ -191,7 +192,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
           data.vaultAddress,
           data.userAddress,
           data.ownerAddress,
-          Number(enteredTokensAmount),
+          Number(enteredLiquidationTokensAmount),
           borrowedToken,
           lendingControllerAddress,
         )
@@ -205,7 +206,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
       data.vaultAddress,
       data.userAddress,
       data.ownerAddress,
-      enteredTokensAmount,
+      enteredLiquidationTokensAmount,
       bug,
     ],
   )
@@ -230,9 +231,9 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     if (isUsingPersent) {
       setInputPersentageAmount(String(maxInputPercentageAmount))
     } else {
-      setInputTokenAmount(String(maxInputTokensAmount))
+      setInputTokenAmount(String(inputUseMaxAmount))
     }
-  }, [isUsingPersent, maxInputTokensAmount])
+  }, [isUsingPersent, inputUseMaxAmount])
 
   /**
    * input change handler
@@ -307,7 +308,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
         isUsingPersent ? maxInputPercentageAmount : maxInputTokensAmount,
         isUsingPersent ? minInputPercentageAmount : minInputTokensAmount,
       ),
-      convertedValue: enteredTokensUsdAmount,
+      convertedValue: enteredLiquidationTokensUsdAmount,
       inputSize: INPUT_LARGE,
     }
   }, [
@@ -320,7 +321,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     inputTokenAmountConvertedToNumber,
     maxInputTokensAmount,
     minInputPercentageAmount,
-    enteredTokensUsdAmount,
+    minInputTokensAmount,
+    enteredLiquidationTokensUsdAmount,
   ])
 
   if (!data || !borrowedToken || !borrowedToken.rate) return null
@@ -420,7 +422,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
               <div className="cell">
                 <div className="title">Cost to Liquidate</div>
                 <CommaNumber
-                  value={enteredTokensUsdAmount}
+                  value={enteredLiquidationTokensUsdAmount}
                   decimalsToShow={2}
                   showDecimal
                   beginningText="$"
@@ -544,7 +546,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
           <div className="liquidation-btn-wrapper">
             <Button
               kind={BUTTON_PRIMARY}
-              disabled={!enteredTokensAmount || isActionActive}
+              disabled={!enteredLiquidationTokensAmount || isActionActive}
               onClick={handleLiquidateVault}
             >
               Liquidate
