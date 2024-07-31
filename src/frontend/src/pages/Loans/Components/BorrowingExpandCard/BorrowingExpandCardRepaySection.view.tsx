@@ -43,6 +43,7 @@ import { SlidingTabButtonType } from 'app/App.components/SlidingTabButtons/Slidi
 import { AVALIABLE_TO_BORROW, FEES_DUE } from 'texts/tooltips/vault.text'
 import {
   CONTRACT_COMPLIANT_REPAYMENT_ADJUST_AND_REFUND,
+  OVER_REPAYING_ROUNDED_WARNING_TEXT,
   OVER_REPAYING_WARNING_TEXT,
   PARTIAL_LOAN_REPAYMENT,
 } from 'texts/banners/vault.text'
@@ -127,15 +128,14 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       ? totalOutstanding + 1
       : Math.ceil(totalOutstanding)
 
-  const userMaxRepaymentAmount = Math.min(userAssetBalance, roundedTotalOutstanding)
+  const inputUseMaxAmount = Math.min(userAssetBalance, roundedTotalOutstanding)
 
   /**
    * condition for minimum repay warning,
-   * when user enters in input amount of tokens,
-   * that is less than minimum available repayment amount
+   * when user enters in input less amount of tokens than minimum available repayment amount
    */
   const isMinimumRepayWarning =
-    !isRepayInFull && inputData.validationStatus === INPUT_STATUS_ERROR && inputAmount <= minimumRepay
+    !isRepayInFull && inputData.validationStatus !== INPUT_STATUS_DEFAULT && inputAmount <= minimumRepay
 
   /**
    * condition for not repaying in full amount,
@@ -145,9 +145,9 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
 
   /**
    * condition for overRepaing warning,
-   * when input amount is greater than vault's original total outstanding
+   * when input amount is greater than vault's rounded total outstanding
    */
-  const isOverRepayingWarning = inputData.validationStatus === INPUT_STATUS_SUCCESS && inputAmount > totalOutstanding
+  const isOverRepayingWarning = inputAmount >= roundedTotalOutstanding
 
   /**
    * useEffect to set initial input value on tab change and on first visit
@@ -155,8 +155,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   useEffect(() => {
     if (isRepayInFull) {
       const validationStatus = loansInputValidation({
-        inputAmount: String(userMaxRepaymentAmount),
-        maxAmount: roundedTotalOutstanding,
+        inputAmount: String(roundedTotalOutstanding),
+        maxAmount: userAssetBalance,
         minAmount: roundedTotalOutstanding,
         options: {
           byDecimalPlaces: Math.min(decimals || assetDecimalsToShow, assetDecimalsToShow),
@@ -164,7 +164,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       })
 
       setInputData({
-        amount: String(userMaxRepaymentAmount),
+        amount: String(roundedTotalOutstanding),
         validationStatus: validationStatus,
       })
     }
@@ -212,7 +212,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
         validationStatus: validationStatus,
       })
     },
-    [decimals, inputData, minimumRepay],
+    [decimals, inputData],
   )
 
   const inputOnBlurHandle = useCallback(() => {
@@ -244,11 +244,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       onBlur: inputOnBlurHandle,
       onFocus: onFocusHandler,
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-        inputOnChangeHandle(
-          e.target.value,
-          isRepayInFull ? roundedTotalOutstanding : userMaxRepaymentAmount,
-          isRepayInFull ? roundedTotalOutstanding : minimumRepay,
-        )
+        inputOnChangeHandle(e.target.value, userAssetBalance, isRepayInFull ? roundedTotalOutstanding : minimumRepay)
       },
     }),
     [
@@ -259,7 +255,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       minimumRepay,
       onFocusHandler,
       roundedTotalOutstanding,
-      userMaxRepaymentAmount,
+      userAssetBalance,
     ],
   )
 
@@ -270,8 +266,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       balanceName: 'Wallet Balance',
       useMaxHandler: () => {
         inputOnChangeHandle(
-          getLoansInputMaxAmount(userMaxRepaymentAmount, decimals),
-          isRepayInFull ? roundedTotalOutstanding : userMaxRepaymentAmount,
+          getLoansInputMaxAmount(inputUseMaxAmount, decimals),
+          userAssetBalance,
           isRepayInFull ? roundedTotalOutstanding : minimumRepay,
         )
       },
@@ -287,7 +283,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       inputAmount,
       borrowedTokenRate,
       inputOnChangeHandle,
-      userMaxRepaymentAmount,
+      inputUseMaxAmount,
       decimals,
       isRepayInFull,
       roundedTotalOutstanding,
@@ -328,7 +324,7 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       {isOverRepayingWarning ? (
         <StatusMessageStyled className={STATUS_FLAG_INFO}>
           <Icon id="info" />
-          {OVER_REPAYING_WARNING_TEXT}
+          {inputAmount === roundedTotalOutstanding ? OVER_REPAYING_ROUNDED_WARNING_TEXT : OVER_REPAYING_WARNING_TEXT}
         </StatusMessageStyled>
       ) : null}
 
