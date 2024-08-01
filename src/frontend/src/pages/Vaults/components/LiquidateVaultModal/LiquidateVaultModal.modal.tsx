@@ -172,6 +172,9 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: LIQUIDATE_VAULT_ACTION,
+      successActionCallback: () => {
+        closePopup()
+      },
       actionFn: async () => {
         if (!borrowedToken || !checkWhetherTokenIsLoanToken(borrowedToken)) {
           return null

@@ -168,14 +168,18 @@ export const repayFullAndCloseVaultAction = async (
     if (type === 'fa12') {
       const assetContract = await tezos.wallet.at(address)
       const batchArr = [
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
-        },
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...assetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
-        },
+        convertedAssetAmount === 0
+          ? null
+          : {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...assetContract.methods.approve(vaultAddress, 0).toTransferParams(),
+            },
+        convertedAssetAmount === 0
+          ? null
+          : {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...assetContract.methods.approve(vaultAddress, convertedAssetAmount).toTransferParams(),
+            },
         convertedAssetAmount === 0
           ? null
           : {
@@ -237,23 +241,26 @@ export const repayFullAndCloseVaultAction = async (
       ].filter(Boolean) as Array<TransferParams & { kind: OpKind.TRANSACTION }>
 
       return await getEstimationBatchResult(tezos, batchArr)
-    }
-    const batchArr = [
-      convertedAssetAmount === 0
-        ? null
-        : {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
-            mumav: true,
-            amount: convertedAssetAmount,
-          },
-      {
-        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-        ...contract.methods.closeVault(vaultId).toTransferParams(),
-      },
-    ].filter(Boolean) as Array<TransferParams & { kind: OpKind.TRANSACTION }>
+    } else if (type === 'mav') {
+      const batchArr = [
+        convertedAssetAmount === 0
+          ? null
+          : {
+              kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+              ...contract?.methods.repay(vaultId, convertedAssetAmount).toTransferParams(),
+              mumav: true,
+              amount: convertedAssetAmount,
+            },
+        {
+          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+          ...contract.methods.closeVault(vaultId).toTransferParams(),
+        },
+      ].filter(Boolean) as Array<TransferParams & { kind: OpKind.TRANSACTION }>
 
-    return await getEstimationBatchResult(tezos, batchArr)
+      return await getEstimationBatchResult(tezos, batchArr)
+    }
+
+    throw new Error('invalid token type')
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
