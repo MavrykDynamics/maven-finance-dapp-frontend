@@ -106,8 +106,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
    * input max and min values for token amount and persentage inputs
    */
   const maxInputTokensAmount = userBalance // max amount is min from user balance or liquidation max
-  const minInputTokensAmount = Math.min(1, liquidationMax) // min amount is 1 token
-  const maxInputPercentageAmount = 100 // max amount is 100%
+  const minInputTokensAmount = 1 // min amount is 1 token
+  const maxInputPercentageAmount = Math.min(100, calcPercent(maxInputTokensAmount, liquidationMax)) // max amount is 100%
   const minInputPercentageAmount = Math.max(1, calcPercent(minInputTokensAmount, liquidationMax)) // min amount is max from 1% and % of 1 token from liquidation max
   const inputUseMaxAmount = Math.min(userBalance, liquidationMax)
 
@@ -202,6 +202,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
       },
     }),
     [
+      closePopup,
       borrowedToken,
       userAddress,
       lendingControllerAddress,
