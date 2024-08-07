@@ -42,8 +42,7 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 
-const columnWidth = '33%'
-const rowHeight = 30
+const rowHeight = 40
 
 type Props = {
   data: LiquidateVaultDataType
@@ -60,14 +59,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
 
-  const {
-    collateralData,
-    liquidationMax,
-    liquidationRewardCoefficient,
-    adminLiquidateFeeCoefficient,
-    collateralBalance,
-    tokenAddress,
-  } = data
+  const { collateralData, liquidationMax, liquidationRewardCoefficient, collateralBalance, tokenAddress } = data
 
   const borrowedToken = getTokenDataByAddress({ tokenAddress, tokensMetadata, tokensPrices })
   const userBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress })
@@ -119,15 +111,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   const liquidationRewardUsdAmount = liquidationRewardTokensAmount * (borrowedToken?.rate ?? 0)
   const maxLiquidationRewardUsdAmount = liquidationMax * liquidationRewardCoefficient * (borrowedToken?.rate ?? 0)
 
-  /**
-   * treasury fee values
-   */
-  const treasuryFeeTokensAmount = enteredLiquidationTokensAmount * adminLiquidateFeeCoefficient
-  const treasuryFeeUsdAmount = treasuryFeeTokensAmount * (borrowedToken?.rate ?? 0)
-
   const returnedToLiquidatorUsd = enteredLiquidationTokensUsdAmount + liquidationRewardUsdAmount
   const profitUsdAmount = Math.max(0, liquidationRewardUsdAmount)
-  const collateralWithdrawn = enteredLiquidationTokensUsdAmount + profitUsdAmount + treasuryFeeUsdAmount
 
   const receivedCollaterals = collateralData.reduce<
     Array<{
@@ -135,6 +120,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
       amount: number
       usdAmount: number
       share: number
+      icon: string
     }>
   >((acc, collateral) => {
     const collateralToken = getTokenDataByAddress({
@@ -156,6 +142,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
     acc.push({
       symbol: collateralToken.symbol,
+      icon: collateralToken.icon,
       amount: collateralReceivedAmount,
       usdAmount: collateralReceivedUsdAmount,
       share:
@@ -237,7 +224,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     } else {
       setInputTokenAmount(String(inputUseMaxAmount))
     }
-  }, [isUsingPersent, inputUseMaxAmount])
+  }, [isUsingPersent, maxInputPercentageAmount, inputUseMaxAmount])
 
   /**
    * input change handler
@@ -323,9 +310,9 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
     isUsingPersent,
     inputPersentConvertedToNumber,
     inputTokenAmountConvertedToNumber,
+    maxInputPercentageAmount,
     maxInputTokensAmount,
     minInputPercentageAmount,
-    minInputTokensAmount,
     enteredLiquidationTokensUsdAmount,
   ])
 
@@ -341,9 +328,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
           <p className="popup-description">
             Foreclosing (liquidating) a vault repays the vault’s debt, by purchasing the vault’s collateral. Liquidators
-            earn an additional 10% yield on top of the debt repaid for helping to secure Maven’s lending. Foreclosing on
-            a vault requires repaying the vault debt in the same asset. The most that can be liquidated from a vault is
-            50%. Input a percentage and then review your liquidation details below.
+            earn an additional 10% yield on top of the debt repaid for helping to secure Mavryk’s lending. The maximum
+            repayment is up to 50% of the outstanding debt.
           </p>
 
           <div className="stats-row">
@@ -419,76 +405,47 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
           <hr />
 
-          <div className="stats-wrapper">
-            <h3>Your Liquidation Summary</h3>
+          <h3>Your Liquidation Summary</h3>
 
-            <div className="stats-grid">
-              <div className="cell">
-                <div className="title">Cost to Liquidate</div>
-                <CommaNumber
-                  value={enteredLiquidationTokensUsdAmount}
-                  decimalsToShow={2}
-                  showDecimal
-                  beginningText="$"
-                  className="numberColor"
-                />
-              </div>
+          <div className="stats-row">
+            <div className="cell">
+              <div className="title">You Pay</div>
+              <CommaNumber
+                value={enteredLiquidationTokensAmount}
+                decimalsToShow={2}
+                showDecimal
+                endingText={borrowedToken.symbol}
+                className="numberColor"
+              />
+              <CommaNumber
+                value={enteredLiquidationTokensUsdAmount}
+                decimalsToShow={2}
+                showDecimal
+                beginningText="$"
+                className="numberColor converted"
+              />
+            </div>
 
-              {/* Commented cuz it hold same value as profit */}
-              {/* <div className="cell">
-                <div className="title">Liquidation Reward</div>
-                <CommaNumber
-                  value={liquidationRewardUsdAmount}
-                  decimalsToShow={2}
-                  showDecimal
-                  beginningText="$"
-                  className="numberColor"
-                />
-              </div> */}
+            <div className="cell">
+              <div className="title">You Receive</div>
+              <CommaNumber
+                value={returnedToLiquidatorUsd}
+                decimalsToShow={2}
+                showDecimal
+                beginningText="$"
+                className="numberColor"
+              />
+            </div>
 
-              <div className="cell">
-                <div className="title">Returned to Liquidator</div>
-                <CommaNumber
-                  value={returnedToLiquidatorUsd}
-                  decimalsToShow={2}
-                  showDecimal
-                  beginningText="$"
-                  className="numberColor"
-                />
-              </div>
-
-              <div className="cell">
-                <div className="title">Collateral Withdrawn</div>
-                <CommaNumber
-                  value={collateralWithdrawn}
-                  decimalsToShow={2}
-                  showDecimal
-                  beginningText="$"
-                  className="numberColor"
-                />
-              </div>
-
-              <div className="cell">
-                <div className="title">Profit</div>
-                <CommaNumber
-                  value={profitUsdAmount}
-                  decimalsToShow={2}
-                  showDecimal
-                  beginningText="$"
-                  className={profitUsdAmount > 0 ? 'upColor' : 'numberColor'}
-                />
-              </div>
-
-              <div className="cell">
-                <div className="title">Treasury Fee</div>
-                <CommaNumber
-                  value={treasuryFeeUsdAmount}
-                  decimalsToShow={2}
-                  showDecimal
-                  beginningText="$"
-                  className="numberColor"
-                />
-              </div>
+            <div className="cell">
+              <div className="title">Profit</div>
+              <CommaNumber
+                value={profitUsdAmount}
+                decimalsToShow={2}
+                showDecimal
+                beginningText="$"
+                className={profitUsdAmount > 0 ? 'upColor' : 'numberColor'}
+              />
             </div>
           </div>
 
@@ -499,25 +456,29 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
               <TableHeader>
                 <TableRow>
                   <TableHeaderCell>Asset</TableHeaderCell>
-                  <TableHeaderCell>Amount</TableHeaderCell>
+                  <TableHeaderCell>Share %</TableHeaderCell>
+                  <TableHeaderCell>Token Amount</TableHeaderCell>
                   <TableHeaderCell contentPosition="right">USD Value</TableHeaderCell>
                 </TableRow>
               </TableHeader>
 
               <TableBody>
-                {receivedCollaterals.map(({ symbol, amount, usdAmount, share }, index) => {
+                {receivedCollaterals.map(({ symbol, icon, amount, usdAmount, share }, index) => {
                   return (
                     <TableRow $rowHeight={rowHeight} $borderColor="primaryText" key={symbol + '-' + index}>
-                      <TableCell $width={columnWidth}>{symbol}</TableCell>
-
-                      <TableCell $width={columnWidth}>
-                        <div className="table-amount-group">
-                          <div>{share}%</div>
-                          <CommaNumber value={amount} decimalsToShow={2} showDecimal className="numberColor" />
+                      <TableCell $width={'30%'}>
+                        <div className="token-info">
+                          <ImageWithPlug imageLink={icon} useRounded alt={`${symbol} logo`} /> {symbol}
                         </div>
                       </TableCell>
 
-                      <TableCell $width={columnWidth} $contentPosition="right">
+                      <TableCell $width={'20%'}>{share}%</TableCell>
+
+                      <TableCell $width={'25%'}>
+                        <CommaNumber value={amount} decimalsToShow={2} showDecimal className="numberColor" />
+                      </TableCell>
+
+                      <TableCell $width={'25%'} $contentPosition="right">
                         <CommaNumber
                           value={usdAmount}
                           decimalsToShow={2}
@@ -531,9 +492,10 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
                 })}
 
                 <TableRow $rowHeight={rowHeight}>
-                  <TableCell $width={columnWidth}>Total</TableCell>
-                  <TableCell $width={columnWidth}></TableCell>
-                  <TableCell $width={columnWidth} $contentPosition="right">
+                  <TableCell $width={'30%'}>Total</TableCell>
+                  <TableCell $width={'20%'}>100%</TableCell>
+                  <TableCell $width={'25%'}></TableCell>
+                  <TableCell $width={'25%'} $contentPosition="right">
                     <CommaNumber
                       value={returnedToLiquidatorUsd}
                       decimalsToShow={2}

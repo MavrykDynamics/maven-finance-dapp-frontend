@@ -21,6 +21,7 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
 
   h3 {
     font-size: 22px;
+    margin-bottom: 32px;
   }
 
   h4 {
@@ -54,13 +55,25 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
     &.downColor p {
       color: ${({ theme }) => theme.downColor};
     }
+
+    &.converted {
+      font-size: 12px;
+      line-height: 4px;
+      font-weight: 400;
+    }
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 0.4fr 0.4fr 0.2fr;
+    column-gap: 32px;
+    margin-top: 10px;
   }
 
   .cell {
     display: flex;
     flex-direction: column;
-
-    row-gap: 6px;
+    row-gap: 4px;
 
     p {
       margin: 0;
@@ -69,9 +82,7 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
     .title {
       display: flex;
       align-items: center;
-
       column-gap: 4px;
-
       line-height: 100%;
     }
   }
@@ -98,27 +109,6 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
     }
   }
 
-  .stats-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-  }
-
-  .stats-wrapper {
-    display: flex;
-    flex-direction: column;
-    row-gap: 20px;
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-
-      column-gap: 15px;
-      row-gap: 20px;
-    }
-  }
-
   hr {
     margin: 15px 0 20px 0;
 
@@ -132,12 +122,21 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
     flex-direction: column;
 
     row-gap: 10px;
-    margin-top: 30px;
+    margin-top: 32px;
 
-    .table-amount-group {
-      display: grid;
-      grid-template-columns: 60px auto;
+    .token-info {
+      display: flex;
       column-gap: 8px;
+      align-items: center;
+
+      .img-wrapper {
+        width: 25px;
+        height: 24px;
+
+        img {
+          object-fit: cover;
+        }
+      }
     }
   }
 

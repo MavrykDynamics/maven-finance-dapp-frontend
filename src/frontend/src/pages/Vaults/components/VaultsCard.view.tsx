@@ -268,7 +268,7 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
             <div className="group">
               <div>
                 <div className="name">
-                  Liquidation Price
+                  Collateral Liquidation Point
                   <Tooltip>
                     <Tooltip.Trigger className="ml-3">
                       <Icon id="info" />
