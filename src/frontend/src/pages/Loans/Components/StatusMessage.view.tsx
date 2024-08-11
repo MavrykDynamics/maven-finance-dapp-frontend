@@ -21,6 +21,47 @@ export const StatusMessage = ({ status, theme, isLoading, gracePeriodTimestamp }
 
   const isGracePeriodTimerFinished = gracePeriodTimestamp && dayjs().valueOf() >= dayjs(gracePeriodTimestamp).valueOf()
 
+  // OLD VERSION, left for comparison reasons only
+  // switch (status) {
+  //   case vaultsStatuses.LIQUIDATABLE:
+  //     return (
+  //       <StatusMessageStyled className={status}>
+  //         <Icon id="error-triangle" />
+  //         This vault can now be liquidated. Over-collateralize this vault or repay the loan immediately to prevent
+  //         liquidation.
+  //       </StatusMessageStyled>
+  //     )
+  //   case vaultsStatuses.GRACE_PERIOD:
+  //     return (
+  //       <StatusMessageStyled className={status}>
+  //         <Icon id="error-triangle" />
+  //         {isGracePeriodTimerFinished || !gracePeriodTimestamp ? (
+  //           <p>
+  //             This vault has been marked for liquidation and is in its <span>grace period</span>.
+  //           </p>
+  //         ) : (
+  //           <p>
+  //             This vault has been marked for liquidation and is in its <span>grace period</span>. You have{' '}
+  //             <div className="timer">
+  //               <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
+  //             </div>{' '}
+  //             over-collateralize this vault or repay the loan to prevent liquidation.
+  //           </p>
+  //         )}
+  //       </StatusMessageStyled>
+  //     )
+  //   case vaultsStatuses.AT_RISK:
+  //     return (
+  //       <StatusMessageStyled className={status}>
+  //         <Icon id="error-triangle" />
+  //         This vault is at risk of being open to liquidation. Over-collateralize this vault or repay the loan to prevent
+  //         reaching your liquidation point.
+  //       </StatusMessageStyled>
+  //     )
+  //   default:
+  //     return null
+  // }
+
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
       return (
@@ -40,7 +81,7 @@ export const StatusMessage = ({ status, theme, isLoading, gracePeriodTimestamp }
             </p>
           ) : (
             <p>
-              This vault has been marked for liquidation and is in its <span>grace period</span>. You have{' '}
+              This vault has been marked for liquidation and is in its grace period. You have{' '}
               <div className="timer">
                 <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
               </div>{' '}
