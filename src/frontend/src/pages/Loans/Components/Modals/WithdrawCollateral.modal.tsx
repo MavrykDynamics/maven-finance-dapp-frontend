@@ -15,7 +15,7 @@ import { COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from 'pages
 import colors from 'styles/colors'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import {
-  MINIMUN_COLLATERAL_RATIO_PERSENT,
+  MAX_SHOWN_COLLATERAL_RATIO_PERSENT,
   WITHDRAW_COLLATERAL_ACTION,
 } from 'providers/VaultsProvider/helpers/vaults.const'
 
@@ -159,10 +159,7 @@ export const WithdrawCollateral = ({
     operationType: operationRemoveCollateral,
   })
 
-  const isActionBtnDisabled =
-    isActionActive ||
-    inputData.validationStatus !== INPUT_STATUS_SUCCESS ||
-    futureCollateralRatio <= MINIMUN_COLLATERAL_RATIO_PERSENT
+  const isActionBtnDisabled = isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS
 
   // withdraw collateral action ----------------------------------------------
   const withdrawAction = useCallback(async () => {
@@ -344,11 +341,11 @@ const WithdrawCollateralTableStats = ({
         <div className={`percentage`}>
           Collateral Ratio:{' '}
           <CommaNumber
-            value={collateralRatio}
+            value={Math.min(MAX_SHOWN_COLLATERAL_RATIO_PERSENT, collateralRatio)}
             endingText="%"
             showDecimal
             decimalsToShow={2}
-            beginningText={collateralRatio === 1000 ? '+' : ''}
+            beginningText={collateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
           />
         </div>
         <GradientDiagram

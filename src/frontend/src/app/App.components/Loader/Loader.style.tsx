@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { shine, ellipsis } from 'styles/animations'
+import { shine, ellipsis, loadingDotsAnimation } from 'styles/animations'
 import { MavenTheme } from 'styles/interfaces'
 import { SPINNER_LOADER_LARGE, SPINNER_LOADER_MEDIUM, SPINNER_LOADER_SMALL } from './loader.const'
 
@@ -96,6 +96,30 @@ export const ClockLoaderWrapper = styled.svg<{ width: number; height: number }>`
   width: ${({ width }) => width}px;
   height: ${({ height }) => height}px;
   display: inline-block;
+`
+
+export const DotsLoaderWrapper = styled.div<{ theme: MavenTheme }>`
+  display: flex;
+  column-gap: 5px;
+
+  .dot {
+    display: inline-block;
+
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+
+    background-color: ${({ theme }) => theme.cyanColor};
+    animation: ${({ theme }) => loadingDotsAnimation()} 1.5s infinite ease-in-out;
+
+    &:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 1s;
+    }
+  }
 `
 
 export const DataLoaderWrapper = styled.div<{ theme: MavenTheme; margin?: string }>`

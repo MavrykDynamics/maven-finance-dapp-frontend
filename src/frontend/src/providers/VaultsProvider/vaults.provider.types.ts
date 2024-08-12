@@ -1,4 +1,4 @@
-import {LoansTokenMetadataType, TokenAddressType} from 'providers/TokensProvider/tokens.provider.types'
+import { LoansTokenMetadataType, TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
 import {
   BORROW_VAULT_ASSET_ACTION,
   CHANGE_BAKER_ACTION,
@@ -13,9 +13,9 @@ import {
   UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from './helpers/vaults.const'
-import {VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR} from './vaults.provider.consts'
-import {vaultsStatuses} from 'pages/Vaults/Vaults.consts'
-import {ANY_USER, NONE_USER, WHITELIST_USERS} from 'pages/Loans/Loans.const'
+import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
+import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import {
   GetAllVaultsQueryQuery,
   GetUserAllVaultsQueryQuery,
@@ -78,12 +78,12 @@ export type VaultsIndexerDataType =
   | GetUserDepositorAllVaultsQueryQuery
   | GetAllVaultsQueryQuery
 
-// TODO: add descr to liquidation fields while testing liquidation functionality and popup
 export type VaultType = {
   // vault tokens data
   borrowedTokenAddress: TokenAddressType // address of borrowed token
   borrowedAmount: number // amount of token that user/s have borrowed from the vault *after normalizer it's not converted to client format*
-  fee: number // amount of token that user will have to pay after he has borrowed from the vault *after normalizer it's not converted to client format*
+  accruedInterest: number // compounded token amount via vaut's apr till vault's last updated block lvl
+  totalOutstanding: number // borrowed amount + accured interest (total loan of the vault)
   collateralData: Array<CollateralType> // collaterals of the vault in format {amount, tokenAddress} *after normalizer amount is not converted to the client format*
 
   // vault metadata
@@ -92,11 +92,12 @@ export type VaultType = {
   vaultId: number // id of the vault
 
   // liquidation data
-  liquidationLvl: number | null // level when vault will be able to liquidate (liquidation delay + liquidation block), to use it we need to convert it to timestamp, if null vault is not liquidatable
-  liquidationMax: number // liquidation cost without fee @Sam-M-Israel?
-  liquidationReward: number // how much the liquidator actually receives after they liquidate a vault and the fee is taken out along with whatever assets are sent to repay the outstanding debt of the loan. This should be the liquidation_fee_pct in the indexer
+  gracePeriodEndLevel: number | null // level when grace perio will end
+  liquidationEndLevel: number | null // level when liquidation will end
+  liquidationMax: number // max liquidation amount
+  liquidationRewardCoefficient: number // how much the liquidator actually receives after they liquidate a vault and the fee is taken out along with whatever assets are sent to repay the outstanding debt of the loan. This should be the liquidation_fee_pct in the indexer
   liquidationRatio: number // at what ratio is the vault able to be liquidated. so in the indexer it says 1500, so that would be 150% collateral to outstanding debt. same usage as the collateral ratio. If the collateral ratio reaches the value of the liquidation ratio then the vault can be liquidated.
-  adminLiquidateFee: number // how much of the reward is sent to the treasury as the admin fee. so when a user liquidates a vault, the adminLiquidationFee and the liquidationReward are taken from the vault, not from one another.
+  adminLiquidateFeeCoefficient: number // how much of the reward is sent to the treasury as the admin fee. so when a user liquidates a vault, the adminLiquidationFee and the liquidationReward are taken from the vault, not from one another.
 
   // permissions
   xtzDelegatedTo: string | null // if vault has xtz, as collateral, those xtz can be delegated to baker, here's the address of the delegated baker
@@ -115,12 +116,11 @@ export type VaultType = {
 // those additional fields can be only calculated after normalization stage, cuz those calcs requiring tokensDecimals & tokensRates
 export type FullLoansVaultType = VaultType & {
   liquidationTimestamp: number | null // same as liquidationLvl but converted to timestamp
-  totalOutstanding: number // fee + borrowed amount in USD
+  gracePeriodTimestamp: number | null // same as gracePeriodLvl but converted to timestamp
   collateralBalance: number // sum of collaterals in USD
   borrowCapacity: number // how much user can borrow from vault (available liq | amount of token while collateral ration >= 200%)
-  liquidationPrice: number
   collateralRatio: number // relation of collaterals in vault to borrowed amount
-  status: (typeof vaultsStatuses)[keyof typeof vaultsStatuses] // status of the vault, depends on collateralRatio
+  status: (typeof vaultsStatuses)[keyof typeof vaultsStatuses] | null // status of the vault, depends on collateralRatio
   borrowedToken: LoansTokenMetadataType & { rate: number } // metadata of borrowed token
 }
 

@@ -9,6 +9,7 @@ import colors from 'styles/colors'
 import { ACCRUED_INTEREST, APR, BORROW_CAPACITY, COLLATERAL_VALUE, OUTSTANDING_DEBT } from 'texts/tooltips/vault.text'
 import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers' // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { MAX_SHOWN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 
 type Props = {
   collateralRatio: number
@@ -16,7 +17,7 @@ type Props = {
   borrowedAmount: number
   borrowCapacity: number
   decimals: number
-  fee: number
+  accruedInterest: number
   apr: number
   rate: number
 }
@@ -27,7 +28,7 @@ export const BorrowingExpandCardValuesSection = ({
   borrowedAmount,
   borrowCapacity,
   decimals,
-  fee,
+  accruedInterest,
   apr,
   rate,
 }: Props) => {
@@ -39,14 +40,14 @@ export const BorrowingExpandCardValuesSection = ({
     <LoansValuesSection className="borrowing-tab">
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={borrowedAmount + fee} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={borrowedAmount + accruedInterest} className="value" showDecimal decimalsToShow={2} />
 
           <CommaNumber
-            value={(borrowedAmount + fee) * rate}
+            value={(borrowedAmount + accruedInterest) * rate}
             beginningText="$"
             className="rate"
             showDecimal
-            decimalsToShow={decimals}
+            decimalsToShow={2}
           />
 
           <div className="name">
@@ -61,7 +62,7 @@ export const BorrowingExpandCardValuesSection = ({
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
+          <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
           <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
           <div className="name">Principal</div>
         </LoansValuesSectionInfo>
@@ -80,8 +81,8 @@ export const BorrowingExpandCardValuesSection = ({
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
-          <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
+          <CommaNumber value={accruedInterest} decimalsToShow={2} className="value" />
+          <CommaNumber value={accruedInterest * rate} decimalsToShow={2} beginningText="$" className="rate" />
           <div className="name">
             Accrued Interest
             <Tooltip>
@@ -126,11 +127,11 @@ export const BorrowingExpandCardValuesSection = ({
         <div className="percentage">
           Collateral Ratio:
           <CommaNumber
-            value={collateralRatio}
+            value={Math.min(collateralRatio, MAX_SHOWN_COLLATERAL_RATIO_PERSENT)}
             endingText="%"
             showDecimal
             decimalsToShow={2}
-            beginningText={collateralRatio === 1000 ? '+' : ''}
+            beginningText={collateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
           />
         </div>
         <GradientDiagram

@@ -5,25 +5,62 @@ import { StatusMessageStyled } from './LoansComponents.style'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { ThemeColorsType } from 'styles'
+import dayjs from 'dayjs'
 
-const findStatusMessage = ({
-  status,
-  timestamp,
-  theme,
-}: {
+type Props = {
   status: string
-  timestamp?: number
   theme: ThemeColorsType
-}) => {
-  const timer = timestamp ? (
-    <div className="timer">
-      <Timer timestamp={timestamp} options={{ defaultColor: theme.primaryText, negativeColor: theme.downColor }} />
-    </div>
-  ) : (
-    <span className="timer no-data">
-      no data
-    </span>
-  )
+  isLoading?: boolean
+  gracePeriodTimestamp: number | null
+}
+
+export const StatusMessage = ({ status, theme, isLoading, gracePeriodTimestamp }: Props) => {
+  if (isLoading) return null
+
+  const timerOptions = { defaultColor: theme.primaryText, negativeColor: theme.downColor }
+
+  const isGracePeriodTimerFinished = gracePeriodTimestamp && dayjs().valueOf() >= dayjs(gracePeriodTimestamp).valueOf()
+
+  // OLD VERSION, left for comparison reasons only
+  // switch (status) {
+  //   case vaultsStatuses.LIQUIDATABLE:
+  //     return (
+  //       <StatusMessageStyled className={status}>
+  //         <Icon id="error-triangle" />
+  //         This vault can now be liquidated. Over-collateralize this vault or repay the loan immediately to prevent
+  //         liquidation.
+  //       </StatusMessageStyled>
+  //     )
+  //   case vaultsStatuses.GRACE_PERIOD:
+  //     return (
+  //       <StatusMessageStyled className={status}>
+  //         <Icon id="error-triangle" />
+  //         {isGracePeriodTimerFinished || !gracePeriodTimestamp ? (
+  //           <p>
+  //             This vault has been marked for liquidation and is in its <span>grace period</span>.
+  //           </p>
+  //         ) : (
+  //           <p>
+  //             This vault has been marked for liquidation and is in its <span>grace period</span>. You have{' '}
+  //             <div className="timer">
+  //               <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
+  //             </div>{' '}
+  //             over-collateralize this vault or repay the loan to prevent liquidation.
+  //           </p>
+  //         )}
+  //       </StatusMessageStyled>
+  //     )
+  //   case vaultsStatuses.AT_RISK:
+  //     return (
+  //       <StatusMessageStyled className={status}>
+  //         <Icon id="error-triangle" />
+  //         This vault is at risk of being open to liquidation. Over-collateralize this vault or repay the loan to prevent
+  //         reaching your liquidation point.
+  //       </StatusMessageStyled>
+  //     )
+  //   default:
+  //     return null
+  // }
 
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
@@ -38,13 +75,19 @@ const findStatusMessage = ({
       return (
         <StatusMessageStyled className={status}>
           <Icon id="error-triangle" />
-          <div>
+          {isGracePeriodTimerFinished || !gracePeriodTimestamp ? (
             <p>
-              This vault has been marked for liquidation and is in its <span>grace period</span>. You have {timer}{' '}
-              over-collateralize this vault
+              This vault has been marked for liquidation and is in its <span>grace period</span>.
             </p>
-            <p> or repay the loan to prevent liquidation.</p>
-          </div>
+          ) : (
+            <p>
+              This vault has been marked for liquidation and is in its grace period. You have{' '}
+              <div className="timer">
+                <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
+              </div>{' '}
+              over-collateralize this vault or repay the loan to prevent liquidation.
+            </p>
+          )}
         </StatusMessageStyled>
       )
     case vaultsStatuses.AT_RISK:
@@ -56,14 +99,6 @@ const findStatusMessage = ({
         </StatusMessageStyled>
       )
     default:
-      return <></>
+      return null
   }
 }
-
-type Props = {
-  timestamp?: number
-  status: string
-  theme: ThemeColorsType
-}
-
-export const StatusMessage = (props: Props) => <>{findStatusMessage(props)}</>

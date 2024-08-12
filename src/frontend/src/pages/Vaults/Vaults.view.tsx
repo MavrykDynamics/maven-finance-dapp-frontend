@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useLayoutEffect, useDeferredValue } from 'react'
+import { useState, useMemo, useEffect, useLayoutEffect, useDeferredValue, ChangeEvent } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // context
@@ -44,9 +44,17 @@ import {
 } from 'providers/VaultsProvider/vaults.provider.consts'
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { MARK_FOR_LIQUIDATION_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
-import { markForLiquidation } from 'providers/VaultsProvider/actions/vaultsLiquidation.actions'
+import {
+  markForLiquidation,
+  mockLendingControllerBlockLevel,
+} from 'providers/VaultsProvider/actions/vaultsLiquidation.actions'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+
+import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
+import { Button } from 'app/App.components/Button/Button.controller'
+import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
+import { Input } from 'app/App.components/Input/NewInput'
 
 const pathname = '/vaults'
 
@@ -192,8 +200,56 @@ export const VaultsView = () => {
 
   const deferredVaultIds = useDeferredValue(paginatedVaultsList)
 
+  const [mockLevelToSet, setMockLevelToSet] = useState('')
+
   return (
     <VaultsStyled>
+      <div className="mock-contract-level-buttons">
+        <div className="levels-list">
+          <span>ONE_MINUTE_BLOCKS = 7.5</span>
+          <span>ONE_HOUR_BLOCKS = 450</span>
+          <span>ONE_DAY_BLOCKS = 10800</span>
+          <span>ONE_WEEK_BLOCKS = 75600</span>
+          <span>ONE_MONTH_BLOCKS = 302400</span>
+          <span>ONE_YEAR_BLOCKS = 3628800</span>
+          <span>
+            <b>CURRENT_INDEXED_LEVEL = {currentIndexerLevelProxy.currentIndexedLevel}</b>
+          </span>
+        </div>
+
+        <div className="action-wrapper">
+          <Input
+            settings={{
+              inputStatus: '',
+            }}
+            inputProps={{
+              value: mockLevelToSet,
+              name: 'mockLevel',
+              onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                setMockLevelToSet(e.target.value)
+              },
+            }}
+          />
+
+          <Button
+            text={'mock block level'}
+            kind={ACTION_PRIMARY}
+            onClick={() => {
+              if (lendingControllerAddress === null) {
+                console.error('no lending controller address')
+                return
+              }
+
+              const newMockLevel = eval(mockLevelToSet)
+
+              console.log({ newMockLevel, mockLevelToSet })
+
+              mockLendingControllerBlockLevel(newMockLevel, lendingControllerAddress)
+            }}
+          />
+        </div>
+      </div>
+
       <SlidingTabButtons
         kind={SECONDARY_SLIDING_TAB_BUTTONS}
         tabItems={tabsList}

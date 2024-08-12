@@ -153,7 +153,7 @@ export const Market = () => {
           const convertedBorrowedAmount =
             convertNumberForClient({ number: vault.borrowedAmount, grade: loanTokenDecimals }) * loanTokenRate
           const convertedInterestAmount =
-            convertNumberForClient({ number: vault.fee, grade: loanTokenDecimals }) * loanTokenRate
+            convertNumberForClient({ number: vault.accruedInterest, grade: loanTokenDecimals }) * loanTokenRate
           const convertedMarketAvailableLiquidity =
             convertNumberForClient({
               number: vault.availableLiquidity,

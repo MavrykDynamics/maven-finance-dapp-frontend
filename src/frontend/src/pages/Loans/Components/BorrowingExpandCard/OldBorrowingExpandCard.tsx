@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { useClickAway } from 'react-use'
 import { useLocation, useNavigate } from 'react-router-dom'
 import classNames from 'classnames'
@@ -7,7 +7,6 @@ import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPerce
 import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import colors from 'styles/colors'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
@@ -54,8 +53,6 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
-
   // TODO: test how it works with only 1 popup
   const notHandleClickAway = addExistingCollateralPopup.showModal || isActionActive
 
@@ -69,17 +66,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
   const vaultAddress = params.get('vaultAddress')
   const isExpanded = vault.address === vaultAddress
 
-  const vaultData = useFullVault(vault)
-
-  useEffect(() => {
-    if (
-      vaultData?.liquidationTimestamp &&
-      isExpanded &&
-      (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
-    ) {
-      setTimerTimestamp(new Date(vaultData?.liquidationTimestamp).getTime())
-    }
-  }, [vaultData, isExpanded])
+  const { vault: vaultData, isStatusLoading } = useFullVault(vault)
 
   if (!vaultData) return null
 
@@ -92,12 +79,13 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
     collateralRatio,
     borrowedAmount,
     borrowedTokenAddress,
-    fee,
+    accruedInterest,
     totalOutstanding,
     collateralBalance,
     apr,
     borrowCapacity,
     status,
+    gracePeriodTimestamp,
   } = vaultData
 
   const { symbol, decimals, icon, rate } = borrowedToken
@@ -162,7 +150,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                 beginningText="$"
                 className="value"
                 showDecimal
-                decimalsToShow={decimals}
+                decimalsToShow={2}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
@@ -184,7 +172,14 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               vaultHasXtzCollateral || vaultHasSmvnCollateral ? '' : 'more-padding'
             }`}
           >
-            {status && <StatusMessage status={status} timestamp={timerTimestamp} theme={colors[themeSelected]} />}
+            {status && (
+              <StatusMessage
+                status={status}
+                gracePeriodTimestamp={gracePeriodTimestamp}
+                theme={colors[themeSelected]}
+                isLoading={isStatusLoading}
+              />
+            )}
 
             <div className="block-name">Borrowed</div>
             <div className="borrowed-data">
@@ -197,7 +192,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">Principal</div>
-                <CommaNumber value={borrowedAmount} decimalsToShow={decimals} className="value" />
+                <CommaNumber value={borrowedAmount} decimalsToShow={2} className="value" />
                 <CommaNumber value={borrowedAmount * rate} decimalsToShow={2} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
@@ -210,8 +205,8 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
                     <Tooltip.Content>Interest, compounded over time every time you borrow</Tooltip.Content>
                   </Tooltip>
                 </div>
-                <CommaNumber value={fee} decimalsToShow={decimals} className="value" />
-                <CommaNumber value={fee * rate} decimalsToShow={2} beginningText="$" className="rate" />
+                <CommaNumber value={accruedInterest} decimalsToShow={2} className="value" />
+                <CommaNumber value={accruedInterest * rate} decimalsToShow={2} beginningText="$" className="rate" />
               </ThreeLevelListItem>
               <ThreeLevelListItem>
                 <div className="name">APR</div>
@@ -267,12 +262,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
 
                           <TableCell $width={'22%'}>
                             <div className="cell-content">
-                              <CommaNumber
-                                value={convertedAmount}
-                                className="value"
-                                showDecimal
-                                decimalsToShow={assetDecimalsToShow}
-                              />
+                              <CommaNumber value={convertedAmount} className="value" showDecimal decimalsToShow={2} />
                               <CommaNumber
                                 value={convertedAmount * rate}
                                 className="borrowedTokenRate"

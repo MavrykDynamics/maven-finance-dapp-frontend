@@ -1,5 +1,7 @@
-export const LIQUIDATION_PRICE = 'Price value of your vault’s collateral at which your vault can be liquidated.'
-export const LIQUIDATION_COST = 'How much it will cost to liquidated this vault.'
+export const LIQUIDATION_PRICE =
+  'If the Collateral Value drops below this number, the vault becomes open to liquidation'
+export const LIQUIDATION_COST =
+  'This is the cost if liquidating the maximum amount possible, which is up to 50% of the outstanding Borrowed Amount.'
 export const VAULT_RISK = 'The level of risk of being liquidated your vault is at.'
 export const TOTAL_AMOUNT =
   'Total amount you are borrowing, a portion of which is paid to the treasury as the DAO fee. The amount you will actually receive is the Total Amount minus the DAO fee'

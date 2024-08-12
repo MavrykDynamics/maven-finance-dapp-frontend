@@ -7,7 +7,10 @@ import { ConfirmRepayPartPopupDataType } from '../../../../providers/LoansProvid
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { repayPartOfVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
-import { REPAY_PART_OF_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  MAX_SHOWN_COLLATERAL_RATIO_PERSENT,
+  REPAY_PART_OF_VAULT_ACTION,
+} from 'providers/VaultsProvider/helpers/vaults.const'
 
 // components
 import NewButton from 'app/App.components/Button/NewButton'
@@ -60,7 +63,7 @@ export const ConfirmRepay = ({
     vaultAddress,
     collateralBalance,
     totalOutstanding,
-    inputAmount,
+    repayAmount,
     availableLiquidity,
     tokenAddress: vaultTokenAddress,
     callback,
@@ -75,7 +78,7 @@ export const ConfirmRepay = ({
     vaultCurrentCollateralBalance: collateralBalance,
     vaultTokenAddress,
     operationType: operationRepay,
-    inputValue: inputAmount,
+    inputValue: repayAmount,
     marketAvailableLiquidity: availableLiquidity,
   })
 
@@ -95,34 +98,23 @@ export const ConfirmRepay = ({
         userAddress,
         vaultId,
         vaultAddress,
-        inputAmount,
+        repayAmount,
         borrowedToken,
-        () => {
-          closePopup()
-          callback()
-        },
       )
     }
 
     return null
-  }, [
-    borrowedToken,
-    bug,
-    callback,
-    closePopup,
-    inputAmount,
-    lendingControllerAddress,
-    userAddress,
-    vaultAddress,
-    vaultId,
-  ])
+  }, [borrowedToken, bug, repayAmount, lendingControllerAddress, userAddress, vaultAddress, vaultId])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: REPAY_PART_OF_VAULT_ACTION,
       actionFn: partlyRepayAction,
+      successActionCallback: () => {
+        callback()
+      },
     }),
-    [partlyRepayAction],
+    [callback, partlyRepayAction],
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)
@@ -147,11 +139,11 @@ export const ConfirmRepay = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
-              <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+              <CommaNumber value={repayAmount} decimalsToShow={2} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>
-              <CommaNumber value={inputAmount * rate} className="value" beginningText="$" />
+              <CommaNumber value={repayAmount * rate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 
@@ -164,11 +156,11 @@ export const ConfirmRepay = ({
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  value={futureCollateralRatio}
+                  value={Math.min(MAX_SHOWN_COLLATERAL_RATIO_PERSENT, futureCollateralRatio)}
                   endingText="%"
                   showDecimal
                   decimalsToShow={2}
-                  beginningText={futureCollateralRatio === 1000 ? '+' : ''}
+                  beginningText={futureCollateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
                 />
               </div>
               <GradientDiagram

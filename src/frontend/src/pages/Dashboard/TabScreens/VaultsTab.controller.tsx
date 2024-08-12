@@ -136,7 +136,7 @@ export const VaultsTab = () => {
                           <TableCell $width="33%">
                             <CommaNumber
                               value={convertedBalance}
-                              decimalsToShow={Number(decimals)}
+                              decimalsToShow={2}
                               useAccurateParsing={convertedBalance < 1}
                             />
                           </TableCell>
@@ -144,6 +144,7 @@ export const VaultsTab = () => {
                             <CommaNumber
                               value={convertedBalance * rate}
                               beginningText={rate ? '$' : symbol}
+                              decimalsToShow={2}
                               useAccurateParsing={convertedBalance < 1}
                             />
                           </TableCell>

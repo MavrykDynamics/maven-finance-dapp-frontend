@@ -5,7 +5,7 @@ import {
   getOnBlurValue,
   getOnFocusValue,
 } from 'app/App.components/Input/Input.constants'
-import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
+import { InputProps, InputSettings } from 'app/App.components/Input/newInput.type'
 import { assetDecimalsToShow } from 'pages/Loans/Loans.const'
 import { getLoansInputMaxAmount, loansInputValidation } from 'pages/Loans/Loans.helpers'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
@@ -90,7 +90,7 @@ export const useBorrowInputData = (borrowedAssetAddress = '', borrowCapacity = 0
     [borrowCapacity, rate, inputData.amount, inputOnBlurHandle, inputOnChangeHandle, onFocusHandler],
   )
 
-  const settings: Settings = useMemo(
+  const settings: InputSettings = useMemo(
     () => ({
       balance: userAssetBalance,
       balanceAsset: symbol,

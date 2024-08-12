@@ -48,6 +48,9 @@ export const PopupContainerWrapper = styled.div<{ theme: MavenTheme; $widthSize?
   &.vaults {
     max-width: 586px;
     padding: 30px 40px;
+
+    max-height: 95%;
+    overflow-y: auto;
   }
 
   &.child-width {

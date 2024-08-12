@@ -5,7 +5,10 @@ import { useLockBodyScroll } from 'react-use'
 import { COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from 'pages/Loans/Loans.const'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { AVALIABLE_TO_BORROW } from 'texts/tooltips/vault.text'
-import { REPAY_FULL_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
+import {
+  MAX_SHOWN_COLLATERAL_RATIO_PERSENT,
+  REPAY_FULL_VAULT_ACTION,
+} from 'providers/VaultsProvider/helpers/vaults.const'
 
 // actions
 import { repayFullAndCloseVaultAction } from 'providers/VaultsProvider/actions/vaults.actions'
@@ -40,6 +43,7 @@ import { ConfirmRepayFullPopupDataType } from '../../../../providers/LoansProvid
 // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
 import { operationRepay, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
+import { useLocation, useNavigate } from 'react-router'
 
 export const ConfirmRepayFull = ({
   closePopup,
@@ -54,6 +58,10 @@ export const ConfirmRepayFull = ({
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
 
+  const location = useLocation()
+  const navigate = useNavigate()
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search])
+
   const {
     preferences: { themeSelected },
     contractAddresses: { lendingControllerAddress },
@@ -62,6 +70,7 @@ export const ConfirmRepayFull = ({
   useLockBodyScroll(show)
 
   const {
+    repayAmount,
     vaultId,
     vaultAddress,
     collateralBalance,
@@ -80,7 +89,7 @@ export const ConfirmRepayFull = ({
     vaultCurrentCollateralBalance: collateralBalance,
     vaultTokenAddress,
     operationType: operationRepay,
-    inputValue: totalOutstanding,
+    inputValue: repayAmount,
     marketAvailableLiquidity: availableLiquidity,
   })
 
@@ -100,34 +109,28 @@ export const ConfirmRepayFull = ({
         userAddress,
         vaultId,
         vaultAddress,
-        totalOutstanding,
+        repayAmount,
         borrowedToken,
-        () => {
-          closePopup()
-          callback()
-        },
       )
     }
 
     return null
-  }, [
-    borrowedToken,
-    bug,
-    callback,
-    closePopup,
-    lendingControllerAddress,
-    totalOutstanding,
-    userAddress,
-    vaultAddress,
-    vaultId,
-  ])
+  }, [borrowedToken, bug, lendingControllerAddress, repayAmount, userAddress, vaultAddress, vaultId])
 
   const contractActionProps: HookContractActionArgs = useMemo(
     () => ({
       actionType: REPAY_FULL_VAULT_ACTION,
       actionFn: fullRepayAction,
+      successActionCallback: () => {
+        closePopup()
+        callback()
+      },
+      dappActionCallback: () => {
+        params.delete('vaultAddress')
+        navigate({ ...location, search: params.toString() }, { replace: true })
+      },
     }),
-    [fullRepayAction],
+    [callback, closePopup, fullRepayAction, location, navigate, params],
   )
 
   const { action: repayBtnHandler } = useContractAction(contractActionProps)
@@ -154,11 +157,11 @@ export const ConfirmRepayFull = ({
             </ThreeLevelListItem>
             <ThreeLevelListItem>
               <div className="name">Amount</div>
-              <CommaNumber value={totalOutstanding} className="value" />
+              <CommaNumber value={repayAmount} className="value" />
             </ThreeLevelListItem>
             <ThreeLevelListItem className="right">
               <div className="name">USD Value</div>
-              <CommaNumber value={totalOutstanding * rate} className="value" beginningText="$" />
+              <CommaNumber value={repayAmount * rate} className="value" beginningText="$" />
             </ThreeLevelListItem>
           </div>
 
@@ -171,11 +174,11 @@ export const ConfirmRepayFull = ({
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  value={futureCollateralRatio}
+                  value={Math.min(MAX_SHOWN_COLLATERAL_RATIO_PERSENT, futureCollateralRatio)}
                   endingText="%"
                   showDecimal
                   decimalsToShow={2}
-                  beginningText={futureCollateralRatio === 1000 ? '+' : ''}
+                  beginningText={futureCollateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
                 />
               </div>
               <GradientDiagram

@@ -215,12 +215,7 @@ export const BorrowingExpandCardMenuSection = ({
 
                       <TableCell $width={'22%'}>
                         <div className="cell-content">
-                          <CommaNumber
-                            value={convertedAmount}
-                            className="value"
-                            showDecimal
-                            decimalsToShow={assetDecimalsToShow}
-                          />
+                          <CommaNumber value={convertedAmount} className="value" showDecimal decimalsToShow={2} />
                           <CommaNumber value={convertedAmount * rate} className="rate" beginningText="$" showDecimal />
                         </div>
                       </TableCell>
