@@ -141,7 +141,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
    * condition for not repaying in full amount,
    * when user repaying in full and input amount is less than vault's total outstanding
    */
-  const isNotRepayInFullWarning = isRepayInFull && roundedTotalOutstanding > inputAmount
+  const isNotRepayInFullWarning =
+    isRepayInFull && inputData.validationStatus !== INPUT_STATUS_DEFAULT && roundedTotalOutstanding > inputAmount
 
   /**
    * condition for overRepaing warning,
