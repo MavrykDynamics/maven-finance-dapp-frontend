@@ -324,7 +324,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   return (
     <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="vaults">
-        <LiquidateVaultModalStyled>
+        <LiquidateVaultModalStyled className="scroll-block">
           <button onClick={closePopup} className="close-modal" />
 
           <h1>Liquidate Vault</h1>
