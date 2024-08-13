@@ -113,7 +113,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
   const inputAmount = checkNan(parseFloat(inputData.amount))
   const userAssetBalance = getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: borrowedToken.address })
   const isRepayInFull = activeRepayTab?.id === loansTabNames.REPAY_IN_FULL
-  const isBtnDisabled = isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS
+  const isBtnDisabled =
+    isActionActive || inputData.validationStatus !== INPUT_STATUS_SUCCESS || (inputAmount === 0 && !isRepayInFull)
 
   /**
    * max repay total outstanding is added 1 token if it's pure integer or rounded to next integer,
@@ -135,20 +136,26 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
    * when user enters in input less amount of tokens than minimum available repayment amount
    */
   const isMinimumRepayWarning =
-    !isRepayInFull && inputData.validationStatus !== INPUT_STATUS_DEFAULT && inputAmount <= minimumRepay
+    !isRepayInFull &&
+    inputData.validationStatus !== INPUT_STATUS_DEFAULT &&
+    inputAmount <= minimumRepay &&
+    inputAmount > 0
 
   /**
    * condition for not repaying in full amount,
    * when user repaying in full and input amount is less than vault's total outstanding
    */
   const isNotRepayInFullWarning =
-    isRepayInFull && inputData.validationStatus !== INPUT_STATUS_DEFAULT && roundedTotalOutstanding > inputAmount
+    isRepayInFull &&
+    inputData.validationStatus !== INPUT_STATUS_DEFAULT &&
+    roundedTotalOutstanding > inputAmount &&
+    inputAmount > 0
 
   /**
    * condition for overRepaing warning,
    * when input amount is greater than vault's rounded total outstanding
    */
-  const isOverRepayingWarning = inputAmount >= roundedTotalOutstanding
+  const isOverRepayingWarning = inputAmount > 0 && inputAmount >= roundedTotalOutstanding
 
   /**
    * useEffect to set initial input value on tab change and on first visit
