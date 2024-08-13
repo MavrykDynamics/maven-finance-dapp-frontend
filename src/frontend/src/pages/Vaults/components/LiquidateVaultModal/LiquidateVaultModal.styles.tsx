@@ -6,6 +6,14 @@ export const LiquidateVaultModalStyled = styled.div<{ theme: MavenTheme }>`
   font-size: 14px;
   line-height: 21px;
 
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-right: -15px;
+
+  &::-webkit-scrollbar-track {
+    margin-top: 10px;
+  }
+
   h1 {
     margin: 0;
   }

@@ -86,7 +86,7 @@ const findStatusTooltipText = (status: string): string => {
     case vaultsStatuses.AT_RISK:
       return 'Between 150% to 200% Collateral.'
     case vaultsStatuses.ACTIVE:
-      return 'healthy vault above 200% Collateral.'
+      return 'Healthy vault above 200% Collateral.'
 
     default:
       return VAULT_RISK

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLockBodyScroll } from 'react-use'
 
 // view
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -76,6 +77,8 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
       setInputPersentageAmount('0')
     }
   }, [show])
+
+  useLockBodyScroll(show)
 
   /**
    * safe converted input strings to numbers
@@ -321,7 +324,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
   return (
     <PopupContainer onClick={closePopup} $show={show}>
       <PopupContainerWrapper onClick={(e) => e.stopPropagation()} className="vaults">
-        <LiquidateVaultModalStyled>
+        <LiquidateVaultModalStyled className="scroll-block">
           <button onClick={closePopup} className="close-modal" />
 
           <h1>Liquidate Vault</h1>
@@ -379,7 +382,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
 
           <div className="input-wrapper">
             <div className="input-title">
-              {isUsingPersent ? 'Input percent you want to liquidate' : 'Input liquidation Amount'}
+              {isUsingPersent ? 'Input Liquidation Percentage (50% Max)' : 'Input liquidation Amount'}
             </div>
             <Input className={`input-with-rate`} inputProps={inputProps} settings={inputSettings}>
               <InputPinnedTokenInfo>
@@ -427,7 +430,7 @@ export const LiquidateVaultModal = ({ data, closePopup, show }: Props) => {
             </div>
 
             <div className="cell">
-              <div className="title">You Receive</div>
+              <div className="title">Returned to You</div>
               <CommaNumber
                 value={returnedToLiquidatorUsd}
                 decimalsToShow={2}

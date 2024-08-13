@@ -154,7 +154,7 @@ export const OldBorrowingExpandCard = ({ headerSufix, children, vault }: Borrowi
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Collateral amount</div>
+              <div className="name">Collateral Amount</div>
               <CommaNumber
                 value={collateralBalance}
                 className="value"
