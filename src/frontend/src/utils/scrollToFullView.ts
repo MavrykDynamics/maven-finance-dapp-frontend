@@ -2,7 +2,7 @@ type VerticalPositionTypes = 'start' | 'center' | 'end' | 'nearest'
 
 export const scrollToFullView = (element: HTMLElement | null, block: VerticalPositionTypes = 'center') => {
   if (!element) return
-  var position = element.getBoundingClientRect();
+  var position = element.getBoundingClientRect()
 
   if (
     position.top >= 0 &&
@@ -12,8 +12,8 @@ export const scrollToFullView = (element: HTMLElement | null, block: VerticalPos
   ) {
     // In the viewport
     return
-  } 
+  }
 
   // Not in the viewport
-  element.scrollIntoView({ block, inline: "nearest", behavior: "smooth"})
+  element.scrollIntoView({ block, inline: 'nearest', behavior: 'smooth' })
 }
