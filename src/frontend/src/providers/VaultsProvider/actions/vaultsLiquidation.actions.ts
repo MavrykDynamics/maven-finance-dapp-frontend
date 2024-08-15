@@ -112,21 +112,21 @@ export const liquidateVault = async (
 }
 
 /**
- * method for dev env and testing purposes, to change mock time (add 7 years), to test liquidation
+ * method for dev env and testing purposes, to change mock time for liquidation testing
  */
-export const mockLendingControllerBlockLevel = async (
-  lvlToSet: number,
-  lendingControllerAddress: string,
-): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
-  try {
-    // prepare and send transaction
-    const tezos = await DAPP_INSTANCE.tezos()
-    const contract = await tezos.wallet.at(lendingControllerAddress)
-    const changeLevelMetadata = await contract.methods.updateConfig(lvlToSet, 'configMockLevel')
+// export const mockLendingControllerBlockLevel = async (
+//   lvlToSet: number,
+//   lendingControllerAddress: string,
+// ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
+//   try {
+//     // prepare and send transaction
+//     const tezos = await DAPP_INSTANCE.tezos()
+//     const contract = await tezos.wallet.at(lendingControllerAddress)
+//     const changeLevelMetadata = await contract.methods.updateConfig(lvlToSet, 'configMockLevel')
 
-    return await getEstimationResult(changeLevelMetadata)
-  } catch (error) {
-    const e = unknownToError(error)
-    return { actionSuccess: false, error: new WalletOperationError(e) }
-  }
-}
+//     return await getEstimationResult(changeLevelMetadata)
+//   } catch (error) {
+//     const e = unknownToError(error)
+//     return { actionSuccess: false, error: new WalletOperationError(e) }
+//   }
+// }
