@@ -115,16 +115,17 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
         // if we have delay for the timer schedule setTimeout, otherwise timer is null
         if (timerMsDelay > 0) {
           timerId = setTimeout(() => {
-            console.log('status recalc in timer', {
-              vaultName: vault.name,
-              oldStatus: vaultStatus,
-              newStatus: getVaultStatus({
-                collateralRatio,
-                totalOustanding: totalOutstandingUsd,
-                liquidationTimestamp: liquidationIsoTime,
-                gracePeriodTimestamp: gracePeriodIsoTime,
-              }),
-            })
+            // debug logs
+            // console.log('status recalc in timer', {
+            //   vaultName: vault.name,
+            //   oldStatus: vaultStatus,
+            //   newStatus: getVaultStatus({
+            //     collateralRatio,
+            //     totalOustanding: totalOutstandingUsd,
+            //     liquidationTimestamp: liquidationIsoTime,
+            //     gracePeriodTimestamp: gracePeriodIsoTime,
+            //   }),
+            // })
 
             setVaultStatus(
               getVaultStatus({
@@ -137,13 +138,14 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
           }, timerMsDelay)
         }
 
-        console.log({
-          vaultLiquidationTimerRestTime,
-          vaultGracePeriodTimerRestTime,
-          timerMsDelay,
-          timerId,
-          vaultName: vault.name,
-        })
+        // debug logs
+        // console.log({
+        //   vaultLiquidationTimerRestTime,
+        //   vaultGracePeriodTimerRestTime,
+        //   timerMsDelay,
+        //   timerId,
+        //   vaultName: vault.name,
+        // })
       } catch (e) {
         if (!isAbortError(e)) {
           console.error('converting vault timestamp by lvl error: ', e)
@@ -157,7 +159,8 @@ export const useFullVault = (vault: VaultType): { vault: FullLoansVaultType | nu
     return () => {
       abortLiquidationController.abort()
 
-      console.log('clearing timer end level changed', { timerId })
+      // debug logs
+      // console.log('clearing timer end level changed', { timerId })
       if (timerId) clearTimeout(timerId)
     }
   }, [gracePeriodEndLevel, liquidationEndLevel])

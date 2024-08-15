@@ -27,24 +27,6 @@ export const VaultsStyled = styled.div<{ theme: MavenTheme }>`
       }
     }
   }
-
-  .mock-contract-level-buttons {
-    display: flex;
-    flex-direction: column;
-    row-gap: 20px;
-
-    .levels-list {
-      display: flex;
-      flex-direction: column;
-      row-gap: 4px;
-    }
-
-    .action-wrapper {
-      display: flex;
-      align-items: center;
-      column-gap: 20px;
-    }
-  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`
