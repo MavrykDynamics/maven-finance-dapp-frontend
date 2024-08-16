@@ -49,7 +49,7 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
                 <Tooltip.Content>{TOTAL_AMOUNT}</Tooltip.Content>
               </Tooltip>
             </div>
-            <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+            <CommaNumber value={inputAmount} decimalsToShow={2} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">
@@ -61,15 +61,11 @@ export const BorrowScreenBottomStats = (props: BorrowScreenBottomStatsProps) => 
                 <Tooltip.Content>{DAO_FEE}</Tooltip.Content>
               </Tooltip>
             </div>
-            <CommaNumber value={inputAmount * (daoFee / 100)} decimalsToShow={assetDecimalsToShow} className="value" />
+            <CommaNumber value={inputAmount * (daoFee / 100)} decimalsToShow={2} className="value" />
           </ThreeLevelListItem>
           <ThreeLevelListItem>
             <div className="name">Amount Received</div>
-            <CommaNumber
-              value={inputAmount - inputAmount * (daoFee / 100)}
-              decimalsToShow={assetDecimalsToShow}
-              className="value"
-            />
+            <CommaNumber value={inputAmount - inputAmount * (daoFee / 100)} decimalsToShow={2} className="value" />
           </ThreeLevelListItem>
         </div>
 

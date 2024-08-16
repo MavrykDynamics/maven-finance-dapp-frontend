@@ -9,6 +9,20 @@ export const clickWave = (color: string) => keyframes`
   }
 `
 
+export const loadingDotsAnimation = () => keyframes`
+  0% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.4;
+  }
+`
+
 export const clickSlide = keyframes`
   0% {
     transform: translateX(0);

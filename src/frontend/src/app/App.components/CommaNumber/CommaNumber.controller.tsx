@@ -68,17 +68,13 @@ export const CommaNumber = ({
     numberWithCommas = `${splittedDigits.at(0)},${splittedDigits.at(1)}...${splittedDigits.at(0)?.at(-1) ?? 0}`
   }
 
-  return beginningText || endingText ? (
-    <div className={className} title={titleForNumber}>
-      <p>
+  return (
+    <div className={className}>
+      <p title={titleForNumber ?? String(value)}>
         {beginningText ? <span className="prefix">{beginningText + ' '}</span> : ''}
         {numberWithCommas}
         {endingText ? <span className="suffix">{' ' + endingText}</span> : ''}
       </p>
-    </div>
-  ) : (
-    <div className={className} title={titleForNumber}>
-      {numberWithCommas}
     </div>
   )
 }

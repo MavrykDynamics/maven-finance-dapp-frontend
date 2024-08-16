@@ -11,7 +11,7 @@ import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provi
 // types
 import { LendingItemType } from 'providers/LoansProvider/loans.provider.types'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { InputProps, Settings } from 'app/App.components/Input/newInput.type'
+import { InputProps, InputSettings } from 'app/App.components/Input/newInput.type'
 
 // utils
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
@@ -151,7 +151,7 @@ export const LendingTabActionsSection = ({
     onFocus: onFocusHandler,
   }
 
-  const settings: Settings = {
+  const settings: InputSettings = {
     balance: tokenBalance,
     balanceAsset: symbol,
     balanceName: 'Wallet Balance',

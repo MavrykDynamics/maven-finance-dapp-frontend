@@ -10,6 +10,7 @@ import { ExpandStyled, ExpandArticleStyled } from './Expand.style'
 // helpers
 import { scrollToFullView } from '../../../utils/scrollToFullView'
 import { BUTTON_SIMPLE_SMALL } from '../Button/Button.constants'
+import classNames from 'classnames'
 
 type Props = {
   isExpanded: boolean
@@ -44,11 +45,11 @@ export default function ExpandSimple({
   // move the scroll to fix it
   useEffect(() => {
     if (!isExpanded) return
-    scrollToFullView(ref.current, 'nearest')
+    scrollToFullView(ref.current, 'start')
   }, [isExpanded])
 
   return (
-    <ExpandStyled ref={ref} className={className}>
+    <ExpandStyled className={classNames(className, 'scroll-ofset-padding')} ref={ref}>
       <header className="expand-header">
         {header}
         <div className={`arrow-wrap ${isExpanded ? 'top' : 'bottom'}`}>

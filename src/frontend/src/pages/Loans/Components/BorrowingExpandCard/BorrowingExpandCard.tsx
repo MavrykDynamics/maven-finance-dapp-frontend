@@ -19,7 +19,6 @@ import colors from 'styles/colors'
 
 import { scrollToFullView } from 'utils/scrollToFullView'
 import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers'
-import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import {
   COLLATERAL_RATIO_GRADIENT,
   getCollateralRatioPercentColor,
@@ -34,6 +33,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
 import { useFullVault } from 'providers/VaultsProvider/hooks/useFullVault'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
+import { MAX_SHOWN_COLLATERAL_RATIO_PERSENT } from 'providers/VaultsProvider/helpers/vaults.const'
 
 type BorrowingExpandCardPropsType = {
   vault: VaultType
@@ -42,7 +42,6 @@ type BorrowingExpandCardPropsType = {
   children?: React.ReactNode
   status?: string
   DAOFee: number
-  hideTransactionHistory?: boolean
 }
 
 export const BorrowingExpandCard = ({
@@ -51,7 +50,6 @@ export const BorrowingExpandCard = ({
   headerSuffix,
   children,
   DAOFee,
-  hideTransactionHistory,
 }: BorrowingExpandCardPropsType) => {
   const {
     openChangeVaultNamePopup,
@@ -87,7 +85,6 @@ export const BorrowingExpandCard = ({
   const location = useLocation()
 
   const [activeRepayTab, setActiveRepayTab] = useState(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.active))
-  const [timerTimestamp, setTimerTimestamp] = useState<number | undefined>(undefined)
 
   const params = useMemo(() => new URLSearchParams(location.search), [location.search])
   const paramsVaultAddress = params.get('vaultAddress')
@@ -115,23 +112,13 @@ export const BorrowingExpandCard = ({
   const ref = useRef<HTMLDivElement | null>(null)
   useClickAway(ref, () => (notHandleClickAway ? null : handleCloseVault()))
 
-  const vaultData = useFullVault(vault)
+  const { vault: vaultData, isStatusLoading } = useFullVault(vault)
 
   useEffect(() => {
     if (activeRepayBorrowTabId !== loansTabNames.REPAY) return
 
     setActiveRepayTab(VAULT_CARD_REPAY_SLIDING_BUTTONS.find((item) => item.id === loansTabNames.REPAY_IN_PART))
   }, [activeRepayBorrowTabId])
-
-  useEffect(() => {
-    if (
-      vaultData?.liquidationTimestamp &&
-      isExpanded &&
-      (vaultData.status === vaultsStatuses.GRACE_PERIOD || vaultData.status === vaultsStatuses.LIQUIDATABLE)
-    ) {
-      setTimerTimestamp(new Date(vaultData?.liquidationTimestamp).getTime())
-    }
-  }, [vaultData, isExpanded])
 
   if (!vaultData) return null
 
@@ -149,13 +136,14 @@ export const BorrowingExpandCard = ({
     xtzDelegatedTo,
     sMVNDelegatedTo,
     collateralData,
-    fee,
+    accruedInterest,
     availableLiquidity,
     totalOutstanding,
     status,
     apr,
     minimumRepay,
     vaultId,
+    gracePeriodTimestamp,
   } = vaultData
 
   const {
@@ -229,9 +217,9 @@ export const BorrowingExpandCard = ({
     })
   }
 
-  const handleClickOpenConfirmRepayPopup = (inputAmount: number, clearInputData: () => void) => {
+  const handleClickOpenConfirmRepayPopup = (repayAmount: number, clearInputData: () => void) => {
     openConfirmRepayPopup({
-      inputAmount,
+      repayAmount,
       vaultId,
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
@@ -245,8 +233,9 @@ export const BorrowingExpandCard = ({
     })
   }
 
-  const handleClickOpenConfirmRepayFullPopup = (clearInputData: () => void) => {
+  const handleClickOpenConfirmRepayFullPopup = (repayAmount: number, clearInputData: () => void) => {
     openConfirmRepayFullPopup?.({
+      repayAmount,
       vaultId,
       vaultAddress,
       tokenAddress: borrowedTokenAddress,
@@ -354,11 +343,11 @@ export const BorrowingExpandCard = ({
               <div className={`percentage`}>
                 Collateral Ratio:{' '}
                 <CommaNumber
-                  value={collateralRatio}
+                  value={Math.min(collateralRatio, MAX_SHOWN_COLLATERAL_RATIO_PERSENT)}
                   endingText="%"
                   showDecimal
                   decimalsToShow={2}
-                  beginningText={collateralRatio === 1000 ? '+' : ''}
+                  beginningText={collateralRatio > MAX_SHOWN_COLLATERAL_RATIO_PERSENT ? '+' : ''}
                 />
               </div>
               <GradientDiagram
@@ -374,11 +363,11 @@ export const BorrowingExpandCard = ({
                 beginningText="$"
                 className="value"
                 showDecimal
-                decimalsToShow={borrowedTokenDecimals}
+                decimalsToShow={2}
               />
             </ThreeLevelListItem>
             <ThreeLevelListItem>
-              <div className="name">Collateral amount</div>
+              <div className="name">Collateral Amount</div>
               <CommaNumber
                 value={collateralBalance}
                 className="value"
@@ -392,7 +381,14 @@ export const BorrowingExpandCard = ({
       >
         {children || (
           <BorrowingExpandedCard>
-            {status && <StatusMessage status={status} timestamp={timerTimestamp} theme={colors[themeSelected]} />}
+            {status && (
+              <StatusMessage
+                status={status}
+                gracePeriodTimestamp={gracePeriodTimestamp}
+                theme={colors[themeSelected]}
+                isLoading={isStatusLoading}
+              />
+            )}
 
             <div className="stats-and-actions">
               <BorrowingExpandCardValuesSection
@@ -401,7 +397,7 @@ export const BorrowingExpandCard = ({
                 borrowedAmount={borrowedAmount}
                 borrowCapacity={borrowCapacity}
                 decimals={borrowedTokenDecimals}
-                fee={fee}
+                accruedInterest={accruedInterest}
                 apr={apr}
                 rate={borrowedTokenRate}
               />
@@ -445,8 +441,9 @@ export const BorrowingExpandCard = ({
                     vaultAddress={vaultAddress}
                     borrowedToken={borrowedToken}
                     borrowedTokenRate={borrowedTokenRate}
-                    fee={fee}
+                    accruedInterest={accruedInterest}
                     borrowedAmount={borrowedAmount}
+                    totalOutstanding={totalOutstanding}
                     minimumRepay={minimumRepay}
                     collateralBalance={collateralBalance}
                     availableLiquidity={availableLiquidity}
@@ -474,7 +471,6 @@ export const BorrowingExpandCard = ({
                 collateralRatio={collateralRatio}
                 collateralBalance={collateralBalance}
                 depositorsFlag={depositorsFlag}
-                hideTransactionHistory={hideTransactionHistory}
               />
             )}
           </BorrowingExpandedCard>

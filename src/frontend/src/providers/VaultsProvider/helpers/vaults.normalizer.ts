@@ -8,7 +8,6 @@ import {
   VaultsIndexerDataType,
   VaultType,
 } from 'providers/VaultsProvider/vaults.provider.types'
-import { calculateAccruedInterest } from 'pages/Loans/Loans.helpers'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { calcMarketAvailableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
@@ -80,25 +79,22 @@ export const normalizeVaults = ({
       const {
         vault,
         collateral_balances,
-        loan_outstanding_total,
+        loan_outstanding_total: vaultTotalOutstanding,
         loan_principal_total: borrowedAmount,
+        loan_interest_total: vaultAccuredInterest,
         borrow_index: vaultBorrowIndex,
         loan_token,
         owner: { address: ownerAddress },
       } = item
 
       const {
-        borrow_index: marketBorrowIndex,
+        borrow_index: tokenBorrowIndex,
         min_repayment_amount,
         token: { token_address: borrowedTokenAddress },
       } = loan_token
 
       // Check whether vault exists
       if (!vault) return acc
-
-      const fee = Math.abs(
-        calculateAccruedInterest(loan_outstanding_total, vaultBorrowIndex, marketBorrowIndex) - borrowedAmount,
-      )
 
       const apr =
         convertNumberForClient({
@@ -112,6 +108,15 @@ export const normalizeVaults = ({
       const { depositors, deporsitorsFlag } = getVaultsDepositorsData(vault)
       const collateralData = normalizeCollaterals(collateral_balances)
 
+      // calculating actual accured interest, cuz loan_interest_total is updated when some operation on vault is done, so for afk vaults it's not actual
+      const accruedInterest =
+        vaultBorrowIndex > 0 && vaultTotalOutstanding > 0
+          ? Math.max(0, Math.floor((vaultTotalOutstanding * tokenBorrowIndex) / vaultBorrowIndex) - borrowedAmount)
+          : 0
+
+      // calculating actual total outstanding that will use actual accrued interest
+      const totalOutstanding = borrowedAmount + accruedInterest
+
       const normallizedVault: VaultType = {
         borrowedTokenAddress,
         name: vault.name,
@@ -122,23 +127,28 @@ export const normalizeVaults = ({
         creationTimestamp: new Date(vault.creation_timestamp).getTime(),
 
         borrowedAmount,
+        totalOutstanding,
+        collateralData,
         availableLiquidity,
         minimumRepay: min_repayment_amount,
-        fee,
-        collateralData,
+        accruedInterest,
 
         // Liquidation
-        liquidationMax: calculateVaultMaxLiquidationAmount(item.loan_outstanding_total, max_vault_liquidation_pct),
-        liquidationReward: convertNumberForClient({
+        liquidationMax: calculateVaultMaxLiquidationAmount(totalOutstanding, max_vault_liquidation_pct),
+        liquidationRewardCoefficient: convertNumberForClient({
           number: liquidation_fee_pct,
           grade: decimals,
         }),
-        adminLiquidateFee: admin_liquidation_fee_pct,
+        adminLiquidateFeeCoefficient: convertNumberForClient({
+          number: admin_liquidation_fee_pct,
+          grade: decimals,
+        }),
         liquidationRatio: liquidation_ratio,
-        liquidationLvl:
+        gracePeriodEndLevel:
           item.marked_for_liquidation_level === 0
             ? null
             : item.marked_for_liquidation_level + Number(liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
+        liquidationEndLevel: item.liquidation_end_level === 0 ? null : item.liquidation_end_level,
 
         // Permissions
         // TODO: implement smvn operators

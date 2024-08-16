@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // hooks
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
@@ -14,7 +14,7 @@ export const useUserVaultsNames = () => {
 
   const [vaultNames, setVaultNames] = useState<string[]>([])
 
-  const { loading } = useQuery(CURRENT_USER_VAULTS_NAMES_QUERY, {
+  const { loading } = useQueryWithRefetch(CURRENT_USER_VAULTS_NAMES_QUERY, {
     variables: {
       userAddress: userAddress ?? '',
     },

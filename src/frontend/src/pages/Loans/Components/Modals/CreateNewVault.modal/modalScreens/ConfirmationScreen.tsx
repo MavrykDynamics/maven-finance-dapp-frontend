@@ -63,7 +63,7 @@ export const ConfirmationScreen = () => {
   } = useLoansContext()
 
   const currentVault = vaultsMapper[newVault.address]
-  const vaultData = useFullVault(currentVault)
+  const { vault: vaultData } = useFullVault(currentVault)
 
   const {
     borrowedTokenAddress = '',
@@ -79,7 +79,8 @@ export const ConfirmationScreen = () => {
     vaultCurrentCollateralBalance: currentCollateralBalance,
     vaultTokenAddress: borrowedTokenAddress,
     operationType: operationBorrow,
-    inputValue: inputAmount,
+    // if currentTotalOutstanding is 0, means vault hasn't been updated, so we use inputAmount, but when currentTotalOutstanding is updated, we ignore inputAmount
+    inputValue: currentTotalOutstanding === 0 ? inputAmount : 0,
     marketAvailableLiquidity,
   })
 
@@ -186,7 +187,7 @@ export const ConfirmationScreen = () => {
       <div className="bottom-stats-wrapper">
         <BorrowScreenBottomStats
           inputAmount={inputAmount}
-          assetDecimalsToShow={assetDecimalsToShow}
+          assetDecimalsToShow={2}
           daoFee={daoFee}
           futureCollateralRatio={futureCollateralRatio}
           futureBorrowCapacity={futureBorrowCapacity}

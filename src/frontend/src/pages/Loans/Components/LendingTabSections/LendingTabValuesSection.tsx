@@ -41,7 +41,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
 
       <div className="stats">
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={2} />
 
           <CommaNumber value={lendValue * rate} beginningText="$" className="rate" showDecimal />
 
@@ -57,7 +57,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={interestEarned} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={interestEarned} className="value" showDecimal decimalsToShow={2} />
 
           <CommaNumber value={interestEarned * rate} beginningText="$" className="rate" showDecimal />
 
@@ -87,7 +87,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo>
-          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={lendValue} className="value" showDecimal decimalsToShow={2} />
 
           <div className="name margin-top">
             m{symbol} Balance
@@ -101,7 +101,7 @@ export const LendingTabValuesSection = ({ lendingItem, loanTokenAddress, lendAPY
         </LoansValuesSectionInfo>
 
         <LoansValuesSectionInfo hasRate={Boolean(rate)}>
-          <CommaNumber value={tokenBalance} className="value" showDecimal decimalsToShow={decimals} />
+          <CommaNumber value={tokenBalance} className="value" showDecimal decimalsToShow={2} />
           <CommaNumber value={tokenBalance * rate} beginningText="$" className="rate" showDecimal />
 
           <div className="name">Wallet Balance</div>

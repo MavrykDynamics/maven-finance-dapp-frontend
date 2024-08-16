@@ -3,7 +3,7 @@ import { MavenTheme } from 'styles/interfaces'
 
 export const LEND_TAB_ID = 'lendingTab'
 export const BORROW_TAB_ID = 'borrowTab'
-export const ASSETS_WE_HAVE_BG_TO = ['MVRK', 'EURL', 'USDT']
+export const ASSETS_WE_HAVE_BG_TO = ['EURL', 'USDT']
 
 export const VAULT_CARD_MENU_TABS = [
   {

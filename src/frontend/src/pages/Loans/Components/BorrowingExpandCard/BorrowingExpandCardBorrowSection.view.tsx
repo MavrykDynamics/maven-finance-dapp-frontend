@@ -26,7 +26,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // types
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
-import { Settings } from 'app/App.components/Input/newInput.type'
+import { InputSettings } from 'app/App.components/Input/newInput.type'
 
 // styles & components
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
@@ -89,7 +89,7 @@ export const BorrowingExpandCardBorrowSection = (props: Props) => {
     (inputAmount > borrowCapacity / rate || futureCollateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT) &&
     inputAmount !== 0
 
-  const newSettings: Settings = useMemo(
+  const newSettings: InputSettings = useMemo(
     () => ({
       ...settings,
       validationFns: [[validateInputLength, ERR_MSG_INPUT]],
@@ -185,7 +185,7 @@ const TableStats = ({
               <Tooltip.Content>{TOTAL_AMOUNT}</Tooltip.Content>
             </Tooltip>
           </div>
-          <CommaNumber value={inputAmount} decimalsToShow={assetDecimalsToShow} className="value" />
+          <CommaNumber value={inputAmount} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">
@@ -197,15 +197,11 @@ const TableStats = ({
               <Tooltip.Content>{DAO_FEE}</Tooltip.Content>
             </Tooltip>
           </div>
-          <CommaNumber value={inputAmount * (DAOFee / 100)} decimalsToShow={assetDecimalsToShow} className="value" />
+          <CommaNumber value={inputAmount * (DAOFee / 100)} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
         <ThreeLevelListItem>
           <div className="name">Amount Received</div>
-          <CommaNumber
-            value={inputAmount - inputAmount * (DAOFee / 100)}
-            decimalsToShow={assetDecimalsToShow}
-            className="value"
-          />
+          <CommaNumber value={inputAmount - inputAmount * (DAOFee / 100)} decimalsToShow={2} className="value" />
         </ThreeLevelListItem>
 
         <ThreeLevelListItem className="right">

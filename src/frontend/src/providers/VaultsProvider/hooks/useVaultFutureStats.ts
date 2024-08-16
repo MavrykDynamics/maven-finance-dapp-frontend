@@ -89,7 +89,7 @@ export const useVaultFutureStats = ({
   }
 
   if (operationType === operationRepay) {
-    const futureTotalOustanding = vaultCurrentTotalOutstanding - inputValue
+    const futureTotalOustanding = Math.max(vaultCurrentTotalOutstanding - inputValue, 0)
     const futureCollateralRatio = getVaultCollateralRatio(
       vaultCurrentCollateralBalance,
       futureTotalOustanding * borrowedTokenRate,
@@ -129,7 +129,7 @@ export const useVaultFutureStats = ({
     const convertedInputAmount =
       inputValue * collateralToken.rate * (operationType === operationRemoveCollateral ? -1 : 1)
 
-    const futureCollateralBalance = vaultCurrentCollateralBalance + convertedInputAmount
+    const futureCollateralBalance = Math.max(vaultCurrentCollateralBalance + convertedInputAmount, 0)
 
     const futureCollateralRatio = getVaultCollateralRatio(
       futureCollateralBalance,

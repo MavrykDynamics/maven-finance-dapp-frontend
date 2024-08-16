@@ -9,25 +9,6 @@ import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.type
 import { checkWhetherTokenIsLoanToken } from 'providers/TokensProvider/helpers/tokens.utils'
 import { DEFAULT_MIN_COLLATERAL_AMOUNT } from 'utils/constants'
 
-// HELPER FOR BORROW FEE
-export const calculateAccruedInterest = (
-  currentLoanOutstandingTotal: number,
-  vaultBorrowIndex: number,
-  tokenBorrowIndex: number,
-) => {
-  let newLoanOutstandingTotal = currentLoanOutstandingTotal
-  const vBorrowIndex = vaultBorrowIndex
-  const loanTokenBorrowIndex = tokenBorrowIndex
-
-  if (currentLoanOutstandingTotal > 0) {
-    if (vBorrowIndex > 0) {
-      newLoanOutstandingTotal = (currentLoanOutstandingTotal * loanTokenBorrowIndex) / vBorrowIndex
-    }
-  }
-
-  return newLoanOutstandingTotal
-}
-
 // HELPER FOR MAX COLLATERAL WITHDRAW
 export const getMaxCollateralWithdraw = (
   totalCollateralAmount: number,
@@ -35,7 +16,7 @@ export const getMaxCollateralWithdraw = (
   collarealAssetRate: number,
 ): number => {
   // If vault is not borrowed we can withdraw all amount
-  if (borrowedAmount === 0) return totalCollateralAmount
+  if (borrowedAmount === 0) return totalCollateralAmount / collarealAssetRate
 
   if (collarealAssetRate === 0) throw new Error('token rate is 0')
 
@@ -68,7 +49,7 @@ export const loansInputValidation = ({
   const numberOfDecimalPlaces = inputAmount.match(/\.(\d+)/)?.[1].length ?? 0
 
   // check amount by min/max value
-  if (Number(inputAmount) > minAmount && Number(inputAmount) <= maxAmount) {
+  if (Number(inputAmount) >= minAmount && Number(inputAmount) <= maxAmount) {
     // check amount by number of decimal places
     if (byDecimalPlaces) {
       return numberOfDecimalPlaces <= byDecimalPlaces ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR

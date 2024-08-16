@@ -1,20 +1,19 @@
 import dayjs from 'dayjs'
 
 // helpers
-import {statusSortPriority, vaultsStatuses} from 'pages/Vaults/Vaults.consts'
-import {api} from 'utils/api/api'
+import { statusSortPriority, vaultsStatuses } from 'pages/Vaults/Vaults.consts'
+import { api } from 'utils/api/api'
 import {
   getTimestampByLevelHeaders,
   getTimestampByLevelSchema,
   getTimestampByLevelUrl,
-  TimestampByLevelResponceType,
 } from 'utils/api/api-helpers/getTimestampByLevel'
-import {getTokenDataByAddress} from 'providers/TokensProvider/helpers/tokens.utils'
-import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
-import {convertNumberForClient, getNumberInBounds} from 'utils/calcFunctions'
+import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 
 // types
-import {TokensContext} from 'providers/TokensProvider/tokens.provider.types'
+import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'
 import {
   FullLoansVaultType,
   NullableVaultsCtxState,
@@ -25,8 +24,8 @@ import {
 } from '../vaults.provider.types'
 
 // consts
-import {EMPTY_VAULTS_CONTEXT, VAULTS_DATA} from '../vaults.provider.consts'
-import {MINIMUN_COLLATERAL_RATIO_PERSENT} from './vaults.const'
+import { EMPTY_VAULTS_CONTEXT, VAULTS_DATA } from '../vaults.provider.consts'
+import { MINIMUN_COLLATERAL_RATIO_PERSENT } from './vaults.const'
 
 // sort vaults by status
 export const sortVaultsByStatus = async ({
@@ -41,28 +40,53 @@ export const sortVaultsByStatus = async ({
   tokensPrices: TokensContext['tokensPrices']
 }) => {
   try {
-    const vaultsLiquidationTimestamps = await vaultsIds.reduce<Promise<Record<string, number | null>>>(
-      async (promiseAcc, vaultAddress) => {
-        const acc = await promiseAcc
-        const { liquidationLvl } = vaultsMapper[vaultAddress]
+    // TODO: check this reduce
+    const vaultsLiquidationTimestamps = await vaultsIds.reduce<
+      Promise<Record<string, { gracePeriod: number | null; liquidation: number | null }>>
+    >(async (promiseAcc, vaultAddress) => {
+      const acc = await promiseAcc
+      const { gracePeriodEndLevel, liquidationEndLevel } = vaultsMapper[vaultAddress]
 
-        if (!liquidationLvl) {
-          acc[vaultAddress] = null
-          return acc
+      try {
+        const [gracePeriodResult, liquidationResult] = await Promise.allSettled([
+          // grace period level to timestamp convert call
+          gracePeriodEndLevel
+            ? api(
+                getTimestampByLevelUrl(gracePeriodEndLevel),
+                { headers: getTimestampByLevelHeaders },
+                getTimestampByLevelSchema,
+              )
+            : null,
+
+          // liquidation period level to timestamp convert call
+          liquidationEndLevel
+            ? api(
+                getTimestampByLevelUrl(liquidationEndLevel),
+                { headers: getTimestampByLevelHeaders },
+                getTimestampByLevelSchema,
+              )
+            : null,
+        ])
+
+        const timestamps: { gracePeriod: number | null; liquidation: number | null } = {
+          gracePeriod: null,
+          liquidation: null,
         }
 
-        const { data: liquidationTimestamp } = await api<TimestampByLevelResponceType>(
-          getTimestampByLevelUrl(liquidationLvl),
-          { headers: getTimestampByLevelHeaders },
-          getTimestampByLevelSchema,
-        )
+        if (gracePeriodResult.status === 'fulfilled' && gracePeriodResult.value) {
+          timestamps.gracePeriod = new Date(gracePeriodResult.value.data).getTime()
+        }
 
-        acc[vaultAddress] = new Date(liquidationTimestamp).getTime()
+        if (liquidationResult.status === 'fulfilled' && liquidationResult.value) {
+          timestamps.liquidation = new Date(liquidationResult.value.data).getTime()
+        }
 
-        return acc
-      },
-      Promise.resolve({}),
-    )
+        acc[vaultAddress] = timestamps
+      } catch (error) {
+        console.error('sort vaults by statuses loading timestamps error', error)
+      }
+      return acc
+    }, Promise.resolve({}))
 
     return [...vaultsIds].sort((a, b) => {
       const vaultAToken = getTokenDataByAddress({
@@ -80,12 +104,12 @@ export const sortVaultsByStatus = async ({
 
       const vaultATotalOutstanding =
         convertNumberForClient({
-          number: vaultsMapper[a].borrowedAmount + vaultsMapper[a].fee,
+          number: vaultsMapper[a].borrowedAmount + vaultsMapper[a].accruedInterest,
           grade: vaultAToken.decimals,
         }) * vaultAToken.rate
       const vaultBTotalOutstanding =
         convertNumberForClient({
-          number: vaultsMapper[b].borrowedAmount + vaultsMapper[b].fee,
+          number: vaultsMapper[b].borrowedAmount + vaultsMapper[b].accruedInterest,
           grade: vaultBToken.decimals,
         }) * vaultBToken.rate
 
@@ -95,7 +119,8 @@ export const sortVaultsByStatus = async ({
           vaultATotalOutstanding,
         ),
         totalOustanding: vaultATotalOutstanding,
-        liquidationTimestamp: vaultsLiquidationTimestamps[a],
+        liquidationTimestamp: vaultsLiquidationTimestamps[a]?.liquidation ?? null,
+        gracePeriodTimestamp: vaultsLiquidationTimestamps[a]?.gracePeriod ?? null,
       })
 
       const vaultBStatus = getVaultStatus({
@@ -104,8 +129,11 @@ export const sortVaultsByStatus = async ({
           vaultBTotalOutstanding,
         ),
         totalOustanding: vaultBTotalOutstanding,
-        liquidationTimestamp: vaultsLiquidationTimestamps[b],
+        liquidationTimestamp: vaultsLiquidationTimestamps[b]?.liquidation ?? null,
+        gracePeriodTimestamp: vaultsLiquidationTimestamps[b]?.gracePeriod ?? null,
       })
+
+      if (vaultAStatus === null || vaultBStatus === null) return 0
 
       return statusSortPriority[vaultAStatus] - statusSortPriority[vaultBStatus]
     })
@@ -127,32 +155,37 @@ export const getVaultStatus = ({
   collateralRatio,
   totalOustanding,
   liquidationTimestamp,
+  gracePeriodTimestamp,
 }: {
   collateralRatio: number
   totalOustanding: number
   liquidationTimestamp: number | null
+  gracePeriodTimestamp: number | null
 }): FullLoansVaultType['status'] => {
-  try {
-    if (collateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT && collateralRatio > 150 && totalOustanding > 0)
-      return vaultsStatuses.AT_RISK
-    if (collateralRatio <= 150 && totalOustanding > 0 && !liquidationTimestamp) return vaultsStatuses.MARK
+  const isTotalOutstandingPresent = totalOustanding > 0
 
-    if (
-      collateralRatio <= 150 &&
-      totalOustanding > 0 &&
-      liquidationTimestamp &&
-      dayjs().valueOf() < dayjs(liquidationTimestamp).valueOf()
-    )
-      return vaultsStatuses.GRACE_PERIOD
-    if (
-      collateralRatio <= 150 &&
-      totalOustanding > 0 &&
-      liquidationTimestamp &&
-      dayjs().valueOf() >= dayjs(liquidationTimestamp).valueOf()
-    )
-      return vaultsStatuses.LIQUIDATABLE
-  } catch (e) {
-    return vaultsStatuses.ACTIVE
+  // liquidation timer
+  const isLiquidationTimerPresent = liquidationTimestamp !== null
+  const isLiquidationTimerDone = isLiquidationTimerPresent && dayjs().valueOf() >= dayjs(liquidationTimestamp).valueOf()
+
+  // grace period timer
+  const isGracePeriodTimerPresent = gracePeriodTimestamp !== null
+  const isGracePeriodTimerDone = isGracePeriodTimerPresent && dayjs().valueOf() >= dayjs(gracePeriodTimestamp).valueOf()
+
+  if (collateralRatio < MINIMUN_COLLATERAL_RATIO_PERSENT && collateralRatio > 150 && isTotalOutstandingPresent) {
+    return vaultsStatuses.AT_RISK
+  }
+
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && (!isGracePeriodTimerPresent || isLiquidationTimerDone)) {
+    return vaultsStatuses.MARK
+  }
+
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && !isGracePeriodTimerDone) {
+    return vaultsStatuses.GRACE_PERIOD
+  }
+
+  if (collateralRatio <= 150 && isTotalOutstandingPresent && isGracePeriodTimerDone && isLiquidationTimerPresent) {
+    return vaultsStatuses.LIQUIDATABLE
   }
 
   return vaultsStatuses.ACTIVE
@@ -211,17 +244,8 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
   if (totalOutstanding === 0) return 250
 
   const collateralRatio = (collateralAmount / totalOutstanding) * 100
-  return useMinMax ? getNumberInBounds(0, 1000, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
+  return useMinMax ? getNumberInBounds(0, 251, Number(collateralRatio.toFixed(1))) : Number(collateralRatio.toFixed(1))
 }
-
-// TODO: add descr to liquidation utils while testing liquidation functionality and popup
-/**
- * @param totalOutstanding – USD amount of borrowed amount and fee of the vault
- * @param liquidationRatio – ??? TODO: add description
- * @returns liquidation price in USD
- */
-export const getVaultLiquidationPrice = (totalOutstanding: number, liquidationRatio: number) =>
-  totalOutstanding * (liquidationRatio / 1000)
 
 /**
  * @param loanOutstandingTotal – USD amount of borrowed amount and fee of the vault
