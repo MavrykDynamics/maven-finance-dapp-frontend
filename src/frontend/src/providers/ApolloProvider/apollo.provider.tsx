@@ -60,7 +60,7 @@ export const ApolloProvider = ({ children }: Props) => {
   const apolloClient = useMemo(
     () =>
       new ApolloClient({
-        link: from([errorLink, retryLink, splitLink(wsLink, httpLink)]),
+        link: splitLink(wsLink, httpLink),
         cache: new InMemoryCache(),
       }),
     [errorLink],

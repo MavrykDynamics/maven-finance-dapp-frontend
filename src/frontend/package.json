@@ -28,7 +28,7 @@
     "@mavrykdynamics/taquito-rpc": "19.2.3",
     "@mavrykdynamics/taquito-signer": "19.2.3",
     "@mavrykdynamics/taquito-utils": "19.2.3",
-    "@microsoft/signalr": "^7.0.7",
+    "@microsoft/signalr": "8.0.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
     "@wert-io/widget-initializer": "^2.0.0",
