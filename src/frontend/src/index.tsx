@@ -142,8 +142,8 @@ const AppContainer = () => {
 
 export const Root = () => {
   return (
-    <ToasterProvider maintance={process.env.REACT_APP_MAINTANCE_MODE === 'on'}>
-      <DappLibsProviders>
+    <DappLibsProviders>
+      <ToasterProvider maintance={process.env.REACT_APP_MAINTANCE_MODE === 'on'}>
         <ApolloProvider>
           <InitialDataDappProviders>
             <DappSectionsDataProviders>
@@ -151,8 +151,8 @@ export const Root = () => {
             </DappSectionsDataProviders>
           </InitialDataDappProviders>
         </ApolloProvider>
-      </DappLibsProviders>
-    </ToasterProvider>
+      </ToasterProvider>
+    </DappLibsProviders>
   )
 }
 

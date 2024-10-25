@@ -24,16 +24,14 @@ export const MaintancePage = () => {
   }, [])
 
   return (
-    <Router>
-      <ThemeProvider theme={themeColors[themeSelected]}>
-        <ErrorPageWrapper $themeSelected={themeSelected}>
-          <ErrorPageInner>
-            <ErrorMidHeader>Site is currently undergoing maintenance</ErrorMidHeader>
-            <ErrorParagraph>The site is currently undergoing maintenance, we will be back shortly.</ErrorParagraph>
-          </ErrorPageInner>
-          <ErrorFooter themeSelected={themeSelected} handleRedirect={handleRedirect} />
-        </ErrorPageWrapper>
-      </ThemeProvider>
-    </Router>
+    <ThemeProvider theme={themeColors[themeSelected]}>
+      <ErrorPageWrapper $themeSelected={themeSelected}>
+        <ErrorPageInner>
+          <ErrorMidHeader>Site is currently undergoing maintenance</ErrorMidHeader>
+          <ErrorParagraph>The site is currently undergoing maintenance, we will be back shortly.</ErrorParagraph>
+        </ErrorPageInner>
+        <ErrorFooter themeSelected={themeSelected} handleRedirect={handleRedirect} />
+      </ErrorPageWrapper>
+    </ThemeProvider>
   )
 }
