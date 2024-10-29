@@ -1,7 +1,7 @@
-import {gql as apolloGql, OperationVariables, TypedDocumentNode} from '@apollo/client'
-import {DocumentNode} from 'graphql'
-import {gql} from 'utils/__generated__'
-import {GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery} from 'utils/__generated__/graphql'
+import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
+import { DocumentNode } from 'graphql'
+import { gql } from 'utils/__generated__'
+import { GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 
 // Cals 24h diffs
 export const LEND_BORROW_24H_DIFF = gql(`
@@ -135,7 +135,7 @@ export function getDevLoansTransactionsHistory({
 
   return apolloGql(`
     query getDevLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
-      lending_controller: dev_lending_controller {
+      lending_controller: lending_controller {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
           type
           amount
