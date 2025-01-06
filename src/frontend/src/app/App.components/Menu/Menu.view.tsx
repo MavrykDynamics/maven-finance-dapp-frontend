@@ -239,7 +239,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             <SocialIcons />
             <span>
               DAPP v2.0
-              <br />© Maven Finance 2024
+              <br />© Maven Finance 2025
             </span>
           </MenuFooter>
         </MenuSidebarContent>
