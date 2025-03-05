@@ -47,7 +47,7 @@ export default function Mobile() {
             participating in the governance of the platform.
           </div>
 
-          <div className="copyright">© Maven Finance 2024</div>
+          <div className="copyright">© Maven Finance 2025</div>
         </MobilePlugFooter>
       </MobilePlugWrapper>
     </MobilePlugBackground>
