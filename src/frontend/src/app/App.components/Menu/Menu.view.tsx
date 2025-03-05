@@ -179,6 +179,8 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
     }
   }, [burgerClickHandler, sidebarOpened])
 
+  const year = useMemo(() => new Date().getFullYear(), [])
+
   return (
     <>
       <MenuTopBar
@@ -206,7 +208,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             })}
           </MenuGrid>
           <MenuFooter className={`${sidebarOpened ? '' : 'menu-collapsed'}`}>
-            <NewButton
+            {/* <NewButton
               kind={BUTTON_PRIMARY}
               form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND}
               isThin
@@ -223,7 +225,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
               disabled={!canGetInitThouthand || isActionActive}
             >
               {sidebarOpened ? 'USDt Faucet' : 'USD'}
-            </NewButton>
+            </NewButton> */}
             {/*<CustomLink to="https://faucet.marigold.dev/" kind={sidebarOpened ? LinkWide : LinkWrapper}>*/}
             {/*  <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>*/}
             {/*    {sidebarOpened ? ' Ghostnet Faucet' : 'GF'}*/}
@@ -239,7 +241,7 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             <SocialIcons />
             <span>
               DAPP v2.0
-              <br />© Maven Finance 2024
+              <br />© Maven Finance {year}
             </span>
           </MenuFooter>
         </MenuSidebarContent>
