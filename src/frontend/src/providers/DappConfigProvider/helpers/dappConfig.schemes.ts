@@ -40,11 +40,11 @@ export const dappConfigSchema = z.object({
       minimum_smvn_balance: z.number(),
     }),
   ]),
-  mvn_faucet: z.tuple([
-    z.object({
-      address: z.string(),
-    }),
-  ]),
+  // mvn_faucet: z.tuple([
+  //   z.object({
+  //     address: z.string(),
+  //   }),
+  // ]),
 })
 
 export type DappConfigGqlType = z.infer<typeof dappConfigSchema>

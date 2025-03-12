@@ -38,9 +38,6 @@ export const DAPP_INITIAL_CONFIG_QUERY = gql(`
     }
 
 		# mvn faucet address
-		mvn_faucet: mvn_faucet{
-			address
-		}
 
     # dapp indexed lvl
     dipdup_index: dipdup_index(where: {name: {_eq: "maven_finance"}}) {

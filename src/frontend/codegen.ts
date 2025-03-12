@@ -10,7 +10,7 @@ const INDEXER_TABLES = {
   mvn_token: true,
 
   // DAPP CONFIG
-  mvn_faucet: true,
+  // mvn_faucet: false,
   dipdup_index: true,
 
   // FEEDS
