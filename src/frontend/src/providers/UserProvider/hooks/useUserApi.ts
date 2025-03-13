@@ -159,7 +159,13 @@ export const useUserApi = ({
       console.error(`Failed to connect wallet:`, e)
       bug('Failed to connect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
     }
-  }, [updateUserTzktTokenBalances, loadInitialTzktTokensForNewlyConnectedUser, handleDisconnect, handleOnReconnected])
+  }, [
+    updateUserTzktTokenBalances,
+    loadInitialTzktTokensForNewlyConnectedUser,
+    handleDisconnect,
+    handleOnReconnected,
+    tzktSocket,
+  ])
 
   /**
    * disconnect user's wallet to DAPP & set context to no user state
