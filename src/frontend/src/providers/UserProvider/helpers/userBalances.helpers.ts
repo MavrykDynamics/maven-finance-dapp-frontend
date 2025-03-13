@@ -189,12 +189,16 @@ export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
   try {
     const tzktSocket = new signalR.HubConnectionBuilder()
       .withUrl(`${process.env.REACT_APP_TZKT_API}/v1/ws`, {
+        skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
       })
       .build()
 
     // open connection
-    await tzktSocket.start()
+    await tzktSocket
+      .start()
+      .then(() => console.log('Connected to WebSocket'))
+      .catch((err) => console.error('WebSocket error:', err))
 
     return tzktSocket
   } catch (e) {
