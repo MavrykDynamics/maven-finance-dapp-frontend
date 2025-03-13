@@ -196,7 +196,7 @@ export const ManagePermissions = ({
                         <Input
                           className={`table-input`}
                           inputProps={{
-                            placeholder: 'Enter tz1 address',
+                            placeholder: 'Enter mv1 address',
                             value: address,
                             type: 'text',
                             onChange: (e) => updateTableDataState(e.target.value, rowIdx),

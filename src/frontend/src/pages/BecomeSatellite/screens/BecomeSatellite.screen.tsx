@@ -263,7 +263,7 @@ export const BecomeSatelliteScreen = () => {
         <Icon id="info" />
       </Tooltip.Trigger>
       <Tooltip.Content>
-        The Oracle Public ID is the tz1 address of your satellite. Follow the Oracle documentation for more info.
+        The Oracle Public ID is the mv1 address of your satellite. Follow the Oracle documentation for more info.
       </Tooltip.Content>
     </Tooltip>
   )
