@@ -19,6 +19,7 @@ import { MenuMobileBurger, MenuTopStyled } from './MenuTopBar.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { DEV_MAVEN_URL, PROD_MAVEN_URL } from 'consts/global.const'
 
 type MenuTopBarProps = {
   burgerClickHandler: () => void
@@ -29,10 +30,7 @@ type MenuTopBarProps = {
 export const PRODUCTS_LINKS = [
   {
     name: 'Dapp',
-    href:
-      process.env.REACT_APP_IS_DEMO === 'true'
-        ? 'https://atlasnet.mavenfinance.io/'
-        : 'https://front-dev.mavryk-dapp.pages.dev',
+    href: process.env.REACT_APP_IS_DEMO === 'true' ? PROD_MAVEN_URL : DEV_MAVEN_URL,
     disabled: false,
     path: '/',
   },

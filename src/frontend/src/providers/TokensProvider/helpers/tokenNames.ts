@@ -30,7 +30,7 @@ const tokenMap = new Map<string, { name: string; symbol: string; icon: string }>
     {
       name: 'MAVENFA12',
       symbol: 'FA12',
-      icon: 'https://front-dev.mavryk-finance-dapp-frontend.pages.dev/images/MVN_token.svg',
+      icon: '/images/MVN_token.svg',
     },
   ],
   ['smvn', { name: 'Staked Maven', symbol: 'sMVN', icon: '/images/sMVN_token.svg' }],
@@ -45,7 +45,7 @@ const tokenMap = new Map<string, { name: string; symbol: string; icon: string }>
     {
       name: 'MAVENFA2',
       symbol: 'FA2',
-      icon: 'https://front-dev.mavryk-finance-dapp-frontend.pages.dev/images/MVN_token.svg',
+      icon: '/images/MVN_token.svg',
     },
   ],
 ])

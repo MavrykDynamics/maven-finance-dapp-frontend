@@ -204,7 +204,6 @@ const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMeta
  * mTokens – array of mTokens addresses
  */
 export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
-  console.log(tokensFromGql, 'tokensFromGql')
   return tokensFromGql.reduce<Omit<TokensContextStateType, 'tokensPrices'>>(
     (acc, tokenFromGql) => {
       try {
