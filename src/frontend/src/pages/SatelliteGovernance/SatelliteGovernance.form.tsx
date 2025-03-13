@@ -87,7 +87,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
     // show if available action === Register Aggregator
     isFieldRegisterAggregator ||
     // show if available action === Fix Mistaken Transfer
-    isFixMistakenTransfer
+    isFixMistakenTransfer ||
+    variant === SATELLITE_GOVERNANCE_ACTION_NAMES.ADD_TO_AGGREGATOR ||
+    variant === SATELLITE_GOVERNANCE_ACTION_NAMES.REMOVE_FROM_AGREGATOR
 
   const {
     suspendSatelliteAction,

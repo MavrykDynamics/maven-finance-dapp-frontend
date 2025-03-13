@@ -49,7 +49,7 @@ export const SATELLITE_GOVERNANCE_CONTENT_FORM = {
     btnText: 'Remove from Aggregator',
     btnIcon: 'minus',
     firstInputLabel: 'Your Address',
-    secondInputLabel: '',
+    secondInputLabel: 'Aggregator Address',
   },
 
   'Add to Aggregator': {
@@ -57,7 +57,7 @@ export const SATELLITE_GOVERNANCE_CONTENT_FORM = {
     btnText: 'Add to Aggregator',
     btnIcon: 'plus',
     firstInputLabel: 'Your Address',
-    secondInputLabel: '',
+    secondInputLabel: 'Aggregator Address',
   },
 
   'Restore Satellite': {
