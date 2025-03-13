@@ -23,6 +23,7 @@ import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/use
 import { getTokenDataByAddress, isMVRKAsset } from 'providers/TokensProvider/helpers/tokens.utils'
 import { ImageWithPlug } from '../Icon/ImageWithPlug'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { EXPLORER_MAIN_LINK } from 'consts/global.const'
 
 type ConnectWalletProps = {
   mountWertWiget: (commodity: string) => void
@@ -74,7 +75,7 @@ export const WalletDetails = ({ mountWertWiget }: ConnectWalletProps) => {
         <div className="top">
           <Icon id="wallet" />
           <TzAddress tzAddress={userAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
-          <a href={`https://ghost.tzstats.com/${userAddress}`} target="_blank" rel="noreferrer">
+          <a href={`${EXPLORER_MAIN_LINK}/account/${userAddress}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
         </div>
@@ -281,7 +282,7 @@ export const MobileWalletDetails = ({ closeMobileMenu, mountWertWiget }: MobileC
         <div className="top">
           <Icon id="wallet" />
           <TzAddress tzAddress={userAddress} type={PRIMARY_TZ_ADDRESS_COLOR} />
-          <a href={`https://ghost.tzstats.com/${userAddress}`} target="_blank" rel="noreferrer">
+          <a href={`${EXPLORER_MAIN_LINK}/account/${userAddress}`} target="_blank" rel="noreferrer">
             <Icon id="send" className="icon-send" />
           </a>
         </div>

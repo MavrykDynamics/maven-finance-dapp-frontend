@@ -5,49 +5,51 @@
  *
  * need to do this mapper cuz back-end can't send valid names and it can have token duplicates
  */
+const tokenMap = new Map<string, { name: string; symbol: string; icon: string }>([
+  ['usdt/usd', { name: 'Tether', symbol: 'USDT', icon: '/images/usdt.png' }],
+  ['usdt', { name: 'Tether', symbol: 'USDT', icon: '/images/usdt.png' }],
+  ['musdt', { name: 'mUSDT', symbol: 'mUSDT', icon: '/images/mUSDT.svg' }],
+
+  ['mvrk/usd', { name: 'Mavryk', symbol: 'MVRK', icon: '/images/MVRK_token.svg' }],
+  ['mvrk', { name: 'Mavryk', symbol: 'MVRK', icon: '/images/MVRK_token.svg' }],
+  ['mmvrk', { name: 'mMVRK', symbol: 'mMVRK', icon: '/images/mMVRK_token.svg' }],
+
+  ['btc/usd', { name: 'wBTC', symbol: 'wBTC', icon: '/images/tzBTC.png' }],
+  ['wbtc', { name: 'wBTC', symbol: 'wBTC', icon: '/images/tzBTC.png' }],
+  ['mwbtc', { name: 'mWBTC', symbol: 'mWBTC', icon: '/images/mTzBTC.svg' }],
+
+  ['eurt/usd', { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }],
+  ['euroc/usd', { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }],
+  ['eurc/usd', { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }],
+  ['eurl', { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }],
+  ['meurl', { name: 'mEURL', symbol: 'mEURL', icon: '/images/mEURL.svg' }],
+
+  ['mvn', { name: 'Maven', symbol: 'MVN', icon: '/images/MVN_token.svg' }],
+  [
+    'fa12',
+    {
+      name: 'MAVENFA12',
+      symbol: 'FA12',
+      icon: '/images/MVN_token.svg',
+    },
+  ],
+  ['smvn', { name: 'Staked Maven', symbol: 'sMVN', icon: '/images/sMVN_token.svg' }],
+
+  ['ocean/usd', { name: 'Ocean', symbol: 'OCEAN', icon: '/images/ocean_token.png' }],
+  ['ocean', { name: 'Ocean', symbol: 'OCEAN', icon: '/images/ocean_token.png' }],
+
+  ['mars1/usd', { name: 'Mars1', symbol: 'MARS1', icon: '/images/mars_token.jpeg' }],
+  ['mars1', { name: 'Mars1', symbol: 'MARS1', icon: '/images/mars_token.jpeg' }],
+  [
+    'fa2',
+    {
+      name: 'MAVENFA2',
+      symbol: 'FA2',
+      icon: '/images/MVN_token.svg',
+    },
+  ],
+])
+
 export const getTokenSymbolAndName = (tokenGqlSymbol: string) => {
-  switch (tokenGqlSymbol.toLowerCase()) {
-    case 'usdt/usd':
-    case 'usdt':
-      return { name: 'Tether', symbol: 'USDT', icon: '/images/usdt.png' }
-    case 'musdt':
-      return { name: 'mUSDT', symbol: 'mUSDT', icon: '/images/mUSDT.svg' }
-
-    case 'mvrk/usd':
-    case 'mvrk':
-      return { name: 'Mavryk', symbol: 'MVRK', icon: '/images/MVRK_token.svg' }
-    case 'mmvrk':
-      return { name: 'mMVRK', symbol: 'mMVRK', icon: '/images/mMVRK_token.svg' }
-
-    case 'btc/usd':
-    case 'wbtc':
-      return { name: 'wBTC', symbol: 'wBTC', icon: '/images/tzBTC.png' }
-    case 'mwbtc':
-      return { name: 'mWBTC', symbol: 'mWBTC', icon: '/images/mTzBTC.svg' }
-    case 'eurt/usd':
-    case 'euroc/usd':
-    case 'eurc/usd':
-    case 'eurl':
-      return { name: 'Eurocoin', symbol: 'EURL', icon: '/images/eurl.png' }
-    case 'meurl':
-      return { name: 'mEURL', symbol: 'mEURL', icon: '/images/mEURL.svg' }
-    case 'mvn':
-      return { name: 'Maven', symbol: 'MVN', icon: '/images/MVN_token.svg' }
-    case 'smvn':
-      return { name: 'Staked Maven', symbol: 'sMVN', icon: '/images/sMVN_token.svg' }
-    case 'ocean/usd':
-    case 'ocean':
-      return {
-        name: 'Ocean',
-        symbol: 'OCEAN',
-        icon: '/images/ocean_token.png',
-      }
-
-    case 'mars1/usd':
-    case 'mars1':
-      return { name: 'Mars1', symbol: 'MARS1', icon: '/images/mars_token.jpeg' }
-
-    default:
-      return null
-  }
+  return tokenMap.get(tokenGqlSymbol.toLowerCase()) || null
 }

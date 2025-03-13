@@ -92,7 +92,7 @@ export const LoansTxTab = ({ txVariant }: { txVariant: 'lending' | 'borrowing' }
                     <TableCell $width="10%" $contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
                         <Link
-                          to={`${process.env.REACT_APP_TZKT_LINK}/${operationHash}`}
+                          to={`${process.env.REACT_APP_EXPLORER_LINK}/operation/${operationHash}`}
                           target="_blank"
                           className="isCyan"
                         >

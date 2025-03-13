@@ -181,12 +181,18 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavenTheme }>`
 
   .amount {
     font-size: 16px;
+    margin: 0;
     color: ${({ theme }) => theme.primaryText};
   }
 
   .balance-btn-group {
     display: flex;
+    align-items: center;
     column-gap: 10px;
+  }
+
+  .amount p {
+    margin: 0;
   }
 `
 

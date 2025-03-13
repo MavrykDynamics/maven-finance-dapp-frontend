@@ -68,6 +68,10 @@ export const VotingBarStyled = styled.div<{ theme: MavenTheme }>`
       width: 100%;
       text-align: center;
       text-overflow: ellipsis;
+
+      p {
+        margin-block-start: 0px;
+      }
     }
   }
 

@@ -87,7 +87,9 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
     // show if available action === Register Aggregator
     isFieldRegisterAggregator ||
     // show if available action === Fix Mistaken Transfer
-    isFixMistakenTransfer
+    isFixMistakenTransfer ||
+    variant === SATELLITE_GOVERNANCE_ACTION_NAMES.ADD_TO_AGGREGATOR ||
+    variant === SATELLITE_GOVERNANCE_ACTION_NAMES.REMOVE_FROM_AGREGATOR
 
   const {
     suspendSatelliteAction,
@@ -302,7 +304,7 @@ export const SatelliteGovernanceForm = ({ variant, maxLength, isButtonDisabled }
 
       <div>
         <H2Title>{title}</H2Title>
-        <p>Please enter a valid tz1 address of the satellite to take action on</p>
+        <p>Please enter a valid mv1 address of the satellite to take action on</p>
       </div>
 
       <fieldset>
