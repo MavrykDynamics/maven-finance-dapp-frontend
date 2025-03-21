@@ -26,6 +26,8 @@ import { normalizeContractAddresses, normalizeInitialConfigData } from './helper
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
+const BLOCKS_DIFF_FOR_ACTION = 5
+
 type Props = {
   children: React.ReactNode
 }
@@ -80,7 +82,7 @@ const DappConfigProvider = ({ children }: Props) => {
       try {
         const parsedLevelData = indexerLevelSchema.parse(data.dipdup_index)
 
-        if (currentIndexerLevelProxy.currentIndexedLevel < parsedLevelData[0].level) {
+        if (currentIndexerLevelProxy.currentIndexedLevel + BLOCKS_DIFF_FOR_ACTION < parsedLevelData[0].level) {
           if (process.env.REACT_APP_ENV === 'prod')
             console.log(`%cnew indexer level: ${parsedLevelData[0].level}`, 'color: fuchsia')
 
