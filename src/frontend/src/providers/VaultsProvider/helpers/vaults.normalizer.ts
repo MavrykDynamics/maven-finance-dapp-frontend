@@ -12,9 +12,7 @@ import { convertNumberForClient } from 'utils/calcFunctions'
 import { calculateVaultMaxLiquidationAmount } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { calcMarketAvailableLiquidity } from 'providers/LoansProvider/helpers/loans.utils'
 
-const getVaultsDepositorsData = (
-  vault: Exclude<VaultsIndexerDataType['lending_controller'][number]['vaults'][number]['vault'], null | undefined>,
-) => {
+const getVaultsDepositorsData = (vault: Exclude<VaultsIndexerDataType['vaults'][number], null | undefined>) => {
   // Convert deep structure of depositors to array of depositrors addresses (strings)
   const depositors = (vault.depositors.map(({ depositor }) => depositor?.address).filter(Boolean) ??
     []) as Array<string>
@@ -29,21 +27,17 @@ const getVaultsDepositorsData = (
   }
 }
 
-const normalizeCollaterals = (
-  collateral_balances: VaultsIndexerDataType['lending_controller'][number]['vaults'][number]['collateral_balances'],
-) => {
-  return collateral_balances.reduce<Array<CollateralType>>((acc, collateral) => {
-    if (!collateral.collateral_token.token) return acc
-
+const normalizeCollaterals = (collateral_json: VaultsIndexerDataType['vaults'][number]['collateral_json']) => {
+  return Object.entries(collateral_json).reduce<Array<CollateralType>>((acc, [tokenAddress, collateral]) => {
     // condition to set smvn client address, cuz back-end returns mvn token address, that is not valid for output
-    if (collateral.collateral_token.token_name === 'smvn') {
+    if (collateral.token_name === 'smvn') {
       acc.push({
         tokenAddress: SMVN_TOKEN_ADDRESS,
         amount: collateral.balance,
       })
     } else {
       acc.push({
-        tokenAddress: collateral.collateral_token.token.token_address,
+        tokenAddress,
         amount: collateral.balance,
       })
     }
@@ -61,10 +55,10 @@ export const normalizeVaults = ({
 }) => {
   const {
     lending_controller: [controller],
+    vaults,
   } = indexerData
 
   const {
-    vaults,
     max_vault_liquidation_pct,
     decimals,
     liquidation_fee_pct,
@@ -76,37 +70,34 @@ export const normalizeVaults = ({
 
   return vaults.reduce<Omit<VaultsCtxState, 'vaultsDashboardData'>>(
     (acc, item) => {
+      // tODO add zod
       const {
-        vault,
-        collateral_balances,
+        collateral_json,
         loan_outstanding_total: vaultTotalOutstanding,
         loan_principal_total: borrowedAmount,
-        loan_interest_total: vaultAccuredInterest,
         borrow_index: vaultBorrowIndex,
-        loan_token,
-        owner: { address: ownerAddress },
-      } = item
-
-      const {
+        owner_address: ownerAddress,
+        token_pool_total,
+        reserve_ratio,
+        total_remaining,
         borrow_index: tokenBorrowIndex,
         min_repayment_amount,
-        token: { token_address: borrowedTokenAddress },
-      } = loan_token
+        loan_token_address: borrowedTokenAddress,
+      } = item
 
-      // Check whether vault exists
-      if (!vault) return acc
+      const loanToken = { token_pool_total, reserve_ratio, total_remaining }
 
       const apr =
         convertNumberForClient({
-          number: item.loan_token?.current_interest_rate ?? 0,
+          number: item.current_interest_rate ?? 0,
           grade: interest_rate_decimals,
         }) * 100
 
       // Calc how much free tokens pool has for certain market
-      const { availableLiquidity } = calcMarketAvailableLiquidity(loan_token)
+      const { availableLiquidity } = calcMarketAvailableLiquidity(loanToken)
 
-      const { depositors, deporsitorsFlag } = getVaultsDepositorsData(vault)
-      const collateralData = normalizeCollaterals(collateral_balances)
+      const { depositors, deporsitorsFlag } = getVaultsDepositorsData(item)
+      const collateralData = normalizeCollaterals(collateral_json)
 
       // calculating actual accured interest, cuz loan_interest_total is updated when some operation on vault is done, so for afk vaults it's not actual
       const accruedInterest =
@@ -118,10 +109,10 @@ export const normalizeVaults = ({
       const totalOutstanding = borrowedAmount + accruedInterest
 
       const normallizedVault: VaultType = {
-        borrowedTokenAddress,
-        name: vault.name,
-        address: vault.address,
-        ownerAddress,
+        borrowedTokenAddress: borrowedTokenAddress ?? '-',
+        name: item.vault_name ?? '-',
+        address: item.vault_address ?? '-',
+        ownerAddress: ownerAddress ?? '-',
         vaultId: item.internal_id,
         apr,
         creationTimestamp: new Date(vault.creation_timestamp).getTime(),
