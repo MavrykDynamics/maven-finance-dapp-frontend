@@ -51,7 +51,8 @@ const normalizeCollaterals = (
     return acc
   }, [])
 }
-
+// andrew_here (replace fields to match the new query)
+// the returned object should be the same as it was to reduce code logic changes in other places
 export const normalizeVaults = ({
   indexerData,
   userAddress,

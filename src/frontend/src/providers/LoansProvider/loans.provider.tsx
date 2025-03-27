@@ -79,10 +79,12 @@ export const LoansProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_MARKET_BY_ADDRESS_QUERY'),
   })
 
+  // andrew_here
   useQueryWithRefetch(GET_ALL_MARKETS_QUERY, {
     skip: !activeSubs[LOANS_MARKETS_DATA],
-    variables: {},
+    variables: {}, // add offset & limit, update GET_ALL_MARKETS_QUERY to take limit and offset
     onCompleted: (data) => {
+      // handle paginated markets data to not replace existing markets, merge it
       const newMarkets = normalizeLoansMarkets({ indexerData: data })
 
       const marketsAddresses = Object.keys(newMarkets)

@@ -107,10 +107,19 @@ export const VaultsProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
 
+  // andrew_here
+  // it uses refetch logic every N blocks (for now 5 blocks)
+
+  // TODO second important task (same goes for markets query(loan))
+  // after u add pagination and it works, add filter case to fetch only updated queries
+
+  // Example -> I fetch 10 vaults and got the last_updated_timestamp
+  // the next time it do redetch -> use filter to fetch vaults after last_updated_timestamp, so it doesnt take old queries
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
-    variables: {},
+    variables: {}, // add offset & limit, update GET_ALL_VAULTS_QUERY to take limit and offset
     onCompleted: (data) => {
+      // update vaults logic to merge data, dont replace the existing one
       const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
         indexerData: data,
         userAddress,

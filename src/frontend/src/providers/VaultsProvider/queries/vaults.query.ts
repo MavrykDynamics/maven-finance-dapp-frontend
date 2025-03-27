@@ -135,6 +135,12 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 `)
 
 // get all vaults
+// andrew_here replace this query with one I sent you
+
+// example -> query getAllVaultsQuery($limit: Int, $offset: Int)
+// see GET_USER_DEPOSITOR_ALL_VAULTS_QUERY how to pass variables on line 3 in this file
+// when u update queries - DO NOT FORGET to run this command from console: <yarn graphql-compile>
+// test queries in playground https://api.mavenfinance.io/console
 export const GET_ALL_VAULTS_QUERY = gql(`
 	query getAllVaultsQuery {
 		lending_controller: lending_controller {
