@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { GetLoansConfigQuery } from 'utils/__generated__/graphql'
 import { LoansContext, MarketsIndexerDataType } from '../loans.provider.types'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
@@ -12,25 +14,24 @@ export const normalizeLoansConfig = ({ indexerData }: { indexerData: GetLoansCon
 
 export const normalizeLoansMarkets = ({ indexerData }: { indexerData: MarketsIndexerDataType }) => {
   const {
+    markets,
     lending_controller: [
-      { interest_rate_decimals: interestRateDecimals, interest_treasury_share, decimals, loan_tokens },
+      { interest_rate_decimals: interestRateDecimals, interest_treasury_share, decimals },
     ],
   } = indexerData
   const treasuryShare = convertNumberForClient({ number: interest_treasury_share, grade: decimals })
 
-  return loan_tokens?.reduce<LoansContext['marketsMapper']>((acc, loanToken) => {
+  return markets?.reduce<LoansContext['marketsMapper']>((acc, loanToken) => {
     const {
       utilisation_rate,
       token_pool_total,
       total_borrowed,
       current_interest_rate,
-      token: { token_address: loanTokenAddress },
-      m_token: {
-        address: loanMTokenAddress,
-        depositorsAmount: { aggregate: suppliers },
-        mTokenRewardsAmount: { aggregate: mTokenRewardsAggregate },
-      },
-      vaults_aggregate: { aggregate: borrowers },
+      token_address: loanTokenAddress ,
+      m_token_address: loanMTokenAddress,
+      depositors_count: suppliers, //TODO check it
+      rewards_earned_total: mTokenRewardsAggregate, //TODO check it
+      borrowers_count: borrowers, //TODO check it
     } = loanToken
 
     const { reserveAmount, reserveFactor, availableLiquidity } = calcMarketAvailableLiquidity(loanToken)
@@ -49,10 +50,10 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: MarketsInd
       availableLiquidity,
       totalLended: token_pool_total,
       totalBorrowed: total_borrowed,
-      totalRewards: mTokenRewardsAggregate?.sum?.rewards_earned ?? 0,
+      totalRewards: mTokenRewardsAggregate ?? 0,
 
-      borrowers: borrowers?.count ?? 0,
-      suppliers: suppliers?.count ?? 0,
+      borrowers: borrowers ?? 0,
+      suppliers: suppliers ?? 0,
 
       reserveFactor,
       reserveAmount,

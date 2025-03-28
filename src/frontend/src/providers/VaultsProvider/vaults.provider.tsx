@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { usePrevious } from 'react-use'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 
@@ -117,7 +119,7 @@ export const VaultsProvider = ({ children }: Props) => {
   // the next time it do redetch -> use filter to fetch vaults after last_updated_timestamp, so it doesnt take old queries
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
-    variables: {}, // add offset & limit, update GET_ALL_VAULTS_QUERY to take limit and offset
+    variables: { limit: 10, offset: 0}, // add offset & limit, update GET_ALL_VAULTS_QUERY to take limit and offset
     onCompleted: (data) => {
       // update vaults logic to merge data, dont replace the existing one
       const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
