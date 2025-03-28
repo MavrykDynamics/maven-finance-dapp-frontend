@@ -279,12 +279,16 @@ export const getVaultsProviderReturnValue = ({
   changeVaultsSubscriptionsList,
   setVaultsDashboardData,
   userAddress,
+  changePage,
+  isLoadingVaults
 }: {
   vaultsCtxState: NullableVaultsCtxState
   activeSubs: VaultsSubsRecordType
   changeVaultsSubscriptionsList: VaultsContext['changeVaultsSubscriptionsList']
   setVaultsDashboardData: VaultsContext['setVaultsDashboardData']
   userAddress: string | null
+  changePage: (newPage: number) => void
+  isLoadingVaults: boolean
 }) => {
   const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds, vaultsDashboardData } = vaultsCtxState
   const commonToReturn = {
@@ -301,6 +305,7 @@ export const getVaultsProviderReturnValue = ({
    * 4. if we subscribed to vaults where user is owner and myVaultsIds list is empty
    */
   const isLoading =
+    isLoadingVaults ||
     (!activeSubs[VAULTS_DATA] && vaultsMapper === null) ||
     (activeSubs[VAULTS_DATA] === 'allVaults' && allVaultsIds === null) ||
     (userAddress && activeSubs[VAULTS_DATA] === 'userIsDepositor' && permissionedVaultsIds === null) ||
@@ -312,6 +317,7 @@ export const getVaultsProviderReturnValue = ({
       ...EMPTY_VAULTS_CONTEXT,
       ...commonToReturn,
       isLoading: true,
+      changePage
     }
   }
 
@@ -320,6 +326,7 @@ export const getVaultsProviderReturnValue = ({
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,
+    changePage,
     isLoading: false,
   }
 }

@@ -41,6 +41,7 @@ export type VaultsActionsType =
 export type VaultsContext = VaultsCtxState & {
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
   setVaultsDashboardData: (newDashboardData: VaultsDashboardDataType) => void
+  changePage: (newPage: number) => void
   isLoading: boolean
 }
 

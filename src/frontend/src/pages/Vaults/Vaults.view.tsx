@@ -74,6 +74,7 @@ export const VaultsView = () => {
     allVaultsIds,
     vaultsMapper,
     permissionedVaultsIds,
+    changePage,
   } = useVaultsContext()
 
   useEffect(() => {
@@ -147,6 +148,10 @@ export const VaultsView = () => {
 
   const currentPage = getPageNumber(search, currentListName)
 
+  useEffect(() => {
+    changePage(currentPage);
+  }, [currentPage]);
+
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
     const currentTabId = tabsList.find((item) => item.path === tabId)?.id
@@ -162,11 +167,6 @@ export const VaultsView = () => {
         : permissionedVaultsIds,
     )
   }
-
-  const paginatedVaultsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, currentListName)
-    return vaultsIds?.slice(from, to)
-  }, [currentListName, currentPage, vaultsIds])
 
   const contractActionProps: HookContractActionArgs<{ vaultId: number; vaultOwner: string }> = useMemo(
     () => ({
@@ -189,8 +189,6 @@ export const VaultsView = () => {
   )
 
   const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
-
-  const deferredVaultIds = useDeferredValue(paginatedVaultsList)
 
   return (
     <VaultsStyled>
@@ -215,7 +213,7 @@ export const VaultsView = () => {
         </DataLoaderWrapper>
       ) : vaultsIds.length ? (
         <VaultsList>
-          {deferredVaultIds.map((item) => {
+          {vaultsIds.map((item) => {
             const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
 
             return (
@@ -229,7 +227,7 @@ export const VaultsView = () => {
             )
           })}
 
-          <Pagination itemsCount={vaultsIds.length} listName={currentListName} />
+          <Pagination itemsCount={100} listName={currentListName} />
         </VaultsList>
       ) : (
         <EmptyContainer className="centered">
