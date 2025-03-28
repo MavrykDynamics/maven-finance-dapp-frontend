@@ -17,6 +17,8 @@ export type Scalars = {
   bigint: { input: any; output: any; }
   float8: { input: any; output: any; }
   jsonb: { input: any; output: any; }
+  numeric: { input: any; output: any; }
+  oid: { input: any; output: any; }
   smallint: { input: any; output: any; }
   timestamptz: { input: any; output: any; }
 };
@@ -13806,86 +13808,6 @@ export enum Dipdup_Head_Select_Column {
   UpdatedAt = 'updated_at'
 }
 
-/** columns and relationships of "dipdup_head_status" */
-export type Dipdup_Head_Status = {
-  __typename?: 'dipdup_head_status';
-  name?: Maybe<Scalars['String']['output']>;
-  status?: Maybe<Scalars['String']['output']>;
-};
-
-/** aggregated selection of "dipdup_head_status" */
-export type Dipdup_Head_Status_Aggregate = {
-  __typename?: 'dipdup_head_status_aggregate';
-  aggregate?: Maybe<Dipdup_Head_Status_Aggregate_Fields>;
-  nodes: Array<Dipdup_Head_Status>;
-};
-
-/** aggregate fields of "dipdup_head_status" */
-export type Dipdup_Head_Status_Aggregate_Fields = {
-  __typename?: 'dipdup_head_status_aggregate_fields';
-  count: Scalars['Int']['output'];
-  max?: Maybe<Dipdup_Head_Status_Max_Fields>;
-  min?: Maybe<Dipdup_Head_Status_Min_Fields>;
-};
-
-
-/** aggregate fields of "dipdup_head_status" */
-export type Dipdup_Head_Status_Aggregate_FieldsCountArgs = {
-  columns?: InputMaybe<Array<Dipdup_Head_Status_Select_Column>>;
-  distinct?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-/** Boolean expression to filter rows from the table "dipdup_head_status". All fields are combined with a logical 'AND'. */
-export type Dipdup_Head_Status_Bool_Exp = {
-  _and?: InputMaybe<Array<Dipdup_Head_Status_Bool_Exp>>;
-  _not?: InputMaybe<Dipdup_Head_Status_Bool_Exp>;
-  _or?: InputMaybe<Array<Dipdup_Head_Status_Bool_Exp>>;
-  name?: InputMaybe<String_Comparison_Exp>;
-  status?: InputMaybe<String_Comparison_Exp>;
-};
-
-/** aggregate max on columns */
-export type Dipdup_Head_Status_Max_Fields = {
-  __typename?: 'dipdup_head_status_max_fields';
-  name?: Maybe<Scalars['String']['output']>;
-  status?: Maybe<Scalars['String']['output']>;
-};
-
-/** aggregate min on columns */
-export type Dipdup_Head_Status_Min_Fields = {
-  __typename?: 'dipdup_head_status_min_fields';
-  name?: Maybe<Scalars['String']['output']>;
-  status?: Maybe<Scalars['String']['output']>;
-};
-
-/** Ordering options when selecting data from "dipdup_head_status". */
-export type Dipdup_Head_Status_Order_By = {
-  name?: InputMaybe<Order_By>;
-  status?: InputMaybe<Order_By>;
-};
-
-/** select columns of table "dipdup_head_status" */
-export enum Dipdup_Head_Status_Select_Column {
-  /** column name */
-  Name = 'name',
-  /** column name */
-  Status = 'status'
-}
-
-/** Streaming cursor of the table "dipdup_head_status" */
-export type Dipdup_Head_Status_Stream_Cursor_Input = {
-  /** Stream column input with initial value */
-  initial_value: Dipdup_Head_Status_Stream_Cursor_Value_Input;
-  /** cursor ordering */
-  ordering?: InputMaybe<Cursor_Ordering>;
-};
-
-/** Initial value of the column from where the streaming should start */
-export type Dipdup_Head_Status_Stream_Cursor_Value_Input = {
-  name?: InputMaybe<Scalars['String']['input']>;
-  status?: InputMaybe<Scalars['String']['input']>;
-};
-
 /** aggregate stddev on columns */
 export type Dipdup_Head_Stddev_Fields = {
   __typename?: 'dipdup_head_stddev_fields';
@@ -14548,6 +14470,174 @@ export type Dipdup_Schema_Stream_Cursor_Value_Input = {
   name?: InputMaybe<Scalars['String']['input']>;
   reindex?: InputMaybe<Scalars['String']['input']>;
   updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** columns and relationships of "dipdup_status" */
+export type Dipdup_Status = {
+  __typename?: 'dipdup_status';
+  level?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  size?: Maybe<Scalars['numeric']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** aggregated selection of "dipdup_status" */
+export type Dipdup_Status_Aggregate = {
+  __typename?: 'dipdup_status_aggregate';
+  aggregate?: Maybe<Dipdup_Status_Aggregate_Fields>;
+  nodes: Array<Dipdup_Status>;
+};
+
+/** aggregate fields of "dipdup_status" */
+export type Dipdup_Status_Aggregate_Fields = {
+  __typename?: 'dipdup_status_aggregate_fields';
+  avg?: Maybe<Dipdup_Status_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Dipdup_Status_Max_Fields>;
+  min?: Maybe<Dipdup_Status_Min_Fields>;
+  stddev?: Maybe<Dipdup_Status_Stddev_Fields>;
+  stddev_pop?: Maybe<Dipdup_Status_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Dipdup_Status_Stddev_Samp_Fields>;
+  sum?: Maybe<Dipdup_Status_Sum_Fields>;
+  var_pop?: Maybe<Dipdup_Status_Var_Pop_Fields>;
+  var_samp?: Maybe<Dipdup_Status_Var_Samp_Fields>;
+  variance?: Maybe<Dipdup_Status_Variance_Fields>;
+};
+
+
+/** aggregate fields of "dipdup_status" */
+export type Dipdup_Status_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Dipdup_Status_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Dipdup_Status_Avg_Fields = {
+  __typename?: 'dipdup_status_avg_fields';
+  level?: Maybe<Scalars['Float']['output']>;
+  size?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "dipdup_status". All fields are combined with a logical 'AND'. */
+export type Dipdup_Status_Bool_Exp = {
+  _and?: InputMaybe<Array<Dipdup_Status_Bool_Exp>>;
+  _not?: InputMaybe<Dipdup_Status_Bool_Exp>;
+  _or?: InputMaybe<Array<Dipdup_Status_Bool_Exp>>;
+  level?: InputMaybe<Int_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  size?: InputMaybe<Numeric_Comparison_Exp>;
+  type?: InputMaybe<String_Comparison_Exp>;
+  updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Dipdup_Status_Max_Fields = {
+  __typename?: 'dipdup_status_max_fields';
+  level?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  size?: Maybe<Scalars['numeric']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** aggregate min on columns */
+export type Dipdup_Status_Min_Fields = {
+  __typename?: 'dipdup_status_min_fields';
+  level?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  size?: Maybe<Scalars['numeric']['output']>;
+  type?: Maybe<Scalars['String']['output']>;
+  updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** Ordering options when selecting data from "dipdup_status". */
+export type Dipdup_Status_Order_By = {
+  level?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  size?: InputMaybe<Order_By>;
+  type?: InputMaybe<Order_By>;
+  updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "dipdup_status" */
+export enum Dipdup_Status_Select_Column {
+  /** column name */
+  Level = 'level',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  Size = 'size',
+  /** column name */
+  Type = 'type',
+  /** column name */
+  UpdatedAt = 'updated_at'
+}
+
+/** aggregate stddev on columns */
+export type Dipdup_Status_Stddev_Fields = {
+  __typename?: 'dipdup_status_stddev_fields';
+  level?: Maybe<Scalars['Float']['output']>;
+  size?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Dipdup_Status_Stddev_Pop_Fields = {
+  __typename?: 'dipdup_status_stddev_pop_fields';
+  level?: Maybe<Scalars['Float']['output']>;
+  size?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Dipdup_Status_Stddev_Samp_Fields = {
+  __typename?: 'dipdup_status_stddev_samp_fields';
+  level?: Maybe<Scalars['Float']['output']>;
+  size?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "dipdup_status" */
+export type Dipdup_Status_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Dipdup_Status_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Dipdup_Status_Stream_Cursor_Value_Input = {
+  level?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  size?: InputMaybe<Scalars['numeric']['input']>;
+  type?: InputMaybe<Scalars['String']['input']>;
+  updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Dipdup_Status_Sum_Fields = {
+  __typename?: 'dipdup_status_sum_fields';
+  level?: Maybe<Scalars['Int']['output']>;
+  size?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Dipdup_Status_Var_Pop_Fields = {
+  __typename?: 'dipdup_status_var_pop_fields';
+  level?: Maybe<Scalars['Float']['output']>;
+  size?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Dipdup_Status_Var_Samp_Fields = {
+  __typename?: 'dipdup_status_var_samp_fields';
+  level?: Maybe<Scalars['Float']['output']>;
+  size?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Dipdup_Status_Variance_Fields = {
+  __typename?: 'dipdup_status_variance_fields';
+  level?: Maybe<Scalars['Float']['output']>;
+  size?: Maybe<Scalars['Float']['output']>;
 };
 
 /** columns and relationships of "dipdup_token_metadata" */
@@ -36426,6 +36516,1090 @@ export type Governance_Whitelist_Contract_Variance_Order_By = {
   id?: InputMaybe<Order_By>;
 };
 
+/** columns and relationships of "gql_history_data_summary" */
+export type Gql_History_Data_Summary = {
+  __typename?: 'gql_history_data_summary';
+  id?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  operation_date?: Maybe<Scalars['timestamptz']['output']>;
+  operation_type?: Maybe<Scalars['smallint']['output']>;
+  operations_count?: Maybe<Scalars['bigint']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  total_amount?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregated selection of "gql_history_data_summary" */
+export type Gql_History_Data_Summary_Aggregate = {
+  __typename?: 'gql_history_data_summary_aggregate';
+  aggregate?: Maybe<Gql_History_Data_Summary_Aggregate_Fields>;
+  nodes: Array<Gql_History_Data_Summary>;
+};
+
+/** aggregate fields of "gql_history_data_summary" */
+export type Gql_History_Data_Summary_Aggregate_Fields = {
+  __typename?: 'gql_history_data_summary_aggregate_fields';
+  avg?: Maybe<Gql_History_Data_Summary_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Gql_History_Data_Summary_Max_Fields>;
+  min?: Maybe<Gql_History_Data_Summary_Min_Fields>;
+  stddev?: Maybe<Gql_History_Data_Summary_Stddev_Fields>;
+  stddev_pop?: Maybe<Gql_History_Data_Summary_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Gql_History_Data_Summary_Stddev_Samp_Fields>;
+  sum?: Maybe<Gql_History_Data_Summary_Sum_Fields>;
+  var_pop?: Maybe<Gql_History_Data_Summary_Var_Pop_Fields>;
+  var_samp?: Maybe<Gql_History_Data_Summary_Var_Samp_Fields>;
+  variance?: Maybe<Gql_History_Data_Summary_Variance_Fields>;
+};
+
+
+/** aggregate fields of "gql_history_data_summary" */
+export type Gql_History_Data_Summary_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Gql_History_Data_Summary_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Gql_History_Data_Summary_Avg_Fields = {
+  __typename?: 'gql_history_data_summary_avg_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  operation_type?: Maybe<Scalars['Float']['output']>;
+  operations_count?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  total_amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "gql_history_data_summary". All fields are combined with a logical 'AND'. */
+export type Gql_History_Data_Summary_Bool_Exp = {
+  _and?: InputMaybe<Array<Gql_History_Data_Summary_Bool_Exp>>;
+  _not?: InputMaybe<Gql_History_Data_Summary_Bool_Exp>;
+  _or?: InputMaybe<Array<Gql_History_Data_Summary_Bool_Exp>>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  lending_controller_id?: InputMaybe<Bigint_Comparison_Exp>;
+  operation_date?: InputMaybe<Timestamptz_Comparison_Exp>;
+  operation_type?: InputMaybe<Smallint_Comparison_Exp>;
+  operations_count?: InputMaybe<Bigint_Comparison_Exp>;
+  token_address?: InputMaybe<String_Comparison_Exp>;
+  token_id?: InputMaybe<Bigint_Comparison_Exp>;
+  total_amount?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Gql_History_Data_Summary_Max_Fields = {
+  __typename?: 'gql_history_data_summary_max_fields';
+  id?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  operation_date?: Maybe<Scalars['timestamptz']['output']>;
+  operation_type?: Maybe<Scalars['smallint']['output']>;
+  operations_count?: Maybe<Scalars['bigint']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  total_amount?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate min on columns */
+export type Gql_History_Data_Summary_Min_Fields = {
+  __typename?: 'gql_history_data_summary_min_fields';
+  id?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  operation_date?: Maybe<Scalars['timestamptz']['output']>;
+  operation_type?: Maybe<Scalars['smallint']['output']>;
+  operations_count?: Maybe<Scalars['bigint']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  total_amount?: Maybe<Scalars['float8']['output']>;
+};
+
+/** Ordering options when selecting data from "gql_history_data_summary". */
+export type Gql_History_Data_Summary_Order_By = {
+  id?: InputMaybe<Order_By>;
+  lending_controller_id?: InputMaybe<Order_By>;
+  operation_date?: InputMaybe<Order_By>;
+  operation_type?: InputMaybe<Order_By>;
+  operations_count?: InputMaybe<Order_By>;
+  token_address?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  total_amount?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "gql_history_data_summary" */
+export enum Gql_History_Data_Summary_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LendingControllerId = 'lending_controller_id',
+  /** column name */
+  OperationDate = 'operation_date',
+  /** column name */
+  OperationType = 'operation_type',
+  /** column name */
+  OperationsCount = 'operations_count',
+  /** column name */
+  TokenAddress = 'token_address',
+  /** column name */
+  TokenId = 'token_id',
+  /** column name */
+  TotalAmount = 'total_amount'
+}
+
+/** aggregate stddev on columns */
+export type Gql_History_Data_Summary_Stddev_Fields = {
+  __typename?: 'gql_history_data_summary_stddev_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  operation_type?: Maybe<Scalars['Float']['output']>;
+  operations_count?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  total_amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Gql_History_Data_Summary_Stddev_Pop_Fields = {
+  __typename?: 'gql_history_data_summary_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  operation_type?: Maybe<Scalars['Float']['output']>;
+  operations_count?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  total_amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Gql_History_Data_Summary_Stddev_Samp_Fields = {
+  __typename?: 'gql_history_data_summary_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  operation_type?: Maybe<Scalars['Float']['output']>;
+  operations_count?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  total_amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "gql_history_data_summary" */
+export type Gql_History_Data_Summary_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Gql_History_Data_Summary_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Gql_History_Data_Summary_Stream_Cursor_Value_Input = {
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  lending_controller_id?: InputMaybe<Scalars['bigint']['input']>;
+  operation_date?: InputMaybe<Scalars['timestamptz']['input']>;
+  operation_type?: InputMaybe<Scalars['smallint']['input']>;
+  operations_count?: InputMaybe<Scalars['bigint']['input']>;
+  token_address?: InputMaybe<Scalars['String']['input']>;
+  token_id?: InputMaybe<Scalars['bigint']['input']>;
+  total_amount?: InputMaybe<Scalars['float8']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Gql_History_Data_Summary_Sum_Fields = {
+  __typename?: 'gql_history_data_summary_sum_fields';
+  id?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  operation_type?: Maybe<Scalars['smallint']['output']>;
+  operations_count?: Maybe<Scalars['bigint']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  total_amount?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Gql_History_Data_Summary_Var_Pop_Fields = {
+  __typename?: 'gql_history_data_summary_var_pop_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  operation_type?: Maybe<Scalars['Float']['output']>;
+  operations_count?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  total_amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Gql_History_Data_Summary_Var_Samp_Fields = {
+  __typename?: 'gql_history_data_summary_var_samp_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  operation_type?: Maybe<Scalars['Float']['output']>;
+  operations_count?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  total_amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Gql_History_Data_Summary_Variance_Fields = {
+  __typename?: 'gql_history_data_summary_variance_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  operation_type?: Maybe<Scalars['Float']['output']>;
+  operations_count?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  total_amount?: Maybe<Scalars['Float']['output']>;
+};
+
+/** columns and relationships of "gql_loan_token_market_stats" */
+export type Gql_Loan_Token_Market_Stats = {
+  __typename?: 'gql_loan_token_market_stats';
+  borrowers_count?: Maybe<Scalars['bigint']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_count?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  loan_token_name?: Maybe<Scalars['String']['output']>;
+  m_token_address?: Maybe<Scalars['String']['output']>;
+  m_token_id?: Maybe<Scalars['bigint']['output']>;
+  paused?: Maybe<Scalars['Boolean']['output']>;
+  reserve_ratio?: Maybe<Scalars['smallint']['output']>;
+  rewards_earned_total?: Maybe<Scalars['float8']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  utilisation_rate?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregated selection of "gql_loan_token_market_stats" */
+export type Gql_Loan_Token_Market_Stats_Aggregate = {
+  __typename?: 'gql_loan_token_market_stats_aggregate';
+  aggregate?: Maybe<Gql_Loan_Token_Market_Stats_Aggregate_Fields>;
+  nodes: Array<Gql_Loan_Token_Market_Stats>;
+};
+
+/** aggregate fields of "gql_loan_token_market_stats" */
+export type Gql_Loan_Token_Market_Stats_Aggregate_Fields = {
+  __typename?: 'gql_loan_token_market_stats_aggregate_fields';
+  avg?: Maybe<Gql_Loan_Token_Market_Stats_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Gql_Loan_Token_Market_Stats_Max_Fields>;
+  min?: Maybe<Gql_Loan_Token_Market_Stats_Min_Fields>;
+  stddev?: Maybe<Gql_Loan_Token_Market_Stats_Stddev_Fields>;
+  stddev_pop?: Maybe<Gql_Loan_Token_Market_Stats_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Gql_Loan_Token_Market_Stats_Stddev_Samp_Fields>;
+  sum?: Maybe<Gql_Loan_Token_Market_Stats_Sum_Fields>;
+  var_pop?: Maybe<Gql_Loan_Token_Market_Stats_Var_Pop_Fields>;
+  var_samp?: Maybe<Gql_Loan_Token_Market_Stats_Var_Samp_Fields>;
+  variance?: Maybe<Gql_Loan_Token_Market_Stats_Variance_Fields>;
+};
+
+
+/** aggregate fields of "gql_loan_token_market_stats" */
+export type Gql_Loan_Token_Market_Stats_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Gql_Loan_Token_Market_Stats_Avg_Fields = {
+  __typename?: 'gql_loan_token_market_stats_avg_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "gql_loan_token_market_stats". All fields are combined with a logical 'AND'. */
+export type Gql_Loan_Token_Market_Stats_Bool_Exp = {
+  _and?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Bool_Exp>>;
+  _not?: InputMaybe<Gql_Loan_Token_Market_Stats_Bool_Exp>;
+  _or?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Bool_Exp>>;
+  borrowers_count?: InputMaybe<Bigint_Comparison_Exp>;
+  current_interest_rate?: InputMaybe<Float8_Comparison_Exp>;
+  depositors_count?: InputMaybe<Bigint_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  lending_controller_id?: InputMaybe<Bigint_Comparison_Exp>;
+  loan_token_name?: InputMaybe<String_Comparison_Exp>;
+  m_token_address?: InputMaybe<String_Comparison_Exp>;
+  m_token_id?: InputMaybe<Bigint_Comparison_Exp>;
+  paused?: InputMaybe<Boolean_Comparison_Exp>;
+  reserve_ratio?: InputMaybe<Smallint_Comparison_Exp>;
+  rewards_earned_total?: InputMaybe<Float8_Comparison_Exp>;
+  token_address?: InputMaybe<String_Comparison_Exp>;
+  token_id?: InputMaybe<Bigint_Comparison_Exp>;
+  token_pool_total?: InputMaybe<Float8_Comparison_Exp>;
+  total_borrowed?: InputMaybe<Float8_Comparison_Exp>;
+  total_remaining?: InputMaybe<Float8_Comparison_Exp>;
+  utilisation_rate?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Gql_Loan_Token_Market_Stats_Max_Fields = {
+  __typename?: 'gql_loan_token_market_stats_max_fields';
+  borrowers_count?: Maybe<Scalars['bigint']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_count?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  loan_token_name?: Maybe<Scalars['String']['output']>;
+  m_token_address?: Maybe<Scalars['String']['output']>;
+  m_token_id?: Maybe<Scalars['bigint']['output']>;
+  reserve_ratio?: Maybe<Scalars['smallint']['output']>;
+  rewards_earned_total?: Maybe<Scalars['float8']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  utilisation_rate?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate min on columns */
+export type Gql_Loan_Token_Market_Stats_Min_Fields = {
+  __typename?: 'gql_loan_token_market_stats_min_fields';
+  borrowers_count?: Maybe<Scalars['bigint']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_count?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  loan_token_name?: Maybe<Scalars['String']['output']>;
+  m_token_address?: Maybe<Scalars['String']['output']>;
+  m_token_id?: Maybe<Scalars['bigint']['output']>;
+  reserve_ratio?: Maybe<Scalars['smallint']['output']>;
+  rewards_earned_total?: Maybe<Scalars['float8']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  utilisation_rate?: Maybe<Scalars['float8']['output']>;
+};
+
+/** Ordering options when selecting data from "gql_loan_token_market_stats". */
+export type Gql_Loan_Token_Market_Stats_Order_By = {
+  borrowers_count?: InputMaybe<Order_By>;
+  current_interest_rate?: InputMaybe<Order_By>;
+  depositors_count?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  lending_controller_id?: InputMaybe<Order_By>;
+  loan_token_name?: InputMaybe<Order_By>;
+  m_token_address?: InputMaybe<Order_By>;
+  m_token_id?: InputMaybe<Order_By>;
+  paused?: InputMaybe<Order_By>;
+  reserve_ratio?: InputMaybe<Order_By>;
+  rewards_earned_total?: InputMaybe<Order_By>;
+  token_address?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  token_pool_total?: InputMaybe<Order_By>;
+  total_borrowed?: InputMaybe<Order_By>;
+  total_remaining?: InputMaybe<Order_By>;
+  utilisation_rate?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "gql_loan_token_market_stats" */
+export enum Gql_Loan_Token_Market_Stats_Select_Column {
+  /** column name */
+  BorrowersCount = 'borrowers_count',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  DepositorsCount = 'depositors_count',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  LendingControllerId = 'lending_controller_id',
+  /** column name */
+  LoanTokenName = 'loan_token_name',
+  /** column name */
+  MTokenAddress = 'm_token_address',
+  /** column name */
+  MTokenId = 'm_token_id',
+  /** column name */
+  Paused = 'paused',
+  /** column name */
+  ReserveRatio = 'reserve_ratio',
+  /** column name */
+  RewardsEarnedTotal = 'rewards_earned_total',
+  /** column name */
+  TokenAddress = 'token_address',
+  /** column name */
+  TokenId = 'token_id',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** aggregate stddev on columns */
+export type Gql_Loan_Token_Market_Stats_Stddev_Fields = {
+  __typename?: 'gql_loan_token_market_stats_stddev_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Gql_Loan_Token_Market_Stats_Stddev_Pop_Fields = {
+  __typename?: 'gql_loan_token_market_stats_stddev_pop_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Gql_Loan_Token_Market_Stats_Stddev_Samp_Fields = {
+  __typename?: 'gql_loan_token_market_stats_stddev_samp_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "gql_loan_token_market_stats" */
+export type Gql_Loan_Token_Market_Stats_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Gql_Loan_Token_Market_Stats_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Gql_Loan_Token_Market_Stats_Stream_Cursor_Value_Input = {
+  borrowers_count?: InputMaybe<Scalars['bigint']['input']>;
+  current_interest_rate?: InputMaybe<Scalars['float8']['input']>;
+  depositors_count?: InputMaybe<Scalars['bigint']['input']>;
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  lending_controller_id?: InputMaybe<Scalars['bigint']['input']>;
+  loan_token_name?: InputMaybe<Scalars['String']['input']>;
+  m_token_address?: InputMaybe<Scalars['String']['input']>;
+  m_token_id?: InputMaybe<Scalars['bigint']['input']>;
+  paused?: InputMaybe<Scalars['Boolean']['input']>;
+  reserve_ratio?: InputMaybe<Scalars['smallint']['input']>;
+  rewards_earned_total?: InputMaybe<Scalars['float8']['input']>;
+  token_address?: InputMaybe<Scalars['String']['input']>;
+  token_id?: InputMaybe<Scalars['bigint']['input']>;
+  token_pool_total?: InputMaybe<Scalars['float8']['input']>;
+  total_borrowed?: InputMaybe<Scalars['float8']['input']>;
+  total_remaining?: InputMaybe<Scalars['float8']['input']>;
+  utilisation_rate?: InputMaybe<Scalars['float8']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Gql_Loan_Token_Market_Stats_Sum_Fields = {
+  __typename?: 'gql_loan_token_market_stats_sum_fields';
+  borrowers_count?: Maybe<Scalars['bigint']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_count?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  m_token_id?: Maybe<Scalars['bigint']['output']>;
+  reserve_ratio?: Maybe<Scalars['smallint']['output']>;
+  rewards_earned_total?: Maybe<Scalars['float8']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  utilisation_rate?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Gql_Loan_Token_Market_Stats_Var_Pop_Fields = {
+  __typename?: 'gql_loan_token_market_stats_var_pop_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Gql_Loan_Token_Market_Stats_Var_Samp_Fields = {
+  __typename?: 'gql_loan_token_market_stats_var_samp_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Gql_Loan_Token_Market_Stats_Variance_Fields = {
+  __typename?: 'gql_loan_token_market_stats_variance_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** columns and relationships of "gql_vault_with_balances" */
+export type Gql_Vault_With_Balances = {
+  __typename?: 'gql_vault_with_balances';
+  allowance?: Maybe<Scalars['smallint']['output']>;
+  baker_address?: Maybe<Scalars['String']['output']>;
+  borrow_index?: Maybe<Scalars['float8']['output']>;
+  collateral_json?: Maybe<Scalars['jsonb']['output']>;
+  creation_timestamp?: Maybe<Scalars['timestamptz']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_json?: Maybe<Scalars['jsonb']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  internal_id?: Maybe<Scalars['bigint']['output']>;
+  is_open?: Maybe<Scalars['Boolean']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  last_updated_block_level?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['bigint']['output']>;
+  liquidation_end_level?: Maybe<Scalars['bigint']['output']>;
+  loan_interest_total?: Maybe<Scalars['float8']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['float8']['output']>;
+  loan_principal_total?: Maybe<Scalars['float8']['output']>;
+  loan_token_address?: Maybe<Scalars['String']['output']>;
+  loan_token_id?: Maybe<Scalars['bigint']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['bigint']['output']>;
+  min_repayment_amount?: Maybe<Scalars['float8']['output']>;
+  owner_address?: Maybe<Scalars['String']['output']>;
+  owner_id?: Maybe<Scalars['bigint']['output']>;
+  reserve_ratio?: Maybe<Scalars['smallint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  vault_address?: Maybe<Scalars['String']['output']>;
+  vault_id?: Maybe<Scalars['bigint']['output']>;
+  vault_name?: Maybe<Scalars['String']['output']>;
+};
+
+
+/** columns and relationships of "gql_vault_with_balances" */
+export type Gql_Vault_With_BalancesCollateral_JsonArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+/** columns and relationships of "gql_vault_with_balances" */
+export type Gql_Vault_With_BalancesDepositors_JsonArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregated selection of "gql_vault_with_balances" */
+export type Gql_Vault_With_Balances_Aggregate = {
+  __typename?: 'gql_vault_with_balances_aggregate';
+  aggregate?: Maybe<Gql_Vault_With_Balances_Aggregate_Fields>;
+  nodes: Array<Gql_Vault_With_Balances>;
+};
+
+/** aggregate fields of "gql_vault_with_balances" */
+export type Gql_Vault_With_Balances_Aggregate_Fields = {
+  __typename?: 'gql_vault_with_balances_aggregate_fields';
+  avg?: Maybe<Gql_Vault_With_Balances_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Gql_Vault_With_Balances_Max_Fields>;
+  min?: Maybe<Gql_Vault_With_Balances_Min_Fields>;
+  stddev?: Maybe<Gql_Vault_With_Balances_Stddev_Fields>;
+  stddev_pop?: Maybe<Gql_Vault_With_Balances_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Gql_Vault_With_Balances_Stddev_Samp_Fields>;
+  sum?: Maybe<Gql_Vault_With_Balances_Sum_Fields>;
+  var_pop?: Maybe<Gql_Vault_With_Balances_Var_Pop_Fields>;
+  var_samp?: Maybe<Gql_Vault_With_Balances_Var_Samp_Fields>;
+  variance?: Maybe<Gql_Vault_With_Balances_Variance_Fields>;
+};
+
+
+/** aggregate fields of "gql_vault_with_balances" */
+export type Gql_Vault_With_Balances_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Gql_Vault_With_Balances_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Gql_Vault_With_Balances_Avg_Fields = {
+  __typename?: 'gql_vault_with_balances_avg_fields';
+  allowance?: Maybe<Scalars['Float']['output']>;
+  borrow_index?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  internal_id?: Maybe<Scalars['Float']['output']>;
+  last_updated_block_level?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  liquidation_end_level?: Maybe<Scalars['Float']['output']>;
+  loan_interest_total?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  loan_principal_total?: Maybe<Scalars['Float']['output']>;
+  loan_token_id?: Maybe<Scalars['Float']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['Float']['output']>;
+  min_repayment_amount?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "gql_vault_with_balances". All fields are combined with a logical 'AND'. */
+export type Gql_Vault_With_Balances_Bool_Exp = {
+  _and?: InputMaybe<Array<Gql_Vault_With_Balances_Bool_Exp>>;
+  _not?: InputMaybe<Gql_Vault_With_Balances_Bool_Exp>;
+  _or?: InputMaybe<Array<Gql_Vault_With_Balances_Bool_Exp>>;
+  allowance?: InputMaybe<Smallint_Comparison_Exp>;
+  baker_address?: InputMaybe<String_Comparison_Exp>;
+  borrow_index?: InputMaybe<Float8_Comparison_Exp>;
+  collateral_json?: InputMaybe<Jsonb_Comparison_Exp>;
+  creation_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
+  current_interest_rate?: InputMaybe<Float8_Comparison_Exp>;
+  depositors_json?: InputMaybe<Jsonb_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  internal_id?: InputMaybe<Bigint_Comparison_Exp>;
+  is_open?: InputMaybe<Boolean_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  last_updated_block_level?: InputMaybe<Bigint_Comparison_Exp>;
+  lending_controller_vault_id?: InputMaybe<Bigint_Comparison_Exp>;
+  liquidation_end_level?: InputMaybe<Bigint_Comparison_Exp>;
+  loan_interest_total?: InputMaybe<Float8_Comparison_Exp>;
+  loan_outstanding_total?: InputMaybe<Float8_Comparison_Exp>;
+  loan_principal_total?: InputMaybe<Float8_Comparison_Exp>;
+  loan_token_address?: InputMaybe<String_Comparison_Exp>;
+  loan_token_id?: InputMaybe<Bigint_Comparison_Exp>;
+  marked_for_liquidation_level?: InputMaybe<Bigint_Comparison_Exp>;
+  min_repayment_amount?: InputMaybe<Float8_Comparison_Exp>;
+  owner_address?: InputMaybe<String_Comparison_Exp>;
+  owner_id?: InputMaybe<Bigint_Comparison_Exp>;
+  reserve_ratio?: InputMaybe<Smallint_Comparison_Exp>;
+  token_pool_total?: InputMaybe<Float8_Comparison_Exp>;
+  total_remaining?: InputMaybe<Float8_Comparison_Exp>;
+  vault_address?: InputMaybe<String_Comparison_Exp>;
+  vault_id?: InputMaybe<Bigint_Comparison_Exp>;
+  vault_name?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Gql_Vault_With_Balances_Max_Fields = {
+  __typename?: 'gql_vault_with_balances_max_fields';
+  allowance?: Maybe<Scalars['smallint']['output']>;
+  baker_address?: Maybe<Scalars['String']['output']>;
+  borrow_index?: Maybe<Scalars['float8']['output']>;
+  creation_timestamp?: Maybe<Scalars['timestamptz']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  internal_id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  last_updated_block_level?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['bigint']['output']>;
+  liquidation_end_level?: Maybe<Scalars['bigint']['output']>;
+  loan_interest_total?: Maybe<Scalars['float8']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['float8']['output']>;
+  loan_principal_total?: Maybe<Scalars['float8']['output']>;
+  loan_token_address?: Maybe<Scalars['String']['output']>;
+  loan_token_id?: Maybe<Scalars['bigint']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['bigint']['output']>;
+  min_repayment_amount?: Maybe<Scalars['float8']['output']>;
+  owner_address?: Maybe<Scalars['String']['output']>;
+  owner_id?: Maybe<Scalars['bigint']['output']>;
+  reserve_ratio?: Maybe<Scalars['smallint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  vault_address?: Maybe<Scalars['String']['output']>;
+  vault_id?: Maybe<Scalars['bigint']['output']>;
+  vault_name?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate min on columns */
+export type Gql_Vault_With_Balances_Min_Fields = {
+  __typename?: 'gql_vault_with_balances_min_fields';
+  allowance?: Maybe<Scalars['smallint']['output']>;
+  baker_address?: Maybe<Scalars['String']['output']>;
+  borrow_index?: Maybe<Scalars['float8']['output']>;
+  creation_timestamp?: Maybe<Scalars['timestamptz']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  internal_id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  last_updated_block_level?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['bigint']['output']>;
+  liquidation_end_level?: Maybe<Scalars['bigint']['output']>;
+  loan_interest_total?: Maybe<Scalars['float8']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['float8']['output']>;
+  loan_principal_total?: Maybe<Scalars['float8']['output']>;
+  loan_token_address?: Maybe<Scalars['String']['output']>;
+  loan_token_id?: Maybe<Scalars['bigint']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['bigint']['output']>;
+  min_repayment_amount?: Maybe<Scalars['float8']['output']>;
+  owner_address?: Maybe<Scalars['String']['output']>;
+  owner_id?: Maybe<Scalars['bigint']['output']>;
+  reserve_ratio?: Maybe<Scalars['smallint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  vault_address?: Maybe<Scalars['String']['output']>;
+  vault_id?: Maybe<Scalars['bigint']['output']>;
+  vault_name?: Maybe<Scalars['String']['output']>;
+};
+
+/** Ordering options when selecting data from "gql_vault_with_balances". */
+export type Gql_Vault_With_Balances_Order_By = {
+  allowance?: InputMaybe<Order_By>;
+  baker_address?: InputMaybe<Order_By>;
+  borrow_index?: InputMaybe<Order_By>;
+  collateral_json?: InputMaybe<Order_By>;
+  creation_timestamp?: InputMaybe<Order_By>;
+  current_interest_rate?: InputMaybe<Order_By>;
+  depositors_json?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  internal_id?: InputMaybe<Order_By>;
+  is_open?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  last_updated_block_level?: InputMaybe<Order_By>;
+  lending_controller_vault_id?: InputMaybe<Order_By>;
+  liquidation_end_level?: InputMaybe<Order_By>;
+  loan_interest_total?: InputMaybe<Order_By>;
+  loan_outstanding_total?: InputMaybe<Order_By>;
+  loan_principal_total?: InputMaybe<Order_By>;
+  loan_token_address?: InputMaybe<Order_By>;
+  loan_token_id?: InputMaybe<Order_By>;
+  marked_for_liquidation_level?: InputMaybe<Order_By>;
+  min_repayment_amount?: InputMaybe<Order_By>;
+  owner_address?: InputMaybe<Order_By>;
+  owner_id?: InputMaybe<Order_By>;
+  reserve_ratio?: InputMaybe<Order_By>;
+  token_pool_total?: InputMaybe<Order_By>;
+  total_remaining?: InputMaybe<Order_By>;
+  vault_address?: InputMaybe<Order_By>;
+  vault_id?: InputMaybe<Order_By>;
+  vault_name?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "gql_vault_with_balances" */
+export enum Gql_Vault_With_Balances_Select_Column {
+  /** column name */
+  Allowance = 'allowance',
+  /** column name */
+  BakerAddress = 'baker_address',
+  /** column name */
+  BorrowIndex = 'borrow_index',
+  /** column name */
+  CollateralJson = 'collateral_json',
+  /** column name */
+  CreationTimestamp = 'creation_timestamp',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  DepositorsJson = 'depositors_json',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  InternalId = 'internal_id',
+  /** column name */
+  IsOpen = 'is_open',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  LastUpdatedBlockLevel = 'last_updated_block_level',
+  /** column name */
+  LendingControllerVaultId = 'lending_controller_vault_id',
+  /** column name */
+  LiquidationEndLevel = 'liquidation_end_level',
+  /** column name */
+  LoanInterestTotal = 'loan_interest_total',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  LoanPrincipalTotal = 'loan_principal_total',
+  /** column name */
+  LoanTokenAddress = 'loan_token_address',
+  /** column name */
+  LoanTokenId = 'loan_token_id',
+  /** column name */
+  MarkedForLiquidationLevel = 'marked_for_liquidation_level',
+  /** column name */
+  MinRepaymentAmount = 'min_repayment_amount',
+  /** column name */
+  OwnerAddress = 'owner_address',
+  /** column name */
+  OwnerId = 'owner_id',
+  /** column name */
+  ReserveRatio = 'reserve_ratio',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  VaultAddress = 'vault_address',
+  /** column name */
+  VaultId = 'vault_id',
+  /** column name */
+  VaultName = 'vault_name'
+}
+
+/** aggregate stddev on columns */
+export type Gql_Vault_With_Balances_Stddev_Fields = {
+  __typename?: 'gql_vault_with_balances_stddev_fields';
+  allowance?: Maybe<Scalars['Float']['output']>;
+  borrow_index?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  internal_id?: Maybe<Scalars['Float']['output']>;
+  last_updated_block_level?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  liquidation_end_level?: Maybe<Scalars['Float']['output']>;
+  loan_interest_total?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  loan_principal_total?: Maybe<Scalars['Float']['output']>;
+  loan_token_id?: Maybe<Scalars['Float']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['Float']['output']>;
+  min_repayment_amount?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Gql_Vault_With_Balances_Stddev_Pop_Fields = {
+  __typename?: 'gql_vault_with_balances_stddev_pop_fields';
+  allowance?: Maybe<Scalars['Float']['output']>;
+  borrow_index?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  internal_id?: Maybe<Scalars['Float']['output']>;
+  last_updated_block_level?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  liquidation_end_level?: Maybe<Scalars['Float']['output']>;
+  loan_interest_total?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  loan_principal_total?: Maybe<Scalars['Float']['output']>;
+  loan_token_id?: Maybe<Scalars['Float']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['Float']['output']>;
+  min_repayment_amount?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Gql_Vault_With_Balances_Stddev_Samp_Fields = {
+  __typename?: 'gql_vault_with_balances_stddev_samp_fields';
+  allowance?: Maybe<Scalars['Float']['output']>;
+  borrow_index?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  internal_id?: Maybe<Scalars['Float']['output']>;
+  last_updated_block_level?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  liquidation_end_level?: Maybe<Scalars['Float']['output']>;
+  loan_interest_total?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  loan_principal_total?: Maybe<Scalars['Float']['output']>;
+  loan_token_id?: Maybe<Scalars['Float']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['Float']['output']>;
+  min_repayment_amount?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "gql_vault_with_balances" */
+export type Gql_Vault_With_Balances_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Gql_Vault_With_Balances_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Gql_Vault_With_Balances_Stream_Cursor_Value_Input = {
+  allowance?: InputMaybe<Scalars['smallint']['input']>;
+  baker_address?: InputMaybe<Scalars['String']['input']>;
+  borrow_index?: InputMaybe<Scalars['float8']['input']>;
+  collateral_json?: InputMaybe<Scalars['jsonb']['input']>;
+  creation_timestamp?: InputMaybe<Scalars['timestamptz']['input']>;
+  current_interest_rate?: InputMaybe<Scalars['float8']['input']>;
+  depositors_json?: InputMaybe<Scalars['jsonb']['input']>;
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  internal_id?: InputMaybe<Scalars['bigint']['input']>;
+  is_open?: InputMaybe<Scalars['Boolean']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  last_updated_block_level?: InputMaybe<Scalars['bigint']['input']>;
+  lending_controller_vault_id?: InputMaybe<Scalars['bigint']['input']>;
+  liquidation_end_level?: InputMaybe<Scalars['bigint']['input']>;
+  loan_interest_total?: InputMaybe<Scalars['float8']['input']>;
+  loan_outstanding_total?: InputMaybe<Scalars['float8']['input']>;
+  loan_principal_total?: InputMaybe<Scalars['float8']['input']>;
+  loan_token_address?: InputMaybe<Scalars['String']['input']>;
+  loan_token_id?: InputMaybe<Scalars['bigint']['input']>;
+  marked_for_liquidation_level?: InputMaybe<Scalars['bigint']['input']>;
+  min_repayment_amount?: InputMaybe<Scalars['float8']['input']>;
+  owner_address?: InputMaybe<Scalars['String']['input']>;
+  owner_id?: InputMaybe<Scalars['bigint']['input']>;
+  reserve_ratio?: InputMaybe<Scalars['smallint']['input']>;
+  token_pool_total?: InputMaybe<Scalars['float8']['input']>;
+  total_remaining?: InputMaybe<Scalars['float8']['input']>;
+  vault_address?: InputMaybe<Scalars['String']['input']>;
+  vault_id?: InputMaybe<Scalars['bigint']['input']>;
+  vault_name?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Gql_Vault_With_Balances_Sum_Fields = {
+  __typename?: 'gql_vault_with_balances_sum_fields';
+  allowance?: Maybe<Scalars['smallint']['output']>;
+  borrow_index?: Maybe<Scalars['float8']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  internal_id?: Maybe<Scalars['bigint']['output']>;
+  last_updated_block_level?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['bigint']['output']>;
+  liquidation_end_level?: Maybe<Scalars['bigint']['output']>;
+  loan_interest_total?: Maybe<Scalars['float8']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['float8']['output']>;
+  loan_principal_total?: Maybe<Scalars['float8']['output']>;
+  loan_token_id?: Maybe<Scalars['bigint']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['bigint']['output']>;
+  min_repayment_amount?: Maybe<Scalars['float8']['output']>;
+  owner_id?: Maybe<Scalars['bigint']['output']>;
+  reserve_ratio?: Maybe<Scalars['smallint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  vault_id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Gql_Vault_With_Balances_Var_Pop_Fields = {
+  __typename?: 'gql_vault_with_balances_var_pop_fields';
+  allowance?: Maybe<Scalars['Float']['output']>;
+  borrow_index?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  internal_id?: Maybe<Scalars['Float']['output']>;
+  last_updated_block_level?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  liquidation_end_level?: Maybe<Scalars['Float']['output']>;
+  loan_interest_total?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  loan_principal_total?: Maybe<Scalars['Float']['output']>;
+  loan_token_id?: Maybe<Scalars['Float']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['Float']['output']>;
+  min_repayment_amount?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Gql_Vault_With_Balances_Var_Samp_Fields = {
+  __typename?: 'gql_vault_with_balances_var_samp_fields';
+  allowance?: Maybe<Scalars['Float']['output']>;
+  borrow_index?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  internal_id?: Maybe<Scalars['Float']['output']>;
+  last_updated_block_level?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  liquidation_end_level?: Maybe<Scalars['Float']['output']>;
+  loan_interest_total?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  loan_principal_total?: Maybe<Scalars['Float']['output']>;
+  loan_token_id?: Maybe<Scalars['Float']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['Float']['output']>;
+  min_repayment_amount?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Gql_Vault_With_Balances_Variance_Fields = {
+  __typename?: 'gql_vault_with_balances_variance_fields';
+  allowance?: Maybe<Scalars['Float']['output']>;
+  borrow_index?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  internal_id?: Maybe<Scalars['Float']['output']>;
+  last_updated_block_level?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  liquidation_end_level?: Maybe<Scalars['Float']['output']>;
+  loan_interest_total?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  loan_principal_total?: Maybe<Scalars['Float']['output']>;
+  loan_token_id?: Maybe<Scalars['Float']['output']>;
+  marked_for_liquidation_level?: Maybe<Scalars['Float']['output']>;
+  min_repayment_amount?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  reserve_ratio?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
 export type Jsonb_Cast_Exp = {
   String?: InputMaybe<String_Comparison_Exp>;
 };
@@ -41321,6 +42495,348 @@ export type Lending_Controller_Vault_Variance_Order_By = {
   vault_id?: InputMaybe<Order_By>;
 };
 
+/** columns and relationships of "loan_token_view" */
+export type Loan_Token_View = {
+  __typename?: 'loan_token_view';
+  borrowers_count?: Maybe<Scalars['bigint']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_count?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  loan_token_name?: Maybe<Scalars['String']['output']>;
+  m_token_address?: Maybe<Scalars['String']['output']>;
+  m_token_id?: Maybe<Scalars['bigint']['output']>;
+  paused?: Maybe<Scalars['Boolean']['output']>;
+  rewards_earned_total?: Maybe<Scalars['float8']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  utilisation_rate?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregated selection of "loan_token_view" */
+export type Loan_Token_View_Aggregate = {
+  __typename?: 'loan_token_view_aggregate';
+  aggregate?: Maybe<Loan_Token_View_Aggregate_Fields>;
+  nodes: Array<Loan_Token_View>;
+};
+
+/** aggregate fields of "loan_token_view" */
+export type Loan_Token_View_Aggregate_Fields = {
+  __typename?: 'loan_token_view_aggregate_fields';
+  avg?: Maybe<Loan_Token_View_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Loan_Token_View_Max_Fields>;
+  min?: Maybe<Loan_Token_View_Min_Fields>;
+  stddev?: Maybe<Loan_Token_View_Stddev_Fields>;
+  stddev_pop?: Maybe<Loan_Token_View_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Loan_Token_View_Stddev_Samp_Fields>;
+  sum?: Maybe<Loan_Token_View_Sum_Fields>;
+  var_pop?: Maybe<Loan_Token_View_Var_Pop_Fields>;
+  var_samp?: Maybe<Loan_Token_View_Var_Samp_Fields>;
+  variance?: Maybe<Loan_Token_View_Variance_Fields>;
+};
+
+
+/** aggregate fields of "loan_token_view" */
+export type Loan_Token_View_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Loan_Token_View_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Loan_Token_View_Avg_Fields = {
+  __typename?: 'loan_token_view_avg_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "loan_token_view". All fields are combined with a logical 'AND'. */
+export type Loan_Token_View_Bool_Exp = {
+  _and?: InputMaybe<Array<Loan_Token_View_Bool_Exp>>;
+  _not?: InputMaybe<Loan_Token_View_Bool_Exp>;
+  _or?: InputMaybe<Array<Loan_Token_View_Bool_Exp>>;
+  borrowers_count?: InputMaybe<Bigint_Comparison_Exp>;
+  current_interest_rate?: InputMaybe<Float8_Comparison_Exp>;
+  depositors_count?: InputMaybe<Bigint_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  lending_controller_id?: InputMaybe<Bigint_Comparison_Exp>;
+  loan_token_name?: InputMaybe<String_Comparison_Exp>;
+  m_token_address?: InputMaybe<String_Comparison_Exp>;
+  m_token_id?: InputMaybe<Bigint_Comparison_Exp>;
+  paused?: InputMaybe<Boolean_Comparison_Exp>;
+  rewards_earned_total?: InputMaybe<Float8_Comparison_Exp>;
+  token_address?: InputMaybe<String_Comparison_Exp>;
+  token_id?: InputMaybe<Bigint_Comparison_Exp>;
+  token_pool_total?: InputMaybe<Float8_Comparison_Exp>;
+  total_borrowed?: InputMaybe<Float8_Comparison_Exp>;
+  total_remaining?: InputMaybe<Float8_Comparison_Exp>;
+  utilisation_rate?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Loan_Token_View_Max_Fields = {
+  __typename?: 'loan_token_view_max_fields';
+  borrowers_count?: Maybe<Scalars['bigint']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_count?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  loan_token_name?: Maybe<Scalars['String']['output']>;
+  m_token_address?: Maybe<Scalars['String']['output']>;
+  m_token_id?: Maybe<Scalars['bigint']['output']>;
+  rewards_earned_total?: Maybe<Scalars['float8']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  utilisation_rate?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate min on columns */
+export type Loan_Token_View_Min_Fields = {
+  __typename?: 'loan_token_view_min_fields';
+  borrowers_count?: Maybe<Scalars['bigint']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_count?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  loan_token_name?: Maybe<Scalars['String']['output']>;
+  m_token_address?: Maybe<Scalars['String']['output']>;
+  m_token_id?: Maybe<Scalars['bigint']['output']>;
+  rewards_earned_total?: Maybe<Scalars['float8']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  utilisation_rate?: Maybe<Scalars['float8']['output']>;
+};
+
+/** Ordering options when selecting data from "loan_token_view". */
+export type Loan_Token_View_Order_By = {
+  borrowers_count?: InputMaybe<Order_By>;
+  current_interest_rate?: InputMaybe<Order_By>;
+  depositors_count?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  lending_controller_id?: InputMaybe<Order_By>;
+  loan_token_name?: InputMaybe<Order_By>;
+  m_token_address?: InputMaybe<Order_By>;
+  m_token_id?: InputMaybe<Order_By>;
+  paused?: InputMaybe<Order_By>;
+  rewards_earned_total?: InputMaybe<Order_By>;
+  token_address?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  token_pool_total?: InputMaybe<Order_By>;
+  total_borrowed?: InputMaybe<Order_By>;
+  total_remaining?: InputMaybe<Order_By>;
+  utilisation_rate?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "loan_token_view" */
+export enum Loan_Token_View_Select_Column {
+  /** column name */
+  BorrowersCount = 'borrowers_count',
+  /** column name */
+  CurrentInterestRate = 'current_interest_rate',
+  /** column name */
+  DepositorsCount = 'depositors_count',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  LendingControllerId = 'lending_controller_id',
+  /** column name */
+  LoanTokenName = 'loan_token_name',
+  /** column name */
+  MTokenAddress = 'm_token_address',
+  /** column name */
+  MTokenId = 'm_token_id',
+  /** column name */
+  Paused = 'paused',
+  /** column name */
+  RewardsEarnedTotal = 'rewards_earned_total',
+  /** column name */
+  TokenAddress = 'token_address',
+  /** column name */
+  TokenId = 'token_id',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  TotalRemaining = 'total_remaining',
+  /** column name */
+  UtilisationRate = 'utilisation_rate'
+}
+
+/** aggregate stddev on columns */
+export type Loan_Token_View_Stddev_Fields = {
+  __typename?: 'loan_token_view_stddev_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Loan_Token_View_Stddev_Pop_Fields = {
+  __typename?: 'loan_token_view_stddev_pop_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Loan_Token_View_Stddev_Samp_Fields = {
+  __typename?: 'loan_token_view_stddev_samp_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "loan_token_view" */
+export type Loan_Token_View_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Loan_Token_View_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Loan_Token_View_Stream_Cursor_Value_Input = {
+  borrowers_count?: InputMaybe<Scalars['bigint']['input']>;
+  current_interest_rate?: InputMaybe<Scalars['float8']['input']>;
+  depositors_count?: InputMaybe<Scalars['bigint']['input']>;
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  lending_controller_id?: InputMaybe<Scalars['bigint']['input']>;
+  loan_token_name?: InputMaybe<Scalars['String']['input']>;
+  m_token_address?: InputMaybe<Scalars['String']['input']>;
+  m_token_id?: InputMaybe<Scalars['bigint']['input']>;
+  paused?: InputMaybe<Scalars['Boolean']['input']>;
+  rewards_earned_total?: InputMaybe<Scalars['float8']['input']>;
+  token_address?: InputMaybe<Scalars['String']['input']>;
+  token_id?: InputMaybe<Scalars['bigint']['input']>;
+  token_pool_total?: InputMaybe<Scalars['float8']['input']>;
+  total_borrowed?: InputMaybe<Scalars['float8']['input']>;
+  total_remaining?: InputMaybe<Scalars['float8']['input']>;
+  utilisation_rate?: InputMaybe<Scalars['float8']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Loan_Token_View_Sum_Fields = {
+  __typename?: 'loan_token_view_sum_fields';
+  borrowers_count?: Maybe<Scalars['bigint']['output']>;
+  current_interest_rate?: Maybe<Scalars['float8']['output']>;
+  depositors_count?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_id?: Maybe<Scalars['bigint']['output']>;
+  m_token_id?: Maybe<Scalars['bigint']['output']>;
+  rewards_earned_total?: Maybe<Scalars['float8']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  total_remaining?: Maybe<Scalars['float8']['output']>;
+  utilisation_rate?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Loan_Token_View_Var_Pop_Fields = {
+  __typename?: 'loan_token_view_var_pop_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Loan_Token_View_Var_Samp_Fields = {
+  __typename?: 'loan_token_view_var_samp_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Loan_Token_View_Variance_Fields = {
+  __typename?: 'loan_token_view_variance_fields';
+  borrowers_count?: Maybe<Scalars['Float']['output']>;
+  current_interest_rate?: Maybe<Scalars['Float']['output']>;
+  depositors_count?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_id?: Maybe<Scalars['Float']['output']>;
+  m_token_id?: Maybe<Scalars['Float']['output']>;
+  rewards_earned_total?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  total_remaining?: Maybe<Scalars['Float']['output']>;
+  utilisation_rate?: Maybe<Scalars['Float']['output']>;
+};
+
 /** columns and relationships of "m_token" */
 export type M_Token = {
   __typename?: 'm_token';
@@ -41330,18 +42846,26 @@ export type M_Token = {
   accounts_aggregate: M_Token_Account_Aggregate;
   address: Scalars['String']['output'];
   admin: Scalars['String']['output'];
+  /** An array relationship */
+  general_contracts: Array<M_Token_General_Contract>;
+  /** An aggregate relationship */
+  general_contracts_aggregate: M_Token_General_Contract_Aggregate;
   /** An object relationship */
   governance: Governance;
   governance_id: Scalars['bigint']['output'];
   id: Scalars['bigint']['output'];
   is_scaled_token: Scalars['Boolean']['output'];
+  /** An array relationship */
+  lambdas: Array<M_Token_Lambda>;
+  /** An aggregate relationship */
+  lambdas_aggregate: M_Token_Lambda_Aggregate;
   last_updated_at: Scalars['timestamptz']['output'];
   /** An array relationship */
   lending_controller_loan_tokens: Array<Lending_Controller_Loan_Token>;
   /** An aggregate relationship */
   lending_controller_loan_tokens_aggregate: Lending_Controller_Loan_Token_Aggregate;
   loan_token_name: Scalars['String']['output'];
-  metadata?: Maybe<Scalars['jsonb']['output']>;
+  metadata: Scalars['jsonb']['output'];
   network: Scalars['String']['output'];
   /** An array relationship */
   operators: Array<M_Token_Operator>;
@@ -41376,6 +42900,46 @@ export type M_TokenAccounts_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<M_Token_Account_Order_By>>;
   where?: InputMaybe<M_Token_Account_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token" */
+export type M_TokenGeneral_ContractsArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_General_Contract_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_General_Contract_Order_By>>;
+  where?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token" */
+export type M_TokenGeneral_Contracts_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_General_Contract_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_General_Contract_Order_By>>;
+  where?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token" */
+export type M_TokenLambdasArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_Lambda_Order_By>>;
+  where?: InputMaybe<M_Token_Lambda_Bool_Exp>;
+};
+
+
+/** columns and relationships of "m_token" */
+export type M_TokenLambdas_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_Lambda_Order_By>>;
+  where?: InputMaybe<M_Token_Lambda_Bool_Exp>;
 };
 
 
@@ -42701,10 +44265,14 @@ export type M_Token_Bool_Exp = {
   accounts_aggregate?: InputMaybe<M_Token_Account_Aggregate_Bool_Exp>;
   address?: InputMaybe<String_Comparison_Exp>;
   admin?: InputMaybe<String_Comparison_Exp>;
+  general_contracts?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+  general_contracts_aggregate?: InputMaybe<M_Token_General_Contract_Aggregate_Bool_Exp>;
   governance?: InputMaybe<Governance_Bool_Exp>;
   governance_id?: InputMaybe<Bigint_Comparison_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
   is_scaled_token?: InputMaybe<Boolean_Comparison_Exp>;
+  lambdas?: InputMaybe<M_Token_Lambda_Bool_Exp>;
+  lambdas_aggregate?: InputMaybe<M_Token_Lambda_Aggregate_Bool_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
   lending_controller_loan_tokens?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
   lending_controller_loan_tokens_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp>;
@@ -42719,6 +44287,524 @@ export type M_Token_Bool_Exp = {
   total_supply?: InputMaybe<Float8_Comparison_Exp>;
   whitelist_contracts?: InputMaybe<M_Token_Whitelist_Contract_Bool_Exp>;
   whitelist_contracts_aggregate?: InputMaybe<M_Token_Whitelist_Contract_Aggregate_Bool_Exp>;
+};
+
+/** columns and relationships of "m_token_general_contract" */
+export type M_Token_General_Contract = {
+  __typename?: 'm_token_general_contract';
+  /** An object relationship */
+  contract: M_Token;
+  contract_address: Scalars['String']['output'];
+  contract_id: Scalars['bigint']['output'];
+  contract_name: Scalars['String']['output'];
+  id: Scalars['bigint']['output'];
+};
+
+/** aggregated selection of "m_token_general_contract" */
+export type M_Token_General_Contract_Aggregate = {
+  __typename?: 'm_token_general_contract_aggregate';
+  aggregate?: Maybe<M_Token_General_Contract_Aggregate_Fields>;
+  nodes: Array<M_Token_General_Contract>;
+};
+
+export type M_Token_General_Contract_Aggregate_Bool_Exp = {
+  count?: InputMaybe<M_Token_General_Contract_Aggregate_Bool_Exp_Count>;
+};
+
+export type M_Token_General_Contract_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<M_Token_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "m_token_general_contract" */
+export type M_Token_General_Contract_Aggregate_Fields = {
+  __typename?: 'm_token_general_contract_aggregate_fields';
+  avg?: Maybe<M_Token_General_Contract_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<M_Token_General_Contract_Max_Fields>;
+  min?: Maybe<M_Token_General_Contract_Min_Fields>;
+  stddev?: Maybe<M_Token_General_Contract_Stddev_Fields>;
+  stddev_pop?: Maybe<M_Token_General_Contract_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<M_Token_General_Contract_Stddev_Samp_Fields>;
+  sum?: Maybe<M_Token_General_Contract_Sum_Fields>;
+  var_pop?: Maybe<M_Token_General_Contract_Var_Pop_Fields>;
+  var_samp?: Maybe<M_Token_General_Contract_Var_Samp_Fields>;
+  variance?: Maybe<M_Token_General_Contract_Variance_Fields>;
+};
+
+
+/** aggregate fields of "m_token_general_contract" */
+export type M_Token_General_Contract_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<M_Token_General_Contract_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "m_token_general_contract" */
+export type M_Token_General_Contract_Aggregate_Order_By = {
+  avg?: InputMaybe<M_Token_General_Contract_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<M_Token_General_Contract_Max_Order_By>;
+  min?: InputMaybe<M_Token_General_Contract_Min_Order_By>;
+  stddev?: InputMaybe<M_Token_General_Contract_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<M_Token_General_Contract_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<M_Token_General_Contract_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<M_Token_General_Contract_Sum_Order_By>;
+  var_pop?: InputMaybe<M_Token_General_Contract_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<M_Token_General_Contract_Var_Samp_Order_By>;
+  variance?: InputMaybe<M_Token_General_Contract_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type M_Token_General_Contract_Avg_Fields = {
+  __typename?: 'm_token_general_contract_avg_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Avg_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "m_token_general_contract". All fields are combined with a logical 'AND'. */
+export type M_Token_General_Contract_Bool_Exp = {
+  _and?: InputMaybe<Array<M_Token_General_Contract_Bool_Exp>>;
+  _not?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+  _or?: InputMaybe<Array<M_Token_General_Contract_Bool_Exp>>;
+  contract?: InputMaybe<M_Token_Bool_Exp>;
+  contract_address?: InputMaybe<String_Comparison_Exp>;
+  contract_id?: InputMaybe<Bigint_Comparison_Exp>;
+  contract_name?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type M_Token_General_Contract_Max_Fields = {
+  __typename?: 'm_token_general_contract_max_fields';
+  contract_address?: Maybe<Scalars['String']['output']>;
+  contract_id?: Maybe<Scalars['bigint']['output']>;
+  contract_name?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** order by max() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Max_Order_By = {
+  contract_address?: InputMaybe<Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  contract_name?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type M_Token_General_Contract_Min_Fields = {
+  __typename?: 'm_token_general_contract_min_fields';
+  contract_address?: Maybe<Scalars['String']['output']>;
+  contract_id?: Maybe<Scalars['bigint']['output']>;
+  contract_name?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** order by min() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Min_Order_By = {
+  contract_address?: InputMaybe<Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  contract_name?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "m_token_general_contract". */
+export type M_Token_General_Contract_Order_By = {
+  contract?: InputMaybe<M_Token_Order_By>;
+  contract_address?: InputMaybe<Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  contract_name?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "m_token_general_contract" */
+export enum M_Token_General_Contract_Select_Column {
+  /** column name */
+  ContractAddress = 'contract_address',
+  /** column name */
+  ContractId = 'contract_id',
+  /** column name */
+  ContractName = 'contract_name',
+  /** column name */
+  Id = 'id'
+}
+
+/** aggregate stddev on columns */
+export type M_Token_General_Contract_Stddev_Fields = {
+  __typename?: 'm_token_general_contract_stddev_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Stddev_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type M_Token_General_Contract_Stddev_Pop_Fields = {
+  __typename?: 'm_token_general_contract_stddev_pop_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Stddev_Pop_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type M_Token_General_Contract_Stddev_Samp_Fields = {
+  __typename?: 'm_token_general_contract_stddev_samp_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Stddev_Samp_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "m_token_general_contract" */
+export type M_Token_General_Contract_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: M_Token_General_Contract_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type M_Token_General_Contract_Stream_Cursor_Value_Input = {
+  contract_address?: InputMaybe<Scalars['String']['input']>;
+  contract_id?: InputMaybe<Scalars['bigint']['input']>;
+  contract_name?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['bigint']['input']>;
+};
+
+/** aggregate sum on columns */
+export type M_Token_General_Contract_Sum_Fields = {
+  __typename?: 'm_token_general_contract_sum_fields';
+  contract_id?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** order by sum() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Sum_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type M_Token_General_Contract_Var_Pop_Fields = {
+  __typename?: 'm_token_general_contract_var_pop_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Var_Pop_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type M_Token_General_Contract_Var_Samp_Fields = {
+  __typename?: 'm_token_general_contract_var_samp_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Var_Samp_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type M_Token_General_Contract_Variance_Fields = {
+  __typename?: 'm_token_general_contract_variance_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "m_token_general_contract" */
+export type M_Token_General_Contract_Variance_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** columns and relationships of "m_token_lambda" */
+export type M_Token_Lambda = {
+  __typename?: 'm_token_lambda';
+  /** An object relationship */
+  contract: M_Token;
+  contract_id: Scalars['bigint']['output'];
+  id: Scalars['bigint']['output'];
+  lambda_bytes: Scalars['String']['output'];
+  lambda_name: Scalars['String']['output'];
+  last_updated_at: Scalars['timestamptz']['output'];
+};
+
+/** aggregated selection of "m_token_lambda" */
+export type M_Token_Lambda_Aggregate = {
+  __typename?: 'm_token_lambda_aggregate';
+  aggregate?: Maybe<M_Token_Lambda_Aggregate_Fields>;
+  nodes: Array<M_Token_Lambda>;
+};
+
+export type M_Token_Lambda_Aggregate_Bool_Exp = {
+  count?: InputMaybe<M_Token_Lambda_Aggregate_Bool_Exp_Count>;
+};
+
+export type M_Token_Lambda_Aggregate_Bool_Exp_Count = {
+  arguments?: InputMaybe<Array<M_Token_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<M_Token_Lambda_Bool_Exp>;
+  predicate: Int_Comparison_Exp;
+};
+
+/** aggregate fields of "m_token_lambda" */
+export type M_Token_Lambda_Aggregate_Fields = {
+  __typename?: 'm_token_lambda_aggregate_fields';
+  avg?: Maybe<M_Token_Lambda_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<M_Token_Lambda_Max_Fields>;
+  min?: Maybe<M_Token_Lambda_Min_Fields>;
+  stddev?: Maybe<M_Token_Lambda_Stddev_Fields>;
+  stddev_pop?: Maybe<M_Token_Lambda_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<M_Token_Lambda_Stddev_Samp_Fields>;
+  sum?: Maybe<M_Token_Lambda_Sum_Fields>;
+  var_pop?: Maybe<M_Token_Lambda_Var_Pop_Fields>;
+  var_samp?: Maybe<M_Token_Lambda_Var_Samp_Fields>;
+  variance?: Maybe<M_Token_Lambda_Variance_Fields>;
+};
+
+
+/** aggregate fields of "m_token_lambda" */
+export type M_Token_Lambda_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<M_Token_Lambda_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** order by aggregate values of table "m_token_lambda" */
+export type M_Token_Lambda_Aggregate_Order_By = {
+  avg?: InputMaybe<M_Token_Lambda_Avg_Order_By>;
+  count?: InputMaybe<Order_By>;
+  max?: InputMaybe<M_Token_Lambda_Max_Order_By>;
+  min?: InputMaybe<M_Token_Lambda_Min_Order_By>;
+  stddev?: InputMaybe<M_Token_Lambda_Stddev_Order_By>;
+  stddev_pop?: InputMaybe<M_Token_Lambda_Stddev_Pop_Order_By>;
+  stddev_samp?: InputMaybe<M_Token_Lambda_Stddev_Samp_Order_By>;
+  sum?: InputMaybe<M_Token_Lambda_Sum_Order_By>;
+  var_pop?: InputMaybe<M_Token_Lambda_Var_Pop_Order_By>;
+  var_samp?: InputMaybe<M_Token_Lambda_Var_Samp_Order_By>;
+  variance?: InputMaybe<M_Token_Lambda_Variance_Order_By>;
+};
+
+/** aggregate avg on columns */
+export type M_Token_Lambda_Avg_Fields = {
+  __typename?: 'm_token_lambda_avg_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by avg() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Avg_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** Boolean expression to filter rows from the table "m_token_lambda". All fields are combined with a logical 'AND'. */
+export type M_Token_Lambda_Bool_Exp = {
+  _and?: InputMaybe<Array<M_Token_Lambda_Bool_Exp>>;
+  _not?: InputMaybe<M_Token_Lambda_Bool_Exp>;
+  _or?: InputMaybe<Array<M_Token_Lambda_Bool_Exp>>;
+  contract?: InputMaybe<M_Token_Bool_Exp>;
+  contract_id?: InputMaybe<Bigint_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  lambda_bytes?: InputMaybe<String_Comparison_Exp>;
+  lambda_name?: InputMaybe<String_Comparison_Exp>;
+  last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type M_Token_Lambda_Max_Fields = {
+  __typename?: 'm_token_lambda_max_fields';
+  contract_id?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  lambda_bytes?: Maybe<Scalars['String']['output']>;
+  lambda_name?: Maybe<Scalars['String']['output']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** order by max() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Max_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** aggregate min on columns */
+export type M_Token_Lambda_Min_Fields = {
+  __typename?: 'm_token_lambda_min_fields';
+  contract_id?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  lambda_bytes?: Maybe<Scalars['String']['output']>;
+  lambda_name?: Maybe<Scalars['String']['output']>;
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** order by min() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Min_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** Ordering options when selecting data from "m_token_lambda". */
+export type M_Token_Lambda_Order_By = {
+  contract?: InputMaybe<M_Token_Order_By>;
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  lambda_bytes?: InputMaybe<Order_By>;
+  lambda_name?: InputMaybe<Order_By>;
+  last_updated_at?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "m_token_lambda" */
+export enum M_Token_Lambda_Select_Column {
+  /** column name */
+  ContractId = 'contract_id',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LambdaBytes = 'lambda_bytes',
+  /** column name */
+  LambdaName = 'lambda_name',
+  /** column name */
+  LastUpdatedAt = 'last_updated_at'
+}
+
+/** aggregate stddev on columns */
+export type M_Token_Lambda_Stddev_Fields = {
+  __typename?: 'm_token_lambda_stddev_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Stddev_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_pop on columns */
+export type M_Token_Lambda_Stddev_Pop_Fields = {
+  __typename?: 'm_token_lambda_stddev_pop_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_pop() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Stddev_Pop_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate stddev_samp on columns */
+export type M_Token_Lambda_Stddev_Samp_Fields = {
+  __typename?: 'm_token_lambda_stddev_samp_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by stddev_samp() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Stddev_Samp_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** Streaming cursor of the table "m_token_lambda" */
+export type M_Token_Lambda_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: M_Token_Lambda_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type M_Token_Lambda_Stream_Cursor_Value_Input = {
+  contract_id?: InputMaybe<Scalars['bigint']['input']>;
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  lambda_bytes?: InputMaybe<Scalars['String']['input']>;
+  lambda_name?: InputMaybe<Scalars['String']['input']>;
+  last_updated_at?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate sum on columns */
+export type M_Token_Lambda_Sum_Fields = {
+  __typename?: 'm_token_lambda_sum_fields';
+  contract_id?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** order by sum() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Sum_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_pop on columns */
+export type M_Token_Lambda_Var_Pop_Fields = {
+  __typename?: 'm_token_lambda_var_pop_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_pop() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Var_Pop_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate var_samp on columns */
+export type M_Token_Lambda_Var_Samp_Fields = {
+  __typename?: 'm_token_lambda_var_samp_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by var_samp() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Var_Samp_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+};
+
+/** aggregate variance on columns */
+export type M_Token_Lambda_Variance_Fields = {
+  __typename?: 'm_token_lambda_variance_fields';
+  contract_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** order by variance() on columns of table "m_token_lambda" */
+export type M_Token_Lambda_Variance_Order_By = {
+  contract_id?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
 };
 
 /** aggregate max on columns */
@@ -43078,10 +45164,12 @@ export type M_Token_Order_By = {
   accounts_aggregate?: InputMaybe<M_Token_Account_Aggregate_Order_By>;
   address?: InputMaybe<Order_By>;
   admin?: InputMaybe<Order_By>;
+  general_contracts_aggregate?: InputMaybe<M_Token_General_Contract_Aggregate_Order_By>;
   governance?: InputMaybe<Governance_Order_By>;
   governance_id?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   is_scaled_token?: InputMaybe<Order_By>;
+  lambdas_aggregate?: InputMaybe<M_Token_Lambda_Aggregate_Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
   lending_controller_loan_tokens_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Order_By>;
   loan_token_name?: InputMaybe<Order_By>;
@@ -47274,6 +49362,32 @@ export type Mvn_Transfer_History_Data_Variance_Order_By = {
   to__id?: InputMaybe<Order_By>;
 };
 
+/** Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'. */
+export type Numeric_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['numeric']['input']>;
+  _gt?: InputMaybe<Scalars['numeric']['input']>;
+  _gte?: InputMaybe<Scalars['numeric']['input']>;
+  _in?: InputMaybe<Array<Scalars['numeric']['input']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
+  _lt?: InputMaybe<Scalars['numeric']['input']>;
+  _lte?: InputMaybe<Scalars['numeric']['input']>;
+  _neq?: InputMaybe<Scalars['numeric']['input']>;
+  _nin?: InputMaybe<Array<Scalars['numeric']['input']>>;
+};
+
+/** Boolean expression to compare columns of type "oid". All fields are combined with logical 'AND'. */
+export type Oid_Comparison_Exp = {
+  _eq?: InputMaybe<Scalars['oid']['input']>;
+  _gt?: InputMaybe<Scalars['oid']['input']>;
+  _gte?: InputMaybe<Scalars['oid']['input']>;
+  _in?: InputMaybe<Array<Scalars['oid']['input']>>;
+  _is_null?: InputMaybe<Scalars['Boolean']['input']>;
+  _lt?: InputMaybe<Scalars['oid']['input']>;
+  _lte?: InputMaybe<Scalars['oid']['input']>;
+  _neq?: InputMaybe<Scalars['oid']['input']>;
+  _nin?: InputMaybe<Array<Scalars['oid']['input']>>;
+};
+
 /** column ordering options */
 export enum Order_By {
   /** in ascending order, nulls last */
@@ -47289,6 +49403,904 @@ export enum Order_By {
   /** in descending order, nulls last */
   DescNullsLast = 'desc_nulls_last'
 }
+
+/** columns and relationships of "pg_stat_statements" */
+export type Pg_Stat_Statements = {
+  __typename?: 'pg_stat_statements';
+  blk_read_time?: Maybe<Scalars['float8']['output']>;
+  blk_write_time?: Maybe<Scalars['float8']['output']>;
+  calls?: Maybe<Scalars['bigint']['output']>;
+  dbid?: Maybe<Scalars['oid']['output']>;
+  jit_emission_count?: Maybe<Scalars['bigint']['output']>;
+  jit_emission_time?: Maybe<Scalars['float8']['output']>;
+  jit_functions?: Maybe<Scalars['bigint']['output']>;
+  jit_generation_time?: Maybe<Scalars['float8']['output']>;
+  jit_inlining_count?: Maybe<Scalars['bigint']['output']>;
+  jit_inlining_time?: Maybe<Scalars['float8']['output']>;
+  jit_optimization_count?: Maybe<Scalars['bigint']['output']>;
+  jit_optimization_time?: Maybe<Scalars['float8']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['bigint']['output']>;
+  local_blks_hit?: Maybe<Scalars['bigint']['output']>;
+  local_blks_read?: Maybe<Scalars['bigint']['output']>;
+  local_blks_written?: Maybe<Scalars['bigint']['output']>;
+  max_exec_time?: Maybe<Scalars['float8']['output']>;
+  max_plan_time?: Maybe<Scalars['float8']['output']>;
+  mean_exec_time?: Maybe<Scalars['float8']['output']>;
+  mean_plan_time?: Maybe<Scalars['float8']['output']>;
+  min_exec_time?: Maybe<Scalars['float8']['output']>;
+  min_plan_time?: Maybe<Scalars['float8']['output']>;
+  plans?: Maybe<Scalars['bigint']['output']>;
+  query?: Maybe<Scalars['String']['output']>;
+  queryid?: Maybe<Scalars['bigint']['output']>;
+  rows?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_hit?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_read?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_written?: Maybe<Scalars['bigint']['output']>;
+  stddev_exec_time?: Maybe<Scalars['float8']['output']>;
+  stddev_plan_time?: Maybe<Scalars['float8']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['float8']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['float8']['output']>;
+  temp_blks_read?: Maybe<Scalars['bigint']['output']>;
+  temp_blks_written?: Maybe<Scalars['bigint']['output']>;
+  toplevel?: Maybe<Scalars['Boolean']['output']>;
+  total_exec_time?: Maybe<Scalars['float8']['output']>;
+  total_plan_time?: Maybe<Scalars['float8']['output']>;
+  userid?: Maybe<Scalars['oid']['output']>;
+  wal_bytes?: Maybe<Scalars['numeric']['output']>;
+  wal_fpi?: Maybe<Scalars['bigint']['output']>;
+  wal_records?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregated selection of "pg_stat_statements" */
+export type Pg_Stat_Statements_Aggregate = {
+  __typename?: 'pg_stat_statements_aggregate';
+  aggregate?: Maybe<Pg_Stat_Statements_Aggregate_Fields>;
+  nodes: Array<Pg_Stat_Statements>;
+};
+
+/** aggregate fields of "pg_stat_statements" */
+export type Pg_Stat_Statements_Aggregate_Fields = {
+  __typename?: 'pg_stat_statements_aggregate_fields';
+  avg?: Maybe<Pg_Stat_Statements_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Pg_Stat_Statements_Max_Fields>;
+  min?: Maybe<Pg_Stat_Statements_Min_Fields>;
+  stddev?: Maybe<Pg_Stat_Statements_Stddev_Fields>;
+  stddev_pop?: Maybe<Pg_Stat_Statements_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Pg_Stat_Statements_Stddev_Samp_Fields>;
+  sum?: Maybe<Pg_Stat_Statements_Sum_Fields>;
+  var_pop?: Maybe<Pg_Stat_Statements_Var_Pop_Fields>;
+  var_samp?: Maybe<Pg_Stat_Statements_Var_Samp_Fields>;
+  variance?: Maybe<Pg_Stat_Statements_Variance_Fields>;
+};
+
+
+/** aggregate fields of "pg_stat_statements" */
+export type Pg_Stat_Statements_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Pg_Stat_Statements_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Pg_Stat_Statements_Avg_Fields = {
+  __typename?: 'pg_stat_statements_avg_fields';
+  blk_read_time?: Maybe<Scalars['Float']['output']>;
+  blk_write_time?: Maybe<Scalars['Float']['output']>;
+  calls?: Maybe<Scalars['Float']['output']>;
+  jit_emission_count?: Maybe<Scalars['Float']['output']>;
+  jit_emission_time?: Maybe<Scalars['Float']['output']>;
+  jit_functions?: Maybe<Scalars['Float']['output']>;
+  jit_generation_time?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_count?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_time?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_count?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_time?: Maybe<Scalars['Float']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  local_blks_hit?: Maybe<Scalars['Float']['output']>;
+  local_blks_read?: Maybe<Scalars['Float']['output']>;
+  local_blks_written?: Maybe<Scalars['Float']['output']>;
+  max_exec_time?: Maybe<Scalars['Float']['output']>;
+  max_plan_time?: Maybe<Scalars['Float']['output']>;
+  mean_exec_time?: Maybe<Scalars['Float']['output']>;
+  mean_plan_time?: Maybe<Scalars['Float']['output']>;
+  min_exec_time?: Maybe<Scalars['Float']['output']>;
+  min_plan_time?: Maybe<Scalars['Float']['output']>;
+  plans?: Maybe<Scalars['Float']['output']>;
+  queryid?: Maybe<Scalars['Float']['output']>;
+  rows?: Maybe<Scalars['Float']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  shared_blks_hit?: Maybe<Scalars['Float']['output']>;
+  shared_blks_read?: Maybe<Scalars['Float']['output']>;
+  shared_blks_written?: Maybe<Scalars['Float']['output']>;
+  stddev_exec_time?: Maybe<Scalars['Float']['output']>;
+  stddev_plan_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['Float']['output']>;
+  temp_blks_read?: Maybe<Scalars['Float']['output']>;
+  temp_blks_written?: Maybe<Scalars['Float']['output']>;
+  total_exec_time?: Maybe<Scalars['Float']['output']>;
+  total_plan_time?: Maybe<Scalars['Float']['output']>;
+  wal_bytes?: Maybe<Scalars['Float']['output']>;
+  wal_fpi?: Maybe<Scalars['Float']['output']>;
+  wal_records?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "pg_stat_statements". All fields are combined with a logical 'AND'. */
+export type Pg_Stat_Statements_Bool_Exp = {
+  _and?: InputMaybe<Array<Pg_Stat_Statements_Bool_Exp>>;
+  _not?: InputMaybe<Pg_Stat_Statements_Bool_Exp>;
+  _or?: InputMaybe<Array<Pg_Stat_Statements_Bool_Exp>>;
+  blk_read_time?: InputMaybe<Float8_Comparison_Exp>;
+  blk_write_time?: InputMaybe<Float8_Comparison_Exp>;
+  calls?: InputMaybe<Bigint_Comparison_Exp>;
+  dbid?: InputMaybe<Oid_Comparison_Exp>;
+  jit_emission_count?: InputMaybe<Bigint_Comparison_Exp>;
+  jit_emission_time?: InputMaybe<Float8_Comparison_Exp>;
+  jit_functions?: InputMaybe<Bigint_Comparison_Exp>;
+  jit_generation_time?: InputMaybe<Float8_Comparison_Exp>;
+  jit_inlining_count?: InputMaybe<Bigint_Comparison_Exp>;
+  jit_inlining_time?: InputMaybe<Float8_Comparison_Exp>;
+  jit_optimization_count?: InputMaybe<Bigint_Comparison_Exp>;
+  jit_optimization_time?: InputMaybe<Float8_Comparison_Exp>;
+  local_blks_dirtied?: InputMaybe<Bigint_Comparison_Exp>;
+  local_blks_hit?: InputMaybe<Bigint_Comparison_Exp>;
+  local_blks_read?: InputMaybe<Bigint_Comparison_Exp>;
+  local_blks_written?: InputMaybe<Bigint_Comparison_Exp>;
+  max_exec_time?: InputMaybe<Float8_Comparison_Exp>;
+  max_plan_time?: InputMaybe<Float8_Comparison_Exp>;
+  mean_exec_time?: InputMaybe<Float8_Comparison_Exp>;
+  mean_plan_time?: InputMaybe<Float8_Comparison_Exp>;
+  min_exec_time?: InputMaybe<Float8_Comparison_Exp>;
+  min_plan_time?: InputMaybe<Float8_Comparison_Exp>;
+  plans?: InputMaybe<Bigint_Comparison_Exp>;
+  query?: InputMaybe<String_Comparison_Exp>;
+  queryid?: InputMaybe<Bigint_Comparison_Exp>;
+  rows?: InputMaybe<Bigint_Comparison_Exp>;
+  shared_blks_dirtied?: InputMaybe<Bigint_Comparison_Exp>;
+  shared_blks_hit?: InputMaybe<Bigint_Comparison_Exp>;
+  shared_blks_read?: InputMaybe<Bigint_Comparison_Exp>;
+  shared_blks_written?: InputMaybe<Bigint_Comparison_Exp>;
+  stddev_exec_time?: InputMaybe<Float8_Comparison_Exp>;
+  stddev_plan_time?: InputMaybe<Float8_Comparison_Exp>;
+  temp_blk_read_time?: InputMaybe<Float8_Comparison_Exp>;
+  temp_blk_write_time?: InputMaybe<Float8_Comparison_Exp>;
+  temp_blks_read?: InputMaybe<Bigint_Comparison_Exp>;
+  temp_blks_written?: InputMaybe<Bigint_Comparison_Exp>;
+  toplevel?: InputMaybe<Boolean_Comparison_Exp>;
+  total_exec_time?: InputMaybe<Float8_Comparison_Exp>;
+  total_plan_time?: InputMaybe<Float8_Comparison_Exp>;
+  userid?: InputMaybe<Oid_Comparison_Exp>;
+  wal_bytes?: InputMaybe<Numeric_Comparison_Exp>;
+  wal_fpi?: InputMaybe<Bigint_Comparison_Exp>;
+  wal_records?: InputMaybe<Bigint_Comparison_Exp>;
+};
+
+/** columns and relationships of "pg_stat_statements_info" */
+export type Pg_Stat_Statements_Info = {
+  __typename?: 'pg_stat_statements_info';
+  dealloc?: Maybe<Scalars['bigint']['output']>;
+  stats_reset?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** aggregated selection of "pg_stat_statements_info" */
+export type Pg_Stat_Statements_Info_Aggregate = {
+  __typename?: 'pg_stat_statements_info_aggregate';
+  aggregate?: Maybe<Pg_Stat_Statements_Info_Aggregate_Fields>;
+  nodes: Array<Pg_Stat_Statements_Info>;
+};
+
+/** aggregate fields of "pg_stat_statements_info" */
+export type Pg_Stat_Statements_Info_Aggregate_Fields = {
+  __typename?: 'pg_stat_statements_info_aggregate_fields';
+  avg?: Maybe<Pg_Stat_Statements_Info_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Pg_Stat_Statements_Info_Max_Fields>;
+  min?: Maybe<Pg_Stat_Statements_Info_Min_Fields>;
+  stddev?: Maybe<Pg_Stat_Statements_Info_Stddev_Fields>;
+  stddev_pop?: Maybe<Pg_Stat_Statements_Info_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Pg_Stat_Statements_Info_Stddev_Samp_Fields>;
+  sum?: Maybe<Pg_Stat_Statements_Info_Sum_Fields>;
+  var_pop?: Maybe<Pg_Stat_Statements_Info_Var_Pop_Fields>;
+  var_samp?: Maybe<Pg_Stat_Statements_Info_Var_Samp_Fields>;
+  variance?: Maybe<Pg_Stat_Statements_Info_Variance_Fields>;
+};
+
+
+/** aggregate fields of "pg_stat_statements_info" */
+export type Pg_Stat_Statements_Info_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Pg_Stat_Statements_Info_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Pg_Stat_Statements_Info_Avg_Fields = {
+  __typename?: 'pg_stat_statements_info_avg_fields';
+  dealloc?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "pg_stat_statements_info". All fields are combined with a logical 'AND'. */
+export type Pg_Stat_Statements_Info_Bool_Exp = {
+  _and?: InputMaybe<Array<Pg_Stat_Statements_Info_Bool_Exp>>;
+  _not?: InputMaybe<Pg_Stat_Statements_Info_Bool_Exp>;
+  _or?: InputMaybe<Array<Pg_Stat_Statements_Info_Bool_Exp>>;
+  dealloc?: InputMaybe<Bigint_Comparison_Exp>;
+  stats_reset?: InputMaybe<Timestamptz_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Pg_Stat_Statements_Info_Max_Fields = {
+  __typename?: 'pg_stat_statements_info_max_fields';
+  dealloc?: Maybe<Scalars['bigint']['output']>;
+  stats_reset?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** aggregate min on columns */
+export type Pg_Stat_Statements_Info_Min_Fields = {
+  __typename?: 'pg_stat_statements_info_min_fields';
+  dealloc?: Maybe<Scalars['bigint']['output']>;
+  stats_reset?: Maybe<Scalars['timestamptz']['output']>;
+};
+
+/** Ordering options when selecting data from "pg_stat_statements_info". */
+export type Pg_Stat_Statements_Info_Order_By = {
+  dealloc?: InputMaybe<Order_By>;
+  stats_reset?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "pg_stat_statements_info" */
+export enum Pg_Stat_Statements_Info_Select_Column {
+  /** column name */
+  Dealloc = 'dealloc',
+  /** column name */
+  StatsReset = 'stats_reset'
+}
+
+/** aggregate stddev on columns */
+export type Pg_Stat_Statements_Info_Stddev_Fields = {
+  __typename?: 'pg_stat_statements_info_stddev_fields';
+  dealloc?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Pg_Stat_Statements_Info_Stddev_Pop_Fields = {
+  __typename?: 'pg_stat_statements_info_stddev_pop_fields';
+  dealloc?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Pg_Stat_Statements_Info_Stddev_Samp_Fields = {
+  __typename?: 'pg_stat_statements_info_stddev_samp_fields';
+  dealloc?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "pg_stat_statements_info" */
+export type Pg_Stat_Statements_Info_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Pg_Stat_Statements_Info_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Pg_Stat_Statements_Info_Stream_Cursor_Value_Input = {
+  dealloc?: InputMaybe<Scalars['bigint']['input']>;
+  stats_reset?: InputMaybe<Scalars['timestamptz']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Pg_Stat_Statements_Info_Sum_Fields = {
+  __typename?: 'pg_stat_statements_info_sum_fields';
+  dealloc?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Pg_Stat_Statements_Info_Var_Pop_Fields = {
+  __typename?: 'pg_stat_statements_info_var_pop_fields';
+  dealloc?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Pg_Stat_Statements_Info_Var_Samp_Fields = {
+  __typename?: 'pg_stat_statements_info_var_samp_fields';
+  dealloc?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Pg_Stat_Statements_Info_Variance_Fields = {
+  __typename?: 'pg_stat_statements_info_variance_fields';
+  dealloc?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate max on columns */
+export type Pg_Stat_Statements_Max_Fields = {
+  __typename?: 'pg_stat_statements_max_fields';
+  blk_read_time?: Maybe<Scalars['float8']['output']>;
+  blk_write_time?: Maybe<Scalars['float8']['output']>;
+  calls?: Maybe<Scalars['bigint']['output']>;
+  jit_emission_count?: Maybe<Scalars['bigint']['output']>;
+  jit_emission_time?: Maybe<Scalars['float8']['output']>;
+  jit_functions?: Maybe<Scalars['bigint']['output']>;
+  jit_generation_time?: Maybe<Scalars['float8']['output']>;
+  jit_inlining_count?: Maybe<Scalars['bigint']['output']>;
+  jit_inlining_time?: Maybe<Scalars['float8']['output']>;
+  jit_optimization_count?: Maybe<Scalars['bigint']['output']>;
+  jit_optimization_time?: Maybe<Scalars['float8']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['bigint']['output']>;
+  local_blks_hit?: Maybe<Scalars['bigint']['output']>;
+  local_blks_read?: Maybe<Scalars['bigint']['output']>;
+  local_blks_written?: Maybe<Scalars['bigint']['output']>;
+  max_exec_time?: Maybe<Scalars['float8']['output']>;
+  max_plan_time?: Maybe<Scalars['float8']['output']>;
+  mean_exec_time?: Maybe<Scalars['float8']['output']>;
+  mean_plan_time?: Maybe<Scalars['float8']['output']>;
+  min_exec_time?: Maybe<Scalars['float8']['output']>;
+  min_plan_time?: Maybe<Scalars['float8']['output']>;
+  plans?: Maybe<Scalars['bigint']['output']>;
+  query?: Maybe<Scalars['String']['output']>;
+  queryid?: Maybe<Scalars['bigint']['output']>;
+  rows?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_hit?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_read?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_written?: Maybe<Scalars['bigint']['output']>;
+  stddev_exec_time?: Maybe<Scalars['float8']['output']>;
+  stddev_plan_time?: Maybe<Scalars['float8']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['float8']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['float8']['output']>;
+  temp_blks_read?: Maybe<Scalars['bigint']['output']>;
+  temp_blks_written?: Maybe<Scalars['bigint']['output']>;
+  total_exec_time?: Maybe<Scalars['float8']['output']>;
+  total_plan_time?: Maybe<Scalars['float8']['output']>;
+  wal_bytes?: Maybe<Scalars['numeric']['output']>;
+  wal_fpi?: Maybe<Scalars['bigint']['output']>;
+  wal_records?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate min on columns */
+export type Pg_Stat_Statements_Min_Fields = {
+  __typename?: 'pg_stat_statements_min_fields';
+  blk_read_time?: Maybe<Scalars['float8']['output']>;
+  blk_write_time?: Maybe<Scalars['float8']['output']>;
+  calls?: Maybe<Scalars['bigint']['output']>;
+  jit_emission_count?: Maybe<Scalars['bigint']['output']>;
+  jit_emission_time?: Maybe<Scalars['float8']['output']>;
+  jit_functions?: Maybe<Scalars['bigint']['output']>;
+  jit_generation_time?: Maybe<Scalars['float8']['output']>;
+  jit_inlining_count?: Maybe<Scalars['bigint']['output']>;
+  jit_inlining_time?: Maybe<Scalars['float8']['output']>;
+  jit_optimization_count?: Maybe<Scalars['bigint']['output']>;
+  jit_optimization_time?: Maybe<Scalars['float8']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['bigint']['output']>;
+  local_blks_hit?: Maybe<Scalars['bigint']['output']>;
+  local_blks_read?: Maybe<Scalars['bigint']['output']>;
+  local_blks_written?: Maybe<Scalars['bigint']['output']>;
+  max_exec_time?: Maybe<Scalars['float8']['output']>;
+  max_plan_time?: Maybe<Scalars['float8']['output']>;
+  mean_exec_time?: Maybe<Scalars['float8']['output']>;
+  mean_plan_time?: Maybe<Scalars['float8']['output']>;
+  min_exec_time?: Maybe<Scalars['float8']['output']>;
+  min_plan_time?: Maybe<Scalars['float8']['output']>;
+  plans?: Maybe<Scalars['bigint']['output']>;
+  query?: Maybe<Scalars['String']['output']>;
+  queryid?: Maybe<Scalars['bigint']['output']>;
+  rows?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_hit?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_read?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_written?: Maybe<Scalars['bigint']['output']>;
+  stddev_exec_time?: Maybe<Scalars['float8']['output']>;
+  stddev_plan_time?: Maybe<Scalars['float8']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['float8']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['float8']['output']>;
+  temp_blks_read?: Maybe<Scalars['bigint']['output']>;
+  temp_blks_written?: Maybe<Scalars['bigint']['output']>;
+  total_exec_time?: Maybe<Scalars['float8']['output']>;
+  total_plan_time?: Maybe<Scalars['float8']['output']>;
+  wal_bytes?: Maybe<Scalars['numeric']['output']>;
+  wal_fpi?: Maybe<Scalars['bigint']['output']>;
+  wal_records?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** Ordering options when selecting data from "pg_stat_statements". */
+export type Pg_Stat_Statements_Order_By = {
+  blk_read_time?: InputMaybe<Order_By>;
+  blk_write_time?: InputMaybe<Order_By>;
+  calls?: InputMaybe<Order_By>;
+  dbid?: InputMaybe<Order_By>;
+  jit_emission_count?: InputMaybe<Order_By>;
+  jit_emission_time?: InputMaybe<Order_By>;
+  jit_functions?: InputMaybe<Order_By>;
+  jit_generation_time?: InputMaybe<Order_By>;
+  jit_inlining_count?: InputMaybe<Order_By>;
+  jit_inlining_time?: InputMaybe<Order_By>;
+  jit_optimization_count?: InputMaybe<Order_By>;
+  jit_optimization_time?: InputMaybe<Order_By>;
+  local_blks_dirtied?: InputMaybe<Order_By>;
+  local_blks_hit?: InputMaybe<Order_By>;
+  local_blks_read?: InputMaybe<Order_By>;
+  local_blks_written?: InputMaybe<Order_By>;
+  max_exec_time?: InputMaybe<Order_By>;
+  max_plan_time?: InputMaybe<Order_By>;
+  mean_exec_time?: InputMaybe<Order_By>;
+  mean_plan_time?: InputMaybe<Order_By>;
+  min_exec_time?: InputMaybe<Order_By>;
+  min_plan_time?: InputMaybe<Order_By>;
+  plans?: InputMaybe<Order_By>;
+  query?: InputMaybe<Order_By>;
+  queryid?: InputMaybe<Order_By>;
+  rows?: InputMaybe<Order_By>;
+  shared_blks_dirtied?: InputMaybe<Order_By>;
+  shared_blks_hit?: InputMaybe<Order_By>;
+  shared_blks_read?: InputMaybe<Order_By>;
+  shared_blks_written?: InputMaybe<Order_By>;
+  stddev_exec_time?: InputMaybe<Order_By>;
+  stddev_plan_time?: InputMaybe<Order_By>;
+  temp_blk_read_time?: InputMaybe<Order_By>;
+  temp_blk_write_time?: InputMaybe<Order_By>;
+  temp_blks_read?: InputMaybe<Order_By>;
+  temp_blks_written?: InputMaybe<Order_By>;
+  toplevel?: InputMaybe<Order_By>;
+  total_exec_time?: InputMaybe<Order_By>;
+  total_plan_time?: InputMaybe<Order_By>;
+  userid?: InputMaybe<Order_By>;
+  wal_bytes?: InputMaybe<Order_By>;
+  wal_fpi?: InputMaybe<Order_By>;
+  wal_records?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "pg_stat_statements" */
+export enum Pg_Stat_Statements_Select_Column {
+  /** column name */
+  BlkReadTime = 'blk_read_time',
+  /** column name */
+  BlkWriteTime = 'blk_write_time',
+  /** column name */
+  Calls = 'calls',
+  /** column name */
+  Dbid = 'dbid',
+  /** column name */
+  JitEmissionCount = 'jit_emission_count',
+  /** column name */
+  JitEmissionTime = 'jit_emission_time',
+  /** column name */
+  JitFunctions = 'jit_functions',
+  /** column name */
+  JitGenerationTime = 'jit_generation_time',
+  /** column name */
+  JitInliningCount = 'jit_inlining_count',
+  /** column name */
+  JitInliningTime = 'jit_inlining_time',
+  /** column name */
+  JitOptimizationCount = 'jit_optimization_count',
+  /** column name */
+  JitOptimizationTime = 'jit_optimization_time',
+  /** column name */
+  LocalBlksDirtied = 'local_blks_dirtied',
+  /** column name */
+  LocalBlksHit = 'local_blks_hit',
+  /** column name */
+  LocalBlksRead = 'local_blks_read',
+  /** column name */
+  LocalBlksWritten = 'local_blks_written',
+  /** column name */
+  MaxExecTime = 'max_exec_time',
+  /** column name */
+  MaxPlanTime = 'max_plan_time',
+  /** column name */
+  MeanExecTime = 'mean_exec_time',
+  /** column name */
+  MeanPlanTime = 'mean_plan_time',
+  /** column name */
+  MinExecTime = 'min_exec_time',
+  /** column name */
+  MinPlanTime = 'min_plan_time',
+  /** column name */
+  Plans = 'plans',
+  /** column name */
+  Query = 'query',
+  /** column name */
+  Queryid = 'queryid',
+  /** column name */
+  Rows = 'rows',
+  /** column name */
+  SharedBlksDirtied = 'shared_blks_dirtied',
+  /** column name */
+  SharedBlksHit = 'shared_blks_hit',
+  /** column name */
+  SharedBlksRead = 'shared_blks_read',
+  /** column name */
+  SharedBlksWritten = 'shared_blks_written',
+  /** column name */
+  StddevExecTime = 'stddev_exec_time',
+  /** column name */
+  StddevPlanTime = 'stddev_plan_time',
+  /** column name */
+  TempBlkReadTime = 'temp_blk_read_time',
+  /** column name */
+  TempBlkWriteTime = 'temp_blk_write_time',
+  /** column name */
+  TempBlksRead = 'temp_blks_read',
+  /** column name */
+  TempBlksWritten = 'temp_blks_written',
+  /** column name */
+  Toplevel = 'toplevel',
+  /** column name */
+  TotalExecTime = 'total_exec_time',
+  /** column name */
+  TotalPlanTime = 'total_plan_time',
+  /** column name */
+  Userid = 'userid',
+  /** column name */
+  WalBytes = 'wal_bytes',
+  /** column name */
+  WalFpi = 'wal_fpi',
+  /** column name */
+  WalRecords = 'wal_records'
+}
+
+/** aggregate stddev on columns */
+export type Pg_Stat_Statements_Stddev_Fields = {
+  __typename?: 'pg_stat_statements_stddev_fields';
+  blk_read_time?: Maybe<Scalars['Float']['output']>;
+  blk_write_time?: Maybe<Scalars['Float']['output']>;
+  calls?: Maybe<Scalars['Float']['output']>;
+  jit_emission_count?: Maybe<Scalars['Float']['output']>;
+  jit_emission_time?: Maybe<Scalars['Float']['output']>;
+  jit_functions?: Maybe<Scalars['Float']['output']>;
+  jit_generation_time?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_count?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_time?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_count?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_time?: Maybe<Scalars['Float']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  local_blks_hit?: Maybe<Scalars['Float']['output']>;
+  local_blks_read?: Maybe<Scalars['Float']['output']>;
+  local_blks_written?: Maybe<Scalars['Float']['output']>;
+  max_exec_time?: Maybe<Scalars['Float']['output']>;
+  max_plan_time?: Maybe<Scalars['Float']['output']>;
+  mean_exec_time?: Maybe<Scalars['Float']['output']>;
+  mean_plan_time?: Maybe<Scalars['Float']['output']>;
+  min_exec_time?: Maybe<Scalars['Float']['output']>;
+  min_plan_time?: Maybe<Scalars['Float']['output']>;
+  plans?: Maybe<Scalars['Float']['output']>;
+  queryid?: Maybe<Scalars['Float']['output']>;
+  rows?: Maybe<Scalars['Float']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  shared_blks_hit?: Maybe<Scalars['Float']['output']>;
+  shared_blks_read?: Maybe<Scalars['Float']['output']>;
+  shared_blks_written?: Maybe<Scalars['Float']['output']>;
+  stddev_exec_time?: Maybe<Scalars['Float']['output']>;
+  stddev_plan_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['Float']['output']>;
+  temp_blks_read?: Maybe<Scalars['Float']['output']>;
+  temp_blks_written?: Maybe<Scalars['Float']['output']>;
+  total_exec_time?: Maybe<Scalars['Float']['output']>;
+  total_plan_time?: Maybe<Scalars['Float']['output']>;
+  wal_bytes?: Maybe<Scalars['Float']['output']>;
+  wal_fpi?: Maybe<Scalars['Float']['output']>;
+  wal_records?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Pg_Stat_Statements_Stddev_Pop_Fields = {
+  __typename?: 'pg_stat_statements_stddev_pop_fields';
+  blk_read_time?: Maybe<Scalars['Float']['output']>;
+  blk_write_time?: Maybe<Scalars['Float']['output']>;
+  calls?: Maybe<Scalars['Float']['output']>;
+  jit_emission_count?: Maybe<Scalars['Float']['output']>;
+  jit_emission_time?: Maybe<Scalars['Float']['output']>;
+  jit_functions?: Maybe<Scalars['Float']['output']>;
+  jit_generation_time?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_count?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_time?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_count?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_time?: Maybe<Scalars['Float']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  local_blks_hit?: Maybe<Scalars['Float']['output']>;
+  local_blks_read?: Maybe<Scalars['Float']['output']>;
+  local_blks_written?: Maybe<Scalars['Float']['output']>;
+  max_exec_time?: Maybe<Scalars['Float']['output']>;
+  max_plan_time?: Maybe<Scalars['Float']['output']>;
+  mean_exec_time?: Maybe<Scalars['Float']['output']>;
+  mean_plan_time?: Maybe<Scalars['Float']['output']>;
+  min_exec_time?: Maybe<Scalars['Float']['output']>;
+  min_plan_time?: Maybe<Scalars['Float']['output']>;
+  plans?: Maybe<Scalars['Float']['output']>;
+  queryid?: Maybe<Scalars['Float']['output']>;
+  rows?: Maybe<Scalars['Float']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  shared_blks_hit?: Maybe<Scalars['Float']['output']>;
+  shared_blks_read?: Maybe<Scalars['Float']['output']>;
+  shared_blks_written?: Maybe<Scalars['Float']['output']>;
+  stddev_exec_time?: Maybe<Scalars['Float']['output']>;
+  stddev_plan_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['Float']['output']>;
+  temp_blks_read?: Maybe<Scalars['Float']['output']>;
+  temp_blks_written?: Maybe<Scalars['Float']['output']>;
+  total_exec_time?: Maybe<Scalars['Float']['output']>;
+  total_plan_time?: Maybe<Scalars['Float']['output']>;
+  wal_bytes?: Maybe<Scalars['Float']['output']>;
+  wal_fpi?: Maybe<Scalars['Float']['output']>;
+  wal_records?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Pg_Stat_Statements_Stddev_Samp_Fields = {
+  __typename?: 'pg_stat_statements_stddev_samp_fields';
+  blk_read_time?: Maybe<Scalars['Float']['output']>;
+  blk_write_time?: Maybe<Scalars['Float']['output']>;
+  calls?: Maybe<Scalars['Float']['output']>;
+  jit_emission_count?: Maybe<Scalars['Float']['output']>;
+  jit_emission_time?: Maybe<Scalars['Float']['output']>;
+  jit_functions?: Maybe<Scalars['Float']['output']>;
+  jit_generation_time?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_count?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_time?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_count?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_time?: Maybe<Scalars['Float']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  local_blks_hit?: Maybe<Scalars['Float']['output']>;
+  local_blks_read?: Maybe<Scalars['Float']['output']>;
+  local_blks_written?: Maybe<Scalars['Float']['output']>;
+  max_exec_time?: Maybe<Scalars['Float']['output']>;
+  max_plan_time?: Maybe<Scalars['Float']['output']>;
+  mean_exec_time?: Maybe<Scalars['Float']['output']>;
+  mean_plan_time?: Maybe<Scalars['Float']['output']>;
+  min_exec_time?: Maybe<Scalars['Float']['output']>;
+  min_plan_time?: Maybe<Scalars['Float']['output']>;
+  plans?: Maybe<Scalars['Float']['output']>;
+  queryid?: Maybe<Scalars['Float']['output']>;
+  rows?: Maybe<Scalars['Float']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  shared_blks_hit?: Maybe<Scalars['Float']['output']>;
+  shared_blks_read?: Maybe<Scalars['Float']['output']>;
+  shared_blks_written?: Maybe<Scalars['Float']['output']>;
+  stddev_exec_time?: Maybe<Scalars['Float']['output']>;
+  stddev_plan_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['Float']['output']>;
+  temp_blks_read?: Maybe<Scalars['Float']['output']>;
+  temp_blks_written?: Maybe<Scalars['Float']['output']>;
+  total_exec_time?: Maybe<Scalars['Float']['output']>;
+  total_plan_time?: Maybe<Scalars['Float']['output']>;
+  wal_bytes?: Maybe<Scalars['Float']['output']>;
+  wal_fpi?: Maybe<Scalars['Float']['output']>;
+  wal_records?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "pg_stat_statements" */
+export type Pg_Stat_Statements_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Pg_Stat_Statements_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Pg_Stat_Statements_Stream_Cursor_Value_Input = {
+  blk_read_time?: InputMaybe<Scalars['float8']['input']>;
+  blk_write_time?: InputMaybe<Scalars['float8']['input']>;
+  calls?: InputMaybe<Scalars['bigint']['input']>;
+  dbid?: InputMaybe<Scalars['oid']['input']>;
+  jit_emission_count?: InputMaybe<Scalars['bigint']['input']>;
+  jit_emission_time?: InputMaybe<Scalars['float8']['input']>;
+  jit_functions?: InputMaybe<Scalars['bigint']['input']>;
+  jit_generation_time?: InputMaybe<Scalars['float8']['input']>;
+  jit_inlining_count?: InputMaybe<Scalars['bigint']['input']>;
+  jit_inlining_time?: InputMaybe<Scalars['float8']['input']>;
+  jit_optimization_count?: InputMaybe<Scalars['bigint']['input']>;
+  jit_optimization_time?: InputMaybe<Scalars['float8']['input']>;
+  local_blks_dirtied?: InputMaybe<Scalars['bigint']['input']>;
+  local_blks_hit?: InputMaybe<Scalars['bigint']['input']>;
+  local_blks_read?: InputMaybe<Scalars['bigint']['input']>;
+  local_blks_written?: InputMaybe<Scalars['bigint']['input']>;
+  max_exec_time?: InputMaybe<Scalars['float8']['input']>;
+  max_plan_time?: InputMaybe<Scalars['float8']['input']>;
+  mean_exec_time?: InputMaybe<Scalars['float8']['input']>;
+  mean_plan_time?: InputMaybe<Scalars['float8']['input']>;
+  min_exec_time?: InputMaybe<Scalars['float8']['input']>;
+  min_plan_time?: InputMaybe<Scalars['float8']['input']>;
+  plans?: InputMaybe<Scalars['bigint']['input']>;
+  query?: InputMaybe<Scalars['String']['input']>;
+  queryid?: InputMaybe<Scalars['bigint']['input']>;
+  rows?: InputMaybe<Scalars['bigint']['input']>;
+  shared_blks_dirtied?: InputMaybe<Scalars['bigint']['input']>;
+  shared_blks_hit?: InputMaybe<Scalars['bigint']['input']>;
+  shared_blks_read?: InputMaybe<Scalars['bigint']['input']>;
+  shared_blks_written?: InputMaybe<Scalars['bigint']['input']>;
+  stddev_exec_time?: InputMaybe<Scalars['float8']['input']>;
+  stddev_plan_time?: InputMaybe<Scalars['float8']['input']>;
+  temp_blk_read_time?: InputMaybe<Scalars['float8']['input']>;
+  temp_blk_write_time?: InputMaybe<Scalars['float8']['input']>;
+  temp_blks_read?: InputMaybe<Scalars['bigint']['input']>;
+  temp_blks_written?: InputMaybe<Scalars['bigint']['input']>;
+  toplevel?: InputMaybe<Scalars['Boolean']['input']>;
+  total_exec_time?: InputMaybe<Scalars['float8']['input']>;
+  total_plan_time?: InputMaybe<Scalars['float8']['input']>;
+  userid?: InputMaybe<Scalars['oid']['input']>;
+  wal_bytes?: InputMaybe<Scalars['numeric']['input']>;
+  wal_fpi?: InputMaybe<Scalars['bigint']['input']>;
+  wal_records?: InputMaybe<Scalars['bigint']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Pg_Stat_Statements_Sum_Fields = {
+  __typename?: 'pg_stat_statements_sum_fields';
+  blk_read_time?: Maybe<Scalars['float8']['output']>;
+  blk_write_time?: Maybe<Scalars['float8']['output']>;
+  calls?: Maybe<Scalars['bigint']['output']>;
+  jit_emission_count?: Maybe<Scalars['bigint']['output']>;
+  jit_emission_time?: Maybe<Scalars['float8']['output']>;
+  jit_functions?: Maybe<Scalars['bigint']['output']>;
+  jit_generation_time?: Maybe<Scalars['float8']['output']>;
+  jit_inlining_count?: Maybe<Scalars['bigint']['output']>;
+  jit_inlining_time?: Maybe<Scalars['float8']['output']>;
+  jit_optimization_count?: Maybe<Scalars['bigint']['output']>;
+  jit_optimization_time?: Maybe<Scalars['float8']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['bigint']['output']>;
+  local_blks_hit?: Maybe<Scalars['bigint']['output']>;
+  local_blks_read?: Maybe<Scalars['bigint']['output']>;
+  local_blks_written?: Maybe<Scalars['bigint']['output']>;
+  max_exec_time?: Maybe<Scalars['float8']['output']>;
+  max_plan_time?: Maybe<Scalars['float8']['output']>;
+  mean_exec_time?: Maybe<Scalars['float8']['output']>;
+  mean_plan_time?: Maybe<Scalars['float8']['output']>;
+  min_exec_time?: Maybe<Scalars['float8']['output']>;
+  min_plan_time?: Maybe<Scalars['float8']['output']>;
+  plans?: Maybe<Scalars['bigint']['output']>;
+  queryid?: Maybe<Scalars['bigint']['output']>;
+  rows?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_hit?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_read?: Maybe<Scalars['bigint']['output']>;
+  shared_blks_written?: Maybe<Scalars['bigint']['output']>;
+  stddev_exec_time?: Maybe<Scalars['float8']['output']>;
+  stddev_plan_time?: Maybe<Scalars['float8']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['float8']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['float8']['output']>;
+  temp_blks_read?: Maybe<Scalars['bigint']['output']>;
+  temp_blks_written?: Maybe<Scalars['bigint']['output']>;
+  total_exec_time?: Maybe<Scalars['float8']['output']>;
+  total_plan_time?: Maybe<Scalars['float8']['output']>;
+  wal_bytes?: Maybe<Scalars['numeric']['output']>;
+  wal_fpi?: Maybe<Scalars['bigint']['output']>;
+  wal_records?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Pg_Stat_Statements_Var_Pop_Fields = {
+  __typename?: 'pg_stat_statements_var_pop_fields';
+  blk_read_time?: Maybe<Scalars['Float']['output']>;
+  blk_write_time?: Maybe<Scalars['Float']['output']>;
+  calls?: Maybe<Scalars['Float']['output']>;
+  jit_emission_count?: Maybe<Scalars['Float']['output']>;
+  jit_emission_time?: Maybe<Scalars['Float']['output']>;
+  jit_functions?: Maybe<Scalars['Float']['output']>;
+  jit_generation_time?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_count?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_time?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_count?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_time?: Maybe<Scalars['Float']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  local_blks_hit?: Maybe<Scalars['Float']['output']>;
+  local_blks_read?: Maybe<Scalars['Float']['output']>;
+  local_blks_written?: Maybe<Scalars['Float']['output']>;
+  max_exec_time?: Maybe<Scalars['Float']['output']>;
+  max_plan_time?: Maybe<Scalars['Float']['output']>;
+  mean_exec_time?: Maybe<Scalars['Float']['output']>;
+  mean_plan_time?: Maybe<Scalars['Float']['output']>;
+  min_exec_time?: Maybe<Scalars['Float']['output']>;
+  min_plan_time?: Maybe<Scalars['Float']['output']>;
+  plans?: Maybe<Scalars['Float']['output']>;
+  queryid?: Maybe<Scalars['Float']['output']>;
+  rows?: Maybe<Scalars['Float']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  shared_blks_hit?: Maybe<Scalars['Float']['output']>;
+  shared_blks_read?: Maybe<Scalars['Float']['output']>;
+  shared_blks_written?: Maybe<Scalars['Float']['output']>;
+  stddev_exec_time?: Maybe<Scalars['Float']['output']>;
+  stddev_plan_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['Float']['output']>;
+  temp_blks_read?: Maybe<Scalars['Float']['output']>;
+  temp_blks_written?: Maybe<Scalars['Float']['output']>;
+  total_exec_time?: Maybe<Scalars['Float']['output']>;
+  total_plan_time?: Maybe<Scalars['Float']['output']>;
+  wal_bytes?: Maybe<Scalars['Float']['output']>;
+  wal_fpi?: Maybe<Scalars['Float']['output']>;
+  wal_records?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Pg_Stat_Statements_Var_Samp_Fields = {
+  __typename?: 'pg_stat_statements_var_samp_fields';
+  blk_read_time?: Maybe<Scalars['Float']['output']>;
+  blk_write_time?: Maybe<Scalars['Float']['output']>;
+  calls?: Maybe<Scalars['Float']['output']>;
+  jit_emission_count?: Maybe<Scalars['Float']['output']>;
+  jit_emission_time?: Maybe<Scalars['Float']['output']>;
+  jit_functions?: Maybe<Scalars['Float']['output']>;
+  jit_generation_time?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_count?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_time?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_count?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_time?: Maybe<Scalars['Float']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  local_blks_hit?: Maybe<Scalars['Float']['output']>;
+  local_blks_read?: Maybe<Scalars['Float']['output']>;
+  local_blks_written?: Maybe<Scalars['Float']['output']>;
+  max_exec_time?: Maybe<Scalars['Float']['output']>;
+  max_plan_time?: Maybe<Scalars['Float']['output']>;
+  mean_exec_time?: Maybe<Scalars['Float']['output']>;
+  mean_plan_time?: Maybe<Scalars['Float']['output']>;
+  min_exec_time?: Maybe<Scalars['Float']['output']>;
+  min_plan_time?: Maybe<Scalars['Float']['output']>;
+  plans?: Maybe<Scalars['Float']['output']>;
+  queryid?: Maybe<Scalars['Float']['output']>;
+  rows?: Maybe<Scalars['Float']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  shared_blks_hit?: Maybe<Scalars['Float']['output']>;
+  shared_blks_read?: Maybe<Scalars['Float']['output']>;
+  shared_blks_written?: Maybe<Scalars['Float']['output']>;
+  stddev_exec_time?: Maybe<Scalars['Float']['output']>;
+  stddev_plan_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['Float']['output']>;
+  temp_blks_read?: Maybe<Scalars['Float']['output']>;
+  temp_blks_written?: Maybe<Scalars['Float']['output']>;
+  total_exec_time?: Maybe<Scalars['Float']['output']>;
+  total_plan_time?: Maybe<Scalars['Float']['output']>;
+  wal_bytes?: Maybe<Scalars['Float']['output']>;
+  wal_fpi?: Maybe<Scalars['Float']['output']>;
+  wal_records?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Pg_Stat_Statements_Variance_Fields = {
+  __typename?: 'pg_stat_statements_variance_fields';
+  blk_read_time?: Maybe<Scalars['Float']['output']>;
+  blk_write_time?: Maybe<Scalars['Float']['output']>;
+  calls?: Maybe<Scalars['Float']['output']>;
+  jit_emission_count?: Maybe<Scalars['Float']['output']>;
+  jit_emission_time?: Maybe<Scalars['Float']['output']>;
+  jit_functions?: Maybe<Scalars['Float']['output']>;
+  jit_generation_time?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_count?: Maybe<Scalars['Float']['output']>;
+  jit_inlining_time?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_count?: Maybe<Scalars['Float']['output']>;
+  jit_optimization_time?: Maybe<Scalars['Float']['output']>;
+  local_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  local_blks_hit?: Maybe<Scalars['Float']['output']>;
+  local_blks_read?: Maybe<Scalars['Float']['output']>;
+  local_blks_written?: Maybe<Scalars['Float']['output']>;
+  max_exec_time?: Maybe<Scalars['Float']['output']>;
+  max_plan_time?: Maybe<Scalars['Float']['output']>;
+  mean_exec_time?: Maybe<Scalars['Float']['output']>;
+  mean_plan_time?: Maybe<Scalars['Float']['output']>;
+  min_exec_time?: Maybe<Scalars['Float']['output']>;
+  min_plan_time?: Maybe<Scalars['Float']['output']>;
+  plans?: Maybe<Scalars['Float']['output']>;
+  queryid?: Maybe<Scalars['Float']['output']>;
+  rows?: Maybe<Scalars['Float']['output']>;
+  shared_blks_dirtied?: Maybe<Scalars['Float']['output']>;
+  shared_blks_hit?: Maybe<Scalars['Float']['output']>;
+  shared_blks_read?: Maybe<Scalars['Float']['output']>;
+  shared_blks_written?: Maybe<Scalars['Float']['output']>;
+  stddev_exec_time?: Maybe<Scalars['Float']['output']>;
+  stddev_plan_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_read_time?: Maybe<Scalars['Float']['output']>;
+  temp_blk_write_time?: Maybe<Scalars['Float']['output']>;
+  temp_blks_read?: Maybe<Scalars['Float']['output']>;
+  temp_blks_written?: Maybe<Scalars['Float']['output']>;
+  total_exec_time?: Maybe<Scalars['Float']['output']>;
+  total_plan_time?: Maybe<Scalars['Float']['output']>;
+  wal_bytes?: Maybe<Scalars['Float']['output']>;
+  wal_fpi?: Maybe<Scalars['Float']['output']>;
+  wal_records?: Maybe<Scalars['Float']['output']>;
+};
 
 export type Query_Root = {
   __typename?: 'query_root';
@@ -47532,10 +50544,6 @@ export type Query_Root = {
   dipdup_head_aggregate: Dipdup_Head_Aggregate;
   /** fetch data from the table: "dipdup_head" using primary key columns */
   dipdup_head_by_pk?: Maybe<Dipdup_Head>;
-  /** fetch data from the table: "dipdup_head_status" */
-  dipdup_head_status: Array<Dipdup_Head_Status>;
-  /** fetch aggregated fields from the table: "dipdup_head_status" */
-  dipdup_head_status_aggregate: Dipdup_Head_Status_Aggregate;
   /** fetch data from the table: "dipdup_index" */
   dipdup_index: Array<Dipdup_Index>;
   /** fetch aggregated fields from the table: "dipdup_index" */
@@ -47560,6 +50568,10 @@ export type Query_Root = {
   dipdup_schema_aggregate: Dipdup_Schema_Aggregate;
   /** fetch data from the table: "dipdup_schema" using primary key columns */
   dipdup_schema_by_pk?: Maybe<Dipdup_Schema>;
+  /** fetch data from the table: "dipdup_status" */
+  dipdup_status: Array<Dipdup_Status>;
+  /** fetch aggregated fields from the table: "dipdup_status" */
+  dipdup_status_aggregate: Dipdup_Status_Aggregate;
   /** fetch data from the table: "dipdup_token_metadata" */
   dipdup_token_metadata: Array<Dipdup_Token_Metadata>;
   /** fetch aggregated fields from the table: "dipdup_token_metadata" */
@@ -47866,6 +50878,18 @@ export type Query_Root = {
   governance_whitelist_contract_aggregate: Governance_Whitelist_Contract_Aggregate;
   /** fetch data from the table: "governance_whitelist_contract" using primary key columns */
   governance_whitelist_contract_by_pk?: Maybe<Governance_Whitelist_Contract>;
+  /** fetch data from the table: "gql_history_data_summary" */
+  gql_history_data_summary: Array<Gql_History_Data_Summary>;
+  /** fetch aggregated fields from the table: "gql_history_data_summary" */
+  gql_history_data_summary_aggregate: Gql_History_Data_Summary_Aggregate;
+  /** fetch data from the table: "gql_loan_token_market_stats" */
+  gql_loan_token_market_stats: Array<Gql_Loan_Token_Market_Stats>;
+  /** fetch aggregated fields from the table: "gql_loan_token_market_stats" */
+  gql_loan_token_market_stats_aggregate: Gql_Loan_Token_Market_Stats_Aggregate;
+  /** fetch data from the table: "gql_vault_with_balances" */
+  gql_vault_with_balances: Array<Gql_Vault_With_Balances>;
+  /** fetch aggregated fields from the table: "gql_vault_with_balances" */
+  gql_vault_with_balances_aggregate: Gql_Vault_With_Balances_Aggregate;
   /** fetch data from the table: "lending_controller" */
   lending_controller: Array<Lending_Controller>;
   /** fetch aggregated fields from the table: "lending_controller" */
@@ -47908,6 +50932,10 @@ export type Query_Root = {
   lending_controller_vault_collateral_balance_aggregate: Lending_Controller_Vault_Collateral_Balance_Aggregate;
   /** fetch data from the table: "lending_controller_vault_collateral_balance" using primary key columns */
   lending_controller_vault_collateral_balance_by_pk?: Maybe<Lending_Controller_Vault_Collateral_Balance>;
+  /** fetch data from the table: "loan_token_view" */
+  loan_token_view: Array<Loan_Token_View>;
+  /** fetch aggregated fields from the table: "loan_token_view" */
+  loan_token_view_aggregate: Loan_Token_View_Aggregate;
   /** fetch data from the table: "m_token" */
   m_token: Array<M_Token>;
   /** fetch data from the table: "m_token_account" */
@@ -47926,6 +50954,18 @@ export type Query_Root = {
   m_token_aggregate: M_Token_Aggregate;
   /** fetch data from the table: "m_token" using primary key columns */
   m_token_by_pk?: Maybe<M_Token>;
+  /** fetch data from the table: "m_token_general_contract" */
+  m_token_general_contract: Array<M_Token_General_Contract>;
+  /** fetch aggregated fields from the table: "m_token_general_contract" */
+  m_token_general_contract_aggregate: M_Token_General_Contract_Aggregate;
+  /** fetch data from the table: "m_token_general_contract" using primary key columns */
+  m_token_general_contract_by_pk?: Maybe<M_Token_General_Contract>;
+  /** fetch data from the table: "m_token_lambda" */
+  m_token_lambda: Array<M_Token_Lambda>;
+  /** fetch aggregated fields from the table: "m_token_lambda" */
+  m_token_lambda_aggregate: M_Token_Lambda_Aggregate;
+  /** fetch data from the table: "m_token_lambda" using primary key columns */
+  m_token_lambda_by_pk?: Maybe<M_Token_Lambda>;
   /** fetch data from the table: "m_token_operator" */
   m_token_operator: Array<M_Token_Operator>;
   /** fetch aggregated fields from the table: "m_token_operator" */
@@ -47980,6 +51020,14 @@ export type Query_Root = {
   mvn_transfer_history_data_aggregate: Mvn_Transfer_History_Data_Aggregate;
   /** fetch data from the table: "mvn_transfer_history_data" using primary key columns */
   mvn_transfer_history_data_by_pk?: Maybe<Mvn_Transfer_History_Data>;
+  /** fetch data from the table: "pg_stat_statements" */
+  pg_stat_statements: Array<Pg_Stat_Statements>;
+  /** fetch aggregated fields from the table: "pg_stat_statements" */
+  pg_stat_statements_aggregate: Pg_Stat_Statements_Aggregate;
+  /** fetch data from the table: "pg_stat_statements_info" */
+  pg_stat_statements_info: Array<Pg_Stat_Statements_Info>;
+  /** fetch aggregated fields from the table: "pg_stat_statements_info" */
+  pg_stat_statements_info_aggregate: Pg_Stat_Statements_Info_Aggregate;
   /** fetch data from the table: "satellite" */
   satellite: Array<Satellite>;
   /** fetch aggregated fields from the table: "satellite" */
@@ -48088,12 +51136,24 @@ export type Query_Root = {
   treasury_whitelist_token_contract_aggregate: Treasury_Whitelist_Token_Contract_Aggregate;
   /** fetch data from the table: "treasury_whitelist_token_contract" using primary key columns */
   treasury_whitelist_token_contract_by_pk?: Maybe<Treasury_Whitelist_Token_Contract>;
+  /** fetch data from the table: "tvl_stats" */
+  tvl_stats: Array<Tvl_Stats>;
+  /** fetch aggregated fields from the table: "tvl_stats" */
+  tvl_stats_aggregate: Tvl_Stats_Aggregate;
+  /** fetch data from the table: "user_dashboard" */
+  user_dashboard: Array<User_Dashboard>;
+  /** fetch aggregated fields from the table: "user_dashboard" */
+  user_dashboard_aggregate: User_Dashboard_Aggregate;
   /** fetch data from the table: "vault" */
   vault: Array<Vault>;
   /** fetch aggregated fields from the table: "vault" */
   vault_aggregate: Vault_Aggregate;
   /** fetch data from the table: "vault" using primary key columns */
   vault_by_pk?: Maybe<Vault>;
+  /** fetch data from the table: "vault_collateral_view" */
+  vault_collateral_view: Array<Vault_Collateral_View>;
+  /** fetch aggregated fields from the table: "vault_collateral_view" */
+  vault_collateral_view_aggregate: Vault_Collateral_View_Aggregate;
   /** fetch data from the table: "vault_depositor" */
   vault_depositor: Array<Vault_Depositor>;
   /** fetch aggregated fields from the table: "vault_depositor" */
@@ -48356,6 +51416,7 @@ export type Query_RootAggregator_History_Data_AggregateArgs = {
 
 export type Query_RootAggregator_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -48425,6 +51486,7 @@ export type Query_RootAggregator_Oracle_Observation_AggregateArgs = {
 
 export type Query_RootAggregator_Oracle_Observation_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -49069,6 +52131,7 @@ export type Query_RootDipdup_Exception_AggregateArgs = {
 
 export type Query_RootDipdup_Exception_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -49092,24 +52155,6 @@ export type Query_RootDipdup_Head_AggregateArgs = {
 
 export type Query_RootDipdup_Head_By_PkArgs = {
   name: Scalars['String']['input'];
-};
-
-
-export type Query_RootDipdup_Head_StatusArgs = {
-  distinct_on?: InputMaybe<Array<Dipdup_Head_Status_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Dipdup_Head_Status_Order_By>>;
-  where?: InputMaybe<Dipdup_Head_Status_Bool_Exp>;
-};
-
-
-export type Query_RootDipdup_Head_Status_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Dipdup_Head_Status_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Dipdup_Head_Status_Order_By>>;
-  where?: InputMaybe<Dipdup_Head_Status_Bool_Exp>;
 };
 
 
@@ -49202,6 +52247,24 @@ export type Query_RootDipdup_Schema_AggregateArgs = {
 
 export type Query_RootDipdup_Schema_By_PkArgs = {
   name: Scalars['String']['input'];
+};
+
+
+export type Query_RootDipdup_StatusArgs = {
+  distinct_on?: InputMaybe<Array<Dipdup_Status_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Dipdup_Status_Order_By>>;
+  where?: InputMaybe<Dipdup_Status_Bool_Exp>;
+};
+
+
+export type Query_RootDipdup_Status_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Dipdup_Status_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Dipdup_Status_Order_By>>;
+  where?: InputMaybe<Dipdup_Status_Bool_Exp>;
 };
 
 
@@ -49455,6 +52518,7 @@ export type Query_RootEmergency_Governance_Vote_AggregateArgs = {
 
 export type Query_RootEmergency_Governance_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -49869,6 +52933,7 @@ export type Query_RootGovernance_Financial_Request_Vote_AggregateArgs = {
 
 export type Query_RootGovernance_Financial_Request_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -50053,6 +53118,7 @@ export type Query_RootGovernance_Proposal_Vote_AggregateArgs = {
 
 export type Query_RootGovernance_Proposal_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -50177,6 +53243,7 @@ export type Query_RootGovernance_Satellite_Action_Vote_AggregateArgs = {
 
 export type Query_RootGovernance_Satellite_Action_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -50378,6 +53445,60 @@ export type Query_RootGovernance_Whitelist_Contract_By_PkArgs = {
 };
 
 
+export type Query_RootGql_History_Data_SummaryArgs = {
+  distinct_on?: InputMaybe<Array<Gql_History_Data_Summary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_History_Data_Summary_Order_By>>;
+  where?: InputMaybe<Gql_History_Data_Summary_Bool_Exp>;
+};
+
+
+export type Query_RootGql_History_Data_Summary_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Gql_History_Data_Summary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_History_Data_Summary_Order_By>>;
+  where?: InputMaybe<Gql_History_Data_Summary_Bool_Exp>;
+};
+
+
+export type Query_RootGql_Loan_Token_Market_StatsArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Order_By>>;
+  where?: InputMaybe<Gql_Loan_Token_Market_Stats_Bool_Exp>;
+};
+
+
+export type Query_RootGql_Loan_Token_Market_Stats_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Order_By>>;
+  where?: InputMaybe<Gql_Loan_Token_Market_Stats_Bool_Exp>;
+};
+
+
+export type Query_RootGql_Vault_With_BalancesArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Vault_With_Balances_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Vault_With_Balances_Order_By>>;
+  where?: InputMaybe<Gql_Vault_With_Balances_Bool_Exp>;
+};
+
+
+export type Query_RootGql_Vault_With_Balances_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Vault_With_Balances_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Vault_With_Balances_Order_By>>;
+  where?: InputMaybe<Gql_Vault_With_Balances_Bool_Exp>;
+};
+
+
 export type Query_RootLending_ControllerArgs = {
   distinct_on?: InputMaybe<Array<Lending_Controller_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -50444,6 +53565,7 @@ export type Query_RootLending_Controller_History_Data_AggregateArgs = {
 
 export type Query_RootLending_Controller_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -50539,6 +53661,24 @@ export type Query_RootLending_Controller_Vault_Collateral_Balance_By_PkArgs = {
 };
 
 
+export type Query_RootLoan_Token_ViewArgs = {
+  distinct_on?: InputMaybe<Array<Loan_Token_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Loan_Token_View_Order_By>>;
+  where?: InputMaybe<Loan_Token_View_Bool_Exp>;
+};
+
+
+export type Query_RootLoan_Token_View_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Loan_Token_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Loan_Token_View_Order_By>>;
+  where?: InputMaybe<Loan_Token_View_Bool_Exp>;
+};
+
+
 export type Query_RootM_TokenArgs = {
   distinct_on?: InputMaybe<Array<M_Token_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -50591,6 +53731,7 @@ export type Query_RootM_Token_Account_History_Data_AggregateArgs = {
 
 export type Query_RootM_Token_Account_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -50604,6 +53745,52 @@ export type Query_RootM_Token_AggregateArgs = {
 
 
 export type Query_RootM_Token_By_PkArgs = {
+  id: Scalars['bigint']['input'];
+};
+
+
+export type Query_RootM_Token_General_ContractArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_General_Contract_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_General_Contract_Order_By>>;
+  where?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+};
+
+
+export type Query_RootM_Token_General_Contract_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_General_Contract_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_General_Contract_Order_By>>;
+  where?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+};
+
+
+export type Query_RootM_Token_General_Contract_By_PkArgs = {
+  id: Scalars['bigint']['input'];
+};
+
+
+export type Query_RootM_Token_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_Lambda_Order_By>>;
+  where?: InputMaybe<M_Token_Lambda_Bool_Exp>;
+};
+
+
+export type Query_RootM_Token_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_Lambda_Order_By>>;
+  where?: InputMaybe<M_Token_Lambda_Bool_Exp>;
+};
+
+
+export type Query_RootM_Token_Lambda_By_PkArgs = {
   id: Scalars['bigint']['input'];
 };
 
@@ -50812,6 +53999,43 @@ export type Query_RootMvn_Transfer_History_Data_AggregateArgs = {
 
 export type Query_RootMvn_Transfer_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
+};
+
+
+export type Query_RootPg_Stat_StatementsArgs = {
+  distinct_on?: InputMaybe<Array<Pg_Stat_Statements_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Pg_Stat_Statements_Order_By>>;
+  where?: InputMaybe<Pg_Stat_Statements_Bool_Exp>;
+};
+
+
+export type Query_RootPg_Stat_Statements_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Pg_Stat_Statements_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Pg_Stat_Statements_Order_By>>;
+  where?: InputMaybe<Pg_Stat_Statements_Bool_Exp>;
+};
+
+
+export type Query_RootPg_Stat_Statements_InfoArgs = {
+  distinct_on?: InputMaybe<Array<Pg_Stat_Statements_Info_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Pg_Stat_Statements_Info_Order_By>>;
+  where?: InputMaybe<Pg_Stat_Statements_Info_Bool_Exp>;
+};
+
+
+export type Query_RootPg_Stat_Statements_Info_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Pg_Stat_Statements_Info_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Pg_Stat_Statements_Info_Order_By>>;
+  where?: InputMaybe<Pg_Stat_Statements_Info_Bool_Exp>;
 };
 
 
@@ -50881,6 +54105,7 @@ export type Query_RootSmvn_History_Data_AggregateArgs = {
 
 export type Query_RootSmvn_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -50904,6 +54129,7 @@ export type Query_RootStake_History_Data_AggregateArgs = {
 
 export type Query_RootStake_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -51180,6 +54406,7 @@ export type Query_RootTreasury_Transfer_History_Data_AggregateArgs = {
 
 export type Query_RootTreasury_Transfer_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -51229,6 +54456,42 @@ export type Query_RootTreasury_Whitelist_Token_Contract_By_PkArgs = {
 };
 
 
+export type Query_RootTvl_StatsArgs = {
+  distinct_on?: InputMaybe<Array<Tvl_Stats_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Tvl_Stats_Order_By>>;
+  where?: InputMaybe<Tvl_Stats_Bool_Exp>;
+};
+
+
+export type Query_RootTvl_Stats_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Tvl_Stats_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Tvl_Stats_Order_By>>;
+  where?: InputMaybe<Tvl_Stats_Bool_Exp>;
+};
+
+
+export type Query_RootUser_DashboardArgs = {
+  distinct_on?: InputMaybe<Array<User_Dashboard_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<User_Dashboard_Order_By>>;
+  where?: InputMaybe<User_Dashboard_Bool_Exp>;
+};
+
+
+export type Query_RootUser_Dashboard_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<User_Dashboard_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<User_Dashboard_Order_By>>;
+  where?: InputMaybe<User_Dashboard_Bool_Exp>;
+};
+
+
 export type Query_RootVaultArgs = {
   distinct_on?: InputMaybe<Array<Vault_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -51249,6 +54512,24 @@ export type Query_RootVault_AggregateArgs = {
 
 export type Query_RootVault_By_PkArgs = {
   id: Scalars['bigint']['input'];
+};
+
+
+export type Query_RootVault_Collateral_ViewArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Collateral_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vault_Collateral_View_Order_By>>;
+  where?: InputMaybe<Vault_Collateral_View_Bool_Exp>;
+};
+
+
+export type Query_RootVault_Collateral_View_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Collateral_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vault_Collateral_View_Order_By>>;
+  where?: InputMaybe<Vault_Collateral_View_Bool_Exp>;
 };
 
 
@@ -54247,12 +57528,6 @@ export type Subscription_Root = {
   dipdup_head_aggregate: Dipdup_Head_Aggregate;
   /** fetch data from the table: "dipdup_head" using primary key columns */
   dipdup_head_by_pk?: Maybe<Dipdup_Head>;
-  /** fetch data from the table: "dipdup_head_status" */
-  dipdup_head_status: Array<Dipdup_Head_Status>;
-  /** fetch aggregated fields from the table: "dipdup_head_status" */
-  dipdup_head_status_aggregate: Dipdup_Head_Status_Aggregate;
-  /** fetch data from the table in a streaming manner: "dipdup_head_status" */
-  dipdup_head_status_stream: Array<Dipdup_Head_Status>;
   /** fetch data from the table in a streaming manner: "dipdup_head" */
   dipdup_head_stream: Array<Dipdup_Head>;
   /** fetch data from the table: "dipdup_index" */
@@ -54287,6 +57562,12 @@ export type Subscription_Root = {
   dipdup_schema_by_pk?: Maybe<Dipdup_Schema>;
   /** fetch data from the table in a streaming manner: "dipdup_schema" */
   dipdup_schema_stream: Array<Dipdup_Schema>;
+  /** fetch data from the table: "dipdup_status" */
+  dipdup_status: Array<Dipdup_Status>;
+  /** fetch aggregated fields from the table: "dipdup_status" */
+  dipdup_status_aggregate: Dipdup_Status_Aggregate;
+  /** fetch data from the table in a streaming manner: "dipdup_status" */
+  dipdup_status_stream: Array<Dipdup_Status>;
   /** fetch data from the table: "dipdup_token_metadata" */
   dipdup_token_metadata: Array<Dipdup_Token_Metadata>;
   /** fetch aggregated fields from the table: "dipdup_token_metadata" */
@@ -54695,6 +57976,24 @@ export type Subscription_Root = {
   governance_whitelist_contract_by_pk?: Maybe<Governance_Whitelist_Contract>;
   /** fetch data from the table in a streaming manner: "governance_whitelist_contract" */
   governance_whitelist_contract_stream: Array<Governance_Whitelist_Contract>;
+  /** fetch data from the table: "gql_history_data_summary" */
+  gql_history_data_summary: Array<Gql_History_Data_Summary>;
+  /** fetch aggregated fields from the table: "gql_history_data_summary" */
+  gql_history_data_summary_aggregate: Gql_History_Data_Summary_Aggregate;
+  /** fetch data from the table in a streaming manner: "gql_history_data_summary" */
+  gql_history_data_summary_stream: Array<Gql_History_Data_Summary>;
+  /** fetch data from the table: "gql_loan_token_market_stats" */
+  gql_loan_token_market_stats: Array<Gql_Loan_Token_Market_Stats>;
+  /** fetch aggregated fields from the table: "gql_loan_token_market_stats" */
+  gql_loan_token_market_stats_aggregate: Gql_Loan_Token_Market_Stats_Aggregate;
+  /** fetch data from the table in a streaming manner: "gql_loan_token_market_stats" */
+  gql_loan_token_market_stats_stream: Array<Gql_Loan_Token_Market_Stats>;
+  /** fetch data from the table: "gql_vault_with_balances" */
+  gql_vault_with_balances: Array<Gql_Vault_With_Balances>;
+  /** fetch aggregated fields from the table: "gql_vault_with_balances" */
+  gql_vault_with_balances_aggregate: Gql_Vault_With_Balances_Aggregate;
+  /** fetch data from the table in a streaming manner: "gql_vault_with_balances" */
+  gql_vault_with_balances_stream: Array<Gql_Vault_With_Balances>;
   /** fetch data from the table: "lending_controller" */
   lending_controller: Array<Lending_Controller>;
   /** fetch aggregated fields from the table: "lending_controller" */
@@ -54751,6 +58050,12 @@ export type Subscription_Root = {
   lending_controller_vault_collateral_balance_stream: Array<Lending_Controller_Vault_Collateral_Balance>;
   /** fetch data from the table in a streaming manner: "lending_controller_vault" */
   lending_controller_vault_stream: Array<Lending_Controller_Vault>;
+  /** fetch data from the table: "loan_token_view" */
+  loan_token_view: Array<Loan_Token_View>;
+  /** fetch aggregated fields from the table: "loan_token_view" */
+  loan_token_view_aggregate: Loan_Token_View_Aggregate;
+  /** fetch data from the table in a streaming manner: "loan_token_view" */
+  loan_token_view_stream: Array<Loan_Token_View>;
   /** fetch data from the table: "m_token" */
   m_token: Array<M_Token>;
   /** fetch data from the table: "m_token_account" */
@@ -54773,6 +58078,22 @@ export type Subscription_Root = {
   m_token_aggregate: M_Token_Aggregate;
   /** fetch data from the table: "m_token" using primary key columns */
   m_token_by_pk?: Maybe<M_Token>;
+  /** fetch data from the table: "m_token_general_contract" */
+  m_token_general_contract: Array<M_Token_General_Contract>;
+  /** fetch aggregated fields from the table: "m_token_general_contract" */
+  m_token_general_contract_aggregate: M_Token_General_Contract_Aggregate;
+  /** fetch data from the table: "m_token_general_contract" using primary key columns */
+  m_token_general_contract_by_pk?: Maybe<M_Token_General_Contract>;
+  /** fetch data from the table in a streaming manner: "m_token_general_contract" */
+  m_token_general_contract_stream: Array<M_Token_General_Contract>;
+  /** fetch data from the table: "m_token_lambda" */
+  m_token_lambda: Array<M_Token_Lambda>;
+  /** fetch aggregated fields from the table: "m_token_lambda" */
+  m_token_lambda_aggregate: M_Token_Lambda_Aggregate;
+  /** fetch data from the table: "m_token_lambda" using primary key columns */
+  m_token_lambda_by_pk?: Maybe<M_Token_Lambda>;
+  /** fetch data from the table in a streaming manner: "m_token_lambda" */
+  m_token_lambda_stream: Array<M_Token_Lambda>;
   /** fetch data from the table: "m_token_operator" */
   m_token_operator: Array<M_Token_Operator>;
   /** fetch aggregated fields from the table: "m_token_operator" */
@@ -54847,6 +58168,18 @@ export type Subscription_Root = {
   mvn_transfer_history_data_by_pk?: Maybe<Mvn_Transfer_History_Data>;
   /** fetch data from the table in a streaming manner: "mvn_transfer_history_data" */
   mvn_transfer_history_data_stream: Array<Mvn_Transfer_History_Data>;
+  /** fetch data from the table: "pg_stat_statements" */
+  pg_stat_statements: Array<Pg_Stat_Statements>;
+  /** fetch aggregated fields from the table: "pg_stat_statements" */
+  pg_stat_statements_aggregate: Pg_Stat_Statements_Aggregate;
+  /** fetch data from the table: "pg_stat_statements_info" */
+  pg_stat_statements_info: Array<Pg_Stat_Statements_Info>;
+  /** fetch aggregated fields from the table: "pg_stat_statements_info" */
+  pg_stat_statements_info_aggregate: Pg_Stat_Statements_Info_Aggregate;
+  /** fetch data from the table in a streaming manner: "pg_stat_statements_info" */
+  pg_stat_statements_info_stream: Array<Pg_Stat_Statements_Info>;
+  /** fetch data from the table in a streaming manner: "pg_stat_statements" */
+  pg_stat_statements_stream: Array<Pg_Stat_Statements>;
   /** fetch data from the table: "satellite" */
   satellite: Array<Satellite>;
   /** fetch aggregated fields from the table: "satellite" */
@@ -54991,12 +58324,30 @@ export type Subscription_Root = {
   treasury_whitelist_token_contract_by_pk?: Maybe<Treasury_Whitelist_Token_Contract>;
   /** fetch data from the table in a streaming manner: "treasury_whitelist_token_contract" */
   treasury_whitelist_token_contract_stream: Array<Treasury_Whitelist_Token_Contract>;
+  /** fetch data from the table: "tvl_stats" */
+  tvl_stats: Array<Tvl_Stats>;
+  /** fetch aggregated fields from the table: "tvl_stats" */
+  tvl_stats_aggregate: Tvl_Stats_Aggregate;
+  /** fetch data from the table in a streaming manner: "tvl_stats" */
+  tvl_stats_stream: Array<Tvl_Stats>;
+  /** fetch data from the table: "user_dashboard" */
+  user_dashboard: Array<User_Dashboard>;
+  /** fetch aggregated fields from the table: "user_dashboard" */
+  user_dashboard_aggregate: User_Dashboard_Aggregate;
+  /** fetch data from the table in a streaming manner: "user_dashboard" */
+  user_dashboard_stream: Array<User_Dashboard>;
   /** fetch data from the table: "vault" */
   vault: Array<Vault>;
   /** fetch aggregated fields from the table: "vault" */
   vault_aggregate: Vault_Aggregate;
   /** fetch data from the table: "vault" using primary key columns */
   vault_by_pk?: Maybe<Vault>;
+  /** fetch data from the table: "vault_collateral_view" */
+  vault_collateral_view: Array<Vault_Collateral_View>;
+  /** fetch aggregated fields from the table: "vault_collateral_view" */
+  vault_collateral_view_aggregate: Vault_Collateral_View_Aggregate;
+  /** fetch data from the table in a streaming manner: "vault_collateral_view" */
+  vault_collateral_view_stream: Array<Vault_Collateral_View>;
   /** fetch data from the table: "vault_depositor" */
   vault_depositor: Array<Vault_Depositor>;
   /** fetch aggregated fields from the table: "vault_depositor" */
@@ -55329,6 +58680,7 @@ export type Subscription_RootAggregator_History_Data_AggregateArgs = {
 
 export type Subscription_RootAggregator_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -55412,6 +58764,7 @@ export type Subscription_RootAggregator_Oracle_Observation_AggregateArgs = {
 
 export type Subscription_RootAggregator_Oracle_Observation_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -56266,6 +59619,7 @@ export type Subscription_RootDipdup_Exception_AggregateArgs = {
 
 export type Subscription_RootDipdup_Exception_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -56296,31 +59650,6 @@ export type Subscription_RootDipdup_Head_AggregateArgs = {
 
 export type Subscription_RootDipdup_Head_By_PkArgs = {
   name: Scalars['String']['input'];
-};
-
-
-export type Subscription_RootDipdup_Head_StatusArgs = {
-  distinct_on?: InputMaybe<Array<Dipdup_Head_Status_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Dipdup_Head_Status_Order_By>>;
-  where?: InputMaybe<Dipdup_Head_Status_Bool_Exp>;
-};
-
-
-export type Subscription_RootDipdup_Head_Status_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Dipdup_Head_Status_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Dipdup_Head_Status_Order_By>>;
-  where?: InputMaybe<Dipdup_Head_Status_Bool_Exp>;
-};
-
-
-export type Subscription_RootDipdup_Head_Status_StreamArgs = {
-  batch_size: Scalars['Int']['input'];
-  cursor: Array<InputMaybe<Dipdup_Head_Status_Stream_Cursor_Input>>;
-  where?: InputMaybe<Dipdup_Head_Status_Bool_Exp>;
 };
 
 
@@ -56448,6 +59777,31 @@ export type Subscription_RootDipdup_Schema_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Dipdup_Schema_Stream_Cursor_Input>>;
   where?: InputMaybe<Dipdup_Schema_Bool_Exp>;
+};
+
+
+export type Subscription_RootDipdup_StatusArgs = {
+  distinct_on?: InputMaybe<Array<Dipdup_Status_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Dipdup_Status_Order_By>>;
+  where?: InputMaybe<Dipdup_Status_Bool_Exp>;
+};
+
+
+export type Subscription_RootDipdup_Status_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Dipdup_Status_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Dipdup_Status_Order_By>>;
+  where?: InputMaybe<Dipdup_Status_Bool_Exp>;
+};
+
+
+export type Subscription_RootDipdup_Status_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Dipdup_Status_Stream_Cursor_Input>>;
+  where?: InputMaybe<Dipdup_Status_Bool_Exp>;
 };
 
 
@@ -56771,6 +60125,7 @@ export type Subscription_RootEmergency_Governance_Vote_AggregateArgs = {
 
 export type Subscription_RootEmergency_Governance_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -57297,6 +60652,7 @@ export type Subscription_RootGovernance_Financial_Request_Vote_AggregateArgs = {
 
 export type Subscription_RootGovernance_Financial_Request_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -57544,6 +60900,7 @@ export type Subscription_RootGovernance_Proposal_Vote_AggregateArgs = {
 
 export type Subscription_RootGovernance_Proposal_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -57703,6 +61060,7 @@ export type Subscription_RootGovernance_Satellite_Action_Vote_AggregateArgs = {
 
 export type Subscription_RootGovernance_Satellite_Action_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -57981,6 +61339,81 @@ export type Subscription_RootGovernance_Whitelist_Contract_StreamArgs = {
 };
 
 
+export type Subscription_RootGql_History_Data_SummaryArgs = {
+  distinct_on?: InputMaybe<Array<Gql_History_Data_Summary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_History_Data_Summary_Order_By>>;
+  where?: InputMaybe<Gql_History_Data_Summary_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_History_Data_Summary_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Gql_History_Data_Summary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_History_Data_Summary_Order_By>>;
+  where?: InputMaybe<Gql_History_Data_Summary_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_History_Data_Summary_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Gql_History_Data_Summary_Stream_Cursor_Input>>;
+  where?: InputMaybe<Gql_History_Data_Summary_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_Loan_Token_Market_StatsArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Order_By>>;
+  where?: InputMaybe<Gql_Loan_Token_Market_Stats_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_Loan_Token_Market_Stats_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Loan_Token_Market_Stats_Order_By>>;
+  where?: InputMaybe<Gql_Loan_Token_Market_Stats_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_Loan_Token_Market_Stats_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Gql_Loan_Token_Market_Stats_Stream_Cursor_Input>>;
+  where?: InputMaybe<Gql_Loan_Token_Market_Stats_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_Vault_With_BalancesArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Vault_With_Balances_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Vault_With_Balances_Order_By>>;
+  where?: InputMaybe<Gql_Vault_With_Balances_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_Vault_With_Balances_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Vault_With_Balances_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Vault_With_Balances_Order_By>>;
+  where?: InputMaybe<Gql_Vault_With_Balances_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_Vault_With_Balances_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Gql_Vault_With_Balances_Stream_Cursor_Input>>;
+  where?: InputMaybe<Gql_Vault_With_Balances_Bool_Exp>;
+};
+
+
 export type Subscription_RootLending_ControllerArgs = {
   distinct_on?: InputMaybe<Array<Lending_Controller_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -58054,6 +61487,7 @@ export type Subscription_RootLending_Controller_History_Data_AggregateArgs = {
 
 export type Subscription_RootLending_Controller_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -58191,6 +61625,31 @@ export type Subscription_RootLending_Controller_Vault_StreamArgs = {
 };
 
 
+export type Subscription_RootLoan_Token_ViewArgs = {
+  distinct_on?: InputMaybe<Array<Loan_Token_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Loan_Token_View_Order_By>>;
+  where?: InputMaybe<Loan_Token_View_Bool_Exp>;
+};
+
+
+export type Subscription_RootLoan_Token_View_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Loan_Token_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Loan_Token_View_Order_By>>;
+  where?: InputMaybe<Loan_Token_View_Bool_Exp>;
+};
+
+
+export type Subscription_RootLoan_Token_View_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Loan_Token_View_Stream_Cursor_Input>>;
+  where?: InputMaybe<Loan_Token_View_Bool_Exp>;
+};
+
+
 export type Subscription_RootM_TokenArgs = {
   distinct_on?: InputMaybe<Array<M_Token_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -58243,6 +61702,7 @@ export type Subscription_RootM_Token_Account_History_Data_AggregateArgs = {
 
 export type Subscription_RootM_Token_Account_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -58271,6 +61731,66 @@ export type Subscription_RootM_Token_AggregateArgs = {
 
 export type Subscription_RootM_Token_By_PkArgs = {
   id: Scalars['bigint']['input'];
+};
+
+
+export type Subscription_RootM_Token_General_ContractArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_General_Contract_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_General_Contract_Order_By>>;
+  where?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+};
+
+
+export type Subscription_RootM_Token_General_Contract_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_General_Contract_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_General_Contract_Order_By>>;
+  where?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+};
+
+
+export type Subscription_RootM_Token_General_Contract_By_PkArgs = {
+  id: Scalars['bigint']['input'];
+};
+
+
+export type Subscription_RootM_Token_General_Contract_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<M_Token_General_Contract_Stream_Cursor_Input>>;
+  where?: InputMaybe<M_Token_General_Contract_Bool_Exp>;
+};
+
+
+export type Subscription_RootM_Token_LambdaArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_Lambda_Order_By>>;
+  where?: InputMaybe<M_Token_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootM_Token_Lambda_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<M_Token_Lambda_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<M_Token_Lambda_Order_By>>;
+  where?: InputMaybe<M_Token_Lambda_Bool_Exp>;
+};
+
+
+export type Subscription_RootM_Token_Lambda_By_PkArgs = {
+  id: Scalars['bigint']['input'];
+};
+
+
+export type Subscription_RootM_Token_Lambda_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<M_Token_Lambda_Stream_Cursor_Input>>;
+  where?: InputMaybe<M_Token_Lambda_Bool_Exp>;
 };
 
 
@@ -58541,6 +62061,7 @@ export type Subscription_RootMvn_Transfer_History_Data_AggregateArgs = {
 
 export type Subscription_RootMvn_Transfer_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -58548,6 +62069,56 @@ export type Subscription_RootMvn_Transfer_History_Data_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Mvn_Transfer_History_Data_Stream_Cursor_Input>>;
   where?: InputMaybe<Mvn_Transfer_History_Data_Bool_Exp>;
+};
+
+
+export type Subscription_RootPg_Stat_StatementsArgs = {
+  distinct_on?: InputMaybe<Array<Pg_Stat_Statements_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Pg_Stat_Statements_Order_By>>;
+  where?: InputMaybe<Pg_Stat_Statements_Bool_Exp>;
+};
+
+
+export type Subscription_RootPg_Stat_Statements_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Pg_Stat_Statements_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Pg_Stat_Statements_Order_By>>;
+  where?: InputMaybe<Pg_Stat_Statements_Bool_Exp>;
+};
+
+
+export type Subscription_RootPg_Stat_Statements_InfoArgs = {
+  distinct_on?: InputMaybe<Array<Pg_Stat_Statements_Info_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Pg_Stat_Statements_Info_Order_By>>;
+  where?: InputMaybe<Pg_Stat_Statements_Info_Bool_Exp>;
+};
+
+
+export type Subscription_RootPg_Stat_Statements_Info_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Pg_Stat_Statements_Info_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Pg_Stat_Statements_Info_Order_By>>;
+  where?: InputMaybe<Pg_Stat_Statements_Info_Bool_Exp>;
+};
+
+
+export type Subscription_RootPg_Stat_Statements_Info_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Pg_Stat_Statements_Info_Stream_Cursor_Input>>;
+  where?: InputMaybe<Pg_Stat_Statements_Info_Bool_Exp>;
+};
+
+
+export type Subscription_RootPg_Stat_Statements_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Pg_Stat_Statements_Stream_Cursor_Input>>;
+  where?: InputMaybe<Pg_Stat_Statements_Bool_Exp>;
 };
 
 
@@ -58631,6 +62202,7 @@ export type Subscription_RootSmvn_History_Data_AggregateArgs = {
 
 export type Subscription_RootSmvn_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -58661,6 +62233,7 @@ export type Subscription_RootStake_History_Data_AggregateArgs = {
 
 export type Subscription_RootStake_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -59021,6 +62594,7 @@ export type Subscription_RootTreasury_Transfer_History_Data_AggregateArgs = {
 
 export type Subscription_RootTreasury_Transfer_History_Data_By_PkArgs = {
   id: Scalars['bigint']['input'];
+  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -59091,6 +62665,56 @@ export type Subscription_RootTreasury_Whitelist_Token_Contract_StreamArgs = {
 };
 
 
+export type Subscription_RootTvl_StatsArgs = {
+  distinct_on?: InputMaybe<Array<Tvl_Stats_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Tvl_Stats_Order_By>>;
+  where?: InputMaybe<Tvl_Stats_Bool_Exp>;
+};
+
+
+export type Subscription_RootTvl_Stats_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Tvl_Stats_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Tvl_Stats_Order_By>>;
+  where?: InputMaybe<Tvl_Stats_Bool_Exp>;
+};
+
+
+export type Subscription_RootTvl_Stats_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Tvl_Stats_Stream_Cursor_Input>>;
+  where?: InputMaybe<Tvl_Stats_Bool_Exp>;
+};
+
+
+export type Subscription_RootUser_DashboardArgs = {
+  distinct_on?: InputMaybe<Array<User_Dashboard_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<User_Dashboard_Order_By>>;
+  where?: InputMaybe<User_Dashboard_Bool_Exp>;
+};
+
+
+export type Subscription_RootUser_Dashboard_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<User_Dashboard_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<User_Dashboard_Order_By>>;
+  where?: InputMaybe<User_Dashboard_Bool_Exp>;
+};
+
+
+export type Subscription_RootUser_Dashboard_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<User_Dashboard_Stream_Cursor_Input>>;
+  where?: InputMaybe<User_Dashboard_Bool_Exp>;
+};
+
+
 export type Subscription_RootVaultArgs = {
   distinct_on?: InputMaybe<Array<Vault_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -59111,6 +62735,31 @@ export type Subscription_RootVault_AggregateArgs = {
 
 export type Subscription_RootVault_By_PkArgs = {
   id: Scalars['bigint']['input'];
+};
+
+
+export type Subscription_RootVault_Collateral_ViewArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Collateral_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vault_Collateral_View_Order_By>>;
+  where?: InputMaybe<Vault_Collateral_View_Bool_Exp>;
+};
+
+
+export type Subscription_RootVault_Collateral_View_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Vault_Collateral_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Vault_Collateral_View_Order_By>>;
+  where?: InputMaybe<Vault_Collateral_View_Bool_Exp>;
+};
+
+
+export type Subscription_RootVault_Collateral_View_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Vault_Collateral_View_Stream_Cursor_Input>>;
+  where?: InputMaybe<Vault_Collateral_View_Bool_Exp>;
 };
 
 
@@ -64329,6 +67978,386 @@ export type Treasury_Whitelist_Token_Contract_Variance_Order_By = {
   token_id?: InputMaybe<Order_By>;
 };
 
+/** columns and relationships of "tvl_stats" */
+export type Tvl_Stats = {
+  __typename?: 'tvl_stats';
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregated selection of "tvl_stats" */
+export type Tvl_Stats_Aggregate = {
+  __typename?: 'tvl_stats_aggregate';
+  aggregate?: Maybe<Tvl_Stats_Aggregate_Fields>;
+  nodes: Array<Tvl_Stats>;
+};
+
+/** aggregate fields of "tvl_stats" */
+export type Tvl_Stats_Aggregate_Fields = {
+  __typename?: 'tvl_stats_aggregate_fields';
+  avg?: Maybe<Tvl_Stats_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Tvl_Stats_Max_Fields>;
+  min?: Maybe<Tvl_Stats_Min_Fields>;
+  stddev?: Maybe<Tvl_Stats_Stddev_Fields>;
+  stddev_pop?: Maybe<Tvl_Stats_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Tvl_Stats_Stddev_Samp_Fields>;
+  sum?: Maybe<Tvl_Stats_Sum_Fields>;
+  var_pop?: Maybe<Tvl_Stats_Var_Pop_Fields>;
+  var_samp?: Maybe<Tvl_Stats_Var_Samp_Fields>;
+  variance?: Maybe<Tvl_Stats_Variance_Fields>;
+};
+
+
+/** aggregate fields of "tvl_stats" */
+export type Tvl_Stats_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Tvl_Stats_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Tvl_Stats_Avg_Fields = {
+  __typename?: 'tvl_stats_avg_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "tvl_stats". All fields are combined with a logical 'AND'. */
+export type Tvl_Stats_Bool_Exp = {
+  _and?: InputMaybe<Array<Tvl_Stats_Bool_Exp>>;
+  _not?: InputMaybe<Tvl_Stats_Bool_Exp>;
+  _or?: InputMaybe<Array<Tvl_Stats_Bool_Exp>>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  token_address?: InputMaybe<String_Comparison_Exp>;
+  token_pool_total?: InputMaybe<Float8_Comparison_Exp>;
+  total_borrowed?: InputMaybe<Float8_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Tvl_Stats_Max_Fields = {
+  __typename?: 'tvl_stats_max_fields';
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate min on columns */
+export type Tvl_Stats_Min_Fields = {
+  __typename?: 'tvl_stats_min_fields';
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+};
+
+/** Ordering options when selecting data from "tvl_stats". */
+export type Tvl_Stats_Order_By = {
+  id?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  token_address?: InputMaybe<Order_By>;
+  token_pool_total?: InputMaybe<Order_By>;
+  total_borrowed?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "tvl_stats" */
+export enum Tvl_Stats_Select_Column {
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  TokenAddress = 'token_address',
+  /** column name */
+  TokenPoolTotal = 'token_pool_total',
+  /** column name */
+  TotalBorrowed = 'total_borrowed'
+}
+
+/** aggregate stddev on columns */
+export type Tvl_Stats_Stddev_Fields = {
+  __typename?: 'tvl_stats_stddev_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Tvl_Stats_Stddev_Pop_Fields = {
+  __typename?: 'tvl_stats_stddev_pop_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Tvl_Stats_Stddev_Samp_Fields = {
+  __typename?: 'tvl_stats_stddev_samp_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "tvl_stats" */
+export type Tvl_Stats_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Tvl_Stats_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Tvl_Stats_Stream_Cursor_Value_Input = {
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  token_address?: InputMaybe<Scalars['String']['input']>;
+  token_pool_total?: InputMaybe<Scalars['float8']['input']>;
+  total_borrowed?: InputMaybe<Scalars['float8']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Tvl_Stats_Sum_Fields = {
+  __typename?: 'tvl_stats_sum_fields';
+  id?: Maybe<Scalars['bigint']['output']>;
+  token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Tvl_Stats_Var_Pop_Fields = {
+  __typename?: 'tvl_stats_var_pop_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Tvl_Stats_Var_Samp_Fields = {
+  __typename?: 'tvl_stats_var_samp_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Tvl_Stats_Variance_Fields = {
+  __typename?: 'tvl_stats_variance_fields';
+  id?: Maybe<Scalars['Float']['output']>;
+  token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+};
+
+/** columns and relationships of "user_dashboard" */
+export type User_Dashboard = {
+  __typename?: 'user_dashboard';
+  active_vaults_count?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  m_tokens?: Maybe<Scalars['jsonb']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  user_address?: Maybe<Scalars['String']['output']>;
+  user_id?: Maybe<Scalars['bigint']['output']>;
+  vaults_count?: Maybe<Scalars['bigint']['output']>;
+};
+
+
+/** columns and relationships of "user_dashboard" */
+export type User_DashboardM_TokensArgs = {
+  path?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregated selection of "user_dashboard" */
+export type User_Dashboard_Aggregate = {
+  __typename?: 'user_dashboard_aggregate';
+  aggregate?: Maybe<User_Dashboard_Aggregate_Fields>;
+  nodes: Array<User_Dashboard>;
+};
+
+/** aggregate fields of "user_dashboard" */
+export type User_Dashboard_Aggregate_Fields = {
+  __typename?: 'user_dashboard_aggregate_fields';
+  avg?: Maybe<User_Dashboard_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<User_Dashboard_Max_Fields>;
+  min?: Maybe<User_Dashboard_Min_Fields>;
+  stddev?: Maybe<User_Dashboard_Stddev_Fields>;
+  stddev_pop?: Maybe<User_Dashboard_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<User_Dashboard_Stddev_Samp_Fields>;
+  sum?: Maybe<User_Dashboard_Sum_Fields>;
+  var_pop?: Maybe<User_Dashboard_Var_Pop_Fields>;
+  var_samp?: Maybe<User_Dashboard_Var_Samp_Fields>;
+  variance?: Maybe<User_Dashboard_Variance_Fields>;
+};
+
+
+/** aggregate fields of "user_dashboard" */
+export type User_Dashboard_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<User_Dashboard_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type User_Dashboard_Avg_Fields = {
+  __typename?: 'user_dashboard_avg_fields';
+  active_vaults_count?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+  vaults_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "user_dashboard". All fields are combined with a logical 'AND'. */
+export type User_Dashboard_Bool_Exp = {
+  _and?: InputMaybe<Array<User_Dashboard_Bool_Exp>>;
+  _not?: InputMaybe<User_Dashboard_Bool_Exp>;
+  _or?: InputMaybe<Array<User_Dashboard_Bool_Exp>>;
+  active_vaults_count?: InputMaybe<Bigint_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  m_tokens?: InputMaybe<Jsonb_Comparison_Exp>;
+  total_borrowed?: InputMaybe<Float8_Comparison_Exp>;
+  user_address?: InputMaybe<String_Comparison_Exp>;
+  user_id?: InputMaybe<Bigint_Comparison_Exp>;
+  vaults_count?: InputMaybe<Bigint_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type User_Dashboard_Max_Fields = {
+  __typename?: 'user_dashboard_max_fields';
+  active_vaults_count?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  user_address?: Maybe<Scalars['String']['output']>;
+  user_id?: Maybe<Scalars['bigint']['output']>;
+  vaults_count?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate min on columns */
+export type User_Dashboard_Min_Fields = {
+  __typename?: 'user_dashboard_min_fields';
+  active_vaults_count?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  user_address?: Maybe<Scalars['String']['output']>;
+  user_id?: Maybe<Scalars['bigint']['output']>;
+  vaults_count?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** Ordering options when selecting data from "user_dashboard". */
+export type User_Dashboard_Order_By = {
+  active_vaults_count?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  m_tokens?: InputMaybe<Order_By>;
+  total_borrowed?: InputMaybe<Order_By>;
+  user_address?: InputMaybe<Order_By>;
+  user_id?: InputMaybe<Order_By>;
+  vaults_count?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "user_dashboard" */
+export enum User_Dashboard_Select_Column {
+  /** column name */
+  ActiveVaultsCount = 'active_vaults_count',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  MTokens = 'm_tokens',
+  /** column name */
+  TotalBorrowed = 'total_borrowed',
+  /** column name */
+  UserAddress = 'user_address',
+  /** column name */
+  UserId = 'user_id',
+  /** column name */
+  VaultsCount = 'vaults_count'
+}
+
+/** aggregate stddev on columns */
+export type User_Dashboard_Stddev_Fields = {
+  __typename?: 'user_dashboard_stddev_fields';
+  active_vaults_count?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+  vaults_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type User_Dashboard_Stddev_Pop_Fields = {
+  __typename?: 'user_dashboard_stddev_pop_fields';
+  active_vaults_count?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+  vaults_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type User_Dashboard_Stddev_Samp_Fields = {
+  __typename?: 'user_dashboard_stddev_samp_fields';
+  active_vaults_count?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+  vaults_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "user_dashboard" */
+export type User_Dashboard_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: User_Dashboard_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type User_Dashboard_Stream_Cursor_Value_Input = {
+  active_vaults_count?: InputMaybe<Scalars['bigint']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  m_tokens?: InputMaybe<Scalars['jsonb']['input']>;
+  total_borrowed?: InputMaybe<Scalars['float8']['input']>;
+  user_address?: InputMaybe<Scalars['String']['input']>;
+  user_id?: InputMaybe<Scalars['bigint']['input']>;
+  vaults_count?: InputMaybe<Scalars['bigint']['input']>;
+};
+
+/** aggregate sum on columns */
+export type User_Dashboard_Sum_Fields = {
+  __typename?: 'user_dashboard_sum_fields';
+  active_vaults_count?: Maybe<Scalars['bigint']['output']>;
+  total_borrowed?: Maybe<Scalars['float8']['output']>;
+  user_id?: Maybe<Scalars['bigint']['output']>;
+  vaults_count?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type User_Dashboard_Var_Pop_Fields = {
+  __typename?: 'user_dashboard_var_pop_fields';
+  active_vaults_count?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+  vaults_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type User_Dashboard_Var_Samp_Fields = {
+  __typename?: 'user_dashboard_var_samp_fields';
+  active_vaults_count?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+  vaults_count?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type User_Dashboard_Variance_Fields = {
+  __typename?: 'user_dashboard_variance_fields';
+  active_vaults_count?: Maybe<Scalars['Float']['output']>;
+  total_borrowed?: Maybe<Scalars['Float']['output']>;
+  user_id?: Maybe<Scalars['Float']['output']>;
+  vaults_count?: Maybe<Scalars['Float']['output']>;
+};
+
 /** columns and relationships of "vault" */
 export type Vault = {
   __typename?: 'vault';
@@ -64339,14 +68368,14 @@ export type Vault = {
   /** An object relationship */
   baker?: Maybe<Maven_User>;
   baker_id?: Maybe<Scalars['bigint']['output']>;
-  creation_timestamp: Scalars['timestamptz']['output'];
+  creation_timestamp?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   depositors: Array<Vault_Depositor>;
   /** An aggregate relationship */
   depositors_aggregate: Vault_Depositor_Aggregate;
   /** An object relationship */
-  factory: Vault_Factory;
-  factory_id: Scalars['bigint']['output'];
+  factory?: Maybe<Vault_Factory>;
+  factory_id?: Maybe<Scalars['bigint']['output']>;
   id: Scalars['bigint']['output'];
   /** An array relationship */
   lambdas: Array<Vault_Lambda>;
@@ -64527,6 +68556,286 @@ export type Vault_Bool_Exp = {
   metadata?: InputMaybe<Jsonb_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   network?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** columns and relationships of "vault_collateral_view" */
+export type Vault_Collateral_View = {
+  __typename?: 'vault_collateral_view';
+  balance?: Maybe<Scalars['float8']['output']>;
+  collateral_token_id?: Maybe<Scalars['bigint']['output']>;
+  collateral_token_name?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['bigint']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['float8']['output']>;
+  owner_address?: Maybe<Scalars['String']['output']>;
+  owner_id?: Maybe<Scalars['bigint']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  vault_address?: Maybe<Scalars['String']['output']>;
+  vault_id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregated selection of "vault_collateral_view" */
+export type Vault_Collateral_View_Aggregate = {
+  __typename?: 'vault_collateral_view_aggregate';
+  aggregate?: Maybe<Vault_Collateral_View_Aggregate_Fields>;
+  nodes: Array<Vault_Collateral_View>;
+};
+
+/** aggregate fields of "vault_collateral_view" */
+export type Vault_Collateral_View_Aggregate_Fields = {
+  __typename?: 'vault_collateral_view_aggregate_fields';
+  avg?: Maybe<Vault_Collateral_View_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Vault_Collateral_View_Max_Fields>;
+  min?: Maybe<Vault_Collateral_View_Min_Fields>;
+  stddev?: Maybe<Vault_Collateral_View_Stddev_Fields>;
+  stddev_pop?: Maybe<Vault_Collateral_View_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Vault_Collateral_View_Stddev_Samp_Fields>;
+  sum?: Maybe<Vault_Collateral_View_Sum_Fields>;
+  var_pop?: Maybe<Vault_Collateral_View_Var_Pop_Fields>;
+  var_samp?: Maybe<Vault_Collateral_View_Var_Samp_Fields>;
+  variance?: Maybe<Vault_Collateral_View_Variance_Fields>;
+};
+
+
+/** aggregate fields of "vault_collateral_view" */
+export type Vault_Collateral_View_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Vault_Collateral_View_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Vault_Collateral_View_Avg_Fields = {
+  __typename?: 'vault_collateral_view_avg_fields';
+  balance?: Maybe<Scalars['Float']['output']>;
+  collateral_token_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "vault_collateral_view". All fields are combined with a logical 'AND'. */
+export type Vault_Collateral_View_Bool_Exp = {
+  _and?: InputMaybe<Array<Vault_Collateral_View_Bool_Exp>>;
+  _not?: InputMaybe<Vault_Collateral_View_Bool_Exp>;
+  _or?: InputMaybe<Array<Vault_Collateral_View_Bool_Exp>>;
+  balance?: InputMaybe<Float8_Comparison_Exp>;
+  collateral_token_id?: InputMaybe<Bigint_Comparison_Exp>;
+  collateral_token_name?: InputMaybe<String_Comparison_Exp>;
+  id?: InputMaybe<Bigint_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  lending_controller_vault_id?: InputMaybe<Bigint_Comparison_Exp>;
+  loan_outstanding_total?: InputMaybe<Float8_Comparison_Exp>;
+  owner_address?: InputMaybe<String_Comparison_Exp>;
+  owner_id?: InputMaybe<Bigint_Comparison_Exp>;
+  token_address?: InputMaybe<String_Comparison_Exp>;
+  token_id?: InputMaybe<Bigint_Comparison_Exp>;
+  vault_address?: InputMaybe<String_Comparison_Exp>;
+  vault_id?: InputMaybe<Bigint_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Vault_Collateral_View_Max_Fields = {
+  __typename?: 'vault_collateral_view_max_fields';
+  balance?: Maybe<Scalars['float8']['output']>;
+  collateral_token_id?: Maybe<Scalars['bigint']['output']>;
+  collateral_token_name?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['bigint']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['float8']['output']>;
+  owner_address?: Maybe<Scalars['String']['output']>;
+  owner_id?: Maybe<Scalars['bigint']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  vault_address?: Maybe<Scalars['String']['output']>;
+  vault_id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate min on columns */
+export type Vault_Collateral_View_Min_Fields = {
+  __typename?: 'vault_collateral_view_min_fields';
+  balance?: Maybe<Scalars['float8']['output']>;
+  collateral_token_id?: Maybe<Scalars['bigint']['output']>;
+  collateral_token_name?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['bigint']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['float8']['output']>;
+  owner_address?: Maybe<Scalars['String']['output']>;
+  owner_id?: Maybe<Scalars['bigint']['output']>;
+  token_address?: Maybe<Scalars['String']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  vault_address?: Maybe<Scalars['String']['output']>;
+  vault_id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** Ordering options when selecting data from "vault_collateral_view". */
+export type Vault_Collateral_View_Order_By = {
+  balance?: InputMaybe<Order_By>;
+  collateral_token_id?: InputMaybe<Order_By>;
+  collateral_token_name?: InputMaybe<Order_By>;
+  id?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  lending_controller_vault_id?: InputMaybe<Order_By>;
+  loan_outstanding_total?: InputMaybe<Order_By>;
+  owner_address?: InputMaybe<Order_By>;
+  owner_id?: InputMaybe<Order_By>;
+  token_address?: InputMaybe<Order_By>;
+  token_id?: InputMaybe<Order_By>;
+  vault_address?: InputMaybe<Order_By>;
+  vault_id?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "vault_collateral_view" */
+export enum Vault_Collateral_View_Select_Column {
+  /** column name */
+  Balance = 'balance',
+  /** column name */
+  CollateralTokenId = 'collateral_token_id',
+  /** column name */
+  CollateralTokenName = 'collateral_token_name',
+  /** column name */
+  Id = 'id',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  LendingControllerVaultId = 'lending_controller_vault_id',
+  /** column name */
+  LoanOutstandingTotal = 'loan_outstanding_total',
+  /** column name */
+  OwnerAddress = 'owner_address',
+  /** column name */
+  OwnerId = 'owner_id',
+  /** column name */
+  TokenAddress = 'token_address',
+  /** column name */
+  TokenId = 'token_id',
+  /** column name */
+  VaultAddress = 'vault_address',
+  /** column name */
+  VaultId = 'vault_id'
+}
+
+/** aggregate stddev on columns */
+export type Vault_Collateral_View_Stddev_Fields = {
+  __typename?: 'vault_collateral_view_stddev_fields';
+  balance?: Maybe<Scalars['Float']['output']>;
+  collateral_token_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Vault_Collateral_View_Stddev_Pop_Fields = {
+  __typename?: 'vault_collateral_view_stddev_pop_fields';
+  balance?: Maybe<Scalars['Float']['output']>;
+  collateral_token_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Vault_Collateral_View_Stddev_Samp_Fields = {
+  __typename?: 'vault_collateral_view_stddev_samp_fields';
+  balance?: Maybe<Scalars['Float']['output']>;
+  collateral_token_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "vault_collateral_view" */
+export type Vault_Collateral_View_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Vault_Collateral_View_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Vault_Collateral_View_Stream_Cursor_Value_Input = {
+  balance?: InputMaybe<Scalars['float8']['input']>;
+  collateral_token_id?: InputMaybe<Scalars['bigint']['input']>;
+  collateral_token_name?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['bigint']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  lending_controller_vault_id?: InputMaybe<Scalars['bigint']['input']>;
+  loan_outstanding_total?: InputMaybe<Scalars['float8']['input']>;
+  owner_address?: InputMaybe<Scalars['String']['input']>;
+  owner_id?: InputMaybe<Scalars['bigint']['input']>;
+  token_address?: InputMaybe<Scalars['String']['input']>;
+  token_id?: InputMaybe<Scalars['bigint']['input']>;
+  vault_address?: InputMaybe<Scalars['String']['input']>;
+  vault_id?: InputMaybe<Scalars['bigint']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Vault_Collateral_View_Sum_Fields = {
+  __typename?: 'vault_collateral_view_sum_fields';
+  balance?: Maybe<Scalars['float8']['output']>;
+  collateral_token_id?: Maybe<Scalars['bigint']['output']>;
+  id?: Maybe<Scalars['bigint']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['bigint']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['float8']['output']>;
+  owner_id?: Maybe<Scalars['bigint']['output']>;
+  token_id?: Maybe<Scalars['bigint']['output']>;
+  vault_id?: Maybe<Scalars['bigint']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Vault_Collateral_View_Var_Pop_Fields = {
+  __typename?: 'vault_collateral_view_var_pop_fields';
+  balance?: Maybe<Scalars['Float']['output']>;
+  collateral_token_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Vault_Collateral_View_Var_Samp_Fields = {
+  __typename?: 'vault_collateral_view_var_samp_fields';
+  balance?: Maybe<Scalars['Float']['output']>;
+  collateral_token_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Vault_Collateral_View_Variance_Fields = {
+  __typename?: 'vault_collateral_view_variance_fields';
+  balance?: Maybe<Scalars['Float']['output']>;
+  collateral_token_id?: Maybe<Scalars['Float']['output']>;
+  id?: Maybe<Scalars['Float']['output']>;
+  lending_controller_vault_id?: Maybe<Scalars['Float']['output']>;
+  loan_outstanding_total?: Maybe<Scalars['Float']['output']>;
+  owner_id?: Maybe<Scalars['Float']['output']>;
+  token_id?: Maybe<Scalars['Float']['output']>;
+  vault_id?: Maybe<Scalars['Float']['output']>;
 };
 
 /** columns and relationships of "vault_depositor" */
@@ -69208,10 +73517,13 @@ export type LoansMarketByAddressQueryQueryVariables = Exact<{
 
 export type LoansMarketByAddressQueryQuery = { __typename?: 'query_root', allMarketsAddresses: Array<{ __typename?: 'lending_controller', loan_tokens: Array<{ __typename?: 'lending_controller_loan_token', token: { __typename?: 'token', token_address: string } }> }>, lending_controller: Array<{ __typename?: 'lending_controller', collateral_ratio: any, interest_treasury_share: any, interest_rate_decimals: any, decimals: any, loan_tokens: Array<{ __typename?: 'lending_controller_loan_token', loan_token_name: string, id: any, utilisation_rate: any, total_borrowed: any, token_pool_total: any, total_remaining: any, reserve_ratio: any, current_interest_rate: any, token: { __typename?: 'token', token_address: string }, m_token: { __typename?: 'm_token', address: string, depositorsAmount: { __typename?: 'm_token_account_aggregate', aggregate?: { __typename?: 'm_token_account_aggregate_fields', count: number } | null }, mTokenRewardsAmount: { __typename?: 'm_token_account_aggregate', aggregate?: { __typename?: 'm_token_account_aggregate_fields', sum?: { __typename?: 'm_token_account_sum_fields', rewards_earned?: any | null } | null } | null } }, vaults_aggregate: { __typename?: 'lending_controller_vault_aggregate', aggregate?: { __typename?: 'lending_controller_vault_aggregate_fields', count: number } | null } }> }> };
 
-export type AllLoansMarketsQueryQueryVariables = Exact<{ [key: string]: never; }>;
+export type AllLoansMarketsQueryQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+}>;
 
 
-export type AllLoansMarketsQueryQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', collateral_ratio: any, interest_treasury_share: any, interest_rate_decimals: any, decimals: any, loan_tokens: Array<{ __typename?: 'lending_controller_loan_token', loan_token_name: string, id: any, utilisation_rate: any, total_borrowed: any, token_pool_total: any, total_remaining: any, reserve_ratio: any, current_interest_rate: any, token: { __typename?: 'token', token_address: string }, m_token: { __typename?: 'm_token', address: string, depositorsAmount: { __typename?: 'm_token_account_aggregate', aggregate?: { __typename?: 'm_token_account_aggregate_fields', count: number } | null }, mTokenRewardsAmount: { __typename?: 'm_token_account_aggregate', aggregate?: { __typename?: 'm_token_account_aggregate_fields', sum?: { __typename?: 'm_token_account_sum_fields', rewards_earned?: any | null } | null } | null } }, vaults_aggregate: { __typename?: 'lending_controller_vault_aggregate', aggregate?: { __typename?: 'lending_controller_vault_aggregate_fields', count: number } | null } }> }> };
+export type AllLoansMarketsQueryQuery = { __typename?: 'query_root', markets: Array<{ __typename?: 'gql_loan_token_market_stats', id?: any | null, token_address?: string | null, m_token_address?: string | null, loan_token_name?: string | null, token_pool_total?: any | null, total_borrowed?: any | null, total_remaining?: any | null, utilisation_rate?: any | null, current_interest_rate?: any | null, depositors_count?: any | null, borrowers_count?: any | null, rewards_earned_total?: any | null, reserve_ratio?: any | null }>, lending_controller: Array<{ __typename?: 'lending_controller', collateral_ratio: any, interest_treasury_share: any, interest_rate_decimals: any, decimals: any }> };
 
 export type GetLoansConfigQueryVariables = Exact<{
   currentTimestamp?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -69333,7 +73645,7 @@ export type SatellitesStatsQueryQuery = { __typename?: 'query_root', oraclesAmou
 export type TokensMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type TokensMetadataQuery = { __typename?: 'query_root', token: Array<{ __typename?: 'token', token_id: any, metadata?: any | null, token_address: string, token_standard?: string | null, lending_controller_collateral_tokens: Array<{ __typename?: 'lending_controller_collateral_token', token_name: string, paused: boolean, is_scaled_token: boolean, is_staked_token: boolean }>, lending_controller_loan_tokens: Array<{ __typename?: 'lending_controller_loan_token', loan_token_name: string, min_repayment_amount: any }>, m_tokens: Array<{ __typename?: 'm_token', metadata?: any | null, address: string }>, mvn_tokens: Array<{ __typename?: 'mvn_token', address: string }>, farms_lp_tokens: Array<{ __typename?: 'farm', name: string, metadata?: any | null, token0?: { __typename?: 'token', token_address: string, metadata?: any | null } | null, token1?: { __typename?: 'token', token_address: string, metadata?: any | null } | null }> }> };
+export type TokensMetadataQuery = { __typename?: 'query_root', token: Array<{ __typename?: 'token', token_id: any, metadata?: any | null, token_address: string, token_standard?: string | null, lending_controller_collateral_tokens: Array<{ __typename?: 'lending_controller_collateral_token', token_name: string, paused: boolean, is_scaled_token: boolean, is_staked_token: boolean }>, lending_controller_loan_tokens: Array<{ __typename?: 'lending_controller_loan_token', loan_token_name: string, min_repayment_amount: any }>, m_tokens: Array<{ __typename?: 'm_token', metadata: any, address: string }>, mvn_tokens: Array<{ __typename?: 'mvn_token', address: string }>, farms_lp_tokens: Array<{ __typename?: 'farm', name: string, metadata?: any | null, token0?: { __typename?: 'token', token_address: string, metadata?: any | null } | null, token1?: { __typename?: 'token', token_address: string, metadata?: any | null } | null }> }> };
 
 export type GetTreasuryStorageDataQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -69352,7 +73664,7 @@ export type GetUserDataQueryVariables = Exact<{
 }>;
 
 
-export type GetUserDataQuery = { __typename?: 'query_root', maven_user: Array<{ __typename?: 'maven_user', address: string, smvn_balance: any, mvn_balance: any, m_token_accounts: Array<{ __typename?: 'm_token_account', balance: any, rewards_earned: any, reward_index: any, m_token: { __typename?: 'm_token', token_reward_index: any, address: string, metadata?: any | null } }>, delegations: Array<{ __typename?: 'delegation_record', satellite: { __typename?: 'satellite', user: { __typename?: 'maven_user', address: string } } }>, satellites: Array<{ __typename?: 'satellite', currently_registered: boolean, status: any, image: string, name: string, user: { __typename?: 'maven_user', address: string } }>, council_council_members: Array<{ __typename?: 'council_council_member', image: string, user: { __typename?: 'maven_user', address: string } }>, break_glass_council_members: Array<{ __typename?: 'break_glass_council_member', image: string, user: { __typename?: 'maven_user', address: string } }>, vesting_vestees: Array<{ __typename?: 'vesting_vestee', end_vesting_timestamp: any }>, governance_satellite_snapshots: Array<{ __typename?: 'governance_satellite_snapshot', cycle: any, ready: boolean, next_snapshot_cycle_id?: any | null, governance: { __typename?: 'governance', cycle_id: any } }>, governance_satellite_action_initiators_aggregate: { __typename?: 'governance_satellite_action_aggregate', aggregate?: { __typename?: 'governance_satellite_action_aggregate_fields', count: number } | null } }> };
+export type GetUserDataQuery = { __typename?: 'query_root', maven_user: Array<{ __typename?: 'maven_user', address: string, smvn_balance: any, mvn_balance: any, m_token_accounts: Array<{ __typename?: 'm_token_account', balance: any, rewards_earned: any, reward_index: any, m_token: { __typename?: 'm_token', token_reward_index: any, address: string, metadata: any } }>, delegations: Array<{ __typename?: 'delegation_record', satellite: { __typename?: 'satellite', user: { __typename?: 'maven_user', address: string } } }>, satellites: Array<{ __typename?: 'satellite', currently_registered: boolean, status: any, image: string, name: string, user: { __typename?: 'maven_user', address: string } }>, council_council_members: Array<{ __typename?: 'council_council_member', image: string, user: { __typename?: 'maven_user', address: string } }>, break_glass_council_members: Array<{ __typename?: 'break_glass_council_member', image: string, user: { __typename?: 'maven_user', address: string } }>, vesting_vestees: Array<{ __typename?: 'vesting_vestee', end_vesting_timestamp: any }>, governance_satellite_snapshots: Array<{ __typename?: 'governance_satellite_snapshot', cycle: any, ready: boolean, next_snapshot_cycle_id?: any | null, governance: { __typename?: 'governance', cycle_id: any } }>, governance_satellite_action_initiators_aggregate: { __typename?: 'governance_satellite_action_aggregate', aggregate?: { __typename?: 'governance_satellite_action_aggregate_fields', count: number } | null } }> };
 
 export type GetUserActionsHistoryDataQueryVariables = Exact<{
   userAddress?: InputMaybe<Scalars['String']['input']>;
@@ -69391,7 +73703,7 @@ export type GetUsersLastestCreatedVaultQueryVariables = Exact<{
 }>;
 
 
-export type GetUsersLastestCreatedVaultQuery = { __typename?: 'query_root', vault: Array<{ __typename?: 'vault', name: string, address: string, creation_timestamp: any, id: any }> };
+export type GetUsersLastestCreatedVaultQuery = { __typename?: 'query_root', vault: Array<{ __typename?: 'vault', name: string, address: string, creation_timestamp?: any | null, id: any }> };
 
 export type GetUserVaultsNamesQueryQueryVariables = Exact<{
   userAddress?: InputMaybe<Scalars['String']['input']>;
@@ -69412,19 +73724,22 @@ export type GetUserDepositorAllVaultsQueryQueryVariables = Exact<{
 }>;
 
 
-export type GetUserDepositorAllVaultsQueryQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', max_vault_liquidation_pct: any, decimals: any, liquidation_fee_pct: any, liquidation_ratio: any, interest_rate_decimals: any, admin_liquidation_fee_pct: any, liquidation_delay_in_minutes: any, vaults: Array<{ __typename?: 'lending_controller_vault', last_updated_block_level: any, marked_for_liquidation_level: any, liquidation_end_level: any, loan_outstanding_total: any, loan_principal_total: any, loan_interest_total: any, internal_id: any, borrow_index: any, collateral_balances: Array<{ __typename?: 'lending_controller_vault_collateral_balance', balance: any, collateral_token: { __typename?: 'lending_controller_collateral_token', token_name: string, token: { __typename?: 'token', token_address: string } } }>, vault?: { __typename?: 'vault', creation_timestamp: any, address: string, name: string, allowance: any, baker?: { __typename?: 'maven_user', address: string } | null, depositors: Array<{ __typename?: 'vault_depositor', depositor: { __typename?: 'maven_user', address: string } }> } | null, loan_token: { __typename?: 'lending_controller_loan_token', current_interest_rate: any, borrow_index: any, total_remaining: any, token_pool_total: any, reserve_ratio: any, min_repayment_amount: any, token: { __typename?: 'token', token_address: string } }, owner: { __typename?: 'maven_user', address: string } }> }> };
+export type GetUserDepositorAllVaultsQueryQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', max_vault_liquidation_pct: any, decimals: any, liquidation_fee_pct: any, liquidation_ratio: any, interest_rate_decimals: any, admin_liquidation_fee_pct: any, liquidation_delay_in_minutes: any, vaults: Array<{ __typename?: 'lending_controller_vault', last_updated_block_level: any, marked_for_liquidation_level: any, liquidation_end_level: any, loan_outstanding_total: any, loan_principal_total: any, loan_interest_total: any, internal_id: any, borrow_index: any, collateral_balances: Array<{ __typename?: 'lending_controller_vault_collateral_balance', balance: any, collateral_token: { __typename?: 'lending_controller_collateral_token', token_name: string, token: { __typename?: 'token', token_address: string } } }>, vault?: { __typename?: 'vault', creation_timestamp?: any | null, address: string, name: string, allowance: any, baker?: { __typename?: 'maven_user', address: string } | null, depositors: Array<{ __typename?: 'vault_depositor', depositor: { __typename?: 'maven_user', address: string } }> } | null, loan_token: { __typename?: 'lending_controller_loan_token', current_interest_rate: any, borrow_index: any, total_remaining: any, token_pool_total: any, reserve_ratio: any, min_repayment_amount: any, token: { __typename?: 'token', token_address: string } }, owner: { __typename?: 'maven_user', address: string } }> }> };
 
 export type GetUserAllVaultsQueryQueryVariables = Exact<{
   userAddress?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetUserAllVaultsQueryQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', max_vault_liquidation_pct: any, decimals: any, liquidation_fee_pct: any, liquidation_ratio: any, interest_rate_decimals: any, admin_liquidation_fee_pct: any, liquidation_delay_in_minutes: any, vaults: Array<{ __typename?: 'lending_controller_vault', last_updated_block_level: any, marked_for_liquidation_level: any, liquidation_end_level: any, loan_outstanding_total: any, loan_principal_total: any, loan_interest_total: any, internal_id: any, borrow_index: any, collateral_balances: Array<{ __typename?: 'lending_controller_vault_collateral_balance', balance: any, collateral_token: { __typename?: 'lending_controller_collateral_token', token_name: string, token: { __typename?: 'token', token_address: string } } }>, vault?: { __typename?: 'vault', creation_timestamp: any, address: string, name: string, allowance: any, baker?: { __typename?: 'maven_user', address: string } | null, depositors: Array<{ __typename?: 'vault_depositor', depositor: { __typename?: 'maven_user', address: string } }> } | null, loan_token: { __typename?: 'lending_controller_loan_token', current_interest_rate: any, borrow_index: any, total_remaining: any, token_pool_total: any, reserve_ratio: any, min_repayment_amount: any, token: { __typename?: 'token', token_address: string } }, owner: { __typename?: 'maven_user', address: string } }> }> };
+export type GetUserAllVaultsQueryQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', max_vault_liquidation_pct: any, decimals: any, liquidation_fee_pct: any, liquidation_ratio: any, interest_rate_decimals: any, admin_liquidation_fee_pct: any, liquidation_delay_in_minutes: any, vaults: Array<{ __typename?: 'lending_controller_vault', last_updated_block_level: any, marked_for_liquidation_level: any, liquidation_end_level: any, loan_outstanding_total: any, loan_principal_total: any, loan_interest_total: any, internal_id: any, borrow_index: any, collateral_balances: Array<{ __typename?: 'lending_controller_vault_collateral_balance', balance: any, collateral_token: { __typename?: 'lending_controller_collateral_token', token_name: string, token: { __typename?: 'token', token_address: string } } }>, vault?: { __typename?: 'vault', creation_timestamp?: any | null, address: string, name: string, allowance: any, baker?: { __typename?: 'maven_user', address: string } | null, depositors: Array<{ __typename?: 'vault_depositor', depositor: { __typename?: 'maven_user', address: string } }> } | null, loan_token: { __typename?: 'lending_controller_loan_token', current_interest_rate: any, borrow_index: any, total_remaining: any, token_pool_total: any, reserve_ratio: any, min_repayment_amount: any, token: { __typename?: 'token', token_address: string } }, owner: { __typename?: 'maven_user', address: string } }> }> };
 
-export type GetAllVaultsQueryQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetAllVaultsQueryQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+}>;
 
 
-export type GetAllVaultsQueryQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', max_vault_liquidation_pct: any, decimals: any, liquidation_fee_pct: any, liquidation_ratio: any, interest_rate_decimals: any, admin_liquidation_fee_pct: any, liquidation_delay_in_minutes: any, vaults: Array<{ __typename?: 'lending_controller_vault', last_updated_block_level: any, marked_for_liquidation_level: any, liquidation_end_level: any, loan_outstanding_total: any, loan_principal_total: any, loan_interest_total: any, internal_id: any, borrow_index: any, collateral_balances: Array<{ __typename?: 'lending_controller_vault_collateral_balance', balance: any, collateral_token: { __typename?: 'lending_controller_collateral_token', token_name: string, token: { __typename?: 'token', token_address: string } } }>, vault?: { __typename?: 'vault', creation_timestamp: any, address: string, name: string, allowance: any, baker?: { __typename?: 'maven_user', address: string } | null, depositors: Array<{ __typename?: 'vault_depositor', depositor: { __typename?: 'maven_user', address: string } }> } | null, loan_token: { __typename?: 'lending_controller_loan_token', current_interest_rate: any, borrow_index: any, total_remaining: any, token_pool_total: any, reserve_ratio: any, min_repayment_amount: any, token: { __typename?: 'token', token_address: string } }, owner: { __typename?: 'maven_user', address: string } }> }> };
+export type GetAllVaultsQueryQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', max_vault_liquidation_pct: any, decimals: any, liquidation_fee_pct: any, liquidation_ratio: any, interest_rate_decimals: any, admin_liquidation_fee_pct: any, liquidation_delay_in_minutes: any }>, vaults: Array<{ __typename?: 'gql_vault_with_balances', vault_address?: string | null, vault_name?: string | null, owner_address?: string | null, loan_token_address?: string | null, loan_outstanding_total?: any | null, loan_principal_total?: any | null, loan_interest_total?: any | null, collateral_json?: any | null, depositors_json?: any | null, is_open?: boolean | null, current_interest_rate?: any | null, borrow_index?: any | null, total_remaining?: any | null, token_pool_total?: any | null, reserve_ratio?: any | null, min_repayment_amount?: any | null, allowance?: any | null, creation_timestamp?: any | null, baker_address?: string | null, last_updated_block_level?: any | null, marked_for_liquidation_level?: any | null, liquidation_end_level?: any | null, internal_id?: any | null }> };
 
 export type DashboardVaultsTabDataQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -69469,7 +73784,7 @@ export const GetLoansHistoryDataDocument = {"kind":"Document","definitions":[{"k
 export const GetLoansTransactionsHistoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getLoansTransactionsHistory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vaultAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"typeFilter"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"smallint"}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"8"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"mvn_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"operation_hash"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"historyItemsAmount"},"name":{"kind":"Name","value":"history_data_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQueryVariables>;
 export const GetDevLoansTransactionsHistoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getDevLoansTransactionsHistory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vaultAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"typeFilter"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"smallint"}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"8"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"mvn_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"operation_hash"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"historyItemsAmount"},"name":{"kind":"Name","value":"history_data_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetDevLoansTransactionsHistoryQuery, GetDevLoansTransactionsHistoryQueryVariables>;
 export const LoansMarketByAddressQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"loansMarketByAddressQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"allMarketsAddresses"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_treasury_share"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"loan_tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"utilisation_rate"}},{"kind":"Field","name":{"kind":"Name","value":"total_borrowed"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"m_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","alias":{"kind":"Name","value":"depositorsAmount"},"name":{"kind":"Name","value":"accounts_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"balance"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"IntValue","value":"0"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"mTokenRewardsAmount"},"name":{"kind":"Name","value":"accounts_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rewards_earned"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vaults_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_outstanding_total"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"StringValue","value":"0","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct"},"value":{"kind":"BooleanValue","value":true}},{"kind":"Argument","name":{"kind":"Name","value":"columns"},"value":{"kind":"EnumValue","value":"owner_id"}}]}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<LoansMarketByAddressQueryQuery, LoansMarketByAddressQueryQueryVariables>;
-export const AllLoansMarketsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"allLoansMarketsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_treasury_share"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"loan_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"utilisation_rate"}},{"kind":"Field","name":{"kind":"Name","value":"total_borrowed"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"m_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","alias":{"kind":"Name","value":"depositorsAmount"},"name":{"kind":"Name","value":"accounts_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"balance"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"IntValue","value":"0"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"mTokenRewardsAmount"},"name":{"kind":"Name","value":"accounts_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rewards_earned"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vaults_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_outstanding_total"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"StringValue","value":"0","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct"},"value":{"kind":"BooleanValue","value":true}},{"kind":"Argument","name":{"kind":"Name","value":"columns"},"value":{"kind":"EnumValue","value":"owner_id"}}]}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<AllLoansMarketsQueryQuery, AllLoansMarketsQueryQueryVariables>;
+export const AllLoansMarketsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"allLoansMarketsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"markets"},"name":{"kind":"Name","value":"gql_loan_token_market_stats"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"m_token_address"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"total_borrowed"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"utilisation_rate"}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"depositors_count"}},{"kind":"Field","name":{"kind":"Name","value":"borrowers_count"}},{"kind":"Field","name":{"kind":"Name","value":"rewards_earned_total"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_treasury_share"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}}]}}]} as unknown as DocumentNode<AllLoansMarketsQueryQuery, AllLoansMarketsQueryQueryVariables>;
 export const GetLoansConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getLoansConfig"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currentTimestamp"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"minimum_loan_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"collateral_ratio"}}]}}]}}]} as unknown as DocumentNode<GetLoansConfigQuery, GetLoansConfigQueryVariables>;
 export const CheckWitherMarketExistsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"checkWitherMarketExists"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CheckWitherMarketExistsQuery, CheckWitherMarketExistsQueryVariables>;
 export const GetGovernanceLatestUserProposalsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGovernanceLatestUserProposalsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"governance_proposal"},"name":{"kind":"Name","value":"governance_proposal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"start_datetime"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"proposer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetGovernanceLatestUserProposalsQueryQuery, GetGovernanceLatestUserProposalsQueryQueryVariables>;
@@ -69502,6 +73817,6 @@ export const GetUserVaultsNamesQueryDocument = {"kind":"Document","definitions":
 export const GetVaultAccIntIndexesQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getVaultAccIntIndexesQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vaultAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vaults"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"vault"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"vaultAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_interest_total"}},{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_block_level"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadata"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetVaultAccIntIndexesQueryQuery, GetVaultAccIntIndexesQueryQueryVariables>;
 export const GetUserDepositorAllVaultsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserDepositorAllVaultsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"max_vault_liquidation_pct"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"admin_liquidation_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_delay_in_minutes"}},{"kind":"Field","name":{"kind":"Name","value":"vaults"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"vault"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"creation_timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"open"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"vault"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_or"},"value":{"kind":"ListValue","values":[{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"allowance"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"0","block":false}}]}}]},{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_and"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"depositors"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"depositor"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"allowance"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"1","block":false}}]}}]}}]}]}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"owner"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_balances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"creation_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"allowance"}},{"kind":"Field","name":{"kind":"Name","value":"baker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"depositors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"depositor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"min_repayment_amount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_block_level"}},{"kind":"Field","name":{"kind":"Name","value":"marked_for_liquidation_level"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_end_level"}},{"kind":"Field","name":{"kind":"Name","value":"loan_outstanding_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_principal_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_interest_total"}},{"kind":"Field","name":{"kind":"Name","value":"internal_id"}},{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserDepositorAllVaultsQueryQuery, GetUserDepositorAllVaultsQueryQueryVariables>;
 export const GetUserAllVaultsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getUserAllVaultsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"max_vault_liquidation_pct"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"admin_liquidation_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_delay_in_minutes"}},{"kind":"Field","name":{"kind":"Name","value":"vaults"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"vault"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"creation_timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"open"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"owner"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_balances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"creation_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"allowance"}},{"kind":"Field","name":{"kind":"Name","value":"baker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"depositors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"depositor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"min_repayment_amount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_block_level"}},{"kind":"Field","name":{"kind":"Name","value":"marked_for_liquidation_level"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_end_level"}},{"kind":"Field","name":{"kind":"Name","value":"loan_outstanding_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_principal_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_interest_total"}},{"kind":"Field","name":{"kind":"Name","value":"internal_id"}},{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}}]}}]}}]}}]} as unknown as DocumentNode<GetUserAllVaultsQueryQuery, GetUserAllVaultsQueryQueryVariables>;
-export const GetAllVaultsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getAllVaultsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"max_vault_liquidation_pct"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"admin_liquidation_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_delay_in_minutes"}},{"kind":"Field","name":{"kind":"Name","value":"vaults"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"vault"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"creation_timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"open"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_balances"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"creation_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"allowance"}},{"kind":"Field","name":{"kind":"Name","value":"baker"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"depositors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"depositor"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"min_repayment_amount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"owner"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_block_level"}},{"kind":"Field","name":{"kind":"Name","value":"marked_for_liquidation_level"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_end_level"}},{"kind":"Field","name":{"kind":"Name","value":"loan_outstanding_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_principal_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_interest_total"}},{"kind":"Field","name":{"kind":"Name","value":"internal_id"}},{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}}]}}]}}]}}]} as unknown as DocumentNode<GetAllVaultsQueryQuery, GetAllVaultsQueryQueryVariables>;
+export const GetAllVaultsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getAllVaultsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"max_vault_liquidation_pct"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"admin_liquidation_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_delay_in_minutes"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"vaults"},"name":{"kind":"Name","value":"gql_vault_with_balances"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"creation_timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"is_open"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vault_address"}},{"kind":"Field","name":{"kind":"Name","value":"vault_name"}},{"kind":"Field","name":{"kind":"Name","value":"owner_address"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token_address"}},{"kind":"Field","name":{"kind":"Name","value":"loan_outstanding_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_principal_total"}},{"kind":"Field","name":{"kind":"Name","value":"loan_interest_total"}},{"kind":"Field","name":{"kind":"Name","value":"collateral_json"}},{"kind":"Field","name":{"kind":"Name","value":"depositors_json"}},{"kind":"Field","name":{"kind":"Name","value":"is_open"}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"borrow_index"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"min_repayment_amount"}},{"kind":"Field","name":{"kind":"Name","value":"allowance"}},{"kind":"Field","name":{"kind":"Name","value":"creation_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"baker_address"}},{"kind":"Field","name":{"kind":"Name","value":"last_updated_block_level"}},{"kind":"Field","name":{"kind":"Name","value":"marked_for_liquidation_level"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_end_level"}},{"kind":"Field","name":{"kind":"Name","value":"internal_id"}}]}}]}}]} as unknown as DocumentNode<GetAllVaultsQueryQuery, GetAllVaultsQueryQueryVariables>;
 export const DashboardVaultsTabDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"dashboardVaultsTabData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"allVaultsCollaterals"},"name":{"kind":"Name","value":"collateral_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"balances_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}}]}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"collateralsForActiveVaults"},"name":{"kind":"Name","value":"collateral_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"balances_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"lending_controller_vault"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_outstanding_total"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"IntValue","value":"0"}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}}]}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"activeVaults"},"name":{"kind":"Name","value":"vaults_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"open"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"borrowedFromMarkets"},"name":{"kind":"Name","value":"loan_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total_borrowed"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}}]}}]} as unknown as DocumentNode<DashboardVaultsTabDataQuery, DashboardVaultsTabDataQueryVariables>;
 export const GetVestingQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getVestingQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"vesting"},"name":{"kind":"Name","value":"vesting"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"admin"}},{"kind":"Field","name":{"kind":"Name","value":"governance_id"}},{"kind":"Field","name":{"kind":"Name","value":"total_vested_amount"}},{"kind":"Field","name":{"kind":"Name","value":"vestees_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total_claimed"}},{"kind":"Field","name":{"kind":"Name","value":"total_remainder"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vestees"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"locked"}},{"kind":"Field","name":{"kind":"Name","value":"vestee"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"total_remainder"}},{"kind":"Field","name":{"kind":"Name","value":"total_allocated_amount"}},{"kind":"Field","name":{"kind":"Name","value":"claim_amount_per_month"}},{"kind":"Field","name":{"kind":"Name","value":"cliff_months"}},{"kind":"Field","name":{"kind":"Name","value":"vesting_months"}},{"kind":"Field","name":{"kind":"Name","value":"next_redemption_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"last_claimed_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"end_cliff_timestamp"}}]}}]}}]}}]} as unknown as DocumentNode<GetVestingQueryQuery, GetVestingQueryQueryVariables>;
