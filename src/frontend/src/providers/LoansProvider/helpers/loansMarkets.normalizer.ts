@@ -12,7 +12,7 @@ export const normalizeLoansConfig = ({ indexerData }: { indexerData: GetLoansCon
   }
 }
 
-export const normalizeLoansMarkets = ({ indexerData }: { indexerData: MarketsIndexerDataType }) => {
+export const normalizeLoansMarketsNew = ({ indexerData }: { indexerData: MarketsIndexerDataType }) => {
   const {
     markets,
     lending_controller: [
@@ -64,3 +64,58 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: MarketsInd
     return acc
   }, {})
 }
+
+export const normalizeLoansMarkets = ({ indexerData }: { indexerData: MarketsIndexerDataType }) => {
+  const {
+    lending_controller: [
+      { interest_rate_decimals: interestRateDecimals, interest_treasury_share, decimals, loan_tokens },
+    ],
+  } = indexerData
+  const treasuryShare = convertNumberForClient({ number: interest_treasury_share, grade: decimals })
+
+  return loan_tokens?.reduce<LoansContext['marketsMapper']>((acc, loanToken) => {
+    const {
+      utilisation_rate,
+      token_pool_total,
+      total_borrowed,
+      current_interest_rate,
+      token: { token_address: loanTokenAddress },
+      m_token: {
+        address: loanMTokenAddress,
+        depositorsAmount: { aggregate: suppliers },
+        mTokenRewardsAmount: { aggregate: mTokenRewardsAggregate },
+      },
+      vaults_aggregate: { aggregate: borrowers },
+    } = loanToken
+
+    const { reserveAmount, reserveFactor, availableLiquidity } = calcMarketAvailableLiquidity(loanToken)
+
+    const tokenCurrentInterestRate = convertNumberForClient({
+      number: current_interest_rate,
+      grade: interestRateDecimals,
+    })
+    const utilizationRate = convertNumberForClient({ number: utilisation_rate, grade: interestRateDecimals })
+
+    acc[loanTokenAddress] = {
+      loanTokenAddress,
+      loanMTokenAddress,
+      utilisationRate: getNumberInBounds(0, 100, utilizationRate * 100),
+
+      availableLiquidity,
+      totalLended: token_pool_total,
+      totalBorrowed: total_borrowed,
+      totalRewards: mTokenRewardsAggregate?.sum?.rewards_earned ?? 0,
+
+      borrowers: borrowers?.count ?? 0,
+      suppliers: suppliers?.count ?? 0,
+
+      reserveFactor,
+      reserveAmount,
+      borrowAPR: tokenCurrentInterestRate * 100,
+      lendingAPY: calcLendingAPY(utilizationRate, tokenCurrentInterestRate, treasuryShare),
+    }
+
+    return acc
+  }, {})
+}
+

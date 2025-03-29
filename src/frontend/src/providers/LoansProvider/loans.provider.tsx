@@ -20,7 +20,7 @@ import {
 } from './helpers/loans.const'
 
 // helpers
-import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
+import {normalizeLoansConfig, normalizeLoansMarkets, normalizeLoansMarketsNew} from './helpers/loansMarkets.normalizer'
 import { getLoansProviderReturnValue } from './helpers/loans.utils'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
@@ -86,7 +86,7 @@ export const LoansProvider = ({ children }: Props) => {
     variables: { limit: 10, offset: 0 }, // add offset & limit, update GET_ALL_MARKETS_QUERY to take limit and offset
     onCompleted: (data) => {
       // handle paginated markets data to not replace existing markets, merge it
-      const newMarkets = normalizeLoansMarkets({ indexerData: data })
+      const newMarkets = normalizeLoansMarketsNew({ indexerData: data })
 
       const marketsAddresses = Object.keys(newMarkets)
       setLoansCtxState((prev) => ({
