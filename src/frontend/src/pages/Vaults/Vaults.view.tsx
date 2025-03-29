@@ -74,6 +74,7 @@ export const VaultsView = () => {
     allVaultsIds,
     vaultsMapper,
     permissionedVaultsIds,
+      vaultsTotalCount,
     changePage,
   } = useVaultsContext()
 
@@ -227,7 +228,7 @@ export const VaultsView = () => {
             )
           })}
 
-          <Pagination itemsCount={100} listName={currentListName} />
+          <Pagination itemsCount={vaultsTotalCount} listName={currentListName} />
         </VaultsList>
       ) : (
         <EmptyContainer className="centered">

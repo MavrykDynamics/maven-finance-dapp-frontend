@@ -188,3 +188,13 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 		}
 	}
 `)
+
+export const GET_ALL_VAULTS_QUERY_COUNT = gql(`
+    query GetVaultCount {
+      vault_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+`)

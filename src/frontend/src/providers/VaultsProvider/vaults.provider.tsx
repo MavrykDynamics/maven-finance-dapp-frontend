@@ -18,7 +18,7 @@ import {
 
 // consts
 import {
-  GET_ALL_VAULTS_QUERY,
+  GET_ALL_VAULTS_QUERY, GET_ALL_VAULTS_QUERY_COUNT,
   GET_USER_ALL_VAULTS_QUERY,
   GET_USER_DEPOSITOR_ALL_VAULTS_QUERY,
 } from './queries/vaults.query'
@@ -88,6 +88,7 @@ export const VaultsProvider = ({ children }: Props) => {
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         permissionedVaultsIds,
       }))
+      setIsLoading(false);
     },
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
@@ -109,6 +110,7 @@ export const VaultsProvider = ({ children }: Props) => {
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         myVaultsIds,
       }))
+      setIsLoading(false);
     },
     onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
@@ -144,6 +146,20 @@ export const VaultsProvider = ({ children }: Props) => {
       setIsLoading(false);
     },
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
+  })
+
+  useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
+    skip: activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
+    variables: {},
+    onCompleted: (data) => {
+      const {vault_aggregate: {aggregate: {count}}} = data;
+
+      setVaultsCtxState((prev) => ({
+        ...prev,
+        vaultsTotalCount: count,
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY_COUNT'),
   })
 
   const changePage = (newPage: number) => {

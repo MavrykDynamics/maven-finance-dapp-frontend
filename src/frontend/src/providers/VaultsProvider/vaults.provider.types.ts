@@ -61,6 +61,7 @@ export type VaultsCtxState = {
   vaultsMapper: Record<string, VaultType>
   permissionedVaultsIds: string[]
   myVaultsIds: string[]
+  vaultsTotalCount: number
   allVaultsIds: string[]
   vaultsDashboardData: null | VaultsDashboardDataType
 }
