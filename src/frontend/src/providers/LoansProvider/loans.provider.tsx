@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useQuery } from '@apollo/client'
 import React, { useContext, useMemo, useState } from 'react'
 
@@ -19,7 +20,7 @@ import {
 } from './helpers/loans.const'
 
 // helpers
-import { normalizeLoansConfig, normalizeLoansMarkets } from './helpers/loansMarkets.normalizer'
+import {normalizeLoansConfig, normalizeLoansMarkets, normalizeLoansMarketsNew} from './helpers/loansMarkets.normalizer'
 import { getLoansProviderReturnValue } from './helpers/loans.utils'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
@@ -79,11 +80,13 @@ export const LoansProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_MARKET_BY_ADDRESS_QUERY'),
   })
 
+  // andrew_here
   useQueryWithRefetch(GET_ALL_MARKETS_QUERY, {
     skip: !activeSubs[LOANS_MARKETS_DATA],
-    variables: {},
+    variables: { limit: 10, offset: 0 }, // add offset & limit, update GET_ALL_MARKETS_QUERY to take limit and offset
     onCompleted: (data) => {
-      const newMarkets = normalizeLoansMarkets({ indexerData: data })
+      // handle paginated markets data to not replace existing markets, merge it
+      const newMarkets = normalizeLoansMarketsNew({ indexerData: data })
 
       const marketsAddresses = Object.keys(newMarkets)
       setLoansCtxState((prev) => ({

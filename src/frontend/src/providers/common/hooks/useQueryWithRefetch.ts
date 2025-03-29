@@ -51,7 +51,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   const prevUserSkipValue = usePrevious(queryOptions?.skip)
   const currentUserSkipValue = queryOptions?.skip
 
-  const { blocksDiff, refetchQueryVariables } = refetchOptions ?? {}
+  const { blocksDiff = 5, refetchQueryVariables } = refetchOptions ?? {}
 
   // Effect to reset isInitialQueryDone, on variables change
   useEffect(() => {
