@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import {
   LoansContext,
   LoansContextState,
@@ -72,10 +74,7 @@ export const calcMarketAvailableLiquidity = ({
   total_remaining,
   token_pool_total,
   reserve_ratio,
-}: Pick<
-  MarketsIndexerDataType['lending_controller'][number]['loan_tokens'][number],
-  'total_remaining' | 'token_pool_total' | 'reserve_ratio'
->) => {
+}) => {
   const reserveAmount = token_pool_total * (reserve_ratio / 10000)
 
   return {

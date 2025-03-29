@@ -31,6 +31,7 @@ export const EMPTY_VAULTS_CONTEXT: VaultsCtxState = {
   myVaultsIds: [],
   allVaultsIds: [],
   permissionedVaultsIds: [],
+  vaultsTotalCount: 0,
   vaultsDashboardData: EMPTY_VAULTS_DASHBOARD_DATA,
 }
 
@@ -40,4 +41,5 @@ export const DEFAULT_VAULTS_CONTEXT: NullableVaultsCtxState = {
   allVaultsIds: null,
   permissionedVaultsIds: null,
   vaultsDashboardData: null,
+  vaultsTotalCount: 0,
 }

@@ -41,6 +41,8 @@ export type VaultsActionsType =
 export type VaultsContext = VaultsCtxState & {
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
   setVaultsDashboardData: (newDashboardData: VaultsDashboardDataType) => void
+  changePage: (newPage: number) => void
+  setIsLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void
   isLoading: boolean
 }
 
@@ -60,6 +62,7 @@ export type VaultsCtxState = {
   vaultsMapper: Record<string, VaultType>
   permissionedVaultsIds: string[]
   myVaultsIds: string[]
+  vaultsTotalCount: number
   allVaultsIds: string[]
   vaultsDashboardData: null | VaultsDashboardDataType
 }

@@ -74,6 +74,9 @@ export const VaultsView = () => {
     allVaultsIds,
     vaultsMapper,
     permissionedVaultsIds,
+    vaultsTotalCount,
+    setIsLoading,
+    changePage,
   } = useVaultsContext()
 
   useEffect(() => {
@@ -147,11 +150,17 @@ export const VaultsView = () => {
 
   const currentPage = getPageNumber(search, currentListName)
 
+  useEffect(() => {
+    if(tabId === vaultTabs.ALL) changePage(currentPage);
+  }, [currentPage]);
+
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
     const currentTabId = tabsList.find((item) => item.path === tabId)?.id
 
     if (!foundTab?.path || currentTabId === id) return
+
+    setIsLoading(true);
 
     navigate(`${pathname}/${foundTab.path}`)
     setVaultsIds(
@@ -162,11 +171,6 @@ export const VaultsView = () => {
         : permissionedVaultsIds,
     )
   }
-
-  const paginatedVaultsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, currentListName)
-    return vaultsIds?.slice(from, to)
-  }, [currentListName, currentPage, vaultsIds])
 
   const contractActionProps: HookContractActionArgs<{ vaultId: number; vaultOwner: string }> = useMemo(
     () => ({
@@ -188,9 +192,14 @@ export const VaultsView = () => {
     [lendingControllerAddress, userAddress],
   )
 
-  const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
+  const paginatedVaultsList = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, currentListName)
+    return vaultsIds?.slice(from, to)
+  }, [currentListName, currentPage, vaultsIds])
 
   const deferredVaultIds = useDeferredValue(paginatedVaultsList)
+
+  const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
 
   return (
     <VaultsStyled>
@@ -215,7 +224,7 @@ export const VaultsView = () => {
         </DataLoaderWrapper>
       ) : vaultsIds.length ? (
         <VaultsList>
-          {deferredVaultIds.map((item) => {
+          {(tabId === vaultTabs.ALL ? vaultsIds : deferredVaultIds).map((item) => {
             const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
 
             return (
@@ -229,7 +238,7 @@ export const VaultsView = () => {
             )
           })}
 
-          <Pagination itemsCount={vaultsIds.length} listName={currentListName} />
+          <Pagination itemsCount={tabId === vaultTabs.ALL ? vaultsTotalCount : vaultsIds.length} listName={currentListName} />
         </VaultsList>
       ) : (
         <EmptyContainer className="centered">
