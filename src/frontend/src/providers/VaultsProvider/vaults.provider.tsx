@@ -32,7 +32,7 @@ import {
 } from './vaults.provider.consts'
 
 // utils
-import { normalizeVaults } from './helpers/vaults.normalizer'
+import {normalizeVaults, normalizeVaultsNew} from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 
 export const vaultsContext = React.createContext<VaultsContext>(undefined!)
@@ -131,7 +131,7 @@ export const VaultsProvider = ({ children }: Props) => {
     },
     onCompleted: (data) => {
       // update vaults logic to merge data, dont replace the existing one
-      const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaults({
+      const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaultsNew({
         indexerData: data,
         userAddress,
       })
@@ -149,7 +149,6 @@ export const VaultsProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
-    skip: activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     variables: {},
     onCompleted: (data) => {
       const {vault_aggregate: {aggregate: {count}}} = data;
@@ -188,6 +187,7 @@ export const VaultsProvider = ({ children }: Props) => {
         setVaultsDashboardData,
         userAddress,
         changePage,
+        setIsLoading,
         isLoadingVaults: isLoading
       }),
     [vaultsCtxState, activeSubs, isLoading],

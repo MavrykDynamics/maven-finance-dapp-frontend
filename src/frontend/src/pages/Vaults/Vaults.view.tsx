@@ -74,7 +74,8 @@ export const VaultsView = () => {
     allVaultsIds,
     vaultsMapper,
     permissionedVaultsIds,
-      vaultsTotalCount,
+    vaultsTotalCount,
+    setIsLoading,
     changePage,
   } = useVaultsContext()
 
@@ -150,7 +151,7 @@ export const VaultsView = () => {
   const currentPage = getPageNumber(search, currentListName)
 
   useEffect(() => {
-    changePage(currentPage);
+    if(tabId === vaultTabs.ALL) changePage(currentPage);
   }, [currentPage]);
 
   const handleChangeTabs = (id: number) => {
@@ -158,6 +159,8 @@ export const VaultsView = () => {
     const currentTabId = tabsList.find((item) => item.path === tabId)?.id
 
     if (!foundTab?.path || currentTabId === id) return
+
+    setIsLoading(true);
 
     navigate(`${pathname}/${foundTab.path}`)
     setVaultsIds(
@@ -189,6 +192,13 @@ export const VaultsView = () => {
     [lendingControllerAddress, userAddress],
   )
 
+  const paginatedVaultsList = useMemo(() => {
+    const [from, to] = calculateSlicePositions(currentPage, currentListName)
+    return vaultsIds?.slice(from, to)
+  }, [currentListName, currentPage, vaultsIds])
+
+  const deferredVaultIds = useDeferredValue(paginatedVaultsList)
+
   const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
 
   return (
@@ -214,7 +224,7 @@ export const VaultsView = () => {
         </DataLoaderWrapper>
       ) : vaultsIds.length ? (
         <VaultsList>
-          {vaultsIds.map((item) => {
+          {(tabId === vaultTabs.ALL ? vaultsIds : deferredVaultIds).map((item) => {
             const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
 
             return (
@@ -228,7 +238,7 @@ export const VaultsView = () => {
             )
           })}
 
-          <Pagination itemsCount={vaultsTotalCount} listName={currentListName} />
+          <Pagination itemsCount={tabId === vaultTabs.ALL ? vaultsTotalCount : vaultsIds.length} listName={currentListName} />
         </VaultsList>
       ) : (
         <EmptyContainer className="centered">

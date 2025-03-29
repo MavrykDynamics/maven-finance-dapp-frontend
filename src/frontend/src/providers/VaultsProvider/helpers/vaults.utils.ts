@@ -280,6 +280,7 @@ export const getVaultsProviderReturnValue = ({
   setVaultsDashboardData,
   userAddress,
   changePage,
+  setIsLoading,
   isLoadingVaults
 }: {
   vaultsCtxState: NullableVaultsCtxState
@@ -289,6 +290,7 @@ export const getVaultsProviderReturnValue = ({
   userAddress: string | null
   changePage: (newPage: number) => void
   isLoadingVaults: boolean
+  setIsLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void
 }) => {
   const { vaultsMapper, myVaultsIds, allVaultsIds, permissionedVaultsIds, vaultsDashboardData } = vaultsCtxState
   const commonToReturn = {
@@ -317,7 +319,8 @@ export const getVaultsProviderReturnValue = ({
       ...EMPTY_VAULTS_CONTEXT,
       ...commonToReturn,
       isLoading: true,
-      changePage
+      changePage,
+      setIsLoading
     }
   }
 
@@ -327,6 +330,7 @@ export const getVaultsProviderReturnValue = ({
     ...commonToReturn,
     ...nonNullableProviderValue,
     changePage,
+    setIsLoading,
     isLoading: false,
   }
 }
