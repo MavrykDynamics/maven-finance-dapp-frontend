@@ -255,10 +255,10 @@
 //     return
 //   }
 //   //TODO: Before using this function, ensure that the oracle and mToken addresses are correct
-//   const allowedLoanTokens = ['usdt', 'tez', 'eurl']
+//   const allowedLoanTokens = ['usdt', 'mav', 'eurl']
 //   const oracleAndMTokenIDsMap = new Map<string, { oracleId: string; mTokenId: string }>([
 //     ['usdt', { oracleId: 'KT1H3UrThDhoDWx3x8BirqxtDFAQDa8MENrX', mTokenId: 'KT1CsED3cRAzpRXA3PwsqhqXa4Qiif9UrBED' }],
-//     ['tez', { oracleId: 'KT18qwZq87AwmL1orDyhrTBa7fwTnzcCoqKo', mTokenId: 'KT1MxJzA7xoKMT2ZjmFwpFx6ovNWgRqnXg6R' }],
+//     ['mav', { oracleId: 'KT18qwZq87AwmL1orDyhrTBa7fwTnzcCoqKo', mTokenId: 'KT1MxJzA7xoKMT2ZjmFwpFx6ovNWgRqnXg6R' }],
 //     ['eurl', { oracleId: 'KT1Np2yJNXtAkAeNb3LEVJCD9vtQtRN2vHLE', mTokenId: 'KT18m5XfF9UKYT54uADH2dAZLQt77jrQitfS' }],
 //   ])
 //   const batchArray: any = []
@@ -315,8 +315,8 @@
 //     tokenContractAddress = null,
 //     tokenId = 0
 //   switch (tokenName) {
-//     case 'tez':
-//       tokenType = 'tez'
+//     case 'mav':
+//       tokenType = 'mav'
 //       break
 //     case 'usdt':
 //       tokenType = 'fa2'
@@ -347,7 +347,7 @@
 //     tokenId: tokenId,
 //   }
 
-//   if (tokenName == 'tez') {
+//   if (tokenName == 'mav') {
 //     return {
 //       kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
 //       ...lendingControllerContract.methods
@@ -428,10 +428,10 @@
 //     }
 
 //     //TODO: Before using this function, ensure that the oracle addresses are correct
-//     const allowedCollaterals = ['usdt', 'tez', 'eurl', 'tzbtc']
+//     const allowedCollaterals = ['usdt', 'mav', 'eurl', 'tzbtc']
 //     const oracleIDMap = new Map<string, string>([
 //       ['usdt', 'KT1H3UrThDhoDWx3x8BirqxtDFAQDa8MENrX'],
-//       ['tez', 'KT18qwZq87AwmL1orDyhrTBa7fwTnzcCoqKo'],
+//       ['mav', 'KT18qwZq87AwmL1orDyhrTBa7fwTnzcCoqKo'],
 //       ['eurl', 'KT1Np2yJNXtAkAeNb3LEVJCD9vtQtRN2vHLE'],
 //       ['tzbtc', 'KT1AWhMLFpZsKJpM2u3WPZYLzBP9NpyPu6py'],
 //     ])
@@ -489,8 +489,8 @@
 //     stakingContractAddress = null,
 //     tokenProtected = false
 //   switch (tokenName) {
-//     case 'tez':
-//       tokenType = 'tez'
+//     case 'mav':
+//       tokenType = 'mav'
 //       tokenContractAddress = zeroAddress
 //       break
 //     case 'usdt':
@@ -524,7 +524,7 @@
 //     tokenId,
 //   }
 
-//   if (tokenName == 'tez') {
+//   if (tokenName == 'mav') {
 //     return {
 //       kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
 //       ...lendingControllerContract.methods

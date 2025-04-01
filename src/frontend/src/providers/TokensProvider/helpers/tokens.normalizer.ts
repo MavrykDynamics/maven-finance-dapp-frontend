@@ -37,7 +37,6 @@ export const normalizeTokenPrices = (feedsLedger: TokenPricesFeedsType) => {
   }, {})
 }
 
-// TODO: if need add support of loan tokens and mTokens to mvn | smvn
 const handleMvnToken = ({
   token_address,
   token_id,
@@ -136,7 +135,7 @@ const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMeta
     // Validating token type, it should be one of tez | fa2 | fa12
     const tokenType = isValidTokenType(token_standard) ? token_standard : null
     if (!tokenType) {
-      throw new Error('Token is invalid token type, not in range tez | fa2 | fa12')
+      throw new Error('Token is invalid token type, not in range mav | fa2 | fa12')
     }
 
     // parsing token metadata schema, to have icon and decimals for token
@@ -231,7 +230,7 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         // Validating token type, it should be one of tez | fa2 | fa12
         const tokenType = isValidTokenType(token_standard) ? token_standard : null
         if (!tokenType) {
-          throw new Error('Token is invalid token type, not in range tez | fa2 | fa12')
+          throw new Error('Token is invalid token type, not in range mav | fa2 | fa12')
         }
 
         // parsing metadata schema, to have icon and decimals for token
@@ -245,6 +244,8 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
 
         // getting symbol, name, icon from tokens mapper, cuz metadata from indexer is not valid for display
         const { symbol, name, icon } = getTokenSymbolAndName(symbolFromIndexer.toLowerCase()) ?? {}
+
+        console.log(parsedMetadata, 'parsedMetadata')
 
         // TODO: parsedMetadata.icon should be primary to use actual not hardcoded image
         const tokenIcon = icon ?? parsedMetadata.icon

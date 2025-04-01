@@ -94,6 +94,7 @@ export const normalizeUserIndexerTokensBalances = ({
         const {
           assets: [{ decimals: interestRateDecimals }],
         } = mTokenMetadataSchema.parse(metadata)
+
         const mToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
         if (!mToken) throw new Error(`token is not whitelisted for DAPP: ${{ address }}`)
 
