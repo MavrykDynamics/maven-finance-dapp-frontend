@@ -1,6 +1,6 @@
 import { BeaconWallet } from '@mavrykdynamics/taquito-beacon-wallet'
 import { NetworkType } from '@mavrykdynamics/beacon-dapp'
-import { TezosToolkit } from '@mavrykdynamics/taquito'
+import { MavrykToolkit } from '@mavrykdynamics/taquito'
 import type { BeaconWallet as BeaconWalletType } from '@mavrykdynamics/taquito-beacon-wallet'
 
 // MAINNET = "mainnet",
@@ -113,7 +113,7 @@ export function dappClient() {
 
   function tezos() {
     const wallet = getDAppClientWallet()
-    const Tezos = new TezosToolkit(getRpcNode())
+    const Tezos = new MavrykToolkit(getRpcNode())
 
     if (wallet) Tezos.setWalletProvider(wallet)
 

@@ -1,4 +1,4 @@
-import { ContractMethod, OpKind, SendParams, TezosToolkit, TransferParams, Wallet } from '@mavrykdynamics/taquito'
+import { ContractMethod, OpKind, SendParams, MavrykToolkit, TransferParams, Wallet } from '@mavrykdynamics/taquito'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { WalletOperationError, checkWhetherWalletAbortError } from 'errors/error'
 import { estimateExecution, getContractErrorMessage } from './walletError.helper'
@@ -51,7 +51,7 @@ export async function getEstimationResult(
 }
 
 export async function getEstimationBatchResult(
-  tezos: TezosToolkit,
+  tezos: MavrykToolkit,
   batchArr: (TransferParams & { kind: OpKind.TRANSACTION })[],
   cb?: () => void,
 ) {

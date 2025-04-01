@@ -20,7 +20,11 @@ import {
 } from './helpers/loans.const'
 
 // helpers
-import {normalizeLoansConfig, normalizeLoansMarkets, normalizeLoansMarketsNew} from './helpers/loansMarkets.normalizer'
+import {
+  normalizeLoansConfig,
+  normalizeLoansMarkets,
+  normalizeLoansMarketsNew,
+} from './helpers/loansMarkets.normalizer'
 import { getLoansProviderReturnValue } from './helpers/loans.utils'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
