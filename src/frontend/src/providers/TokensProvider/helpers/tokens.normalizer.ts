@@ -245,8 +245,6 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         // getting symbol, name, icon from tokens mapper, cuz metadata from indexer is not valid for display
         const { symbol, name, icon } = getTokenSymbolAndName(symbolFromIndexer.toLowerCase()) ?? {}
 
-        console.log(parsedMetadata, 'parsedMetadata')
-
         // TODO: parsedMetadata.icon should be primary to use actual not hardcoded image
         const tokenIcon = icon ?? parsedMetadata.icon
         // token should at least have symbol, name and icon to be able to use it on front
