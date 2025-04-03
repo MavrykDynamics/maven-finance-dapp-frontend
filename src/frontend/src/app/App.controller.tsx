@@ -20,6 +20,7 @@ import { setItemInStorage } from 'utils/storage'
 
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
+import { loadGTag } from './App.analytics'
 
 export const App = () => {
   const showSidebarOpened = useMedia('(min-width: 1400px)')
@@ -42,6 +43,7 @@ export const App = () => {
     setIsIOS(
       ['iPad Simulator', 'iPhone Simulator', 'iPod Simulator', 'iPad', 'iPhone', 'iPod'].includes(navigator.platform),
     )
+    loadGTag()
   }, [])
 
   // when user closes the tab - reset RPC node to the dafult one

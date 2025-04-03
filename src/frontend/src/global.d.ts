@@ -42,4 +42,8 @@ declare global {
   type TupleKeyValueAny<TupleType extends string, TValue> = {
     [key in TupleType]: TValue
   }
+
+  interface Window {
+    dataLayer: Array<unknown>
+  }
 }
