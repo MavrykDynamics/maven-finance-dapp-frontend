@@ -33,6 +33,7 @@ const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
         tokensMetadata,
         marketsAddresses: marketsAddresses,
       })
+
       setLoansChartsData(newChartsData)
     },
     onError: (error) => handleApolloError(error, 'GET_LOANS_HISTORY_DATA'),
@@ -46,6 +47,7 @@ const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
     calcMarketLendingChart,
   } = chartsToCalc
 
+  // TODO fetch the last item for the total values
   const { totalLendingChart, totalBorrowingChart, totalCollateralChart, marketBorrowChart, marketLendingChart } =
     chartsData ?? {}
 
