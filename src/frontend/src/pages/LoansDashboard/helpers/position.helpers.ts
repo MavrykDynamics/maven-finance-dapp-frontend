@@ -1,5 +1,5 @@
 export const getVaultSimpleStatus = (collateralRatio: number): { text: string; status: string } => {
-  return collateralRatio >= 200
+  return collateralRatio >= 200 || collateralRatio === 0
     ? { text: 'Low Risk', status: 'low' }
     : collateralRatio <= 150
     ? { text: 'High Risk', status: 'hight' }
