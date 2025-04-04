@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePrevious } from 'react-use'
-import { DocumentNode, OperationVariables, QueryHookOptions, TypedDocumentNode, useQuery } from '@apollo/client'
+import {
+  ApolloQueryResult,
+  DocumentNode,
+  OperationVariables,
+  QueryHookOptions,
+  TypedDocumentNode,
+  useQuery,
+} from '@apollo/client'
 
 import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
 import { isAbortError } from 'errors/error'
@@ -93,13 +100,17 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
   // callback to refetch query on block lvl change
   const refetchQuery = useCallback(
+    // source is newIndexerLvl, or boolean when we want to refetch query after some action was completed
+
     async (source: number | boolean | null = null) => {
       if (!isInitialQueryDone.current || isRefetching.current) return
 
       isRefetching.current = true
       try {
         const variables = typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
+        let refetchData: ApolloQueryResult<TData> | null = null
 
+        // case when we have blocks diff, and we want to refetch query only when block lvl is changed
         if (typeof blocksDiff === 'number' && typeof source === 'number') {
           // if we don't have blocks diff first indexer change just set lastUpdatedBlock
           if (lastUpdatedBlock.current === null) {
@@ -108,29 +119,27 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
           }
 
           if (source - lastUpdatedBlock.current >= blocksDiff) {
-            const refetchData = await queryResult.refetch(variables)
-
-            if (process.env.REACT_APP_ENV === 'dev') console.log(`[${source}] Refetched`, { refetchData, queryName })
-
-            if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
-            if (refetchData.error) queryOptions?.onError?.(refetchData.error)
-
+            refetchData = await queryResult.refetch(variables)
             lastUpdatedBlock.current = source
           }
 
           return
         }
 
+        // case to refetch data after some action was completed
         if (typeof source === 'boolean') {
-          const refetchData = await queryResult.refetch(variables)
+          refetchData = await queryResult.refetch(variables)
 
+          // reset proxy flag
+          forcedUpdateProxy.hasForcedUpdate = false
+        }
+
+        // run apollo methods on refetchData
+        if (refetchData !== null) {
           if (process.env.REACT_APP_ENV === 'dev') console.log(`[${source}] Refetched`, { refetchData, queryName })
 
           if (refetchData.data) queryOptions?.onCompleted?.(refetchData.data)
           if (refetchData.error) queryOptions?.onError?.(refetchData.error)
-
-          // reset proxy flag
-          forcedUpdateProxy.hasForcedUpdate = false
         }
       } catch (e) {
         if (!isAbortError(e)) console.error(`[${source}] refetch error:`, e)
@@ -141,6 +150,8 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     [refetchQueryVariables, queryOptions?.onCompleted, blocksDiff],
   )
 
+  // effect to run refetch query when forcedUpdateProxy has been changed to true
+  // it is used only in the Dapp provider ! DO NOT USE IT IN OTHER PLACES
   useEffect(() => {
     const id = forcedUpdateProxy.registerListener(async () => {
       if (!isInitialQueryDone.current) return
