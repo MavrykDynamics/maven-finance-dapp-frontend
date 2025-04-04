@@ -47,8 +47,6 @@ export const LoansProvider = ({ children }: Props) => {
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
   const [loansCtxState, setLoansCtxState] = useState<NullableLoansContextState>(DEFAULT_LOANS_CONTEXT)
 
-  console.log('render')
-
   /**
    * GET_LOANS_CONFIG -> load lending controller config
    * GET_MARKET_BY_ADDRESS_QUERY -> load market by address
