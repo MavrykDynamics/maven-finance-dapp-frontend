@@ -23,6 +23,7 @@ import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schem
 import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
 import { sleep } from 'utils/api/sleep'
 import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
+import { forcedUpdateProxy } from 'providers/common/utils/observeForcedUpdate'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
 
@@ -124,6 +125,10 @@ const DappConfigProvider = ({ children }: Props) => {
 
       // some callback f.e. to reset input, clear form data etc.
       await callback?.()
+
+      // force queries refetch when some action is done to get up-to-date data from indexer
+
+      forcedUpdateProxy.hasForcedUpdate = true
       setAction(null)
     }
 
