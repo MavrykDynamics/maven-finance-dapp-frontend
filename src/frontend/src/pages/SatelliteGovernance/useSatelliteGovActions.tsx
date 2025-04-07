@@ -132,7 +132,6 @@ export const useSatelliteGovActions = (satelliteAddress: string, oracleAddress: 
         purpose: string,
       ) => Promise<ActionErrorReturnType | ActionSuccessReturnType>,
     ) => {
-      debugger
       if (!userAddress) {
         bug('Click Connect in the left menu', 'Please connect your wallet')
         return null

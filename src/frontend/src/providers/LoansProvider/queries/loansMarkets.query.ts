@@ -58,7 +58,6 @@ export const GET_MARKET_BY_ADDRESS_QUERY = gql(`
 	}
 `)
 // andrew_here replace this query with one I sent you
-
 export const GET_ALL_MARKETS_QUERY = gql(`
 	query allLoansMarketsQuery($limit: Int, $offset: Int) {
   markets: gql_loan_token_market_stats(limit: $limit, offset: $offset) {

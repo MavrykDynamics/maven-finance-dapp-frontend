@@ -2,7 +2,7 @@ import {
   ContractMethod,
   OpKind,
   SendParams,
-  TezosOperationError,
+  MavrykOperationError,
   TransferParams,
   Wallet,
 } from '@mavrykdynamics/taquito'
@@ -24,7 +24,7 @@ import { walletErrorPayload } from 'errors/error.schema'
 export const getContractErrorMessage = (e: unknown, skipValidation = false): WalletErrorPayload => {
   const isTezosError = skipValidation ? true : isWalletOperationError(e)
   if (isTezosError) {
-    const error = e as TezosOperationError
+    const error = e as MavrykOperationError
     const errorCode = Number(error.message) ? Number(error.message) : error.message ? error.message : null
 
     const isNumberKey = typeof errorCode === 'number'

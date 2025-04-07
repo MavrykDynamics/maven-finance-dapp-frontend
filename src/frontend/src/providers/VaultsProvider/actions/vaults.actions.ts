@@ -1,11 +1,10 @@
 // helpers
-import { scrollUpPage } from 'utils/scrollUpPage'
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // consts
-import { OpKind, TezosToolkit, TransferParams } from '@mavrykdynamics/taquito'
+import { OpKind, MavrykToolkit, TransferParams } from '@mavrykdynamics/taquito'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types
@@ -373,7 +372,7 @@ export const createVault = async (
 function getBatchObject_fa2(
   userAddress: string,
   vaultFactoryAddress: string,
-  factoryContract: Awaited<ReturnType<TezosToolkit['wallet']['at']>>,
+  factoryContract: Awaited<ReturnType<MavrykToolkit['wallet']['at']>>,
   operation: 'add_operator' | 'remove_operator',
   token_id: number,
 ) {
@@ -395,7 +394,7 @@ function getBatchObject_fa2(
 
 function getBacthObject_fa12(
   vaultFactoryAddress: string,
-  factoryContract: Awaited<ReturnType<TezosToolkit['wallet']['at']>>,
+  factoryContract: Awaited<ReturnType<MavrykToolkit['wallet']['at']>>,
   amount = 0,
 ) {
   return {

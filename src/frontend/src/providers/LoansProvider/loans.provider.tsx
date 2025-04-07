@@ -20,7 +20,11 @@ import {
 } from './helpers/loans.const'
 
 // helpers
-import {normalizeLoansConfig, normalizeLoansMarkets, normalizeLoansMarketsNew} from './helpers/loansMarkets.normalizer'
+import {
+  normalizeLoansConfig,
+  normalizeLoansMarkets,
+  normalizeLoansMarketsNew,
+} from './helpers/loansMarkets.normalizer'
 import { getLoansProviderReturnValue } from './helpers/loans.utils'
 
 export const loansContext = React.createContext<LoansContext>(undefined!)
@@ -83,9 +87,12 @@ export const LoansProvider = ({ children }: Props) => {
   // andrew_here
   useQueryWithRefetch(GET_ALL_MARKETS_QUERY, {
     skip: !activeSubs[LOANS_MARKETS_DATA],
-    variables: { limit: 10, offset: 0 }, // add offset & limit, update GET_ALL_MARKETS_QUERY to take limit and offset
+    // TODO ask about server pagination, at this moment we have like 4 tokens
+    // dont think we will have a lot of them
+    variables: { limit: 20, offset: 0 },
     onCompleted: (data) => {
       // handle paginated markets data to not replace existing markets, merge it
+      // update it in case of server pagination
       const newMarkets = normalizeLoansMarketsNew({ indexerData: data })
 
       const marketsAddresses = Object.keys(newMarkets)
