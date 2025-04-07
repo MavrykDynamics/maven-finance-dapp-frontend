@@ -33,7 +33,7 @@ query getLending24hDiff($currentTimestamp: timestamptz) {
 export const GET_LOANS_HISTORY_DATA = gql(`
 query getLoansHistoryData {
   lending_controller: lending_controller {
-    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, order_by: {timestamp: asc}) {
+    history_data(where: {type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}}, order_by: {timestamp: asc}, limit: 100) {
       type
       amount
       timestamp
