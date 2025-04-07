@@ -2,7 +2,7 @@ import { gql } from 'utils/__generated__/gql'
 
 export const SMVN_MVN_HISTORY_DATA = gql(`
   query smvnMvnHistoryData($periodTimestamp: timestamptz = "1970-01-01T00:00:00.000Z") {
-    operationsInPeriod: smvn_history_data(distinct_on: timestamp, where: {timestamp: {_gte: $periodTimestamp}}) {
+    operationsInPeriod: smvn_history_data(distinct_on: timestamp, where: {timestamp: {_gte: $periodTimestamp}}, limit: 100) {
       mvn_total_supply
       smvn_total_supply
       timestamp
@@ -24,7 +24,7 @@ export const SMVN_MVN_HISTORY_DATA = gql(`
 
 export const DAPP_MVN_SMVN_STATS = gql(`
   query getDappSmvnMvnStats($doormanContractAddress: String) {
-    maven_user: maven_user(where: { address: { _eq: $doormanContractAddress } }) {
+    maven_user: maven_user(where: { address: { _eq: $doormanContractAddress } }, limit: 100) {
       address
       mvn_balance
       smvn_balance
