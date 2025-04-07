@@ -104,7 +104,7 @@ export const USER_ACTIONS_HISTORY_DATA_QUERY = gql(`
 
 export const USER_ACTIONS_EARNING_HISTORY_DATA_QUERY = gql(`
   query getUserEarningHistoryData($userAddress: String) {
-    maven_user: maven_user(where: {address: {_eq: $userAddress}}) {
+    maven_user: maven_user(where: {address: {_eq: $userAddress}}, limit: 100) {
       # earning history
       stakes_history_data(where: {type: {_in: ["3", "4"]}}, order_by: {timestamp: desc}) {
         timestamp
@@ -126,7 +126,7 @@ export const USER_REWARDS_DATA_QUERY = gql(`
       id
     }
 
-    maven_user: maven_user(where: {address: {_eq: $userAddress}}) {
+    maven_user: maven_user(where: {address: {_eq: $userAddress}}, limit: 100) {
       smvn_balance
 
       # user doorman rewards, satellite claimed rewards, doorman claimed rewards
