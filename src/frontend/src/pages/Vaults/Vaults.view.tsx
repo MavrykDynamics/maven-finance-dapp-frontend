@@ -148,11 +148,11 @@ export const VaultsView = () => {
     [allVaultsIds, myVaultsIds, permissionedVaultsIds, tabId],
   )
 
-  const currentPage = getPageNumber(search, currentListName)
+  const currentPage = useMemo(() => getPageNumber(search, currentListName), [search, currentListName])
 
   useEffect(() => {
-    if(tabId === vaultTabs.ALL) changePage(currentPage);
-  }, [currentPage]);
+    if (tabId === vaultTabs.ALL) changePage(currentPage)
+  }, [currentPage])
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
@@ -160,7 +160,7 @@ export const VaultsView = () => {
 
     if (!foundTab?.path || currentTabId === id) return
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     navigate(`${pathname}/${foundTab.path}`)
     setVaultsIds(
@@ -238,7 +238,10 @@ export const VaultsView = () => {
             )
           })}
 
-          <Pagination itemsCount={tabId === vaultTabs.ALL ? vaultsTotalCount : vaultsIds.length} listName={currentListName} />
+          <Pagination
+            itemsCount={tabId === vaultTabs.ALL ? vaultsTotalCount : vaultsIds.length}
+            listName={currentListName}
+          />
         </VaultsList>
       ) : (
         <EmptyContainer className="centered">

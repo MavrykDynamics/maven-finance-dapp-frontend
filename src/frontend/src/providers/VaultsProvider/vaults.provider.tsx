@@ -18,7 +18,8 @@ import {
 
 // consts
 import {
-  GET_ALL_VAULTS_QUERY, GET_ALL_VAULTS_QUERY_COUNT,
+  GET_ALL_VAULTS_QUERY,
+  GET_ALL_VAULTS_QUERY_COUNT,
   GET_USER_ALL_VAULTS_QUERY,
   GET_USER_DEPOSITOR_ALL_VAULTS_QUERY,
 } from './queries/vaults.query'
@@ -32,7 +33,7 @@ import {
 } from './vaults.provider.consts'
 
 // utils
-import {normalizeVaults, normalizeVaultsNew} from './helpers/vaults.normalizer'
+import { normalizeVaults, normalizeVaultsNew } from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 
 export const vaultsContext = React.createContext<VaultsContext>(undefined!)
@@ -41,7 +42,7 @@ type Props = {
   children: React.ReactNode
 }
 
-const VAULTS_LIMIT = 10;
+const VAULTS_LIMIT = 10
 
 // TODO: if will need implement query that will take vaults where owner === current user and market token === vault loan token
 export const VaultsProvider = ({ children }: Props) => {
@@ -50,8 +51,8 @@ export const VaultsProvider = ({ children }: Props) => {
 
   const prevUserAddress = usePrevious(userAddress)
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
   const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
@@ -88,7 +89,7 @@ export const VaultsProvider = ({ children }: Props) => {
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         permissionedVaultsIds,
       }))
-      setIsLoading(false);
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
@@ -110,7 +111,7 @@ export const VaultsProvider = ({ children }: Props) => {
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         myVaultsIds,
       }))
-      setIsLoading(false);
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
@@ -127,7 +128,7 @@ export const VaultsProvider = ({ children }: Props) => {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
     variables: {
       limit: VAULTS_LIMIT,
-      offset: (currentPage - 1) * VAULTS_LIMIT
+      offset: (currentPage - 1) * VAULTS_LIMIT,
     },
     onCompleted: (data) => {
       // update vaults logic to merge data, dont replace the existing one
@@ -143,7 +144,7 @@ export const VaultsProvider = ({ children }: Props) => {
         permissionedVaultsIds,
         myVaultsIds,
       }))
-      setIsLoading(false);
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
@@ -151,7 +152,11 @@ export const VaultsProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
     variables: {},
     onCompleted: (data) => {
-      const {vault_aggregate: {aggregate: {count}}} = data;
+      const {
+        vault_aggregate: {
+          aggregate: { count },
+        },
+      } = data
 
       setVaultsCtxState((prev) => ({
         ...prev,
@@ -162,10 +167,10 @@ export const VaultsProvider = ({ children }: Props) => {
   })
 
   const changePage = (newPage: number) => {
-    if(newPage === currentPage) return;
-    setIsLoading(true);
-    setCurrentPage(newPage);
-  };
+    if (newPage === currentPage) return
+    setIsLoading(true)
+    setCurrentPage(newPage)
+  }
 
   const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
     setVaultsCtxState((prev) => ({
@@ -188,7 +193,7 @@ export const VaultsProvider = ({ children }: Props) => {
         userAddress,
         changePage,
         setIsLoading,
-        isLoadingVaults: isLoading
+        isLoadingVaults: isLoading,
       }),
     [vaultsCtxState, activeSubs, isLoading],
   )
