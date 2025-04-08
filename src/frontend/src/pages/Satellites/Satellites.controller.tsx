@@ -19,7 +19,6 @@ import { BUTTON_PRIMARY, BUTTON_SIMPLE, BUTTON_WIDE } from 'app/App.components/B
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { NOT_STAKING_MVN_TEXT } from 'app/App.components/Info/Banners/banners.texts'
-import { getTotalDelegatedMVN } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
 // styles
 import { SatelliteGovernanceStatsInfo } from 'pages/SatelliteGovernance/SatelliteGovernance.style'
@@ -41,14 +40,17 @@ import {
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
+  const { totalDelegatedMVN } = useSatelliteStatistics()
   const {
     activeSatellitesIds,
     satelliteMapper,
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
+    totalSatellitesCount,
   } = useSatellitesContext()
   const { userTokensBalances, isSatellite, userAddress } = useUserContext()
 
@@ -65,13 +67,11 @@ const Satellites = () => {
 
   const tabsInfo = useMemo(
     () => ({
-      totalDelegatedMVN: (
-        <CommaNumber value={getTotalDelegatedMVN(activeSatellitesIds, satelliteMapper)} endingText={'MVN'} />
-      ),
-      totalSatelliteOracles: activeSatellitesIds.length,
+      totalDelegatedMVN: <CommaNumber value={totalDelegatedMVN} endingText={'MVN'} />,
+      totalSatelliteOracles: totalSatellitesCount,
       numberOfDataFeeds: feedsAddresses.length > 50 ? feedsAddresses.length + '+' : feedsAddresses.length,
     }),
-    [activeSatellitesIds, feedsAddresses, satelliteMapper],
+    [totalDelegatedMVN, totalSatellitesCount, feedsAddresses.length],
   )
 
   return (
