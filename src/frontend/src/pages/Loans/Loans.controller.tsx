@@ -25,7 +25,14 @@ import { H2Title } from 'styles/generalStyledComponents/Titles.style'
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { DEFAULT_LOANS_ACTIVE_SUBS, LOANS_MARKETS_DATA } from 'providers/LoansProvider/helpers/loans.const'
-import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
+import {
+  BORROW_TAB_ID,
+  CHART_SETTINGS,
+  CollateralResponse,
+  LEND_TAB_ID,
+  RawTotalCollateralBalances,
+  tokenCollateralSchema,
+} from './Loans.const'
 import colors from 'styles/colors'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
 import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
@@ -48,34 +55,6 @@ import { APR } from 'texts/tooltips/vault.text'
 import { buildCollateralQuery } from './utils'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { gql } from '@apollo/client'
-import { z } from 'zod'
-
-const CHART_SETTINGS = {
-  width: 450,
-  height: 270,
-  hideXAxis: true,
-  hideYAxis: true,
-  isPeriod: true,
-}
-
-export const tokenCollateralSchema = z.record(
-  z.string(),
-  z.object({
-    aggregate: z.object({
-      sum: z.object({
-        balance: z.number(),
-        loan_outstanding_total: z.number(),
-      }),
-    }),
-  }),
-)
-
-export type CollateralResponse = z.infer<typeof tokenCollateralSchema>
-
-type RawTotalCollateralBalances = {
-  totalCollateral: number
-  tottalBorrowed: number
-}
 
 export const Loans = () => {
   const {
@@ -87,13 +66,7 @@ export const Loans = () => {
   })
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const {
-    changeLoansSubscriptionsList,
-    marketsAddresses,
-    marketsMapper,
-    isLoading: isLoansLoading,
-    config: { collateralFactor, liquidationFactor },
-  } = useLoansContext()
+  const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
   const { changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
 
   // total collaterals state
