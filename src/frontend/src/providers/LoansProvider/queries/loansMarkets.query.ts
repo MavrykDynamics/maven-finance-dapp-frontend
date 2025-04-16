@@ -92,6 +92,7 @@ export const GET_LOANS_CONFIG = gql(`
 		lending_controller: lending_controller {
 			minimum_loan_fee_pct
 			collateral_ratio
+			liquidation_ratio
 		}
 	}
 `)

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
@@ -45,6 +45,10 @@ import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import { APR } from 'texts/tooltips/vault.text'
+import { buildCollateralQuery } from './utils'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { gql } from '@apollo/client'
+import { z } from 'zod'
 
 const CHART_SETTINGS = {
   width: 450,
@@ -53,6 +57,19 @@ const CHART_SETTINGS = {
   hideYAxis: true,
   isPeriod: true,
 }
+
+export const tokenCollateralSchema = z.record(
+  z.string(),
+  z.object({
+    aggregate: z.object({
+      sum: z.object({
+        balance: z.number(),
+      }),
+    }),
+  }),
+)
+
+export type CollateralResponse = z.infer<typeof tokenCollateralSchema>
 
 export const Loans = () => {
   const {
@@ -64,8 +81,39 @@ export const Loans = () => {
   })
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
-  const { changeVaultsSubscriptionsList, vaultsMapper, allVaultsIds, isLoading: isVaultsLoading } = useVaultsContext()
+  const {
+    changeLoansSubscriptionsList,
+    marketsAddresses,
+    marketsMapper,
+    isLoading: isLoansLoading,
+    config: { collateralFactor, liquidationFactor },
+  } = useLoansContext()
+  const { changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
+
+  // total collaterals state
+  const [rawTotalCollateralBalances, setRawTotalCollateralBalances] = useState<Record<string, number> | null>(null)
+
+  const collateralsTotalQuery = useMemo(() => buildCollateralQuery(marketsAddresses), [marketsAddresses])
+
+  useQueryWithRefetch(gql(collateralsTotalQuery), {
+    skip: marketsAddresses.length === 0,
+    onCompleted: (data: CollateralResponse) => {
+      const parsedData = tokenCollateralSchema.safeParse(data)
+      if (!parsedData.success) {
+        console.error('Error parsing collateral data:', parsedData.error)
+        return
+      }
+      const rawTotalCollateral = Object.entries(data).reduce<Record<string, number>>(
+        (acc, [marketAddress, aggregator]) => {
+          acc[marketAddress] = aggregator.aggregate.sum.balance
+          return acc
+        },
+        {},
+      )
+      setRawTotalCollateralBalances(rawTotalCollateral)
+    },
+    onError: (error) => console.error(error, 'collateralsTotalQuery'),
+  })
 
   useEffect(() => {
     changeLoansSubscriptionsList({
@@ -193,7 +241,6 @@ export const Loans = () => {
 
               if (!loanToken || !loanToken.rate || !market) return null
               const {
-                loanTokenAddress,
                 loanMTokenAddress,
                 utilisationRate,
                 availableLiquidity,
@@ -221,44 +268,6 @@ export const Loans = () => {
 
               const { symbol, decimals, icon, rate, address } = loanToken
 
-              const { loanTokenTotalCollaterals, loanTokenVaultsTotalBorrowed } = allVaultsIds.reduce<{
-                loanTokenTotalCollaterals: number
-                loanTokenVaultsTotalBorrowed: number
-              }>(
-                (acc, vaultId) => {
-                  const vault = vaultsMapper[vaultId]
-
-                  if (vault.borrowedTokenAddress !== loanTokenAddress) return acc
-
-                  acc.loanTokenTotalCollaterals += vault.collateralData.reduce(
-                    (acc, { amount, tokenAddress: collateralTokenAddress }) => {
-                      const collateralToken = getTokenDataByAddress({
-                        tokenAddress: collateralTokenAddress,
-                        tokensPrices,
-                        tokensMetadata,
-                      })
-
-                      if (!collateralToken || !collateralToken.rate) return acc
-                      const { decimals, rate } = collateralToken
-                      return (acc +=
-                        convertNumberForClient({
-                          number: amount,
-                          grade: decimals,
-                        }) * rate)
-                    },
-                    0,
-                  )
-
-                  acc.loanTokenVaultsTotalBorrowed +=
-                    convertNumberForClient({ number: vault.borrowedAmount, grade: decimals }) * rate
-                  return acc
-                },
-                {
-                  loanTokenTotalCollaterals: 0,
-                  loanTokenVaultsTotalBorrowed: 0,
-                },
-              )
-
               const convertedMarketTotalLended = convertNumberForClient({
                 number: totalLended,
                 grade: decimals,
@@ -268,12 +277,18 @@ export const Loans = () => {
                 grade: decimals,
               })
 
-              const totalCorratealColor =
-                loanTokenTotalCollaterals && loanTokenVaultsTotalBorrowed
-                  ? loanTokenTotalCollaterals / loanTokenVaultsTotalBorrowed > 2
-                    ? 'up'
-                    : 'down'
-                  : 'neutral'
+              const totalCollateralBalane =
+                convertNumberForClient({
+                  number: rawTotalCollateralBalances?.[marketAddress] ?? 0,
+                  grade: decimals,
+                }) * rate
+
+              const totalCollateralColor =
+                collateralFactor > liquidationFactor * 1.3
+                  ? 'up'
+                  : collateralFactor > liquidationFactor
+                  ? 'neutral'
+                  : 'down'
               return (
                 <MarketOverview key={symbol}>
                   <div className="asset-info">
@@ -362,8 +377,8 @@ export const Loans = () => {
                       <ThreeLevelListItem>
                         <div className="name">Total Collateral</div>
                         <CommaNumber
-                          value={loanTokenTotalCollaterals}
-                          className={`value ${totalCorratealColor}`}
+                          value={totalCollateralBalane}
+                          className={`value ${totalCollateralColor}`}
                           beginningText="$"
                         />
                       </ThreeLevelListItem>

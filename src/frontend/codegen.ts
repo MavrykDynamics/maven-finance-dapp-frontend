@@ -72,6 +72,9 @@ const INDEXER_TABLES = {
 
   // TOKENS
   token: true,
+
+  // AGGREGATE
+  vault_collateral_view_aggregate: true,
 }
 
 // environment prefixes

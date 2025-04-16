@@ -64,6 +64,7 @@ export const EMPTY_LOANS_CONTEXT: LoansContextState = {
   config: {
     daoFee: 0,
     collateralFactor: 0,
+    liquidationFactor: 0,
   },
   chartsData: null,
 }

@@ -9,15 +9,14 @@ export const normalizeLoansConfig = ({ indexerData }: { indexerData: GetLoansCon
   return {
     daoFee: indexerData.lending_controller[0].minimum_loan_fee_pct / 100,
     collateralFactor: indexerData.lending_controller[0].collateral_ratio / 10,
+    liquidationFactor: indexerData.lending_controller[0].liquidation_ratio / 10,
   }
 }
 
 export const normalizeLoansMarketsNew = ({ indexerData }: { indexerData: MarketsIndexerDataType }) => {
   const {
     markets,
-    lending_controller: [
-      { interest_rate_decimals: interestRateDecimals, interest_treasury_share, decimals },
-    ],
+    lending_controller: [{ interest_rate_decimals: interestRateDecimals, interest_treasury_share, decimals }],
   } = indexerData
   const treasuryShare = convertNumberForClient({ number: interest_treasury_share, grade: decimals })
 
@@ -27,7 +26,7 @@ export const normalizeLoansMarketsNew = ({ indexerData }: { indexerData: Markets
       token_pool_total,
       total_borrowed,
       current_interest_rate,
-      token_address: loanTokenAddress ,
+      token_address: loanTokenAddress,
       m_token_address: loanMTokenAddress,
       depositors_count: suppliers, //TODO check it
       rewards_earned_total: mTokenRewardsAggregate, //TODO check it
@@ -118,4 +117,3 @@ export const normalizeLoansMarkets = ({ indexerData }: { indexerData: MarketsInd
     return acc
   }, {})
 }
-

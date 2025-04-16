@@ -118,7 +118,7 @@ export type Aggregator = {
   last_completed_data_last_updated_at: Scalars['timestamptz']['output'];
   last_completed_data_pct_oracle_resp: Scalars['smallint']['output'];
   last_completed_data_round: Scalars['bigint']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   name: Scalars['String']['output'];
   network: Scalars['String']['output'];
@@ -519,7 +519,7 @@ export type Aggregator_Factory = {
   lambdas: Array<Aggregator_Factory_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Aggregator_Factory_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   network: Scalars['String']['output'];
   track_aggregator_paused: Scalars['Boolean']['output'];
@@ -717,7 +717,7 @@ export type Aggregator_Factory_Aggregator_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "aggregator_factory_aggregator_lambda" */
@@ -1281,7 +1281,7 @@ export type Aggregator_Factory_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "aggregator_factory_lambda" */
@@ -2770,7 +2770,7 @@ export type Aggregator_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "aggregator_lambda" */
@@ -5145,7 +5145,7 @@ export type Break_Glass = {
   lambdas: Array<Break_Glass_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Break_Glass_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   network: Scalars['String']['output'];
   threshold: Scalars['smallint']['output'];
@@ -7319,7 +7319,7 @@ export type Break_Glass_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "break_glass_lambda" */
@@ -8202,7 +8202,7 @@ export type Council = {
   lambdas: Array<Council_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Council_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   members: Array<Council_Council_Member>;
   /** An aggregate relationship */
@@ -10371,7 +10371,7 @@ export type Council_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "council_lambda" */
@@ -11287,7 +11287,7 @@ export type Delegation = {
   lambdas: Array<Delegation_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Delegation_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   max_satellites: Scalars['smallint']['output'];
   metadata?: Maybe<Scalars['jsonb']['output']>;
   minimum_smvn_balance: Scalars['float8']['output'];
@@ -11918,7 +11918,7 @@ export type Delegation_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "delegation_lambda" */
@@ -12285,7 +12285,7 @@ export type Delegation_Record = {
   /** An object relationship */
   satellite: Satellite;
   satellite_id: Scalars['bigint']['output'];
-  satellite_registration_timestamp: Scalars['timestamptz']['output'];
+  satellite_registration_timestamp?: Maybe<Scalars['timestamptz']['output']>;
   /** An object relationship */
   user: Maven_User;
   user_id: Scalars['bigint']['output'];
@@ -14856,7 +14856,7 @@ export type Doorman = {
   lambdas: Array<Doorman_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Doorman_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   min_mvn_amount: Scalars['float8']['output'];
   network: Scalars['String']['output'];
@@ -15476,7 +15476,7 @@ export type Doorman_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "doorman_lambda" */
@@ -16985,7 +16985,7 @@ export type Emergency_Governance = {
   lambdas: Array<Emergency_Governance_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Emergency_Governance_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   min_smvn_required_to_trigger: Scalars['float8']['output'];
   min_smvn_required_to_vote: Scalars['float8']['output'];
@@ -17546,7 +17546,7 @@ export type Emergency_Governance_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "emergency_governance_lambda" */
@@ -19658,7 +19658,7 @@ export type Farm = {
   /** An aggregate relationship */
   lambdas_aggregate: Farm_Lambda_Aggregate;
   last_block_update: Scalars['bigint']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   loan_token_name?: Maybe<Scalars['String']['output']>;
   /** An object relationship */
   lp_token: Token;
@@ -20606,7 +20606,7 @@ export type Farm_Factory = {
   lambdas: Array<Farm_Factory_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Farm_Factory_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   m_farm_lambdas: Array<Farm_Factory_M_Farm_Lambda>;
   /** An aggregate relationship */
@@ -20875,7 +20875,7 @@ export type Farm_Factory_Farm_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "farm_factory_farm_lambda" */
@@ -21393,7 +21393,7 @@ export type Farm_Factory_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "farm_factory_lambda" */
@@ -21657,7 +21657,7 @@ export type Farm_Factory_M_Farm_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "farm_factory_m_farm_lambda" */
@@ -22669,7 +22669,7 @@ export type Farm_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "farm_lambda" */
@@ -23981,7 +23981,7 @@ export type Governance = {
   lambdas: Array<Governance_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Governance_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   lending_controllers: Array<Lending_Controller>;
   /** An aggregate relationship */
@@ -24750,7 +24750,7 @@ export type Governance_Financial = {
   lambdas: Array<Governance_Financial_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Governance_Financial_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   network: Scalars['String']['output'];
   /** An array relationship */
@@ -25239,7 +25239,7 @@ export type Governance_Financial_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "governance_financial_lambda" */
@@ -26537,7 +26537,7 @@ export type Governance_Financial_Request_Vote = {
   /** An object relationship */
   satellite_snapshot: Governance_Satellite_Snapshot;
   satellite_snapshot_id: Scalars['bigint']['output'];
-  timestamp: Scalars['timestamptz']['output'];
+  timestamp?: Maybe<Scalars['timestamptz']['output']>;
   /** NAY: 0\nYAY: 1\nPASS: 2 */
   vote: Scalars['smallint']['output'];
   /** An object relationship */
@@ -27839,7 +27839,7 @@ export type Governance_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "governance_lambda" */
@@ -30351,7 +30351,7 @@ export type Governance_Proposal_Vote = {
   id: Scalars['bigint']['output'];
   /** PROPOSAL: 0\nVOTING: 1\nTIMELOCK: 2 */
   round: Scalars['smallint']['output'];
-  timestamp: Scalars['timestamptz']['output'];
+  timestamp?: Maybe<Scalars['timestamptz']['output']>;
   /** NAY: 0\nYAY: 1\nPASS: 2 */
   vote: Scalars['smallint']['output'];
   /** An object relationship */
@@ -30916,7 +30916,7 @@ export type Governance_Proxy = {
   lambdas: Array<Governance_Proxy_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Governance_Proxy_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   network: Scalars['String']['output'];
 };
@@ -31042,7 +31042,7 @@ export type Governance_Proxy_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "governance_proxy_lambda" */
@@ -31504,7 +31504,7 @@ export type Governance_Satellite = {
   lambdas: Array<Governance_Satellite_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Governance_Satellite_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   max_actions_per_satellite: Scalars['smallint']['output'];
   metadata?: Maybe<Scalars['jsonb']['output']>;
   network: Scalars['String']['output'];
@@ -32743,7 +32743,7 @@ export type Governance_Satellite_Action_Vote = {
   /** An object relationship */
   satellite_snapshot: Governance_Satellite_Snapshot;
   satellite_snapshot_id: Scalars['bigint']['output'];
-  timestamp: Scalars['timestamptz']['output'];
+  timestamp?: Maybe<Scalars['timestamptz']['output']>;
   /** NAY: 0\nYAY: 1\nPASS: 2 */
   vote: Scalars['smallint']['output'];
   /** An object relationship */
@@ -33457,7 +33457,7 @@ export type Governance_Satellite_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "governance_satellite_lambda" */
@@ -37657,7 +37657,7 @@ export type Lending_Controller = {
   /** An aggregate relationship */
   lambdas_aggregate: Lending_Controller_Lambda_Aggregate;
   last_completed_data_max_delay: Scalars['bigint']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   liquidate_vault_paused: Scalars['Boolean']['output'];
   liquidation_delay_in_minutes: Scalars['bigint']['output'];
   liquidation_fee_pct: Scalars['smallint']['output'];
@@ -39194,7 +39194,7 @@ export type Lending_Controller_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "lending_controller_lambda" */
@@ -41271,7 +41271,7 @@ export type Lending_Controller_Vault = {
   id: Scalars['bigint']['output'];
   internal_id: Scalars['bigint']['output'];
   last_updated_block_level: Scalars['bigint']['output'];
-  last_updated_timestamp: Scalars['timestamptz']['output'];
+  last_updated_timestamp?: Maybe<Scalars['timestamptz']['output']>;
   /** An object relationship */
   lending_controller: Lending_Controller;
   lending_controller_id: Scalars['bigint']['output'];
@@ -42858,7 +42858,7 @@ export type M_Token = {
   lambdas: Array<M_Token_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: M_Token_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   lending_controller_loan_tokens: Array<Lending_Controller_Loan_Token>;
   /** An aggregate relationship */
@@ -44551,7 +44551,7 @@ export type M_Token_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "m_token_lambda" */
@@ -47576,7 +47576,7 @@ export type Mvn_Token = {
   governance_id: Scalars['bigint']['output'];
   id: Scalars['bigint']['output'];
   inflation_rate: Scalars['smallint']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   maximum_supply: Scalars['float8']['output'];
   metadata?: Maybe<Scalars['jsonb']['output']>;
   /** An array relationship */
@@ -51598,7 +51598,6 @@ export type Query_RootEmergency_Governance_Vote_AggregateArgs = {
 
 export type Query_RootEmergency_Governance_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
-  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -52013,7 +52012,6 @@ export type Query_RootGovernance_Financial_Request_Vote_AggregateArgs = {
 
 export type Query_RootGovernance_Financial_Request_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
-  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -52198,7 +52196,6 @@ export type Query_RootGovernance_Proposal_Vote_AggregateArgs = {
 
 export type Query_RootGovernance_Proposal_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
-  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -52323,7 +52320,6 @@ export type Query_RootGovernance_Satellite_Action_Vote_AggregateArgs = {
 
 export type Query_RootGovernance_Satellite_Action_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
-  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -53895,7 +53891,7 @@ export type Satellite = {
   name: Scalars['String']['output'];
   peer_id?: Maybe<Scalars['String']['output']>;
   public_key?: Maybe<Scalars['String']['output']>;
-  registration_timestamp: Scalars['timestamptz']['output'];
+  registration_timestamp?: Maybe<Scalars['timestamptz']['output']>;
   satellite_action_counter: Scalars['bigint']['output'];
   /** ACTIVE: 0\nSUSPENDED: 1\nBANNED: 2 */
   status: Scalars['smallint']['output'];
@@ -59157,7 +59153,6 @@ export type Subscription_RootEmergency_Governance_Vote_AggregateArgs = {
 
 export type Subscription_RootEmergency_Governance_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
-  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -59684,7 +59679,6 @@ export type Subscription_RootGovernance_Financial_Request_Vote_AggregateArgs = {
 
 export type Subscription_RootGovernance_Financial_Request_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
-  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -59932,7 +59926,6 @@ export type Subscription_RootGovernance_Proposal_Vote_AggregateArgs = {
 
 export type Subscription_RootGovernance_Proposal_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
-  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -60092,7 +60085,6 @@ export type Subscription_RootGovernance_Satellite_Action_Vote_AggregateArgs = {
 
 export type Subscription_RootGovernance_Satellite_Action_Vote_By_PkArgs = {
   id: Scalars['bigint']['input'];
-  timestamp: Scalars['timestamptz']['input'];
 };
 
 
@@ -62697,7 +62689,7 @@ export type Treasury = {
   balances: Array<Treasury_Balance>;
   /** An aggregate relationship */
   balances_aggregate: Treasury_Balance_Aggregate;
-  creation_timestamp: Scalars['timestamptz']['output'];
+  creation_timestamp?: Maybe<Scalars['timestamptz']['output']>;
   /** An object relationship */
   factory?: Maybe<Treasury_Factory>;
   factory_id?: Maybe<Scalars['bigint']['output']>;
@@ -62717,7 +62709,7 @@ export type Treasury = {
   lambdas: Array<Treasury_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Treasury_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   mint_mvn_and_transfer_paused: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
@@ -63505,7 +63497,7 @@ export type Treasury_Factory = {
   lambdas: Array<Treasury_Factory_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Treasury_Factory_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   network: Scalars['String']['output'];
   track_treasury_paused: Scalars['Boolean']['output'];
@@ -64036,7 +64028,7 @@ export type Treasury_Factory_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "treasury_factory_lambda" */
@@ -64497,7 +64489,7 @@ export type Treasury_Factory_Treasury_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "treasury_factory_treasury_lambda" */
@@ -65578,7 +65570,7 @@ export type Treasury_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "treasury_lambda" */
@@ -67363,7 +67355,7 @@ export type Vault = {
   lambdas: Array<Vault_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Vault_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   /** An array relationship */
   lending_controller_vaults: Array<Lending_Controller_Vault>;
   /** An aggregate relationship */
@@ -68102,7 +68094,7 @@ export type Vault_Factory = {
   lambdas: Array<Vault_Factory_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Vault_Factory_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   network: Scalars['String']['output'];
   /** An array relationship */
@@ -68603,7 +68595,7 @@ export type Vault_Factory_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "vault_factory_lambda" */
@@ -69092,7 +69084,7 @@ export type Vault_Factory_Vault_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "vault_factory_vault_lambda" */
@@ -69600,7 +69592,7 @@ export type Vault_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "vault_lambda" */
@@ -70137,7 +70129,7 @@ export type Vesting = {
   lambdas: Array<Vesting_Lambda>;
   /** An aggregate relationship */
   lambdas_aggregate: Vesting_Lambda_Aggregate;
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   network: Scalars['String']['output'];
   total_vested_amount: Scalars['bigint']['output'];
@@ -70595,7 +70587,7 @@ export type Vesting_Lambda = {
   id: Scalars['bigint']['output'];
   lambda_bytes: Scalars['String']['output'];
   lambda_name: Scalars['String']['output'];
-  last_updated_at: Scalars['timestamptz']['output'];
+  last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
 };
 
 /** aggregated selection of "vesting_lambda" */
@@ -72300,7 +72292,7 @@ export type GlassBrokenStatusAndWhiteListDevsQuery = { __typename?: 'query_root'
 export type GetAllContractStatusesDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllContractStatusesDataQuery = { __typename?: 'query_root', farm: Array<{ __typename?: 'farm', name: string, address: string, claim_paused: boolean, deposit_paused: boolean, withdraw_paused: boolean, admin: string, last_updated_at: any }>, farm_factory: Array<{ __typename?: 'farm_factory', create_farm_paused: boolean, create_farm_m_token_paused: boolean, track_farm_paused: boolean, untrack_farm_paused: boolean, address: string, admin: string, last_updated_at: any }>, delegation: Array<{ __typename?: 'delegation', delegate_to_satellite_paused: boolean, distribute_reward_paused: boolean, register_as_satellite_paused: boolean, undelegate_from_satellite_paused: boolean, unregister_as_satellite_paused: boolean, update_satellite_record_paused: boolean, take_satellites_snapshot_paused: boolean, address: string, admin: string, last_updated_at: any }>, doorman: Array<{ __typename?: 'doorman', address: string, compound_paused: boolean, farm_claim_paused: boolean, stake_mvn_paused: boolean, unstake_mvn_paused: boolean, exit_paused: boolean, on_vault_deposit_stake_paused: boolean, on_vault_liquidate_stake_paused: boolean, on_vault_withdraw_stake_paused: boolean, admin: string, last_updated_at: any }>, treasury: Array<{ __typename?: 'treasury', name: string, address: string, admin: string, mint_mvn_and_transfer_paused: boolean, stake_tokens_paused: boolean, transfer_paused: boolean, unstake_tokens_paused: boolean, update_token_operators_paused: boolean, last_updated_at: any }>, treasury_factory: Array<{ __typename?: 'treasury_factory', create_treasury_paused: boolean, track_treasury_paused: boolean, untrack_treasury_paused: boolean, address: string, admin: string, last_updated_at: any }>, aggregator: Array<{ __typename?: 'aggregator', address: string, name: string, withdraw_reward_smvn_paused: boolean, withdraw_reward_mvrk_paused: boolean, admin: string, last_updated_at: any }>, aggregator_factory: Array<{ __typename?: 'aggregator_factory', address: string, admin: string, untrack_aggregator_paused: boolean, track_aggregator_paused: boolean, distribute_reward_mvrk_paused: boolean, distribute_reward_smvn_paused: boolean, create_aggregator_paused: boolean, last_updated_at: any }>, lending_controller: Array<{ __typename?: 'lending_controller', address: string, admin: string, last_updated_at: any, add_liquidity_paused: boolean, close_vault_paused: boolean, liquidate_vault_paused: boolean, mark_for_liquidation_paused: boolean, register_deposit_paused: boolean, register_vault_creation_paused: boolean, register_withdrawal_paused: boolean, remove_liquidity_paused: boolean, repay_paused: boolean, set_collateral_token_paused: boolean, set_loan_token_paused: boolean, vault_deposit_paused: boolean, vault_deposit_staked_token_paused: boolean, vault_on_liquidate_paused: boolean, vault_withdraw_paused: boolean, vault_withdraw_staked_token_paused: boolean }>, vault_factory: Array<{ __typename?: 'vault_factory', address: string, admin: string, create_vault_paused: boolean, last_updated_at: any }> };
+export type GetAllContractStatusesDataQuery = { __typename?: 'query_root', farm: Array<{ __typename?: 'farm', name: string, address: string, claim_paused: boolean, deposit_paused: boolean, withdraw_paused: boolean, admin: string, last_updated_at?: any | null }>, farm_factory: Array<{ __typename?: 'farm_factory', create_farm_paused: boolean, create_farm_m_token_paused: boolean, track_farm_paused: boolean, untrack_farm_paused: boolean, address: string, admin: string, last_updated_at?: any | null }>, delegation: Array<{ __typename?: 'delegation', delegate_to_satellite_paused: boolean, distribute_reward_paused: boolean, register_as_satellite_paused: boolean, undelegate_from_satellite_paused: boolean, unregister_as_satellite_paused: boolean, update_satellite_record_paused: boolean, take_satellites_snapshot_paused: boolean, address: string, admin: string, last_updated_at?: any | null }>, doorman: Array<{ __typename?: 'doorman', address: string, compound_paused: boolean, farm_claim_paused: boolean, stake_mvn_paused: boolean, unstake_mvn_paused: boolean, exit_paused: boolean, on_vault_deposit_stake_paused: boolean, on_vault_liquidate_stake_paused: boolean, on_vault_withdraw_stake_paused: boolean, admin: string, last_updated_at?: any | null }>, treasury: Array<{ __typename?: 'treasury', name: string, address: string, admin: string, mint_mvn_and_transfer_paused: boolean, stake_tokens_paused: boolean, transfer_paused: boolean, unstake_tokens_paused: boolean, update_token_operators_paused: boolean, last_updated_at?: any | null }>, treasury_factory: Array<{ __typename?: 'treasury_factory', create_treasury_paused: boolean, track_treasury_paused: boolean, untrack_treasury_paused: boolean, address: string, admin: string, last_updated_at?: any | null }>, aggregator: Array<{ __typename?: 'aggregator', address: string, name: string, withdraw_reward_smvn_paused: boolean, withdraw_reward_mvrk_paused: boolean, admin: string, last_updated_at?: any | null }>, aggregator_factory: Array<{ __typename?: 'aggregator_factory', address: string, admin: string, untrack_aggregator_paused: boolean, track_aggregator_paused: boolean, distribute_reward_mvrk_paused: boolean, distribute_reward_smvn_paused: boolean, create_aggregator_paused: boolean, last_updated_at?: any | null }>, lending_controller: Array<{ __typename?: 'lending_controller', address: string, admin: string, last_updated_at?: any | null, add_liquidity_paused: boolean, close_vault_paused: boolean, liquidate_vault_paused: boolean, mark_for_liquidation_paused: boolean, register_deposit_paused: boolean, register_vault_creation_paused: boolean, register_withdrawal_paused: boolean, remove_liquidity_paused: boolean, repay_paused: boolean, set_collateral_token_paused: boolean, set_loan_token_paused: boolean, vault_deposit_paused: boolean, vault_deposit_staked_token_paused: boolean, vault_on_liquidate_paused: boolean, vault_withdraw_paused: boolean, vault_withdraw_staked_token_paused: boolean }>, vault_factory: Array<{ __typename?: 'vault_factory', address: string, admin: string, create_vault_paused: boolean, last_updated_at?: any | null }> };
 
 export type GetBreakGlassCouncilMembersQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -72447,14 +72439,14 @@ export type FarmsStakedFinishedQueryQuery = { __typename?: 'query_root', farm: A
 export type GetAllFinRequestsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllFinRequestsQueryQuery = { __typename?: 'query_root', governance_financial_request: Array<{ __typename?: 'governance_financial_request', executed: boolean, expiration_datetime: any, dropped_datetime?: any | null, execution_datetime?: any | null, id: any, request_purpose: string, request_type: string, requested_datetime: any, smvn_percentage_for_approval: any, snapshot_smvn_total_supply: any, status: any, token_amount: any, pass_vote_smvn_total: any, nay_vote_smvn_total: any, yay_vote_smvn_total: any, requester: { __typename?: 'maven_user', address: string }, token: { __typename?: 'token', token_address: string }, governance_financial: { __typename?: 'governance_financial', address: string, governance: { __typename?: 'governance', address: string } }, treasury: { __typename?: 'treasury', address: string }, votes: Array<{ __typename?: 'governance_financial_request_vote', governance_financial_request_id: any, id: any, timestamp: any, vote: any, voter_id: any, voter: { __typename?: 'maven_user', address: string } }> }> };
+export type GetAllFinRequestsQueryQuery = { __typename?: 'query_root', governance_financial_request: Array<{ __typename?: 'governance_financial_request', executed: boolean, expiration_datetime: any, dropped_datetime?: any | null, execution_datetime?: any | null, id: any, request_purpose: string, request_type: string, requested_datetime: any, smvn_percentage_for_approval: any, snapshot_smvn_total_supply: any, status: any, token_amount: any, pass_vote_smvn_total: any, nay_vote_smvn_total: any, yay_vote_smvn_total: any, requester: { __typename?: 'maven_user', address: string }, token: { __typename?: 'token', token_address: string }, governance_financial: { __typename?: 'governance_financial', address: string, governance: { __typename?: 'governance', address: string } }, treasury: { __typename?: 'treasury', address: string }, votes: Array<{ __typename?: 'governance_financial_request_vote', governance_financial_request_id: any, id: any, timestamp?: any | null, vote: any, voter_id: any, voter: { __typename?: 'maven_user', address: string } }> }> };
 
 export type GetActiveFinRequestsQueryQueryVariables = Exact<{
   currentTimestamp?: InputMaybe<Scalars['timestamptz']['input']>;
 }>;
 
 
-export type GetActiveFinRequestsQueryQuery = { __typename?: 'query_root', governance_financial_request: Array<{ __typename?: 'governance_financial_request', executed: boolean, expiration_datetime: any, dropped_datetime?: any | null, execution_datetime?: any | null, id: any, request_purpose: string, request_type: string, requested_datetime: any, smvn_percentage_for_approval: any, snapshot_smvn_total_supply: any, status: any, token_amount: any, pass_vote_smvn_total: any, nay_vote_smvn_total: any, yay_vote_smvn_total: any, requester: { __typename?: 'maven_user', address: string }, token: { __typename?: 'token', token_address: string }, governance_financial: { __typename?: 'governance_financial', address: string, governance: { __typename?: 'governance', address: string } }, treasury: { __typename?: 'treasury', address: string }, votes: Array<{ __typename?: 'governance_financial_request_vote', governance_financial_request_id: any, id: any, timestamp: any, vote: any, voter_id: any, voter: { __typename?: 'maven_user', address: string } }> }> };
+export type GetActiveFinRequestsQueryQuery = { __typename?: 'query_root', governance_financial_request: Array<{ __typename?: 'governance_financial_request', executed: boolean, expiration_datetime: any, dropped_datetime?: any | null, execution_datetime?: any | null, id: any, request_purpose: string, request_type: string, requested_datetime: any, smvn_percentage_for_approval: any, snapshot_smvn_total_supply: any, status: any, token_amount: any, pass_vote_smvn_total: any, nay_vote_smvn_total: any, yay_vote_smvn_total: any, requester: { __typename?: 'maven_user', address: string }, token: { __typename?: 'token', token_address: string }, governance_financial: { __typename?: 'governance_financial', address: string, governance: { __typename?: 'governance', address: string } }, treasury: { __typename?: 'treasury', address: string }, votes: Array<{ __typename?: 'governance_financial_request_vote', governance_financial_request_id: any, id: any, timestamp?: any | null, vote: any, voter_id: any, voter: { __typename?: 'maven_user', address: string } }> }> };
 
 export type GetLending24hDiffQueryVariables = Exact<{
   currentTimestamp?: InputMaybe<Scalars['timestamptz']['input']>;
@@ -72512,7 +72504,7 @@ export type GetLoansConfigQueryVariables = Exact<{
 }>;
 
 
-export type GetLoansConfigQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', minimum_loan_fee_pct: any, collateral_ratio: any }> };
+export type GetLoansConfigQuery = { __typename?: 'query_root', lending_controller: Array<{ __typename?: 'lending_controller', minimum_loan_fee_pct: any, collateral_ratio: any, liquidation_ratio: any }> };
 
 export type CheckWitherMarketExistsQueryVariables = Exact<{
   marketAddress?: InputMaybe<Scalars['String']['input']>;
@@ -72562,28 +72554,28 @@ export type OngoingGovernanceSatelliteActionsQueryQueryVariables = Exact<{
 }>;
 
 
-export type OngoingGovernanceSatelliteActionsQueryQuery = { __typename?: 'query_root', governance_satellite_action: Array<{ __typename?: 'governance_satellite_action', executed: boolean, expiration_datetime?: any | null, execution_datetime?: any | null, dropped_datetime?: any | null, governance_purpose: string, governance_type: string, id: any, nay_vote_smvn_total: any, pass_vote_smvn_total: any, smvn_percentage_for_approval: any, smvn_required_for_approval: any, snapshot_smvn_total_supply: any, start_datetime: any, status: any, yay_vote_smvn_total: any, governance_satellite: { __typename?: 'governance_satellite', address: string }, initiator: { __typename?: 'maven_user', address: string }, parameters: Array<{ __typename?: 'governance_satellite_action_parameter', name: string, value: string, id: any }>, votes: Array<{ __typename?: 'governance_satellite_action_vote', governance_satellite_action_id: any, id: any, timestamp: any, vote: any, voter: { __typename?: 'maven_user', address: string } }> }> };
+export type OngoingGovernanceSatelliteActionsQueryQuery = { __typename?: 'query_root', governance_satellite_action: Array<{ __typename?: 'governance_satellite_action', executed: boolean, expiration_datetime?: any | null, execution_datetime?: any | null, dropped_datetime?: any | null, governance_purpose: string, governance_type: string, id: any, nay_vote_smvn_total: any, pass_vote_smvn_total: any, smvn_percentage_for_approval: any, smvn_required_for_approval: any, snapshot_smvn_total_supply: any, start_datetime: any, status: any, yay_vote_smvn_total: any, governance_satellite: { __typename?: 'governance_satellite', address: string }, initiator: { __typename?: 'maven_user', address: string }, parameters: Array<{ __typename?: 'governance_satellite_action_parameter', name: string, value: string, id: any }>, votes: Array<{ __typename?: 'governance_satellite_action_vote', governance_satellite_action_id: any, id: any, timestamp?: any | null, vote: any, voter: { __typename?: 'maven_user', address: string } }> }> };
 
 export type PastGovernanceSatelliteActionsQueryQueryVariables = Exact<{
   currentTimestamp?: InputMaybe<Scalars['timestamptz']['input']>;
 }>;
 
 
-export type PastGovernanceSatelliteActionsQueryQuery = { __typename?: 'query_root', governance_satellite_action: Array<{ __typename?: 'governance_satellite_action', executed: boolean, expiration_datetime?: any | null, execution_datetime?: any | null, dropped_datetime?: any | null, governance_purpose: string, governance_type: string, id: any, nay_vote_smvn_total: any, pass_vote_smvn_total: any, smvn_percentage_for_approval: any, smvn_required_for_approval: any, snapshot_smvn_total_supply: any, start_datetime: any, status: any, yay_vote_smvn_total: any, governance_satellite: { __typename?: 'governance_satellite', address: string }, initiator: { __typename?: 'maven_user', address: string }, parameters: Array<{ __typename?: 'governance_satellite_action_parameter', name: string, value: string, id: any }>, votes: Array<{ __typename?: 'governance_satellite_action_vote', governance_satellite_action_id: any, id: any, timestamp: any, vote: any, voter: { __typename?: 'maven_user', address: string } }> }> };
+export type PastGovernanceSatelliteActionsQueryQuery = { __typename?: 'query_root', governance_satellite_action: Array<{ __typename?: 'governance_satellite_action', executed: boolean, expiration_datetime?: any | null, execution_datetime?: any | null, dropped_datetime?: any | null, governance_purpose: string, governance_type: string, id: any, nay_vote_smvn_total: any, pass_vote_smvn_total: any, smvn_percentage_for_approval: any, smvn_required_for_approval: any, snapshot_smvn_total_supply: any, start_datetime: any, status: any, yay_vote_smvn_total: any, governance_satellite: { __typename?: 'governance_satellite', address: string }, initiator: { __typename?: 'maven_user', address: string }, parameters: Array<{ __typename?: 'governance_satellite_action_parameter', name: string, value: string, id: any }>, votes: Array<{ __typename?: 'governance_satellite_action_vote', governance_satellite_action_id: any, id: any, timestamp?: any | null, vote: any, voter: { __typename?: 'maven_user', address: string } }> }> };
 
 export type UserGovernanceSatelliteActionsQueryQueryVariables = Exact<{
   userAddress?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type UserGovernanceSatelliteActionsQueryQuery = { __typename?: 'query_root', governance_satellite_action: Array<{ __typename?: 'governance_satellite_action', executed: boolean, expiration_datetime?: any | null, execution_datetime?: any | null, dropped_datetime?: any | null, governance_purpose: string, governance_type: string, id: any, nay_vote_smvn_total: any, pass_vote_smvn_total: any, smvn_percentage_for_approval: any, smvn_required_for_approval: any, snapshot_smvn_total_supply: any, start_datetime: any, status: any, yay_vote_smvn_total: any, governance_satellite: { __typename?: 'governance_satellite', address: string }, initiator: { __typename?: 'maven_user', address: string }, parameters: Array<{ __typename?: 'governance_satellite_action_parameter', name: string, value: string, id: any }>, votes: Array<{ __typename?: 'governance_satellite_action_vote', governance_satellite_action_id: any, id: any, timestamp: any, vote: any, voter: { __typename?: 'maven_user', address: string } }> }> };
+export type UserGovernanceSatelliteActionsQueryQuery = { __typename?: 'query_root', governance_satellite_action: Array<{ __typename?: 'governance_satellite_action', executed: boolean, expiration_datetime?: any | null, execution_datetime?: any | null, dropped_datetime?: any | null, governance_purpose: string, governance_type: string, id: any, nay_vote_smvn_total: any, pass_vote_smvn_total: any, smvn_percentage_for_approval: any, smvn_required_for_approval: any, snapshot_smvn_total_supply: any, start_datetime: any, status: any, yay_vote_smvn_total: any, governance_satellite: { __typename?: 'governance_satellite', address: string }, initiator: { __typename?: 'maven_user', address: string }, parameters: Array<{ __typename?: 'governance_satellite_action_parameter', name: string, value: string, id: any }>, votes: Array<{ __typename?: 'governance_satellite_action_vote', governance_satellite_action_id: any, id: any, timestamp?: any | null, vote: any, voter: { __typename?: 'maven_user', address: string } }> }> };
 
 export type SatelliteVotesQueryQueryVariables = Exact<{
   userAddress: Scalars['String']['input'];
 }>;
 
 
-export type SatelliteVotesQueryQuery = { __typename?: 'query_root', satellite: Array<{ __typename?: 'satellite', user: { __typename?: 'maven_user', governance_financial_requests_votes: Array<{ __typename?: 'governance_financial_request_vote', timestamp: any, vote: any, id: any, governance_financial_request: { __typename?: 'governance_financial_request', request_type: string } }>, governance_proposals_votes: Array<{ __typename?: 'governance_proposal_vote', timestamp: any, vote: any, id: any, governance_proposal: { __typename?: 'governance_proposal', title: string } }>, governance_satellite_actions_votes: Array<{ __typename?: 'governance_satellite_action_vote', timestamp: any, vote: any, id: any, governance_satellite_action: { __typename?: 'governance_satellite_action', governance_type: string } }> } }> };
+export type SatelliteVotesQueryQuery = { __typename?: 'query_root', satellite: Array<{ __typename?: 'satellite', user: { __typename?: 'maven_user', governance_financial_requests_votes: Array<{ __typename?: 'governance_financial_request_vote', timestamp?: any | null, vote: any, id: any, governance_financial_request: { __typename?: 'governance_financial_request', request_type: string } }>, governance_proposals_votes: Array<{ __typename?: 'governance_proposal_vote', timestamp?: any | null, vote: any, id: any, governance_proposal: { __typename?: 'governance_proposal', title: string } }>, governance_satellite_actions_votes: Array<{ __typename?: 'governance_satellite_action_vote', timestamp?: any | null, vote: any, id: any, governance_satellite_action: { __typename?: 'governance_satellite_action', governance_type: string } }> } }> };
 
 export type CheckWitherSatelliteExistsQueryVariables = Exact<{
   userAddress?: InputMaybe<Scalars['String']['input']>;
@@ -72648,7 +72640,7 @@ export type TokensMetadataQuery = { __typename?: 'query_root', token: Array<{ __
 export type GetTreasuryStorageDataQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetTreasuryStorageDataQuery = { __typename?: 'query_root', treasury: Array<{ __typename?: 'treasury', address: string, admin: string, creation_timestamp: any, name: string, balances: Array<{ __typename?: 'treasury_balance', balance: any, token: { __typename?: 'token', token_address: string } }> }> };
+export type GetTreasuryStorageDataQuery = { __typename?: 'query_root', treasury: Array<{ __typename?: 'treasury', address: string, admin: string, creation_timestamp?: any | null, name: string, balances: Array<{ __typename?: 'treasury_balance', balance: any, token: { __typename?: 'token', token_address: string } }> }> };
 
 export type GetTreasurySmvnBalancesQueryVariables = Exact<{
   addresses?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
@@ -72788,7 +72780,7 @@ export const GetLoansTransactionsHistoryDocument = {"kind":"Document","definitio
 export const GetDevLoansTransactionsHistoryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getDevLoansTransactionsHistory"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"vaultAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"typeFilter"}},"type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"smallint"}}},"defaultValue":{"kind":"ListValue","values":[]}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"0"}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"defaultValue":{"kind":"IntValue","value":"8"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"history_data"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"timestamp"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"collateral_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"mvn_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"operation_hash"}},{"kind":"Field","name":{"kind":"Name","value":"sender"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"vault"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"historyItemsAmount"},"name":{"kind":"Name","value":"history_data_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetDevLoansTransactionsHistoryQuery, GetDevLoansTransactionsHistoryQueryVariables>;
 export const LoansMarketByAddressQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"loansMarketByAddressQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"allMarketsAddresses"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_treasury_share"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}},{"kind":"Field","name":{"kind":"Name","value":"loan_tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketTokenAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"utilisation_rate"}},{"kind":"Field","name":{"kind":"Name","value":"total_borrowed"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"m_token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","alias":{"kind":"Name","value":"depositorsAmount"},"name":{"kind":"Name","value":"accounts_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"balance"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gte"},"value":{"kind":"IntValue","value":"0"}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"mTokenRewardsAmount"},"name":{"kind":"Name","value":"accounts_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rewards_earned"}}]}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"vaults_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"loan_outstanding_total"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"StringValue","value":"0","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"distinct"},"value":{"kind":"BooleanValue","value":true}},{"kind":"Argument","name":{"kind":"Name","value":"columns"},"value":{"kind":"EnumValue","value":"owner_id"}}]}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<LoansMarketByAddressQueryQuery, LoansMarketByAddressQueryQueryVariables>;
 export const AllLoansMarketsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"allLoansMarketsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"markets"},"name":{"kind":"Name","value":"gql_loan_token_market_stats"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"m_token_address"}},{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"token_pool_total"}},{"kind":"Field","name":{"kind":"Name","value":"total_borrowed"}},{"kind":"Field","name":{"kind":"Name","value":"total_remaining"}},{"kind":"Field","name":{"kind":"Name","value":"utilisation_rate"}},{"kind":"Field","name":{"kind":"Name","value":"current_interest_rate"}},{"kind":"Field","name":{"kind":"Name","value":"depositors_count"}},{"kind":"Field","name":{"kind":"Name","value":"borrowers_count"}},{"kind":"Field","name":{"kind":"Name","value":"rewards_earned_total"}},{"kind":"Field","name":{"kind":"Name","value":"reserve_ratio"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"collateral_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"interest_treasury_share"}},{"kind":"Field","name":{"kind":"Name","value":"interest_rate_decimals"}},{"kind":"Field","name":{"kind":"Name","value":"decimals"}}]}}]}}]} as unknown as DocumentNode<AllLoansMarketsQueryQuery, AllLoansMarketsQueryQueryVariables>;
-export const GetLoansConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getLoansConfig"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currentTimestamp"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"minimum_loan_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"collateral_ratio"}}]}}]}}]} as unknown as DocumentNode<GetLoansConfigQuery, GetLoansConfigQueryVariables>;
+export const GetLoansConfigDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getLoansConfig"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"currentTimestamp"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"timestamptz"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"minimum_loan_fee_pct"}},{"kind":"Field","name":{"kind":"Name","value":"collateral_ratio"}},{"kind":"Field","name":{"kind":"Name","value":"liquidation_ratio"}}]}}]}}]} as unknown as DocumentNode<GetLoansConfigQuery, GetLoansConfigQueryVariables>;
 export const CheckWitherMarketExistsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"checkWitherMarketExists"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"marketAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lending_controller"},"name":{"kind":"Name","value":"lending_controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"token_address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"marketAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}}]}}]} as unknown as DocumentNode<CheckWitherMarketExistsQuery, CheckWitherMarketExistsQueryVariables>;
 export const GetGovernanceLatestUserProposalsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGovernanceLatestUserProposalsQuery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"defaultValue":{"kind":"StringValue","value":"","block":false}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"governance_proposal"},"name":{"kind":"Name","value":"governance_proposal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"order_by"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"start_datetime"},"value":{"kind":"EnumValue","value":"desc"}}]}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"proposer"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"Variable","name":{"kind":"Name","value":"userAddress"}}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<GetGovernanceLatestUserProposalsQueryQuery, GetGovernanceLatestUserProposalsQueryQueryVariables>;
 export const GovernanceConfigQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"governanceConfigQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"governance"},"name":{"kind":"Name","value":"governance"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"current_round"}},{"kind":"Field","name":{"kind":"Name","value":"success_reward"}},{"kind":"Field","name":{"kind":"Name","value":"cycle_id"}},{"kind":"Field","name":{"kind":"Name","value":"proposal_submission_fee_mumav"}},{"kind":"Field","name":{"kind":"Name","value":"timelock_proposal_id"}},{"kind":"Field","name":{"kind":"Name","value":"cycle_highest_voted_proposal_id"}},{"kind":"Field","name":{"kind":"Name","value":"current_round_end_level"}},{"kind":"Field","name":{"kind":"Name","value":"proposals"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"executed"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"0","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"locked"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"defeated_datetime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"dropped_datetime"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<GovernanceConfigQueryQuery, GovernanceConfigQueryQueryVariables>;
