@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // providers
@@ -36,6 +36,7 @@ import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
+  SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
@@ -54,9 +55,10 @@ const Satellites = () => {
   } = useSatellitesContext()
   const { userTokensBalances, isSatellite, userAddress } = useUserContext()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    console.log('run')
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ALL_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 

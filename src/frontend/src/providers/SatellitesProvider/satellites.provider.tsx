@@ -104,6 +104,7 @@ export const SatellitesProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(ALL_SATELLITES_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
+    fetchPolicy: 'network-only',
     variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
     onCompleted: (data) => {
       const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
@@ -157,6 +158,7 @@ export const SatellitesProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(SATELLITE_AGGREGATE_COUNT, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
+    fetchPolicy: 'network-only',
     onCompleted: (data) => {
       const {
         satellite_aggregate: {
