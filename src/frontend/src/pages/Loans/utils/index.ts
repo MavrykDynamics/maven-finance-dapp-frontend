@@ -14,6 +14,7 @@ export function buildCollateralQuery(tokenAddresses: string[]) {
             aggregate {
               sum {
                 balance
+                loan_outstanding_total
               }
             }
           }

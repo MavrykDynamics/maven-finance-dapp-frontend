@@ -64,12 +64,18 @@ export const tokenCollateralSchema = z.record(
     aggregate: z.object({
       sum: z.object({
         balance: z.number(),
+        loan_outstanding_total: z.number(),
       }),
     }),
   }),
 )
 
 export type CollateralResponse = z.infer<typeof tokenCollateralSchema>
+
+type RawTotalCollateralBalances = {
+  totalCollateral: number
+  tottalBorrowed: number
+}
 
 export const Loans = () => {
   const {
@@ -91,7 +97,10 @@ export const Loans = () => {
   const { changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
 
   // total collaterals state
-  const [rawTotalCollateralBalances, setRawTotalCollateralBalances] = useState<Record<string, number> | null>(null)
+  const [rawTotalCollateralBalances, setRawTotalCollateralBalances] = useState<Record<
+    string,
+    RawTotalCollateralBalances
+  > | null>(null)
 
   const collateralsTotalQuery = useMemo(() => buildCollateralQuery(marketsAddresses), [marketsAddresses])
 
@@ -103,9 +112,12 @@ export const Loans = () => {
         console.error('Error parsing collateral data:', parsedData.error)
         return
       }
-      const rawTotalCollateral = Object.entries(data).reduce<Record<string, number>>(
+      const rawTotalCollateral = Object.entries(data).reduce<Record<string, RawTotalCollateralBalances>>(
         (acc, [marketAddress, aggregator]) => {
-          acc[marketAddress] = aggregator.aggregate.sum.balance
+          acc[marketAddress] = {
+            totalCollateral: aggregator.aggregate.sum.balance,
+            tottalBorrowed: aggregator.aggregate.sum.loan_outstanding_total,
+          }
           return acc
         },
         {},
@@ -277,18 +289,25 @@ export const Loans = () => {
                 grade: decimals,
               })
 
-              const totalCollateralBalane =
+              const totalCollateralBalance =
                 convertNumberForClient({
-                  number: rawTotalCollateralBalances?.[marketAddress] ?? 0,
+                  number: rawTotalCollateralBalances?.[marketAddress].totalCollateral ?? 0,
+                  grade: decimals,
+                }) * rate
+
+              const loanTokenVaultsTotalBorrowed =
+                convertNumberForClient({
+                  number: rawTotalCollateralBalances?.[marketAddress].tottalBorrowed ?? 0,
                   grade: decimals,
                 }) * rate
 
               const totalCollateralColor =
-                collateralFactor > liquidationFactor * 1.3
-                  ? 'up'
-                  : collateralFactor > liquidationFactor
-                  ? 'neutral'
-                  : 'down'
+                totalCollateralBalance && loanTokenVaultsTotalBorrowed
+                  ? totalCollateralBalance / loanTokenVaultsTotalBorrowed > 2
+                    ? 'up'
+                    : 'down'
+                  : 'neutral'
+
               return (
                 <MarketOverview key={symbol}>
                   <div className="asset-info">
@@ -377,7 +396,7 @@ export const Loans = () => {
                       <ThreeLevelListItem>
                         <div className="name">Total Collateral</div>
                         <CommaNumber
-                          value={totalCollateralBalane}
+                          value={totalCollateralBalance}
                           className={`value ${totalCollateralColor}`}
                           beginningText="$"
                         />
