@@ -180,6 +180,7 @@ export const CHART_SETTINGS = {
   isPeriod: true,
 }
 
+// Collateral query response
 export const tokenCollateralSchema = z.record(
   z.string(),
   z.object({
@@ -198,3 +199,21 @@ export type RawTotalCollateralBalances = {
   totalCollateral: number
   tottalBorrowed: number
 }
+
+// user total balances query
+
+export const gqlVaultWithBalancesAggregateSchema = z.object({
+  gql_vault_with_balances_aggregate: z.object({
+    aggregate: z.object({
+      sum: z.object({
+        token_pool_total: z.number(),
+        loan_interest_total: z.number(),
+        loan_outstanding_total: z.number(),
+        total_remaining: z.number(),
+      }),
+    }),
+  }),
+})
+
+// TypeScript type
+export type GqlVaultWithBalancesAggregate = z.infer<typeof gqlVaultWithBalancesAggregateSchema>

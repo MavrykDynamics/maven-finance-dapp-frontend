@@ -75,6 +75,7 @@ const INDEXER_TABLES = {
 
   // AGGREGATE
   vault_collateral_view_aggregate: true,
+  gql_vault_with_balances_aggregate: true,
 }
 
 // environment prefixes
