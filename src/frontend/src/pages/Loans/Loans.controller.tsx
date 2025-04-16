@@ -48,7 +48,6 @@ import useLoansCharts from 'providers/LoansProvider/hooks/useLoansCharts'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import { APR } from 'texts/tooltips/vault.text'
@@ -67,13 +66,13 @@ export const Loans = () => {
 
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper, isLoading: isLoansLoading } = useLoansContext()
-  const { changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
 
   // total collaterals state
   const [rawTotalCollateralBalances, setRawTotalCollateralBalances] = useState<Record<
     string,
     RawTotalCollateralBalances
   > | null>(null)
+  const [isTotalBalancesLoading, setIsTotalBalancesLoading] = useState(true)
 
   const collateralsTotalQuery = useMemo(() => buildCollateralQuery(marketsAddresses), [marketsAddresses])
 
@@ -83,6 +82,7 @@ export const Loans = () => {
       const parsedData = tokenCollateralSchema.safeParse(data)
       if (!parsedData.success) {
         console.error('Error parsing collateral data:', parsedData.error)
+        setIsTotalBalancesLoading(false)
         return
       }
       const rawTotalCollateral = Object.entries(data).reduce<Record<string, RawTotalCollateralBalances>>(
@@ -96,6 +96,7 @@ export const Loans = () => {
         {},
       )
       setRawTotalCollateralBalances(rawTotalCollateral)
+      setIsTotalBalancesLoading(false)
     },
     onError: (error) => console.error(error, 'collateralsTotalQuery'),
   })
@@ -104,13 +105,9 @@ export const Loans = () => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
     })
-    changeVaultsSubscriptionsList({
-      [VAULTS_DATA]: VAULTS_ALL,
-    })
 
     return () => {
       changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
-      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
     }
   }, [])
 
@@ -201,7 +198,7 @@ export const Loans = () => {
     <Page>
       <PageHeader page={'lending'} />
 
-      {isLoansLoading || isVaultsLoading ? (
+      {isLoansLoading || isTotalBalancesLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading loan markets</div>

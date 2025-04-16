@@ -43,12 +43,6 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import {
-  DEFAULT_VAULTS_ACTIVE_SUBS,
-  VAULTS_DATA,
-  VAULTS_USER_ALL,
-} from 'providers/VaultsProvider/vaults.provider.consts'
 import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
