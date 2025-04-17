@@ -98,7 +98,7 @@ export const VaultsProvider = ({ children }: Props) => {
         ...prev,
         permissionedVaultsMapper: { ...prev.permissionedVaultsMapper, ...vaultsMapper },
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
-        permissionedVaultsIds,
+        permissionedVaultsIds: Array.from(new Set([...(prev.permissionedVaultsIds ?? []), ...permissionedVaultsIds])),
       }))
       setIsLoading(false)
     },
@@ -141,7 +141,7 @@ export const VaultsProvider = ({ children }: Props) => {
         ...prev,
         myVaultsMapper: { ...prev.myVaultsMapper, ...vaultsMapper },
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
-        myVaultsIds,
+        myVaultsIds: Array.from(new Set([...(prev.myVaultsIds ?? []), ...myVaultsIds])),
       }))
       setIsLoading(false)
     },
@@ -164,7 +164,7 @@ export const VaultsProvider = ({ children }: Props) => {
       setVaultsCtxState((prev) => ({
         ...prev,
         vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
-        allVaultsIds,
+        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         permissionedVaultsIds,
         myVaultsIds,
       }))
