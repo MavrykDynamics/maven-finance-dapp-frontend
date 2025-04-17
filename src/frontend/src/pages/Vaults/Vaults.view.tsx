@@ -85,6 +85,8 @@ export const VaultsView = () => {
     changePage,
   } = useVaultsContext()
 
+  const [vaultsIds, setVaultsIds] = useState<string[]>([])
+
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_CONFIG]: true,
@@ -140,7 +142,6 @@ export const VaultsView = () => {
     ],
     [tabId],
   )
-  const [vaultsIds, setVaultsIds] = useState<string[]>([])
 
   const { currentMapper, currentListName, currentVaultsCount, currentVaultsIds } = useMemo(() => {
     if (tabId === vaultTabs.MY) {
@@ -241,7 +242,7 @@ export const VaultsView = () => {
       <VaultsSearchFilter
         vaultsMapper={currentMapper}
         currentVaultsIds={currentVaultsIds}
-        allVaultsIds={allVaultsIds}
+        allVaultsIds={currentVaultsIds}
         setVaultsIds={setVaultsIds}
       />
 
@@ -252,7 +253,7 @@ export const VaultsView = () => {
         </DataLoaderWrapper>
       ) : vaultsIds.length ? (
         <VaultsList>
-          {currentVaultsIds.map((item) => {
+          {vaultsIds.map((item) => {
             const isOwner = currentMapper[item]?.ownerAddress === userAddress
 
             return (
