@@ -100,9 +100,11 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
       myVaultsIds.filter((vaultId) => {
         const vault = myVaultsMapper[vaultId]
 
+        if (vault.borrowedTokenAddress !== loanTokenAddress) return false
+
         return showZeroVaults ? vault.collateralData.find(({ amount }) => amount > 0) || vault.borrowedAmount : true
       }),
-    [myVaultsIds, showZeroVaults, myVaultsMapper],
+    [myVaultsIds, myVaultsMapper, loanTokenAddress, showZeroVaults],
   )
   // get total pages for pagination
   const totalPages = useMemo(() => getTotalPages(myVaultsCount, VAULTS_LIMIT), [myVaultsCount])
