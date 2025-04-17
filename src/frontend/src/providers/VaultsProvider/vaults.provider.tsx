@@ -39,11 +39,19 @@ import {
 import { normalizeVaults, normalizeVaultsNew } from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 import { VaultStatsSchemaResponse } from './schemas/vaultsCount.schema'
+import { Lending_Controller_Vault_Bool_Exp, Lending_Controller_Vault_Order_By } from 'utils/__generated__/graphql'
 
 export const vaultsContext = React.createContext<VaultsContext>(undefined!)
 
 type Props = {
   children: React.ReactNode
+}
+
+type VaultFiltersType = {
+  [key in typeof PAGINATION_ALL | typeof PAGINATION_MY | typeof PAGINATION_PERMISSIONED]: {
+    where: Lending_Controller_Vault_Bool_Exp
+    orderBy: Lending_Controller_Vault_Order_By
+  }
 }
 
 // TODO: if will need implement query that will take vaults where owner === current user and market token === vault loan token
@@ -66,7 +74,7 @@ export const VaultsProvider = ({ children }: Props) => {
   const [marketAddress, setMarketAddress] = useState('')
 
   // query filters // TODO add types
-  const [vaultFilters, setVaultFilters] = useState({
+  const [vaultFilters, setVaultFilters] = useState<VaultFiltersType>({
     [PAGINATION_ALL]: {
       where: {},
       orderBy: {},
@@ -81,48 +89,62 @@ export const VaultsProvider = ({ children }: Props) => {
     },
   })
 
-  const defaultVaultFilters: Record<string, { where: any; orderBy: any }> = useMemo(
-    () => ({
-      [PAGINATION_ALL]: {
-        where: { is_open: { _eq: true }, ...vaultFilters[PAGINATION_ALL].where },
-        orderBy: { creation_timestamp: 'desc', ...vaultFilters[PAGINATION_ALL].orderBy },
-      },
-      [PAGINATION_MY]: {
-        where: {
-          open: { _eq: true },
-          owner: { address: { _eq: userAddress } },
-          ...(marketAddress
-            ? {
-                loan_token: {
-                  token: {
-                    token_address: {
-                      _eq: marketAddress,
+  const defaultVaultFilters = useMemo(
+    () =>
+      ({
+        [PAGINATION_ALL]: {
+          where: { is_open: { _eq: true }, ...vaultFilters[PAGINATION_ALL].where },
+          orderBy: {
+            creation_timestamp: 'desc',
+            ...vaultFilters[PAGINATION_ALL].orderBy,
+          },
+        },
+        [PAGINATION_MY]: {
+          where: {
+            open: { _eq: true },
+            owner: { address: { _eq: userAddress } },
+            ...(marketAddress
+              ? {
+                  loan_token: {
+                    token: {
+                      token_address: {
+                        _eq: marketAddress,
+                      },
                     },
                   },
-                },
-              }
-            : {}),
-          ...vaultFilters[PAGINATION_MY].where,
-        },
-        orderBy: { vault: { creation_timestamp: 'desc' }, ...vaultFilters[PAGINATION_MY].orderBy },
-      },
-      [PAGINATION_PERMISSIONED]: {
-        where: {
-          open: { _eq: true },
-          vault: {
-            _or: [
-              { allowance: { _eq: '0' } },
-              { _and: { depositors: { depositor: { address: { _eq: userAddress } } }, allowance: { _eq: '1' } } },
-            ],
+                }
+              : {}),
+            ...vaultFilters[PAGINATION_MY].where,
           },
-          owner: { address: { _neq: userAddress } },
-          ...vaultFilters[PAGINATION_PERMISSIONED].where,
+          orderBy: {
+            vault: { creation_timestamp: 'desc' },
+            ...vaultFilters[PAGINATION_MY].orderBy,
+          },
         },
-        orderBy: { vault: { creation_timestamp: 'desc' }, ...vaultFilters[PAGINATION_PERMISSIONED].orderBy },
-      },
-    }),
+        [PAGINATION_PERMISSIONED]: {
+          where: {
+            open: { _eq: true },
+            vault: {
+              _or: [
+                { allowance: { _eq: '0' } },
+                { _and: { depositors: { depositor: { address: { _eq: userAddress } } }, allowance: { _eq: '1' } } },
+              ],
+            },
+            owner: { address: { _neq: userAddress } },
+            ...vaultFilters[PAGINATION_PERMISSIONED].where,
+          },
+          orderBy: {
+            vault: { creation_timestamp: 'desc' },
+            ...vaultFilters[PAGINATION_PERMISSIONED].orderBy,
+          },
+        },
+      } as VaultFiltersType),
     [marketAddress, userAddress, vaultFilters],
   )
+
+  const updateVaultQueryFilters = useCallback((queryFilters: any, vaultType: PaginationVaultType) => {
+    setVaultFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
+  }, [])
 
   // reset user specific fields on user change
   useEffect(() => {
