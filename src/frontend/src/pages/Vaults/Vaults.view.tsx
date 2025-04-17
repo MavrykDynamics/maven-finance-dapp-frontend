@@ -239,12 +239,7 @@ export const VaultsView = () => {
         className="mt-30 mb-30"
       />
 
-      <VaultsSearchFilter
-        vaultsMapper={currentMapper}
-        currentVaultsIds={currentVaultsIds}
-        allVaultsIds={currentVaultsIds}
-        setVaultsIds={setVaultsIds}
-      />
+      <VaultsSearchFilter />
 
       {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>

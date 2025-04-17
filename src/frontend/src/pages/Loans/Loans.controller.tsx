@@ -35,7 +35,6 @@ import {
 } from './Loans.const'
 import colors from 'styles/colors'
 import { CURRENCY_AMOUNT_DATE_TOOLTIP } from 'app/App.components/Chart/Tooltips/ChartTooltip'
-import { DEFAULT_VAULTS_ACTIVE_SUBS, VAULTS_ALL, VAULTS_DATA } from 'providers/VaultsProvider/vaults.provider.consts'
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'
 
 // utils
