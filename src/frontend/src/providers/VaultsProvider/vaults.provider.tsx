@@ -65,6 +65,37 @@ export const VaultsProvider = ({ children }: Props) => {
   // used for the user active vaults based on the market address
   const [marketAddress, setMarketAddress] = useState('')
 
+  // query filters
+  const defaultVaultFilters = useMemo(
+    () => ({
+      [PAGINATION_ALL]: {
+        where: { is_open: { _eq: true } },
+        orderBy: { creation_timestamp: 'desc' },
+      },
+      [PAGINATION_MY]: {
+        where: {
+          open: { _eq: true },
+          owner: { address: { _eq: userAddress } },
+        },
+        orderBy: { vault: { creation_timestamp: 'desc' } },
+      },
+      [PAGINATION_PERMISSIONED]: {
+        where: {
+          open: { _eq: true },
+          vault: {
+            _or: [
+              { allowance: { _eq: '0' } },
+              { _and: { depositors: { depositor: { address: { _eq: userAddress } } }, allowance: { _eq: '1' } } },
+            ],
+          },
+          owner: { address: { _neq: userAddress } },
+        },
+        orderBy: { vault: { creation_timestamp: 'desc' } },
+      },
+    }),
+    [userAddress],
+  )
+
   // reset user specific fields on user change
   useEffect(() => {
     if (prevUserAddress !== userAddress) {
@@ -87,6 +118,8 @@ export const VaultsProvider = ({ children }: Props) => {
       userAddress: userAddress ?? '',
       limit: VAULTS_LIMIT,
       offset: (paginationState[PAGINATION_PERMISSIONED] - 1) * VAULTS_LIMIT,
+      lendingWhere: defaultVaultFilters[PAGINATION_PERMISSIONED].where,
+      lendingOrderBy: defaultVaultFilters[PAGINATION_PERMISSIONED].orderBy,
     },
     onCompleted: (data) => {
       const { vaultsMapper, allVaultsIds, permissionedVaultsIds } = normalizeVaults({
@@ -127,7 +160,9 @@ export const VaultsProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_USER_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     variables: {
-      where: userWhereQueryVariable,
+      // here TODO handle market as before after tests
+      lendingUserWhere: defaultVaultFilters[PAGINATION_MY].where,
+      lendingUserOrderBy: defaultVaultFilters[PAGINATION_MY].orderBy,
       limit: VAULTS_LIMIT,
       offset: (paginationState[PAGINATION_MY] - 1) * VAULTS_LIMIT,
     },
@@ -151,6 +186,8 @@ export const VaultsProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
     variables: {
+      lendingAllWhere: defaultVaultFilters[PAGINATION_ALL].where,
+      lendingAllOrderBy: defaultVaultFilters[PAGINATION_ALL].orderBy,
       limit: VAULTS_LIMIT,
       offset: (paginationState[PAGINATION_ALL] - 1) * VAULTS_LIMIT,
     },
@@ -176,7 +213,7 @@ export const VaultsProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
     variables: {
       userAddress: userAddress ?? '',
-      where: userWhereQueryVariable,
+      lendingWhere: userWhereQueryVariable,
     },
     onCompleted: (data) => {
       const parsedData = VaultStatsSchemaResponse.safeParse(data)

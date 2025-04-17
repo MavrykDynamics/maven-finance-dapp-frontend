@@ -3,7 +3,7 @@
 import { gql } from 'utils/__generated__'
 
 export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
-	query getUserDepositorAllVaultsQuery($userAddress: String, $limit: Int, $offset: Int) {
+	query getUserDepositorAllVaultsQuery($userAddress: String, $lendingWhere: lending_controller_vault_bool_exp, $lendingOrderBy: [lending_controller_vault_order_by!], $limit: Int, $offset: Int) {
 		lending_controller: lending_controller {
 			max_vault_liquidation_pct
 			decimals
@@ -13,7 +13,7 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 			admin_liquidation_fee_pct
 			liquidation_delay_in_minutes
 
-			vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, vault: {_or: [{allowance: {_eq: "0"}}, {_and: {depositors: {depositor: {address: {_eq: $userAddress}}}, allowance: {_eq: "1"}}}]}, owner: {address: {_neq: $userAddress}}}, limit: $limit, offset: $offset) {
+			vaults(order_by: $lendingOrderBy, where: $lendingWhere, limit: $limit, offset: $offset) {
 				# collaterals of the vault
 				collateral_balances {
 					balance
@@ -70,7 +70,7 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 `)
 
 export const GET_USER_ALL_VAULTS_QUERY = gql(`
-	query getUserAllVaultsQuery($where: lending_controller_vault_bool_exp, $limit: Int, $offset: Int) {
+	query getUserAllVaultsQuery($lendingUserWhere: lending_controller_vault_bool_exp, $lendingUserOrderBy: [lending_controller_vault_order_by!], $limit: Int, $offset: Int) {
 		lending_controller: lending_controller {
 			max_vault_liquidation_pct
 			decimals
@@ -80,7 +80,7 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 			admin_liquidation_fee_pct
 			liquidation_delay_in_minutes
 
-			vaults(order_by: {vault: {creation_timestamp: desc}}, where: $where, limit: $limit, offset: $offset) {
+			vaults(order_by: $lendingUserOrderBy, where: $lendingUserWhere, limit: $limit, offset: $offset) {
 				# collaterals of the vault
 				collateral_balances {
 					balance
@@ -144,7 +144,7 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 // when u update queries - DO NOT FORGET to run this command from console: <yarn graphql-compile>
 // test queries in playground https://api.mavenfinance.io/console
 export const GET_ALL_VAULTS_QUERY = gql(`
-	query getAllVaultsQuery($limit: Int, $offset: Int) {
+	query getAllVaultsQuery($lendingAllWhere: gql_vault_with_balances_bool_exp, $lendingAllOrderBy: [gql_vault_with_balances_order_by!], $limit: Int, $offset: Int) {
 		# Get lending controller config
 		lending_controller: lending_controller {
 			max_vault_liquidation_pct
@@ -157,8 +157,8 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 		}
 
 		vaults: gql_vault_with_balances(
-			order_by: {creation_timestamp: desc}, 
-			where: {is_open: {_eq: true}}
+			order_by: $lendingAllOrderBy, 
+			where: $lendingAllWhere,
 			limit: $limit
             offset: $offset
 		) {
@@ -192,7 +192,7 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 export const GET_ALL_VAULTS_QUERY_COUNT = gql(`
 	query GetVaultCounts(
 	  $userAddress: String,
-	  $where: lending_controller_vault_bool_exp
+	  $lendingWhere: lending_controller_vault_bool_exp
 	) {
 	  totalVaults: vault_aggregate {
 		aggregate {
@@ -201,7 +201,7 @@ export const GET_ALL_VAULTS_QUERY_COUNT = gql(`
 	  }
   
 	  userOpenVaults: lending_controller {
-		vaults_aggregate(where: $where) {
+		vaults_aggregate(where: $lendingWhere) {
 		  aggregate {
 			count
 		  }
