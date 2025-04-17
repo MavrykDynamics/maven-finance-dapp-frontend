@@ -65,19 +65,46 @@ export const VaultsProvider = ({ children }: Props) => {
   // used for the user active vaults based on the market address
   const [marketAddress, setMarketAddress] = useState('')
 
-  // query filters
-  const defaultVaultFilters = useMemo(
+  // query filters // TODO add types
+  const [vaultFilters, setVaultFilters] = useState({
+    [PAGINATION_ALL]: {
+      where: {},
+      orderBy: {},
+    },
+    [PAGINATION_MY]: {
+      where: {},
+      orderBy: {},
+    },
+    [PAGINATION_PERMISSIONED]: {
+      where: {},
+      orderBy: {},
+    },
+  })
+
+  const defaultVaultFilters: Record<string, { where: any; orderBy: any }> = useMemo(
     () => ({
       [PAGINATION_ALL]: {
-        where: { is_open: { _eq: true } },
-        orderBy: { creation_timestamp: 'desc' },
+        where: { is_open: { _eq: true }, ...vaultFilters[PAGINATION_ALL].where },
+        orderBy: { creation_timestamp: 'desc', ...vaultFilters[PAGINATION_ALL].orderBy },
       },
       [PAGINATION_MY]: {
         where: {
           open: { _eq: true },
           owner: { address: { _eq: userAddress } },
+          ...(marketAddress
+            ? {
+                loan_token: {
+                  token: {
+                    token_address: {
+                      _eq: marketAddress,
+                    },
+                  },
+                },
+              }
+            : {}),
+          ...vaultFilters[PAGINATION_MY].where,
         },
-        orderBy: { vault: { creation_timestamp: 'desc' } },
+        orderBy: { vault: { creation_timestamp: 'desc' }, ...vaultFilters[PAGINATION_MY].orderBy },
       },
       [PAGINATION_PERMISSIONED]: {
         where: {
@@ -89,11 +116,12 @@ export const VaultsProvider = ({ children }: Props) => {
             ],
           },
           owner: { address: { _neq: userAddress } },
+          ...vaultFilters[PAGINATION_PERMISSIONED].where,
         },
-        orderBy: { vault: { creation_timestamp: 'desc' } },
+        orderBy: { vault: { creation_timestamp: 'desc' }, ...vaultFilters[PAGINATION_PERMISSIONED].orderBy },
       },
     }),
-    [userAddress],
+    [marketAddress, userAddress, vaultFilters],
   )
 
   // reset user specific fields on user change
@@ -137,25 +165,6 @@ export const VaultsProvider = ({ children }: Props) => {
     },
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
-
-  const userWhereQueryVariable = useMemo(() => {
-    const where: Record<string, unknown> = {
-      open: { _eq: true },
-      owner: { address: { _eq: userAddress } },
-    }
-
-    if (marketAddress) {
-      where.loan_token = {
-        token: {
-          token_address: {
-            _eq: marketAddress,
-          },
-        },
-      }
-    }
-
-    return where
-  }, [userAddress, marketAddress])
 
   useQueryWithRefetch(GET_USER_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
@@ -213,7 +222,7 @@ export const VaultsProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
     variables: {
       userAddress: userAddress ?? '',
-      lendingWhere: userWhereQueryVariable,
+      lendingWhere: defaultVaultFilters[PAGINATION_MY].where,
     },
     onCompleted: (data) => {
       const parsedData = VaultStatsSchemaResponse.safeParse(data)
