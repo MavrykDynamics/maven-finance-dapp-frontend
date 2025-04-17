@@ -265,7 +265,6 @@ export const VaultsView = () => {
               />
             )
           })}
-
           <Pagination itemsCount={totalPages} listName={currentListName} />
         </VaultsList>
       ) : (

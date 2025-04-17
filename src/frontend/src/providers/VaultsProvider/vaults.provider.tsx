@@ -62,6 +62,9 @@ export const VaultsProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
   const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
+  // used for the user active vaults based on the market address
+  const [marketAddress, setMarketAddress] = useState('')
+
   // reset user specific fields on user change
   useEffect(() => {
     if (prevUserAddress !== userAddress) {
@@ -102,10 +105,29 @@ export const VaultsProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
 
+  const userWhereQueryVariable = useMemo(() => {
+    const where: Record<string, unknown> = {
+      open: { _eq: true },
+      owner: { address: { _eq: userAddress } },
+    }
+
+    if (marketAddress) {
+      where.loan_token = {
+        token: {
+          token_address: {
+            _eq: marketAddress,
+          },
+        },
+      }
+    }
+
+    return where
+  }, [userAddress, marketAddress])
+
   useQueryWithRefetch(GET_USER_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     variables: {
-      userAddress: userAddress ?? '',
+      where: userWhereQueryVariable,
       limit: VAULTS_LIMIT,
       offset: (paginationState[PAGINATION_MY] - 1) * VAULTS_LIMIT,
     },
@@ -152,7 +174,10 @@ export const VaultsProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
-    variables: {},
+    variables: {
+      userAddress: userAddress ?? '',
+      where: userWhereQueryVariable,
+    },
     onCompleted: (data) => {
       const parsedData = VaultStatsSchemaResponse.safeParse(data)
 
@@ -162,9 +187,8 @@ export const VaultsProvider = ({ children }: Props) => {
       }
 
       const totalCount = parsedData.data.totalVaults.aggregate.count
-      const myVaultsCount = parsedData.data.userOpenVaults.nodes[0].vaults_aggregate.aggregate.count
-      const permissionedVaultsCount =
-        parsedData.data.otherOpenVaultsWithAllowance.nodes[0].vaults_aggregate.aggregate.count
+      const myVaultsCount = parsedData.data.userOpenVaults[0].vaults_aggregate.aggregate.count
+      const permissionedVaultsCount = parsedData.data.otherOpenVaultsWithAllowance[0].vaults_aggregate.aggregate.count
 
       setVaultsCtxState((prev) => ({
         ...prev,
@@ -187,6 +211,10 @@ export const VaultsProvider = ({ children }: Props) => {
     [paginationState],
   )
 
+  const changeUserVaultsQueryBasedOnMarket = useCallback((marketAddress: string) => {
+    setMarketAddress(marketAddress)
+  }, [])
+
   const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
     setVaultsCtxState((prev) => ({
       ...prev,
@@ -207,10 +235,11 @@ export const VaultsProvider = ({ children }: Props) => {
         setVaultsDashboardData,
         userAddress,
         changePage,
+        changeUserVaultsQueryBasedOnMarket,
         setIsLoading,
         isLoadingVaults: isLoading,
       }),
-    [vaultsCtxState, activeSubs, isLoading, userAddress],
+    [vaultsCtxState, activeSubs, userAddress, changePage, changeUserVaultsQueryBasedOnMarket, isLoading],
   )
 
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>

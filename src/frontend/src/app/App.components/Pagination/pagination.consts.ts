@@ -43,6 +43,7 @@ export const MY_VAULTS_LIST_NAME = 'myVaults'
 export const PERMISSIONED_VAULTS_LIST_NAME = 'permissionedVaults'
 
 export const LOANS_POSITION_TABLE = 'loansPositionTable'
+export const BORROW_LIST_NAME = 'borrowVaultsPerMarket'
 
 export const LIST_NAMES_MAPPER: Record<string, number> = {
   [COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME]: 8,
@@ -76,6 +77,7 @@ export const LIST_NAMES_MAPPER: Record<string, number> = {
   [VAULTS_LIST_NAME]: 10,
   [MY_VAULTS_LIST_NAME]: 10,
   [PERMISSIONED_VAULTS_LIST_NAME]: 10,
+  [BORROW_LIST_NAME]: 10,
 }
 
 export const calculateSlicePositions = (currentPage: number, listName: string) => {

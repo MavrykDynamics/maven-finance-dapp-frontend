@@ -70,7 +70,7 @@ export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
 `)
 
 export const GET_USER_ALL_VAULTS_QUERY = gql(`
-	query getUserAllVaultsQuery($userAddress: String, $limit: Int, $offset: Int) {
+	query getUserAllVaultsQuery($where: lending_controller_vault_bool_exp, $limit: Int, $offset: Int) {
 		lending_controller: lending_controller {
 			max_vault_liquidation_pct
 			decimals
@@ -80,7 +80,7 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 			admin_liquidation_fee_pct
 			liquidation_delay_in_minutes
 
-			vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, owner: {address: {_eq: $userAddress}}}, limit: $limit, offset: $offset) {
+			vaults(order_by: {vault: {creation_timestamp: desc}}, where: $where, limit: $limit, offset: $offset) {
 				# collaterals of the vault
 				collateral_balances {
 					balance
@@ -190,57 +190,50 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 `)
 
 export const GET_ALL_VAULTS_QUERY_COUNT = gql(`
-   query GetVaultCounts {
-  totalVaults: vault_aggregate {
-    aggregate {
-      count
-    }
-  }
-
-  userOpenVaults: lending_controller_aggregate {
-    nodes {
-      vaults_aggregate(
-        where: {
-          open: { _eq: true }
-          owner: { address: { _eq: "mv1QjpPmbwQVyye5ecQEC23DCWKvPXV2waBW" } }
-        }
-      ) {
-        aggregate {
-          count
-        }
-      }
-    }
-  }
-
-  otherOpenVaultsWithAllowance: lending_controller_aggregate {
-    nodes {
-      vaults_aggregate(
-        where: {
-          open: { _eq: true }
-          vault: {
-            _or: [
-              { allowance: { _eq: "0" } }
-              {
-                _and: [
-                  {
-                    depositors: {
-                      depositor: { address: { _eq: "mv1QjpPmbwQVyye5ecQEC23DCWKvPXV2waBW" } }
-                    }
-                  }
-                  { allowance: { _eq: "1" } }
-                ]
-              }
-            ]
-          }
-          owner: { address: { _neq: "mv1QjpPmbwQVyye5ecQEC23DCWKvPXV2waBW" } }
-        }
-      ) {
-        aggregate {
-          count
-        }
-      }
-    }
-  }
-}
-
-`)
+	query GetVaultCounts(
+	  $userAddress: String,
+	  $where: lending_controller_vault_bool_exp
+	) {
+	  totalVaults: vault_aggregate {
+		aggregate {
+		  count
+		}
+	  }
+  
+	  userOpenVaults: lending_controller {
+		vaults_aggregate(where: $where) {
+		  aggregate {
+			count
+		  }
+		}
+	  }
+  
+	  otherOpenVaultsWithAllowance: lending_controller {
+		vaults_aggregate(
+		  where: {
+			open: { _eq: true },
+			vault: {
+			  _or: [
+				{ allowance: { _eq: "0" } },
+				{
+				  _and: [
+					{
+					  depositors: {
+						depositor: { address: { _eq: $userAddress } }
+					  }
+					},
+					{ allowance: { _eq: "1" } }
+				  ]
+				}
+			  ]
+			},
+			owner: { address: { _neq: $userAddress } }
+		  }
+		) {
+		  aggregate {
+			count
+		  }
+		}
+	  }
+	}
+  `)

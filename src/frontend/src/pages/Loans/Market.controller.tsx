@@ -159,7 +159,6 @@ export const Market = () => {
       loanTokenAddress: loanToken?.address ?? '',
     },
     onCompleted: (data: GqlVaultWithBalancesAggregate) => {
-      console.log(data)
       const parsedData = gqlVaultWithBalancesAggregateSchema.safeParse(data)
       if (!parsedData.success) {
         console.error(parsedData.error)
