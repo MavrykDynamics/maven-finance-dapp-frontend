@@ -279,8 +279,6 @@ export const getVaultsProviderReturnValue = ({
   changeVaultsSubscriptionsList,
   setVaultsDashboardData,
   userAddress,
-  changePage,
-  changeUserVaultsQueryBasedOnMarket,
   setIsLoading,
   isLoadingVaults,
 }: {
@@ -289,8 +287,6 @@ export const getVaultsProviderReturnValue = ({
   changeVaultsSubscriptionsList: VaultsContext['changeVaultsSubscriptionsList']
   setVaultsDashboardData: VaultsContext['setVaultsDashboardData']
   userAddress: string | null
-  changePage: VaultsContext['changePage']
-  changeUserVaultsQueryBasedOnMarket: VaultsContext['changeUserVaultsQueryBasedOnMarket']
   isLoadingVaults: boolean
   setIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void
 }) => {
@@ -321,8 +317,6 @@ export const getVaultsProviderReturnValue = ({
       ...EMPTY_VAULTS_CONTEXT,
       ...commonToReturn,
       isLoading: true,
-      changePage,
-      changeUserVaultsQueryBasedOnMarket,
       setIsLoading,
     }
   }
@@ -332,8 +326,6 @@ export const getVaultsProviderReturnValue = ({
   return {
     ...commonToReturn,
     ...nonNullableProviderValue,
-    changePage,
-    changeUserVaultsQueryBasedOnMarket,
     setIsLoading,
     isLoading: false,
   }

@@ -292,19 +292,29 @@ export const VaultsProvider = ({ children }: Props) => {
   }
 
   const providerValue = useMemo(
-    () =>
-      getVaultsProviderReturnValue({
+    () => ({
+      ...getVaultsProviderReturnValue({
         vaultsCtxState,
         activeSubs,
         changeVaultsSubscriptionsList,
         setVaultsDashboardData,
         userAddress,
-        changePage,
-        changeUserVaultsQueryBasedOnMarket,
         setIsLoading,
         isLoadingVaults: isLoading,
       }),
-    [vaultsCtxState, activeSubs, userAddress, changePage, changeUserVaultsQueryBasedOnMarket, isLoading],
+      updateVaultQueryFilters,
+      changePage,
+      changeUserVaultsQueryBasedOnMarket,
+    }),
+    [
+      vaultsCtxState,
+      activeSubs,
+      userAddress,
+      isLoading,
+      updateVaultQueryFilters,
+      changePage,
+      changeUserVaultsQueryBasedOnMarket,
+    ],
   )
 
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
