@@ -288,7 +288,7 @@ export const getVaultsProviderReturnValue = ({
   changeVaultsSubscriptionsList: VaultsContext['changeVaultsSubscriptionsList']
   setVaultsDashboardData: VaultsContext['setVaultsDashboardData']
   userAddress: string | null
-  changePage: (newPage: number) => void
+  changePage: VaultsContext['changePage']
   isLoadingVaults: boolean
   setIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void
 }) => {

@@ -32,12 +32,14 @@ import {
   PERMISSIONED_VAULTS_LIST_NAME,
   getTotalPages,
 } from 'app/App.components/Pagination/pagination.consts'
-import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // actions
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
+  PAGINATION_ALL,
+  PAGINATION_MY,
+  PAGINATION_PERMISSIONED,
   VAULTS_ALL,
   VAULTS_DATA,
   VAULTS_LIMIT,
@@ -78,7 +80,7 @@ export const VaultsView = () => {
     myVaultsMapper,
     permissionedVaultsMapper,
     permissionedVaultsIds,
-    vaultsTotalCount,
+    vaultsPaginationStats: { total: totalVaultsCount, my: myVaultsCount, permissioned: permissionedVaultsCount },
     setIsLoading,
     changePage,
   } = useVaultsContext()
@@ -107,7 +109,7 @@ export const VaultsView = () => {
       setVaultsIds(
         tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds,
       )
-  }, [isVaultsLoading])
+  }, [allVaultsIds, isVaultsLoading, myVaultsIds, permissionedVaultsIds, tabId])
 
   useEffect(() => {
     if (!userAddress && (tabId === vaultTabs.MY || tabId === vaultTabs.PERMISSIONED)) {
@@ -136,31 +138,53 @@ export const VaultsView = () => {
         path: vaultTabs.PERMISSIONED,
       },
     ],
-    [tabId, userAddress],
+    [tabId],
   )
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
 
-  const currentMapper = useMemo(
-    () => (tabId === vaultTabs.ALL ? vaultsMapper : tabId === vaultTabs.MY ? myVaultsMapper : permissionedVaultsMapper),
-    [myVaultsMapper, permissionedVaultsMapper, tabId, vaultsMapper],
-  )
+  const { currentMapper, currentListName, currentVaultsCount, currentVaultsIds } = useMemo(() => {
+    if (tabId === vaultTabs.MY) {
+      return {
+        currentMapper: myVaultsMapper,
+        currentListName: MY_VAULTS_LIST_NAME,
+        currentVaultsCount: myVaultsCount,
+        currentVaultsIds: myVaultsIds,
+      }
+    }
+    if (tabId === vaultTabs.PERMISSIONED) {
+      return {
+        currentMapper: permissionedVaultsMapper,
+        currentListName: PERMISSIONED_VAULTS_LIST_NAME,
+        currentVaultsCount: permissionedVaultsCount,
+        currentVaultsIds: permissionedVaultsIds,
+      }
+    }
 
-  const currentListName =
-    tabId === vaultTabs.ALL
-      ? VAULTS_LIST_NAME
-      : tabId === vaultTabs.MY
-      ? MY_VAULTS_LIST_NAME
-      : PERMISSIONED_VAULTS_LIST_NAME
-
-  const currentVaultsIds = useMemo(
-    () => (tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds),
-    [allVaultsIds, myVaultsIds, permissionedVaultsIds, tabId],
-  )
+    return {
+      currentMapper: vaultsMapper,
+      currentListName: VAULTS_LIST_NAME,
+      currentVaultsCount: totalVaultsCount,
+      currentVaultsIds: allVaultsIds,
+    }
+  }, [
+    allVaultsIds,
+    myVaultsCount,
+    myVaultsIds,
+    myVaultsMapper,
+    permissionedVaultsCount,
+    permissionedVaultsIds,
+    permissionedVaultsMapper,
+    tabId,
+    totalVaultsCount,
+    vaultsMapper,
+  ])
 
   const currentPage = useMemo(() => getPageNumber(search, currentListName), [search, currentListName])
 
   useEffect(() => {
-    if (tabId === vaultTabs.ALL) changePage(currentPage)
+    if (tabId === vaultTabs.ALL) changePage(currentPage, PAGINATION_ALL)
+    if (tabId === vaultTabs.MY) changePage(currentPage, PAGINATION_MY)
+    if (tabId === vaultTabs.PERMISSIONED) changePage(currentPage, PAGINATION_PERMISSIONED)
   }, [currentPage])
 
   const handleChangeTabs = (id: number) => {
@@ -201,16 +225,9 @@ export const VaultsView = () => {
     [lendingControllerAddress, userAddress],
   )
 
-  const paginatedVaultsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, currentListName)
-    return vaultsIds?.slice(from, to)
-  }, [currentListName, currentPage, vaultsIds])
-
-  const deferredVaultIds = useDeferredValue(paginatedVaultsList)
-
   const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
 
-  const totalPages = useMemo(() => getTotalPages(vaultsTotalCount, VAULTS_LIMIT), [vaultsTotalCount])
+  const totalPages = useMemo(() => getTotalPages(currentVaultsCount, VAULTS_LIMIT), [currentVaultsCount])
 
   return (
     <VaultsStyled>
@@ -235,7 +252,7 @@ export const VaultsView = () => {
         </DataLoaderWrapper>
       ) : vaultsIds.length ? (
         <VaultsList>
-          {(tabId === vaultTabs.ALL ? vaultsIds : deferredVaultIds).map((item) => {
+          {currentVaultsIds.map((item) => {
             const isOwner = currentMapper[item]?.ownerAddress === userAddress
 
             return (
@@ -249,7 +266,7 @@ export const VaultsView = () => {
             )
           })}
 
-          <Pagination itemsCount={tabId === vaultTabs.ALL ? totalPages : vaultsIds.length} listName={currentListName} />
+          <Pagination itemsCount={totalPages} listName={currentListName} />
         </VaultsList>
       ) : (
         <EmptyContainer className="centered">

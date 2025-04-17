@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { usePrevious } from 'react-use'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
@@ -31,11 +29,16 @@ import {
   VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
   VAULTS_LIMIT,
+  PAGINATION_ALL,
+  PAGINATION_MY,
+  PAGINATION_PERMISSIONED,
+  PaginationVaultType,
 } from './vaults.provider.consts'
 
 // utils
 import { normalizeVaults, normalizeVaultsNew } from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
+import { VaultStatsSchemaResponse } from './schemas/vaultsCount.schema'
 
 export const vaultsContext = React.createContext<VaultsContext>(undefined!)
 
@@ -51,7 +54,11 @@ export const VaultsProvider = ({ children }: Props) => {
   const prevUserAddress = usePrevious(userAddress)
 
   const [isLoading, setIsLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [paginationState, setPaginationState] = useState(() => ({
+    [PAGINATION_ALL]: 1,
+    [PAGINATION_MY]: 1,
+    [PAGINATION_PERMISSIONED]: 1,
+  }))
   const [activeSubs, setActiveSubs] = useState<VaultsSubsRecordType>(DEFAULT_VAULTS_ACTIVE_SUBS)
   const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
@@ -75,6 +82,8 @@ export const VaultsProvider = ({ children }: Props) => {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     variables: {
       userAddress: userAddress ?? '',
+      limit: VAULTS_LIMIT,
+      offset: (paginationState[PAGINATION_PERMISSIONED] - 1) * VAULTS_LIMIT,
     },
     onCompleted: (data) => {
       const { vaultsMapper, allVaultsIds, permissionedVaultsIds } = normalizeVaults({
@@ -97,6 +106,8 @@ export const VaultsProvider = ({ children }: Props) => {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     variables: {
       userAddress: userAddress ?? '',
+      limit: VAULTS_LIMIT,
+      offset: (paginationState[PAGINATION_MY] - 1) * VAULTS_LIMIT,
     },
     onCompleted: (data) => {
       const { vaultsMapper, allVaultsIds, myVaultsIds } = normalizeVaults({
@@ -115,19 +126,11 @@ export const VaultsProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
 
-  // andrew_here
-  // it uses refetch logic every N blocks (for now 5 blocks)
-
-  // TODO second important task (same goes for markets query(loan))
-  // after u add pagination and it works, add filter case to fetch only updated queries
-
-  // Example -> I fetch 10 vaults and got the last_updated_timestamp
-  // the next time it do redetch -> use filter to fetch vaults after last_updated_timestamp, so it doesnt take old queries
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
     variables: {
       limit: VAULTS_LIMIT,
-      offset: (currentPage - 1) * VAULTS_LIMIT,
+      offset: (paginationState[PAGINATION_ALL] - 1) * VAULTS_LIMIT,
     },
     onCompleted: (data) => {
       // update vaults logic to merge data, dont replace the existing one
@@ -151,27 +154,37 @@ export const VaultsProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
     variables: {},
     onCompleted: (data) => {
-      const {
-        vault_aggregate: {
-          aggregate: { count },
-        },
-      } = data
+      const parsedData = VaultStatsSchemaResponse.safeParse(data)
+
+      if (!parsedData.success) {
+        console.error('Error parsing vaults count data:', parsedData.error)
+        return
+      }
+
+      const totalCount = parsedData.data.totalVaults.aggregate.count
+      const myVaultsCount = parsedData.data.userOpenVaults.nodes[0].vaults_aggregate.aggregate.count
+      const permissionedVaultsCount =
+        parsedData.data.otherOpenVaultsWithAllowance.nodes[0].vaults_aggregate.aggregate.count
 
       setVaultsCtxState((prev) => ({
         ...prev,
-        vaultsTotalCount: count,
+        vaultsPaginationStats: {
+          total: totalCount,
+          my: myVaultsCount,
+          permissioned: permissionedVaultsCount,
+        },
       }))
     },
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY_COUNT'),
   })
 
   const changePage = useCallback(
-    (newPage: number) => {
-      if (newPage === currentPage) return
+    (newPage: number, mapperType: PaginationVaultType) => {
+      if (newPage === paginationState[mapperType]) return
       setIsLoading(true)
-      setCurrentPage(newPage)
+      setPaginationState((prev) => ({ ...prev, [mapperType]: newPage }))
     },
-    [currentPage],
+    [paginationState],
   )
 
   const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
@@ -197,10 +210,8 @@ export const VaultsProvider = ({ children }: Props) => {
         setIsLoading,
         isLoadingVaults: isLoading,
       }),
-    [vaultsCtxState, activeSubs, isLoading],
+    [vaultsCtxState, activeSubs, isLoading, userAddress],
   )
-
-  console.log(providerValue, 'providerValue')
 
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
 }
