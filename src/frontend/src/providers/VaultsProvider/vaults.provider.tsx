@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { usePrevious } from 'react-use'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -84,7 +84,7 @@ export const VaultsProvider = ({ children }: Props) => {
 
       setVaultsCtxState((prev) => ({
         ...prev,
-        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+        permissionedVaultsMapper: { ...prev.permissionedVaultsMapper, ...vaultsMapper },
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         permissionedVaultsIds,
       }))
@@ -106,7 +106,7 @@ export const VaultsProvider = ({ children }: Props) => {
 
       setVaultsCtxState((prev) => ({
         ...prev,
-        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
+        myVaultsMapper: { ...prev.myVaultsMapper, ...vaultsMapper },
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         myVaultsIds,
       }))
@@ -165,11 +165,14 @@ export const VaultsProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY_COUNT'),
   })
 
-  const changePage = (newPage: number) => {
-    if (newPage === currentPage) return
-    setIsLoading(true)
-    setCurrentPage(newPage)
-  }
+  const changePage = useCallback(
+    (newPage: number) => {
+      if (newPage === currentPage) return
+      setIsLoading(true)
+      setCurrentPage(newPage)
+    },
+    [currentPage],
+  )
 
   const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
     setVaultsCtxState((prev) => ({
@@ -196,6 +199,8 @@ export const VaultsProvider = ({ children }: Props) => {
       }),
     [vaultsCtxState, activeSubs, isLoading],
   )
+
+  console.log(providerValue, 'providerValue')
 
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
 }

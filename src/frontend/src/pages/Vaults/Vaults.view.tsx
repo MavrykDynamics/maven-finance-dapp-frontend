@@ -75,6 +75,8 @@ export const VaultsView = () => {
     myVaultsIds,
     allVaultsIds,
     vaultsMapper,
+    myVaultsMapper,
+    permissionedVaultsMapper,
     permissionedVaultsIds,
     vaultsTotalCount,
     setIsLoading,
@@ -137,6 +139,11 @@ export const VaultsView = () => {
     [tabId, userAddress],
   )
   const [vaultsIds, setVaultsIds] = useState<string[]>([])
+
+  const currentMapper = useMemo(
+    () => (tabId === vaultTabs.ALL ? vaultsMapper : tabId === vaultTabs.MY ? myVaultsMapper : permissionedVaultsMapper),
+    [myVaultsMapper, permissionedVaultsMapper, tabId, vaultsMapper],
+  )
 
   const currentListName =
     tabId === vaultTabs.ALL
@@ -215,7 +222,7 @@ export const VaultsView = () => {
       />
 
       <VaultsSearchFilter
-        vaultsMapper={vaultsMapper}
+        vaultsMapper={currentMapper}
         currentVaultsIds={currentVaultsIds}
         allVaultsIds={allVaultsIds}
         setVaultsIds={setVaultsIds}
@@ -229,11 +236,11 @@ export const VaultsView = () => {
       ) : vaultsIds.length ? (
         <VaultsList>
           {(tabId === vaultTabs.ALL ? vaultsIds : deferredVaultIds).map((item) => {
-            const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
+            const isOwner = currentMapper[item]?.ownerAddress === userAddress
 
             return (
               <VaultsCard
-                vault={vaultsMapper[item]}
+                vault={currentMapper[item]}
                 key={item}
                 isOwner={isOwner}
                 handleMarkForLiquidation={handleMarkForLiquidation}

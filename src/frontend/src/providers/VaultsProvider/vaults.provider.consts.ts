@@ -28,6 +28,8 @@ export const EMPTY_VAULTS_DASHBOARD_DATA: VaultsDashboardDataType = {
 
 export const EMPTY_VAULTS_CONTEXT: VaultsCtxState = {
   vaultsMapper: {},
+  myVaultsMapper: {},
+  permissionedVaultsMapper: {},
   myVaultsIds: [],
   allVaultsIds: [],
   permissionedVaultsIds: [],
@@ -37,6 +39,8 @@ export const EMPTY_VAULTS_CONTEXT: VaultsCtxState = {
 
 export const DEFAULT_VAULTS_CONTEXT: NullableVaultsCtxState = {
   vaultsMapper: null,
+  myVaultsMapper: null,
+  permissionedVaultsMapper: null,
   myVaultsIds: null,
   allVaultsIds: null,
   permissionedVaultsIds: null,
