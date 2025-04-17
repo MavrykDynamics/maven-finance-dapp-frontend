@@ -88,6 +88,8 @@ export const getPageNumber = (search: string, listName: string): number => {
   return Number((page as Record<string, string>)?.[listName]) || 1
 }
 
+export const getTotalPages = (totalItems: number, limit: number) => Math.ceil(totalItems / limit)
+
 export const updatePageInUrl = ({
   page,
   newPage,

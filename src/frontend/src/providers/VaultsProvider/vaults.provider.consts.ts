@@ -43,3 +43,5 @@ export const DEFAULT_VAULTS_CONTEXT: NullableVaultsCtxState = {
   vaultsDashboardData: null,
   vaultsTotalCount: 0,
 }
+
+export const VAULTS_LIMIT = 1

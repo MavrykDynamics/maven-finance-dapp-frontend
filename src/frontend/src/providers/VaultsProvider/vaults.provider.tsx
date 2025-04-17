@@ -30,6 +30,7 @@ import {
   VAULTS_DATA,
   VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
+  VAULTS_LIMIT,
 } from './vaults.provider.consts'
 
 // utils
@@ -41,8 +42,6 @@ export const vaultsContext = React.createContext<VaultsContext>(undefined!)
 type Props = {
   children: React.ReactNode
 }
-
-const VAULTS_LIMIT = 10
 
 // TODO: if will need implement query that will take vaults where owner === current user and market token === vault loan token
 export const VaultsProvider = ({ children }: Props) => {

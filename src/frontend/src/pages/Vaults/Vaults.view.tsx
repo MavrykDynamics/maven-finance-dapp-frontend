@@ -30,6 +30,7 @@ import {
   getPageNumber,
   MY_VAULTS_LIST_NAME,
   PERMISSIONED_VAULTS_LIST_NAME,
+  getTotalPages,
 } from 'app/App.components/Pagination/pagination.consts'
 import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
@@ -39,6 +40,7 @@ import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   VAULTS_ALL,
   VAULTS_DATA,
+  VAULTS_LIMIT,
   VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
 } from 'providers/VaultsProvider/vaults.provider.consts'
@@ -201,6 +203,8 @@ export const VaultsView = () => {
 
   const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
 
+  const totalPages = useMemo(() => getTotalPages(vaultsTotalCount, VAULTS_LIMIT), [vaultsTotalCount])
+
   return (
     <VaultsStyled>
       <SlidingTabButtons
@@ -238,10 +242,7 @@ export const VaultsView = () => {
             )
           })}
 
-          <Pagination
-            itemsCount={tabId === vaultTabs.ALL ? vaultsTotalCount : vaultsIds.length}
-            listName={currentListName}
-          />
+          <Pagination itemsCount={tabId === vaultTabs.ALL ? totalPages : vaultsIds.length} listName={currentListName} />
         </VaultsList>
       ) : (
         <EmptyContainer className="centered">
