@@ -26,6 +26,8 @@ import {
   GetAllVaultsQueryQuery,
   GetUserAllVaultsQueryQuery,
   GetUserDepositorAllVaultsQueryQuery,
+  Lending_Controller_Vault_Bool_Exp,
+  Lending_Controller_Vault_Order_By,
 } from 'utils/__generated__/graphql'
 
 // actions type
@@ -151,4 +153,15 @@ export type VaultAssetData = {
   balance: number
   chartColor: string
   tokenAddress: string
+}
+
+// Pagination and filters
+
+export type LendingQueryFilterType = {
+  where: Lending_Controller_Vault_Bool_Exp
+  orderBy: Lending_Controller_Vault_Order_By
+}
+
+export type VaultFiltersType = {
+  [key in PaginationVaultType]: LendingQueryFilterType
 }

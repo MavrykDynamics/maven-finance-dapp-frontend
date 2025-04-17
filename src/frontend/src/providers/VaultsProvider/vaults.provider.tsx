@@ -8,7 +8,9 @@ import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // types
 import {
+  LendingQueryFilterType,
   NullableVaultsCtxState,
+  VaultFiltersType,
   VaultsContext,
   VaultsDashboardDataType,
   VaultsSubsRecordType,
@@ -39,19 +41,11 @@ import {
 import { normalizeVaults, normalizeVaultsNew } from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 import { VaultStatsSchemaResponse } from './schemas/vaultsCount.schema'
-import { Lending_Controller_Vault_Bool_Exp, Lending_Controller_Vault_Order_By } from 'utils/__generated__/graphql'
 
 export const vaultsContext = React.createContext<VaultsContext>(undefined!)
 
 type Props = {
   children: React.ReactNode
-}
-
-type VaultFiltersType = {
-  [key in typeof PAGINATION_ALL | typeof PAGINATION_MY | typeof PAGINATION_PERMISSIONED]: {
-    where: Lending_Controller_Vault_Bool_Exp
-    orderBy: Lending_Controller_Vault_Order_By
-  }
 }
 
 // TODO: if will need implement query that will take vaults where owner === current user and market token === vault loan token
@@ -73,7 +67,7 @@ export const VaultsProvider = ({ children }: Props) => {
   // used for the user active vaults based on the market address
   const [marketAddress, setMarketAddress] = useState('')
 
-  // query filters // TODO add types
+  // query filters
   const [vaultFilters, setVaultFilters] = useState<VaultFiltersType>({
     [PAGINATION_ALL]: {
       where: {},
@@ -142,9 +136,12 @@ export const VaultsProvider = ({ children }: Props) => {
     [marketAddress, userAddress, vaultFilters],
   )
 
-  const updateVaultQueryFilters = useCallback((queryFilters: any, vaultType: PaginationVaultType) => {
-    setVaultFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
-  }, [])
+  const updateVaultQueryFilters = useCallback(
+    (queryFilters: Partial<LendingQueryFilterType>, vaultType: PaginationVaultType) => {
+      setVaultFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
+    },
+    [],
+  )
 
   // reset user specific fields on user change
   useEffect(() => {
