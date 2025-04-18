@@ -53,3 +53,14 @@ export const getVaultsOrderByQuery = (option: SortVaultOption): { orderBy?: Gql_
       return {}
   }
 }
+
+// search query
+
+export const getSearchQueryForWhereFilter = (searchValue: string): { where: Gql_Vault_With_Balances_Bool_Exp } => {
+  if (!searchValue) return { where: {} }
+  return {
+    where: {
+      _or: [{ vault_name: { _ilike: searchValue } }, { vault_address: { _eq: searchValue } }],
+    },
+  }
+}

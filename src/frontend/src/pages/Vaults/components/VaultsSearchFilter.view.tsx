@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, FC, memo } from 'react'
+import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
 import qs from 'qs'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
@@ -33,9 +33,15 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { PaginationVaultType, VAULTS_DEFFAULT_FILTERS } from 'providers/VaultsProvider/vaults.provider.consts'
+import { PaginationVaultType } from 'providers/VaultsProvider/vaults.provider.consts'
 import Button from 'app/App.components/Button/NewButton'
-import { getFilterBorrowedQuery, getFilterCollateralQuery, getVaultsOrderByQuery } from '../utils/filterQueries'
+import {
+  getFilterBorrowedQuery,
+  getFilterCollateralQuery,
+  getSearchQueryForWhereFilter,
+  getVaultsOrderByQuery,
+} from '../utils/filterQueries'
+import { useDebouncedSearch } from 'app/App.hooks/useDebouncedSerach'
 
 type Filters = Record<string, string>
 
@@ -87,21 +93,22 @@ export const VaultsSearchFilter = memo(() => {
   const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])
   const sortDdItems = useMemo(() => sortingList.map((item) => getDdItem(item)), [])
 
-  const [searchInputValue, setSearchInput] = useState('')
-
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
   const [chosenDdItem, setChosenDdItem] = useState<Filters>({
     [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
     [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
   })
 
-  const handleSearch = (searchValue: string, searchData: string[]) => {
-    const searchQuery = searchValue.toLowerCase()
+  // Search --------------
+  const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
+  const hasTouchedInput = useRef(false)
 
-    console.log(searchQuery, '----')
-
-    setSearchInput(searchValue)
-  }
+  useEffect(() => {
+    if (!hasTouchedInput.current) return
+    const searchFilterQuery = getSearchQueryForWhereFilter(debouncedValue)
+    setIsPendingQueryWhenFilters(true)
+    updateVaultQueryFilters(searchFilterQuery, tabId)
+  }, [debouncedValue, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
 
   const handleDropdownSelect = (name: string) => (selectedOption: DDItemId) => {
     setFilterStatuses((prev) => ({
@@ -156,15 +163,15 @@ export const VaultsSearchFilter = memo(() => {
     setIsPendingQueryWhenFilters(true)
   }, [chosenDdItem, preparedCollateralAssets, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
 
-  const resetFilters = useCallback(() => {
-    updateVaultQueryFilters(VAULTS_DEFFAULT_FILTERS[tabId], tabId)
-    setChosenDdItem({
-      [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
-      [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
-    })
+  // const resetFilters = useCallback(() => {
+  //   updateVaultQueryFilters(VAULTS_DEFFAULT_FILTERS[tabId], tabId)
+  //   setChosenDdItem({
+  //     [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
+  //     [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
+  //   })
 
-    setFilterStatuses({})
-  }, [tabId, updateVaultQueryFilters])
+  //   setFilterStatuses({})
+  // }, [tabId, updateVaultQueryFilters])
 
   return (
     <VaultsSearchFilterWrapper>
@@ -173,14 +180,11 @@ export const VaultsSearchFilter = memo(() => {
           type="text"
           kind={'search'}
           placeholder="Search by address"
-          onChange={() =>
-            applyFilters({
-              sort,
-              assets,
-              zero,
-            } as Filters)
-          }
-          value={searchInputValue}
+          onChange={(e) => {
+            hasTouchedInput.current = true
+            handleChange(e.target.value)
+          }}
+          value={inputValue}
           disabled={isPendingQueryWhenFilters}
         />
         <VaultsFilters>
