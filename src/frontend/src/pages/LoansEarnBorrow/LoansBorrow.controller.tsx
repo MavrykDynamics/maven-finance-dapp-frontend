@@ -52,7 +52,7 @@ export const LoansBorrow = () => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { userAddress } = useUserContext()
-  const { vaultsMapper, myVaultsIds, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
+  const { myVaultsMapper, myVaultsIds, changeVaultsSubscriptionsList, isLoading: isVaultsLoading } = useVaultsContext()
 
   const { marketsAddresses, marketsMapper, changeLoansSubscriptionsList, isLoading: isLoansLoading } = useLoansContext()
 
@@ -127,7 +127,7 @@ export const LoansBorrow = () => {
   const handleBorrow = (marketTokenAddress: string) => {
     // get first valid vault, it's vault where user can borrow, and it shares same token as market
     const validVaultId = myVaultsIds.find((vaultId) => {
-      const vault = vaultsMapper[vaultId]
+      const vault = myVaultsMapper[vaultId]
 
       if (marketTokenAddress !== vault.borrowedTokenAddress) return false
 
@@ -176,7 +176,7 @@ export const LoansBorrow = () => {
         })
       }
     } else {
-      const validVault = vaultsMapper[validVaultId]
+      const validVault = myVaultsMapper[validVaultId]
 
       if (!validVault) return
 

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useLayoutEffect, useDeferredValue, ChangeEvent } from 'react'
+import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // context
@@ -30,15 +30,20 @@ import {
   getPageNumber,
   MY_VAULTS_LIST_NAME,
   PERMISSIONED_VAULTS_LIST_NAME,
+  getTotalPages,
 } from 'app/App.components/Pagination/pagination.consts'
-import { calculateSlicePositions } from 'app/App.components/Pagination/pagination.consts'
 import { SECONDARY_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 
 // actions
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
+  PAGINATION_ALL,
+  PAGINATION_MY,
+  PAGINATION_PERMISSIONED,
+  PaginationVaultType,
   VAULTS_ALL,
   VAULTS_DATA,
+  VAULTS_LIMIT,
   VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
 } from 'providers/VaultsProvider/vaults.provider.consts'
@@ -51,15 +56,15 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 const pathname = '/vaults'
 
 export const vaultTabs = {
-  ALL: 'all',
-  MY: 'my',
-  PERMISSIONED: 'permissioned',
+  ALL: PAGINATION_ALL,
+  MY: PAGINATION_MY,
+  PERMISSIONED: PAGINATION_PERMISSIONED,
 }
 
 export const VaultsView = () => {
   const navigate = useNavigate()
   const { search } = useLocation()
-  const { tabId = 'all' } = useParams<{ tabId: string }>()
+  const { tabId = PAGINATION_ALL } = useParams<{ tabId: PaginationVaultType }>()
 
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -73,10 +78,13 @@ export const VaultsView = () => {
     myVaultsIds,
     allVaultsIds,
     vaultsMapper,
+    myVaultsMapper,
+    permissionedVaultsMapper,
     permissionedVaultsIds,
-    vaultsTotalCount,
+    vaultsPaginationStats: { total: totalVaultsCount, my: myVaultsCount, permissioned: permissionedVaultsCount },
     setIsLoading,
     changePage,
+    isPendingQueryWhenFilters,
   } = useVaultsContext()
 
   useEffect(() => {
@@ -97,19 +105,6 @@ export const VaultsView = () => {
         tabId === vaultTabs.ALL ? VAULTS_ALL : tabId === vaultTabs.MY ? VAULTS_USER_ALL : VAULTS_USER_DEPOSITOR,
     })
   }, [tabId])
-
-  useLayoutEffect(() => {
-    if (!isVaultsLoading)
-      setVaultsIds(
-        tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds,
-      )
-  }, [isVaultsLoading])
-
-  useEffect(() => {
-    if (!userAddress && (tabId === vaultTabs.MY || tabId === vaultTabs.PERMISSIONED)) {
-      setVaultsIds([])
-    }
-  }, [userAddress])
 
   const tabsList = useMemo(
     () => [
@@ -132,27 +127,53 @@ export const VaultsView = () => {
         path: vaultTabs.PERMISSIONED,
       },
     ],
-    [tabId, userAddress],
-  )
-  const [vaultsIds, setVaultsIds] = useState<string[]>([])
-
-  const currentListName =
-    tabId === vaultTabs.ALL
-      ? VAULTS_LIST_NAME
-      : tabId === vaultTabs.MY
-      ? MY_VAULTS_LIST_NAME
-      : PERMISSIONED_VAULTS_LIST_NAME
-
-  const currentVaultsIds = useMemo(
-    () => (tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds),
-    [allVaultsIds, myVaultsIds, permissionedVaultsIds, tabId],
+    [tabId],
   )
 
-  const currentPage = getPageNumber(search, currentListName)
+  const { currentMapper, currentListName, currentVaultsCount, currentVaultsIds } = useMemo(() => {
+    if (tabId === vaultTabs.MY) {
+      return {
+        currentMapper: myVaultsMapper,
+        currentListName: MY_VAULTS_LIST_NAME,
+        currentVaultsCount: myVaultsCount,
+        currentVaultsIds: myVaultsIds,
+      }
+    }
+    if (tabId === vaultTabs.PERMISSIONED) {
+      return {
+        currentMapper: permissionedVaultsMapper,
+        currentListName: PERMISSIONED_VAULTS_LIST_NAME,
+        currentVaultsCount: permissionedVaultsCount,
+        currentVaultsIds: permissionedVaultsIds,
+      }
+    }
+
+    return {
+      currentMapper: vaultsMapper,
+      currentListName: VAULTS_LIST_NAME,
+      currentVaultsCount: totalVaultsCount,
+      currentVaultsIds: allVaultsIds,
+    }
+  }, [
+    allVaultsIds,
+    myVaultsCount,
+    myVaultsIds,
+    myVaultsMapper,
+    permissionedVaultsCount,
+    permissionedVaultsIds,
+    permissionedVaultsMapper,
+    tabId,
+    totalVaultsCount,
+    vaultsMapper,
+  ])
+
+  const currentPage = useMemo(() => getPageNumber(search, currentListName), [search, currentListName])
 
   useEffect(() => {
-    if(tabId === vaultTabs.ALL) changePage(currentPage);
-  }, [currentPage]);
+    if (tabId === vaultTabs.ALL) changePage(currentPage, PAGINATION_ALL)
+    if (tabId === vaultTabs.MY) changePage(currentPage, PAGINATION_MY)
+    if (tabId === vaultTabs.PERMISSIONED) changePage(currentPage, PAGINATION_PERMISSIONED)
+  }, [currentPage, tabId])
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
@@ -160,16 +181,9 @@ export const VaultsView = () => {
 
     if (!foundTab?.path || currentTabId === id) return
 
-    setIsLoading(true);
+    setIsLoading(true)
 
     navigate(`${pathname}/${foundTab.path}`)
-    setVaultsIds(
-      foundTab.path === vaultTabs.ALL
-        ? allVaultsIds
-        : foundTab.path === vaultTabs.MY
-        ? myVaultsIds
-        : permissionedVaultsIds,
-    )
   }
 
   const contractActionProps: HookContractActionArgs<{ vaultId: number; vaultOwner: string }> = useMemo(
@@ -192,14 +206,9 @@ export const VaultsView = () => {
     [lendingControllerAddress, userAddress],
   )
 
-  const paginatedVaultsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, currentListName)
-    return vaultsIds?.slice(from, to)
-  }, [currentListName, currentPage, vaultsIds])
-
-  const deferredVaultIds = useDeferredValue(paginatedVaultsList)
-
   const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
+
+  const totalPages = useMemo(() => getTotalPages(currentVaultsCount, VAULTS_LIMIT), [currentVaultsCount])
 
   return (
     <VaultsStyled>
@@ -210,36 +219,38 @@ export const VaultsView = () => {
         className="mt-30 mb-30"
       />
 
-      <VaultsSearchFilter
-        vaultsMapper={vaultsMapper}
-        currentVaultsIds={currentVaultsIds}
-        allVaultsIds={allVaultsIds}
-        setVaultsIds={setVaultsIds}
-      />
+      <VaultsSearchFilter />
 
       {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : vaultsIds.length ? (
-        <VaultsList>
-          {(tabId === vaultTabs.ALL ? vaultsIds : deferredVaultIds).map((item) => {
-            const isOwner = vaultsMapper[item]?.ownerAddress === userAddress
+      ) : currentVaultsIds.length ? (
+        <>
+          {isPendingQueryWhenFilters && (
+            <div className="filterClockWrapper">
+              <ClockLoader width={35} height={35} />
+              <b>Loading...</b>
+            </div>
+          )}
+          <VaultsList>
+            {currentVaultsIds.map((item) => {
+              const isOwner = currentMapper[item]?.ownerAddress === userAddress
 
-            return (
-              <VaultsCard
-                vault={vaultsMapper[item]}
-                key={item}
-                isOwner={isOwner}
-                handleMarkForLiquidation={handleMarkForLiquidation}
-                vaultTab={tabId}
-              />
-            )
-          })}
-
-          <Pagination itemsCount={tabId === vaultTabs.ALL ? vaultsTotalCount : vaultsIds.length} listName={currentListName} />
-        </VaultsList>
+              return (
+                <VaultsCard
+                  vault={currentMapper[item]}
+                  key={item}
+                  isOwner={isOwner}
+                  handleMarkForLiquidation={handleMarkForLiquidation}
+                  vaultTab={tabId}
+                />
+              )
+            })}
+            <Pagination itemsCount={totalPages} listName={currentListName} disabled={isPendingQueryWhenFilters} />
+          </VaultsList>
+        </>
       ) : (
         <EmptyContainer className="centered">
           <img src="/images/not-found.svg" alt=" No vaults to show" />

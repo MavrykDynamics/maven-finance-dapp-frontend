@@ -43,6 +43,7 @@ export const MY_VAULTS_LIST_NAME = 'myVaults'
 export const PERMISSIONED_VAULTS_LIST_NAME = 'permissionedVaults'
 
 export const LOANS_POSITION_TABLE = 'loansPositionTable'
+export const BORROW_LIST_NAME = 'borrowVaultsPerMarket'
 
 export const LIST_NAMES_MAPPER: Record<string, number> = {
   [COUNCIL_ALL_PENDING_ACTIONS_LIST_NAME]: 8,
@@ -76,6 +77,7 @@ export const LIST_NAMES_MAPPER: Record<string, number> = {
   [VAULTS_LIST_NAME]: 10,
   [MY_VAULTS_LIST_NAME]: 10,
   [PERMISSIONED_VAULTS_LIST_NAME]: 10,
+  [BORROW_LIST_NAME]: 10,
 }
 
 export const calculateSlicePositions = (currentPage: number, listName: string) => {
@@ -87,6 +89,8 @@ export const getPageNumber = (search: string, listName: string): number => {
   const { page = {} } = qs.parse(search, { ignoreQueryPrefix: true })
   return Number((page as Record<string, string>)?.[listName]) || 1
 }
+
+export const getTotalPages = (totalItems: number, limit: number) => Math.ceil(totalItems / limit)
 
 export const updatePageInUrl = ({
   page,
@@ -128,4 +132,5 @@ export type PaginationProps = {
   side?: PaginationPlacementVariants
   listName: string
   className?: string
+  disabled?: boolean
 }

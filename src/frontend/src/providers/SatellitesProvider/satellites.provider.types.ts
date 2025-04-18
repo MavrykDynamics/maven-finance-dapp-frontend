@@ -1,4 +1,4 @@
-import {z} from 'zod'
+import { z } from 'zod'
 
 import {
   ActiveSatellitesDataQueryQuery,
@@ -7,7 +7,7 @@ import {
   SatelliteDataQueryQuery,
 } from './../../utils/__generated__/graphql'
 
-import {normalizeSatellite, normalizeSatelliteVotes} from './helpers/satellites.normalizer'
+import { normalizeSatellite, normalizeSatelliteVotes } from './helpers/satellites.normalizer'
 
 import {
   DELEGATE_ACTION,
@@ -41,6 +41,10 @@ export type SatellitesContextState = {
   proposalsAmount: number
   satelliteGovActionsAmount: number
   finRequestsAmount: number
+
+  // pagination
+  changePage: (page: number) => void
+  totalSatellitesCount: number
 }
 
 export type SatellitesContext = SatellitesContextState & {

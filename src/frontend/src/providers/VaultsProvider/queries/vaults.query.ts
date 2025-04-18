@@ -2,140 +2,6 @@
 
 import { gql } from 'utils/__generated__'
 
-export const GET_USER_DEPOSITOR_ALL_VAULTS_QUERY = gql(`
-	query getUserDepositorAllVaultsQuery($userAddress: String) {
-		lending_controller: lending_controller {
-			max_vault_liquidation_pct
-			decimals
-			liquidation_fee_pct
-			liquidation_ratio
-			interest_rate_decimals
-			admin_liquidation_fee_pct
-			liquidation_delay_in_minutes
-
-			vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, vault: {_or: [{allowance: {_eq: "0"}}, {_and: {depositors: {depositor: {address: {_eq: $userAddress}}}, allowance: {_eq: "1"}}}]}, owner: {address: {_neq: $userAddress}}}) {
-				# collaterals of the vault
-				collateral_balances {
-					balance
-					collateral_token {
-						token_name
-						token {
-							token_address
-						}
-					}
-				}
-
-				vault {
-					creation_timestamp
-					address
-					name
-					allowance
-					baker {
-						address
-					}
-					depositors {
-						depositor {
-							address
-						}
-					}
-				}
-
-				loan_token {
-					token {
-						token_address
-					}
-					current_interest_rate
-					borrow_index
-					total_remaining
-					token_pool_total
-					reserve_ratio
-					min_repayment_amount
-				}
-
-				owner {
-					address
-				}
-				
-				last_updated_block_level
-				marked_for_liquidation_level
-				liquidation_end_level
-				loan_outstanding_total
-				loan_principal_total
-				loan_interest_total
-				internal_id
-				borrow_index
-			}
-		}
-	}
-`)
-
-export const GET_USER_ALL_VAULTS_QUERY = gql(`
-	query getUserAllVaultsQuery($userAddress: String) {
-		lending_controller: lending_controller {
-			max_vault_liquidation_pct
-			decimals
-			liquidation_fee_pct
-			liquidation_ratio
-			interest_rate_decimals
-			admin_liquidation_fee_pct
-			liquidation_delay_in_minutes
-
-			vaults(order_by: {vault: {creation_timestamp: desc}}, where: {open: {_eq: true}, owner: {address: {_eq: $userAddress}}}) {
-				# collaterals of the vault
-				collateral_balances {
-					balance
-					collateral_token {
-						token_name
-						token {
-							token_address
-						}
-					}
-				}
-
-				vault {
-					creation_timestamp
-					address
-					name
-					allowance
-					baker {
-						address
-					}
-					depositors {
-						depositor {
-							address
-						}
-					}
-				}
-
-				loan_token {
-					token {
-						token_address
-					}
-					current_interest_rate
-					borrow_index
-					total_remaining
-					token_pool_total
-					reserve_ratio
-					min_repayment_amount
-				}
-
-				owner {
-					address
-				}
-				
-				last_updated_block_level
-				marked_for_liquidation_level
-				liquidation_end_level
-				loan_outstanding_total
-				loan_principal_total
-				loan_interest_total
-				internal_id
-				borrow_index
-			}
-		}
-	}
-`)
-
 // get all vaults
 // andrew_here replace this query with one I sent you
 
@@ -144,7 +10,7 @@ export const GET_USER_ALL_VAULTS_QUERY = gql(`
 // when u update queries - DO NOT FORGET to run this command from console: <yarn graphql-compile>
 // test queries in playground https://api.mavenfinance.io/console
 export const GET_ALL_VAULTS_QUERY = gql(`
-	query getAllVaultsQuery($limit: Int, $offset: Int) {
+	query getAllVaultsQuery($vaultsWhere: gql_vault_with_balances_bool_exp, $vaultsOrderBy: [gql_vault_with_balances_order_by!], $limit: Int, $offset: Int) {
 		# Get lending controller config
 		lending_controller: lending_controller {
 			max_vault_liquidation_pct
@@ -157,8 +23,8 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 		}
 
 		vaults: gql_vault_with_balances(
-			order_by: {creation_timestamp: desc}, 
-			where: {is_open: {_eq: true}}
+			order_by: $vaultsOrderBy, 
+			where: $vaultsWhere,
 			limit: $limit
             offset: $offset
 		) {
@@ -190,11 +56,27 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 `)
 
 export const GET_ALL_VAULTS_QUERY_COUNT = gql(`
-    query GetVaultCount {
-      vault_aggregate {
-        aggregate {
-          count
-        }
+	query GetVaultCounts($totalCountWhere: lending_controller_vault_bool_exp = {}, $userCountWhere: lending_controller_vault_bool_exp = {}, $permissionedCountWhere: lending_controller_vault_bool_exp = {}) {
+  totalVaults: lending_controller {
+    vaults_aggregate(where: $totalCountWhere) {
+      aggregate {
+        count
       }
     }
-`)
+  }
+  userOpenVaults: lending_controller {
+    vaults_aggregate(where: $userCountWhere) {
+      aggregate {
+        count
+      }
+    }
+  }
+  otherOpenVaultsWithAllowance: lending_controller {
+    vaults_aggregate(where: $permissionedCountWhere) {
+      aggregate {
+        count
+      }
+    }
+  }
+}
+  `)

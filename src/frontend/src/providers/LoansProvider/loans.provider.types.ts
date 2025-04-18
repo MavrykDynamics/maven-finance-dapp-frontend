@@ -68,6 +68,7 @@ export type LoansContextState = {
   config: {
     daoFee: number
     collateralFactor: number
+    liquidationFactor: number
   }
   chartsData: LoansChartsType | null
 }

@@ -3,7 +3,12 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
-import { BORROW_TAB_ID, LEND_TAB_ID } from './Loans.const'
+import {
+  BORROW_TAB_ID,
+  GqlVaultWithBalancesAggregate,
+  gqlVaultWithBalancesAggregateSchema,
+  LEND_TAB_ID,
+} from './Loans.const'
 import {
   DEFAULT_LOANS_ACTIVE_SUBS,
   LOANS_CONFIG,
@@ -31,21 +36,25 @@ import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { USER_AVAILABLE_BORROW } from 'texts/tooltips/loan.text'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { getVaultBorrowCapacity, getVaultCollateralBalance } from 'providers/VaultsProvider/helpers/vaults.utils'
+import { getVaultBorrowCapacity } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import {
-  DEFAULT_VAULTS_ACTIVE_SUBS,
-  VAULTS_DATA,
-  VAULTS_USER_ALL,
-} from 'providers/VaultsProvider/vaults.provider.consts'
 import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { USER_VAULT_BALANCES_QUERY } from './queries/userVaultBalances.query'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+
+type UserVaultBalances = {
+  availableLiquidity: number
+  userAccruedInterest: number
+  userTotalBorrowed: number
+  userTotalCollateral: number
+}
 
 export const Market = () => {
   const navigate = useNavigate()
@@ -59,8 +68,8 @@ export const Market = () => {
 
   const { apolloClient } = useApolloContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { userAddress } = useUserContext()
   const { fatal } = useToasterContext()
-  const { myVaultsIds, vaultsMapper, isLoading: isVaultsLoading, changeVaultsSubscriptionsList } = useVaultsContext()
   const {
     allMarketsAddresses,
     marketsMapper,
@@ -71,19 +80,22 @@ export const Market = () => {
   } = useLoansContext()
 
   const [isMarketExistanseLoading, setIsMarketExistanseLoading] = useState(false)
+  const [isUserBalancesLoading, setIsUserBalancesLoading] = useState(true)
+  const [rawUserTotalBalances, setRawUserTotalBalances] = useState<UserVaultBalances>({
+    availableLiquidity: 0,
+    userAccruedInterest: 0,
+    userTotalBorrowed: 0,
+    userTotalCollateral: 0,
+  })
 
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_MARKETS_DATA]: true,
       [LOANS_CONFIG]: true,
     })
-    changeVaultsSubscriptionsList({
-      [VAULTS_DATA]: VAULTS_USER_ALL,
-    })
 
     return () => {
       changeLoansSubscriptionsList(DEFAULT_LOANS_ACTIVE_SUBS)
-      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
       setMarketAddressToSubscribe(null)
     }
   }, [])
@@ -140,45 +152,85 @@ export const Market = () => {
 
   const loanToken = getTokenDataByAddress({ tokenAddress: currentMarketAddress, tokensMetadata, tokensPrices })
 
-  const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(
-    () =>
-      myVaultsIds.reduce(
-        (acc, itemId) => {
-          const vault = vaultsMapper[itemId]
+  useQueryWithRefetch(USER_VAULT_BALANCES_QUERY, {
+    skip: !userAddress || !loanToken,
+    variables: {
+      userAddress: userAddress,
+      loanTokenAddress: loanToken?.address ?? '',
+    },
+    onCompleted: (data: GqlVaultWithBalancesAggregate) => {
+      const parsedData = gqlVaultWithBalancesAggregateSchema.safeParse(data)
+      if (!parsedData.success) {
+        console.error(parsedData.error)
+        setIsUserBalancesLoading(false)
+        return
+      }
 
-          if (!loanToken?.rate || vault.borrowedTokenAddress !== currentMarketAddress) return acc
-          const { decimals: loanTokenDecimals, rate: loanTokenRate } = loanToken
+      const { total_remaining, loan_interest_total, loan_outstanding_total, token_pool_total } =
+        parsedData.data.gql_vault_with_balances_aggregate.aggregate.sum
 
-          const vaultCollateralBalance = getVaultCollateralBalance(vault.collateralData, tokensMetadata, tokensPrices)
-          const convertedBorrowedAmount =
-            convertNumberForClient({ number: vault.borrowedAmount, grade: loanTokenDecimals }) * loanTokenRate
-          const convertedInterestAmount =
-            convertNumberForClient({ number: vault.accruedInterest, grade: loanTokenDecimals }) * loanTokenRate
-          const convertedMarketAvailableLiquidity =
-            convertNumberForClient({
-              number: vault.availableLiquidity,
-              grade: loanTokenDecimals,
-            }) * loanTokenRate
+      const balancesData = {
+        availableLiquidity: total_remaining,
+        userAccruedInterest: loan_interest_total,
+        userTotalBorrowed: loan_outstanding_total,
+        userTotalCollateral: token_pool_total,
+      }
 
-          acc.userTotalBorrowed += convertedBorrowedAmount
-          acc.userTotalCollateral += vaultCollateralBalance
-          acc.userAccruedInterest += convertedInterestAmount
-          acc.userAvailableBorrow += getVaultBorrowCapacity(
-            convertedMarketAvailableLiquidity,
-            convertedBorrowedAmount + convertedInterestAmount,
-            vaultCollateralBalance,
-          )
-          return acc
-        },
-        {
-          userTotalBorrowed: 0,
-          userTotalCollateral: 0,
-          userAccruedInterest: 0,
-          userAvailableBorrow: 0,
-        },
-      ),
-    [myVaultsIds, currentMarketAddress, loanToken, tokensMetadata, tokensPrices, vaultsMapper],
-  )
+      setRawUserTotalBalances(balancesData)
+      setIsUserBalancesLoading(false)
+    },
+    onError: (error) => console.error(error, 'USER_VAULT_BALANCES_QUERY'),
+  })
+
+  const { userTotalBorrowed, userTotalCollateral, userAccruedInterest, userAvailableBorrow } = useMemo(() => {
+    const defaultUserTotalBalances = {
+      userAvailableBorrow: 0,
+      userAccruedInterest: 0,
+      userTotalBorrowed: 0,
+      userTotalCollateral: 0,
+    }
+
+    const userTotalValuesToReturn = { ...defaultUserTotalBalances }
+
+    if (!loanToken?.rate) return defaultUserTotalBalances
+
+    const { decimals: loanTokenDecimals, rate: loanTokenRate } = loanToken
+
+    const vaultCollateralBalance =
+      convertNumberForClient({ number: rawUserTotalBalances.userTotalCollateral, grade: loanTokenDecimals }) *
+      loanTokenRate
+
+    const convertedBorrowedAmount =
+      convertNumberForClient({ number: rawUserTotalBalances.userTotalBorrowed, grade: loanTokenDecimals }) *
+      loanTokenRate
+
+    const convertedInterestAmount =
+      convertNumberForClient({ number: rawUserTotalBalances.userAccruedInterest, grade: loanTokenDecimals }) *
+      loanTokenRate
+
+    const convertedMarketAvailableLiquidity =
+      convertNumberForClient({
+        number: rawUserTotalBalances.availableLiquidity,
+        grade: loanTokenDecimals,
+      }) * loanTokenRate
+
+    userTotalValuesToReturn.userTotalBorrowed = convertedBorrowedAmount
+    userTotalValuesToReturn.userTotalCollateral = vaultCollateralBalance
+    userTotalValuesToReturn.userAccruedInterest = convertedInterestAmount
+    userTotalValuesToReturn.userAvailableBorrow = getVaultBorrowCapacity(
+      convertedMarketAvailableLiquidity,
+      convertedBorrowedAmount + convertedInterestAmount,
+      vaultCollateralBalance,
+    )
+
+    return userTotalValuesToReturn
+  }, [
+    loanToken,
+    rawUserTotalBalances.userTotalCollateral,
+    rawUserTotalBalances.userTotalBorrowed,
+    rawUserTotalBalances.userAccruedInterest,
+    rawUserTotalBalances.availableLiquidity,
+  ])
 
   const selectedMarket = currentMarketAddress ? marketsMapper[currentMarketAddress] : null
 
@@ -242,7 +294,7 @@ export const Market = () => {
 
       {marketPagination}
 
-      {isLoansLoading || isVaultsLoading || isMarketExistanseLoading ? (
+      {isLoansLoading || isUserBalancesLoading || isMarketExistanseLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading {loanToken?.symbol ?? currentMarketAddress} market</div>

@@ -27,6 +27,17 @@ export const VaultsStyled = styled.div<{ theme: MavenTheme }>`
       }
     }
   }
+
+  .filterClockWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-block: 24px;
+
+    b {
+      margin-left: 12px;
+    }
+  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`
@@ -68,6 +79,22 @@ export const VaultsFilters = styled.div`
 
     .assetsFilter {
       width: 275px;
+    }
+  }
+`
+
+export const VaultsFilterOptions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .vaultFilterBtns {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    button {
+      height: 34px;
     }
   }
 `

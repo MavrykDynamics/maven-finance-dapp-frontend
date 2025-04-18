@@ -11,8 +11,8 @@ export const CHECK_WHETHER_SATELLITE_EXISTS = gql(`
 `)
 
 export const SATELLITE_DATA_QUERY = gql(`
-  query satelliteDataQuery($userAddress: String!) {
-    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}) {
+  query satelliteDataQuery($userAddress: String!, $limit: Int = 10, $offset: Int = 0) {
+    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}, limit: $limit, offset: $offset) {
 			nodes {
 				user {
 					address
@@ -20,7 +20,7 @@ export const SATELLITE_DATA_QUERY = gql(`
 			}
 		}
 
-    satellite: satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}, order_by: {currently_registered: desc}) {
+    satellite: satellite(where: {registration_timestamp: {_is_null: false}, user: {address: {_eq: $userAddress}}}, order_by: {currently_registered: desc}, limit: $limit, offset: $offset) {
       description
       fee
       image
@@ -165,8 +165,8 @@ export const SATELLITE_DATA_QUERY = gql(`
 `)
 
 export const ACTIVE_SATELLITES_DATA_QUERY = gql(`
-  query activeSatellitesDataQuery {
-    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}) {
+  query activeSatellitesDataQuery($limit: Int = 10, $offset: Int = 0) {
+    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}, limit: $limit, offset: $offset) {
 			nodes {
 				user {
 					address
@@ -174,7 +174,7 @@ export const ACTIVE_SATELLITES_DATA_QUERY = gql(`
 			}
 		}
 
-    satellite: satellite(where: {registration_timestamp: {_is_null: false}, currently_registered: {_eq: true}, status: {_eq: "0"}}, order_by: {currently_registered: desc}) {
+    satellite: satellite(where: {registration_timestamp: {_is_null: false}, currently_registered: {_eq: true}, status: {_eq: "0"}}, order_by: {currently_registered: desc}, limit: $limit, offset: $offset) {
       description
       fee
       image
@@ -319,8 +319,8 @@ export const ACTIVE_SATELLITES_DATA_QUERY = gql(`
 `)
 
 export const ALL_SATELLITES_DATA_QUERY = gql(`
-  query allSatellitesDataQuery {
-    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}) {
+  query allSatellitesDataQuery($limit: Int = 10, $offset: Int = 0) {
+    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}, limit: $limit, offset: $offset) {
 			nodes {
 				user {
 					address
@@ -328,7 +328,7 @@ export const ALL_SATELLITES_DATA_QUERY = gql(`
 			}
 		}
 
-    satellite: satellite(where: {registration_timestamp: {_is_null: false}}, order_by: {currently_registered: desc}) {
+    satellite: satellite(where: {registration_timestamp: {_is_null: false}}, order_by: {currently_registered: desc}, limit: $limit, offset: $offset) {
       description
       fee
       image
@@ -473,8 +473,8 @@ export const ALL_SATELLITES_DATA_QUERY = gql(`
 `)
 
 export const ORACLES_SATELLITES_DATA_QUERY = gql(`
-  query oraclesSatellitesDataQuery {
-    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}) {
+  query oraclesSatellitesDataQuery($limit: Int = 10, $offset: Int = 0) {
+    satelliteAddresses: satellite_aggregate(order_by: {currently_registered: desc}, limit: $limit, offset: $offset) {
       nodes {
         user {
           address
@@ -482,7 +482,7 @@ export const ORACLES_SATELLITES_DATA_QUERY = gql(`
       }
     }
 
-    satellite: satellite(where: {registration_timestamp: {_is_null: false}, _and: {user: {aggregator_oracles_aggregate: {count: {predicate: {_gte: 1}, filter: {observations_aggregate: {count: {predicate: {_gte: 1}}}}}}}}}, order_by: {currently_registered: desc}) {
+    satellite: satellite(where: {registration_timestamp: {_is_null: false}, _and: {user: {aggregator_oracles_aggregate: {count: {predicate: {_gte: 1}, filter: {observations_aggregate: {count: {predicate: {_gte: 1}}}}}}}}}, order_by: {currently_registered: desc}, limit: $limit, offset: $offset) {
       description
       fee
       image
@@ -625,3 +625,13 @@ export const ORACLES_SATELLITES_DATA_QUERY = gql(`
     }
   }
 `)
+
+export const SATELLITE_AGGREGATE_COUNT = gql(`
+    query GetSatellitesCount {
+      satellite_aggregate {
+        aggregate {
+          count
+        }
+      }
+    }
+  `)

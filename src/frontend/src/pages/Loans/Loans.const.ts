@@ -1,5 +1,6 @@
 import { ColorBreakpoint } from 'app/App.components/GriadientFillDiagram/GradientDiagram'
 import { MavenTheme } from 'styles/interfaces'
+import { z } from 'zod'
 
 export const LEND_TAB_ID = 'lendingTab'
 export const BORROW_TAB_ID = 'borrowTab'
@@ -170,3 +171,49 @@ export const COLLATERAL_RATIO_GRADIENT: Array<ColorBreakpoint> = [
 ]
 
 export const assetDecimalsToShow = 8
+
+export const CHART_SETTINGS = {
+  width: 450,
+  height: 270,
+  hideXAxis: true,
+  hideYAxis: true,
+  isPeriod: true,
+}
+
+// Collateral query response
+export const tokenCollateralSchema = z.record(
+  z.string(),
+  z.object({
+    aggregate: z.object({
+      sum: z.object({
+        balance: z.number(),
+        loan_outstanding_total: z.number(),
+      }),
+    }),
+  }),
+)
+
+export type CollateralResponse = z.infer<typeof tokenCollateralSchema>
+
+export type RawTotalCollateralBalances = {
+  totalCollateral: number
+  tottalBorrowed: number
+}
+
+// user total balances query
+
+export const gqlVaultWithBalancesAggregateSchema = z.object({
+  gql_vault_with_balances_aggregate: z.object({
+    aggregate: z.object({
+      sum: z.object({
+        token_pool_total: z.number(),
+        loan_interest_total: z.number(),
+        loan_outstanding_total: z.number(),
+        total_remaining: z.number(),
+      }),
+    }),
+  }),
+})
+
+// TypeScript type
+export type GqlVaultWithBalancesAggregate = z.infer<typeof gqlVaultWithBalancesAggregateSchema>

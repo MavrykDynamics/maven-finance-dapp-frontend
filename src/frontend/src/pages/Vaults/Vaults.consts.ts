@@ -27,6 +27,8 @@ export const sortVaultItems = {
   BORROWED_LOW: 'Borrowed Amount ↓',
 } as const
 
+export type SortVaultOption = (typeof sortVaultItems)[keyof typeof sortVaultItems]
+
 export const sortingList = Object.values(sortVaultItems)
 
 export const statusSortPriority = {

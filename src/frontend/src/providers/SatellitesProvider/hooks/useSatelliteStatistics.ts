@@ -31,6 +31,7 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
     averageOracleReward: null,
     oracleRewardsTotal: null,
   })
+
   useQueryWithRefetch(
     SATELLITES_STATS,
     {

@@ -2,7 +2,11 @@ import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 import { PaginationPlacementVariants, PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
-export const PaginationWrapper = styled.div<{ theme: MavenTheme; $side?: PaginationPlacementVariants }>`
+export const PaginationWrapper = styled.div<{
+  theme: MavenTheme
+  $side?: PaginationPlacementVariants
+  $disabled: boolean
+}>`
   display: flex;
   max-height: 36px;
   align-items: center;
@@ -13,6 +17,14 @@ export const PaginationWrapper = styled.div<{ theme: MavenTheme; $side?: Paginat
   width: fit-content;
   margin-left: auto;
   margin-top: 20px;
+
+  ${({ $disabled }) =>
+    $disabled
+      ? css`
+          opacity: 0.7;
+          pointer-events: none;
+        `
+      : ''}
 
   ${({ $side }) =>
     $side === PAGINATION_SIDE_RIGHT

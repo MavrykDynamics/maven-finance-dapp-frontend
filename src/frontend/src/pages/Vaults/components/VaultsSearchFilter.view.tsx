@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
 import qs from 'qs'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
@@ -8,7 +8,12 @@ import { DDItemId, DropDown, getDdItem } from 'app/App.components/DropDown/NewDr
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
 // styles
-import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper, VaultsFilters } from './../Vaults.style'
+import {
+  VaultsSearchFilterStyled,
+  VaultsSearchFilterWrapper,
+  VaultsFilters,
+  VaultsFilterOptions,
+} from './../Vaults.style'
 
 // helpers
 import {
@@ -16,34 +21,69 @@ import {
   sortingList,
   vaultsPathname,
   vaultsFilters,
+  ALL_VAULTS_FILTER,
   COLLATERAL_NAME,
   BORROWED_NAME,
-  ALL_VAULTS_FILTER,
+  SortVaultOption,
 } from '../Vaults.consts'
-import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
+import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { getVaultCollateralBalance, sortVaultsByStatus } from 'providers/VaultsProvider/helpers/vaults.utils'
-import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'
+import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { PaginationVaultType, VAULTS_DEFFAULT_FILTERS } from 'providers/VaultsProvider/vaults.provider.consts'
+import Button from 'app/App.components/Button/NewButton'
+import {
+  Advanced_Gql_Vault_With_Balances_Bool_Exp,
+  getFilterBorrowedQuery,
+  getFilterCollateralQuery,
+  getSearchQueryForWhereFilter,
+  getVaultsOrderByQuery,
+  HIDE_VAULT_ZERO_BALANCES,
+} from '../utils/filterQueries'
+import { useDebouncedSearch } from 'app/App.hooks/useDebouncedSerach'
 
 type Filters = Record<string, string>
 
-type Props = {
-  vaultsMapper: Record<string, VaultType>
-  allVaultsIds: string[]
-  currentVaultsIds: string[]
-  setVaultsIds: (arg: string[]) => void
+const prepareFilterBasedOnMatkets = (marketsAddresses: string[], tokensMetadata: Record<string, TokenMetadataType>) => {
+  return {
+    preparedCollateralAssets: marketsAddresses.reduce<Record<string, string>>((acc, address) => {
+      const loanToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
+      if (!loanToken) return acc
+      acc[`${COLLATERAL_NAME}, ${loanToken?.symbol}`] = address
+      return acc
+    }, {}),
+
+    preparedLoanAssets: marketsAddresses.reduce<Record<string, string>>((acc, address) => {
+      const loanToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
+      if (!loanToken) return acc
+      acc[`${BORROWED_NAME}, ${loanToken?.symbol}`] = address
+      return acc
+    }, {}),
+  }
 }
 
-// TODO: need to refactor filters logic
-export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsIds, setVaultsIds }: Props) => {
+export const VaultsSearchFilter = memo(() => {
   const navigate = useNavigate()
   const { search } = useLocation()
-  const { tabId } = useParams<{ tabId: string }>()
+  const { tabId = 'all' } = useParams<{ tabId: PaginationVaultType }>()
 
-  const { tokensMetadata, tokensPrices } = useTokensContext()
+  const { marketsAddresses } = useLoansContext()
+  const { tokensMetadata } = useTokensContext()
+  const { updateVaultQueryFilters, setIsPendingQueryWhenFilters, isPendingQueryWhenFilters, resetVaultFilters } =
+    useVaultsContext()
+
+  const { preparedCollateralAssets, preparedLoanAssets } = useMemo(
+    () => prepareFilterBasedOnMatkets(marketsAddresses, tokensMetadata),
+    [marketsAddresses, tokensMetadata],
+  )
+
+  const preparedAssets = useMemo(
+    () => [ALL_VAULTS_FILTER].concat(Object.keys(preparedCollateralAssets)).concat(Object.keys(preparedLoanAssets)),
+    [preparedCollateralAssets, preparedLoanAssets],
+  )
 
   // use MOST_RECENT and ALL_VAULTS_FILTER as the default filters value
   const {
@@ -53,43 +93,8 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
     ...restQP
   } = qs.parse(search, { ignoreQueryPrefix: true })
 
-  const { preparedCollateralAssets, preparedLoanAssets } = useMemo(() => {
-    const { collateralAssets, loanAssets } = currentVaultsIds.reduce<{
-      collateralAssets: Set<string>
-      loanAssets: Set<string>
-    }>(
-      (acc, vaultAddress) => {
-        const { borrowedTokenAddress, collateralData } = vaultsMapper[vaultAddress]
-
-        const loanToken = getTokenDataByAddress({ tokenAddress: borrowedTokenAddress, tokensMetadata })
-        if (!loanToken) return acc
-
-        acc.loanAssets.add(`${BORROWED_NAME}, ${loanToken.symbol}`)
-
-        Array.from({ length: collateralData.length }, (_, idx) => {
-          const collateral = getTokenDataByAddress({ tokenAddress: collateralData[idx].tokenAddress, tokensMetadata })
-          if (collateral) {
-            acc.collateralAssets.add(`${COLLATERAL_NAME}, ${collateral.symbol}`)
-          }
-        })
-
-        return acc
-      },
-      {
-        collateralAssets: new Set(),
-        loanAssets: new Set(),
-      },
-    )
-
-    return { preparedCollateralAssets: Array.from(collateralAssets), preparedLoanAssets: Array.from(loanAssets) }
-  }, [currentVaultsIds, tokensMetadata, vaultsMapper])
-
-  const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
-
   const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])
   const sortDdItems = useMemo(() => sortingList.map((item) => getDdItem(item)), [])
-
-  const [searchInputValue, setSearchInput] = useState('')
 
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
   const [chosenDdItem, setChosenDdItem] = useState<Filters>({
@@ -97,27 +102,33 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
     [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
   })
 
-  const handleSearch = (searchValue: string, searchData: string[]) => {
-    const searchQuery = searchValue.toLowerCase()
+  // reset filters on compponent unmount
+  const resetFilters = useCallback(() => {
+    resetVaultFilters()
+    setChosenDdItem({
+      [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
+      [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
+    })
 
-    let filteredVaultsIds: string[] = []
+    setFilterStatuses({})
+  }, [])
 
-    if (searchQuery !== '') {
-      filteredVaultsIds = searchData.filter((vaultId) => {
-        const vault = vaultsMapper[vaultId]
-        const isIncludedInLoanAddress = vault.address.toLowerCase().includes(searchQuery)
-        const isIncludedInOwnerAddress = vault.ownerAddress.toLowerCase().includes(searchQuery)
-
-        return isIncludedInLoanAddress || isIncludedInOwnerAddress
-      })
-    } else {
-      filteredVaultsIds = searchData
+  useEffect(() => {
+    return () => {
+      resetFilters()
     }
+  }, [])
 
-    setSearchInput(searchValue)
+  // Search --------------
+  const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
+  const hasTouchedInput = useRef(false)
 
-    return filteredVaultsIds
-  }
+  useEffect(() => {
+    if (!hasTouchedInput.current) return
+    const searchFilterQuery = getSearchQueryForWhereFilter(debouncedValue)
+    setIsPendingQueryWhenFilters(true)
+    updateVaultQueryFilters(searchFilterQuery, tabId)
+  }, [debouncedValue, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
 
   const handleDropdownSelect = (name: string) => (selectedOption: DDItemId) => {
     setFilterStatuses((prev) => ({
@@ -132,135 +143,19 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
 
     if (selectedOption === chosenDdItem[name]) return
 
-    applyFilters(updatedChosenDdItem, searchInputValue)
+    applyFilters(updatedChosenDdItem)
   }
 
   const applyFilters = useCallback(
-    async (filtersList: Filters, searchString: string) => {
-      const data = handleSearch(searchString, currentVaultsIds)
-      let filteredVaultsIds: string[] = data
-
-      // sort by statuses
-      if (filtersList[vaultsFilters.SORT] === sortVaultItems.STATUSES) {
-        filteredVaultsIds = await sortVaultsByStatus({
-          vaultsIds: data,
-          vaultsMapper,
-          tokensMetadata,
-          tokensPrices,
-        })
-      }
-
-      const sortIsCollateralHighToLow = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_HIGH
-      const sortIsCollateralLowToHigh = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_LOW
-      const sortIsBorrowedAmountHighToLow = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_HIGH
-      const sortIsBorrowedAmountLowToHigh = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_LOW
-      const sortIsMostRecent = filtersList[vaultsFilters.SORT] === sortVaultItems.MOST_RECENT
-
-      // sort by: collateral value | borrowed amount | date
-      if (
-        sortIsCollateralHighToLow ||
-        sortIsCollateralLowToHigh ||
-        sortIsBorrowedAmountHighToLow ||
-        sortIsBorrowedAmountLowToHigh ||
-        sortIsMostRecent
-      ) {
-        filteredVaultsIds = data.sort((a, b) => {
-          // by collateral amount high > low
-          if (sortIsCollateralHighToLow) {
-            const vaultA = getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices)
-            const vaultB = getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices)
-
-            return vaultB - vaultA
-          }
-          // by collateral amount low > high
-          if (sortIsCollateralLowToHigh) {
-            const vaultA = getVaultCollateralBalance(vaultsMapper[a].collateralData, tokensMetadata, tokensPrices)
-            const vaultB = getVaultCollateralBalance(vaultsMapper[b].collateralData, tokensMetadata, tokensPrices)
-
-            return vaultA - vaultB
-          }
-          // by borrowed amount high > low
-          if (sortIsBorrowedAmountHighToLow) {
-            const vaultA = vaultsMapper[a].borrowedAmount
-            const vaultB = vaultsMapper[b].borrowedAmount
-
-            return vaultB - vaultA
-          }
-
-          // by borrowed amount low > high
-          if (sortIsBorrowedAmountLowToHigh) {
-            const vaultA = vaultsMapper[a].borrowedAmount
-            const vaultB = vaultsMapper[b].borrowedAmount
-
-            return vaultA - vaultB
-          }
-          // by date
-          if (sortIsMostRecent) {
-            const vaultA = vaultsMapper[a].creationTimestamp
-            const vaultB = vaultsMapper[b].creationTimestamp
-
-            if (!vaultA || !vaultB) {
-              return 0
-            }
-
-            return new Date(vaultB).getTime() - new Date(vaultA).getTime()
-          }
-
-          return 0
-        })
-      }
-
-      const asset = filtersList[vaultsFilters.ASSETS]?.split(',') || []
-      const [assetName = '', assetIcon = ''] = asset
-      const isCollateralAsset = assetName === COLLATERAL_NAME
-
-      // filter by collateral asset
-      if (filtersList[vaultsFilters.ASSETS] && isCollateralAsset && assetIcon) {
-        filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
-          const vault = vaultsMapper[vaultId]
-          if (vault.collateralData.length) {
-            const isFound = vault.collateralData.some(({ tokenAddress }) => {
-              // TODO: test it
-              return stringFullCharsCompare(tokensMetadata[tokenAddress].symbol, assetIcon)
-            })
-
-            return isFound
-          }
-
-          return false
-        })
-      }
-
-      // filter by loan asset
-      if (filtersList[vaultsFilters.ASSETS] && !isCollateralAsset && assetIcon) {
-        filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
-          const vault = vaultsMapper[vaultId]
-          if (vault.borrowedTokenAddress) {
-            // TODO: test it
-            return stringFullCharsCompare(tokensMetadata[vault.borrowedTokenAddress].symbol, assetIcon)
-          }
-
-          return false
-        })
-      }
-
-      // filter by 0 balance
-      if (filtersList[vaultsFilters.ZERO]) {
-        filteredVaultsIds = filteredVaultsIds.filter((vaultId) => {
-          const { borrowedAmount, collateralData } = vaultsMapper[vaultId]
-          return borrowedAmount || getVaultCollateralBalance(collateralData, tokensMetadata, tokensPrices)
-        })
-      }
-
+    async (filtersList: Filters) => {
       const withoutEmptyFilters = Object.fromEntries(Object.entries(filtersList).filter((item) => item[1]))
       const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP })
 
       navigate(`${vaultsPathname}/${tabId}?${stringifiedQP}`, { replace: true })
 
       setChosenDdItem(withoutEmptyFilters)
-      setVaultsIds(filteredVaultsIds)
     },
-    [currentVaultsIds.join(','), restQP, tabId, vaultsMapper, tokensMetadata, tokensPrices],
+    [restQP, navigate, tabId],
   )
 
   const handleClickCheckbox = () => {
@@ -268,21 +163,31 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
     handleDropdownSelect(vaultsFilters.ZERO)(status)
   }
 
-  // apply filter to new data or clean data
-  useEffect(() => {
-    if (currentVaultsIds.length === 0) {
-      setVaultsIds([])
-      return
+  const applyServerFilters = useCallback(() => {
+    let whereQuery: Partial<Advanced_Gql_Vault_With_Balances_Bool_Exp> = {} // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
+
+    const { assets, sort, zero } = chosenDdItem
+    if (assets.includes(COLLATERAL_NAME)) {
+      whereQuery = getFilterCollateralQuery(preparedCollateralAssets[assets])
     }
 
-    const filtersFromQp = {
-      sort,
-      assets,
-      zero,
-    } as Filters
+    if (assets.includes(BORROWED_NAME)) {
+      whereQuery = getFilterBorrowedQuery(preparedCollateralAssets[assets])
+    }
 
-    applyFilters(filtersFromQp, searchInputValue)
-  }, [currentVaultsIds.join(',')])
+    const orderByQuery = getVaultsOrderByQuery(sort as SortVaultOption)
+
+    if (zero === 'checked')
+      whereQuery = {
+        where: { ...whereQuery.where, ...HIDE_VAULT_ZERO_BALANCES },
+        shadowWhere: { ...whereQuery.shadowWhere, ...HIDE_VAULT_ZERO_BALANCES },
+      }
+
+    const query = { ...whereQuery, ...orderByQuery }
+
+    updateVaultQueryFilters(query, tabId)
+    setIsPendingQueryWhenFilters(true)
+  }, [chosenDdItem, preparedCollateralAssets, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
 
   return (
     <VaultsSearchFilterWrapper>
@@ -291,17 +196,12 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
           type="text"
           kind={'search'}
           placeholder="Search by address"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            applyFilters(
-              {
-                sort,
-                assets,
-                zero,
-              } as Filters,
-              e.target.value,
-            )
-          }
-          value={searchInputValue}
+          onChange={(e) => {
+            hasTouchedInput.current = true
+            handleChange(e.target.value)
+          }}
+          value={inputValue}
+          disabled={isPendingQueryWhenFilters}
         />
         <VaultsFilters>
           <div className="filter">
@@ -313,6 +213,7 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
               activeItem={getDdItem(chosenDdItem[vaultsFilters.ASSETS])}
               items={filterDdItems}
               clickItem={handleDropdownSelect(vaultsFilters.ASSETS)}
+              disabled={isPendingQueryWhenFilters}
             />
           </div>
 
@@ -324,19 +225,28 @@ export const VaultsSearchFilter = ({ vaultsMapper, allVaultsIds, currentVaultsId
               activeItem={getDdItem(chosenDdItem[vaultsFilters.SORT])}
               items={sortDdItems}
               clickItem={handleDropdownSelect(vaultsFilters.SORT)}
+              disabled={isPendingQueryWhenFilters}
             />
           </div>
         </VaultsFilters>
       </VaultsSearchFilterStyled>
-      <div className="checkbox-wrapper">
-        <Checkbox
-          id="vaults-zero-filter"
-          onChangeHandler={handleClickCheckbox}
-          checked={chosenDdItem[vaultsFilters.ZERO] === 'checked'}
-        >
-          Hide vaults with a loan balance of 0
-        </Checkbox>
-      </div>
+      <VaultsFilterOptions>
+        <div className="checkbox-wrapper">
+          <Checkbox
+            id="vaults-zero-filter"
+            onChangeHandler={handleClickCheckbox}
+            checked={chosenDdItem[vaultsFilters.ZERO] === 'checked'}
+          >
+            Hide vaults with a loan balance of 0
+          </Checkbox>
+        </div>
+
+        <div className="vaultFilterBtns">
+          <Button kind="primary" size="large" onClick={applyServerFilters} disabled={isPendingQueryWhenFilters}>
+            Apply
+          </Button>
+        </div>
+      </VaultsFilterOptions>
     </VaultsSearchFilterWrapper>
   )
-}
+})

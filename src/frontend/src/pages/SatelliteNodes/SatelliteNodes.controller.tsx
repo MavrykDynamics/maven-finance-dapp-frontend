@@ -51,7 +51,7 @@ const itemsForDropDown = [
 const ddItems = itemsForDropDown.map(({ text }) => text)
 
 const SatelliteNodes = () => {
-  const { pathname, search } = useLocation()
+  const { search } = useLocation()
 
   const { userTokensBalances, userAddress } = useUserContext()
   const { isSatellite } = useUserContext()
@@ -63,6 +63,9 @@ const SatelliteNodes = () => {
     finRequestsAmount,
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
+    changePage,
+
+    totalSatellitesCount,
   } = useSatellitesContext()
 
   useEffect(() => {
@@ -81,12 +84,11 @@ const SatelliteNodes = () => {
   const [inputSearch, setInputSearch] = useState('')
   const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
 
-  const currentPage = getPageNumber(search, SATELITES_NODES_LIST_NAME)
+  const currentPage = useMemo(() => getPageNumber(search, SATELITES_NODES_LIST_NAME), [search])
 
-  const paginatedItemsList = useMemo(() => {
-    const [from, to] = calculateSlicePositions(currentPage, SATELITES_NODES_LIST_NAME)
-    return filteredSatelliteList.slice(from, to)
-  }, [currentPage, filteredSatelliteList])
+  useEffect(() => {
+    changePage(currentPage)
+  }, [currentPage])
 
   useEffect(() => {
     if (isSatellitesLoading) return
@@ -173,15 +175,15 @@ const SatelliteNodes = () => {
               </DropdownContainer>
             </SatelliteSearchFilter>
 
-            {paginatedItemsList ? (
+            {filteredSatelliteList ? (
               <div className={`list`}>
-                {paginatedItemsList.map((satelliteAddress) => {
+                {filteredSatelliteList.map((satelliteAddress) => {
                   if (!satelliteMapper[satelliteAddress]) return null
                   return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
                 })}
 
                 <Pagination
-                  itemsCount={filteredSatelliteList.length}
+                  itemsCount={totalSatellitesCount}
                   side={PAGINATION_SIDE_RIGHT}
                   listName={SATELITES_NODES_LIST_NAME}
                 />
