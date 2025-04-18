@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, FC } from 'react'
 import qs from 'qs'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
@@ -8,7 +8,12 @@ import { DDItemId, DropDown, getDdItem } from 'app/App.components/DropDown/NewDr
 import Checkbox from 'app/App.components/Checkbox/Checkbox.view'
 
 // styles
-import { VaultsSearchFilterStyled, VaultsSearchFilterWrapper, VaultsFilters } from './../Vaults.style'
+import {
+  VaultsSearchFilterStyled,
+  VaultsSearchFilterWrapper,
+  VaultsFilters,
+  VaultsFilterOptions,
+} from './../Vaults.style'
 
 // helpers
 import {
@@ -20,48 +25,61 @@ import {
   COLLATERAL_NAME,
   BORROWED_NAME,
 } from '../Vaults.consts'
-import { stringFullCharsCompare } from 'utils/stringFullCharsCompare'
 
 // types
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { LoanMarketType } from 'providers/LoansProvider/loans.provider.types'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
+import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
+import { PaginationVaultType, VAULTS_DEFFAULT_FILTERS } from 'providers/VaultsProvider/vaults.provider.consts'
+import Button from 'app/App.components/Button/NewButton'
+import { getFilterCollateralQuery } from '../utils/filterQueries'
 
 type Filters = Record<string, string>
 
-const prepareFilterBasedOnMatkets = (
-  marketsAddresses: string[],
-  marketsMapper: Record<string, LoanMarketType>,
-  tokensMetadata: Record<string, TokenMetadataType>,
-): Record<string, Array<string>> => {
+const prepareFilterBasedOnMatkets = (marketsAddresses: string[], tokensMetadata: Record<string, TokenMetadataType>) => {
   return {
-    preparedCollateralAssets: marketsAddresses.map((address) => {
+    preparedCollateralAssets: marketsAddresses.reduce<Record<string, string>>((acc, address) => {
       const loanToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
-      return `${COLLATERAL_NAME}, ${loanToken?.symbol ?? 'Unknown'}`
-    }),
-    preparedLoanAssets: marketsAddresses.map((address) => {
+      if (!loanToken) return acc
+      acc[`${COLLATERAL_NAME}, ${loanToken?.symbol}`] = address
+      return acc
+    }, {}),
+
+    preparedLoanAssets: marketsAddresses.reduce<Record<string, string>>((acc, address) => {
       const loanToken = getTokenDataByAddress({ tokensMetadata, tokenAddress: address })
-      return `${BORROWED_NAME}, ${loanToken?.symbol ?? 'Unknown'}`
-    }),
+      if (!loanToken) return acc
+      acc[`${BORROWED_NAME}, ${loanToken?.symbol}`] = address
+      return acc
+    }, {}),
   }
 }
 
-export const VaultsSearchFilter = () => {
+// const sortIsCollateralHighToLow = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_HIGH
+// const sortIsCollateralLowToHigh = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_LOW
+// const sortIsBorrowedAmountHighToLow = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_HIGH
+// const sortIsBorrowedAmountLowToHigh = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_LOW
+// const sortIsMostRecent = filtersList[vaultsFilters.SORT] === sortVaultItems.MOST_RECENT
+
+export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ activeTabId }) => {
   const navigate = useNavigate()
   const { search } = useLocation()
-  const { tabId } = useParams<{ tabId: string }>()
+  const { tabId = activeTabId } = useParams<{ tabId: PaginationVaultType }>()
 
-  const { changeLoansSubscriptionsList, marketsAddresses, marketsMapper } = useLoansContext()
+  const { marketsAddresses } = useLoansContext()
   const { tokensMetadata } = useTokensContext()
+  const { updateVaultQueryFilters } = useVaultsContext()
 
   const { preparedCollateralAssets, preparedLoanAssets } = useMemo(
-    () => prepareFilterBasedOnMatkets(marketsAddresses, marketsMapper, tokensMetadata),
-    [marketsAddresses, marketsMapper, tokensMetadata],
+    () => prepareFilterBasedOnMatkets(marketsAddresses, tokensMetadata),
+    [marketsAddresses, tokensMetadata],
   )
 
-  const preparedAssets = [ALL_VAULTS_FILTER].concat(preparedCollateralAssets).concat(preparedLoanAssets)
+  const preparedAssets = useMemo(
+    () => [ALL_VAULTS_FILTER].concat(Object.keys(preparedCollateralAssets)).concat(Object.keys(preparedLoanAssets)),
+    [preparedCollateralAssets, preparedLoanAssets],
+  )
 
   // use MOST_RECENT and ALL_VAULTS_FILTER as the default filters value
   const {
@@ -85,9 +103,7 @@ export const VaultsSearchFilter = () => {
   const handleSearch = (searchValue: string, searchData: string[]) => {
     const searchQuery = searchValue.toLowerCase()
 
-    if (searchQuery !== '') {
-      console.log(searchQuery, '----')
-    }
+    console.log(searchQuery, '----')
 
     setSearchInput(searchValue)
   }
@@ -105,13 +121,15 @@ export const VaultsSearchFilter = () => {
 
     if (selectedOption === chosenDdItem[name]) return
 
-    applyFilters(updatedChosenDdItem, searchInputValue)
+    applyFilters(updatedChosenDdItem)
   }
 
   const applyFilters = useCallback(
-    async (filtersList: Filters, searchString: string) => {
+    async (filtersList: Filters) => {
       const withoutEmptyFilters = Object.fromEntries(Object.entries(filtersList).filter((item) => item[1]))
       const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP })
+
+      console.log(filtersList, 'filtersList')
 
       navigate(`${vaultsPathname}/${tabId}?${stringifiedQP}`, { replace: true })
 
@@ -125,6 +143,29 @@ export const VaultsSearchFilter = () => {
     handleDropdownSelect(vaultsFilters.ZERO)(status)
   }
 
+  const applyServerFilters = useCallback(() => {
+    // if (chosenDdItem.assets.includes(COLLATERAL_NAME)) {
+    const query = getFilterCollateralQuery(preparedCollateralAssets[chosenDdItem.assets])
+
+    // updateVaultQueryFilters(query, tabId)
+    setChosenDdItem({
+      [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
+      [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
+    })
+
+    setFilterStatuses({})
+  }, [chosenDdItem.assets, preparedCollateralAssets, tabId, updateVaultQueryFilters])
+
+  const resetFilters = useCallback(() => {
+    // updateVaultQueryFilters(VAULTS_DEFFAULT_FILTERS[tabId], tabId)
+    setChosenDdItem({
+      [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
+      [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
+    })
+
+    setFilterStatuses({})
+  }, [tabId, updateVaultQueryFilters])
+
   return (
     <VaultsSearchFilterWrapper>
       <VaultsSearchFilterStyled>
@@ -132,15 +173,12 @@ export const VaultsSearchFilter = () => {
           type="text"
           kind={'search'}
           placeholder="Search by address"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            applyFilters(
-              {
-                sort,
-                assets,
-                zero,
-              } as Filters,
-              e.target.value,
-            )
+          onChange={() =>
+            applyFilters({
+              sort,
+              assets,
+              zero,
+            } as Filters)
           }
           value={searchInputValue}
         />
@@ -169,15 +207,26 @@ export const VaultsSearchFilter = () => {
           </div>
         </VaultsFilters>
       </VaultsSearchFilterStyled>
-      <div className="checkbox-wrapper">
-        <Checkbox
-          id="vaults-zero-filter"
-          onChangeHandler={handleClickCheckbox}
-          checked={chosenDdItem[vaultsFilters.ZERO] === 'checked'}
-        >
-          Hide vaults with a loan balance of 0
-        </Checkbox>
-      </div>
+      <VaultsFilterOptions>
+        <div className="checkbox-wrapper">
+          <Checkbox
+            id="vaults-zero-filter"
+            onChangeHandler={handleClickCheckbox}
+            checked={chosenDdItem[vaultsFilters.ZERO] === 'checked'}
+          >
+            Hide vaults with a loan balance of 0
+          </Checkbox>
+        </div>
+
+        <div className="vaultFilterBtns">
+          <Button kind="secondary" size="large" onClick={resetFilters}>
+            Reset
+          </Button>
+          <Button kind="primary" size="large" onClick={applyServerFilters}>
+            Apply
+          </Button>
+        </div>
+      </VaultsFilterOptions>
     </VaultsSearchFilterWrapper>
   )
 }

@@ -72,6 +72,22 @@ export const VaultsFilters = styled.div`
   }
 `
 
+export const VaultsFilterOptions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .vaultFilterBtns {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    button {
+      height: 34px;
+    }
+  }
+`
+
 export const VaultsCardDropDown = styled.div<{ theme: MavenTheme }>`
   padding: 30px;
   padding-bottom: 0;

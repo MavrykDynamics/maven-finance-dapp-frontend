@@ -26,8 +26,8 @@ import {
   GetAllVaultsQueryQuery,
   GetUserAllVaultsQueryQuery,
   GetUserDepositorAllVaultsQueryQuery,
-  Lending_Controller_Vault_Bool_Exp,
-  Lending_Controller_Vault_Order_By,
+  Gql_Vault_With_Balances_Bool_Exp,
+  Gql_Vault_With_Balances_Order_By,
 } from 'utils/__generated__/graphql'
 
 // actions type
@@ -50,7 +50,7 @@ export type VaultsContext = VaultsCtxState & {
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
   setVaultsDashboardData: (newDashboardData: VaultsDashboardDataType) => void
   changePage: (newPage: number, mapperType: PaginationVaultType) => void
-  changeUserVaultsQueryBasedOnMarket: (marketAddress: string) => void
+  changeUserVaultsQueryBasedOnMarket: (marketAddress: string | null) => void
   updateVaultQueryFilters: (queryFilters: Partial<LendingQueryFilterType>, vaultType: PaginationVaultType) => void
   setIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void
   isLoading: boolean
@@ -159,8 +159,8 @@ export type VaultAssetData = {
 // Pagination and filters
 
 export type LendingQueryFilterType = {
-  where: Lending_Controller_Vault_Bool_Exp
-  orderBy: Lending_Controller_Vault_Order_By
+  where: Gql_Vault_With_Balances_Bool_Exp
+  orderBy: Gql_Vault_With_Balances_Order_By
 }
 
 export type VaultFiltersType = {

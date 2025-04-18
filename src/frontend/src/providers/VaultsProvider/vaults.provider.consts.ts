@@ -63,3 +63,18 @@ export const PAGINATION_MY = 'my'
 export const PAGINATION_PERMISSIONED = 'permissioned'
 
 export type PaginationVaultType = typeof PAGINATION_ALL | typeof PAGINATION_MY | typeof PAGINATION_PERMISSIONED
+
+export const VAULTS_DEFFAULT_FILTERS = {
+  [PAGINATION_ALL]: {
+    where: {},
+    orderBy: {},
+  },
+  [PAGINATION_MY]: {
+    where: {},
+    orderBy: {},
+  },
+  [PAGINATION_PERMISSIONED]: {
+    where: {},
+    orderBy: {},
+  },
+}

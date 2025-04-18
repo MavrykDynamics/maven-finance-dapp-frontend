@@ -35,6 +35,7 @@ import {
   PAGINATION_MY,
   PAGINATION_PERMISSIONED,
   PaginationVaultType,
+  VAULTS_DEFFAULT_FILTERS,
 } from './vaults.provider.consts'
 
 // utils
@@ -65,23 +66,10 @@ export const VaultsProvider = ({ children }: Props) => {
   const [vaultsCtxState, setVaultsCtxState] = useState<NullableVaultsCtxState>(DEFAULT_VAULTS_CONTEXT)
 
   // used for the user active vaults based on the market address
-  const [marketAddress, setMarketAddress] = useState('')
+  const [marketAddress, setMarketAddress] = useState<string | null>(null)
 
   // query filters
-  const [vaultFilters, setVaultFilters] = useState<VaultFiltersType>({
-    [PAGINATION_ALL]: {
-      where: {},
-      orderBy: {},
-    },
-    [PAGINATION_MY]: {
-      where: {},
-      orderBy: {},
-    },
-    [PAGINATION_PERMISSIONED]: {
-      where: {},
-      orderBy: {},
-    },
-  })
+  const [vaultFilters, setVaultFilters] = useState<VaultFiltersType>(VAULTS_DEFFAULT_FILTERS)
 
   const defaultVaultFilters = useMemo(
     () =>
@@ -169,7 +157,7 @@ export const VaultsProvider = ({ children }: Props) => {
       lendingOrderBy: defaultVaultFilters[PAGINATION_PERMISSIONED].orderBy,
     },
     onCompleted: (data) => {
-      const { vaultsMapper, allVaultsIds, permissionedVaultsIds } = normalizeVaults({
+      const { vaultsMapper, permissionedVaultsIds } = normalizeVaults({
         indexerData: data,
         userAddress,
       })
@@ -177,7 +165,6 @@ export const VaultsProvider = ({ children }: Props) => {
       setVaultsCtxState((prev) => ({
         ...prev,
         permissionedVaultsMapper: { ...prev.permissionedVaultsMapper, ...vaultsMapper },
-        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         permissionedVaultsIds: Array.from(new Set([...(prev.permissionedVaultsIds ?? []), ...permissionedVaultsIds])),
       }))
       setIsLoading(false)
@@ -195,7 +182,7 @@ export const VaultsProvider = ({ children }: Props) => {
       offset: (paginationState[PAGINATION_MY] - 1) * VAULTS_LIMIT,
     },
     onCompleted: (data) => {
-      const { vaultsMapper, allVaultsIds, myVaultsIds } = normalizeVaults({
+      const { vaultsMapper, myVaultsIds } = normalizeVaults({
         indexerData: data,
         userAddress,
       })
@@ -203,7 +190,6 @@ export const VaultsProvider = ({ children }: Props) => {
       setVaultsCtxState((prev) => ({
         ...prev,
         myVaultsMapper: { ...prev.myVaultsMapper, ...vaultsMapper },
-        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
         myVaultsIds: Array.from(new Set([...(prev.myVaultsIds ?? []), ...myVaultsIds])),
       }))
       setIsLoading(false)
@@ -221,7 +207,7 @@ export const VaultsProvider = ({ children }: Props) => {
     },
     onCompleted: (data) => {
       // update vaults logic to merge data, dont replace the existing one
-      const { vaultsMapper, allVaultsIds, myVaultsIds, permissionedVaultsIds } = normalizeVaultsNew({
+      const { vaultsMapper, allVaultsIds } = normalizeVaultsNew({
         indexerData: data,
         userAddress,
       })
@@ -230,8 +216,6 @@ export const VaultsProvider = ({ children }: Props) => {
         ...prev,
         vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
         allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
-        permissionedVaultsIds,
-        myVaultsIds,
       }))
       setIsLoading(false)
     },
@@ -276,7 +260,7 @@ export const VaultsProvider = ({ children }: Props) => {
     [paginationState],
   )
 
-  const changeUserVaultsQueryBasedOnMarket = useCallback((marketAddress: string) => {
+  const changeUserVaultsQueryBasedOnMarket = useCallback((marketAddress: string | null) => {
     setMarketAddress(marketAddress)
   }, [])
 

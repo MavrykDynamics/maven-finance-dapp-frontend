@@ -89,7 +89,7 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
     }
 
     return () => {
-      changeUserVaultsQueryBasedOnMarket('')
+      changeUserVaultsQueryBasedOnMarket(null)
     }
   }, [changeUserVaultsQueryBasedOnMarket, loanToken?.address])
 

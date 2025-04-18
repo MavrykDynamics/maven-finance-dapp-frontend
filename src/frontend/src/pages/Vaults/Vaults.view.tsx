@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useLayoutEffect, useDeferredValue, ChangeEvent } from 'react'
+import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 // context
@@ -40,6 +40,7 @@ import {
   PAGINATION_ALL,
   PAGINATION_MY,
   PAGINATION_PERMISSIONED,
+  PaginationVaultType,
   VAULTS_ALL,
   VAULTS_DATA,
   VAULTS_LIMIT,
@@ -55,15 +56,15 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 const pathname = '/vaults'
 
 export const vaultTabs = {
-  ALL: 'all',
-  MY: 'my',
-  PERMISSIONED: 'permissioned',
+  ALL: PAGINATION_ALL,
+  MY: PAGINATION_MY,
+  PERMISSIONED: PAGINATION_PERMISSIONED,
 }
 
 export const VaultsView = () => {
   const navigate = useNavigate()
   const { search } = useLocation()
-  const { tabId = 'all' } = useParams<{ tabId: string }>()
+  const { tabId = PAGINATION_ALL } = useParams<{ tabId: PaginationVaultType }>()
 
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -85,8 +86,6 @@ export const VaultsView = () => {
     changePage,
   } = useVaultsContext()
 
-  const [vaultsIds, setVaultsIds] = useState<string[]>([])
-
   useEffect(() => {
     changeLoansSubscriptionsList({
       [LOANS_CONFIG]: true,
@@ -105,19 +104,6 @@ export const VaultsView = () => {
         tabId === vaultTabs.ALL ? VAULTS_ALL : tabId === vaultTabs.MY ? VAULTS_USER_ALL : VAULTS_USER_DEPOSITOR,
     })
   }, [tabId])
-
-  useLayoutEffect(() => {
-    if (!isVaultsLoading)
-      setVaultsIds(
-        tabId === vaultTabs.ALL ? allVaultsIds : tabId === vaultTabs.MY ? myVaultsIds : permissionedVaultsIds,
-      )
-  }, [allVaultsIds, isVaultsLoading, myVaultsIds, permissionedVaultsIds, tabId])
-
-  useEffect(() => {
-    if (!userAddress && (tabId === vaultTabs.MY || tabId === vaultTabs.PERMISSIONED)) {
-      setVaultsIds([])
-    }
-  }, [userAddress])
 
   const tabsList = useMemo(
     () => [
@@ -186,7 +172,7 @@ export const VaultsView = () => {
     if (tabId === vaultTabs.ALL) changePage(currentPage, PAGINATION_ALL)
     if (tabId === vaultTabs.MY) changePage(currentPage, PAGINATION_MY)
     if (tabId === vaultTabs.PERMISSIONED) changePage(currentPage, PAGINATION_PERMISSIONED)
-  }, [currentPage])
+  }, [currentPage, tabId])
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
@@ -197,13 +183,6 @@ export const VaultsView = () => {
     setIsLoading(true)
 
     navigate(`${pathname}/${foundTab.path}`)
-    setVaultsIds(
-      foundTab.path === vaultTabs.ALL
-        ? allVaultsIds
-        : foundTab.path === vaultTabs.MY
-        ? myVaultsIds
-        : permissionedVaultsIds,
-    )
   }
 
   const contractActionProps: HookContractActionArgs<{ vaultId: number; vaultOwner: string }> = useMemo(
@@ -239,16 +218,16 @@ export const VaultsView = () => {
         className="mt-30 mb-30"
       />
 
-      <VaultsSearchFilter />
+      <VaultsSearchFilter activeTabId={tabId} />
 
       {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : vaultsIds.length ? (
+      ) : currentVaultsIds.length ? (
         <VaultsList>
-          {vaultsIds.map((item) => {
+          {currentVaultsIds.map((item) => {
             const isOwner = currentMapper[item]?.ownerAddress === userAddress
 
             return (
