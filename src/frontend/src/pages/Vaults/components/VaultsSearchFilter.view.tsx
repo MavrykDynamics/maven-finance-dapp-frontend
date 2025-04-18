@@ -33,7 +33,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { PaginationVaultType } from 'providers/VaultsProvider/vaults.provider.consts'
+import { PaginationVaultType, VAULTS_DEFFAULT_FILTERS } from 'providers/VaultsProvider/vaults.provider.consts'
 import Button from 'app/App.components/Button/NewButton'
 import {
   Advanced_Gql_Vault_With_Balances_Bool_Exp,
@@ -72,7 +72,8 @@ export const VaultsSearchFilter = memo(() => {
 
   const { marketsAddresses } = useLoansContext()
   const { tokensMetadata } = useTokensContext()
-  const { updateVaultQueryFilters, setIsPendingQueryWhenFilters, isPendingQueryWhenFilters } = useVaultsContext()
+  const { updateVaultQueryFilters, setIsPendingQueryWhenFilters, isPendingQueryWhenFilters, resetVaultFilters } =
+    useVaultsContext()
 
   const { preparedCollateralAssets, preparedLoanAssets } = useMemo(
     () => prepareFilterBasedOnMatkets(marketsAddresses, tokensMetadata),
@@ -100,6 +101,23 @@ export const VaultsSearchFilter = memo(() => {
     [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
     [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
   })
+
+  // reset filters on compponent unmount
+  const resetFilters = useCallback(() => {
+    resetVaultFilters()
+    setChosenDdItem({
+      [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
+      [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
+    })
+
+    setFilterStatuses({})
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      resetFilters()
+    }
+  }, [])
 
   // Search --------------
   const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
@@ -170,16 +188,6 @@ export const VaultsSearchFilter = memo(() => {
     updateVaultQueryFilters(query, tabId)
     setIsPendingQueryWhenFilters(true)
   }, [chosenDdItem, preparedCollateralAssets, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
-
-  // const resetFilters = useCallback(() => {
-  //   updateVaultQueryFilters(VAULTS_DEFFAULT_FILTERS[tabId], tabId)
-  //   setChosenDdItem({
-  //     [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
-  //     [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
-  //   })
-
-  //   setFilterStatuses({})
-  // }, [tabId, updateVaultQueryFilters])
 
   return (
     <VaultsSearchFilterWrapper>

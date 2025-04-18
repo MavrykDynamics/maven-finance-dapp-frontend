@@ -51,6 +51,7 @@ export type VaultsContext = VaultsCtxState & {
   changePage: (newPage: number, mapperType: PaginationVaultType) => void
   changeUserVaultsQueryBasedOnMarket: (marketAddress: string | null) => void
   updateVaultQueryFilters: (queryFilters: Partial<LendingQueryFilterType>, vaultType: PaginationVaultType) => void
+  resetVaultFilters: () => void
   setIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void
   isLoading: boolean
   isPendingQueryWhenFilters: boolean

@@ -137,6 +137,10 @@ export const VaultsProvider = ({ children }: Props) => {
     [],
   )
 
+  const resetVaultFilters = useCallback(() => {
+    setVaultFilters(VAULTS_DEFFAULT_FILTERS)
+  }, [])
+
   // reset user specific fields on user change
   useEffect(() => {
     if (prevUserAddress !== userAddress) {
@@ -292,6 +296,7 @@ export const VaultsProvider = ({ children }: Props) => {
         isLoadingVaults: isLoading,
       }),
       updateVaultQueryFilters,
+      resetVaultFilters,
       changePage,
       changeUserVaultsQueryBasedOnMarket,
       setIsPendingQueryWhenFilters,
@@ -303,6 +308,7 @@ export const VaultsProvider = ({ children }: Props) => {
       userAddress,
       isLoading,
       updateVaultQueryFilters,
+      resetVaultFilters,
       changePage,
       changeUserVaultsQueryBasedOnMarket,
       isPendingQueryWhenFilters,
