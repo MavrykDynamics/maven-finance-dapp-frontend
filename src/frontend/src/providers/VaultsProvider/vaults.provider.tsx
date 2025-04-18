@@ -78,6 +78,7 @@ export const VaultsProvider = ({ children }: Props) => {
             creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_ALL].orderBy,
           },
+          shadowWhere: { ...vaultFilters[PAGINATION_ALL].shadowWhere },
         },
         [PAGINATION_MY]: {
           where: {
@@ -96,6 +97,7 @@ export const VaultsProvider = ({ children }: Props) => {
             creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_MY].orderBy,
           },
+          shadowWhere: { ...vaultFilters[PAGINATION_MY].shadowWhere, owner: { address: { _eq: userAddress } } },
         },
         [PAGINATION_PERMISSIONED]: {
           where: (() => {
@@ -122,6 +124,7 @@ export const VaultsProvider = ({ children }: Props) => {
             creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_PERMISSIONED].orderBy,
           },
+          shadowWhere: { ...vaultFilters[PAGINATION_PERMISSIONED].shadowWhere },
         },
       } as VaultFiltersType),
     [marketAddress, userAddress, vaultFilters],
@@ -223,12 +226,11 @@ export const VaultsProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
 
-  const countQueryFilters = useMemo(() => ({ owner: { address: { _eq: userAddress } } }), [userAddress])
-
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
     variables: {
-      userAddress: userAddress ?? '',
-      lendingCountWhere: countQueryFilters,
+      totalCountWhere: defaultVaultFilters[PAGINATION_ALL].shadowWhere,
+      userCountWhere: defaultVaultFilters[PAGINATION_MY].shadowWhere,
+      permissionedCountWhere: defaultVaultFilters[PAGINATION_PERMISSIONED].shadowWhere,
     },
     onCompleted: (data) => {
       const parsedData = VaultStatsSchemaResponse.safeParse(data)

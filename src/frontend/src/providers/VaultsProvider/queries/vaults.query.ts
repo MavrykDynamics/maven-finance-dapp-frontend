@@ -56,52 +56,27 @@ export const GET_ALL_VAULTS_QUERY = gql(`
 `)
 
 export const GET_ALL_VAULTS_QUERY_COUNT = gql(`
-	query GetVaultCounts(
-	  $userAddress: String,
-	  $lendingCountWhere: lending_controller_vault_bool_exp
-	) {
-	  totalVaults: lending_controller {
-    	vaults_aggregate {
-      	aggregate {
-        	count
-      	}
+	query GetVaultCounts($totalCountWhere: lending_controller_vault_bool_exp = {}, $userCountWhere: lending_controller_vault_bool_exp = {}, $permissionedCountWhere: lending_controller_vault_bool_exp = {}) {
+  totalVaults: lending_controller {
+    vaults_aggregate(where: $totalCountWhere) {
+      aggregate {
+        count
+      }
     }
   }
-  
-	  userOpenVaults: lending_controller {
-		vaults_aggregate(where: $lendingCountWhere) {
-		  aggregate {
-			count
-		  }
-		}
-	  }
-  
-	  otherOpenVaultsWithAllowance: lending_controller {
-		vaults_aggregate(
-		  where: {
-			open: { _eq: true },
-			vault: {
-			  _or: [
-				{ allowance: { _eq: "0" } },
-				{
-				  _and: [
-					{
-					  depositors: {
-						depositor: { address: { _eq: $userAddress } }
-					  }
-					},
-					{ allowance: { _eq: "1" } }
-				  ]
-				}
-			  ]
-			},
-			owner: { address: { _neq: $userAddress } }
-		  }
-		) {
-		  aggregate {
-			count
-		  }
-		}
-	  }
-	}
+  userOpenVaults: lending_controller {
+    vaults_aggregate(where: $userCountWhere) {
+      aggregate {
+        count
+      }
+    }
+  }
+  otherOpenVaultsWithAllowance: lending_controller {
+    vaults_aggregate(where: $permissionedCountWhere) {
+      aggregate {
+        count
+      }
+    }
+  }
+}
   `)

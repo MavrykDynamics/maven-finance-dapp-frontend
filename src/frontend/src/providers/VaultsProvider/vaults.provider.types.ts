@@ -26,6 +26,7 @@ import {
   GetAllVaultsQueryQuery,
   Gql_Vault_With_Balances_Bool_Exp,
   Gql_Vault_With_Balances_Order_By,
+  Lending_Controller_Vault_Bool_Exp,
 } from 'utils/__generated__/graphql'
 
 // actions type
@@ -158,6 +159,7 @@ export type VaultAssetData = {
 export type LendingQueryFilterType = {
   where: Gql_Vault_With_Balances_Bool_Exp
   orderBy: Gql_Vault_With_Balances_Order_By
+  shadowWhere: Lending_Controller_Vault_Bool_Exp
 }
 
 export type VaultFiltersType = {

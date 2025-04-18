@@ -68,13 +68,16 @@ export const VAULTS_DEFFAULT_FILTERS = {
   [PAGINATION_ALL]: {
     where: {},
     orderBy: {},
+    shadowWhere: {},
   },
   [PAGINATION_MY]: {
     where: {},
     orderBy: {},
+    shadowWhere: {},
   },
   [PAGINATION_PERMISSIONED]: {
     where: {},
     orderBy: {},
+    shadowWhere: {},
   },
 }

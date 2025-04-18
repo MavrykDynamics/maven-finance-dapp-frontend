@@ -2,13 +2,20 @@ import { sortVaultItems, SortVaultOption } from '../Vaults.consts'
 import {
   Gql_Vault_With_Balances_Bool_Exp,
   Gql_Vault_With_Balances_Order_By,
+  Lending_Controller_Vault_Bool_Exp,
   Order_By,
 } from 'utils/__generated__/graphql'
 
+export type Advanced_Gql_Vault_With_Balances_Bool_Exp = {
+  where: Gql_Vault_With_Balances_Bool_Exp
+  shadowWhere: Lending_Controller_Vault_Bool_Exp
+}
+
 // <where> (filter) -------------
 export const getFilterCollateralQuery = (tokenAddress: string) => {
-  const queryFilters: { where: Gql_Vault_With_Balances_Bool_Exp } = {
+  const queryFilters: Advanced_Gql_Vault_With_Balances_Bool_Exp = {
     where: { collateral_json: { _has_key: tokenAddress } },
+    shadowWhere: { loan_token: { token: { token_address: { _eq: tokenAddress } } } },
   }
 
   return queryFilters
@@ -16,8 +23,9 @@ export const getFilterCollateralQuery = (tokenAddress: string) => {
 
 // workd for vaults all
 export const getFilterBorrowedQuery = (loanTokenAddress: string) => {
-  const queryFilters: { where: Gql_Vault_With_Balances_Bool_Exp } = {
+  const queryFilters: Advanced_Gql_Vault_With_Balances_Bool_Exp = {
     where: { loan_token_address: { _eq: loanTokenAddress } },
+    shadowWhere: { loan_token: { token: { token_address: { _eq: loanTokenAddress } } } },
   }
 
   return queryFilters
@@ -55,12 +63,12 @@ export const getVaultsOrderByQuery = (option: SortVaultOption): { orderBy?: Gql_
 }
 
 // search query
-
-export const getSearchQueryForWhereFilter = (searchValue: string): { where: Gql_Vault_With_Balances_Bool_Exp } => {
-  if (!searchValue) return { where: {} }
+export const getSearchQueryForWhereFilter = (searchValue: string): Advanced_Gql_Vault_With_Balances_Bool_Exp => {
+  if (!searchValue) return { where: {}, shadowWhere: {} }
   return {
     where: {
       _or: [{ vault_name: { _ilike: searchValue } }, { vault_address: { _eq: searchValue } }],
     },
+    shadowWhere: { vault: { _or: [{ name: { _eq: searchValue } }, { address: { _eq: searchValue } }] } },
   }
 }
