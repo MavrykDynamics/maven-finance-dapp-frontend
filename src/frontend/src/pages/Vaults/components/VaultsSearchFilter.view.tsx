@@ -24,6 +24,7 @@ import {
   ALL_VAULTS_FILTER,
   COLLATERAL_NAME,
   BORROWED_NAME,
+  SortVaultOption,
 } from '../Vaults.consts'
 
 // types
@@ -34,7 +35,7 @@ import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.u
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { PaginationVaultType, VAULTS_DEFFAULT_FILTERS } from 'providers/VaultsProvider/vaults.provider.consts'
 import Button from 'app/App.components/Button/NewButton'
-import { getFilterCollateralQuery } from '../utils/filterQueries'
+import { getFilterBorrowedQuery, getFilterCollateralQuery, getVaultsOrderByQuery } from '../utils/filterQueries'
 
 type Filters = Record<string, string>
 
@@ -55,12 +56,6 @@ const prepareFilterBasedOnMatkets = (marketsAddresses: string[], tokensMetadata:
     }, {}),
   }
 }
-
-// const sortIsCollateralHighToLow = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_HIGH
-// const sortIsCollateralLowToHigh = filtersList[vaultsFilters.SORT] === sortVaultItems.COLLATERAL_LOW
-// const sortIsBorrowedAmountHighToLow = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_HIGH
-// const sortIsBorrowedAmountLowToHigh = filtersList[vaultsFilters.SORT] === sortVaultItems.BORROWED_LOW
-// const sortIsMostRecent = filtersList[vaultsFilters.SORT] === sortVaultItems.MOST_RECENT
 
 export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ activeTabId }) => {
   const navigate = useNavigate()
@@ -129,8 +124,6 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
       const withoutEmptyFilters = Object.fromEntries(Object.entries(filtersList).filter((item) => item[1]))
       const stringifiedQP = qs.stringify({ ...withoutEmptyFilters, ...restQP })
 
-      console.log(filtersList, 'filtersList')
-
       navigate(`${vaultsPathname}/${tabId}?${stringifiedQP}`, { replace: true })
 
       setChosenDdItem(withoutEmptyFilters)
@@ -144,17 +137,27 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
   }
 
   const applyServerFilters = useCallback(() => {
-    // if (chosenDdItem.assets.includes(COLLATERAL_NAME)) {
-    const query = getFilterCollateralQuery(preparedCollateralAssets[chosenDdItem.assets])
+    let whereQuery = {} // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
 
-    // updateVaultQueryFilters(query, tabId)
+    const { assets, sort } = chosenDdItem
+    if (assets.includes(COLLATERAL_NAME)) {
+      whereQuery = getFilterCollateralQuery(preparedCollateralAssets[assets])
+    }
+
+    if (assets.includes(BORROWED_NAME)) {
+      whereQuery = getFilterBorrowedQuery(preparedCollateralAssets[assets])
+    }
+
+    const orderByQuery = getVaultsOrderByQuery(sort as SortVaultOption)
+
+    const query = { ...whereQuery, ...orderByQuery }
+
+    updateVaultQueryFilters(query, tabId)
     setChosenDdItem({
       [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
       [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
     })
-
-    setFilterStatuses({})
-  }, [chosenDdItem.assets, preparedCollateralAssets, tabId, updateVaultQueryFilters])
+  }, [chosenDdItem, preparedCollateralAssets, tabId, updateVaultQueryFilters])
 
   const resetFilters = useCallback(() => {
     updateVaultQueryFilters(VAULTS_DEFFAULT_FILTERS[tabId], tabId)

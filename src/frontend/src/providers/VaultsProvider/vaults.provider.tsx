@@ -115,8 +115,10 @@ export const VaultsProvider = ({ children }: Props) => {
           },
         },
       } as VaultFiltersType),
-    [marketAddress, userAddress],
+    [marketAddress, userAddress, vaultFilters],
   )
+
+  console.log(defaultVaultFilters, 'defaultVaultFilters')
 
   const updateVaultQueryFilters = useCallback(
     (queryFilters: Partial<LendingQueryFilterType>, vaultType: PaginationVaultType) => {
@@ -136,11 +138,7 @@ export const VaultsProvider = ({ children }: Props) => {
     }
   }, [userAddress])
 
-  /**
-   * GET_USER_DEPOSITOR_ALL_VAULTS_QUERY -> get vaults where user allowed to deposit
-   * GET_USER_ALL_VAULTS_QUERY -> get vaults created by user
-   * GET_ALL_VAULTS_QUERY -> get all vaults
-   */
+  // QUERY FOR PERMISSION VAULTS ( get vaults where user allowed to deposit)
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     variables: {
@@ -157,14 +155,15 @@ export const VaultsProvider = ({ children }: Props) => {
 
       setVaultsCtxState((prev) => ({
         ...prev,
-        permissionedVaultsMapper: { ...prev.permissionedVaultsMapper, ...vaultsMapper },
-        permissionedVaultsIds: Array.from(new Set([...(prev.permissionedVaultsIds ?? []), ...vaultsIds])),
+        permissionedVaultsMapper: { ...vaultsMapper },
+        permissionedVaultsIds: vaultsIds,
       }))
       setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
 
+  // QUERY FOR USER VAULTS (MY)
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     variables: {
@@ -181,14 +180,15 @@ export const VaultsProvider = ({ children }: Props) => {
 
       setVaultsCtxState((prev) => ({
         ...prev,
-        myVaultsMapper: { ...prev.myVaultsMapper, ...vaultsMapper },
-        myVaultsIds: Array.from(new Set([...(prev.myVaultsIds ?? []), ...vaultsIds])),
+        myVaultsMapper: { ...vaultsMapper },
+        myVaultsIds: vaultsIds,
       }))
       setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
 
+  // QUERY FOR ALL VAULTS
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
     variables: {
@@ -205,8 +205,8 @@ export const VaultsProvider = ({ children }: Props) => {
 
       setVaultsCtxState((prev) => ({
         ...prev,
-        vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
-        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...vaultsIds])),
+        vaultsMapper: { ...vaultsMapper },
+        allVaultsIds: vaultsIds,
       }))
       setIsLoading(false)
     },
@@ -293,8 +293,6 @@ export const VaultsProvider = ({ children }: Props) => {
       changeUserVaultsQueryBasedOnMarket,
     ],
   )
-
-  console.log(providerValue, 'providerValue')
 
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
 }
