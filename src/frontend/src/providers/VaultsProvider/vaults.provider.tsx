@@ -238,7 +238,7 @@ export const VaultsProvider = ({ children }: Props) => {
         return
       }
 
-      const totalCount = parsedData.data.totalVaults.aggregate.count
+      const totalCount = parsedData.data.totalVaults[0].vaults_aggregate.aggregate.count
       const myVaultsCount = parsedData.data.userOpenVaults[0].vaults_aggregate.aggregate.count
       const permissionedVaultsCount = parsedData.data.otherOpenVaultsWithAllowance[0].vaults_aggregate.aggregate.count
 

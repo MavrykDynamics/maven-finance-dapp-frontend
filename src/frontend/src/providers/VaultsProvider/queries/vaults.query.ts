@@ -60,11 +60,13 @@ export const GET_ALL_VAULTS_QUERY_COUNT = gql(`
 	  $userAddress: String,
 	  $lendingCountWhere: lending_controller_vault_bool_exp
 	) {
-	  totalVaults: vault_aggregate {
-		aggregate {
-		  count
-		}
-	  }
+	  totalVaults: lending_controller {
+    	vaults_aggregate {
+      	aggregate {
+        	count
+      	}
+    }
+  }
   
 	  userOpenVaults: lending_controller {
 		vaults_aggregate(where: $lendingCountWhere) {

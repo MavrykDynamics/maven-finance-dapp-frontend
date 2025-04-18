@@ -1,11 +1,15 @@
 import { z } from 'zod'
 
 export const VaultStatsSchemaResponse = z.object({
-  totalVaults: z.object({
-    aggregate: z.object({
-      count: z.number(),
+  totalVaults: z.array(
+    z.object({
+      vaults_aggregate: z.object({
+        aggregate: z.object({
+          count: z.number(),
+        }),
+      }),
     }),
-  }),
+  ),
 
   userOpenVaults: z.array(
     z.object({
