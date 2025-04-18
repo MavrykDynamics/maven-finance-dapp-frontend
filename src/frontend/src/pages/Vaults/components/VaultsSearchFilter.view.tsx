@@ -157,7 +157,7 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
   }, [chosenDdItem.assets, preparedCollateralAssets, tabId, updateVaultQueryFilters])
 
   const resetFilters = useCallback(() => {
-    // updateVaultQueryFilters(VAULTS_DEFFAULT_FILTERS[tabId], tabId)
+    updateVaultQueryFilters(VAULTS_DEFFAULT_FILTERS[tabId], tabId)
     setChosenDdItem({
       [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
       [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
@@ -219,9 +219,6 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
         </div>
 
         <div className="vaultFilterBtns">
-          <Button kind="secondary" size="large" onClick={resetFilters}>
-            Reset
-          </Button>
           <Button kind="primary" size="large" onClick={applyServerFilters}>
             Apply
           </Button>

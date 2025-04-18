@@ -24,8 +24,6 @@ import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import {
   GetAllVaultsQueryQuery,
-  GetUserAllVaultsQueryQuery,
-  GetUserDepositorAllVaultsQueryQuery,
   Gql_Vault_With_Balances_Bool_Exp,
   Gql_Vault_With_Balances_Order_By,
 } from 'utils/__generated__/graphql'
@@ -92,10 +90,7 @@ export type VaultsSubsRecordType = {
   [VAULTS_DATA]: VaultsSubType | null
 }
 
-export type VaultsIndexerDataType =
-  | GetUserAllVaultsQueryQuery
-  | GetUserDepositorAllVaultsQueryQuery
-  | GetAllVaultsQueryQuery
+export type VaultsIndexerDataType = GetAllVaultsQueryQuery
 
 export type VaultType = {
   // vault tokens data

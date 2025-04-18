@@ -17,17 +17,19 @@ import { LendingQueryFilterType } from 'providers/VaultsProvider/vaults.provider
 
 // Collateral JSON same asc / desc
 
+// works for vaults all
 export const getFilterCollateralQuery = (tokenAddress: string) => {
   const queryFilters: Partial<LendingQueryFilterType> = {
-    where: { collateral_json: { _has_key: tokenAddress } },
+    // where: { collateral_json: { _has_key: tokenAddress } },
   }
 
   return queryFilters
 }
 
+// workd for vaults all
 export const getFilterBorrowedQuery = (loanTokenAddress: string) => {
   const queryFilters: Partial<LendingQueryFilterType> = {
-    where: { loan_token_address: { _eq: loanTokenAddress } },
+    // where: { loan_token_address: { _eq: loanTokenAddress } },
   }
 
   return queryFilters

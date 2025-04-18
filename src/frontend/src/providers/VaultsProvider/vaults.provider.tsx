@@ -17,12 +17,7 @@ import {
 } from './vaults.provider.types'
 
 // consts
-import {
-  GET_ALL_VAULTS_QUERY,
-  GET_ALL_VAULTS_QUERY_COUNT,
-  GET_USER_ALL_VAULTS_QUERY,
-  GET_USER_DEPOSITOR_ALL_VAULTS_QUERY,
-} from './queries/vaults.query'
+import { GET_ALL_VAULTS_QUERY, GET_ALL_VAULTS_QUERY_COUNT } from './queries/vaults.query'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   DEFAULT_VAULTS_CONTEXT,
@@ -39,7 +34,7 @@ import {
 } from './vaults.provider.consts'
 
 // utils
-import { normalizeVaults, normalizeVaultsNew } from './helpers/vaults.normalizer'
+import { normalizeVaultsNew } from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 import { VaultStatsSchemaResponse } from './schemas/vaultsCount.schema'
 
@@ -83,45 +78,44 @@ export const VaultsProvider = ({ children }: Props) => {
         },
         [PAGINATION_MY]: {
           where: {
-            open: { _eq: true },
-            owner: { address: { _eq: userAddress } },
+            is_open: { _eq: true },
+            owner_address: { _eq: userAddress },
             ...(marketAddress
               ? {
-                  loan_token: {
-                    token: {
-                      token_address: {
-                        _eq: marketAddress,
-                      },
-                    },
+                  loan_token_address: {
+                    _eq: marketAddress,
                   },
                 }
               : {}),
             ...vaultFilters[PAGINATION_MY].where,
           },
           orderBy: {
-            vault: { creation_timestamp: 'desc' },
+            creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_MY].orderBy,
           },
         },
         [PAGINATION_PERMISSIONED]: {
           where: {
-            open: { _eq: true },
-            vault: {
-              _or: [
-                { allowance: { _eq: '0' } },
-                { _and: { depositors: { depositor: { address: { _eq: userAddress } } }, allowance: { _eq: '1' } } },
-              ],
-            },
-            owner: { address: { _neq: userAddress } },
+            is_open: { _eq: true },
+            owner_address: { _neq: userAddress },
+            _or: [
+              { allowance: { _eq: '0' } },
+              {
+                _and: [
+                  { allowance: { _eq: '1' } },
+                  { depositors_json: { _contains: { address: { _eq: userAddress } } } },
+                ],
+              },
+            ],
             ...vaultFilters[PAGINATION_PERMISSIONED].where,
           },
           orderBy: {
-            vault: { creation_timestamp: 'desc' },
+            creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_PERMISSIONED].orderBy,
           },
         },
       } as VaultFiltersType),
-    [marketAddress, userAddress, vaultFilters],
+    [marketAddress, userAddress],
   )
 
   const updateVaultQueryFilters = useCallback(
@@ -147,17 +141,16 @@ export const VaultsProvider = ({ children }: Props) => {
    * GET_USER_ALL_VAULTS_QUERY -> get vaults created by user
    * GET_ALL_VAULTS_QUERY -> get all vaults
    */
-  useQueryWithRefetch(GET_USER_DEPOSITOR_ALL_VAULTS_QUERY, {
+  useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     variables: {
-      userAddress: userAddress ?? '',
       limit: VAULTS_LIMIT,
       offset: (paginationState[PAGINATION_PERMISSIONED] - 1) * VAULTS_LIMIT,
-      lendingWhere: defaultVaultFilters[PAGINATION_PERMISSIONED].where,
-      lendingOrderBy: defaultVaultFilters[PAGINATION_PERMISSIONED].orderBy,
+      vaultsWhere: defaultVaultFilters[PAGINATION_PERMISSIONED].where,
+      vaultsOrderBy: defaultVaultFilters[PAGINATION_PERMISSIONED].orderBy,
     },
     onCompleted: (data) => {
-      const { vaultsMapper, permissionedVaultsIds } = normalizeVaults({
+      const { vaultsMapper, vaultsIds } = normalizeVaultsNew({
         indexerData: data,
         userAddress,
       })
@@ -165,24 +158,23 @@ export const VaultsProvider = ({ children }: Props) => {
       setVaultsCtxState((prev) => ({
         ...prev,
         permissionedVaultsMapper: { ...prev.permissionedVaultsMapper, ...vaultsMapper },
-        permissionedVaultsIds: Array.from(new Set([...(prev.permissionedVaultsIds ?? []), ...permissionedVaultsIds])),
+        permissionedVaultsIds: Array.from(new Set([...(prev.permissionedVaultsIds ?? []), ...vaultsIds])),
       }))
       setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
 
-  useQueryWithRefetch(GET_USER_ALL_VAULTS_QUERY, {
+  useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     variables: {
-      // here TODO handle market as before after tests
-      lendingUserWhere: defaultVaultFilters[PAGINATION_MY].where,
-      lendingUserOrderBy: defaultVaultFilters[PAGINATION_MY].orderBy,
+      vaultsWhere: defaultVaultFilters[PAGINATION_MY].where,
+      vaultsOrderBy: defaultVaultFilters[PAGINATION_MY].orderBy,
       limit: VAULTS_LIMIT,
       offset: (paginationState[PAGINATION_MY] - 1) * VAULTS_LIMIT,
     },
     onCompleted: (data) => {
-      const { vaultsMapper, myVaultsIds } = normalizeVaults({
+      const { vaultsMapper, vaultsIds } = normalizeVaultsNew({
         indexerData: data,
         userAddress,
       })
@@ -190,7 +182,7 @@ export const VaultsProvider = ({ children }: Props) => {
       setVaultsCtxState((prev) => ({
         ...prev,
         myVaultsMapper: { ...prev.myVaultsMapper, ...vaultsMapper },
-        myVaultsIds: Array.from(new Set([...(prev.myVaultsIds ?? []), ...myVaultsIds])),
+        myVaultsIds: Array.from(new Set([...(prev.myVaultsIds ?? []), ...vaultsIds])),
       }))
       setIsLoading(false)
     },
@@ -200,14 +192,13 @@ export const VaultsProvider = ({ children }: Props) => {
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
     variables: {
-      lendingAllWhere: defaultVaultFilters[PAGINATION_ALL].where,
-      lendingAllOrderBy: defaultVaultFilters[PAGINATION_ALL].orderBy,
+      vaultsWhere: defaultVaultFilters[PAGINATION_ALL].where,
+      vaultsOrderBy: defaultVaultFilters[PAGINATION_ALL].orderBy,
       limit: VAULTS_LIMIT,
       offset: (paginationState[PAGINATION_ALL] - 1) * VAULTS_LIMIT,
     },
     onCompleted: (data) => {
-      // update vaults logic to merge data, dont replace the existing one
-      const { vaultsMapper, allVaultsIds } = normalizeVaultsNew({
+      const { vaultsMapper, vaultsIds } = normalizeVaultsNew({
         indexerData: data,
         userAddress,
       })
@@ -215,17 +206,19 @@ export const VaultsProvider = ({ children }: Props) => {
       setVaultsCtxState((prev) => ({
         ...prev,
         vaultsMapper: { ...prev.vaultsMapper, ...vaultsMapper },
-        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...allVaultsIds])),
+        allVaultsIds: Array.from(new Set([...(prev.allVaultsIds ?? []), ...vaultsIds])),
       }))
       setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
 
+  const countQueryFilters = useMemo(() => ({ owner: { address: { _eq: userAddress } } }), [userAddress])
+
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
     variables: {
       userAddress: userAddress ?? '',
-      lendingWhere: defaultVaultFilters[PAGINATION_MY].where,
+      lendingCountWhere: countQueryFilters,
     },
     onCompleted: (data) => {
       const parsedData = VaultStatsSchemaResponse.safeParse(data)
@@ -300,6 +293,8 @@ export const VaultsProvider = ({ children }: Props) => {
       changeUserVaultsQueryBasedOnMarket,
     ],
   )
+
+  console.log(providerValue, 'providerValue')
 
   return <vaultsContext.Provider value={providerValue}>{children}</vaultsContext.Provider>
 }
