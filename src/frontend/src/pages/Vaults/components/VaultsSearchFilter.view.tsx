@@ -36,10 +36,12 @@ import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { PaginationVaultType } from 'providers/VaultsProvider/vaults.provider.consts'
 import Button from 'app/App.components/Button/NewButton'
 import {
+  Advanced_Gql_Vault_With_Balances_Bool_Exp,
   getFilterBorrowedQuery,
   getFilterCollateralQuery,
   getSearchQueryForWhereFilter,
   getVaultsOrderByQuery,
+  HIDE_VAULT_ZERO_BALANCES,
 } from '../utils/filterQueries'
 import { useDebouncedSearch } from 'app/App.hooks/useDebouncedSerach'
 
@@ -144,9 +146,9 @@ export const VaultsSearchFilter = memo(() => {
   }
 
   const applyServerFilters = useCallback(() => {
-    let whereQuery = {} // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
+    let whereQuery: Partial<Advanced_Gql_Vault_With_Balances_Bool_Exp> = {} // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
 
-    const { assets, sort } = chosenDdItem
+    const { assets, sort, zero } = chosenDdItem
     if (assets.includes(COLLATERAL_NAME)) {
       whereQuery = getFilterCollateralQuery(preparedCollateralAssets[assets])
     }
@@ -156,6 +158,12 @@ export const VaultsSearchFilter = memo(() => {
     }
 
     const orderByQuery = getVaultsOrderByQuery(sort as SortVaultOption)
+
+    if (zero === 'checked')
+      whereQuery = {
+        where: { ...whereQuery.where, ...HIDE_VAULT_ZERO_BALANCES },
+        shadowWhere: { ...whereQuery.shadowWhere, ...HIDE_VAULT_ZERO_BALANCES },
+      }
 
     const query = { ...whereQuery, ...orderByQuery }
 

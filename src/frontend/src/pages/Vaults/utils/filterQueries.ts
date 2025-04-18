@@ -72,3 +72,6 @@ export const getSearchQueryForWhereFilter = (searchValue: string): Advanced_Gql_
     shadowWhere: { vault: { _or: [{ name: { _eq: searchValue } }, { address: { _eq: searchValue } }] } },
   }
 }
+
+// zero vault loan balance
+export const HIDE_VAULT_ZERO_BALANCES: Gql_Vault_With_Balances_Bool_Exp = { loan_outstanding_total: { _neq: '0' } }
