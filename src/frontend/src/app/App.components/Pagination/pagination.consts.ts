@@ -132,4 +132,5 @@ export type PaginationProps = {
   side?: PaginationPlacementVariants
   listName: string
   className?: string
+  disabled?: boolean
 }

@@ -27,6 +27,17 @@ export const VaultsStyled = styled.div<{ theme: MavenTheme }>`
       }
     }
   }
+
+  .filterClockWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-block: 24px;
+
+    b {
+      margin-left: 12px;
+    }
+  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`

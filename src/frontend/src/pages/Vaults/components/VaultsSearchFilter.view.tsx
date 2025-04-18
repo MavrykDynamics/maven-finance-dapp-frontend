@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, FC } from 'react'
+import { useState, useCallback, useMemo, FC, memo } from 'react'
 import qs from 'qs'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
@@ -57,14 +57,14 @@ const prepareFilterBasedOnMatkets = (marketsAddresses: string[], tokensMetadata:
   }
 }
 
-export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ activeTabId }) => {
+export const VaultsSearchFilter = memo(() => {
   const navigate = useNavigate()
   const { search } = useLocation()
-  const { tabId = activeTabId } = useParams<{ tabId: PaginationVaultType }>()
+  const { tabId = 'all' } = useParams<{ tabId: PaginationVaultType }>()
 
   const { marketsAddresses } = useLoansContext()
   const { tokensMetadata } = useTokensContext()
-  const { updateVaultQueryFilters } = useVaultsContext()
+  const { updateVaultQueryFilters, setIsPendingQueryWhenFilters, isPendingQueryWhenFilters } = useVaultsContext()
 
   const { preparedCollateralAssets, preparedLoanAssets } = useMemo(
     () => prepareFilterBasedOnMatkets(marketsAddresses, tokensMetadata),
@@ -153,11 +153,8 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
     const query = { ...whereQuery, ...orderByQuery }
 
     updateVaultQueryFilters(query, tabId)
-    setChosenDdItem({
-      [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
-      [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
-    })
-  }, [chosenDdItem, preparedCollateralAssets, tabId, updateVaultQueryFilters])
+    setIsPendingQueryWhenFilters(true)
+  }, [chosenDdItem, preparedCollateralAssets, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
 
   const resetFilters = useCallback(() => {
     updateVaultQueryFilters(VAULTS_DEFFAULT_FILTERS[tabId], tabId)
@@ -184,6 +181,7 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
             } as Filters)
           }
           value={searchInputValue}
+          disabled={isPendingQueryWhenFilters}
         />
         <VaultsFilters>
           <div className="filter">
@@ -195,6 +193,7 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
               activeItem={getDdItem(chosenDdItem[vaultsFilters.ASSETS])}
               items={filterDdItems}
               clickItem={handleDropdownSelect(vaultsFilters.ASSETS)}
+              disabled={isPendingQueryWhenFilters}
             />
           </div>
 
@@ -206,6 +205,7 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
               activeItem={getDdItem(chosenDdItem[vaultsFilters.SORT])}
               items={sortDdItems}
               clickItem={handleDropdownSelect(vaultsFilters.SORT)}
+              disabled={isPendingQueryWhenFilters}
             />
           </div>
         </VaultsFilters>
@@ -222,11 +222,11 @@ export const VaultsSearchFilter: FC<{ activeTabId: PaginationVaultType }> = ({ a
         </div>
 
         <div className="vaultFilterBtns">
-          <Button kind="primary" size="large" onClick={applyServerFilters}>
+          <Button kind="primary" size="large" onClick={applyServerFilters} disabled={isPendingQueryWhenFilters}>
             Apply
           </Button>
         </div>
       </VaultsFilterOptions>
     </VaultsSearchFilterWrapper>
   )
-}
+})

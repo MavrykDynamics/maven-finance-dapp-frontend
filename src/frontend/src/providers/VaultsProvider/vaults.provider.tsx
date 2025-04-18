@@ -66,6 +66,9 @@ export const VaultsProvider = ({ children }: Props) => {
   // query filters
   const [vaultFilters, setVaultFilters] = useState<VaultFiltersType>(VAULTS_DEFFAULT_FILTERS)
 
+  // used to disable buttons, filters etc. when pending query with updated filters
+  const [isPendingQueryWhenFilters, setIsPendingQueryWhenFilters] = useState(true)
+
   const defaultVaultFilters = useMemo(
     () =>
       ({
@@ -118,8 +121,6 @@ export const VaultsProvider = ({ children }: Props) => {
     [marketAddress, userAddress, vaultFilters],
   )
 
-  console.log(defaultVaultFilters, 'defaultVaultFilters')
-
   const updateVaultQueryFilters = useCallback(
     (queryFilters: Partial<LendingQueryFilterType>, vaultType: PaginationVaultType) => {
       setVaultFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
@@ -159,6 +160,7 @@ export const VaultsProvider = ({ children }: Props) => {
         permissionedVaultsIds: vaultsIds,
       }))
       setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
     },
     onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
   })
@@ -184,6 +186,7 @@ export const VaultsProvider = ({ children }: Props) => {
         myVaultsIds: vaultsIds,
       }))
       setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
     },
     onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
   })
@@ -209,6 +212,7 @@ export const VaultsProvider = ({ children }: Props) => {
         allVaultsIds: vaultsIds,
       }))
       setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
     },
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
@@ -282,6 +286,8 @@ export const VaultsProvider = ({ children }: Props) => {
       updateVaultQueryFilters,
       changePage,
       changeUserVaultsQueryBasedOnMarket,
+      setIsPendingQueryWhenFilters,
+      isPendingQueryWhenFilters,
     }),
     [
       vaultsCtxState,
@@ -291,6 +297,7 @@ export const VaultsProvider = ({ children }: Props) => {
       updateVaultQueryFilters,
       changePage,
       changeUserVaultsQueryBasedOnMarket,
+      isPendingQueryWhenFilters,
     ],
   )
 

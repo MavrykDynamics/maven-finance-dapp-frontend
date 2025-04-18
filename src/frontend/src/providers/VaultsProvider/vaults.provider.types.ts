@@ -52,6 +52,8 @@ export type VaultsContext = VaultsCtxState & {
   updateVaultQueryFilters: (queryFilters: Partial<LendingQueryFilterType>, vaultType: PaginationVaultType) => void
   setIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void
   isLoading: boolean
+  isPendingQueryWhenFilters: boolean
+  setIsPendingQueryWhenFilters: (v: boolean) => void
 }
 
 export type VaultsDashboardDataType = {

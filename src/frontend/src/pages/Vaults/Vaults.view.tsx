@@ -84,6 +84,7 @@ export const VaultsView = () => {
     vaultsPaginationStats: { total: totalVaultsCount, my: myVaultsCount, permissioned: permissionedVaultsCount },
     setIsLoading,
     changePage,
+    isPendingQueryWhenFilters,
   } = useVaultsContext()
 
   useEffect(() => {
@@ -218,7 +219,7 @@ export const VaultsView = () => {
         className="mt-30 mb-30"
       />
 
-      <VaultsSearchFilter activeTabId={tabId} />
+      <VaultsSearchFilter />
 
       {isLoansLoading || isVaultsLoading ? (
         <DataLoaderWrapper>
@@ -226,22 +227,30 @@ export const VaultsView = () => {
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
       ) : currentVaultsIds.length ? (
-        <VaultsList>
-          {currentVaultsIds.map((item) => {
-            const isOwner = currentMapper[item]?.ownerAddress === userAddress
+        <>
+          {!isPendingQueryWhenFilters && (
+            <div className="filterClockWrapper">
+              <ClockLoader width={35} height={35} />
+              <b>Loading...</b>
+            </div>
+          )}
+          <VaultsList>
+            {currentVaultsIds.map((item) => {
+              const isOwner = currentMapper[item]?.ownerAddress === userAddress
 
-            return (
-              <VaultsCard
-                vault={currentMapper[item]}
-                key={item}
-                isOwner={isOwner}
-                handleMarkForLiquidation={handleMarkForLiquidation}
-                vaultTab={tabId}
-              />
-            )
-          })}
-          <Pagination itemsCount={totalPages} listName={currentListName} />
-        </VaultsList>
+              return (
+                <VaultsCard
+                  vault={currentMapper[item]}
+                  key={item}
+                  isOwner={isOwner}
+                  handleMarkForLiquidation={handleMarkForLiquidation}
+                  vaultTab={tabId}
+                />
+              )
+            })}
+            <Pagination itemsCount={totalPages} listName={currentListName} disabled={isPendingQueryWhenFilters} />
+          </VaultsList>
+        </>
       ) : (
         <EmptyContainer className="centered">
           <img src="/images/not-found.svg" alt=" No vaults to show" />
