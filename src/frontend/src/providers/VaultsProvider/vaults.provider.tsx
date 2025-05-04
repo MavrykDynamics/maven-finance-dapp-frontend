@@ -101,12 +101,12 @@ export const VaultsProvider = ({ children }: Props) => {
         },
         [PAGINATION_PERMISSIONED]: {
           where: (() => {
-            const { _or: orFilter, ...restWhere } = vaultFilters[PAGINATION_PERMISSIONED].where
+            const { ...restWhere } = vaultFilters[PAGINATION_PERMISSIONED].where
 
             return {
               is_open: { _eq: true },
+
               owner_address: { _neq: userAddress },
-              // If search is active, it contains another "_or", so we merge it here to avoid overwriting the state
               _or: [
                 { allowance: { _eq: '0' } },
                 {
@@ -115,7 +115,6 @@ export const VaultsProvider = ({ children }: Props) => {
                     { depositors_json: { _contains: { address: { _eq: userAddress } } } },
                   ],
                 },
-                ...(orFilter ? orFilter : []),
               ],
               ...restWhere,
             }
