@@ -1,14 +1,5 @@
-// @ts-nocheck
-
 import { gql } from 'utils/__generated__'
 
-// get all vaults
-// andrew_here replace this query with one I sent you
-
-// example -> query getAllVaultsQuery($limit: Int, $offset: Int)
-// see GET_USER_DEPOSITOR_ALL_VAULTS_QUERY how to pass variables on line 3 in this file
-// when u update queries - DO NOT FORGET to run this command from console: <yarn graphql-compile>
-// test queries in playground https://api.mavenfinance.io/console
 export const GET_ALL_VAULTS_QUERY = gql(`
 	query getAllVaultsQuery($vaultsWhere: gql_vault_with_balances_bool_exp, $vaultsOrderBy: [gql_vault_with_balances_order_by!], $limit: Int, $offset: Int) {
 		# Get lending controller config

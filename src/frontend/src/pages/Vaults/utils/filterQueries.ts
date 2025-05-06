@@ -21,7 +21,7 @@ export const getFilterCollateralQuery = (tokenAddress: string) => {
   return queryFilters
 }
 
-// workd for vaults all
+// work for vaults all
 export const getFilterBorrowedQuery = (loanTokenAddress: string) => {
   const queryFilters: Advanced_Gql_Vault_With_Balances_Bool_Exp = {
     where: { loan_token_address: { _eq: loanTokenAddress } },
