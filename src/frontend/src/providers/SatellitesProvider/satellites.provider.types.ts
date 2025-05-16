@@ -33,9 +33,13 @@ import {
 export type SatellitesContextState = {
   // data
   satelliteMapper: SatelliteMapper
+  satelliteActiveMapper: SatelliteMapper
+  satelliteOraclesMapper: SatelliteMapper
+  satelliteMapperByAddress: SatelliteMapper
   activeSatellitesIds: string[]
   allSatellitesIds: string[]
   oraclesIds: string[]
+  staelliteIdsByAddress: string[]
 
   // values to calc satellite metrics
   proposalsAmount: number

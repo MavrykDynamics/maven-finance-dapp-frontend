@@ -87,16 +87,12 @@ export const SatellitesProvider = ({ children }: Props) => {
       offset: (currentPage - 1) * SATELLITES_LIMIT,
     },
     onCompleted: (data) => {
-      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper: satelliteAddressToSubscribe
-          ? { ...prev.satelliteMapper, ...satelliteMapper }
-          : satelliteMapper,
-        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
-        activeSatellitesIds: Array.from(new Set([...(prev.activeSatellitesIds ?? []), ...activeSatellitesIds])),
-        oraclesIds: Array.from(new Set([...(prev.oraclesIds ?? []), ...oraclesIds])),
+        staelliteIdsByAddress: satelliteIds,
+        satelliteMapperByAddress: satelliteMapper,
       }))
     },
     onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY'),
@@ -107,14 +103,12 @@ export const SatellitesProvider = ({ children }: Props) => {
     fetchPolicy: 'network-only',
     variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
     onCompleted: (data) => {
-      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
         satelliteMapper,
-        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
-        activeSatellitesIds,
-        oraclesIds,
+        allSatellitesIds: satelliteIds,
       }))
 
       setIsLoading(false)
@@ -126,14 +120,12 @@ export const SatellitesProvider = ({ children }: Props) => {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ACTIVE_SUB,
     variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
     onCompleted: (data) => {
-      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper: { ...prev.satelliteMapper, ...satelliteMapper },
-        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
-        activeSatellitesIds: activeSatellitesIds,
-        oraclesIds: Array.from(new Set([...(prev.oraclesIds ?? []), ...oraclesIds])),
+        satelliteActiveMapper: satelliteMapper,
+        activeSatellitesIds: satelliteIds,
       }))
     },
     onError: (error) => handleApolloError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
@@ -143,14 +135,12 @@ export const SatellitesProvider = ({ children }: Props) => {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ORACLES_SUB,
     variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
     onCompleted: (data) => {
-      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+      const { satelliteMapper, satelliteIds } = normalizeSatellitesLedger(data)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper: { ...prev.satelliteMapper, ...satelliteMapper },
-        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
-        oraclesIds,
-        activeSatellitesIds: Array.from(new Set([...(prev.activeSatellitesIds ?? []), ...activeSatellitesIds])),
+        oraclesIds: satelliteIds,
+        satelliteOraclesMapper: satelliteMapper,
       }))
     },
     onError: (error) => handleApolloError(error, 'ORACLES_SATELLITES_DATA_QUERY'),

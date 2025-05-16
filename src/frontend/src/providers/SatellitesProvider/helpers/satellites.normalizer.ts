@@ -147,7 +147,7 @@ export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['s
       currentlyRegistered: satelliteRecord.currently_registered,
 
       // delegation data
-      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 100 ?? 0,
+      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 100 || 0,
       delegatorCount: satelliteRecord.delegatorCount.aggregate?.count ?? 0,
       totalVotingPower,
       satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
@@ -196,8 +196,7 @@ export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['s
 export const normalizeSatellitesLedger = (store: SatellitesIndexerDataType) => {
   return store.satellite.reduce<{
     satelliteMapper: Record<string, SatelliteRecordType>
-    activeSatellitesIds: string[]
-    oraclesIds: string[]
+    satelliteIds: string[]
   }>(
     (acc, satelliteRecord) => {
       const normalizedSatellite = normalizeSatellite(satelliteRecord)
@@ -205,21 +204,13 @@ export const normalizeSatellitesLedger = (store: SatellitesIndexerDataType) => {
       if (!normalizedSatellite) return acc
 
       acc.satelliteMapper[normalizedSatellite.address] = normalizedSatellite
-
-      if (normalizedSatellite.currentlyRegistered && normalizedSatellite.status === 0) {
-        acc.activeSatellitesIds.push(normalizedSatellite.address)
-      }
-
-      if (Object.keys(normalizedSatellite.participatedFeeds).length) {
-        acc.oraclesIds.push(normalizedSatellite.address)
-      }
+      acc.satelliteIds.push(normalizedSatellite.address)
 
       return acc
     },
     {
       satelliteMapper: {},
-      activeSatellitesIds: [],
-      oraclesIds: [],
+      satelliteIds: [],
     },
   )
 }

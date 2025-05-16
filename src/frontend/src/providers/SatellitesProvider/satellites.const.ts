@@ -70,6 +70,8 @@ export const DEFAULT_SATELLITES_ACTIVE_SUBS = {
 // context data
 export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = {
   satelliteMapper: null,
+  satelliteActiveMapper: null,
+  satelliteOraclesMapper: null,
   activeSatellitesIds: null,
   allSatellitesIds: null,
   oraclesIds: null,
@@ -78,10 +80,14 @@ export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = 
   finRequestsAmount: null,
   changePage: () => {},
   totalSatellitesCount: null,
+  satelliteMapperByAddress: null,
+  staelliteIdsByAddress: null,
 }
 
 export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   satelliteMapper: {},
+  satelliteActiveMapper: {},
+  satelliteOraclesMapper: {},
   activeSatellitesIds: [],
   allSatellitesIds: [],
   oraclesIds: [],
@@ -90,6 +96,8 @@ export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   finRequestsAmount: 0,
   changePage: () => {},
   totalSatellitesCount: 0,
+  satelliteMapperByAddress: {},
+  staelliteIdsByAddress: [],
 }
 
 export const SATELLITES_LIMIT = 5
