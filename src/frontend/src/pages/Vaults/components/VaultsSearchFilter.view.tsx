@@ -111,13 +111,13 @@ export const VaultsSearchFilter = memo(() => {
     })
 
     setFilterStatuses({})
-  }, [])
+  }, [tabId])
 
   useEffect(() => {
     return () => {
       resetFilters()
     }
-  }, [])
+  }, [tabId])
 
   // Search --------------
   const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
