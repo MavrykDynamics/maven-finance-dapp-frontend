@@ -100,4 +100,34 @@ export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   staelliteIdsByAddress: [],
 }
 
+// Filters & pagination ----------
 export const SATELLITES_LIMIT = 5
+export const SATELLITE_PAGINATION_ALL = 'SATELLITE_PAGINATION_ALL'
+export const SATELLITE_PAGINATION_ACTIVE = 'SATELLITE_PAGINATION_ACTIVE'
+export const SATELLITE_PAGINATION_ORACLES = 'SATELLITE_PAGINATION_ORACLES'
+export const SATELLITE_PAGINATION_BY_ADDRESS = 'SATELLITE_PAGINATION_BY_ADDRESS'
+
+export type SatelliteFilterType =
+  | typeof SATELLITE_PAGINATION_ALL
+  | typeof SATELLITE_PAGINATION_ACTIVE
+  | typeof SATELLITE_PAGINATION_ORACLES
+  | typeof SATELLITE_PAGINATION_BY_ADDRESS
+
+export const SATELLITE_DEFFAULT_FILTERS = {
+  [SATELLITE_PAGINATION_ALL]: {
+    where: {},
+    orderBy: {},
+  },
+  [SATELLITE_PAGINATION_ACTIVE]: {
+    where: {},
+    orderBy: {},
+  },
+  [SATELLITE_PAGINATION_ORACLES]: {
+    where: {},
+    orderBy: {},
+  },
+  [SATELLITE_PAGINATION_BY_ADDRESS]: {
+    where: {},
+    orderBy: {},
+  },
+}

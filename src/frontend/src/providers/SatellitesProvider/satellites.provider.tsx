@@ -16,6 +16,11 @@ import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   DEFAULT_SATELLITES_CONTEXT,
   SATELLITE_DATA_SUB,
+  SATELLITE_DEFFAULT_FILTERS,
+  SATELLITE_PAGINATION_ACTIVE,
+  SATELLITE_PAGINATION_ALL,
+  SATELLITE_PAGINATION_BY_ADDRESS,
+  SATELLITE_PAGINATION_ORACLES,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
   SATELLITES_DATA_ALL_SUB,
@@ -31,6 +36,12 @@ import { SatellitesContext, SatellitesContextState, SatellitesSubsRecordType } f
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import {
+  getSatelliteActiveFilters,
+  getSatelliteAllFilters,
+  getSatelliteByAddressFilters,
+  getSatelliteOracleFilters,
+} from './helpers/satellite.filters'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -59,6 +70,27 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
 
+  // Satellite filters --------------------
+  const [paginationState, setPaginationState] = useState(() => ({
+    [SATELLITE_PAGINATION_ALL]: 1,
+    [SATELLITE_PAGINATION_ACTIVE]: 1,
+    [SATELLITE_PAGINATION_ORACLES]: 1,
+    [SATELLITE_PAGINATION_BY_ADDRESS]: 1,
+  }))
+
+  // query filters
+  const [satelliteFilters, setSatelliteFilters] = useState(SATELLITE_DEFFAULT_FILTERS)
+
+  const defaultSatelliteFilters = useMemo(
+    () => ({
+      [SATELLITE_PAGINATION_ALL]: { ...getSatelliteAllFilters() },
+      [SATELLITE_PAGINATION_BY_ADDRESS]: { ...getSatelliteByAddressFilters(satelliteAddressToSubscribe ?? '') },
+      [SATELLITE_PAGINATION_ACTIVE]: { ...getSatelliteActiveFilters() },
+      [SATELLITE_PAGINATION_ORACLES]: { ...getSatelliteOracleFilters() },
+    }),
+    [satelliteAddressToSubscribe],
+  )
+
   /**
    * SATELLITES_METRICS_DATA -> load proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
    * SATELLITE_DATA_QUERY -> load satellite by address
@@ -84,7 +116,7 @@ export const SatellitesProvider = ({ children }: Props) => {
     variables: {
       userAddress: satelliteAddressToSubscribe ?? '',
       limit: SATELLITES_LIMIT,
-      offset: (currentPage - 1) * SATELLITES_LIMIT,
+      offset: (paginationState[SATELLITE_PAGINATION_BY_ADDRESS] - 1) * SATELLITES_LIMIT,
     },
     onCompleted: (data) => {
       const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
@@ -101,7 +133,10 @@ export const SatellitesProvider = ({ children }: Props) => {
   useQueryWithRefetch(ALL_SATELLITES_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
     fetchPolicy: 'network-only',
-    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
+    variables: {
+      limit: SATELLITES_LIMIT,
+      offset: (paginationState[SATELLITE_PAGINATION_ALL] - 1) * SATELLITES_LIMIT,
+    },
     onCompleted: (data) => {
       const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
@@ -118,7 +153,10 @@ export const SatellitesProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(ACTIVE_SATELLITES_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ACTIVE_SUB,
-    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
+    variables: {
+      limit: SATELLITES_LIMIT,
+      offset: (paginationState[SATELLITE_PAGINATION_ACTIVE] - 1) * SATELLITES_LIMIT,
+    },
     onCompleted: (data) => {
       const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
@@ -133,7 +171,10 @@ export const SatellitesProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(ORACLES_SATELLITES_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ORACLES_SUB,
-    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
+    variables: {
+      limit: SATELLITES_LIMIT,
+      offset: (paginationState[SATELLITE_PAGINATION_ORACLES] - 1) * SATELLITES_LIMIT,
+    },
     onCompleted: (data) => {
       const { satelliteMapper, satelliteIds } = normalizeSatellitesLedger(data)
 
