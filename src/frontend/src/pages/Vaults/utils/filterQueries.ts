@@ -35,10 +35,10 @@ export const getFilterBorrowedQuery = (loanTokenAddress: string) => {
 export const getVaultsOrderByQuery = (option: SortVaultOption): { orderBy?: Gql_Vault_With_Balances_Order_By } => {
   switch (option) {
     case sortVaultItems.COLLATERAL_HIGH:
-      return { orderBy: { creation_timestamp: Order_By.Desc, collateral_json: Order_By.Desc } }
+      return { orderBy: { creation_timestamp: Order_By.Desc, total_collateral_usd_value: Order_By.Desc } }
 
     case sortVaultItems.COLLATERAL_LOW:
-      return { orderBy: { creation_timestamp: Order_By.Desc, collateral_json: Order_By.Asc } }
+      return { orderBy: { creation_timestamp: Order_By.Desc, total_collateral_usd_value: Order_By.Asc } }
 
     case sortVaultItems.BORROWED_HIGH:
       return { orderBy: { creation_timestamp: Order_By.Desc, loan_principal_total: Order_By.Desc } }

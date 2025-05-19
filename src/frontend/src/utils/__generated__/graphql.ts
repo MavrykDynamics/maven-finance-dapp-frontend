@@ -119,6 +119,14 @@ export type Aggregator = {
   last_completed_data_pct_oracle_resp: Scalars['smallint']['output'];
   last_completed_data_round: Scalars['bigint']['output'];
   last_updated_at?: Maybe<Scalars['timestamptz']['output']>;
+  /** An array relationship */
+  lending_controller_collateral_token_oracles: Array<Lending_Controller_Collateral_Token>;
+  /** An aggregate relationship */
+  lending_controller_collateral_token_oracles_aggregate: Lending_Controller_Collateral_Token_Aggregate;
+  /** An array relationship */
+  lending_controller_loan_token_oracles: Array<Lending_Controller_Loan_Token>;
+  /** An aggregate relationship */
+  lending_controller_loan_token_oracles_aggregate: Lending_Controller_Loan_Token_Aggregate;
   metadata?: Maybe<Scalars['jsonb']['output']>;
   name: Scalars['String']['output'];
   network: Scalars['String']['output'];
@@ -216,6 +224,46 @@ export type AggregatorLambdas_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Aggregator_Lambda_Order_By>>;
   where?: InputMaybe<Aggregator_Lambda_Bool_Exp>;
+};
+
+
+/** columns and relationships of "aggregator" */
+export type AggregatorLending_Controller_Collateral_Token_OraclesArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_Collateral_Token_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Lending_Controller_Collateral_Token_Order_By>>;
+  where?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+};
+
+
+/** columns and relationships of "aggregator" */
+export type AggregatorLending_Controller_Collateral_Token_Oracles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_Collateral_Token_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Lending_Controller_Collateral_Token_Order_By>>;
+  where?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+};
+
+
+/** columns and relationships of "aggregator" */
+export type AggregatorLending_Controller_Loan_Token_OraclesArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Lending_Controller_Loan_Token_Order_By>>;
+  where?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+};
+
+
+/** columns and relationships of "aggregator" */
+export type AggregatorLending_Controller_Loan_Token_Oracles_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Lending_Controller_Loan_Token_Order_By>>;
+  where?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
 };
 
 
@@ -475,6 +523,10 @@ export type Aggregator_Bool_Exp = {
   last_completed_data_pct_oracle_resp?: InputMaybe<Smallint_Comparison_Exp>;
   last_completed_data_round?: InputMaybe<Bigint_Comparison_Exp>;
   last_updated_at?: InputMaybe<Timestamptz_Comparison_Exp>;
+  lending_controller_collateral_token_oracles?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
+  lending_controller_collateral_token_oracles_aggregate?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp>;
+  lending_controller_loan_token_oracles?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
+  lending_controller_loan_token_oracles_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp>;
   metadata?: InputMaybe<Jsonb_Comparison_Exp>;
   name?: InputMaybe<String_Comparison_Exp>;
   network?: InputMaybe<String_Comparison_Exp>;
@@ -4410,6 +4462,8 @@ export type Aggregator_Order_By = {
   last_completed_data_pct_oracle_resp?: InputMaybe<Order_By>;
   last_completed_data_round?: InputMaybe<Order_By>;
   last_updated_at?: InputMaybe<Order_By>;
+  lending_controller_collateral_token_oracles_aggregate?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Order_By>;
+  lending_controller_loan_token_oracles_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Order_By>;
   metadata?: InputMaybe<Order_By>;
   name?: InputMaybe<Order_By>;
   network?: InputMaybe<Order_By>;
@@ -37125,6 +37179,7 @@ export type Gql_Vault_With_Balances = {
   owner_id?: Maybe<Scalars['bigint']['output']>;
   reserve_ratio?: Maybe<Scalars['smallint']['output']>;
   token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['float8']['output']>;
   total_remaining?: Maybe<Scalars['float8']['output']>;
   vault_address?: Maybe<Scalars['String']['output']>;
   vault_id?: Maybe<Scalars['bigint']['output']>;
@@ -37193,6 +37248,7 @@ export type Gql_Vault_With_Balances_Avg_Fields = {
   owner_id?: Maybe<Scalars['Float']['output']>;
   reserve_ratio?: Maybe<Scalars['Float']['output']>;
   token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['Float']['output']>;
   total_remaining?: Maybe<Scalars['Float']['output']>;
   vault_id?: Maybe<Scalars['Float']['output']>;
 };
@@ -37227,6 +37283,7 @@ export type Gql_Vault_With_Balances_Bool_Exp = {
   owner_id?: InputMaybe<Bigint_Comparison_Exp>;
   reserve_ratio?: InputMaybe<Smallint_Comparison_Exp>;
   token_pool_total?: InputMaybe<Float8_Comparison_Exp>;
+  total_collateral_usd_value?: InputMaybe<Float8_Comparison_Exp>;
   total_remaining?: InputMaybe<Float8_Comparison_Exp>;
   vault_address?: InputMaybe<String_Comparison_Exp>;
   vault_id?: InputMaybe<Bigint_Comparison_Exp>;
@@ -37258,6 +37315,7 @@ export type Gql_Vault_With_Balances_Max_Fields = {
   owner_id?: Maybe<Scalars['bigint']['output']>;
   reserve_ratio?: Maybe<Scalars['smallint']['output']>;
   token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['float8']['output']>;
   total_remaining?: Maybe<Scalars['float8']['output']>;
   vault_address?: Maybe<Scalars['String']['output']>;
   vault_id?: Maybe<Scalars['bigint']['output']>;
@@ -37289,6 +37347,7 @@ export type Gql_Vault_With_Balances_Min_Fields = {
   owner_id?: Maybe<Scalars['bigint']['output']>;
   reserve_ratio?: Maybe<Scalars['smallint']['output']>;
   token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['float8']['output']>;
   total_remaining?: Maybe<Scalars['float8']['output']>;
   vault_address?: Maybe<Scalars['String']['output']>;
   vault_id?: Maybe<Scalars['bigint']['output']>;
@@ -37322,6 +37381,7 @@ export type Gql_Vault_With_Balances_Order_By = {
   owner_id?: InputMaybe<Order_By>;
   reserve_ratio?: InputMaybe<Order_By>;
   token_pool_total?: InputMaybe<Order_By>;
+  total_collateral_usd_value?: InputMaybe<Order_By>;
   total_remaining?: InputMaybe<Order_By>;
   vault_address?: InputMaybe<Order_By>;
   vault_id?: InputMaybe<Order_By>;
@@ -37381,6 +37441,8 @@ export enum Gql_Vault_With_Balances_Select_Column {
   /** column name */
   TokenPoolTotal = 'token_pool_total',
   /** column name */
+  TotalCollateralUsdValue = 'total_collateral_usd_value',
+  /** column name */
   TotalRemaining = 'total_remaining',
   /** column name */
   VaultAddress = 'vault_address',
@@ -37410,6 +37472,7 @@ export type Gql_Vault_With_Balances_Stddev_Fields = {
   owner_id?: Maybe<Scalars['Float']['output']>;
   reserve_ratio?: Maybe<Scalars['Float']['output']>;
   token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['Float']['output']>;
   total_remaining?: Maybe<Scalars['Float']['output']>;
   vault_id?: Maybe<Scalars['Float']['output']>;
 };
@@ -37434,6 +37497,7 @@ export type Gql_Vault_With_Balances_Stddev_Pop_Fields = {
   owner_id?: Maybe<Scalars['Float']['output']>;
   reserve_ratio?: Maybe<Scalars['Float']['output']>;
   token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['Float']['output']>;
   total_remaining?: Maybe<Scalars['Float']['output']>;
   vault_id?: Maybe<Scalars['Float']['output']>;
 };
@@ -37458,6 +37522,7 @@ export type Gql_Vault_With_Balances_Stddev_Samp_Fields = {
   owner_id?: Maybe<Scalars['Float']['output']>;
   reserve_ratio?: Maybe<Scalars['Float']['output']>;
   token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['Float']['output']>;
   total_remaining?: Maybe<Scalars['Float']['output']>;
   vault_id?: Maybe<Scalars['Float']['output']>;
 };
@@ -37497,6 +37562,7 @@ export type Gql_Vault_With_Balances_Stream_Cursor_Value_Input = {
   owner_id?: InputMaybe<Scalars['bigint']['input']>;
   reserve_ratio?: InputMaybe<Scalars['smallint']['input']>;
   token_pool_total?: InputMaybe<Scalars['float8']['input']>;
+  total_collateral_usd_value?: InputMaybe<Scalars['float8']['input']>;
   total_remaining?: InputMaybe<Scalars['float8']['input']>;
   vault_address?: InputMaybe<Scalars['String']['input']>;
   vault_id?: InputMaybe<Scalars['bigint']['input']>;
@@ -37523,6 +37589,7 @@ export type Gql_Vault_With_Balances_Sum_Fields = {
   owner_id?: Maybe<Scalars['bigint']['output']>;
   reserve_ratio?: Maybe<Scalars['smallint']['output']>;
   token_pool_total?: Maybe<Scalars['float8']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['float8']['output']>;
   total_remaining?: Maybe<Scalars['float8']['output']>;
   vault_id?: Maybe<Scalars['bigint']['output']>;
 };
@@ -37547,6 +37614,7 @@ export type Gql_Vault_With_Balances_Var_Pop_Fields = {
   owner_id?: Maybe<Scalars['Float']['output']>;
   reserve_ratio?: Maybe<Scalars['Float']['output']>;
   token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['Float']['output']>;
   total_remaining?: Maybe<Scalars['Float']['output']>;
   vault_id?: Maybe<Scalars['Float']['output']>;
 };
@@ -37571,6 +37639,7 @@ export type Gql_Vault_With_Balances_Var_Samp_Fields = {
   owner_id?: Maybe<Scalars['Float']['output']>;
   reserve_ratio?: Maybe<Scalars['Float']['output']>;
   token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['Float']['output']>;
   total_remaining?: Maybe<Scalars['Float']['output']>;
   vault_id?: Maybe<Scalars['Float']['output']>;
 };
@@ -37595,6 +37664,7 @@ export type Gql_Vault_With_Balances_Variance_Fields = {
   owner_id?: Maybe<Scalars['Float']['output']>;
   reserve_ratio?: Maybe<Scalars['Float']['output']>;
   token_pool_total?: Maybe<Scalars['Float']['output']>;
+  total_collateral_usd_value?: Maybe<Scalars['Float']['output']>;
   total_remaining?: Maybe<Scalars['Float']['output']>;
   vault_id?: Maybe<Scalars['Float']['output']>;
 };
@@ -37986,8 +38056,8 @@ export type Lending_Controller_Collateral_Token = {
   lending_controller_id: Scalars['bigint']['output'];
   max_deposit_amount?: Maybe<Scalars['float8']['output']>;
   /** An object relationship */
-  oracle: Maven_User;
-  oracle_id: Scalars['bigint']['output'];
+  oracle?: Maybe<Aggregator>;
+  oracle_id?: Maybe<Scalars['bigint']['output']>;
   paused: Scalars['Boolean']['output'];
   protected: Scalars['Boolean']['output'];
   staking_contract_address?: Maybe<Scalars['String']['output']>;
@@ -38220,7 +38290,7 @@ export type Lending_Controller_Collateral_Token_Bool_Exp = {
   lending_controller?: InputMaybe<Lending_Controller_Bool_Exp>;
   lending_controller_id?: InputMaybe<Bigint_Comparison_Exp>;
   max_deposit_amount?: InputMaybe<Float8_Comparison_Exp>;
-  oracle?: InputMaybe<Maven_User_Bool_Exp>;
+  oracle?: InputMaybe<Aggregator_Bool_Exp>;
   oracle_id?: InputMaybe<Bigint_Comparison_Exp>;
   paused?: InputMaybe<Boolean_Comparison_Exp>;
   protected?: InputMaybe<Boolean_Comparison_Exp>;
@@ -38291,7 +38361,7 @@ export type Lending_Controller_Collateral_Token_Order_By = {
   lending_controller?: InputMaybe<Lending_Controller_Order_By>;
   lending_controller_id?: InputMaybe<Order_By>;
   max_deposit_amount?: InputMaybe<Order_By>;
-  oracle?: InputMaybe<Maven_User_Order_By>;
+  oracle?: InputMaybe<Aggregator_Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   paused?: InputMaybe<Order_By>;
   protected?: InputMaybe<Order_By>;
@@ -39474,8 +39544,8 @@ export type Lending_Controller_Loan_Token = {
   min_repayment_amount: Scalars['float8']['output'];
   optimal_utilisation_rate: Scalars['float8']['output'];
   /** An object relationship */
-  oracle: Maven_User;
-  oracle_id: Scalars['bigint']['output'];
+  oracle?: Maybe<Aggregator>;
+  oracle_id?: Maybe<Scalars['bigint']['output']>;
   paused: Scalars['Boolean']['output'];
   raw_m_tokens_total_supply: Scalars['float8']['output'];
   reserve_ratio: Scalars['smallint']['output'];
@@ -39752,7 +39822,7 @@ export type Lending_Controller_Loan_Token_Bool_Exp = {
   max_interest_rate?: InputMaybe<Float8_Comparison_Exp>;
   min_repayment_amount?: InputMaybe<Float8_Comparison_Exp>;
   optimal_utilisation_rate?: InputMaybe<Float8_Comparison_Exp>;
-  oracle?: InputMaybe<Maven_User_Bool_Exp>;
+  oracle?: InputMaybe<Aggregator_Bool_Exp>;
   oracle_id?: InputMaybe<Bigint_Comparison_Exp>;
   paused?: InputMaybe<Boolean_Comparison_Exp>;
   raw_m_tokens_total_supply?: InputMaybe<Float8_Comparison_Exp>;
@@ -39892,7 +39962,7 @@ export type Lending_Controller_Loan_Token_Order_By = {
   max_interest_rate?: InputMaybe<Order_By>;
   min_repayment_amount?: InputMaybe<Order_By>;
   optimal_utilisation_rate?: InputMaybe<Order_By>;
-  oracle?: InputMaybe<Maven_User_Order_By>;
+  oracle?: InputMaybe<Aggregator_Order_By>;
   oracle_id?: InputMaybe<Order_By>;
   paused?: InputMaybe<Order_By>;
   raw_m_tokens_total_supply?: InputMaybe<Order_By>;
@@ -45789,17 +45859,9 @@ export type Maven_User = {
   governance_satellite_snapshots_aggregate: Governance_Satellite_Snapshot_Aggregate;
   id: Scalars['bigint']['output'];
   /** An array relationship */
-  lending_controller_collateral_token_oracles: Array<Lending_Controller_Collateral_Token>;
-  /** An aggregate relationship */
-  lending_controller_collateral_token_oracles_aggregate: Lending_Controller_Collateral_Token_Aggregate;
-  /** An array relationship */
   lending_controller_history_data_sender: Array<Lending_Controller_History_Data>;
   /** An aggregate relationship */
   lending_controller_history_data_sender_aggregate: Lending_Controller_History_Data_Aggregate;
-  /** An array relationship */
-  lending_controller_loan_token_oracles: Array<Lending_Controller_Loan_Token>;
-  /** An aggregate relationship */
-  lending_controller_loan_token_oracles_aggregate: Lending_Controller_Loan_Token_Aggregate;
   /** An array relationship */
   lending_controller_vaults: Array<Lending_Controller_Vault>;
   /** An aggregate relationship */
@@ -46351,26 +46413,6 @@ export type Maven_UserGovernance_Satellite_Snapshots_AggregateArgs = {
 
 
 /** columns and relationships of "maven_user" */
-export type Maven_UserLending_Controller_Collateral_Token_OraclesArgs = {
-  distinct_on?: InputMaybe<Array<Lending_Controller_Collateral_Token_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Lending_Controller_Collateral_Token_Order_By>>;
-  where?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
-};
-
-
-/** columns and relationships of "maven_user" */
-export type Maven_UserLending_Controller_Collateral_Token_Oracles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Lending_Controller_Collateral_Token_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Lending_Controller_Collateral_Token_Order_By>>;
-  where?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
-};
-
-
-/** columns and relationships of "maven_user" */
 export type Maven_UserLending_Controller_History_Data_SenderArgs = {
   distinct_on?: InputMaybe<Array<Lending_Controller_History_Data_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -46387,26 +46429,6 @@ export type Maven_UserLending_Controller_History_Data_Sender_AggregateArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
   order_by?: InputMaybe<Array<Lending_Controller_History_Data_Order_By>>;
   where?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
-};
-
-
-/** columns and relationships of "maven_user" */
-export type Maven_UserLending_Controller_Loan_Token_OraclesArgs = {
-  distinct_on?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Lending_Controller_Loan_Token_Order_By>>;
-  where?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
-};
-
-
-/** columns and relationships of "maven_user" */
-export type Maven_UserLending_Controller_Loan_Token_Oracles_AggregateArgs = {
-  distinct_on?: InputMaybe<Array<Lending_Controller_Loan_Token_Select_Column>>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  order_by?: InputMaybe<Array<Lending_Controller_Loan_Token_Order_By>>;
-  where?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
 };
 
 
@@ -46822,12 +46844,8 @@ export type Maven_User_Bool_Exp = {
   governance_satellite_snapshots?: InputMaybe<Governance_Satellite_Snapshot_Bool_Exp>;
   governance_satellite_snapshots_aggregate?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Bool_Exp>;
   id?: InputMaybe<Bigint_Comparison_Exp>;
-  lending_controller_collateral_token_oracles?: InputMaybe<Lending_Controller_Collateral_Token_Bool_Exp>;
-  lending_controller_collateral_token_oracles_aggregate?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Bool_Exp>;
   lending_controller_history_data_sender?: InputMaybe<Lending_Controller_History_Data_Bool_Exp>;
   lending_controller_history_data_sender_aggregate?: InputMaybe<Lending_Controller_History_Data_Aggregate_Bool_Exp>;
-  lending_controller_loan_token_oracles?: InputMaybe<Lending_Controller_Loan_Token_Bool_Exp>;
-  lending_controller_loan_token_oracles_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Bool_Exp>;
   lending_controller_vaults?: InputMaybe<Lending_Controller_Vault_Bool_Exp>;
   lending_controller_vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Bool_Exp>;
   m_token_accounts?: InputMaybe<M_Token_Account_Bool_Exp>;
@@ -46913,9 +46931,7 @@ export type Maven_User_Order_By = {
   governance_satellite_oracles_aggregate?: InputMaybe<Governance_Satellite_Oracle_Aggregate_Order_By>;
   governance_satellite_snapshots_aggregate?: InputMaybe<Governance_Satellite_Snapshot_Aggregate_Order_By>;
   id?: InputMaybe<Order_By>;
-  lending_controller_collateral_token_oracles_aggregate?: InputMaybe<Lending_Controller_Collateral_Token_Aggregate_Order_By>;
   lending_controller_history_data_sender_aggregate?: InputMaybe<Lending_Controller_History_Data_Aggregate_Order_By>;
-  lending_controller_loan_token_oracles_aggregate?: InputMaybe<Lending_Controller_Loan_Token_Aggregate_Order_By>;
   lending_controller_vaults_aggregate?: InputMaybe<Lending_Controller_Vault_Aggregate_Order_By>;
   m_token_accounts_aggregate?: InputMaybe<M_Token_Account_Aggregate_Order_By>;
   m_token_user_operators_aggregate?: InputMaybe<M_Token_Operator_Aggregate_Order_By>;
