@@ -33,7 +33,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { PaginationVaultType, VAULTS_DEFFAULT_FILTERS } from 'providers/VaultsProvider/vaults.provider.consts'
+import { PaginationVaultType } from 'providers/VaultsProvider/vaults.provider.consts'
 import Button from 'app/App.components/Button/NewButton'
 import {
   Advanced_Gql_Vault_With_Balances_Bool_Exp,
@@ -123,13 +123,6 @@ export const VaultsSearchFilter = memo(() => {
   const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
   const hasTouchedInput = useRef(false)
 
-  useEffect(() => {
-    if (!hasTouchedInput.current) return
-    const searchFilterQuery = getSearchQueryForWhereFilter(debouncedValue)
-    setIsPendingQueryWhenFilters(true)
-    updateVaultQueryFilters(searchFilterQuery, tabId)
-  }, [debouncedValue, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
-
   const handleDropdownSelect = (name: string) => (selectedOption: DDItemId) => {
     setFilterStatuses((prev) => ({
       ...prev,
@@ -183,18 +176,34 @@ export const VaultsSearchFilter = memo(() => {
         shadowWhere: { ...whereQuery.shadowWhere, ...HIDE_VAULT_ZERO_BALANCES },
       }
 
+    if (hasTouchedInput.current) {
+      const searchFilterQuery = getSearchQueryForWhereFilter(debouncedValue)
+
+      whereQuery = {
+        ...whereQuery,
+        where: { ...whereQuery.where, ...searchFilterQuery.where },
+        shadowWhere: { ...whereQuery.shadowWhere, ...searchFilterQuery.shadowWhere },
+      }
+    }
+
     const query = { ...whereQuery, ...orderByQuery }
 
     updateVaultQueryFilters(query, tabId)
     setIsPendingQueryWhenFilters(true)
   }, [
     chosenDdItem,
-    preparedCollateralAssets,
-    setIsPendingQueryWhenFilters,
-    preparedLoanAssets,
-    tabId,
     updateVaultQueryFilters,
+    tabId,
+    debouncedValue,
+    setIsPendingQueryWhenFilters,
+    preparedCollateralAssets,
+    preparedLoanAssets,
   ])
+
+  useEffect(() => {
+    if (!hasTouchedInput.current) return
+    applyServerFilters()
+  }, [debouncedValue, tabId])
 
   return (
     <VaultsSearchFilterWrapper>

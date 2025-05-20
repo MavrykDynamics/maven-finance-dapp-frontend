@@ -226,7 +226,7 @@ export const VaultsView = () => {
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : currentVaultsIds.length ? (
+      ) : currentVaultsIds.length || isPendingQueryWhenFilters ? (
         <>
           {isPendingQueryWhenFilters && (
             <div className="filterClockWrapper">
