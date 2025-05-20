@@ -49,7 +49,7 @@ export const getVaultsOrderByQuery = (option: SortVaultOption): { orderBy?: Gql_
     case sortVaultItems.STATUSES:
       return {
         orderBy: {
-          creation_timestamp: Order_By.Desc,
+          creation_timestamp: undefined,
           marked_for_liquidation_level: Order_By.Desc,
           is_open: Order_By.Desc,
           liquidation_end_level: Order_By.Desc,
