@@ -172,7 +172,7 @@ export const VaultsSearchFilter = memo(() => {
     }
 
     if (assets.includes(BORROWED_NAME)) {
-      whereQuery = getFilterBorrowedQuery(preparedCollateralAssets[assets])
+      whereQuery = getFilterBorrowedQuery(preparedLoanAssets[assets])
     }
 
     const orderByQuery = getVaultsOrderByQuery(sort as SortVaultOption)
@@ -187,7 +187,14 @@ export const VaultsSearchFilter = memo(() => {
 
     updateVaultQueryFilters(query, tabId)
     setIsPendingQueryWhenFilters(true)
-  }, [chosenDdItem, preparedCollateralAssets, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
+  }, [
+    chosenDdItem,
+    preparedCollateralAssets,
+    setIsPendingQueryWhenFilters,
+    preparedLoanAssets,
+    tabId,
+    updateVaultQueryFilters,
+  ])
 
   return (
     <VaultsSearchFilterWrapper>
