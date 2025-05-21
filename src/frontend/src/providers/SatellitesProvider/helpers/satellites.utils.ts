@@ -151,10 +151,6 @@ export const getSatellitesProviderReturnValue = ({
     satelliteAddressToSubscribe &&
     !satelliteMapper?.[satelliteAddressToSubscribe]
 
-  // when we first visit page it will return empty satellites ctx and then apge will subscribe, so we need this cond to prevent empty page blinking
-  const isAnySatellitesTypeInitialLoading =
-    (activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper) || (!activeSubs[SATELLITE_DATA_SUB] && !satelliteMapper)
-
   /**
    * isLoading indicates whether provider is loading smth, so we need to show loader, not load in background, cases:
    * 1. handling initial loading, when provider returned value before component subscribed
@@ -165,7 +161,6 @@ export const getSatellitesProviderReturnValue = ({
    * 6. handling satellite participation loading
    */
   const isLoading =
-    isAnySatellitesTypeInitialLoading ||
     (activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ORACLES_SUB && !oraclesIds) ||
     (activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB && !activeSatellitesIds) ||
     isLoadingSingleSatellite ||

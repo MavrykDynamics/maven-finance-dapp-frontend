@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo } from 'react'
+import { useLayoutEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // providers
@@ -36,7 +36,6 @@ import {
   SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
-  SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
@@ -48,17 +47,18 @@ const Satellites = () => {
   const { totalDelegatedMVN } = useSatelliteStatistics()
   const {
     activeSatellitesIds,
-    satelliteMapper,
+    satelliteActiveMapper,
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
     totalSatellitesCount,
   } = useSatellitesContext()
   const { userTokensBalances, isSatellite, userAddress } = useUserContext()
 
+  console.log(isSatellitesLoading, 'isSatellitesLoading')
+
   useLayoutEffect(() => {
-    console.log('run')
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ALL_SUB,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 
@@ -144,8 +144,10 @@ const Satellites = () => {
 
                   <div className={`satellitesList`}>
                     {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => {
-                      if (!satelliteMapper[satelliteAddress]) return null
-                      return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+                      if (!satelliteActiveMapper[satelliteAddress]) return null
+                      return (
+                        <SatelliteListItem satellite={satelliteActiveMapper[satelliteAddress]} key={satelliteAddress} />
+                      )
                     })}
                   </div>
                 </>
