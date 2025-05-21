@@ -31,7 +31,7 @@ import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/
 export const SatellitesTab = () => {
   const {
     activeSatellitesIds,
-    satelliteMapper,
+    satelliteActiveMapper,
     proposalsAmount,
     satelliteGovActionsAmount,
     finRequestsAmount,
@@ -54,12 +54,12 @@ export const SatellitesTab = () => {
     () =>
       reduceSatellitesData({
         activeSatellitesIds,
-        satelliteMapper,
+        satelliteMapper: satelliteActiveMapper,
         proposalsAmount,
         satelliteGovActionsAmount,
         finRequestsAmount,
       }),
-    [activeSatellitesIds, satelliteMapper, proposalsAmount, satelliteGovActionsAmount, finRequestsAmount],
+    [activeSatellitesIds, satelliteActiveMapper, proposalsAmount, satelliteGovActionsAmount, finRequestsAmount],
   )
 
   return (

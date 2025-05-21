@@ -45,7 +45,7 @@ export const BecomeSatellite = () => {
     minimumStakedMvnBalance,
   } = useDappConfigContext()
   const {
-    satelliteMapper,
+    satelliteMapperByAddress,
     setSatelliteAddressToSubscribe,
     changeSatellitesSubscriptionsList,
     isLoading: isSatellitesLoading,
@@ -68,11 +68,11 @@ export const BecomeSatellite = () => {
   // derived states
   const { usersSatelliteProfile, userSmvnBalance, userMvnBalance } = useMemo(
     () => ({
-      usersSatelliteProfile: userAddress ? satelliteMapper[userAddress] : null,
+      usersSatelliteProfile: userAddress ? satelliteMapperByAddress[userAddress] : null,
       userSmvnBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: SMVN_TOKEN_ADDRESS }),
       userMvnBalance: getUserTokenBalanceByAddress({ userTokensBalances, tokenAddress: mvnTokenAddress }),
     }),
-    [mvnTokenAddress, satelliteMapper, userAddress, userTokensBalances],
+    [mvnTokenAddress, satelliteMapperByAddress, userAddress, userTokensBalances],
   )
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export const BecomeSatellite = () => {
   useLayoutEffect(() => {
     setIsSatelliteExistenceError(false)
 
-    if ((userAddress && satelliteMapper[userAddress]) || !userAddress) return
+    if ((userAddress && satelliteMapperByAddress[userAddress]) || !userAddress) return
 
     setIsSatelliteExistenceLoading(true)
 
