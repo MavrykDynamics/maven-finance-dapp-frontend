@@ -69,6 +69,7 @@ export const VaultsSearchFilter = memo(() => {
   const navigate = useNavigate()
   const { search } = useLocation()
   const { tabId = 'all' } = useParams<{ tabId: PaginationVaultType }>()
+  const hasAutoAppliedRef = useRef(false)
 
   const { marketsAddresses } = useLoansContext()
   const { tokensMetadata } = useTokensContext()
@@ -98,8 +99,8 @@ export const VaultsSearchFilter = memo(() => {
 
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
   const [chosenDdItem, setChosenDdItem] = useState<Filters>({
-    [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
-    [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
+    [vaultsFilters.ASSETS]: assets as string,
+    [vaultsFilters.SORT]: sort as string,
   })
 
   // reset filters on compponent unmount
@@ -200,10 +201,21 @@ export const VaultsSearchFilter = memo(() => {
     preparedLoanAssets,
   ])
 
+  // search filter
   useEffect(() => {
     if (!hasTouchedInput.current) return
     applyServerFilters()
   }, [debouncedValue, tabId])
+
+  // APply filters on the first render it URL has params
+  useEffect(() => {
+    const isAssetsReady = Object.keys(preparedCollateralAssets).length > 0 || Object.keys(preparedLoanAssets).length > 0
+
+    if (!hasAutoAppliedRef.current && isAssetsReady) {
+      applyServerFilters()
+      hasAutoAppliedRef.current = true
+    }
+  }, [preparedCollateralAssets, preparedLoanAssets])
 
   return (
     <VaultsSearchFilterWrapper>
