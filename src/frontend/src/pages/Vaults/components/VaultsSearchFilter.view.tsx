@@ -33,7 +33,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { TokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
-import { PaginationVaultType, VAULTS_DEFFAULT_FILTERS } from 'providers/VaultsProvider/vaults.provider.consts'
+import { PaginationVaultType } from 'providers/VaultsProvider/vaults.provider.consts'
 import Button from 'app/App.components/Button/NewButton'
 import {
   Advanced_Gql_Vault_With_Balances_Bool_Exp,
@@ -69,6 +69,7 @@ export const VaultsSearchFilter = memo(() => {
   const navigate = useNavigate()
   const { search } = useLocation()
   const { tabId = 'all' } = useParams<{ tabId: PaginationVaultType }>()
+  const hasAutoAppliedRef = useRef(false)
 
   const { marketsAddresses } = useLoansContext()
   const { tokensMetadata } = useTokensContext()
@@ -98,8 +99,8 @@ export const VaultsSearchFilter = memo(() => {
 
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
   const [chosenDdItem, setChosenDdItem] = useState<Filters>({
-    [vaultsFilters.ASSETS]: ALL_VAULTS_FILTER,
-    [vaultsFilters.SORT]: sortVaultItems.MOST_RECENT,
+    [vaultsFilters.ASSETS]: assets as string,
+    [vaultsFilters.SORT]: sort as string,
   })
 
   // reset filters on compponent unmount
@@ -122,13 +123,6 @@ export const VaultsSearchFilter = memo(() => {
   // Search --------------
   const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
   const hasTouchedInput = useRef(false)
-
-  useEffect(() => {
-    if (!hasTouchedInput.current) return
-    const searchFilterQuery = getSearchQueryForWhereFilter(debouncedValue)
-    setIsPendingQueryWhenFilters(true)
-    updateVaultQueryFilters(searchFilterQuery, tabId)
-  }, [debouncedValue, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
 
   const handleDropdownSelect = (name: string) => (selectedOption: DDItemId) => {
     setFilterStatuses((prev) => ({
@@ -164,7 +158,7 @@ export const VaultsSearchFilter = memo(() => {
   }
 
   const applyServerFilters = useCallback(() => {
-    let whereQuery: Partial<Advanced_Gql_Vault_With_Balances_Bool_Exp> = {} // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
+    let whereQuery: Partial<Advanced_Gql_Vault_With_Balances_Bool_Exp> = { where: {}, shadowWhere: {} } // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
 
     const { assets, sort, zero } = chosenDdItem
     if (assets.includes(COLLATERAL_NAME)) {
@@ -172,7 +166,7 @@ export const VaultsSearchFilter = memo(() => {
     }
 
     if (assets.includes(BORROWED_NAME)) {
-      whereQuery = getFilterBorrowedQuery(preparedCollateralAssets[assets])
+      whereQuery = getFilterBorrowedQuery(preparedLoanAssets[assets])
     }
 
     const orderByQuery = getVaultsOrderByQuery(sort as SortVaultOption)
@@ -183,11 +177,45 @@ export const VaultsSearchFilter = memo(() => {
         shadowWhere: { ...whereQuery.shadowWhere, ...HIDE_VAULT_ZERO_BALANCES },
       }
 
+    if (hasTouchedInput.current) {
+      const searchFilterQuery = getSearchQueryForWhereFilter(debouncedValue)
+
+      whereQuery = {
+        ...whereQuery,
+        where: { ...whereQuery.where, ...searchFilterQuery.where },
+        shadowWhere: { ...whereQuery.shadowWhere, ...searchFilterQuery.shadowWhere },
+      }
+    }
+
     const query = { ...whereQuery, ...orderByQuery }
 
     updateVaultQueryFilters(query, tabId)
     setIsPendingQueryWhenFilters(true)
-  }, [chosenDdItem, preparedCollateralAssets, setIsPendingQueryWhenFilters, tabId, updateVaultQueryFilters])
+  }, [
+    chosenDdItem,
+    updateVaultQueryFilters,
+    tabId,
+    debouncedValue,
+    setIsPendingQueryWhenFilters,
+    preparedCollateralAssets,
+    preparedLoanAssets,
+  ])
+
+  // search filter
+  useEffect(() => {
+    if (!hasTouchedInput.current) return
+    applyServerFilters()
+  }, [debouncedValue, tabId])
+
+  // APply filters on the first render it URL has params
+  useEffect(() => {
+    const isAssetsReady = Object.keys(preparedCollateralAssets).length > 0 || Object.keys(preparedLoanAssets).length > 0
+
+    if (!hasAutoAppliedRef.current && isAssetsReady) {
+      applyServerFilters()
+      hasAutoAppliedRef.current = true
+    }
+  }, [preparedCollateralAssets, preparedLoanAssets])
 
   return (
     <VaultsSearchFilterWrapper>

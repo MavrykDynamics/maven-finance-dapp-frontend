@@ -101,22 +101,28 @@ export const VaultsProvider = ({ children }: Props) => {
         },
         [PAGINATION_PERMISSIONED]: {
           where: (() => {
-            const { ...restWhere } = vaultFilters[PAGINATION_PERMISSIONED].where
+            const { _or: searchOr, ...restWhere } = vaultFilters[PAGINATION_PERMISSIONED].where
 
             return {
-              is_open: { _eq: true },
-
-              owner_address: { _neq: userAddress },
-              _or: [
-                { allowance: { _eq: '0' } },
+              _and: [
                 {
-                  _and: [
-                    { allowance: { _eq: '1' } },
-                    { depositors_json: { _contains: { address: { _eq: userAddress } } } },
+                  is_open: { _eq: true },
+                  owner_address: { _neq: userAddress },
+                  _or: [
+                    { allowance: { _eq: '0' } },
+                    {
+                      _and: [
+                        { allowance: { _eq: '1' } },
+                        { depositors_json: { _contains: { address: { _eq: userAddress } } } },
+                      ],
+                    },
                   ],
+                  ...restWhere,
+                },
+                {
+                  _or: searchOr,
                 },
               ],
-              ...restWhere,
             }
           })(),
           orderBy: {
