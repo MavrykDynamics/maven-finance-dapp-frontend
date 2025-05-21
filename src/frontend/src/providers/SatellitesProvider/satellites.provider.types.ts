@@ -1,11 +1,6 @@
 import { z } from 'zod'
 
-import {
-  ActiveSatellitesDataQueryQuery,
-  AllSatellitesDataQueryQuery,
-  OraclesSatellitesDataQueryQuery,
-  SatelliteDataQueryQuery,
-} from './../../utils/__generated__/graphql'
+import { SatelliteDataQueryQuery, Satellite_Bool_Exp, Satellite_Order_By } from './../../utils/__generated__/graphql'
 
 import { normalizeSatellite, normalizeSatelliteVotes } from './helpers/satellites.normalizer'
 
@@ -13,6 +8,7 @@ import {
   DELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
   INACTIVE_SATELLITE_STATUS,
+  PaginationSatelliteType,
   REGISTER_SATELLITE_ACTION,
   SATELLITE_DATA_SUB,
   SATELLITE_ORACLE_STATUSES,
@@ -47,7 +43,7 @@ export type SatellitesContextState = {
   finRequestsAmount: number
 
   // pagination
-  changePage: (page: number) => void
+  changePage: (newPage: number, mapperType: PaginationSatelliteType) => void
   totalSatellitesCount: number
 }
 
@@ -59,11 +55,7 @@ export type SatellitesContext = SatellitesContextState & {
   changeSatellitesSubscriptionsList: (skips: Partial<SatellitesSubsRecordType>) => void
 }
 
-export type SatellitesIndexerDataType =
-  | SatelliteDataQueryQuery
-  | ActiveSatellitesDataQueryQuery
-  | AllSatellitesDataQueryQuery
-  | OraclesSatellitesDataQueryQuery
+export type SatellitesIndexerDataType = SatelliteDataQueryQuery
 
 // ------- subs types
 export type SatellitesDataSubsType =
@@ -101,3 +93,13 @@ export type SatelliteActionsType =
   | typeof REGISTER_SATELLITE_ACTION
   | typeof UNREGISTER_SATELLITE_ACTION
   | typeof UPDATE_SATELLITE_ACTION
+
+// Pagination
+export type SatelliteQueryFilterType = {
+  where: Satellite_Bool_Exp
+  orderBy: Satellite_Order_By
+}
+
+export type SatelliteFiltersType = {
+  [key in PaginationSatelliteType]: SatelliteQueryFilterType
+}

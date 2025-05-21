@@ -1,13 +1,7 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // helpers
-import {
-  ACTIVE_SATELLITES_DATA_QUERY,
-  ALL_SATELLITES_DATA_QUERY,
-  ORACLES_SATELLITES_DATA_QUERY,
-  SATELLITE_AGGREGATE_COUNT,
-  SATELLITE_DATA_QUERY,
-} from './queries/satellites.query'
+import { SATELLITE_AGGREGATE_COUNT, SATELLITE_DATA_QUERY } from './queries/satellites.query'
 import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
 import { getSatellitesProviderReturnValue } from './helpers/satellites.utils'
 
@@ -15,6 +9,7 @@ import { getSatellitesProviderReturnValue } from './helpers/satellites.utils'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   DEFAULT_SATELLITES_CONTEXT,
+  PaginationSatelliteType,
   SATELLITE_DATA_SUB,
   SATELLITE_DEFFAULT_FILTERS,
   SATELLITE_PAGINATION_ACTIVE,
@@ -31,7 +26,12 @@ import {
 import { SATELLITES_METRICS_DATA } from './queries/satellitesMetricsData.query'
 
 // types
-import { SatellitesContext, SatellitesContextState, SatellitesSubsRecordType } from './satellites.provider.types'
+import {
+  SatelliteFiltersType,
+  SatellitesContext,
+  SatellitesContextState,
+  SatellitesSubsRecordType,
+} from './satellites.provider.types'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
@@ -67,7 +67,6 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
 
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
 
   // Satellite filters --------------------
@@ -79,15 +78,16 @@ export const SatellitesProvider = ({ children }: Props) => {
   }))
 
   // query filters
-  const [satelliteFilters, setSatelliteFilters] = useState(SATELLITE_DEFFAULT_FILTERS)
+  const [satelliteFilters, setSatelliteFilters] = useState<SatelliteFiltersType>(SATELLITE_DEFFAULT_FILTERS)
 
   const defaultSatelliteFilters = useMemo(
-    () => ({
-      [SATELLITE_PAGINATION_ALL]: { ...getSatelliteAllFilters() },
-      [SATELLITE_PAGINATION_BY_ADDRESS]: { ...getSatelliteByAddressFilters(satelliteAddressToSubscribe ?? '') },
-      [SATELLITE_PAGINATION_ACTIVE]: { ...getSatelliteActiveFilters() },
-      [SATELLITE_PAGINATION_ORACLES]: { ...getSatelliteOracleFilters() },
-    }),
+    () =>
+      ({
+        [SATELLITE_PAGINATION_ALL]: { ...getSatelliteAllFilters() },
+        [SATELLITE_PAGINATION_BY_ADDRESS]: { ...getSatelliteByAddressFilters(satelliteAddressToSubscribe ?? '') },
+        [SATELLITE_PAGINATION_ACTIVE]: { ...getSatelliteActiveFilters() },
+        [SATELLITE_PAGINATION_ORACLES]: { ...getSatelliteOracleFilters() },
+      } as unknown as SatelliteFiltersType),
     [satelliteAddressToSubscribe],
   )
 
@@ -114,7 +114,9 @@ export const SatellitesProvider = ({ children }: Props) => {
   useQueryWithRefetch(SATELLITE_DATA_QUERY, {
     skip: !satelliteAddressToSubscribe || activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_SINGLE_SUB,
     variables: {
-      userAddress: satelliteAddressToSubscribe ?? '',
+      ...defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS],
+      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].where,
+      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].orderBy,
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_BY_ADDRESS] - 1) * SATELLITES_LIMIT,
     },
@@ -126,14 +128,17 @@ export const SatellitesProvider = ({ children }: Props) => {
         staelliteIdsByAddress: satelliteIds,
         satelliteMapperByAddress: satelliteMapper,
       }))
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY'),
   })
 
-  useQueryWithRefetch(ALL_SATELLITES_DATA_QUERY, {
+  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
     fetchPolicy: 'network-only',
     variables: {
+      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].where,
+      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].orderBy,
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ALL] - 1) * SATELLITES_LIMIT,
     },
@@ -151,9 +156,11 @@ export const SatellitesProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'ALL_SATELLITES_DATA_QUERY'),
   })
 
-  useQueryWithRefetch(ACTIVE_SATELLITES_DATA_QUERY, {
+  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ACTIVE_SUB,
     variables: {
+      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].where,
+      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].orderBy,
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ACTIVE] - 1) * SATELLITES_LIMIT,
     },
@@ -165,13 +172,17 @@ export const SatellitesProvider = ({ children }: Props) => {
         satelliteActiveMapper: satelliteMapper,
         activeSatellitesIds: satelliteIds,
       }))
+
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
   })
 
-  useQueryWithRefetch(ORACLES_SATELLITES_DATA_QUERY, {
+  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ORACLES_SUB,
     variables: {
+      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].where,
+      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].orderBy,
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ORACLES] - 1) * SATELLITES_LIMIT,
     },
@@ -183,6 +194,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         oraclesIds: satelliteIds,
         satelliteOraclesMapper: satelliteMapper,
       }))
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
   })
@@ -210,12 +222,12 @@ export const SatellitesProvider = ({ children }: Props) => {
   }
 
   const changePage = useCallback(
-    (newPage: number) => {
-      if (newPage === currentPage) return
+    (newPage: number, mapperType: PaginationSatelliteType) => {
+      if (newPage === paginationState[mapperType]) return
       setIsLoading(true)
-      setCurrentPage(newPage)
+      setPaginationState((prev) => ({ ...prev, [mapperType]: newPage }))
     },
-    [currentPage],
+    [paginationState],
   )
 
   const providerValue = useMemo(

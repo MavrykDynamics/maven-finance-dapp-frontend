@@ -1,21 +1,23 @@
+import { Order_By } from 'utils/__generated__/graphql'
+
 export const getSatelliteByAddressFilters = (userAddress: string) => {
   return {
     where: { registration_timestamp: { _is_null: false }, user: { address: { _eq: userAddress } } },
-    order_by: { currently_registered: 'desc' },
+    orderBy: { currently_registered: Order_By.Desc },
   }
 }
 
 export const getSatelliteActiveFilters = () => {
   return {
     where: { registration_timestamp: { _is_null: false }, currently_registered: { _eq: true }, status: { _eq: '0' } },
-    order_by: { currently_registered: 'desc' },
+    orderBy: { currently_registered: Order_By.Desc },
   }
 }
 
 export const getSatelliteAllFilters = () => {
   return {
     where: { registration_timestamp: { _is_null: false } },
-    order_by: { currently_registered: 'desc' },
+    orderBy: { currently_registered: Order_By.Desc },
   }
 }
 
@@ -34,6 +36,6 @@ export const getSatelliteOracleFilters = () => {
         },
       },
     },
-    order_by: { currently_registered: 'desc' },
+    orderBy: { currently_registered: Order_By.Desc },
   }
 }

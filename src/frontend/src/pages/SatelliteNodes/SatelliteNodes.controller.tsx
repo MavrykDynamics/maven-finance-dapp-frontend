@@ -33,6 +33,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
+  SATELLITE_PAGINATION_ALL,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
@@ -87,8 +88,8 @@ const SatelliteNodes = () => {
   const currentPage = useMemo(() => getPageNumber(search, SATELITES_NODES_LIST_NAME), [search])
 
   useEffect(() => {
-    changePage(currentPage)
-  }, [currentPage])
+    changePage(currentPage, SATELLITE_PAGINATION_ALL)
+  }, [changePage, currentPage])
 
   useEffect(() => {
     if (isSatellitesLoading) return
