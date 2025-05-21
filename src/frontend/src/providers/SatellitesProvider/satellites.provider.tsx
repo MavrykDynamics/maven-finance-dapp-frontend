@@ -42,6 +42,7 @@ import {
   getSatelliteByAddressFilters,
   getSatelliteOracleFilters,
 } from './helpers/satellite.filters'
+import { SatellitesCountsSchema } from './schemas/satellitesCount.schema'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -202,17 +203,38 @@ export const SatellitesProvider = ({ children }: Props) => {
   useQueryWithRefetch(SATELLITE_AGGREGATE_COUNT, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
     fetchPolicy: 'network-only',
+    variables: {
+      whereBysatelliteAddress: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].where,
+      whereByActiveSatellite: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].where,
+      whereOracles: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].where,
+    },
     onCompleted: (data) => {
-      const {
-        satellite_aggregate: {
-          // @ts-expect-error // for some reason TS doesn't see aggregate type
-          aggregate: { count },
-        },
-      } = data ?? {}
-      setSatellitesCtxState((prev) => ({
-        ...prev,
-        totalSatellitesCount: count ?? 0,
-      }))
+      try {
+        const parsedData = SatellitesCountsSchema.parse(data)
+        const {
+          totalSatellites: {
+            aggregate: { count: totalCount },
+          },
+          userSatellites: {
+            aggregate: { count: userSatellitesCount },
+          },
+          activeSatellites: {
+            aggregate: { count: activeSatellitesCount },
+          },
+          oracleSatellites: {
+            aggregate: { count: oracleSatellitesCount },
+          },
+        } = parsedData ?? {}
+        setSatellitesCtxState((prev) => ({
+          ...prev,
+          totalSatellitesCount: totalCount ?? 0,
+          activeSatellitesCount: activeSatellitesCount ?? 0,
+          userSatellitesCount: userSatellitesCount ?? 0,
+          oracleSatellitesCount: oracleSatellitesCount ?? 0,
+        }))
+      } catch (error) {
+        console.error(error, 'SATELLITE_AGGREGATE_COUNT')
+      }
     },
     onError: (error) => handleApolloError(error, 'SATELLITE_AGGREGATE_COUNT'),
   })

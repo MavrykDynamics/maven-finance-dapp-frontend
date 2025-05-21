@@ -165,11 +165,27 @@ export const SATELLITE_DATA_QUERY = gql(`
 `)
 
 export const SATELLITE_AGGREGATE_COUNT = gql(`
-    query GetSatellitesCount {
-      satellite_aggregate {
-        aggregate {
-          count
-        }
-      }
+   query GetSatellitesCount($whereBysatelliteAddress: satellite_bool_exp, $whereByActiveSatellite: satellite_bool_exp, $whereOracles: satellite_bool_exp) {
+  totalSatellites: satellite_aggregate {
+    aggregate {
+      count
     }
+  }
+  userSatellites: satellite_aggregate(where: $whereBysatelliteAddress) {
+    aggregate {
+      count
+    }
+  }
+  activeSatellites: satellite_aggregate(where: $whereByActiveSatellite) {
+    aggregate {
+      count
+    }
+  }
+  oracleSatellites: satellite_aggregate(where: $whereOracles) {
+    aggregate {
+      count
+    }
+  }
+}
+
   `)

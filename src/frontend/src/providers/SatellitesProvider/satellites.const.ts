@@ -82,6 +82,9 @@ export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = 
   totalSatellitesCount: null,
   satelliteMapperByAddress: null,
   staelliteIdsByAddress: null,
+  activeSatellitesCount: null,
+  userSatellitesCount: null,
+  oracleSatellitesCount: null,
 }
 
 export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
@@ -98,6 +101,9 @@ export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   totalSatellitesCount: 0,
   satelliteMapperByAddress: {},
   staelliteIdsByAddress: [],
+  activeSatellitesCount: 0,
+  userSatellitesCount: 0,
+  oracleSatellitesCount: 0,
 }
 
 // Filters & pagination ----------

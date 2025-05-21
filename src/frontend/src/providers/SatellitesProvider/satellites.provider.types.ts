@@ -45,6 +45,9 @@ export type SatellitesContextState = {
   // pagination
   changePage: (newPage: number, mapperType: PaginationSatelliteType) => void
   totalSatellitesCount: number
+  activeSatellitesCount: number
+  userSatellitesCount: number
+  oracleSatellitesCount: number
 }
 
 export type SatellitesContext = SatellitesContextState & {
