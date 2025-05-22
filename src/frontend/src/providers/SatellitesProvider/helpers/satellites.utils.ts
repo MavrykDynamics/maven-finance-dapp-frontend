@@ -147,9 +147,7 @@ export const getSatellitesProviderReturnValue = ({
 
   // check if we loading single satellite NOTE: checking whether satellite exists should be on component, not in provider
   const isLoadingSingleSatellite =
-    activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_SINGLE_SUB &&
-    satelliteAddressToSubscribe &&
-    !satelliteMapper?.[satelliteAddressToSubscribe]
+    activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_SINGLE_SUB && satelliteAddressToSubscribe && isPaginationLoading
 
   /**
    * isLoading indicates whether provider is loading smth, so we need to show loader, not load in background, cases:

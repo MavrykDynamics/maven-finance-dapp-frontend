@@ -129,6 +129,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         staelliteIdsByAddress: satelliteIds,
         satelliteMapperByAddress: satelliteMapper,
       }))
+
       setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY'),
