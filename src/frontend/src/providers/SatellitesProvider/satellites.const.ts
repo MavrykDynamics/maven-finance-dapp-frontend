@@ -64,46 +64,8 @@ export const SATELLITE_PARTICIPATION_DATA_SUB = 'SATELLITE_PARTICIPATION_DATA_SU
 
 export const DEFAULT_SATELLITES_ACTIVE_SUBS = {
   [SATELLITE_DATA_SUB]: null,
+  [SATELLITES_DATA_SINGLE_SUB]: false,
   [SATELLITE_PARTICIPATION_DATA_SUB]: false,
-}
-
-// context data
-export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = {
-  satelliteMapper: null,
-  satelliteActiveMapper: null,
-  satelliteOraclesMapper: null,
-  activeSatellitesIds: null,
-  allSatellitesIds: null,
-  oraclesIds: null,
-  proposalsAmount: null,
-  satelliteGovActionsAmount: null,
-  finRequestsAmount: null,
-  changePage: () => {},
-  totalSatellitesCount: null,
-  satelliteMapperByAddress: null,
-  staelliteIdsByAddress: null,
-  activeSatellitesCount: null,
-  userSatellitesCount: null,
-  oracleSatellitesCount: null,
-}
-
-export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
-  satelliteMapper: {},
-  satelliteActiveMapper: {},
-  satelliteOraclesMapper: {},
-  activeSatellitesIds: [],
-  allSatellitesIds: [],
-  oraclesIds: [],
-  proposalsAmount: 0,
-  satelliteGovActionsAmount: 0,
-  finRequestsAmount: 0,
-  changePage: () => {},
-  totalSatellitesCount: 0,
-  satelliteMapperByAddress: {},
-  staelliteIdsByAddress: [],
-  activeSatellitesCount: 0,
-  userSatellitesCount: 0,
-  oracleSatellitesCount: 0,
 }
 
 // Filters & pagination ----------
@@ -136,4 +98,52 @@ export const SATELLITE_DEFFAULT_FILTERS = {
     where: {},
     orderBy: {},
   },
+}
+
+export const DEFAULT_SATELLITE_PAGINATION_DATA = {
+  [SATELLITE_PAGINATION_ALL]: 1,
+  [SATELLITE_PAGINATION_ACTIVE]: 1,
+  [SATELLITE_PAGINATION_ORACLES]: 1,
+  [SATELLITE_PAGINATION_BY_ADDRESS]: 1,
+}
+
+// context data
+export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = {
+  satelliteMapper: null,
+  satelliteActiveMapper: null,
+  satelliteOraclesMapper: null,
+  activeSatellitesIds: null,
+  allSatellitesIds: null,
+  oraclesIds: null,
+  proposalsAmount: null,
+  satelliteGovActionsAmount: null,
+  finRequestsAmount: null,
+  changePage: () => {},
+  totalSatellitesCount: null,
+  satelliteMapperByAddress: null,
+  staelliteIdsByAddress: null,
+  activeSatellitesCount: null,
+  userSatellitesCount: null,
+  oracleSatellitesCount: null,
+  paginationState: null,
+}
+
+export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
+  satelliteMapper: {},
+  satelliteActiveMapper: {},
+  satelliteOraclesMapper: {},
+  activeSatellitesIds: [],
+  allSatellitesIds: [],
+  oraclesIds: [],
+  proposalsAmount: 0,
+  satelliteGovActionsAmount: 0,
+  finRequestsAmount: 0,
+  changePage: () => {},
+  paginationState: DEFAULT_SATELLITE_PAGINATION_DATA,
+  totalSatellitesCount: 0,
+  satelliteMapperByAddress: {},
+  staelliteIdsByAddress: [],
+  activeSatellitesCount: 0,
+  userSatellitesCount: 0,
+  oracleSatellitesCount: 0,
 }

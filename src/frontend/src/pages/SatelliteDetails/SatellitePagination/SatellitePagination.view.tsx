@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 
@@ -9,17 +9,62 @@ import NewButton from 'app/App.components/Button/NewButton'
 // style
 import { SatellitePaginationStyled } from './SatellitePagination.style'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
+import { useEffect, useMemo } from 'react'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PAGINATION_ALL,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITES_DATA_ALL_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
+import { sleep } from 'utils/api/sleep'
 
 const SatellitePagination = () => {
   const { satelliteId } = useParams()
-  const { allSatellitesIds } = useSatellitesContext()
+  const navigate = useNavigate()
+  const {
+    allSatellitesIds,
+    staelliteIdsByAddress,
+    changeSatellitesSubscriptionsList,
+    setSatelliteAddressToSubscribe,
+    changePage,
+    paginationState,
+  } = useSatellitesContext()
 
-  const currentSatelliteIndex = allSatellitesIds.findIndex(
+  const mergedSatelliteIds = useMemo(
+    () => [...staelliteIdsByAddress, ...allSatellitesIds],
+    [staelliteIdsByAddress, allSatellitesIds],
+  )
+
+  const currentSatelliteIndex = mergedSatelliteIds.findIndex(
     (activeSatelliteAddress) => activeSatelliteAddress === satelliteId,
   )
 
-  const prevSatelliteAddress = allSatellitesIds.at(currentSatelliteIndex - 1) ?? allSatellitesIds.at(-1)
-  const nextSatelliteAddress = allSatellitesIds.at(currentSatelliteIndex + 1) ?? allSatellitesIds.at(0)
+  const prevSatelliteAddress = mergedSatelliteIds.at(currentSatelliteIndex - 1) ?? mergedSatelliteIds.at(-1)
+  const nextSatelliteAddress = mergedSatelliteIds.at(currentSatelliteIndex + 1) ?? mergedSatelliteIds.at(0)
+
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITES_DATA_SINGLE_SUB]: true,
+      // [SATELLITE_DATA_SUB]: SATELLITES_DATA_ALL_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      setSatelliteAddressToSubscribe(null)
+    }
+  }, [])
+
+  const handlesatelliteAddressClick = async () => {
+    if (currentSatelliteIndex === mergedSatelliteIds.length - 1 && mergedSatelliteIds.length > 0) {
+      sleep(300)
+      changePage(paginationState[SATELLITE_PAGINATION_ALL] + 1, SATELLITE_PAGINATION_ALL)
+    } else {
+      navigate(`/satellites/satellite-details/${nextSatelliteAddress}`)
+    }
+  }
 
   return (
     <SatellitePaginationStyled>
@@ -35,10 +80,10 @@ const SatellitePagination = () => {
         </Link>
       ) : null}
       {nextSatelliteAddress ? (
-        <Link className="pagination-link next" to={`/satellites/satellite-details/${nextSatelliteAddress}`}>
+        <div className="pagination-link next" onClick={handlesatelliteAddressClick}>
           Next satellite
           <Icon id="arrow-obtuse-angle" />
-        </Link>
+        </div>
       ) : null}
     </SatellitePaginationStyled>
   )

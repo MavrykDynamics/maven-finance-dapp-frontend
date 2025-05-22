@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -30,13 +30,6 @@ import {
 import { useSatelliteVotes } from 'providers/SatellitesProvider/hooks/useSatelliteVotes'
 import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
 
-// consts
-import {
-  DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITE_DATA_SUB,
-  SATELLITE_PARTICIPATION_DATA_SUB,
-  SATELLITES_DATA_SINGLE_SUB,
-} from 'providers/SatellitesProvider/satellites.const'
 import { FatalError } from 'errors/error'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
 
@@ -46,14 +39,19 @@ export const SatelliteDetails = () => {
   const { fatal } = useToasterContext()
   const {
     satelliteMapper,
+    satelliteMapperByAddress,
     proposalsAmount,
     satelliteGovActionsAmount,
     finRequestsAmount,
     isLoading: isSatellitesLoading,
     setSatelliteAddressToSubscribe,
-    changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
-  const currentSatellite = satelliteMapper[satelliteId]
+  const mergedSatellitedMapper = useMemo(
+    () => ({ ...satelliteMapper, ...satelliteMapperByAddress }),
+    [satelliteMapper, satelliteMapperByAddress],
+  )
+
+  const currentSatellite = mergedSatellitedMapper[satelliteId]
 
   const { proposalParticipation, votingParticipation } = getSatelliteParticipation({
     satellite: currentSatellite,
@@ -64,21 +62,9 @@ export const SatelliteDetails = () => {
 
   const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
 
-  useEffect(() => {
-    changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
-      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
-    })
-
-    return () => {
-      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
-      setSatelliteAddressToSubscribe(null)
-    }
-  }, [])
-
   // check whether satellite exists, cuz address is stored in url and user can change it
   useEffect(() => {
-    if (satelliteId && satelliteMapper[satelliteId]) {
+    if (satelliteId && mergedSatellitedMapper[satelliteId]) {
       setSatelliteAddressToSubscribe(satelliteId)
       return
     }

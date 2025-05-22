@@ -77,7 +77,7 @@ export const BecomeSatellite = () => {
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
+      [SATELLITES_DATA_SINGLE_SUB]: true,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 

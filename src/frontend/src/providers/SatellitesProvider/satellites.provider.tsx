@@ -7,6 +7,7 @@ import { getSatellitesProviderReturnValue } from './helpers/satellites.utils'
 
 // consts
 import {
+  DEFAULT_SATELLITE_PAGINATION_DATA,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   DEFAULT_SATELLITES_CONTEXT,
   PaginationSatelliteType,
@@ -50,14 +51,6 @@ export type Props = {
   children: React.ReactNode
 }
 
-/**
- * NOTES:
- *
- * Single satellite sub: need to use SATELLITES_DATA_SINGLE_SUB sub type along with providing satellite address
- * via setSatelliteAddressToSubscribe, if this address is from indexer (userAddress, when isSatelliteTrue, or satelliteDelegatedTo)
- * you don't need to check whether satellite exists, if address can be modified by user, or we not sure whether satellite exists, we need to check it first
- * with apolloClient and CHECK_WHETHER_SATELLITE_EXISTS query, otherwise if satellite is not exists it will show infinity loader
- */
 export const SatellitesProvider = ({ children }: Props) => {
   const { handleApolloError } = useApolloContext()
 
@@ -71,12 +64,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [isLoading, setIsLoading] = useState(true)
 
   // Satellite filters --------------------
-  const [paginationState, setPaginationState] = useState(() => ({
-    [SATELLITE_PAGINATION_ALL]: 1,
-    [SATELLITE_PAGINATION_ACTIVE]: 1,
-    [SATELLITE_PAGINATION_ORACLES]: 1,
-    [SATELLITE_PAGINATION_BY_ADDRESS]: 1,
-  }))
+  const [paginationState, setPaginationState] = useState(() => DEFAULT_SATELLITE_PAGINATION_DATA)
 
   // query filters
   const [satelliteFilters, setSatelliteFilters] = useState<SatelliteFiltersType>(SATELLITE_DEFFAULT_FILTERS)
@@ -113,7 +101,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(SATELLITE_DATA_QUERY, {
-    skip: !satelliteAddressToSubscribe || activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_SINGLE_SUB,
+    skip: !satelliteAddressToSubscribe || !activeSubs[SATELLITES_DATA_SINGLE_SUB],
     variables: {
       ...defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS],
       satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].where,
@@ -132,7 +120,7 @@ export const SatellitesProvider = ({ children }: Props) => {
 
       setIsLoading(false)
     },
-    onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY'),
+    onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY|SATELLITES_DATA_SINGLE_SUB'),
   })
 
   useQueryWithRefetch(SATELLITE_DATA_QUERY, {
@@ -149,8 +137,8 @@ export const SatellitesProvider = ({ children }: Props) => {
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper,
-        allSatellitesIds: satelliteIds,
+        satelliteMapper: { ...prev.satelliteMapper, ...satelliteMapper },
+        allSatellitesIds: [...(prev.allSatellitesIds ?? []), ...satelliteIds],
       }))
 
       setIsLoading(false)
@@ -264,8 +252,9 @@ export const SatellitesProvider = ({ children }: Props) => {
         isPaginationLoading: isLoading,
       }),
       changePage,
+      paginationState,
     }),
-    [satellitesCtxState, satelliteAddressToSubscribe, activeSubs, isLoading, changePage],
+    [satellitesCtxState, satelliteAddressToSubscribe, activeSubs, isLoading, changePage, paginationState],
   )
 
   return <satellitesContext.Provider value={providerValue}>{children}</satellitesContext.Provider>

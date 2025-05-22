@@ -5,6 +5,7 @@ import { SatelliteDataQueryQuery, Satellite_Bool_Exp, Satellite_Order_By } from 
 import { normalizeSatellite, normalizeSatelliteVotes } from './helpers/satellites.normalizer'
 
 import {
+  DEFAULT_SATELLITE_PAGINATION_DATA,
   DELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
   INACTIVE_SATELLITE_STATUS,
@@ -44,6 +45,7 @@ export type SatellitesContextState = {
 
   // pagination
   changePage: (newPage: number, mapperType: PaginationSatelliteType) => void
+  paginationState: typeof DEFAULT_SATELLITE_PAGINATION_DATA
   totalSatellitesCount: number
   activeSatellitesCount: number
   userSatellitesCount: number
@@ -69,6 +71,7 @@ export type SatellitesDataSubsType =
   | null
 export type SatellitesSubsRecordType = {
   [SATELLITE_DATA_SUB]: SatellitesDataSubsType
+  [SATELLITES_DATA_SINGLE_SUB]: boolean
   [SATELLITE_PARTICIPATION_DATA_SUB]: boolean
 }
 
