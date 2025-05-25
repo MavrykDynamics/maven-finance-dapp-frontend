@@ -57,14 +57,14 @@ const SatellitePagination = () => {
     }
   }, [])
 
-  const handlesatelliteAddressClick = async () => {
-    if (currentSatelliteIndex === mergedSatelliteIds.length - 1 && mergedSatelliteIds.length > 0) {
-      sleep(300)
-      changePage(paginationState[SATELLITE_PAGINATION_ALL] + 1, SATELLITE_PAGINATION_ALL)
-    } else {
-      navigate(`/satellites/satellite-details/${nextSatelliteAddress}`)
-    }
-  }
+  // const handlesatelliteAddressClick = async () => {
+  //   if (currentSatelliteIndex === mergedSatelliteIds.length - 1 && mergedSatelliteIds.length > 0) {
+  //     sleep(300)
+  //     changePage(paginationState[SATELLITE_PAGINATION_ALL] + 1, SATELLITE_PAGINATION_ALL)
+  //   } else {
+  //     navigate(`/satellites/satellite-details/${nextSatelliteAddress}`)
+  //   }
+  // }
 
   return (
     <SatellitePaginationStyled>
@@ -80,10 +80,10 @@ const SatellitePagination = () => {
         </Link>
       ) : null}
       {nextSatelliteAddress ? (
-        <div className="pagination-link next" onClick={handlesatelliteAddressClick}>
+        <Link className="pagination-link next" to={`/satellites/satellite-details/${nextSatelliteAddress}`}>
           Next satellite
           <Icon id="arrow-obtuse-angle" />
-        </div>
+        </Link>
       ) : null}
     </SatellitePaginationStyled>
   )
