@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { SatellitesContextState } from './satellites.provider.types'
+import { SatelliteQueryFilterType, SatellitesContextState } from './satellites.provider.types'
 
 // actions
 export const DELEGATE_ACTION = 'delegate'
@@ -126,6 +126,7 @@ export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = 
   userSatellitesCount: null,
   oracleSatellitesCount: null,
   paginationState: null,
+  updateSatelliteQueryFilters: null,
 }
 
 export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
@@ -146,4 +147,5 @@ export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   activeSatellitesCount: 0,
   userSatellitesCount: 0,
   oracleSatellitesCount: 0,
+  updateSatelliteQueryFilters: () => {},
 }

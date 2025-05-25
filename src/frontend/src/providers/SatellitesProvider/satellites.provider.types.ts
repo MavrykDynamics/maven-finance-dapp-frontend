@@ -45,6 +45,11 @@ export type SatellitesContextState = {
 
   // pagination
   changePage: (newPage: number, mapperType: PaginationSatelliteType) => void
+  updateSatelliteQueryFilters: (
+    queryFilters: Partial<SatelliteQueryFilterType>,
+    vaultType: PaginationSatelliteType,
+  ) => void
+
   paginationState: typeof DEFAULT_SATELLITE_PAGINATION_DATA
   totalSatellitesCount: number
   activeSatellitesCount: number

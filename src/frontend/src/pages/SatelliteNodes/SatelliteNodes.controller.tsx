@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 // consts
 import {
-  calculateSlicePositions,
   getPageNumber,
   PAGINATION_SIDE_RIGHT,
   SATELITES_NODES_LIST_NAME,
@@ -11,7 +10,6 @@ import {
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { NOT_STAKING_MVN_TEXT } from 'app/App.components/Info/Banners/banners.texts'
-import { handleFilterSatellites, handleSortSatellites } from './SatelliteNodes.helpers'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -41,6 +39,12 @@ import { Info } from 'app/App.components/Info/Info.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
+import { useDebouncedSearch } from 'app/App.hooks/useDebouncedSerach'
+import {
+  getSatelliteOrderByQuery,
+  getSatelliteSearchQueryForWhereFilter,
+} from 'providers/SatellitesProvider/helpers/satellite.filters'
+import { Satellite_Bool_Exp } from 'utils/__generated__/graphql'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -59,15 +63,41 @@ const SatelliteNodes = () => {
   const {
     allSatellitesIds,
     satelliteMapper,
-    proposalsAmount,
-    satelliteGovActionsAmount,
-    finRequestsAmount,
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
     changePage,
-
+    updateSatelliteQueryFilters,
     totalSatellitesCount,
   } = useSatellitesContext()
+
+  const [ddIsOpen, setDdIsOpen] = useState(false)
+  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
+
+  // Search --------------
+  const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
+  const hasTouchedInput = useRef(false)
+
+  const currentPage = useMemo(() => getPageNumber(search, SATELITES_NODES_LIST_NAME), [search])
+
+  const applyServerFilters = useCallback(() => {
+    let whereQuery: { where: Partial<Satellite_Bool_Exp> } = { where: {} }
+
+    const orderByQuery = getSatelliteOrderByQuery(chosenDdItem?.value ?? '')
+
+    if (hasTouchedInput.current) {
+      const searchFilterQuery = getSatelliteSearchQueryForWhereFilter(debouncedValue)
+
+      whereQuery = {
+        ...whereQuery,
+        where: { ...whereQuery.where, ...searchFilterQuery.where },
+      }
+    }
+
+    const query = { ...whereQuery, ...orderByQuery }
+
+    updateSatelliteQueryFilters(query, SATELLITE_PAGINATION_ALL)
+    // setIsPendingQueryWhenFilters(true)
+  }, [chosenDdItem?.value, updateSatelliteQueryFilters, debouncedValue])
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -80,45 +110,23 @@ const SatelliteNodes = () => {
     }
   }, [])
 
-  const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [inputSearch, setInputSearch] = useState('')
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
+  console.log('render SatelliteNodes', isSatellitesLoading)
 
-  const currentPage = useMemo(() => getPageNumber(search, SATELITES_NODES_LIST_NAME), [search])
+  // search filter
+  useEffect(() => {
+    if (!hasTouchedInput.current) return
+    applyServerFilters()
+  }, [debouncedValue])
+
+  useEffect(() => {
+    if (chosenDdItem?.value) {
+      applyServerFilters()
+    }
+  }, [chosenDdItem?.value])
 
   useEffect(() => {
     changePage(currentPage, SATELLITE_PAGINATION_ALL)
   }, [changePage, currentPage])
-
-  useEffect(() => {
-    if (isSatellitesLoading) return
-
-    const filteredSatellitesIds = [...allSatellitesIds]
-      .filter(handleFilterSatellites(inputSearch, satelliteMapper))
-      .sort(
-        handleSortSatellites({
-          sortType: chosenDdItem?.text ?? '',
-          satelliteMapper,
-          proposalsAmount,
-          satelliteGovActionsAmount,
-          finRequestsAmount,
-        }),
-      )
-
-    setFilteredSatelliteList(filteredSatellitesIds)
-  }, [
-    allSatellitesIds,
-    chosenDdItem?.text,
-    finRequestsAmount,
-    inputSearch,
-    isSatellitesLoading,
-    proposalsAmount,
-    satelliteGovActionsAmount,
-    satelliteMapper,
-  ])
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setInputSearch(e.target.value)
 
   const handleSelect = (e: string) => {
     const chosenItem = itemsForDropDown.find((item) => item.text === e)
@@ -160,8 +168,11 @@ const SatelliteNodes = () => {
                 type="text"
                 kind={'search'}
                 placeholder="Search by address or name..."
-                onChange={handleSearch}
-                value={inputSearch}
+                onChange={(e) => {
+                  hasTouchedInput.current = true
+                  handleChange(e.target.value)
+                }}
+                value={inputValue}
               />
               <DropdownContainer>
                 <h4>Order by:</h4>
@@ -176,9 +187,9 @@ const SatelliteNodes = () => {
               </DropdownContainer>
             </SatelliteSearchFilter>
 
-            {filteredSatelliteList ? (
+            {allSatellitesIds ? (
               <div className={`list`}>
-                {filteredSatelliteList.map((satelliteAddress) => {
+                {allSatellitesIds.map((satelliteAddress) => {
                   if (!satelliteMapper[satelliteAddress]) return null
                   return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
                 })}

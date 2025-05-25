@@ -29,6 +29,7 @@ import { SATELLITES_METRICS_DATA } from './queries/satellitesMetricsData.query'
 // types
 import {
   SatelliteFiltersType,
+  SatelliteQueryFilterType,
   SatellitesContext,
   SatellitesContextState,
   SatellitesSubsRecordType,
@@ -44,6 +45,8 @@ import {
   getSatelliteOracleFilters,
 } from './helpers/satellite.filters'
 import { SatellitesCountsSchema } from './schemas/satellitesCount.schema'
+import { mergeFilters } from 'utils/merge'
+import { Satellite_Bool_Exp, Satellite_Order_By } from 'utils/__generated__/graphql'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -72,12 +75,29 @@ export const SatellitesProvider = ({ children }: Props) => {
   const defaultSatelliteFilters = useMemo(
     () =>
       ({
-        [SATELLITE_PAGINATION_ALL]: { ...getSatelliteAllFilters() },
-        [SATELLITE_PAGINATION_BY_ADDRESS]: { ...getSatelliteByAddressFilters(satelliteAddressToSubscribe ?? '') },
-        [SATELLITE_PAGINATION_ACTIVE]: { ...getSatelliteActiveFilters() },
-        [SATELLITE_PAGINATION_ORACLES]: { ...getSatelliteOracleFilters() },
+        [SATELLITE_PAGINATION_ALL]: mergeFilters<Satellite_Bool_Exp, Satellite_Order_By, PaginationSatelliteType>(
+          getSatelliteAllFilters,
+          satelliteFilters,
+          SATELLITE_PAGINATION_ALL,
+        ),
+
+        [SATELLITE_PAGINATION_BY_ADDRESS]: {
+          ...getSatelliteByAddressFilters(satelliteAddressToSubscribe ?? ''),
+        },
+
+        [SATELLITE_PAGINATION_ACTIVE]: mergeFilters<Satellite_Bool_Exp, Satellite_Order_By, PaginationSatelliteType>(
+          getSatelliteActiveFilters,
+          satelliteFilters,
+          SATELLITE_PAGINATION_ACTIVE,
+        ),
+
+        [SATELLITE_PAGINATION_ORACLES]: mergeFilters<Satellite_Bool_Exp, Satellite_Order_By, PaginationSatelliteType>(
+          getSatelliteOracleFilters,
+          satelliteFilters,
+          SATELLITE_PAGINATION_ORACLES,
+        ),
       } as unknown as SatelliteFiltersType),
-    [satelliteAddressToSubscribe],
+    [satelliteAddressToSubscribe, satelliteFilters],
   )
 
   /**
@@ -137,8 +157,8 @@ export const SatellitesProvider = ({ children }: Props) => {
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper: { ...prev.satelliteMapper, ...satelliteMapper },
-        allSatellitesIds: [...(prev.allSatellitesIds ?? []), ...satelliteIds],
+        satelliteMapper: satelliteMapper,
+        allSatellitesIds: satelliteIds,
       }))
 
       setIsLoading(false)
@@ -241,6 +261,13 @@ export const SatellitesProvider = ({ children }: Props) => {
     [paginationState],
   )
 
+  const updateSatelliteQueryFilters = useCallback(
+    (queryFilters: Partial<SatelliteQueryFilterType>, vaultType: PaginationSatelliteType) => {
+      setSatelliteFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
+    },
+    [],
+  )
+
   const providerValue = useMemo(
     () => ({
       ...getSatellitesProviderReturnValue({
@@ -252,9 +279,18 @@ export const SatellitesProvider = ({ children }: Props) => {
         isPaginationLoading: isLoading,
       }),
       changePage,
+      updateSatelliteQueryFilters,
       paginationState,
     }),
-    [satellitesCtxState, satelliteAddressToSubscribe, activeSubs, isLoading, changePage, paginationState],
+    [
+      satellitesCtxState,
+      updateSatelliteQueryFilters,
+      satelliteAddressToSubscribe,
+      activeSubs,
+      isLoading,
+      changePage,
+      paginationState,
+    ],
   )
 
   return <satellitesContext.Provider value={providerValue}>{children}</satellitesContext.Provider>
