@@ -154,58 +154,58 @@ const SatelliteNodes = () => {
       ) : null}
 
       <PageContent className="mt-30">
-        {isSatellitesLoading ? (
-          <DataLoaderWrapper>
-            <ClockLoader width={150} height={150} />
-            <div className="text">Loading satellites data</div>
-          </DataLoaderWrapper>
-        ) : (
-          <SatelliteNodesStyled>
-            <SatelliteSearchFilter>
-              <Input
-                type="text"
-                kind={'search'}
-                placeholder="Search by address or name..."
-                onChange={(e) => {
-                  hasTouchedInput.current = true
-                  handleChange(e.target.value)
-                }}
-                value={inputValue}
+        <SatelliteNodesStyled>
+          <SatelliteSearchFilter>
+            <Input
+              type="text"
+              kind={'search'}
+              placeholder="Search by address or name..."
+              onChange={(e) => {
+                hasTouchedInput.current = true
+                handleChange(e.target.value)
+              }}
+              value={inputValue}
+              disabled={isSatellitesLoading}
+            />
+            <DropdownContainer>
+              <h4>Order by:</h4>
+              <DropDown
+                placeholder="Choose option"
+                isOpen={ddIsOpen}
+                setIsOpen={setDdIsOpen}
+                itemSelected={chosenDdItem?.text}
+                items={ddItems}
+                clickOnItem={handleSelect}
+                disabled={isSatellitesLoading}
               />
-              <DropdownContainer>
-                <h4>Order by:</h4>
-                <DropDown
-                  placeholder="Choose option"
-                  isOpen={ddIsOpen}
-                  setIsOpen={setDdIsOpen}
-                  itemSelected={chosenDdItem?.text}
-                  items={ddItems}
-                  clickOnItem={handleSelect}
-                />
-              </DropdownContainer>
-            </SatelliteSearchFilter>
+            </DropdownContainer>
+          </SatelliteSearchFilter>
 
-            {allSatellitesIds ? (
-              <div className={`list`}>
-                {allSatellitesIds.map((satelliteAddress) => {
-                  if (!satelliteMapper[satelliteAddress]) return null
-                  return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
-                })}
+          {isSatellitesLoading ? (
+            <DataLoaderWrapper>
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading satellites data</div>
+            </DataLoaderWrapper>
+          ) : allSatellitesIds ? (
+            <div className={`list`}>
+              {allSatellitesIds.map((satelliteAddress) => {
+                if (!satelliteMapper[satelliteAddress]) return null
+                return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+              })}
 
-                <Pagination
-                  itemsCount={totalSatellitesCount}
-                  side={PAGINATION_SIDE_RIGHT}
-                  listName={SATELITES_NODES_LIST_NAME}
-                />
-              </div>
-            ) : (
-              <EmptyContainer>
-                <img src="/images/not-found.svg" alt=" No satellites to show" />
-                <figcaption> No satellites to show</figcaption>
-              </EmptyContainer>
-            )}
-          </SatelliteNodesStyled>
-        )}
+              <Pagination
+                itemsCount={totalSatellitesCount}
+                side={PAGINATION_SIDE_RIGHT}
+                listName={SATELITES_NODES_LIST_NAME}
+              />
+            </div>
+          ) : (
+            <EmptyContainer>
+              <img src="/images/not-found.svg" alt=" No satellites to show" />
+              <figcaption> No satellites to show</figcaption>
+            </EmptyContainer>
+          )}
+        </SatelliteNodesStyled>
 
         <SatellitesSideBar />
       </PageContent>
