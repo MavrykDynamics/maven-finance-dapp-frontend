@@ -82,7 +82,7 @@ const SatelliteNodes = () => {
   const applyServerFilters = useCallback(() => {
     let whereQuery: { where: Partial<Satellite_Bool_Exp> } = { where: {} }
 
-    const orderByQuery = getSatelliteOrderByQuery(chosenDdItem?.value ?? '')
+    const orderByQuery = getSatelliteOrderByQuery(chosenDdItem?.text ?? '')
 
     if (hasTouchedInput.current) {
       const searchFilterQuery = getSatelliteSearchQueryForWhereFilter(debouncedValue)
@@ -97,7 +97,7 @@ const SatelliteNodes = () => {
 
     updateSatelliteQueryFilters(query, SATELLITE_PAGINATION_ALL)
     // setIsPendingQueryWhenFilters(true)
-  }, [chosenDdItem?.value, updateSatelliteQueryFilters, debouncedValue])
+  }, [chosenDdItem?.text, updateSatelliteQueryFilters, debouncedValue])
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -110,8 +110,6 @@ const SatelliteNodes = () => {
     }
   }, [])
 
-  console.log('render SatelliteNodes', isSatellitesLoading)
-
   // search filter
   useEffect(() => {
     if (!hasTouchedInput.current) return
@@ -119,10 +117,10 @@ const SatelliteNodes = () => {
   }, [debouncedValue])
 
   useEffect(() => {
-    if (chosenDdItem?.value) {
+    if (chosenDdItem?.text) {
       applyServerFilters()
     }
-  }, [chosenDdItem?.value])
+  }, [chosenDdItem?.text])
 
   useEffect(() => {
     changePage(currentPage, SATELLITE_PAGINATION_ALL)

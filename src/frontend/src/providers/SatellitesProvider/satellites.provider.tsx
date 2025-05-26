@@ -100,6 +100,9 @@ export const SatellitesProvider = ({ children }: Props) => {
     [satelliteAddressToSubscribe, satelliteFilters],
   )
 
+  console.log(defaultSatelliteFilters, 'defaultSatelliteFilters')
+  console.log(satelliteFilters, 'satelliteFilters')
+
   /**
    * SATELLITES_METRICS_DATA -> load proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
    * SATELLITE_DATA_QUERY -> load satellite by address
