@@ -98,6 +98,10 @@ export const VaultsFilters = styled.div`
       border-radius: 100px;
       cursor: pointer;
 
+      &:disabled {
+        background-color: ${({ theme }) => theme.buttonDisabled};
+      }
+
       svg {
         width: 20px;
         height: 20px;

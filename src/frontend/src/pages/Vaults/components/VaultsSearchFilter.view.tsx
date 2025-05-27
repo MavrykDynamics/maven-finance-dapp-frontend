@@ -222,6 +222,8 @@ export const VaultsSearchFilter = memo(() => {
     }
   }, [preparedCollateralAssets, preparedLoanAssets])
 
+  const hasSelectedFilters = useMemo(() => Object.keys(filterStatuses).length !== 0, [filterStatuses])
+
   return (
     <VaultsSearchFilterWrapper>
       <VaultsSearchFilterStyled>
@@ -265,7 +267,12 @@ export const VaultsSearchFilter = memo(() => {
           <div className="vaultFilterBtns">
             <Tooltip>
               <Tooltip.Trigger className="ml-3">
-                <Button kind="primary" size="large" onClick={applyServerFilters} disabled={isPendingQueryWhenFilters}>
+                <Button
+                  kind="primary"
+                  size="large"
+                  onClick={applyServerFilters}
+                  disabled={isPendingQueryWhenFilters || !hasSelectedFilters}
+                >
                   <Icon id="check-fill" fill="#160E3F" />
                 </Button>
               </Tooltip.Trigger>
