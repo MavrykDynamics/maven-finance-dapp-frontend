@@ -209,7 +209,7 @@ export const VaultsView = () => {
   const { actionWithArgs: handleMarkForLiquidation } = useContractAction(contractActionProps)
 
   const totalPages = useMemo(() => getTotalPages(currentVaultsCount, VAULTS_LIMIT), [currentVaultsCount])
-
+  console.log(isPendingQueryWhenFilters, 'isPendingQueryWhenFilters')
   return (
     <VaultsStyled>
       <SlidingTabButtons

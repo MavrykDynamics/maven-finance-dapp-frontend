@@ -148,6 +148,10 @@ export const VaultsProvider = ({ children }: Props) => {
 
   // reset user specific fields on user change
   useEffect(() => {
+    if (!userAddress) {
+      setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
+    }
     if (prevUserAddress !== userAddress) {
       setVaultsCtxState((prev) => ({
         ...prev,
@@ -155,7 +159,7 @@ export const VaultsProvider = ({ children }: Props) => {
         myVaultsIds: null,
       }))
     }
-  }, [userAddress])
+  }, [userAddress, prevUserAddress])
 
   // QUERY FOR PERMISSION VAULTS ( get vaults where user allowed to deposit)
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
@@ -203,6 +207,7 @@ export const VaultsProvider = ({ children }: Props) => {
         myVaultsMapper: { ...vaultsMapper },
         myVaultsIds: vaultsIds,
       }))
+
       setIsLoading(false)
       setIsPendingQueryWhenFilters(false)
     },

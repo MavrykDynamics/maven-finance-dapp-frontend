@@ -44,6 +44,7 @@ import {
   HIDE_VAULT_ZERO_BALANCES,
 } from '../utils/filterQueries'
 import { useDebouncedSearch } from 'app/App.hooks/useDebouncedSerach'
+import { useUserContext } from 'providers/UserProvider/user.provider'
 
 type Filters = Record<string, string>
 
@@ -72,6 +73,7 @@ export const VaultsSearchFilter = memo(() => {
   const hasAutoAppliedRef = useRef(false)
 
   const { marketsAddresses } = useLoansContext()
+  const { userAddress } = useUserContext()
   const { tokensMetadata } = useTokensContext()
   const { updateVaultQueryFilters, setIsPendingQueryWhenFilters, isPendingQueryWhenFilters, resetVaultFilters } =
     useVaultsContext()
@@ -158,6 +160,7 @@ export const VaultsSearchFilter = memo(() => {
   }
 
   const applyServerFilters = useCallback(() => {
+    if (tabId === 'my' && !userAddress) return
     let whereQuery: Partial<Advanced_Gql_Vault_With_Balances_Bool_Exp> = { where: {}, shadowWhere: {} } // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
 
     const { assets, sort, zero } = chosenDdItem
