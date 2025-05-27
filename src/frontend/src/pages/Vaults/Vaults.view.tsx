@@ -210,8 +210,6 @@ export const VaultsView = () => {
 
   const totalPages = useMemo(() => getTotalPages(currentVaultsCount, VAULTS_LIMIT), [currentVaultsCount])
 
-  console.log(isVaultsLoading, isPendingQueryWhenFilters)
-
   return (
     <VaultsStyled>
       <SlidingTabButtons

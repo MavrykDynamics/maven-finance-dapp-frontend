@@ -165,7 +165,6 @@ export const VaultsProvider = ({ children }: Props) => {
   useEffect(() => {
     if (!userAddress && (isLoading || isPendingQueryWhenFilters)) {
       setIsLoading(false)
-      setIsPendingQueryWhenFilters(false)
     }
   }, [isLoading, userAddress, isPendingQueryWhenFilters])
 

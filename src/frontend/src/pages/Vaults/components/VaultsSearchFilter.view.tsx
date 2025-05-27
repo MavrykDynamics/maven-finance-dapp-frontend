@@ -45,6 +45,8 @@ import {
 } from '../utils/filterQueries'
 import { useDebouncedSearch } from 'app/App.hooks/useDebouncedSerach'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type Filters = Record<string, string>
 
@@ -259,6 +261,17 @@ export const VaultsSearchFilter = memo(() => {
               disabled={isPendingQueryWhenFilters}
             />
           </div>
+
+          <div className="vaultFilterBtns">
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Button kind="primary" size="large" onClick={applyServerFilters} disabled={isPendingQueryWhenFilters}>
+                  <Icon id="check-fill" fill="#160E3F" />
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content>Apply selected filters</Tooltip.Content>
+            </Tooltip>
+          </div>
         </VaultsFilters>
       </VaultsSearchFilterStyled>
       <VaultsFilterOptions>
@@ -270,12 +283,6 @@ export const VaultsSearchFilter = memo(() => {
           >
             Hide vaults with a loan balance of 0
           </Checkbox>
-        </div>
-
-        <div className="vaultFilterBtns">
-          <Button kind="primary" size="large" onClick={applyServerFilters} disabled={isPendingQueryWhenFilters}>
-            Apply
-          </Button>
         </div>
       </VaultsFilterOptions>
     </VaultsSearchFilterWrapper>

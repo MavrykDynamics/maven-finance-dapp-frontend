@@ -81,22 +81,36 @@ export const VaultsFilters = styled.div`
       width: 275px;
     }
   }
+
+  .vaultFilterBtns {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-left: 12px;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 10px;
+      cursor: pointer;
+
+      svg {
+        width: 20px;
+        height: 20px;
+        stroke-width: 1px;
+      }
+    }
+  }
 `
 
 export const VaultsFilterOptions = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  .vaultFilterBtns {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-
-    button {
-      height: 34px;
-    }
-  }
 `
 
 export const VaultsCardDropDown = styled.div<{ theme: MavenTheme }>`
