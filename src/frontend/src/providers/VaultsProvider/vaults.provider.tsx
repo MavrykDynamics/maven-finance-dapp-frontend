@@ -83,7 +83,7 @@ export const VaultsProvider = ({ children }: Props) => {
         [PAGINATION_MY]: {
           where: {
             is_open: { _eq: true },
-            owner_address: { _eq: userAddress },
+            owner_address: { _eq: userAddress !== null ? userAddress : undefined },
             ...(marketAddress
               ? {
                   loan_token_address: {
@@ -97,7 +97,10 @@ export const VaultsProvider = ({ children }: Props) => {
             creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_MY].orderBy,
           },
-          shadowWhere: { ...vaultFilters[PAGINATION_MY].shadowWhere, owner: { address: { _eq: userAddress } } },
+          shadowWhere: {
+            ...vaultFilters[PAGINATION_MY].shadowWhere,
+            owner: { address: { _eq: userAddress !== null ? userAddress : undefined } },
+          },
         },
         [PAGINATION_PERMISSIONED]: {
           where: (() => {
@@ -148,10 +151,6 @@ export const VaultsProvider = ({ children }: Props) => {
 
   // reset user specific fields on user change
   useEffect(() => {
-    if (!userAddress) {
-      setIsLoading(false)
-      setIsPendingQueryWhenFilters(false)
-    }
     if (prevUserAddress !== userAddress) {
       setVaultsCtxState((prev) => ({
         ...prev,
@@ -160,6 +159,15 @@ export const VaultsProvider = ({ children }: Props) => {
       }))
     }
   }, [userAddress, prevUserAddress])
+
+  // if no user address we can query for user vaults ot permissioned vaults
+  // so we reset the loading state in case user address is not set
+  useEffect(() => {
+    if (!userAddress && (isLoading || isPendingQueryWhenFilters)) {
+      setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
+    }
+  }, [isLoading, userAddress, isPendingQueryWhenFilters])
 
   // QUERY FOR PERMISSION VAULTS ( get vaults where user allowed to deposit)
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
