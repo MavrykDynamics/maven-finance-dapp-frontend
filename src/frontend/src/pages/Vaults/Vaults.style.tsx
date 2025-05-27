@@ -95,7 +95,7 @@ export const VaultsFilters = styled.div`
       width: 40px;
       height: 40px;
       padding: 0;
-      border-radius: 10px;
+      border-radius: 100px;
       cursor: pointer;
 
       svg {
