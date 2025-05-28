@@ -76,6 +76,8 @@ export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = 
   proposalsAmount: null,
   satelliteGovActionsAmount: null,
   finRequestsAmount: null,
+  changePage: () => {},
+  totalSatellitesCount: null,
 }
 
 export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
@@ -86,4 +88,8 @@ export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   proposalsAmount: 0,
   satelliteGovActionsAmount: 0,
   finRequestsAmount: 0,
+  changePage: () => {},
+  totalSatellitesCount: 0,
 }
+
+export const SATELLITES_LIMIT = 5

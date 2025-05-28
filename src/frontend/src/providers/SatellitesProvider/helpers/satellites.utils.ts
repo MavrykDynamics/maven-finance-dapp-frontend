@@ -1,4 +1,4 @@
-import {calcPercent} from 'utils/calcFunctions'
+import { calcPercent } from 'utils/calcFunctions'
 
 import {
   EMPTY_SATELLITES_CONTEXT,
@@ -20,7 +20,7 @@ import {
   SatellitesContextState,
   SatellitesSubsRecordType,
 } from '../satellites.provider.types'
-import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
+import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
 import {
   STATUS_FLAG_DOWN,
   STATUS_FLAG_UP,
@@ -111,12 +111,14 @@ export const getSatellitesProviderReturnValue = ({
   activeSubs,
   changeSatellitesSubscriptionsList,
   setSatelliteAddressToSubscribe,
+  isPaginationLoading,
 }: {
   satellitesCtxState: DeepNullable<SatellitesContextState>
   satelliteAddressToSubscribe: string | null
   activeSubs: SatellitesSubsRecordType
   changeSatellitesSubscriptionsList: SatellitesContext['changeSatellitesSubscriptionsList']
   setSatelliteAddressToSubscribe: SatellitesContext['setSatelliteAddressToSubscribe']
+  isPaginationLoading: boolean
 }) => {
   const {
     satelliteGovActionsAmount,
@@ -168,7 +170,8 @@ export const getSatellitesProviderReturnValue = ({
     (activeSubs[SATELLITE_DATA_SUB] === SATELLITES_DATA_ACTIVE_SUB && !activeSatellitesIds) ||
     isLoadingSingleSatellite ||
     isLoadingAllSatellites ||
-    isLoadingSatelliteParticipation
+    isLoadingSatelliteParticipation ||
+    isPaginationLoading
 
   // if provider is loading smth return loading true and default empty context (nonNullable)
   if (isLoading) {

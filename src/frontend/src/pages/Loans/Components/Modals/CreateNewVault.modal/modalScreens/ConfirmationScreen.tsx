@@ -44,7 +44,7 @@ export const ConfirmationScreen = () => {
     contractAddresses: { lendingControllerAddress },
     globalLoadingState: { isActionActive },
   } = useDappConfigContext()
-  const { vaultsMapper } = useVaultsContext()
+  const { myVaultsMapper } = useVaultsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -62,7 +62,7 @@ export const ConfirmationScreen = () => {
     config: { daoFee },
   } = useLoansContext()
 
-  const currentVault = vaultsMapper[newVault.address]
+  const currentVault = myVaultsMapper[newVault.address]
   const { vault: vaultData } = useFullVault(currentVault)
 
   const {

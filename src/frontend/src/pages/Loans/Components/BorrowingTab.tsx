@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { TokenAddressType } from 'providers/TokensProvider/tokens.provider.types'
@@ -20,6 +20,17 @@ import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useLocation, useNavigate } from 'react-router-dom'
+import {
+  DEFAULT_VAULTS_ACTIVE_SUBS,
+  PAGINATION_MY,
+  VAULTS_DATA,
+  VAULTS_LIMIT,
+  VAULTS_USER_ALL,
+} from 'providers/VaultsProvider/vaults.provider.consts'
+import { ClockLoader } from 'app/App.components/Loader/Loader.view'
+import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
+import { BORROW_LIST_NAME, getPageNumber, getTotalPages } from 'app/App.components/Pagination/pagination.consts'
+import Pagination from 'app/App.components/Pagination/Pagination.view'
 
 type BorrowingTabPropsType = {
   loanTokenAddress: TokenAddressType
@@ -32,7 +43,16 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
   const { openCreateVaultPopup } = useLoansPopupsContext()
   const { tokensMetadata, tokensPrices } = useTokensContext()
-  const { myVaultsIds, vaultsMapper } = useVaultsContext()
+  const {
+    myVaultsIds,
+    myVaultsMapper,
+    changeVaultsSubscriptionsList,
+    isLoading: isVaultsLoading,
+    vaultsPaginationStats: { my: myVaultsCount },
+    changePage,
+    changeUserVaultsQueryBasedOnMarket,
+  } = useVaultsContext()
+
   const { userAddress } = useUserContext()
   const {
     globalLoadingState: { isActionActive },
@@ -41,21 +61,53 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
     config: { daoFee },
   } = useLoansContext()
 
+  // Subscribe to fetch only user vaults
+  useEffect(() => {
+    changeVaultsSubscriptionsList({
+      [VAULTS_DATA]: VAULTS_USER_ALL,
+    })
+
+    return () => {
+      changeVaultsSubscriptionsList(DEFAULT_VAULTS_ACTIVE_SUBS)
+    }
+  }, [])
+
+  // URL pagination if user has more than 10 vaults per market
+  const currentPage = useMemo(() => getPageNumber(location.search, BORROW_LIST_NAME), [location.search])
+
+  useEffect(() => {
+    changePage(currentPage, PAGINATION_MY)
+  }, [currentPage])
+
   const loanToken = getTokenDataByAddress({ tokensMetadata, tokensPrices, tokenAddress: loanTokenAddress })
+
+  // set market address for the user queryto fetch only vaults for this market, by default it is emty string
+  // so it will fetch all user vaults
+  useEffect(() => {
+    if (loanToken?.address) {
+      changeUserVaultsQueryBasedOnMarket(loanToken.address)
+    }
+
+    return () => {
+      changeUserVaultsQueryBasedOnMarket(null)
+    }
+  }, [changeUserVaultsQueryBasedOnMarket, loanToken?.address])
 
   const [showZeroVaults, setShowZeroVaults] = useState(false)
 
   const userMarketVaultsIds = useMemo(
     () =>
       myVaultsIds.filter((vaultId) => {
-        const vault = vaultsMapper[vaultId]
+        const vault = myVaultsMapper[vaultId]
 
         if (vault.borrowedTokenAddress !== loanTokenAddress) return false
 
         return showZeroVaults ? vault.collateralData.find(({ amount }) => amount > 0) || vault.borrowedAmount : true
       }),
-    [loanTokenAddress, myVaultsIds, showZeroVaults, vaultsMapper],
+    [myVaultsIds, myVaultsMapper, loanTokenAddress, showZeroVaults],
   )
+  // get total pages for pagination
+  const totalPages = useMemo(() => getTotalPages(myVaultsCount, VAULTS_LIMIT), [myVaultsCount])
 
   if (!loanToken || !loanToken.rate) return null
 
@@ -71,7 +123,12 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
   return (
     <BorrowingTabStyled>
-      {userMarketVaultsIds.length ? (
+      {isVaultsLoading ? (
+        <DataLoaderWrapper>
+          <ClockLoader width={150} height={150} />
+          <div className="text">Loading vaults...</div>
+        </DataLoaderWrapper>
+      ) : userMarketVaultsIds.length ? (
         <>
           <div className="title-block">
             <H2Title>Your {symbol} Vaults</H2Title>
@@ -107,9 +164,10 @@ export const BorrowingTab = ({ marketAvaliableLiquidity, loanTokenAddress }: Bor
 
           <VaultsList>
             {userMarketVaultsIds.map((vaultId) => {
-              const vault = vaultsMapper[vaultId]
+              const vault = myVaultsMapper[vaultId]
               return <BorrowingExpandCard isOwner vault={vault} key={vault.address} DAOFee={daoFee} />
             })}
+            <Pagination itemsCount={totalPages} listName={BORROW_LIST_NAME} />
           </VaultsList>
         </>
       ) : (

@@ -68,6 +68,8 @@ export const dark = {
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
   // const colors
   cyanColor,
+  // disabled colors
+  buttonDisabled: '#5A5A6E',
 }
 
 export const light = {
@@ -136,6 +138,8 @@ export const light = {
   forTabs: 'linear-gradient(90deg, #03C9A3 0.31%, #8D86EB 99.97%)',
   // const colors
   cyanColor,
+  // disabled colors
+  buttonDisabled: '#5A5A6E',
 }
 
 export const space = {
@@ -204,6 +208,8 @@ export const space = {
   forTabs: 'linear-gradient(90deg, #86D4C9 0.31%, #8D86EB 99.97%)',
   // const colors
   cyanColor,
+  // disabled colors
+  buttonDisabled: '#5A5A6E',
 }
 
 type Themes = {

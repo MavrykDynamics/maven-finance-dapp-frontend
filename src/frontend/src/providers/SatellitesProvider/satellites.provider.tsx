@@ -1,10 +1,11 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // helpers
 import {
   ACTIVE_SATELLITES_DATA_QUERY,
   ALL_SATELLITES_DATA_QUERY,
   ORACLES_SATELLITES_DATA_QUERY,
+  SATELLITE_AGGREGATE_COUNT,
   SATELLITE_DATA_QUERY,
 } from './queries/satellites.query'
 import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
@@ -20,6 +21,7 @@ import {
   SATELLITES_DATA_ALL_SUB,
   SATELLITES_DATA_ORACLES_SUB,
   SATELLITES_DATA_SINGLE_SUB,
+  SATELLITES_LIMIT,
 } from './satellites.const'
 import { SATELLITES_METRICS_DATA } from './queries/satellitesMetricsData.query'
 
@@ -53,6 +55,10 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [satelliteAddressToSubscribe, setSatelliteAddressToSubscribe] = useState<string | null>(null)
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
 
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
+
   /**
    * SATELLITES_METRICS_DATA -> load proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
    * SATELLITE_DATA_QUERY -> load satellite by address
@@ -77,6 +83,8 @@ export const SatellitesProvider = ({ children }: Props) => {
     skip: !satelliteAddressToSubscribe || activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_SINGLE_SUB,
     variables: {
       userAddress: satelliteAddressToSubscribe ?? '',
+      limit: SATELLITES_LIMIT,
+      offset: (currentPage - 1) * SATELLITES_LIMIT,
     },
     onCompleted: (data) => {
       const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
@@ -96,6 +104,8 @@ export const SatellitesProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(ALL_SATELLITES_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
+    fetchPolicy: 'network-only',
+    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
     onCompleted: (data) => {
       const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
@@ -106,12 +116,15 @@ export const SatellitesProvider = ({ children }: Props) => {
         activeSatellitesIds,
         oraclesIds,
       }))
+
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'ALL_SATELLITES_DATA_QUERY'),
   })
 
   useQueryWithRefetch(ACTIVE_SATELLITES_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ACTIVE_SUB,
+    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
     onCompleted: (data) => {
       const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
@@ -128,6 +141,7 @@ export const SatellitesProvider = ({ children }: Props) => {
 
   useQueryWithRefetch(ORACLES_SATELLITES_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ORACLES_SUB,
+    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
     onCompleted: (data) => {
       const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
 
@@ -142,20 +156,50 @@ export const SatellitesProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
   })
 
+  useQueryWithRefetch(SATELLITE_AGGREGATE_COUNT, {
+    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
+    fetchPolicy: 'network-only',
+    onCompleted: (data) => {
+      const {
+        satellite_aggregate: {
+          // @ts-expect-error // for some reason TS doesn't see aggregate type
+          aggregate: { count },
+        },
+      } = data ?? {}
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        totalSatellitesCount: count ?? 0,
+      }))
+    },
+    onError: (error) => handleApolloError(error, 'SATELLITE_AGGREGATE_COUNT'),
+  })
+
   const changeSatellitesSubscriptionsList = (newSkips: Partial<SatellitesSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }
 
+  const changePage = useCallback(
+    (newPage: number) => {
+      if (newPage === currentPage) return
+      setIsLoading(true)
+      setCurrentPage(newPage)
+    },
+    [currentPage],
+  )
+
   const providerValue = useMemo(
-    () =>
-      getSatellitesProviderReturnValue({
+    () => ({
+      ...getSatellitesProviderReturnValue({
         satellitesCtxState,
         satelliteAddressToSubscribe,
         activeSubs,
         changeSatellitesSubscriptionsList,
         setSatelliteAddressToSubscribe,
+        isPaginationLoading: isLoading,
       }),
-    [satellitesCtxState, activeSubs, satelliteAddressToSubscribe],
+      changePage,
+    }),
+    [satellitesCtxState, satelliteAddressToSubscribe, activeSubs, isLoading, changePage],
   )
 
   return <satellitesContext.Provider value={providerValue}>{children}</satellitesContext.Provider>

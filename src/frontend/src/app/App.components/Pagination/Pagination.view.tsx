@@ -9,7 +9,13 @@ import { PaginationArrow, PaginationWrapper } from './Pagination.style'
 
 import { LIST_NAMES_MAPPER, PaginationProps, PAGINATION_SIDE_RIGHT, updatePageInUrl } from './pagination.consts'
 
-const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, className }: PaginationProps) => {
+const Pagination = ({
+  itemsCount,
+  side = PAGINATION_SIDE_RIGHT,
+  listName,
+  className,
+  disabled = false,
+}: PaginationProps) => {
   const { pathname, search } = useLocation()
   const { page = {}, ...rest } = qs.parse(search, { ignoreQueryPrefix: true })
 
@@ -27,7 +33,7 @@ const Pagination = ({ itemsCount, side = PAGINATION_SIDE_RIGHT, listName, classN
   }, [currentPage])
 
   return pagesCount > 1 ? (
-    <PaginationWrapper className={className} $side={side}>
+    <PaginationWrapper className={className} $side={side} $disabled={disabled}>
       Page
       <div className="input_wrapper">
         <Input

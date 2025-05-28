@@ -27,6 +27,17 @@ export const VaultsStyled = styled.div<{ theme: MavenTheme }>`
       }
     }
   }
+
+  .filterClockWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-block: 24px;
+
+    b {
+      margin-left: 12px;
+    }
+  }
 `
 
 export const VaultsSearchFilterWrapper = styled.div`
@@ -70,6 +81,40 @@ export const VaultsFilters = styled.div`
       width: 275px;
     }
   }
+
+  .vaultFilterBtns {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-left: 12px;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 100px;
+      cursor: pointer;
+
+      &:disabled {
+        background-color: ${({ theme }) => theme.buttonDisabled};
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        stroke-width: 1px;
+      }
+    }
+  }
+`
+
+export const VaultsFilterOptions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `
 
 export const VaultsCardDropDown = styled.div<{ theme: MavenTheme }>`

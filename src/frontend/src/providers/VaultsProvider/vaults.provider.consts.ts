@@ -28,18 +28,56 @@ export const EMPTY_VAULTS_DASHBOARD_DATA: VaultsDashboardDataType = {
 
 export const EMPTY_VAULTS_CONTEXT: VaultsCtxState = {
   vaultsMapper: {},
+  myVaultsMapper: {},
+  permissionedVaultsMapper: {},
   myVaultsIds: [],
   allVaultsIds: [],
   permissionedVaultsIds: [],
-  vaultsTotalCount: 0,
+  vaultsPaginationStats: {
+    total: 0,
+    my: 0,
+    permissioned: 0,
+  },
   vaultsDashboardData: EMPTY_VAULTS_DASHBOARD_DATA,
 }
 
 export const DEFAULT_VAULTS_CONTEXT: NullableVaultsCtxState = {
   vaultsMapper: null,
+  myVaultsMapper: null,
+  permissionedVaultsMapper: null,
   myVaultsIds: null,
   allVaultsIds: null,
   permissionedVaultsIds: null,
   vaultsDashboardData: null,
-  vaultsTotalCount: 0,
+  vaultsPaginationStats: {
+    total: 0,
+    my: 0,
+    permissioned: 0,
+  },
+}
+
+// pagination
+export const VAULTS_LIMIT = 10
+export const PAGINATION_ALL = 'all'
+export const PAGINATION_MY = 'my'
+export const PAGINATION_PERMISSIONED = 'permissioned'
+
+export type PaginationVaultType = typeof PAGINATION_ALL | typeof PAGINATION_MY | typeof PAGINATION_PERMISSIONED
+
+export const VAULTS_DEFFAULT_FILTERS = {
+  [PAGINATION_ALL]: {
+    where: {},
+    orderBy: {},
+    shadowWhere: {},
+  },
+  [PAGINATION_MY]: {
+    where: {},
+    orderBy: {},
+    shadowWhere: {},
+  },
+  [PAGINATION_PERMISSIONED]: {
+    where: {},
+    orderBy: {},
+    shadowWhere: {},
+  },
 }

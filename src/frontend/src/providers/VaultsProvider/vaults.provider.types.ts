@@ -13,13 +13,20 @@ import {
   UPDATE_OPERATORS_ACTION,
   WITHDRAW_COLLATERAL_ACTION,
 } from './helpers/vaults.const'
-import { VAULTS_ALL, VAULTS_DATA, VAULTS_USER_ALL, VAULTS_USER_DEPOSITOR } from './vaults.provider.consts'
+import {
+  PaginationVaultType,
+  VAULTS_ALL,
+  VAULTS_DATA,
+  VAULTS_USER_ALL,
+  VAULTS_USER_DEPOSITOR,
+} from './vaults.provider.consts'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { ANY_USER, NONE_USER, WHITELIST_USERS } from 'pages/Loans/Loans.const'
 import {
   GetAllVaultsQueryQuery,
-  GetUserAllVaultsQueryQuery,
-  GetUserDepositorAllVaultsQueryQuery,
+  Gql_Vault_With_Balances_Bool_Exp,
+  Gql_Vault_With_Balances_Order_By,
+  Lending_Controller_Vault_Bool_Exp,
 } from 'utils/__generated__/graphql'
 
 // actions type
@@ -41,9 +48,14 @@ export type VaultsActionsType =
 export type VaultsContext = VaultsCtxState & {
   changeVaultsSubscriptionsList: (skips: Partial<VaultsSubsRecordType>) => void
   setVaultsDashboardData: (newDashboardData: VaultsDashboardDataType) => void
-  changePage: (newPage: number) => void
-  setIsLoading: (value: (((prevState: boolean) => boolean) | boolean)) => void
+  changePage: (newPage: number, mapperType: PaginationVaultType) => void
+  changeUserVaultsQueryBasedOnMarket: (marketAddress: string | null) => void
+  updateVaultQueryFilters: (queryFilters: Partial<LendingQueryFilterType>, vaultType: PaginationVaultType) => void
+  resetVaultFilters: () => void
+  setIsLoading: (value: ((prevState: boolean) => boolean) | boolean) => void
   isLoading: boolean
+  isPendingQueryWhenFilters: boolean
+  setIsPendingQueryWhenFilters: (v: boolean) => void
 }
 
 export type VaultsDashboardDataType = {
@@ -60,9 +72,15 @@ export type VaultsDashboardDataType = {
 
 export type VaultsCtxState = {
   vaultsMapper: Record<string, VaultType>
+  myVaultsMapper: Record<string, VaultType>
+  permissionedVaultsMapper: Record<string, VaultType>
   permissionedVaultsIds: string[]
   myVaultsIds: string[]
-  vaultsTotalCount: number
+  vaultsPaginationStats: {
+    total: number
+    my: number
+    permissioned: number
+  }
   allVaultsIds: string[]
   vaultsDashboardData: null | VaultsDashboardDataType
 }
@@ -76,10 +94,7 @@ export type VaultsSubsRecordType = {
   [VAULTS_DATA]: VaultsSubType | null
 }
 
-export type VaultsIndexerDataType =
-  | GetUserAllVaultsQueryQuery
-  | GetUserDepositorAllVaultsQueryQuery
-  | GetAllVaultsQueryQuery
+export type VaultsIndexerDataType = GetAllVaultsQueryQuery
 
 export type VaultType = {
   // vault tokens data
@@ -138,4 +153,16 @@ export type VaultAssetData = {
   balance: number
   chartColor: string
   tokenAddress: string
+}
+
+// Pagination and filters
+
+export type LendingQueryFilterType = {
+  where: Gql_Vault_With_Balances_Bool_Exp
+  orderBy: Gql_Vault_With_Balances_Order_By
+  shadowWhere: Lending_Controller_Vault_Bool_Exp
+}
+
+export type VaultFiltersType = {
+  [key in PaginationVaultType]: LendingQueryFilterType
 }
