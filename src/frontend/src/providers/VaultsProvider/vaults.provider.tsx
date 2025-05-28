@@ -67,7 +67,7 @@ export const VaultsProvider = ({ children }: Props) => {
   const [vaultFilters, setVaultFilters] = useState<VaultFiltersType>(VAULTS_DEFFAULT_FILTERS)
 
   // used to disable buttons, filters etc. when pending query with updated filters
-  const [isPendingQueryWhenFilters, setIsPendingQueryWhenFilters] = useState(true)
+  const [isPendingQueryWhenFilters, setIsPendingQueryWhenFilters] = useState(false)
 
   const defaultVaultFilters = useMemo(
     () =>
@@ -132,7 +132,17 @@ export const VaultsProvider = ({ children }: Props) => {
             creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_PERMISSIONED].orderBy,
           },
-          shadowWhere: { ...vaultFilters[PAGINATION_PERMISSIONED].shadowWhere },
+          shadowWhere: {
+            open: { _eq: true },
+            vault: {
+              _or: [
+                { allowance: { _eq: '0' } },
+                { _and: { depositors: { depositor: { address: { _eq: userAddress } } }, allowance: { _eq: '1' } } },
+              ],
+            },
+            owner: { address: { _neq: userAddress } },
+            ...vaultFilters[PAGINATION_PERMISSIONED].shadowWhere,
+          },
         },
       } as VaultFiltersType),
     [marketAddress, userAddress, vaultFilters],

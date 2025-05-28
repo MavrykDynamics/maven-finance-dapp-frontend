@@ -221,19 +221,13 @@ export const VaultsView = () => {
 
       <VaultsSearchFilter />
 
-      {isLoansLoading || isVaultsLoading ? (
+      {isLoansLoading || isVaultsLoading || isPendingQueryWhenFilters ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : currentVaultsIds.length || isPendingQueryWhenFilters ? (
+      ) : currentVaultsIds.length > 0 ? (
         <>
-          {isPendingQueryWhenFilters && (
-            <div className="filterClockWrapper">
-              <ClockLoader width={35} height={35} />
-              <b>Loading...</b>
-            </div>
-          )}
           <VaultsList>
             {currentVaultsIds.map((item) => {
               const isOwner = currentMapper[item]?.ownerAddress === userAddress

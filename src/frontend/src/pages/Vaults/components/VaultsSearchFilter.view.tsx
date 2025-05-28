@@ -163,6 +163,7 @@ export const VaultsSearchFilter = memo(() => {
 
   const applyServerFilters = useCallback(() => {
     if (!userAddress && (tabId === 'my' || tabId === 'permissioned')) return
+
     let whereQuery: Partial<Advanced_Gql_Vault_With_Balances_Bool_Exp> = { where: {}, shadowWhere: {} } // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
 
     const { assets, sort, zero } = chosenDdItem
@@ -204,6 +205,7 @@ export const VaultsSearchFilter = memo(() => {
     setIsPendingQueryWhenFilters,
     preparedCollateralAssets,
     preparedLoanAssets,
+    userAddress,
   ])
 
   // search filter
