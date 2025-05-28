@@ -28,6 +28,14 @@ const Pagination = ({
 
   const generateNewUrl = (newPage: number) => updatePageInUrl({ page, newPage, listName, pathname, restQP: rest })
 
+  const formatNumber = (value: string) => {
+    const _val = value.toString()
+    const num = parseInt(_val.replace(/,/g, ''), 10)
+    return isNaN(num) ? '' : num.toLocaleString()
+  }
+
+  const unformatNumber = (value: string) => value.replace(/,/g, '')
+
   useEffect(() => {
     setInputValue(currentPage)
   }, [currentPage])
@@ -37,20 +45,21 @@ const Pagination = ({
       Page
       <div className="input_wrapper">
         <Input
+          type="text"
+          value={formatNumber(inputValue)}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (+e.target.value <= pagesCount) {
-              setInputValue(e.target.value)
-            }
+            const raw = unformatNumber(e.target.value)
+            if (+raw <= pagesCount) setInputValue(raw)
           }}
           onKeyDown={(e: React.KeyboardEvent) => {
             if ((!inputValue && e.key === '0') || e.key === '-') e.preventDefault()
             if (e.key === 'Enter') navigate(generateNewUrl(inputValue))
           }}
           onBlur={() => {
-            if (!inputValue && !inputValue !== currentPage) setInputValue(currentPage)
+            if (!inputValue && inputValue !== currentPage.toString()) {
+              setInputValue(currentPage.toString())
+            }
           }}
-          type={'number'}
-          value={inputValue}
         />
       </div>
       of {pagesCount}
