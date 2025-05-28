@@ -177,14 +177,6 @@ export const VaultsProvider = ({ children }: Props) => {
     }
   }, [userAddress, prevUserAddress])
 
-  // if no user address we can query for user vaults ot permissioned vaults
-  // so we reset the loading state in case user address is not set
-  useEffect(() => {
-    if (!userAddress && (isLoading || isPendingQueryWhenFilters)) {
-      setIsLoading(false)
-    }
-  }, [isLoading, userAddress, isPendingQueryWhenFilters])
-
   // QUERY FOR PERMISSION VAULTS ( get vaults where user allowed to deposit)
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,

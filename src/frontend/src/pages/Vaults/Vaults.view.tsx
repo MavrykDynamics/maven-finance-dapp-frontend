@@ -173,7 +173,11 @@ export const VaultsView = () => {
     if (tabId === vaultTabs.ALL) changePage(currentPage, PAGINATION_ALL)
     if (tabId === vaultTabs.MY) changePage(currentPage, PAGINATION_MY)
     if (tabId === vaultTabs.PERMISSIONED) changePage(currentPage, PAGINATION_PERMISSIONED)
-  }, [currentPage, tabId])
+
+    if ((tabId === vaultTabs.MY || tabId === vaultTabs.PERMISSIONED) && !userAddress) {
+      setIsLoading(false)
+    }
+  }, [currentPage, tabId, userAddress])
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
