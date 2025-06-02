@@ -8,6 +8,7 @@ import Icon from '../Icon/Icon.view'
 import { PaginationArrow, PaginationWrapper } from './Pagination.style'
 
 import { LIST_NAMES_MAPPER, PaginationProps, PAGINATION_SIDE_RIGHT, updatePageInUrl } from './pagination.consts'
+import { formatNumber } from '../CommaNumber/CommaNumber.controller'
 
 const Pagination = ({
   itemsCount,
@@ -28,14 +29,6 @@ const Pagination = ({
 
   const generateNewUrl = (newPage: number) => updatePageInUrl({ page, newPage, listName, pathname, restQP: rest })
 
-  const formatNumber = (value: string) => {
-    const _val = value.toString()
-    const num = parseInt(_val.replace(/,/g, ''), 10)
-    return isNaN(num) ? '' : num.toLocaleString()
-  }
-
-  const unformatNumber = (value: string) => value.replace(/,/g, '')
-
   useEffect(() => {
     setInputValue(currentPage)
   }, [currentPage])
@@ -45,24 +38,23 @@ const Pagination = ({
       Page
       <div className="input_wrapper">
         <Input
-          type="text"
-          value={formatNumber(inputValue)}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            const raw = unformatNumber(e.target.value)
-            if (+raw <= pagesCount) setInputValue(raw)
+            if (+e.target.value <= pagesCount) {
+              setInputValue(e.target.value)
+            }
           }}
           onKeyDown={(e: React.KeyboardEvent) => {
             if ((!inputValue && e.key === '0') || e.key === '-') e.preventDefault()
             if (e.key === 'Enter') navigate(generateNewUrl(inputValue))
           }}
           onBlur={() => {
-            if (!inputValue && inputValue !== currentPage.toString()) {
-              setInputValue(currentPage.toString())
-            }
+            if (!inputValue && !inputValue !== currentPage) setInputValue(currentPage)
           }}
+          type={'number'}
+          value={inputValue}
         />
       </div>
-      of {pagesCount}
+      of {formatNumber({ number: pagesCount })} items
       <PaginationArrow
         $isDisabled={+currentPage === 1}
         onClick={() => {
