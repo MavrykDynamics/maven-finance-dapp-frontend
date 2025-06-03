@@ -265,6 +265,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   const updateSatelliteQueryFilters = useCallback(
     (queryFilters: Partial<SatelliteQueryFilterType>, vaultType: PaginationSatelliteType) => {
       setSatelliteFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
+      setIsLoading(true)
     },
     [],
   )

@@ -96,7 +96,6 @@ const SatelliteNodes = () => {
     const query = { ...whereQuery, ...orderByQuery }
 
     updateSatelliteQueryFilters(query, SATELLITE_PAGINATION_ALL)
-    // setIsPendingQueryWhenFilters(true)
   }, [chosenDdItem?.text, updateSatelliteQueryFilters, debouncedValue])
 
   useEffect(() => {
