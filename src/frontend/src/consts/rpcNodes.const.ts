@@ -23,7 +23,7 @@ export const marigoldMumbainetRpcNode = 'https://mumbainet.tezos.marigold.dev/'
 // tezTools
 export const tezToolsRpcNode = 'https://eu01-node.teztools.net/'
 
-export const atlasNetRpcnode = 'https://atlasnet.rpc.mavryk.network'
+export const atlasNetRpcnode = 'https://rpc.mavenfinance.io'
 
 export const rpcNodeSchema = z.enum([
   ecadLabsTezMainnetRpcNode,
