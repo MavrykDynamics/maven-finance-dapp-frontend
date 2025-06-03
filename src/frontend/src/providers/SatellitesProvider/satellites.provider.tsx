@@ -100,9 +100,6 @@ export const SatellitesProvider = ({ children }: Props) => {
     [satelliteAddressToSubscribe, satelliteFilters],
   )
 
-  console.log(defaultSatelliteFilters, 'defaultSatelliteFilters')
-  console.log(satelliteFilters, 'satelliteFilters')
-
   /**
    * SATELLITES_METRICS_DATA -> load proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
    * SATELLITE_DATA_QUERY -> load satellite by address
@@ -216,6 +213,7 @@ export const SatellitesProvider = ({ children }: Props) => {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
     fetchPolicy: 'network-only',
     variables: {
+      whereBySatelliteTotal: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].where,
       whereBysatelliteAddress: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].where,
       whereByActiveSatellite: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].where,
       whereOracles: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].where,
