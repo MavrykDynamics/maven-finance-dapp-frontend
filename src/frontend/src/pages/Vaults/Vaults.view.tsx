@@ -173,7 +173,11 @@ export const VaultsView = () => {
     if (tabId === vaultTabs.ALL) changePage(currentPage, PAGINATION_ALL)
     if (tabId === vaultTabs.MY) changePage(currentPage, PAGINATION_MY)
     if (tabId === vaultTabs.PERMISSIONED) changePage(currentPage, PAGINATION_PERMISSIONED)
-  }, [currentPage, tabId])
+
+    if ((tabId === vaultTabs.MY || tabId === vaultTabs.PERMISSIONED) && !userAddress) {
+      setIsLoading(false)
+    }
+  }, [currentPage, tabId, userAddress])
 
   const handleChangeTabs = (id: number) => {
     const foundTab = tabsList.find((item) => item.id === id)
@@ -221,19 +225,13 @@ export const VaultsView = () => {
 
       <VaultsSearchFilter />
 
-      {isLoansLoading || isVaultsLoading ? (
+      {isLoansLoading || isVaultsLoading || isPendingQueryWhenFilters ? (
         <DataLoaderWrapper>
           <ClockLoader width={150} height={150} />
           <div className="text">Loading vaults</div>
         </DataLoaderWrapper>
-      ) : currentVaultsIds.length || isPendingQueryWhenFilters ? (
+      ) : currentVaultsIds.length > 0 ? (
         <>
-          {isPendingQueryWhenFilters && (
-            <div className="filterClockWrapper">
-              <ClockLoader width={35} height={35} />
-              <b>Loading...</b>
-            </div>
-          )}
           <VaultsList>
             {currentVaultsIds.map((item) => {
               const isOwner = currentMapper[item]?.ownerAddress === userAddress

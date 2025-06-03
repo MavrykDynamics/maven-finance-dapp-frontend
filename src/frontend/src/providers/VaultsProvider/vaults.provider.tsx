@@ -67,7 +67,9 @@ export const VaultsProvider = ({ children }: Props) => {
   const [vaultFilters, setVaultFilters] = useState<VaultFiltersType>(VAULTS_DEFFAULT_FILTERS)
 
   // used to disable buttons, filters etc. when pending query with updated filters
-  const [isPendingQueryWhenFilters, setIsPendingQueryWhenFilters] = useState(true)
+  const [isPendingQueryWhenFilters, setIsPendingQueryWhenFilters] = useState(false)
+
+  const preparedUserAddressForQuery = useMemo(() => (userAddress !== null ? userAddress : undefined), [userAddress])
 
   const defaultVaultFilters = useMemo(
     () =>
@@ -83,7 +85,7 @@ export const VaultsProvider = ({ children }: Props) => {
         [PAGINATION_MY]: {
           where: {
             is_open: { _eq: true },
-            owner_address: { _eq: userAddress },
+            owner_address: { _eq: preparedUserAddressForQuery },
             ...(marketAddress
               ? {
                   loan_token_address: {
@@ -97,7 +99,10 @@ export const VaultsProvider = ({ children }: Props) => {
             creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_MY].orderBy,
           },
-          shadowWhere: { ...vaultFilters[PAGINATION_MY].shadowWhere, owner: { address: { _eq: userAddress } } },
+          shadowWhere: {
+            ...vaultFilters[PAGINATION_MY].shadowWhere,
+            owner: { address: { _eq: preparedUserAddressForQuery } },
+          },
         },
         [PAGINATION_PERMISSIONED]: {
           where: (() => {
@@ -107,13 +112,13 @@ export const VaultsProvider = ({ children }: Props) => {
               _and: [
                 {
                   is_open: { _eq: true },
-                  owner_address: { _neq: userAddress },
+                  owner_address: { _neq: preparedUserAddressForQuery },
                   _or: [
                     { allowance: { _eq: '0' } },
                     {
                       _and: [
                         { allowance: { _eq: '1' } },
-                        { depositors_json: { _contains: { address: { _eq: userAddress } } } },
+                        { depositors_json: { _contains: { address: { _eq: preparedUserAddressForQuery } } } },
                       ],
                     },
                   ],
@@ -129,10 +134,25 @@ export const VaultsProvider = ({ children }: Props) => {
             creation_timestamp: 'desc',
             ...vaultFilters[PAGINATION_PERMISSIONED].orderBy,
           },
-          shadowWhere: { ...vaultFilters[PAGINATION_PERMISSIONED].shadowWhere },
+          shadowWhere: {
+            open: { _eq: true },
+            vault: {
+              _or: [
+                { allowance: { _eq: '0' } },
+                {
+                  _and: {
+                    depositors: { depositor: { address: { _eq: preparedUserAddressForQuery } } },
+                    allowance: { _eq: '1' },
+                  },
+                },
+              ],
+            },
+            owner: { address: { _neq: preparedUserAddressForQuery } },
+            ...vaultFilters[PAGINATION_PERMISSIONED].shadowWhere,
+          },
         },
       } as VaultFiltersType),
-    [marketAddress, userAddress, vaultFilters],
+    [marketAddress, preparedUserAddressForQuery, vaultFilters],
   )
 
   const updateVaultQueryFilters = useCallback(
@@ -155,7 +175,7 @@ export const VaultsProvider = ({ children }: Props) => {
         myVaultsIds: null,
       }))
     }
-  }, [userAddress])
+  }, [userAddress, prevUserAddress])
 
   // QUERY FOR PERMISSION VAULTS ( get vaults where user allowed to deposit)
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
@@ -203,6 +223,7 @@ export const VaultsProvider = ({ children }: Props) => {
         myVaultsMapper: { ...vaultsMapper },
         myVaultsIds: vaultsIds,
       }))
+
       setIsLoading(false)
       setIsPendingQueryWhenFilters(false)
     },

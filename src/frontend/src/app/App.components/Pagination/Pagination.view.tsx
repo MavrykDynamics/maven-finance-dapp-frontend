@@ -8,6 +8,7 @@ import Icon from '../Icon/Icon.view'
 import { PaginationArrow, PaginationWrapper } from './Pagination.style'
 
 import { LIST_NAMES_MAPPER, PaginationProps, PAGINATION_SIDE_RIGHT, updatePageInUrl } from './pagination.consts'
+import { formatNumber } from '../CommaNumber/CommaNumber.controller'
 
 const Pagination = ({
   itemsCount,
@@ -53,7 +54,7 @@ const Pagination = ({
           value={inputValue}
         />
       </div>
-      of {pagesCount}
+      of {formatNumber({ number: pagesCount })} items
       <PaginationArrow
         $isDisabled={+currentPage === 1}
         onClick={() => {

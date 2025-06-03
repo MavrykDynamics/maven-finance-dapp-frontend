@@ -39,11 +39,12 @@ export const PaginationWrapper = styled.div<{
       : ''}
 
   .input_wrapper {
-    max-width: 56px;
+    max-width: 74px;
     margin: 0 10px;
 
     input {
-      padding: 7.5px 0 7.5px 20px;
+      text-align: center;
+      padding: 7.5px 10px;
       border-color: ${({ theme }) => theme.strokeColor};
     }
   }

@@ -44,6 +44,9 @@ import {
   HIDE_VAULT_ZERO_BALANCES,
 } from '../utils/filterQueries'
 import { useDebouncedSearch } from 'app/App.hooks/useDebouncedSerach'
+import { useUserContext } from 'providers/UserProvider/user.provider'
+import Icon from 'app/App.components/Icon/Icon.view'
+import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 
 type Filters = Record<string, string>
 
@@ -72,6 +75,7 @@ export const VaultsSearchFilter = memo(() => {
   const hasAutoAppliedRef = useRef(false)
 
   const { marketsAddresses } = useLoansContext()
+  const { userAddress } = useUserContext()
   const { tokensMetadata } = useTokensContext()
   const { updateVaultQueryFilters, setIsPendingQueryWhenFilters, isPendingQueryWhenFilters, resetVaultFilters } =
     useVaultsContext()
@@ -158,6 +162,8 @@ export const VaultsSearchFilter = memo(() => {
   }
 
   const applyServerFilters = useCallback(() => {
+    if (!userAddress && (tabId === 'my' || tabId === 'permissioned')) return
+
     let whereQuery: Partial<Advanced_Gql_Vault_With_Balances_Bool_Exp> = { where: {}, shadowWhere: {} } // default values, sort desc, fetch all vaults based on tab (all, user, permissioned - where u can deposit)
 
     const { assets, sort, zero } = chosenDdItem
@@ -199,6 +205,7 @@ export const VaultsSearchFilter = memo(() => {
     setIsPendingQueryWhenFilters,
     preparedCollateralAssets,
     preparedLoanAssets,
+    userAddress,
   ])
 
   // search filter
@@ -216,6 +223,8 @@ export const VaultsSearchFilter = memo(() => {
       hasAutoAppliedRef.current = true
     }
   }, [preparedCollateralAssets, preparedLoanAssets])
+
+  const hasSelectedFilters = useMemo(() => Object.keys(filterStatuses).length !== 0, [filterStatuses])
 
   return (
     <VaultsSearchFilterWrapper>
@@ -256,6 +265,22 @@ export const VaultsSearchFilter = memo(() => {
               disabled={isPendingQueryWhenFilters}
             />
           </div>
+
+          <div className="vaultFilterBtns">
+            <Tooltip>
+              <Tooltip.Trigger className="ml-3">
+                <Button
+                  kind="primary"
+                  size="large"
+                  onClick={applyServerFilters}
+                  disabled={isPendingQueryWhenFilters || !hasSelectedFilters}
+                >
+                  <Icon id="check-fill" fill="#160E3F" />
+                </Button>
+              </Tooltip.Trigger>
+              <Tooltip.Content>Apply selected filters</Tooltip.Content>
+            </Tooltip>
+          </div>
         </VaultsFilters>
       </VaultsSearchFilterStyled>
       <VaultsFilterOptions>
@@ -267,12 +292,6 @@ export const VaultsSearchFilter = memo(() => {
           >
             Hide vaults with a loan balance of 0
           </Checkbox>
-        </div>
-
-        <div className="vaultFilterBtns">
-          <Button kind="primary" size="large" onClick={applyServerFilters} disabled={isPendingQueryWhenFilters}>
-            Apply
-          </Button>
         </div>
       </VaultsFilterOptions>
     </VaultsSearchFilterWrapper>
