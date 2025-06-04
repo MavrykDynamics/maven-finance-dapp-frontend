@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 
 // context
@@ -35,8 +35,9 @@ import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/que
 
 export const SatelliteDetails = () => {
   const { satelliteId = '' } = useParams<{ satelliteId: string }>()
+  const navigate = useNavigate()
   const { apolloClient } = useApolloContext()
-  const { fatal } = useToasterContext()
+  const { bug, fatal } = useToasterContext()
   const {
     satelliteMapper,
     satelliteMapperByAddress,
@@ -85,7 +86,8 @@ export const SatelliteDetails = () => {
           return
         }
 
-        fatal(new FatalError(`Satellite with address ${satelliteId} does not exist`))
+        bug(new FatalError(`Satellite with address ${satelliteId} does not exist`))
+        navigate('/satellites', { replace: true })
       } catch (e) {
         fatal(new FatalError('Loading satellite error, please, try to reload page'))
       } finally {
