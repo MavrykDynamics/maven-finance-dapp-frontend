@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
@@ -32,10 +32,22 @@ import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/
 
 import { FatalError } from 'errors/error'
 import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/queries/satellites.query'
+import {
+  DEFAULT_SATELLITES_ACTIVE_SUBS,
+  SATELLITE_DATA_SUB,
+  SATELLITE_PARTICIPATION_DATA_SUB,
+  SATELLITES_DATA_ALL_SUB,
+  SATELLITES_DATA_SINGLE_SUB,
+} from 'providers/SatellitesProvider/satellites.const'
 
 export const SatelliteDetails = () => {
   const { satelliteId = '' } = useParams<{ satelliteId: string }>()
+  const [currentSatelliteAddress, setCurrentSatelliteAddress] = useState<string>(satelliteId)
+  const [currentSatelliteIdx, setCurrentSatelliteAddressIndex] = useState<number>(0)
   const navigate = useNavigate()
+
+  const isInitialRenderRef = useRef<boolean>(true)
+
   const { apolloClient } = useApolloContext()
   const { bug, fatal } = useToasterContext()
   const {
@@ -46,13 +58,15 @@ export const SatelliteDetails = () => {
     finRequestsAmount,
     isLoading: isSatellitesLoading,
     setSatelliteAddressToSubscribe,
+    changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
+
   const mergedSatellitedMapper = useMemo(
     () => ({ ...satelliteMapper, ...satelliteMapperByAddress }),
     [satelliteMapper, satelliteMapperByAddress],
   )
 
-  const currentSatellite = mergedSatellitedMapper[satelliteId]
+  const currentSatellite = mergedSatellitedMapper[currentSatelliteAddress]
 
   const { proposalParticipation, votingParticipation } = getSatelliteParticipation({
     satellite: currentSatellite,
@@ -63,31 +77,50 @@ export const SatelliteDetails = () => {
 
   const [isSatelliteExistanseLoading, setIsSatelliteExistanseLoading] = useState(false)
 
+  useEffect(() => {
+    changeSatellitesSubscriptionsList({
+      [SATELLITES_DATA_SINGLE_SUB]: true,
+      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ALL_SUB,
+      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+    })
+
+    return () => {
+      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      setSatelliteAddressToSubscribe(null)
+    }
+  }, [])
+
   // check whether satellite exists, cuz address is stored in url and user can change it
   useEffect(() => {
-    if (satelliteId && mergedSatellitedMapper[satelliteId]) {
+    // Satellite already in memory, just switch context
+    if (mergedSatellitedMapper[satelliteId]) {
+      setCurrentSatelliteAddress(satelliteId)
       setSatelliteAddressToSubscribe(satelliteId)
       return
     }
 
-    setIsSatelliteExistanseLoading(true)
+    if (!satelliteId || !isInitialRenderRef.current) return
 
+    // Satellite not in memory: only then fetch
     const checkWhetherSatelliteExists = async () => {
+      setIsSatelliteExistanseLoading(true)
       try {
         const satelliteFromGql = await apolloClient.query({
           query: CHECK_WHETHER_SATELLITE_EXISTS,
           variables: {
-            userAddress: satelliteId ?? '',
+            userAddress: satelliteId,
           },
         })
 
-        if (satelliteFromGql.data.satellite[0]?.user.address === satelliteId) {
-          setSatelliteAddressToSubscribe(satelliteId)
-          return
-        }
+        const fetchedSatellite = satelliteFromGql?.data?.satellite?.[0]
 
-        bug(new FatalError(`Satellite with address ${satelliteId} does not exist`))
-        navigate('/satellites', { replace: true })
+        if (fetchedSatellite?.user?.address === satelliteId) {
+          setSatelliteAddressToSubscribe(satelliteId)
+          setCurrentSatelliteAddress(satelliteId)
+        } else {
+          bug(new FatalError(`Satellite with address ${satelliteId} does not exist`))
+          navigate('/satellites', { replace: true })
+        }
       } catch (e) {
         fatal(new FatalError('Loading satellite error, please, try to reload page'))
       } finally {
@@ -96,9 +129,9 @@ export const SatelliteDetails = () => {
     }
 
     checkWhetherSatelliteExists()
-
+    isInitialRenderRef.current = false
     return () => setSatelliteAddressToSubscribe(null)
-  }, [satelliteId])
+  }, [mergedSatellitedMapper, satelliteId])
 
   const { satelliteVotes, isLoading: isSatelliteVotesLoading } = useSatelliteVotes(satelliteId)
 
@@ -107,7 +140,11 @@ export const SatelliteDetails = () => {
       <PageHeader page={'satellites'} />
       <PageContent className="mt-30">
         <div>
-          <SatellitePagination />
+          <SatellitePagination
+            ref={isInitialRenderRef}
+            currentSatelliteIdx={currentSatelliteIdx}
+            setCurrentSatelliteAddressIndex={setCurrentSatelliteAddressIndex}
+          />
 
           {isSatellitesLoading || isSatelliteExistanseLoading ? (
             <DataLoaderWrapper>

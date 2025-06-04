@@ -33,6 +33,12 @@ export const SatellitePaginationStyled = styled.div<{ theme: MavenTheme }>`
       opacity: 0.8;
     }
 
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     &.prev {
       margin-left: auto;
     }

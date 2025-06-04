@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 
@@ -9,84 +9,85 @@ import NewButton from 'app/App.components/Button/NewButton'
 // style
 import { SatellitePaginationStyled } from './SatellitePagination.style'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
-import { useEffect, useMemo } from 'react'
-import {
-  DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITE_DATA_SUB,
-  SATELLITE_PAGINATION_ALL,
-  SATELLITE_PARTICIPATION_DATA_SUB,
-  SATELLITES_DATA_ALL_SUB,
-  SATELLITES_DATA_SINGLE_SUB,
-} from 'providers/SatellitesProvider/satellites.const'
-import { sleep } from 'utils/api/sleep'
+import { forwardRef, useEffect, useMemo } from 'react'
+import { SATELLITE_PAGINATION_ALL } from 'providers/SatellitesProvider/satellites.const'
 
-const SatellitePagination = () => {
-  const { satelliteId } = useParams()
-  const navigate = useNavigate()
-  const {
-    allSatellitesIds,
-    staelliteIdsByAddress,
-    changeSatellitesSubscriptionsList,
-    setSatelliteAddressToSubscribe,
-    changePage,
-    paginationState,
-  } = useSatellitesContext()
+type SatellitePaginationpProps = {
+  currentSatelliteIdx: number
+  setCurrentSatelliteAddressIndex: (value: number) => void
+}
 
-  const mergedSatelliteIds = useMemo(
-    () => [...staelliteIdsByAddress, ...allSatellitesIds],
-    [staelliteIdsByAddress, allSatellitesIds],
-  )
+const SatellitePagination = forwardRef<boolean, SatellitePaginationpProps>(
+  ({ currentSatelliteIdx, setCurrentSatelliteAddressIndex }, ref) => {
+    const navigate = useNavigate()
 
-  const currentSatelliteIndex = mergedSatelliteIds.findIndex(
-    (activeSatelliteAddress) => activeSatelliteAddress === satelliteId,
-  )
+    const { allSatellitesIds, staelliteIdsByAddress, paginationState, changePage, isLoading } = useSatellitesContext()
+    const satelliteFromParamsIdx = useMemo(
+      () => allSatellitesIds.findIndex((id) => id === staelliteIdsByAddress?.[0]),
+      [allSatellitesIds, staelliteIdsByAddress],
+    )
 
-  const prevSatelliteAddress = mergedSatelliteIds.at(currentSatelliteIndex - 1) ?? mergedSatelliteIds.at(-1)
-  const nextSatelliteAddress = mergedSatelliteIds.at(currentSatelliteIndex + 1) ?? mergedSatelliteIds.at(0)
+    const mergedSatelliteIds = useMemo(() => {
+      return satelliteFromParamsIdx !== -1 ? allSatellitesIds : [...staelliteIdsByAddress, ...allSatellitesIds]
+    }, [allSatellitesIds, satelliteFromParamsIdx, staelliteIdsByAddress])
 
-  useEffect(() => {
-    changeSatellitesSubscriptionsList({
-      [SATELLITES_DATA_SINGLE_SUB]: true,
-      // [SATELLITE_DATA_SUB]: SATELLITES_DATA_ALL_SUB,
-      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
-    })
+    // only run when new batch is fetched
+    useEffect(() => {
+      if (satelliteFromParamsIdx !== -1) {
+        setCurrentSatelliteAddressIndex(satelliteFromParamsIdx)
+      }
+    }, [satelliteFromParamsIdx])
 
-    return () => {
-      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
-      setSatelliteAddressToSubscribe(null)
+    const handleNext = () => {
+      const isLastSatellite = currentSatelliteIdx === mergedSatelliteIds.length - 1
+
+      if (isLastSatellite) {
+        // Trigger pagination and reset index
+        if (ref && typeof ref !== 'function') {
+          ref.current = true
+        }
+
+        setCurrentSatelliteAddressIndex(1)
+        changePage(paginationState[SATELLITE_PAGINATION_ALL] + 1, SATELLITE_PAGINATION_ALL)
+      } else {
+        // go to the next satellite in the current list
+        const nextIdx = currentSatelliteIdx + 1
+        setCurrentSatelliteAddressIndex(nextIdx)
+        navigate(`/satellites/satellite-details/${mergedSatelliteIds[nextIdx]}`, {
+          replace: true,
+        })
+      }
     }
-  }, [])
 
-  // const handlesatelliteAddressClick = async () => {
-  //   if (currentSatelliteIndex === mergedSatelliteIds.length - 1 && mergedSatelliteIds.length > 0) {
-  //     sleep(300)
-  //     changePage(paginationState[SATELLITE_PAGINATION_ALL] + 1, SATELLITE_PAGINATION_ALL)
-  //   } else {
-  //     navigate(`/satellites/satellite-details/${nextSatelliteAddress}`)
-  //   }
-  // }
+    const handlePrev = () => {
+      if (currentSatelliteIdx <= 0) return
 
-  return (
-    <SatellitePaginationStyled>
-      <Link to={`/satellite-nodes`} className="go-back">
-        <NewButton kind={BUTTON_SECONDARY}>
-          <Icon id="full-arrow-left" /> Back to satellites
-        </NewButton>
-      </Link>
-      {prevSatelliteAddress ? (
-        <Link className="pagination-link prev" to={`/satellites/satellite-details/${prevSatelliteAddress}`}>
-          <Icon id="arrow-obtuse-angle" />
-          Previous satellite
+      const prevIdx = currentSatelliteIdx - 1
+      setCurrentSatelliteAddressIndex(prevIdx)
+
+      navigate(`/satellites/satellite-details/${mergedSatelliteIds[prevIdx]}`, { replace: true })
+    }
+
+    return (
+      <SatellitePaginationStyled>
+        <Link to={`/satellite-nodes`} className="go-back">
+          <NewButton kind={BUTTON_SECONDARY} disabled={isLoading}>
+            <Icon id="full-arrow-left" /> Back to satellites
+          </NewButton>
         </Link>
-      ) : null}
-      {nextSatelliteAddress ? (
-        <Link className="pagination-link next" to={`/satellites/satellite-details/${nextSatelliteAddress}`}>
+        {currentSatelliteIdx > 0 && (
+          <button className="pagination-link prev" onClick={handlePrev}>
+            <Icon id="arrow-obtuse-angle" />
+            Previous satellite
+          </button>
+        )}
+        <button className="pagination-link next" onClick={handleNext} disabled={isLoading}>
           Next satellite
           <Icon id="arrow-obtuse-angle" />
-        </Link>
-      ) : null}
-    </SatellitePaginationStyled>
-  )
-}
+        </button>
+      </SatellitePaginationStyled>
+    )
+  },
+)
 
 export default SatellitePagination
