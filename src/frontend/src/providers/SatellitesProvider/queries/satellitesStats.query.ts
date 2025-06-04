@@ -1,4 +1,4 @@
-import { gql } from 'utils/__generated__';
+import { gql } from 'utils/__generated__'
 
 // data for sidebar
 export const SATELLITES_STATS = gql(`
@@ -41,4 +41,4 @@ query SatellitesStatsQuery{
     }
   }
 }
-`);
+`)

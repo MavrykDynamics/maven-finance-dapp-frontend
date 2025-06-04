@@ -29,7 +29,6 @@ import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
-  SATELLITE_DATA_SUB,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_SINGLE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
@@ -43,7 +42,7 @@ const DelegationTab = () => {
   const { distributeProposalRewards, availableProposalRewards }: DelegationtabOutletProps = useOutletContext()
 
   const {
-    satelliteMapper,
+    satelliteMapperByAddress,
     proposalsAmount,
     satelliteGovActionsAmount,
     finRequestsAmount,
@@ -73,7 +72,7 @@ const DelegationTab = () => {
     return () => setSatelliteAddressToSubscribe(null)
   }, [satelliteMvnIsDelegatedTo])
 
-  const satelliteRecord = satelliteMvnIsDelegatedTo ? satelliteMapper[satelliteMvnIsDelegatedTo] : null
+  const satelliteRecord = satelliteMvnIsDelegatedTo ? satelliteMapperByAddress[satelliteMvnIsDelegatedTo] : null
   const { proposalParticipation } = getSatelliteParticipation({
     satellite: satelliteRecord,
     proposalsAmount,

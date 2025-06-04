@@ -6,6 +6,7 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
+  SATELLITE_PAGINATION_ACTIVE,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
@@ -36,6 +37,7 @@ export const SatellitesTab = () => {
     satelliteGovActionsAmount,
     finRequestsAmount,
     changeSatellitesSubscriptionsList,
+    activeSatellitesCount,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
 
@@ -81,7 +83,7 @@ export const SatellitesTab = () => {
           <StatBlock>
             <div className="name">Active Satellites</div>
             <div className="value">
-              <CommaNumber value={activeSatellitesIds.length} />
+              <CommaNumber value={activeSatellitesCount} />
             </div>
           </StatBlock>
 

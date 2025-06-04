@@ -210,7 +210,6 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(SATELLITE_AGGREGATE_COUNT, {
-    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
     fetchPolicy: 'network-only',
     variables: {
       whereBySatelliteTotal: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].where,
@@ -235,6 +234,7 @@ export const SatellitesProvider = ({ children }: Props) => {
             aggregate: { count: oracleSatellitesCount },
           },
         } = parsedData ?? {}
+
         setSatellitesCtxState((prev) => ({
           ...prev,
           totalSatellitesCount: totalCount ?? 0,
