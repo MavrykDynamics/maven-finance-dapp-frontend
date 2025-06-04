@@ -63,8 +63,6 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [satelliteAddressToSubscribe, setSatelliteAddressToSubscribe] = useState<string | null>(null)
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
 
-  console.log(satelliteAddressToSubscribe, 'satelliteAddressToSubscribe')
-
   // Pagination
   const [isLoading, setIsLoading] = useState(true)
 

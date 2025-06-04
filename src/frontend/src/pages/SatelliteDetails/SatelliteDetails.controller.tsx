@@ -92,17 +92,15 @@ export const SatelliteDetails = () => {
 
   // check whether satellite exists, cuz address is stored in url and user can change it
   useEffect(() => {
-    // Satellite already in memory, just switch context
-    if (mergedSatellitedMapper[satelliteId]) {
-      setCurrentSatelliteAddress(satelliteId)
-      setSatelliteAddressToSubscribe(satelliteId)
-      return
-    }
-
-    if (!satelliteId || !isInitialRenderRef.current) return
-
     // Satellite not in memory: only then fetch
     const checkWhetherSatelliteExists = async () => {
+      // Satellite already in memory, just switch context
+      if (mergedSatellitedMapper[satelliteId]) {
+        setCurrentSatelliteAddress(satelliteId)
+        setSatelliteAddressToSubscribe(satelliteId)
+        return
+      }
+
       setIsSatelliteExistanseLoading(true)
       try {
         const satelliteFromGql = await apolloClient.query({
@@ -129,6 +127,9 @@ export const SatelliteDetails = () => {
     }
 
     checkWhetherSatelliteExists()
+
+    if (!satelliteId || !isInitialRenderRef.current) return
+
     isInitialRenderRef.current = false
     return () => setSatelliteAddressToSubscribe(null)
   }, [mergedSatellitedMapper, satelliteId])
