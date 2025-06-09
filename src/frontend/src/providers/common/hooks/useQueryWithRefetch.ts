@@ -13,6 +13,8 @@ import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
 import { isAbortError } from 'errors/error'
 import { forcedUpdateProxy } from '../utils/observeForcedUpdate'
 
+const DISABLE_BLOCK_REFETCH = true
+
 /**
  *
  * @param query - query we want to refetch
@@ -111,7 +113,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         let refetchData: ApolloQueryResult<TData> | null = null
 
         // case when we have blocks diff, and we want to refetch query only when block lvl is changed
-        if (typeof blocksDiff === 'number' && typeof source === 'number') {
+        if (!DISABLE_BLOCK_REFETCH && typeof blocksDiff === 'number' && typeof source === 'number') {
           // if we don't have blocks diff first indexer change just set lastUpdatedBlock
           if (lastUpdatedBlock.current === null) {
             lastUpdatedBlock.current = source
@@ -174,8 +176,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   // subscribe to indexer lvl change, and unsibscribe when component unmounts, or query becomes inactive
   useEffect(() => {
     // if query is active subscibe to indexer lvl change, and save id of subscription
-    if (!currentUserSkipValue && !refetchId.current) {
-      if (process.env.REACT_APP_ENV === 'dev') console.log(`%cregister ${queryName}`, 'color: lime')
+    if (!DISABLE_BLOCK_REFETCH && !currentUserSkipValue && !refetchId.current) {
       refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
     }
 
