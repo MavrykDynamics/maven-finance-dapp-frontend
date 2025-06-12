@@ -1,5 +1,5 @@
 import { split } from '@apollo/client'
-import { HttpLink } from '@apollo/client/link/http'
+import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { RetryLink } from '@apollo/client/link/retry'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { createClient } from 'graphql-ws'
@@ -7,7 +7,7 @@ import { getMainDefinition } from '@apollo/client/utilities'
 import { isAbortError } from 'errors/error'
 
 // apollo client setup
-export const httpLink = new HttpLink({
+export const httpLink = new BatchHttpLink({
   uri: process.env.REACT_APP_GRAPHQL_API ?? '',
 })
 
@@ -17,7 +17,7 @@ export const wsLink = new GraphQLWsLink(
   }),
 )
 
-export const splitLink = (wsLink: GraphQLWsLink, httpLink: HttpLink) =>
+export const splitLink = (wsLink: GraphQLWsLink, httpLink: BatchHttpLink) =>
   split(
     ({ query }) => {
       const definition = getMainDefinition(query)
