@@ -7,7 +7,6 @@ import { tokensGqlSchema } from './helpers/tokens.schemes'
 
 // hooks
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 
 // helpers
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
@@ -15,6 +14,7 @@ import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.
 // types
 import { TokensContext, TokensContextStateType } from './tokens.provider.types'
 import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
+import { useQuery } from '@apollo/client'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -37,32 +37,28 @@ export const TokensProvider = ({ children }: Props) => {
   })
 
   // Load tokens metadata
-  useQueryWithRefetch(
-    QUERY_TOKENS_METADATA,
-    {
-      onCompleted: (data) => {
-        try {
-          const parsedTokens = tokensGqlSchema.parse(data.token)
+  useQuery(QUERY_TOKENS_METADATA, {
+    onCompleted: (data) => {
+      try {
+        const parsedTokens = tokensGqlSchema.parse(data.token)
 
-          initialLoadingStatus.current = false
+        initialLoadingStatus.current = false
 
-          const { tokensMetadata, mTokens, farmLpTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
+        const { tokensMetadata, mTokens, farmLpTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
 
-          setTokensCtxState((prev) => ({
-            ...prev,
-            tokensMetadata,
-            farmLpTokens,
-            collateralTokens,
-            mTokens,
-          }))
-        } catch (e) {
-          console.error('zod parsing tokens error:', { e })
-        }
-      },
-      onError: (error) => handleApolloError(error, 'QUERY_TOKENS_METADATA'),
+        setTokensCtxState((prev) => ({
+          ...prev,
+          tokensMetadata,
+          farmLpTokens,
+          collateralTokens,
+          mTokens,
+        }))
+      } catch (e) {
+        console.error('zod parsing tokens error:', { e })
+      }
     },
-    { blocksDiff: 2000 },
-  )
+    onError: (error) => handleApolloError(error, 'QUERY_TOKENS_METADATA'),
+  })
 
   // update token prices in ctx
   const updateTokensPrices = (feedsLedger: FullFeedsQueryType | SmallFeedsQueryType) => {
