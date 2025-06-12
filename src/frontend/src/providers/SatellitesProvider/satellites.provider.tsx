@@ -70,6 +70,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [paginationState, setPaginationState] = useState(() => DEFAULT_SATELLITE_PAGINATION_DATA)
 
   // query filters
+  // @ts-ignore
   const [satelliteFilters, setSatelliteFilters] = useState<SatelliteFiltersType>(SATELLITE_DEFFAULT_FILTERS)
 
   const defaultSatelliteFilters = useMemo(

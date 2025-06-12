@@ -54,8 +54,6 @@ const Satellites = () => {
   } = useSatellitesContext()
   const { userTokensBalances, isSatellite, userAddress } = useUserContext()
 
-  console.log(isSatellitesLoading, 'isSatellitesLoading')
-
   useLayoutEffect(() => {
     changeSatellitesSubscriptionsList({
       [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,

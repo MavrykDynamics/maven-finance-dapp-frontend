@@ -4,21 +4,21 @@ import { SatelliteQueryFilterType } from '../satellites.provider.types'
 export const getSatelliteByAddressFilters = (userAddress: string): SatelliteQueryFilterType => {
   return {
     where: { registration_timestamp: { _is_null: false }, user: { address: { _eq: userAddress } } },
-    orderBy: { currently_registered: undefined },
+    orderBy: { currently_registered: Order_By.Desc },
   }
 }
 
 export const getSatelliteActiveFilters = (): SatelliteQueryFilterType => {
   return {
     where: { registration_timestamp: { _is_null: false }, currently_registered: { _eq: true }, status: { _eq: '0' } },
-    orderBy: { currently_registered: undefined },
+    orderBy: { currently_registered: Order_By.Desc },
   }
 }
 
 export const getSatelliteAllFilters = (): SatelliteQueryFilterType => {
   return {
     where: { registration_timestamp: { _is_null: false } },
-    orderBy: { currently_registered: undefined },
+    orderBy: { currently_registered: Order_By.Desc },
   }
 }
 

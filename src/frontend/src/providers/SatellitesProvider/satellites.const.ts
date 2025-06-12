@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { SatelliteQueryFilterType, SatellitesContextState } from './satellites.provider.types'
+import { Order_By } from 'utils/__generated__/graphql'
 
 // actions
 export const DELEGATE_ACTION = 'delegate'
@@ -84,19 +85,19 @@ export type PaginationSatelliteType =
 export const SATELLITE_DEFFAULT_FILTERS = {
   [SATELLITE_PAGINATION_ALL]: {
     where: {},
-    orderBy: {},
+    orderBy: { currently_registered: Order_By.Desc },
   },
   [SATELLITE_PAGINATION_ACTIVE]: {
     where: {},
-    orderBy: {},
+    orderBy: { currently_registered: Order_By.Desc },
   },
   [SATELLITE_PAGINATION_ORACLES]: {
     where: {},
-    orderBy: {},
+    orderBy: { currently_registered: Order_By.Desc },
   },
   [SATELLITE_PAGINATION_BY_ADDRESS]: {
     where: {},
-    orderBy: {},
+    orderBy: { currently_registered: Order_By.Desc },
   },
 }
 
