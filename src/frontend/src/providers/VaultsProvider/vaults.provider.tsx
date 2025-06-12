@@ -37,6 +37,7 @@ import {
 import { normalizeVaultsNew } from './helpers/vaults.normalizer'
 import { getVaultsProviderReturnValue } from './helpers/vaults.utils'
 import { VaultStatsSchemaResponse } from './schemas/vaultsCount.schema'
+import { useQueryWithInterval } from 'providers/common/hooks/useQueryWithInterval'
 
 export const vaultsContext = React.createContext<VaultsContext>(undefined!)
 
@@ -256,7 +257,7 @@ export const VaultsProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
   })
 
-  useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
+  useQueryWithInterval(GET_ALL_VAULTS_QUERY_COUNT, {
     variables: {
       totalCountWhere: defaultVaultFilters[PAGINATION_ALL].shadowWhere,
       userCountWhere: defaultVaultFilters[PAGINATION_MY].shadowWhere,

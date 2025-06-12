@@ -9,9 +9,10 @@ import {
   useQuery,
 } from '@apollo/client'
 
-import { currentIndexerLevelProxy } from '../utils/observeCurrentIndexerLevel'
 import { isAbortError } from 'errors/error'
 import { forcedUpdateProxy } from '../utils/observeForcedUpdate'
+
+const REFRESH_INTERVAL = 10_000 // 30 seconds
 
 /**
  *
@@ -30,7 +31,7 @@ import { forcedUpdateProxy } from '../utils/observeForcedUpdate'
  *    --- @refetchQueryVariables should be in UseCallback if it depends on data from cmp/hook, or be outside cmp/hook to not provoke useCallback to recreate refetch fn on parent's rerender
  *    --- on vars change should i forbid refetch call?
  */
-export const useQueryWithRefetch = <TData = unknown, TVariables extends OperationVariables = OperationVariables>(
+export const useQueryWithInterval = <TData = unknown, TVariables extends OperationVariables = OperationVariables>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
   queryOptions: QueryHookOptions<TData, TVariables>,
   refetchOptions?: {
@@ -42,11 +43,8 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   // @ts-expect-error
   const queryName = query.definitions?.[0]?.name?.value
 
-  // lastUpdatedBlock -> block of last query refetch, used along with blocksDiff option
-  const lastUpdatedBlock = useRef<null | number>(null)
-
   // refetchId -> id of callback that subscibes to indexer block change
-  const refetchId = useRef<null | string>(null)
+  const refetchId = useRef<null | NodeJS.Timeout>(null)
   const isRefetching = useRef(false)
 
   // shouldRunUseQuery -> when variables changing we need to rerun useQuery, isInitialQueryDone is ref so resetting it won't trigger useQuery rerun
@@ -60,7 +58,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
   const prevUserSkipValue = usePrevious(queryOptions?.skip)
   const currentUserSkipValue = queryOptions?.skip
 
-  const { blocksDiff = 7000, refetchQueryVariables } = refetchOptions ?? {}
+  const { refetchQueryVariables } = refetchOptions ?? {}
 
   // Effect to reset isInitialQueryDone, on variables change
   useEffect(() => {
@@ -98,35 +96,17 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     fetchPolicy: 'network-only',
   })
 
-  // callback to refetch query on block lvl change
+  // callback to refetch query on interval or forced update
   const refetchQuery = useCallback(
-    // source is newIndexerLvl, or boolean when we want to refetch query after some action was completed
-
-    async (source: number | boolean | null = null) => {
-      if (!isInitialQueryDone.current || isRefetching.current) return
+    async (source: boolean | null = null) => {
+      if (!isInitialQueryDone.current || isRefetching.current || document.hidden) return
 
       isRefetching.current = true
       try {
         const variables = typeof refetchQueryVariables === 'function' ? refetchQueryVariables() : refetchQueryVariables
         let refetchData: ApolloQueryResult<TData> | null = null
 
-        // case when we have blocks diff, and we want to refetch query only when block lvl is changed
-        if (typeof blocksDiff === 'number' && typeof source === 'number') {
-          // if we don't have blocks diff first indexer change just set lastUpdatedBlock
-          if (lastUpdatedBlock.current === null) {
-            lastUpdatedBlock.current = source
-            return
-          }
-
-          if (source - lastUpdatedBlock.current >= blocksDiff) {
-            refetchData = await queryResult.refetch(variables)
-            lastUpdatedBlock.current = source
-          }
-
-          return
-        }
-
-        // case to refetch data after some action was completed
+        // refetch data logic
         if (typeof source === 'boolean') {
           refetchData = await queryResult.refetch(variables)
 
@@ -147,7 +127,7 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
         isRefetching.current = false
       }
     },
-    [refetchQueryVariables, queryOptions?.onCompleted, blocksDiff],
+    [refetchQueryVariables, queryOptions?.onCompleted],
   )
 
   // effect to run refetch query when forcedUpdateProxy has been changed to true
@@ -171,26 +151,31 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
     }
   }, [refetchQuery])
 
-  // subscribe to indexer lvl change, and unsibscribe when component unmounts, or query becomes inactive
+  // refetch every N seconds, and unsibscribe when component unmounts, or query becomes inactive
   useEffect(() => {
-    // if query is active subscibe to indexer lvl change, and save id of subscription
+    let interval: NodeJS.Timeout | undefined = undefined
+    // if query is activeset interval, and save id of it
     if (!currentUserSkipValue && !refetchId.current) {
-      if (process.env.REACT_APP_ENV === 'dev') console.log(`%cregister ${queryName}`, 'color: lime')
-      refetchId.current = currentIndexerLevelProxy.registerListener(refetchQuery)
+      // call interval here
+      interval = setInterval(() => {
+        refetchQuery(true)
+      }, REFRESH_INTERVAL)
+
+      refetchId.current = interval
     }
 
-    // if query is not active and we have id, then unsubscibe from indexer lvl change
+    // if query is not active and we have id, then clear interval
     if (currentUserSkipValue && refetchId.current) {
       if (process.env.REACT_APP_ENV === 'dev') console.log(`%cunregister in callback ${queryName}`, 'color: orange')
-      currentIndexerLevelProxy.removeListener(refetchId.current)
+      clearInterval(interval)
       refetchId.current = null
     }
 
     return () => {
-      // if we have id and hook unmounts, then unsubscibe from indexer lvl change
+      // if we have id and hook unmounts, then clear interval
       if (refetchId.current) {
         if (process.env.REACT_APP_ENV === 'dev') console.log(`%cunregister in cleanup ${queryName}`, 'color: orange')
-        currentIndexerLevelProxy.removeListener(refetchId.current)
+        clearInterval(interval)
         refetchId.current = null
       }
     }
