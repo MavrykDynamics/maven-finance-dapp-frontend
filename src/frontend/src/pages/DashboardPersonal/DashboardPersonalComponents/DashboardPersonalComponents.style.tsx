@@ -73,6 +73,11 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavenTheme 
 export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavenTheme }>`
   width: 260px;
 
+  & p {
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+  }
+
   .wallet-info {
     display: flex;
     flex-direction: column;
