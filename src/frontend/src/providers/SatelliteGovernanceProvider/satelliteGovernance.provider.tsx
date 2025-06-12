@@ -36,6 +36,7 @@ import {
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQuery } from '@apollo/client'
 
 // context
 export const satelliteGovernanceContext = React.createContext<SatelliteGovernanceContext>(undefined!)
@@ -72,22 +73,16 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
    * PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY -> load all past satellite governance actions
    * USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY -> load all satellite governance actions created by user
    */
-  useQueryWithRefetch(
-    SATELLITE_GOVERNANCE_CONFIG_QUERY,
-    {
-      skip: !activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB],
-      onCompleted: (data) => {
-        setSatelliteGovCtxState((prev) => ({
-          ...prev,
-          config: normalizeSatelliteGovernanceConfig(data),
-        }))
-      },
-      onError: (error) => handleApolloError(error, 'SATELLITE_GOVERNANCE_CONFIG_QUERY'),
+  useQuery(SATELLITE_GOVERNANCE_CONFIG_QUERY, {
+    skip: !activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB],
+    onCompleted: (data) => {
+      setSatelliteGovCtxState((prev) => ({
+        ...prev,
+        config: normalizeSatelliteGovernanceConfig(data),
+      }))
     },
-    {
-      blocksDiff: 4000,
-    },
-  )
+    onError: (error) => handleApolloError(error, 'SATELLITE_GOVERNANCE_CONFIG_QUERY'),
+  })
 
   useQueryWithRefetch(
     ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY,
