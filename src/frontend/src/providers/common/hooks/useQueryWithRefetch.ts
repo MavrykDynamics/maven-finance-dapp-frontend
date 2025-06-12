@@ -154,29 +154,24 @@ export const useQueryWithRefetch = <TData = unknown, TVariables extends Operatio
 
   // refetch every N seconds, and unsibscribe when component unmounts, or query becomes inactive
   useEffect(() => {
-    let interval: NodeJS.Timeout | undefined = undefined
-    // if query is activeset interval, and save id of it
-    if (!currentUserSkipValue && !refetchId.current) {
-      // call interval here
-      interval = setInterval(() => {
-        refetchQuery(true)
-      }, REFRESH_INTERVAL)
-
-      refetchId.current = interval
+    const handleVisibilityChange = () => {
+      if (document.hidden && refetchId.current) {
+        clearInterval(refetchId.current)
+        refetchId.current = null
+      } else if (!document.hidden && !refetchId.current && !currentUserSkipValue) {
+        refetchId.current = setInterval(() => {
+          refetchQuery(true)
+        }, REFRESH_INTERVAL)
+      }
     }
 
-    // if query is not active and we have id, then clear interval
-    if (currentUserSkipValue && refetchId.current) {
-      if (process.env.REACT_APP_ENV === 'dev') console.log(`%cunregister in callback ${queryName}`, 'color: orange')
-      clearInterval(interval)
-      refetchId.current = null
-    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    handleVisibilityChange()
 
     return () => {
-      // if we have id and hook unmounts, then clear interval
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       if (refetchId.current) {
-        if (process.env.REACT_APP_ENV === 'dev') console.log(`%cunregister in cleanup ${queryName}`, 'color: orange')
-        clearInterval(interval)
+        clearInterval(refetchId.current)
         refetchId.current = null
       }
     }
