@@ -54,6 +54,7 @@ export const getSatelliteOrderByQuery = (option: string): { orderBy?: Satellite_
     case 'Participation':
       return {
         orderBy: {
+          // currently_registered: undefined,
           satellite_action_counter: Order_By.Desc,
           financial_request_counter: Order_By.Desc,
           governance_proposal_counter: Order_By.Desc,

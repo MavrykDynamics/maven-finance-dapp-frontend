@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // const
@@ -6,13 +6,9 @@ import { ACTION_PRIMARY } from 'app/App.components/Button/Button.constants'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
-  SATELLITE_PAGINATION_ACTIVE,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
-
-// types
-import { SatellitesContext } from 'providers/SatellitesProvider/satellites.provider.types'
 
 // view
 import { Button } from 'app/App.components/Button/Button.controller'
@@ -27,19 +23,34 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // helpers
-import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
+// import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
+import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { SATELLITES_DASHBOARD_STATS } from 'providers/SatellitesProvider/queries/satellitesStats.query'
 
 export const SatellitesTab = () => {
+  const { handleApolloError } = useApolloContext()
   const {
     activeSatellitesIds,
-    satelliteActiveMapper,
-    proposalsAmount,
-    satelliteGovActionsAmount,
-    finRequestsAmount,
     changeSatellitesSubscriptionsList,
     activeSatellitesCount,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
+
+  const [satelliteStats, setSatellitesStats] = useState({
+    avgFee: 0,
+  })
+
+  const { loading } = useQueryWithRefetch(SATELLITES_DASHBOARD_STATS, {
+    onCompleted: (data) => {
+      const rawfee = data.activeSatellitesAmount.aggregate?.avg?.fee
+
+      if (rawfee) {
+        setSatellitesStats((prev) => ({ ...prev, avgFee: rawfee / 100 }))
+      }
+    },
+    onError: (error) => handleApolloError(error, 'SATELLITES_DASHBOARD_STATS'),
+  })
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -52,18 +63,6 @@ export const SatellitesTab = () => {
     }
   }, [])
 
-  const { avgDelegatedMvn, avgFee, avgFreeMvnSpace, avgStakedMvn, participationRate } = useMemo(
-    () =>
-      reduceSatellitesData({
-        activeSatellitesIds,
-        satelliteMapper: satelliteActiveMapper,
-        proposalsAmount,
-        satelliteGovActionsAmount,
-        finRequestsAmount,
-      }),
-    [activeSatellitesIds, satelliteActiveMapper, proposalsAmount, satelliteGovActionsAmount, finRequestsAmount],
-  )
-
   return (
     <TabWrapperStyled $backgroundImage="dashboard_satelliteTab_bg.png">
       <div className="top">
@@ -73,7 +72,7 @@ export const SatellitesTab = () => {
         </Link>
       </div>
 
-      {isSatellitesLoading ? (
+      {isSatellitesLoading || loading ? (
         <DataLoaderWrapper className="tabLoader">
           <ClockLoader width={150} height={150} />
           <div className="text">Loading satellites</div>
@@ -90,35 +89,39 @@ export const SatellitesTab = () => {
           <StatBlock>
             <div className="name">Avg. Delegated sMVN</div>
             <div className="value">
-              <CommaNumber endingText="sMVN" value={avgDelegatedMvn} />
+              {/* <CommaNumber endingText="sMVN" value={avgDelegatedMvn} /> */}
+              Coming Soon
             </div>
           </StatBlock>
 
           <StatBlock>
             <div className="name">Avg. Free sMVN Space</div>
             <div className="value">
-              <CommaNumber endingText="sMVN" value={avgFreeMvnSpace} />
+              {/* <CommaNumber endingText="sMVN" value={avgFreeMvnSpace} /> */}
+              Coming Soon
             </div>
           </StatBlock>
 
           <StatBlock>
             <div className="name">Avg. Delegation Fee</div>
             <div className="value">
-              <CommaNumber endingText="%" value={avgFee} />
+              <CommaNumber endingText="%" value={satelliteStats.avgFee} />
             </div>
           </StatBlock>
 
           <StatBlock>
             <div className="name">Avg. MVN Staked</div>
             <div className="value">
-              <CommaNumber endingText="sMVN" value={avgStakedMvn} />
+              {/* <CommaNumber endingText="sMVN" value={avgStakedMvn} /> */}
+              Coming Soon
             </div>
           </StatBlock>
 
           <StatBlock>
             <div className="name">Participation Rate</div>
             <div className="value">
-              <CommaNumber endingText="%" value={participationRate} />
+              {/* <CommaNumber endingText="%" value={participationRate} /> */}
+              Coming Soon
             </div>
           </StatBlock>
         </SatellitesContentStyled>
@@ -145,60 +148,4 @@ export const SatellitesTab = () => {
       </div>
     </TabWrapperStyled>
   )
-}
-
-const reduceSatellitesData = ({
-  activeSatellitesIds,
-  satelliteMapper,
-  proposalsAmount,
-  satelliteGovActionsAmount,
-  finRequestsAmount,
-}: {
-  activeSatellitesIds: SatellitesContext['activeSatellitesIds']
-  satelliteMapper: SatellitesContext['satelliteMapper']
-  proposalsAmount: SatellitesContext['proposalsAmount']
-  satelliteGovActionsAmount: SatellitesContext['satelliteGovActionsAmount']
-  finRequestsAmount: SatellitesContext['finRequestsAmount']
-}) => {
-  const satellitesInfo = activeSatellitesIds.reduce(
-    (acc, satelliteAddress) => {
-      const satelliteRecord = satelliteMapper[satelliteAddress]
-      if (!satelliteRecord || satelliteRecord.status !== 0) return acc
-
-      const { proposalParticipation, votingParticipation } = getSatelliteParticipation({
-        satellite: satelliteRecord,
-        proposalsAmount,
-        satelliteGovActionsAmount,
-        finRequestsAmount,
-      })
-
-      acc.activeSatellites += 1
-      acc.avgFee += satelliteRecord.satelliteFee
-      acc.avgStakedMvn += satelliteRecord.sMvnBalance
-      acc.participationRate += (proposalParticipation + votingParticipation) / 2
-      acc.avgFreeMvnSpace += Math.max(
-        satelliteRecord.sMvnBalance * satelliteRecord.delegationRatio - satelliteRecord.totalDelegatedAmount,
-        0,
-      )
-      acc.avgDelegatedMvn += satelliteRecord.sMvnBalance + satelliteRecord.totalDelegatedAmount
-
-      return acc
-    },
-    {
-      activeSatellites: 0,
-      avgFee: 0,
-      avgDelegatedMvn: 0,
-      avgStakedMvn: 0,
-      participationRate: 0,
-      avgFreeMvnSpace: 0,
-    },
-  )
-
-  return {
-    avgFee: satellitesInfo.avgFee / satellitesInfo.activeSatellites,
-    avgStakedMvn: satellitesInfo.avgStakedMvn / satellitesInfo.activeSatellites,
-    participationRate: satellitesInfo.participationRate / satellitesInfo.activeSatellites,
-    avgFreeMvnSpace: satellitesInfo.avgFreeMvnSpace / satellitesInfo.activeSatellites,
-    avgDelegatedMvn: satellitesInfo.avgDelegatedMvn / satellitesInfo.activeSatellites,
-  }
 }

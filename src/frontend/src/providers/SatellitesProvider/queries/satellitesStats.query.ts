@@ -42,3 +42,16 @@ query SatellitesStatsQuery{
   }
 }
 `)
+
+export const SATELLITES_DASHBOARD_STATS = gql(`
+query SatellitesDashboardStatsQuery {
+  activeSatellitesAmount: satellite_aggregate(where: {user: {satellites: {status: {_eq: "0"}, currently_registered: {_eq: true}}}}) {
+    aggregate {
+      avg {
+        total_delegated_amount
+        fee
+      }
+    }
+  }
+}
+`)
