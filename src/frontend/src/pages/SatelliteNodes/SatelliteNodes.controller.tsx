@@ -46,6 +46,7 @@ import {
 } from 'providers/SatellitesProvider/helpers/satellite.filters'
 import { Satellite_Bool_Exp } from 'utils/__generated__/graphql'
 import qs from 'qs'
+import { satelliteNodesPath } from './satelliteNodes.const'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -141,7 +142,7 @@ const SatelliteNodes = () => {
 
     const stringifiedQP = qs.stringify({ ...(chosenItem ? { orderBy: chosenItem?.text } : {}), ...restQP })
 
-    navigate(`/satellite-nodes?${stringifiedQP}`, { replace: true })
+    navigate(`${satelliteNodesPath}?${stringifiedQP}`, { replace: true })
     setChosenDdItem(chosenItem)
     setDdIsOpen(!ddIsOpen)
   }
@@ -204,7 +205,13 @@ const SatelliteNodes = () => {
             <div className={`list`}>
               {allSatellitesIds.map((satelliteAddress) => {
                 if (!satelliteMapper[satelliteAddress]) return null
-                return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+                return (
+                  <SatelliteListItem
+                    satellite={satelliteMapper[satelliteAddress]}
+                    key={satelliteAddress}
+                    fromNodesPage
+                  />
+                )
               })}
 
               <Pagination

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, To, useLocation, useNavigate } from 'react-router-dom'
 
 import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 
@@ -11,6 +11,7 @@ import { SatellitePaginationStyled } from './SatellitePagination.style'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { forwardRef, useEffect, useMemo } from 'react'
 import { SATELLITE_PAGINATION_ALL } from 'providers/SatellitesProvider/satellites.const'
+import { satelliteNodesPath } from 'pages/SatelliteNodes/satelliteNodes.const'
 
 type SatellitePaginationpProps = {
   currentSatelliteIdx: number
@@ -20,6 +21,8 @@ type SatellitePaginationpProps = {
 const SatellitePagination = forwardRef<boolean, SatellitePaginationpProps>(
   ({ currentSatelliteIdx, setCurrentSatelliteAddressIndex }, ref) => {
     const navigate = useNavigate()
+
+    const { state } = useLocation()
 
     const { allSatellitesIds, staelliteIdsByAddress, paginationState, changePage, isLoading } = useSatellitesContext()
     const satelliteFromParamsIdx = useMemo(
@@ -70,7 +73,7 @@ const SatellitePagination = forwardRef<boolean, SatellitePaginationpProps>(
 
     return (
       <SatellitePaginationStyled>
-        <Link to={`/satellite-nodes`} className="go-back">
+        <Link to={state?.fromNodesPage ? (-1 as To) : satelliteNodesPath} className="go-back">
           <NewButton kind={BUTTON_SECONDARY} disabled={isLoading}>
             <Icon id="full-arrow-left" /> Back to satellites
           </NewButton>
