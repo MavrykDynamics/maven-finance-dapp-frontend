@@ -64,7 +64,7 @@ export const ChangeVaultName = ({
 }) => {
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
-  const { vaultNames, isLoading: isVaultsNamesLoading } = useUserVaultsNames()
+  const { vaultNames } = useUserVaultsNames(!show)
 
   useLockBodyScroll(show)
 

@@ -8,13 +8,14 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 // consts
 import { CURRENT_USER_VAULTS_NAMES_QUERY } from '../queries/userVaultsNames.query'
 
-export const useUserVaultsNames = () => {
+export const useUserVaultsNames = (skip = true) => {
   const { handleApolloError } = useApolloContext()
   const { userAddress } = useUserContext()
 
   const [vaultNames, setVaultNames] = useState<string[]>([])
 
   const { loading } = useQueryWithRefetch(CURRENT_USER_VAULTS_NAMES_QUERY, {
+    skip,
     variables: {
       userAddress: userAddress ?? '',
     },
