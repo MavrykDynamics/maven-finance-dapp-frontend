@@ -119,10 +119,6 @@ const DataFeedDetails = () => {
       const oracleParamsByFeed = { where: { user: { address: { _in: feedOracleAddresses } } } }
       updateSatelliteQueryFilters(oracleParamsByFeed, SATELLITE_PAGINATION_ORACLES)
     }
-
-    return () => {
-      updateSatelliteQueryFilters({ where: {} }, SATELLITE_PAGINATION_ORACLES)
-    }
   }, [feedOracleAddresses])
 
   // Before trusted wias checked like this feed && feed.oraclesResponces >= feed.pct_oracle_threshold

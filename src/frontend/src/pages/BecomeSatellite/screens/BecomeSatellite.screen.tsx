@@ -47,7 +47,7 @@ import {
   BecomeSatelliteRegisterAsOracle,
 } from '../BecomeSatellite.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { Outlet, useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck $balanceOk={false}>

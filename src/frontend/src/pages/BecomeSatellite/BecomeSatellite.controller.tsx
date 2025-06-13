@@ -50,6 +50,7 @@ export const BecomeSatellite = () => {
     changeSatellitesSubscriptionsList,
     isLoading: isSatellitesLoading,
   } = useSatellitesContext()
+
   const {
     userAddress,
     isSatellite,

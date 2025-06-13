@@ -91,24 +91,27 @@ const SatelliteNodes = () => {
 
   const currentPage = useMemo(() => getPageNumber(search, SATELITES_NODES_LIST_NAME), [search])
 
-  const applyServerFilters = useCallback(() => {
-    let whereQuery: { where: Partial<Satellite_Bool_Exp> } = { where: {} }
+  const applyServerFilters = useCallback(
+    (searchValue: string) => {
+      let whereQuery: { where: Partial<Satellite_Bool_Exp> } = { where: {} }
 
-    const orderByQuery = getSatelliteOrderByQuery(chosenDdItem?.text ?? '')
+      const orderByQuery = getSatelliteOrderByQuery(chosenDdItem?.text ?? '')
 
-    if (hasTouchedInput.current) {
-      const searchFilterQuery = getSatelliteSearchQueryForWhereFilter(debouncedValue)
+      if (hasTouchedInput.current) {
+        const searchFilterQuery = getSatelliteSearchQueryForWhereFilter(searchValue)
 
-      whereQuery = {
-        ...whereQuery,
-        where: { ...whereQuery.where, ...searchFilterQuery.where },
+        whereQuery = {
+          ...whereQuery,
+          where: { ...whereQuery.where, ...searchFilterQuery.where },
+        }
       }
-    }
 
-    const query = { ...whereQuery, ...orderByQuery }
+      const query = { ...whereQuery, ...orderByQuery }
 
-    updateSatelliteQueryFilters(query, SATELLITE_PAGINATION_ALL)
-  }, [chosenDdItem?.text, updateSatelliteQueryFilters, debouncedValue])
+      updateSatelliteQueryFilters(query, SATELLITE_PAGINATION_ALL)
+    },
+    [chosenDdItem?.text, updateSatelliteQueryFilters],
+  )
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -121,17 +124,16 @@ const SatelliteNodes = () => {
     }
   }, [])
 
-  // search filter
+  //  filters on initial load
   useEffect(() => {
-    if (!hasTouchedInput.current) return
-    applyServerFilters()
+    applyServerFilters(debouncedValue)
   }, [debouncedValue])
 
   useEffect(() => {
     if (chosenDdItem?.text) {
-      applyServerFilters()
+      applyServerFilters(debouncedValue)
     }
-  }, [chosenDdItem?.text])
+  }, [chosenDdItem?.text, debouncedValue])
 
   useEffect(() => {
     changePage(currentPage, SATELLITE_PAGINATION_ALL)

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // helpers
 import { SATELLITE_AGGREGATE_COUNT, SATELLITE_DATA_QUERY } from './queries/satellites.query'
@@ -72,6 +72,27 @@ export const SatellitesProvider = ({ children }: Props) => {
   // query filters
   // @ts-ignore
   const [satelliteFilters, setSatelliteFilters] = useState<SatelliteFiltersType>(SATELLITE_DEFFAULT_FILTERS)
+
+  const changeSatellitesSubscriptionsList = (newSkips: Partial<SatellitesSubsRecordType>) => {
+    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
+  }
+
+  const changePage = useCallback(
+    (newPage: number, mapperType: PaginationSatelliteType) => {
+      if (newPage === paginationState[mapperType]) return
+      setIsLoading(true)
+      setPaginationState((prev) => ({ ...prev, [mapperType]: newPage }))
+    },
+    [paginationState],
+  )
+
+  const updateSatelliteQueryFilters = useCallback(
+    (queryFilters: Partial<SatelliteQueryFilterType>, vaultType: PaginationSatelliteType) => {
+      setIsLoading(true)
+      setSatelliteFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
+    },
+    [],
+  )
 
   const defaultSatelliteFilters = useMemo(
     () =>
@@ -250,27 +271,6 @@ export const SatellitesProvider = ({ children }: Props) => {
     },
     onError: (error) => handleApolloError(error, 'SATELLITE_AGGREGATE_COUNT'),
   })
-
-  const changeSatellitesSubscriptionsList = (newSkips: Partial<SatellitesSubsRecordType>) => {
-    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
-
-  const changePage = useCallback(
-    (newPage: number, mapperType: PaginationSatelliteType) => {
-      if (newPage === paginationState[mapperType]) return
-      setIsLoading(true)
-      setPaginationState((prev) => ({ ...prev, [mapperType]: newPage }))
-    },
-    [paginationState],
-  )
-
-  const updateSatelliteQueryFilters = useCallback(
-    (queryFilters: Partial<SatelliteQueryFilterType>, vaultType: PaginationSatelliteType) => {
-      setSatelliteFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
-      setIsLoading(true)
-    },
-    [],
-  )
 
   const providerValue = useMemo(
     () => ({
