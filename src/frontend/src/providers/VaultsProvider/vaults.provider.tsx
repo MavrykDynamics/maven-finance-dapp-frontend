@@ -257,6 +257,7 @@ export const VaultsProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
+    skip: activeSubs[VAULTS_DATA] === null,
     variables: {
       totalCountWhere: defaultVaultFilters[PAGINATION_ALL].shadowWhere,
       userCountWhere: defaultVaultFilters[PAGINATION_MY].shadowWhere,
