@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // consts
 import {
@@ -45,6 +45,7 @@ import {
   getSatelliteSearchQueryForWhereFilter,
 } from 'providers/SatellitesProvider/helpers/satellite.filters'
 import { Satellite_Bool_Exp } from 'utils/__generated__/graphql'
+import qs from 'qs'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -57,6 +58,7 @@ const ddItems = itemsForDropDown.map(({ text }) => text)
 
 const SatelliteNodes = () => {
   const { search } = useLocation()
+  const navigate = useNavigate()
 
   const { userTokensBalances, userAddress } = useUserContext()
   const { isSatellite } = useUserContext()
@@ -70,8 +72,17 @@ const SatelliteNodes = () => {
     totalSatellitesCount,
   } = useSatellitesContext()
 
+  const { orderBy = undefined, ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
+
   const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
+  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>(() => {
+    if (orderBy && typeof orderBy === 'string') {
+      const chosenItem = itemsForDropDown.find((item) => item.text === orderBy)
+      return chosenItem
+    }
+
+    return undefined
+  })
 
   // Search --------------
   const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
@@ -127,6 +138,10 @@ const SatelliteNodes = () => {
 
   const handleSelect = (e: string) => {
     const chosenItem = itemsForDropDown.find((item) => item.text === e)
+
+    const stringifiedQP = qs.stringify({ ...(chosenItem ? { orderBy: chosenItem?.text } : {}), ...restQP })
+
+    navigate(`/satellite-nodes?${stringifiedQP}`, { replace: true })
     setChosenDdItem(chosenItem)
     setDdIsOpen(!ddIsOpen)
   }
