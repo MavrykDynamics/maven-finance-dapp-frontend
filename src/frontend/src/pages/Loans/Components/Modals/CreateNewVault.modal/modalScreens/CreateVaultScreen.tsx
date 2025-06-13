@@ -27,8 +27,8 @@ import { useUserVaultsNames } from 'providers/VaultsProvider/hooks/useVaultsName
 import { validateEmptyInput, validateInputLength } from 'app/App.utils/input/validateInput'
 
 export const CreateVaultScreen = () => {
-  const { vaultNames } = useUserVaultsNames()
-  const { vaultInputState, updateInputVaultState, updateScreenToShow } = useCreateVaultContext()
+  const { vaultInputState, updateInputVaultState, updateScreenToShow, show } = useCreateVaultContext()
+  const { vaultNames } = useUserVaultsNames(!show)
 
   // handlers
   const handleVaultNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
