@@ -1,7 +1,7 @@
 import { ContractMethod, OpKind, SendParams, MavrykToolkit, TransferParams, Wallet } from '@mavrykdynamics/taquito'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { WalletOperationError, checkWhetherWalletAbortError } from 'errors/error'
-import { estimateExecution, getContractErrorMessage } from './walletError.helper'
+import { getContractErrorMessage } from './walletError.helper'
 
 type EstimationResultParams = {
   callback?: () => void
@@ -40,12 +40,7 @@ export async function getEstimationResult(
   //   return { actionSuccess: false, error: op.error }
   // }
   try {
-    const operation = await metadata.send({
-      ...args?.params,
-      storageLimit: 800,
-      gasLimit: 25000,
-      fee: 18000,
-    })
+    const operation = await metadata.send(args?.params)
 
     args?.callback?.()
 
@@ -66,12 +61,7 @@ export async function getEstimationBatchResult(
   //   return { actionSuccess: false, error: estimateBatchOp.error }
   // }
   try {
-    // @ts-expect-error // MavrykToolkit does not have proper parameters type
-    const operation = await tezos.wallet.batch(batchArr).send({
-      storageLimit: 800,
-      gasLimit: 25000,
-      fee: 18000,
-    })
+    const operation = await tezos.wallet.batch(batchArr).send()
 
     cb?.()
 
