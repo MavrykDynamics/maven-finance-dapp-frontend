@@ -55,9 +55,6 @@ export type DappConfigContextMethods = {
 export type DappConfigContext = DappConfigContextStateType &
   DappConfigContextMethods & {
     isLoading: boolean
-
-    // action handlers
-    setAction: (actionName: null | UserActionType) => void
   }
 
 // ------ dapp actions & action results types
