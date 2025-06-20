@@ -17,8 +17,7 @@ import { ipfsClient } from 'app/App.components/IPFSUploader/IPFSUploader.control
 
 // utils
 import { getXTZBakers } from './bakers/getXtzBakers'
-import { dappConfigSchema, indexerLevelSchema } from './helpers/dappConfig.schemes'
-import { currentIndexerLevelProxy } from 'providers/common/utils/observeCurrentIndexerLevel'
+import { dappConfigSchema } from './helpers/dappConfig.schemes'
 import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
 
 export const dappConfigContext = React.createContext<DappConfigContext>(undefined!)
@@ -73,12 +72,6 @@ const DappConfigProvider = ({ children }: Props) => {
           minimumStakedMvnBalance: minimumStakedMvnBalance,
           mvnFaucetAddress: mvnFaucetAddress,
         }))
-
-        // Load lvl on dapp init, and then update it with subscription
-        const parsedLevelData = indexerLevelSchema.safeParse(data.dipdup_index)
-        if (currentIndexerLevelProxy.currentIndexedLevel === 0 && parsedLevelData.success) {
-          currentIndexerLevelProxy.currentIndexedLevel = parsedLevelData.data[0].level
-        }
       } catch (e) {
         console.error('zod parsing DAPP_INITIAL_CONFIG_QUERY error:', { e })
       }
