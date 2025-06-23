@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 // consts
 import { TOASTER_ACTIONS_TEXTS } from 'providers/ToasterProvider/helpers/texts/toasterActions.texts'
 import { WALLTET_ERROR_FIELD } from 'errors/consts/error.const'
@@ -13,11 +14,13 @@ import {
   ActionErrorReturnType,
   ActionSuccessReturnType,
   ActionTypes,
+  UserActionType,
 } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
+import { forcedUpdateProxy } from 'providers/common/utils/observeForcedUpdate'
 
 type ActionReturnPayload = Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
 
@@ -46,8 +49,29 @@ export const useContractAction = <G>({
   willUseSharedError = false,
   isSilentAction = false,
 }: HookContractActionArgs<G>): { action: () => Promise<void>; actionWithArgs: (args: G) => Promise<void> } => {
-  const { bug, info, loading, setSharedError } = useToasterContext()
-  const { setAction, toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
+  const { bug, info, loading, setSharedError, hideToasterMessage, success } = useToasterContext()
+  const { toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
+
+  const turnOffAction = useCallback(
+    async (action: UserActionType) => {
+      const { actionName, toasterId, callback } = action
+      // if we don't have toasterId it means that action is silent, and we don't show anything to user
+      if (toasterId) {
+        await sleep(850)
+        hideToasterMessage(toasterId)
+        await sleep(850)
+        success(TOASTER_ACTIONS_TEXTS[actionName]['end']['message'], TOASTER_ACTIONS_TEXTS[actionName]['end']['title'])
+      }
+      toggleActionCompletion(false)
+
+      // some callback f.e. to reset input, clear form data etc.
+      await callback?.()
+
+      // force queries refetch when some action is done to get up-to-date data from indexer
+      forcedUpdateProxy.hasForcedUpdate = true
+    },
+    [hideToasterMessage, success, toggleActionCompletion],
+  )
 
   async function invokeAction(actionResult: ActionErrorReturnType | ActionSuccessReturnType | null) {
     try {
@@ -86,10 +110,10 @@ export const useContractAction = <G>({
         }
 
         const operationConfirm = await operation.confirmation()
-        // @ts-expect-error
+        // @ts-expect-error // not typed
         const operationLvl = operationConfirm.block.header.level
 
-        setAction({ actionName: actionType, toasterId, operationLvl, callback: dappActionCallback })
+        turnOffAction({ actionName: actionType, toasterId, operationLvl, callback: dappActionCallback })
       } else if (isContractErrorPayload(actionResult.error)) {
         if (willUseSharedError) {
           setSharedError(WALLTET_ERROR_FIELD, {
@@ -105,7 +129,6 @@ export const useContractAction = <G>({
         throw new Error(message)
       }
     } catch (e) {
-      setAction(null)
       errActionCallback?.()
       const parsedError = unknownToError(e)
       bug(parsedError.message)
