@@ -1,5 +1,7 @@
 import { gql } from 'utils/__generated__'
 
+import { gql as originalGql } from '@apollo/client'
+
 // data for sidebar
 export const SATELLITES_STATS = gql(`
 query SatellitesStatsQuery{
@@ -43,15 +45,15 @@ query SatellitesStatsQuery{
 }
 `)
 
-export const SATELLITES_DASHBOARD_STATS = gql(`
+export const SATELLITES_DASHBOARD_STATS = originalGql(`
 query SatellitesDashboardStatsQuery {
-  activeSatellitesAmount: satellite_aggregate(where: {user: {satellites: {status: {_eq: "0"}, currently_registered: {_eq: true}}}}) {
-    aggregate {
-      avg {
-        total_delegated_amount
-        fee
-      }
-    }
+  gql_satellite_summary {
+    avg_delegated_smvn
+    avg_delegation_fee
+    avg_free_smvn_balance
+    avg_mvn_staked
+    avg_participation_rate
   }
 }
+
 `)

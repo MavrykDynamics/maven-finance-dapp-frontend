@@ -27,6 +27,8 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { SATELLITES_DASHBOARD_STATS } from 'providers/SatellitesProvider/queries/satellitesStats.query'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { SatelliteDashboardAvgMetrics, satelliteDashboardAvgSchema } from '../schemas/satelliteDashboard.schema'
 
 export const SatellitesTab = () => {
   const { handleApolloError } = useApolloContext()
@@ -39,14 +41,34 @@ export const SatellitesTab = () => {
 
   const [satelliteStats, setSatellitesStats] = useState({
     avgFee: 0,
+    avgDelegatedSmvn: 0,
+    avgFreeSmvnSpace: 0,
+    avgStakedMvn: 0,
+    participationRate: 0,
   })
 
   const { loading } = useQueryWithRefetch(SATELLITES_DASHBOARD_STATS, {
-    onCompleted: (data) => {
-      const rawfee = data.activeSatellitesAmount.aggregate?.avg?.fee
+    onCompleted: (data: { gql_satellite_summary: [SatelliteDashboardAvgMetrics] }) => {
+      try {
+        const parsedData = satelliteDashboardAvgSchema.parse(data.gql_satellite_summary[0])
 
-      if (rawfee) {
-        setSatellitesStats((prev) => ({ ...prev, avgFee: rawfee / 100 }))
+        const {
+          avg_delegated_smvn,
+          avg_delegation_fee,
+          avg_free_smvn_balance,
+          avg_mvn_staked,
+          avg_participation_rate,
+        } = parsedData
+
+        setSatellitesStats({
+          avgFee: Number((avg_delegation_fee / 100).toFixed(2)),
+          avgDelegatedSmvn: convertNumberForClient({ number: avg_delegated_smvn }),
+          avgStakedMvn: convertNumberForClient({ number: avg_mvn_staked }),
+          participationRate: Number((avg_participation_rate / 100).toFixed(2)),
+          avgFreeSmvnSpace: convertNumberForClient({ number: avg_free_smvn_balance }),
+        })
+      } catch (error) {
+        console.error('Error parsing satellite stats:', error)
       }
     },
     onError: (error) => handleApolloError(error, 'SATELLITES_DASHBOARD_STATS'),
@@ -89,16 +111,14 @@ export const SatellitesTab = () => {
           <StatBlock>
             <div className="name">Avg. Delegated sMVN</div>
             <div className="value">
-              {/* <CommaNumber endingText="sMVN" value={avgDelegatedMvn} /> */}
-              Coming Soon
+              <CommaNumber endingText="sMVN" value={satelliteStats.avgDelegatedSmvn} />
             </div>
           </StatBlock>
 
           <StatBlock>
             <div className="name">Avg. Free sMVN Space</div>
             <div className="value">
-              {/* <CommaNumber endingText="sMVN" value={avgFreeMvnSpace} /> */}
-              Coming Soon
+              <CommaNumber endingText="sMVN" value={satelliteStats.avgFreeSmvnSpace} />
             </div>
           </StatBlock>
 
@@ -112,16 +132,14 @@ export const SatellitesTab = () => {
           <StatBlock>
             <div className="name">Avg. MVN Staked</div>
             <div className="value">
-              {/* <CommaNumber endingText="sMVN" value={avgStakedMvn} /> */}
-              Coming Soon
+              <CommaNumber endingText="sMVN" value={satelliteStats.avgStakedMvn} />
             </div>
           </StatBlock>
 
           <StatBlock>
             <div className="name">Participation Rate</div>
             <div className="value">
-              {/* <CommaNumber endingText="%" value={participationRate} /> */}
-              Coming Soon
+              <CommaNumber endingText="%" value={satelliteStats.participationRate} />
             </div>
           </StatBlock>
         </SatellitesContentStyled>
