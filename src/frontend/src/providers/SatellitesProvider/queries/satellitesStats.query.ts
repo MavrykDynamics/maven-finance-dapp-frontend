@@ -1,7 +1,5 @@
 import { gql } from 'utils/__generated__'
 
-import { gql as originalGql } from '@apollo/client'
-
 // data for sidebar
 export const SATELLITES_STATS = gql(`
 query SatellitesStatsQuery{
@@ -45,7 +43,7 @@ query SatellitesStatsQuery{
 }
 `)
 
-export const SATELLITES_DASHBOARD_STATS = originalGql(`
+export const SATELLITES_DASHBOARD_STATS = gql(`
 query SatellitesDashboardStatsQuery {
   gql_satellite_summary {
     avg_delegated_smvn

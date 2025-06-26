@@ -6,7 +6,6 @@ export const satelliteDashboardAvgSchema = z.object({
   avg_free_smvn_balance: z.number(), // large float
   avg_mvn_staked: z.number(), // large integer
   avg_participation_rate: z.number(), // percent-like float
-  total_active_satellites: z.number(), // whole number
 })
 
 // Example usage:

@@ -37151,6 +37151,270 @@ export type Gql_Loan_Token_Market_Stats_Variance_Fields = {
   utilisation_rate?: Maybe<Scalars['Float']['output']>;
 };
 
+/** columns and relationships of "gql_satellite_summary" */
+export type Gql_Satellite_Summary = {
+  __typename?: 'gql_satellite_summary';
+  avg_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['numeric']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+  avg_participation_rate?: Maybe<Scalars['numeric']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  total_active_satellites?: Maybe<Scalars['bigint']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  total_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** aggregated selection of "gql_satellite_summary" */
+export type Gql_Satellite_Summary_Aggregate = {
+  __typename?: 'gql_satellite_summary_aggregate';
+  aggregate?: Maybe<Gql_Satellite_Summary_Aggregate_Fields>;
+  nodes: Array<Gql_Satellite_Summary>;
+};
+
+/** aggregate fields of "gql_satellite_summary" */
+export type Gql_Satellite_Summary_Aggregate_Fields = {
+  __typename?: 'gql_satellite_summary_aggregate_fields';
+  avg?: Maybe<Gql_Satellite_Summary_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Gql_Satellite_Summary_Max_Fields>;
+  min?: Maybe<Gql_Satellite_Summary_Min_Fields>;
+  stddev?: Maybe<Gql_Satellite_Summary_Stddev_Fields>;
+  stddev_pop?: Maybe<Gql_Satellite_Summary_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Gql_Satellite_Summary_Stddev_Samp_Fields>;
+  sum?: Maybe<Gql_Satellite_Summary_Sum_Fields>;
+  var_pop?: Maybe<Gql_Satellite_Summary_Var_Pop_Fields>;
+  var_samp?: Maybe<Gql_Satellite_Summary_Var_Samp_Fields>;
+  variance?: Maybe<Gql_Satellite_Summary_Variance_Fields>;
+};
+
+
+/** aggregate fields of "gql_satellite_summary" */
+export type Gql_Satellite_Summary_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Gql_Satellite_Summary_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Gql_Satellite_Summary_Avg_Fields = {
+  __typename?: 'gql_satellite_summary_avg_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "gql_satellite_summary". All fields are combined with a logical 'AND'. */
+export type Gql_Satellite_Summary_Bool_Exp = {
+  _and?: InputMaybe<Array<Gql_Satellite_Summary_Bool_Exp>>;
+  _not?: InputMaybe<Gql_Satellite_Summary_Bool_Exp>;
+  _or?: InputMaybe<Array<Gql_Satellite_Summary_Bool_Exp>>;
+  avg_delegated_smvn?: InputMaybe<Numeric_Comparison_Exp>;
+  avg_delegation_fee?: InputMaybe<Numeric_Comparison_Exp>;
+  avg_free_smvn_balance?: InputMaybe<Numeric_Comparison_Exp>;
+  avg_mvn_staked?: InputMaybe<Numeric_Comparison_Exp>;
+  avg_participation_rate?: InputMaybe<Numeric_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  total_active_satellites?: InputMaybe<Bigint_Comparison_Exp>;
+  total_delegated_smvn?: InputMaybe<Numeric_Comparison_Exp>;
+  total_free_smvn_balance?: InputMaybe<Numeric_Comparison_Exp>;
+  total_mvn_staked?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Gql_Satellite_Summary_Max_Fields = {
+  __typename?: 'gql_satellite_summary_max_fields';
+  avg_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['numeric']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+  avg_participation_rate?: Maybe<Scalars['numeric']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  total_active_satellites?: Maybe<Scalars['bigint']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  total_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** aggregate min on columns */
+export type Gql_Satellite_Summary_Min_Fields = {
+  __typename?: 'gql_satellite_summary_min_fields';
+  avg_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['numeric']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+  avg_participation_rate?: Maybe<Scalars['numeric']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  total_active_satellites?: Maybe<Scalars['bigint']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  total_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** Ordering options when selecting data from "gql_satellite_summary". */
+export type Gql_Satellite_Summary_Order_By = {
+  avg_delegated_smvn?: InputMaybe<Order_By>;
+  avg_delegation_fee?: InputMaybe<Order_By>;
+  avg_free_smvn_balance?: InputMaybe<Order_By>;
+  avg_mvn_staked?: InputMaybe<Order_By>;
+  avg_participation_rate?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  total_active_satellites?: InputMaybe<Order_By>;
+  total_delegated_smvn?: InputMaybe<Order_By>;
+  total_free_smvn_balance?: InputMaybe<Order_By>;
+  total_mvn_staked?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "gql_satellite_summary" */
+export enum Gql_Satellite_Summary_Select_Column {
+  /** column name */
+  AvgDelegatedSmvn = 'avg_delegated_smvn',
+  /** column name */
+  AvgDelegationFee = 'avg_delegation_fee',
+  /** column name */
+  AvgFreeSmvnBalance = 'avg_free_smvn_balance',
+  /** column name */
+  AvgMvnStaked = 'avg_mvn_staked',
+  /** column name */
+  AvgParticipationRate = 'avg_participation_rate',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  TotalActiveSatellites = 'total_active_satellites',
+  /** column name */
+  TotalDelegatedSmvn = 'total_delegated_smvn',
+  /** column name */
+  TotalFreeSmvnBalance = 'total_free_smvn_balance',
+  /** column name */
+  TotalMvnStaked = 'total_mvn_staked'
+}
+
+/** aggregate stddev on columns */
+export type Gql_Satellite_Summary_Stddev_Fields = {
+  __typename?: 'gql_satellite_summary_stddev_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Gql_Satellite_Summary_Stddev_Pop_Fields = {
+  __typename?: 'gql_satellite_summary_stddev_pop_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Gql_Satellite_Summary_Stddev_Samp_Fields = {
+  __typename?: 'gql_satellite_summary_stddev_samp_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "gql_satellite_summary" */
+export type Gql_Satellite_Summary_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Gql_Satellite_Summary_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Gql_Satellite_Summary_Stream_Cursor_Value_Input = {
+  avg_delegated_smvn?: InputMaybe<Scalars['numeric']['input']>;
+  avg_delegation_fee?: InputMaybe<Scalars['numeric']['input']>;
+  avg_free_smvn_balance?: InputMaybe<Scalars['numeric']['input']>;
+  avg_mvn_staked?: InputMaybe<Scalars['numeric']['input']>;
+  avg_participation_rate?: InputMaybe<Scalars['numeric']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  total_active_satellites?: InputMaybe<Scalars['bigint']['input']>;
+  total_delegated_smvn?: InputMaybe<Scalars['numeric']['input']>;
+  total_free_smvn_balance?: InputMaybe<Scalars['numeric']['input']>;
+  total_mvn_staked?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Gql_Satellite_Summary_Sum_Fields = {
+  __typename?: 'gql_satellite_summary_sum_fields';
+  avg_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['numeric']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+  avg_participation_rate?: Maybe<Scalars['numeric']['output']>;
+  total_active_satellites?: Maybe<Scalars['bigint']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  total_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Gql_Satellite_Summary_Var_Pop_Fields = {
+  __typename?: 'gql_satellite_summary_var_pop_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Gql_Satellite_Summary_Var_Samp_Fields = {
+  __typename?: 'gql_satellite_summary_var_samp_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Gql_Satellite_Summary_Variance_Fields = {
+  __typename?: 'gql_satellite_summary_variance_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
 /** columns and relationships of "gql_vault_with_balances" */
 export type Gql_Vault_With_Balances = {
   __typename?: 'gql_vault_with_balances';
@@ -49990,6 +50254,10 @@ export type Query_Root = {
   gql_loan_token_market_stats: Array<Gql_Loan_Token_Market_Stats>;
   /** fetch aggregated fields from the table: "gql_loan_token_market_stats" */
   gql_loan_token_market_stats_aggregate: Gql_Loan_Token_Market_Stats_Aggregate;
+  /** fetch data from the table: "gql_satellite_summary" */
+  gql_satellite_summary: Array<Gql_Satellite_Summary>;
+  /** fetch aggregated fields from the table: "gql_satellite_summary" */
+  gql_satellite_summary_aggregate: Gql_Satellite_Summary_Aggregate;
   /** fetch data from the table: "gql_vault_with_balances" */
   gql_vault_with_balances: Array<Gql_Vault_With_Balances>;
   /** fetch aggregated fields from the table: "gql_vault_with_balances" */
@@ -50130,12 +50398,20 @@ export type Query_Root = {
   satellite_aggregate: Satellite_Aggregate;
   /** fetch data from the table: "satellite" using primary key columns */
   satellite_by_pk?: Maybe<Satellite>;
+  /** fetch data from the table: "satellite_data_view" */
+  satellite_data_view: Array<Satellite_Data_View>;
+  /** fetch aggregated fields from the table: "satellite_data_view" */
+  satellite_data_view_aggregate: Satellite_Data_View_Aggregate;
   /** fetch data from the table: "satellite_rewards" */
   satellite_rewards: Array<Satellite_Rewards>;
   /** fetch aggregated fields from the table: "satellite_rewards" */
   satellite_rewards_aggregate: Satellite_Rewards_Aggregate;
   /** fetch data from the table: "satellite_rewards" using primary key columns */
   satellite_rewards_by_pk?: Maybe<Satellite_Rewards>;
+  /** fetch data from the table: "satellite_summary_view" */
+  satellite_summary_view: Array<Satellite_Summary_View>;
+  /** fetch aggregated fields from the table: "satellite_summary_view" */
+  satellite_summary_view_aggregate: Satellite_Summary_View_Aggregate;
   /** fetch data from the table: "smvn_history_data" */
   smvn_history_data: Array<Smvn_History_Data>;
   /** fetch aggregated fields from the table: "smvn_history_data" */
@@ -52573,6 +52849,24 @@ export type Query_RootGql_Loan_Token_Market_Stats_AggregateArgs = {
 };
 
 
+export type Query_RootGql_Satellite_SummaryArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Satellite_Summary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Satellite_Summary_Order_By>>;
+  where?: InputMaybe<Gql_Satellite_Summary_Bool_Exp>;
+};
+
+
+export type Query_RootGql_Satellite_Summary_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Satellite_Summary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Satellite_Summary_Order_By>>;
+  where?: InputMaybe<Gql_Satellite_Summary_Bool_Exp>;
+};
+
+
 export type Query_RootGql_Vault_With_BalancesArgs = {
   distinct_on?: InputMaybe<Array<Gql_Vault_With_Balances_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -53118,6 +53412,24 @@ export type Query_RootSatellite_By_PkArgs = {
 };
 
 
+export type Query_RootSatellite_Data_ViewArgs = {
+  distinct_on?: InputMaybe<Array<Satellite_Data_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Satellite_Data_View_Order_By>>;
+  where?: InputMaybe<Satellite_Data_View_Bool_Exp>;
+};
+
+
+export type Query_RootSatellite_Data_View_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Satellite_Data_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Satellite_Data_View_Order_By>>;
+  where?: InputMaybe<Satellite_Data_View_Bool_Exp>;
+};
+
+
 export type Query_RootSatellite_RewardsArgs = {
   distinct_on?: InputMaybe<Array<Satellite_Rewards_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -53138,6 +53450,24 @@ export type Query_RootSatellite_Rewards_AggregateArgs = {
 
 export type Query_RootSatellite_Rewards_By_PkArgs = {
   id: Scalars['bigint']['input'];
+};
+
+
+export type Query_RootSatellite_Summary_ViewArgs = {
+  distinct_on?: InputMaybe<Array<Satellite_Summary_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Satellite_Summary_View_Order_By>>;
+  where?: InputMaybe<Satellite_Summary_View_Bool_Exp>;
+};
+
+
+export type Query_RootSatellite_Summary_View_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Satellite_Summary_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Satellite_Summary_View_Order_By>>;
+  where?: InputMaybe<Satellite_Summary_View_Bool_Exp>;
 };
 
 
@@ -54139,6 +54469,674 @@ export type Satellite_Bool_Exp = {
   user?: InputMaybe<Maven_User_Bool_Exp>;
   user_id?: InputMaybe<Bigint_Comparison_Exp>;
   website?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** columns and relationships of "satellite_data_view" */
+export type Satellite_Data_View = {
+  __typename?: 'satellite_data_view';
+  created_fin_requests_count?: Maybe<Scalars['bigint']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['bigint']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['bigint']['output']>;
+  currently_registered?: Maybe<Scalars['Boolean']['output']>;
+  delegator_count?: Maybe<Scalars['bigint']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  fee?: Maybe<Scalars['smallint']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['bigint']['output']>;
+  financial_request_counter?: Maybe<Scalars['bigint']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['bigint']['output']>;
+  free_smvn_balance?: Maybe<Scalars['float8']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['bigint']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']['output']>;
+  image?: Maybe<Scalars['String']['output']>;
+  last_proposal_current_round?: Maybe<Scalars['Boolean']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_id?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_title?: Maybe<Scalars['String']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  last_vote?: Maybe<Scalars['smallint']['output']>;
+  mvn_balance?: Maybe<Scalars['float8']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['float8']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  participation_rate?: Maybe<Scalars['float8']['output']>;
+  peer_id?: Maybe<Scalars['String']['output']>;
+  proposals_voted_on?: Maybe<Scalars['bigint']['output']>;
+  public_key?: Maybe<Scalars['String']['output']>;
+  registration_timestamp?: Maybe<Scalars['timestamptz']['output']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['bigint']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['bigint']['output']>;
+  satellite_id?: Maybe<Scalars['bigint']['output']>;
+  smvn_balance?: Maybe<Scalars['float8']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['float8']['output']>;
+  status?: Maybe<Scalars['smallint']['output']>;
+  total_delegated_amount?: Maybe<Scalars['float8']['output']>;
+  total_observations_count?: Maybe<Scalars['bigint']['output']>;
+  total_voting_power?: Maybe<Scalars['float8']['output']>;
+  user_address?: Maybe<Scalars['String']['output']>;
+  website?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregated selection of "satellite_data_view" */
+export type Satellite_Data_View_Aggregate = {
+  __typename?: 'satellite_data_view_aggregate';
+  aggregate?: Maybe<Satellite_Data_View_Aggregate_Fields>;
+  nodes: Array<Satellite_Data_View>;
+};
+
+/** aggregate fields of "satellite_data_view" */
+export type Satellite_Data_View_Aggregate_Fields = {
+  __typename?: 'satellite_data_view_aggregate_fields';
+  avg?: Maybe<Satellite_Data_View_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Satellite_Data_View_Max_Fields>;
+  min?: Maybe<Satellite_Data_View_Min_Fields>;
+  stddev?: Maybe<Satellite_Data_View_Stddev_Fields>;
+  stddev_pop?: Maybe<Satellite_Data_View_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Satellite_Data_View_Stddev_Samp_Fields>;
+  sum?: Maybe<Satellite_Data_View_Sum_Fields>;
+  var_pop?: Maybe<Satellite_Data_View_Var_Pop_Fields>;
+  var_samp?: Maybe<Satellite_Data_View_Var_Samp_Fields>;
+  variance?: Maybe<Satellite_Data_View_Variance_Fields>;
+};
+
+
+/** aggregate fields of "satellite_data_view" */
+export type Satellite_Data_View_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Satellite_Data_View_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Satellite_Data_View_Avg_Fields = {
+  __typename?: 'satellite_data_view_avg_fields';
+  created_fin_requests_count?: Maybe<Scalars['Float']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['Float']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['Float']['output']>;
+  delegator_count?: Maybe<Scalars['Float']['output']>;
+  fee?: Maybe<Scalars['Float']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['Float']['output']>;
+  financial_request_counter?: Maybe<Scalars['Float']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['Float']['output']>;
+  free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['Float']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['Float']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['Float']['output']>;
+  last_proposal_id?: Maybe<Scalars['Float']['output']>;
+  last_vote?: Maybe<Scalars['Float']['output']>;
+  mvn_balance?: Maybe<Scalars['Float']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['Float']['output']>;
+  participation_rate?: Maybe<Scalars['Float']['output']>;
+  proposals_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_action_counter?: Maybe<Scalars['Float']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['Float']['output']>;
+  satellite_id?: Maybe<Scalars['Float']['output']>;
+  smvn_balance?: Maybe<Scalars['Float']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  total_delegated_amount?: Maybe<Scalars['Float']['output']>;
+  total_observations_count?: Maybe<Scalars['Float']['output']>;
+  total_voting_power?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "satellite_data_view". All fields are combined with a logical 'AND'. */
+export type Satellite_Data_View_Bool_Exp = {
+  _and?: InputMaybe<Array<Satellite_Data_View_Bool_Exp>>;
+  _not?: InputMaybe<Satellite_Data_View_Bool_Exp>;
+  _or?: InputMaybe<Array<Satellite_Data_View_Bool_Exp>>;
+  created_fin_requests_count?: InputMaybe<Bigint_Comparison_Exp>;
+  created_gov_proposals_count?: InputMaybe<Bigint_Comparison_Exp>;
+  created_satellite_gov_actions_count?: InputMaybe<Bigint_Comparison_Exp>;
+  currently_registered?: InputMaybe<Boolean_Comparison_Exp>;
+  delegator_count?: InputMaybe<Bigint_Comparison_Exp>;
+  description?: InputMaybe<String_Comparison_Exp>;
+  fee?: InputMaybe<Smallint_Comparison_Exp>;
+  fin_requests_votes_count?: InputMaybe<Bigint_Comparison_Exp>;
+  financial_request_counter?: InputMaybe<Bigint_Comparison_Exp>;
+  financial_requests_voted_on?: InputMaybe<Bigint_Comparison_Exp>;
+  free_smvn_balance?: InputMaybe<Float8_Comparison_Exp>;
+  gov_proposals_votes_count?: InputMaybe<Bigint_Comparison_Exp>;
+  governance_proposal_counter?: InputMaybe<Bigint_Comparison_Exp>;
+  image?: InputMaybe<String_Comparison_Exp>;
+  last_proposal_current_round?: InputMaybe<Boolean_Comparison_Exp>;
+  last_proposal_cycle?: InputMaybe<Bigint_Comparison_Exp>;
+  last_proposal_governance_cycle_id?: InputMaybe<Bigint_Comparison_Exp>;
+  last_proposal_id?: InputMaybe<Bigint_Comparison_Exp>;
+  last_proposal_title?: InputMaybe<String_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  last_vote?: InputMaybe<Smallint_Comparison_Exp>;
+  mvn_balance?: InputMaybe<Float8_Comparison_Exp>;
+  mvrk_rewards_total?: InputMaybe<Float8_Comparison_Exp>;
+  name?: InputMaybe<String_Comparison_Exp>;
+  participation_rate?: InputMaybe<Float8_Comparison_Exp>;
+  peer_id?: InputMaybe<String_Comparison_Exp>;
+  proposals_voted_on?: InputMaybe<Bigint_Comparison_Exp>;
+  public_key?: InputMaybe<String_Comparison_Exp>;
+  registration_timestamp?: InputMaybe<Timestamptz_Comparison_Exp>;
+  satellite_action_counter?: InputMaybe<Bigint_Comparison_Exp>;
+  satellite_actions_voted_on?: InputMaybe<Bigint_Comparison_Exp>;
+  satellite_gov_actions_votes_count?: InputMaybe<Bigint_Comparison_Exp>;
+  satellite_id?: InputMaybe<Bigint_Comparison_Exp>;
+  smvn_balance?: InputMaybe<Float8_Comparison_Exp>;
+  smvn_rewards_total?: InputMaybe<Float8_Comparison_Exp>;
+  status?: InputMaybe<Smallint_Comparison_Exp>;
+  total_delegated_amount?: InputMaybe<Float8_Comparison_Exp>;
+  total_observations_count?: InputMaybe<Bigint_Comparison_Exp>;
+  total_voting_power?: InputMaybe<Float8_Comparison_Exp>;
+  user_address?: InputMaybe<String_Comparison_Exp>;
+  website?: InputMaybe<String_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Satellite_Data_View_Max_Fields = {
+  __typename?: 'satellite_data_view_max_fields';
+  created_fin_requests_count?: Maybe<Scalars['bigint']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['bigint']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['bigint']['output']>;
+  delegator_count?: Maybe<Scalars['bigint']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  fee?: Maybe<Scalars['smallint']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['bigint']['output']>;
+  financial_request_counter?: Maybe<Scalars['bigint']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['bigint']['output']>;
+  free_smvn_balance?: Maybe<Scalars['float8']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['bigint']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']['output']>;
+  image?: Maybe<Scalars['String']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_id?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_title?: Maybe<Scalars['String']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  last_vote?: Maybe<Scalars['smallint']['output']>;
+  mvn_balance?: Maybe<Scalars['float8']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['float8']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  participation_rate?: Maybe<Scalars['float8']['output']>;
+  peer_id?: Maybe<Scalars['String']['output']>;
+  proposals_voted_on?: Maybe<Scalars['bigint']['output']>;
+  public_key?: Maybe<Scalars['String']['output']>;
+  registration_timestamp?: Maybe<Scalars['timestamptz']['output']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['bigint']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['bigint']['output']>;
+  satellite_id?: Maybe<Scalars['bigint']['output']>;
+  smvn_balance?: Maybe<Scalars['float8']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['float8']['output']>;
+  status?: Maybe<Scalars['smallint']['output']>;
+  total_delegated_amount?: Maybe<Scalars['float8']['output']>;
+  total_observations_count?: Maybe<Scalars['bigint']['output']>;
+  total_voting_power?: Maybe<Scalars['float8']['output']>;
+  user_address?: Maybe<Scalars['String']['output']>;
+  website?: Maybe<Scalars['String']['output']>;
+};
+
+/** aggregate min on columns */
+export type Satellite_Data_View_Min_Fields = {
+  __typename?: 'satellite_data_view_min_fields';
+  created_fin_requests_count?: Maybe<Scalars['bigint']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['bigint']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['bigint']['output']>;
+  delegator_count?: Maybe<Scalars['bigint']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  fee?: Maybe<Scalars['smallint']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['bigint']['output']>;
+  financial_request_counter?: Maybe<Scalars['bigint']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['bigint']['output']>;
+  free_smvn_balance?: Maybe<Scalars['float8']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['bigint']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']['output']>;
+  image?: Maybe<Scalars['String']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_id?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_title?: Maybe<Scalars['String']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  last_vote?: Maybe<Scalars['smallint']['output']>;
+  mvn_balance?: Maybe<Scalars['float8']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['float8']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  participation_rate?: Maybe<Scalars['float8']['output']>;
+  peer_id?: Maybe<Scalars['String']['output']>;
+  proposals_voted_on?: Maybe<Scalars['bigint']['output']>;
+  public_key?: Maybe<Scalars['String']['output']>;
+  registration_timestamp?: Maybe<Scalars['timestamptz']['output']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['bigint']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['bigint']['output']>;
+  satellite_id?: Maybe<Scalars['bigint']['output']>;
+  smvn_balance?: Maybe<Scalars['float8']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['float8']['output']>;
+  status?: Maybe<Scalars['smallint']['output']>;
+  total_delegated_amount?: Maybe<Scalars['float8']['output']>;
+  total_observations_count?: Maybe<Scalars['bigint']['output']>;
+  total_voting_power?: Maybe<Scalars['float8']['output']>;
+  user_address?: Maybe<Scalars['String']['output']>;
+  website?: Maybe<Scalars['String']['output']>;
+};
+
+/** Ordering options when selecting data from "satellite_data_view". */
+export type Satellite_Data_View_Order_By = {
+  created_fin_requests_count?: InputMaybe<Order_By>;
+  created_gov_proposals_count?: InputMaybe<Order_By>;
+  created_satellite_gov_actions_count?: InputMaybe<Order_By>;
+  currently_registered?: InputMaybe<Order_By>;
+  delegator_count?: InputMaybe<Order_By>;
+  description?: InputMaybe<Order_By>;
+  fee?: InputMaybe<Order_By>;
+  fin_requests_votes_count?: InputMaybe<Order_By>;
+  financial_request_counter?: InputMaybe<Order_By>;
+  financial_requests_voted_on?: InputMaybe<Order_By>;
+  free_smvn_balance?: InputMaybe<Order_By>;
+  gov_proposals_votes_count?: InputMaybe<Order_By>;
+  governance_proposal_counter?: InputMaybe<Order_By>;
+  image?: InputMaybe<Order_By>;
+  last_proposal_current_round?: InputMaybe<Order_By>;
+  last_proposal_cycle?: InputMaybe<Order_By>;
+  last_proposal_governance_cycle_id?: InputMaybe<Order_By>;
+  last_proposal_id?: InputMaybe<Order_By>;
+  last_proposal_title?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  last_vote?: InputMaybe<Order_By>;
+  mvn_balance?: InputMaybe<Order_By>;
+  mvrk_rewards_total?: InputMaybe<Order_By>;
+  name?: InputMaybe<Order_By>;
+  participation_rate?: InputMaybe<Order_By>;
+  peer_id?: InputMaybe<Order_By>;
+  proposals_voted_on?: InputMaybe<Order_By>;
+  public_key?: InputMaybe<Order_By>;
+  registration_timestamp?: InputMaybe<Order_By>;
+  satellite_action_counter?: InputMaybe<Order_By>;
+  satellite_actions_voted_on?: InputMaybe<Order_By>;
+  satellite_gov_actions_votes_count?: InputMaybe<Order_By>;
+  satellite_id?: InputMaybe<Order_By>;
+  smvn_balance?: InputMaybe<Order_By>;
+  smvn_rewards_total?: InputMaybe<Order_By>;
+  status?: InputMaybe<Order_By>;
+  total_delegated_amount?: InputMaybe<Order_By>;
+  total_observations_count?: InputMaybe<Order_By>;
+  total_voting_power?: InputMaybe<Order_By>;
+  user_address?: InputMaybe<Order_By>;
+  website?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "satellite_data_view" */
+export enum Satellite_Data_View_Select_Column {
+  /** column name */
+  CreatedFinRequestsCount = 'created_fin_requests_count',
+  /** column name */
+  CreatedGovProposalsCount = 'created_gov_proposals_count',
+  /** column name */
+  CreatedSatelliteGovActionsCount = 'created_satellite_gov_actions_count',
+  /** column name */
+  CurrentlyRegistered = 'currently_registered',
+  /** column name */
+  DelegatorCount = 'delegator_count',
+  /** column name */
+  Description = 'description',
+  /** column name */
+  Fee = 'fee',
+  /** column name */
+  FinRequestsVotesCount = 'fin_requests_votes_count',
+  /** column name */
+  FinancialRequestCounter = 'financial_request_counter',
+  /** column name */
+  FinancialRequestsVotedOn = 'financial_requests_voted_on',
+  /** column name */
+  FreeSmvnBalance = 'free_smvn_balance',
+  /** column name */
+  GovProposalsVotesCount = 'gov_proposals_votes_count',
+  /** column name */
+  GovernanceProposalCounter = 'governance_proposal_counter',
+  /** column name */
+  Image = 'image',
+  /** column name */
+  LastProposalCurrentRound = 'last_proposal_current_round',
+  /** column name */
+  LastProposalCycle = 'last_proposal_cycle',
+  /** column name */
+  LastProposalGovernanceCycleId = 'last_proposal_governance_cycle_id',
+  /** column name */
+  LastProposalId = 'last_proposal_id',
+  /** column name */
+  LastProposalTitle = 'last_proposal_title',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  LastVote = 'last_vote',
+  /** column name */
+  MvnBalance = 'mvn_balance',
+  /** column name */
+  MvrkRewardsTotal = 'mvrk_rewards_total',
+  /** column name */
+  Name = 'name',
+  /** column name */
+  ParticipationRate = 'participation_rate',
+  /** column name */
+  PeerId = 'peer_id',
+  /** column name */
+  ProposalsVotedOn = 'proposals_voted_on',
+  /** column name */
+  PublicKey = 'public_key',
+  /** column name */
+  RegistrationTimestamp = 'registration_timestamp',
+  /** column name */
+  SatelliteActionCounter = 'satellite_action_counter',
+  /** column name */
+  SatelliteActionsVotedOn = 'satellite_actions_voted_on',
+  /** column name */
+  SatelliteGovActionsVotesCount = 'satellite_gov_actions_votes_count',
+  /** column name */
+  SatelliteId = 'satellite_id',
+  /** column name */
+  SmvnBalance = 'smvn_balance',
+  /** column name */
+  SmvnRewardsTotal = 'smvn_rewards_total',
+  /** column name */
+  Status = 'status',
+  /** column name */
+  TotalDelegatedAmount = 'total_delegated_amount',
+  /** column name */
+  TotalObservationsCount = 'total_observations_count',
+  /** column name */
+  TotalVotingPower = 'total_voting_power',
+  /** column name */
+  UserAddress = 'user_address',
+  /** column name */
+  Website = 'website'
+}
+
+/** aggregate stddev on columns */
+export type Satellite_Data_View_Stddev_Fields = {
+  __typename?: 'satellite_data_view_stddev_fields';
+  created_fin_requests_count?: Maybe<Scalars['Float']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['Float']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['Float']['output']>;
+  delegator_count?: Maybe<Scalars['Float']['output']>;
+  fee?: Maybe<Scalars['Float']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['Float']['output']>;
+  financial_request_counter?: Maybe<Scalars['Float']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['Float']['output']>;
+  free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['Float']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['Float']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['Float']['output']>;
+  last_proposal_id?: Maybe<Scalars['Float']['output']>;
+  last_vote?: Maybe<Scalars['Float']['output']>;
+  mvn_balance?: Maybe<Scalars['Float']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['Float']['output']>;
+  participation_rate?: Maybe<Scalars['Float']['output']>;
+  proposals_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_action_counter?: Maybe<Scalars['Float']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['Float']['output']>;
+  satellite_id?: Maybe<Scalars['Float']['output']>;
+  smvn_balance?: Maybe<Scalars['Float']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  total_delegated_amount?: Maybe<Scalars['Float']['output']>;
+  total_observations_count?: Maybe<Scalars['Float']['output']>;
+  total_voting_power?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Satellite_Data_View_Stddev_Pop_Fields = {
+  __typename?: 'satellite_data_view_stddev_pop_fields';
+  created_fin_requests_count?: Maybe<Scalars['Float']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['Float']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['Float']['output']>;
+  delegator_count?: Maybe<Scalars['Float']['output']>;
+  fee?: Maybe<Scalars['Float']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['Float']['output']>;
+  financial_request_counter?: Maybe<Scalars['Float']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['Float']['output']>;
+  free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['Float']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['Float']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['Float']['output']>;
+  last_proposal_id?: Maybe<Scalars['Float']['output']>;
+  last_vote?: Maybe<Scalars['Float']['output']>;
+  mvn_balance?: Maybe<Scalars['Float']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['Float']['output']>;
+  participation_rate?: Maybe<Scalars['Float']['output']>;
+  proposals_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_action_counter?: Maybe<Scalars['Float']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['Float']['output']>;
+  satellite_id?: Maybe<Scalars['Float']['output']>;
+  smvn_balance?: Maybe<Scalars['Float']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  total_delegated_amount?: Maybe<Scalars['Float']['output']>;
+  total_observations_count?: Maybe<Scalars['Float']['output']>;
+  total_voting_power?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Satellite_Data_View_Stddev_Samp_Fields = {
+  __typename?: 'satellite_data_view_stddev_samp_fields';
+  created_fin_requests_count?: Maybe<Scalars['Float']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['Float']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['Float']['output']>;
+  delegator_count?: Maybe<Scalars['Float']['output']>;
+  fee?: Maybe<Scalars['Float']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['Float']['output']>;
+  financial_request_counter?: Maybe<Scalars['Float']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['Float']['output']>;
+  free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['Float']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['Float']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['Float']['output']>;
+  last_proposal_id?: Maybe<Scalars['Float']['output']>;
+  last_vote?: Maybe<Scalars['Float']['output']>;
+  mvn_balance?: Maybe<Scalars['Float']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['Float']['output']>;
+  participation_rate?: Maybe<Scalars['Float']['output']>;
+  proposals_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_action_counter?: Maybe<Scalars['Float']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['Float']['output']>;
+  satellite_id?: Maybe<Scalars['Float']['output']>;
+  smvn_balance?: Maybe<Scalars['Float']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  total_delegated_amount?: Maybe<Scalars['Float']['output']>;
+  total_observations_count?: Maybe<Scalars['Float']['output']>;
+  total_voting_power?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "satellite_data_view" */
+export type Satellite_Data_View_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Satellite_Data_View_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Satellite_Data_View_Stream_Cursor_Value_Input = {
+  created_fin_requests_count?: InputMaybe<Scalars['bigint']['input']>;
+  created_gov_proposals_count?: InputMaybe<Scalars['bigint']['input']>;
+  created_satellite_gov_actions_count?: InputMaybe<Scalars['bigint']['input']>;
+  currently_registered?: InputMaybe<Scalars['Boolean']['input']>;
+  delegator_count?: InputMaybe<Scalars['bigint']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  fee?: InputMaybe<Scalars['smallint']['input']>;
+  fin_requests_votes_count?: InputMaybe<Scalars['bigint']['input']>;
+  financial_request_counter?: InputMaybe<Scalars['bigint']['input']>;
+  financial_requests_voted_on?: InputMaybe<Scalars['bigint']['input']>;
+  free_smvn_balance?: InputMaybe<Scalars['float8']['input']>;
+  gov_proposals_votes_count?: InputMaybe<Scalars['bigint']['input']>;
+  governance_proposal_counter?: InputMaybe<Scalars['bigint']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
+  last_proposal_current_round?: InputMaybe<Scalars['Boolean']['input']>;
+  last_proposal_cycle?: InputMaybe<Scalars['bigint']['input']>;
+  last_proposal_governance_cycle_id?: InputMaybe<Scalars['bigint']['input']>;
+  last_proposal_id?: InputMaybe<Scalars['bigint']['input']>;
+  last_proposal_title?: InputMaybe<Scalars['String']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  last_vote?: InputMaybe<Scalars['smallint']['input']>;
+  mvn_balance?: InputMaybe<Scalars['float8']['input']>;
+  mvrk_rewards_total?: InputMaybe<Scalars['float8']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  participation_rate?: InputMaybe<Scalars['float8']['input']>;
+  peer_id?: InputMaybe<Scalars['String']['input']>;
+  proposals_voted_on?: InputMaybe<Scalars['bigint']['input']>;
+  public_key?: InputMaybe<Scalars['String']['input']>;
+  registration_timestamp?: InputMaybe<Scalars['timestamptz']['input']>;
+  satellite_action_counter?: InputMaybe<Scalars['bigint']['input']>;
+  satellite_actions_voted_on?: InputMaybe<Scalars['bigint']['input']>;
+  satellite_gov_actions_votes_count?: InputMaybe<Scalars['bigint']['input']>;
+  satellite_id?: InputMaybe<Scalars['bigint']['input']>;
+  smvn_balance?: InputMaybe<Scalars['float8']['input']>;
+  smvn_rewards_total?: InputMaybe<Scalars['float8']['input']>;
+  status?: InputMaybe<Scalars['smallint']['input']>;
+  total_delegated_amount?: InputMaybe<Scalars['float8']['input']>;
+  total_observations_count?: InputMaybe<Scalars['bigint']['input']>;
+  total_voting_power?: InputMaybe<Scalars['float8']['input']>;
+  user_address?: InputMaybe<Scalars['String']['input']>;
+  website?: InputMaybe<Scalars['String']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Satellite_Data_View_Sum_Fields = {
+  __typename?: 'satellite_data_view_sum_fields';
+  created_fin_requests_count?: Maybe<Scalars['bigint']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['bigint']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['bigint']['output']>;
+  delegator_count?: Maybe<Scalars['bigint']['output']>;
+  fee?: Maybe<Scalars['smallint']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['bigint']['output']>;
+  financial_request_counter?: Maybe<Scalars['bigint']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['bigint']['output']>;
+  free_smvn_balance?: Maybe<Scalars['float8']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['bigint']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['bigint']['output']>;
+  last_proposal_id?: Maybe<Scalars['bigint']['output']>;
+  last_vote?: Maybe<Scalars['smallint']['output']>;
+  mvn_balance?: Maybe<Scalars['float8']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['float8']['output']>;
+  participation_rate?: Maybe<Scalars['float8']['output']>;
+  proposals_voted_on?: Maybe<Scalars['bigint']['output']>;
+  satellite_action_counter?: Maybe<Scalars['bigint']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['bigint']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['bigint']['output']>;
+  satellite_id?: Maybe<Scalars['bigint']['output']>;
+  smvn_balance?: Maybe<Scalars['float8']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['float8']['output']>;
+  status?: Maybe<Scalars['smallint']['output']>;
+  total_delegated_amount?: Maybe<Scalars['float8']['output']>;
+  total_observations_count?: Maybe<Scalars['bigint']['output']>;
+  total_voting_power?: Maybe<Scalars['float8']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Satellite_Data_View_Var_Pop_Fields = {
+  __typename?: 'satellite_data_view_var_pop_fields';
+  created_fin_requests_count?: Maybe<Scalars['Float']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['Float']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['Float']['output']>;
+  delegator_count?: Maybe<Scalars['Float']['output']>;
+  fee?: Maybe<Scalars['Float']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['Float']['output']>;
+  financial_request_counter?: Maybe<Scalars['Float']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['Float']['output']>;
+  free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['Float']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['Float']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['Float']['output']>;
+  last_proposal_id?: Maybe<Scalars['Float']['output']>;
+  last_vote?: Maybe<Scalars['Float']['output']>;
+  mvn_balance?: Maybe<Scalars['Float']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['Float']['output']>;
+  participation_rate?: Maybe<Scalars['Float']['output']>;
+  proposals_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_action_counter?: Maybe<Scalars['Float']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['Float']['output']>;
+  satellite_id?: Maybe<Scalars['Float']['output']>;
+  smvn_balance?: Maybe<Scalars['Float']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  total_delegated_amount?: Maybe<Scalars['Float']['output']>;
+  total_observations_count?: Maybe<Scalars['Float']['output']>;
+  total_voting_power?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Satellite_Data_View_Var_Samp_Fields = {
+  __typename?: 'satellite_data_view_var_samp_fields';
+  created_fin_requests_count?: Maybe<Scalars['Float']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['Float']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['Float']['output']>;
+  delegator_count?: Maybe<Scalars['Float']['output']>;
+  fee?: Maybe<Scalars['Float']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['Float']['output']>;
+  financial_request_counter?: Maybe<Scalars['Float']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['Float']['output']>;
+  free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['Float']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['Float']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['Float']['output']>;
+  last_proposal_id?: Maybe<Scalars['Float']['output']>;
+  last_vote?: Maybe<Scalars['Float']['output']>;
+  mvn_balance?: Maybe<Scalars['Float']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['Float']['output']>;
+  participation_rate?: Maybe<Scalars['Float']['output']>;
+  proposals_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_action_counter?: Maybe<Scalars['Float']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['Float']['output']>;
+  satellite_id?: Maybe<Scalars['Float']['output']>;
+  smvn_balance?: Maybe<Scalars['Float']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  total_delegated_amount?: Maybe<Scalars['Float']['output']>;
+  total_observations_count?: Maybe<Scalars['Float']['output']>;
+  total_voting_power?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Satellite_Data_View_Variance_Fields = {
+  __typename?: 'satellite_data_view_variance_fields';
+  created_fin_requests_count?: Maybe<Scalars['Float']['output']>;
+  created_gov_proposals_count?: Maybe<Scalars['Float']['output']>;
+  created_satellite_gov_actions_count?: Maybe<Scalars['Float']['output']>;
+  delegator_count?: Maybe<Scalars['Float']['output']>;
+  fee?: Maybe<Scalars['Float']['output']>;
+  fin_requests_votes_count?: Maybe<Scalars['Float']['output']>;
+  financial_request_counter?: Maybe<Scalars['Float']['output']>;
+  financial_requests_voted_on?: Maybe<Scalars['Float']['output']>;
+  free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  gov_proposals_votes_count?: Maybe<Scalars['Float']['output']>;
+  governance_proposal_counter?: Maybe<Scalars['Float']['output']>;
+  last_proposal_cycle?: Maybe<Scalars['Float']['output']>;
+  last_proposal_governance_cycle_id?: Maybe<Scalars['Float']['output']>;
+  last_proposal_id?: Maybe<Scalars['Float']['output']>;
+  last_vote?: Maybe<Scalars['Float']['output']>;
+  mvn_balance?: Maybe<Scalars['Float']['output']>;
+  mvrk_rewards_total?: Maybe<Scalars['Float']['output']>;
+  participation_rate?: Maybe<Scalars['Float']['output']>;
+  proposals_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_action_counter?: Maybe<Scalars['Float']['output']>;
+  satellite_actions_voted_on?: Maybe<Scalars['Float']['output']>;
+  satellite_gov_actions_votes_count?: Maybe<Scalars['Float']['output']>;
+  satellite_id?: Maybe<Scalars['Float']['output']>;
+  smvn_balance?: Maybe<Scalars['Float']['output']>;
+  smvn_rewards_total?: Maybe<Scalars['Float']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  total_delegated_amount?: Maybe<Scalars['Float']['output']>;
+  total_observations_count?: Maybe<Scalars['Float']['output']>;
+  total_voting_power?: Maybe<Scalars['Float']['output']>;
 };
 
 /** aggregate max on columns */
@@ -55148,6 +56146,270 @@ export type Satellite_Sum_Order_By = {
   status?: InputMaybe<Order_By>;
   total_delegated_amount?: InputMaybe<Order_By>;
   user_id?: InputMaybe<Order_By>;
+};
+
+/** columns and relationships of "satellite_summary_view" */
+export type Satellite_Summary_View = {
+  __typename?: 'satellite_summary_view';
+  avg_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['numeric']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+  avg_participation_rate?: Maybe<Scalars['numeric']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  total_active_satellites?: Maybe<Scalars['bigint']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  total_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** aggregated selection of "satellite_summary_view" */
+export type Satellite_Summary_View_Aggregate = {
+  __typename?: 'satellite_summary_view_aggregate';
+  aggregate?: Maybe<Satellite_Summary_View_Aggregate_Fields>;
+  nodes: Array<Satellite_Summary_View>;
+};
+
+/** aggregate fields of "satellite_summary_view" */
+export type Satellite_Summary_View_Aggregate_Fields = {
+  __typename?: 'satellite_summary_view_aggregate_fields';
+  avg?: Maybe<Satellite_Summary_View_Avg_Fields>;
+  count: Scalars['Int']['output'];
+  max?: Maybe<Satellite_Summary_View_Max_Fields>;
+  min?: Maybe<Satellite_Summary_View_Min_Fields>;
+  stddev?: Maybe<Satellite_Summary_View_Stddev_Fields>;
+  stddev_pop?: Maybe<Satellite_Summary_View_Stddev_Pop_Fields>;
+  stddev_samp?: Maybe<Satellite_Summary_View_Stddev_Samp_Fields>;
+  sum?: Maybe<Satellite_Summary_View_Sum_Fields>;
+  var_pop?: Maybe<Satellite_Summary_View_Var_Pop_Fields>;
+  var_samp?: Maybe<Satellite_Summary_View_Var_Samp_Fields>;
+  variance?: Maybe<Satellite_Summary_View_Variance_Fields>;
+};
+
+
+/** aggregate fields of "satellite_summary_view" */
+export type Satellite_Summary_View_Aggregate_FieldsCountArgs = {
+  columns?: InputMaybe<Array<Satellite_Summary_View_Select_Column>>;
+  distinct?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+/** aggregate avg on columns */
+export type Satellite_Summary_View_Avg_Fields = {
+  __typename?: 'satellite_summary_view_avg_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Boolean expression to filter rows from the table "satellite_summary_view". All fields are combined with a logical 'AND'. */
+export type Satellite_Summary_View_Bool_Exp = {
+  _and?: InputMaybe<Array<Satellite_Summary_View_Bool_Exp>>;
+  _not?: InputMaybe<Satellite_Summary_View_Bool_Exp>;
+  _or?: InputMaybe<Array<Satellite_Summary_View_Bool_Exp>>;
+  avg_delegated_smvn?: InputMaybe<Numeric_Comparison_Exp>;
+  avg_delegation_fee?: InputMaybe<Numeric_Comparison_Exp>;
+  avg_free_smvn_balance?: InputMaybe<Numeric_Comparison_Exp>;
+  avg_mvn_staked?: InputMaybe<Numeric_Comparison_Exp>;
+  avg_participation_rate?: InputMaybe<Numeric_Comparison_Exp>;
+  last_updated?: InputMaybe<Timestamptz_Comparison_Exp>;
+  total_active_satellites?: InputMaybe<Bigint_Comparison_Exp>;
+  total_delegated_smvn?: InputMaybe<Numeric_Comparison_Exp>;
+  total_free_smvn_balance?: InputMaybe<Numeric_Comparison_Exp>;
+  total_mvn_staked?: InputMaybe<Numeric_Comparison_Exp>;
+};
+
+/** aggregate max on columns */
+export type Satellite_Summary_View_Max_Fields = {
+  __typename?: 'satellite_summary_view_max_fields';
+  avg_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['numeric']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+  avg_participation_rate?: Maybe<Scalars['numeric']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  total_active_satellites?: Maybe<Scalars['bigint']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  total_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** aggregate min on columns */
+export type Satellite_Summary_View_Min_Fields = {
+  __typename?: 'satellite_summary_view_min_fields';
+  avg_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['numeric']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+  avg_participation_rate?: Maybe<Scalars['numeric']['output']>;
+  last_updated?: Maybe<Scalars['timestamptz']['output']>;
+  total_active_satellites?: Maybe<Scalars['bigint']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  total_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** Ordering options when selecting data from "satellite_summary_view". */
+export type Satellite_Summary_View_Order_By = {
+  avg_delegated_smvn?: InputMaybe<Order_By>;
+  avg_delegation_fee?: InputMaybe<Order_By>;
+  avg_free_smvn_balance?: InputMaybe<Order_By>;
+  avg_mvn_staked?: InputMaybe<Order_By>;
+  avg_participation_rate?: InputMaybe<Order_By>;
+  last_updated?: InputMaybe<Order_By>;
+  total_active_satellites?: InputMaybe<Order_By>;
+  total_delegated_smvn?: InputMaybe<Order_By>;
+  total_free_smvn_balance?: InputMaybe<Order_By>;
+  total_mvn_staked?: InputMaybe<Order_By>;
+};
+
+/** select columns of table "satellite_summary_view" */
+export enum Satellite_Summary_View_Select_Column {
+  /** column name */
+  AvgDelegatedSmvn = 'avg_delegated_smvn',
+  /** column name */
+  AvgDelegationFee = 'avg_delegation_fee',
+  /** column name */
+  AvgFreeSmvnBalance = 'avg_free_smvn_balance',
+  /** column name */
+  AvgMvnStaked = 'avg_mvn_staked',
+  /** column name */
+  AvgParticipationRate = 'avg_participation_rate',
+  /** column name */
+  LastUpdated = 'last_updated',
+  /** column name */
+  TotalActiveSatellites = 'total_active_satellites',
+  /** column name */
+  TotalDelegatedSmvn = 'total_delegated_smvn',
+  /** column name */
+  TotalFreeSmvnBalance = 'total_free_smvn_balance',
+  /** column name */
+  TotalMvnStaked = 'total_mvn_staked'
+}
+
+/** aggregate stddev on columns */
+export type Satellite_Summary_View_Stddev_Fields = {
+  __typename?: 'satellite_summary_view_stddev_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_pop on columns */
+export type Satellite_Summary_View_Stddev_Pop_Fields = {
+  __typename?: 'satellite_summary_view_stddev_pop_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate stddev_samp on columns */
+export type Satellite_Summary_View_Stddev_Samp_Fields = {
+  __typename?: 'satellite_summary_view_stddev_samp_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** Streaming cursor of the table "satellite_summary_view" */
+export type Satellite_Summary_View_Stream_Cursor_Input = {
+  /** Stream column input with initial value */
+  initial_value: Satellite_Summary_View_Stream_Cursor_Value_Input;
+  /** cursor ordering */
+  ordering?: InputMaybe<Cursor_Ordering>;
+};
+
+/** Initial value of the column from where the streaming should start */
+export type Satellite_Summary_View_Stream_Cursor_Value_Input = {
+  avg_delegated_smvn?: InputMaybe<Scalars['numeric']['input']>;
+  avg_delegation_fee?: InputMaybe<Scalars['numeric']['input']>;
+  avg_free_smvn_balance?: InputMaybe<Scalars['numeric']['input']>;
+  avg_mvn_staked?: InputMaybe<Scalars['numeric']['input']>;
+  avg_participation_rate?: InputMaybe<Scalars['numeric']['input']>;
+  last_updated?: InputMaybe<Scalars['timestamptz']['input']>;
+  total_active_satellites?: InputMaybe<Scalars['bigint']['input']>;
+  total_delegated_smvn?: InputMaybe<Scalars['numeric']['input']>;
+  total_free_smvn_balance?: InputMaybe<Scalars['numeric']['input']>;
+  total_mvn_staked?: InputMaybe<Scalars['numeric']['input']>;
+};
+
+/** aggregate sum on columns */
+export type Satellite_Summary_View_Sum_Fields = {
+  __typename?: 'satellite_summary_view_sum_fields';
+  avg_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['numeric']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+  avg_participation_rate?: Maybe<Scalars['numeric']['output']>;
+  total_active_satellites?: Maybe<Scalars['bigint']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['numeric']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['numeric']['output']>;
+  total_mvn_staked?: Maybe<Scalars['numeric']['output']>;
+};
+
+/** aggregate var_pop on columns */
+export type Satellite_Summary_View_Var_Pop_Fields = {
+  __typename?: 'satellite_summary_view_var_pop_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate var_samp on columns */
+export type Satellite_Summary_View_Var_Samp_Fields = {
+  __typename?: 'satellite_summary_view_var_samp_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
+};
+
+/** aggregate variance on columns */
+export type Satellite_Summary_View_Variance_Fields = {
+  __typename?: 'satellite_summary_view_variance_fields';
+  avg_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  avg_delegation_fee?: Maybe<Scalars['Float']['output']>;
+  avg_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  avg_mvn_staked?: Maybe<Scalars['Float']['output']>;
+  avg_participation_rate?: Maybe<Scalars['Float']['output']>;
+  total_active_satellites?: Maybe<Scalars['Float']['output']>;
+  total_delegated_smvn?: Maybe<Scalars['Float']['output']>;
+  total_free_smvn_balance?: Maybe<Scalars['Float']['output']>;
+  total_mvn_staked?: Maybe<Scalars['Float']['output']>;
 };
 
 /** aggregate var_pop on columns */
@@ -57044,6 +58306,12 @@ export type Subscription_Root = {
   gql_loan_token_market_stats_aggregate: Gql_Loan_Token_Market_Stats_Aggregate;
   /** fetch data from the table in a streaming manner: "gql_loan_token_market_stats" */
   gql_loan_token_market_stats_stream: Array<Gql_Loan_Token_Market_Stats>;
+  /** fetch data from the table: "gql_satellite_summary" */
+  gql_satellite_summary: Array<Gql_Satellite_Summary>;
+  /** fetch aggregated fields from the table: "gql_satellite_summary" */
+  gql_satellite_summary_aggregate: Gql_Satellite_Summary_Aggregate;
+  /** fetch data from the table in a streaming manner: "gql_satellite_summary" */
+  gql_satellite_summary_stream: Array<Gql_Satellite_Summary>;
   /** fetch data from the table: "gql_vault_with_balances" */
   gql_vault_with_balances: Array<Gql_Vault_With_Balances>;
   /** fetch aggregated fields from the table: "gql_vault_with_balances" */
@@ -57230,6 +58498,12 @@ export type Subscription_Root = {
   satellite_aggregate: Satellite_Aggregate;
   /** fetch data from the table: "satellite" using primary key columns */
   satellite_by_pk?: Maybe<Satellite>;
+  /** fetch data from the table: "satellite_data_view" */
+  satellite_data_view: Array<Satellite_Data_View>;
+  /** fetch aggregated fields from the table: "satellite_data_view" */
+  satellite_data_view_aggregate: Satellite_Data_View_Aggregate;
+  /** fetch data from the table in a streaming manner: "satellite_data_view" */
+  satellite_data_view_stream: Array<Satellite_Data_View>;
   /** fetch data from the table: "satellite_rewards" */
   satellite_rewards: Array<Satellite_Rewards>;
   /** fetch aggregated fields from the table: "satellite_rewards" */
@@ -57240,6 +58514,12 @@ export type Subscription_Root = {
   satellite_rewards_stream: Array<Satellite_Rewards>;
   /** fetch data from the table in a streaming manner: "satellite" */
   satellite_stream: Array<Satellite>;
+  /** fetch data from the table: "satellite_summary_view" */
+  satellite_summary_view: Array<Satellite_Summary_View>;
+  /** fetch aggregated fields from the table: "satellite_summary_view" */
+  satellite_summary_view_aggregate: Satellite_Summary_View_Aggregate;
+  /** fetch data from the table in a streaming manner: "satellite_summary_view" */
+  satellite_summary_view_stream: Array<Satellite_Summary_View>;
   /** fetch data from the table: "smvn_history_data" */
   smvn_history_data: Array<Smvn_History_Data>;
   /** fetch aggregated fields from the table: "smvn_history_data" */
@@ -60429,6 +61709,31 @@ export type Subscription_RootGql_Loan_Token_Market_Stats_StreamArgs = {
 };
 
 
+export type Subscription_RootGql_Satellite_SummaryArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Satellite_Summary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Satellite_Summary_Order_By>>;
+  where?: InputMaybe<Gql_Satellite_Summary_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_Satellite_Summary_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Gql_Satellite_Summary_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Gql_Satellite_Summary_Order_By>>;
+  where?: InputMaybe<Gql_Satellite_Summary_Bool_Exp>;
+};
+
+
+export type Subscription_RootGql_Satellite_Summary_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Gql_Satellite_Summary_Stream_Cursor_Input>>;
+  where?: InputMaybe<Gql_Satellite_Summary_Bool_Exp>;
+};
+
+
 export type Subscription_RootGql_Vault_With_BalancesArgs = {
   distinct_on?: InputMaybe<Array<Gql_Vault_With_Balances_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -61135,6 +62440,31 @@ export type Subscription_RootSatellite_By_PkArgs = {
 };
 
 
+export type Subscription_RootSatellite_Data_ViewArgs = {
+  distinct_on?: InputMaybe<Array<Satellite_Data_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Satellite_Data_View_Order_By>>;
+  where?: InputMaybe<Satellite_Data_View_Bool_Exp>;
+};
+
+
+export type Subscription_RootSatellite_Data_View_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Satellite_Data_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Satellite_Data_View_Order_By>>;
+  where?: InputMaybe<Satellite_Data_View_Bool_Exp>;
+};
+
+
+export type Subscription_RootSatellite_Data_View_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Satellite_Data_View_Stream_Cursor_Input>>;
+  where?: InputMaybe<Satellite_Data_View_Bool_Exp>;
+};
+
+
 export type Subscription_RootSatellite_RewardsArgs = {
   distinct_on?: InputMaybe<Array<Satellite_Rewards_Select_Column>>;
   limit?: InputMaybe<Scalars['Int']['input']>;
@@ -61169,6 +62499,31 @@ export type Subscription_RootSatellite_StreamArgs = {
   batch_size: Scalars['Int']['input'];
   cursor: Array<InputMaybe<Satellite_Stream_Cursor_Input>>;
   where?: InputMaybe<Satellite_Bool_Exp>;
+};
+
+
+export type Subscription_RootSatellite_Summary_ViewArgs = {
+  distinct_on?: InputMaybe<Array<Satellite_Summary_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Satellite_Summary_View_Order_By>>;
+  where?: InputMaybe<Satellite_Summary_View_Bool_Exp>;
+};
+
+
+export type Subscription_RootSatellite_Summary_View_AggregateArgs = {
+  distinct_on?: InputMaybe<Array<Satellite_Summary_View_Select_Column>>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  order_by?: InputMaybe<Array<Satellite_Summary_View_Order_By>>;
+  where?: InputMaybe<Satellite_Summary_View_Bool_Exp>;
+};
+
+
+export type Subscription_RootSatellite_Summary_View_StreamArgs = {
+  batch_size: Scalars['Int']['input'];
+  cursor: Array<InputMaybe<Satellite_Summary_View_Stream_Cursor_Input>>;
+  where?: InputMaybe<Satellite_Summary_View_Bool_Exp>;
 };
 
 
@@ -72641,7 +73996,7 @@ export type SatellitesStatsQueryQuery = { __typename?: 'query_root', oraclesAmou
 export type SatellitesDashboardStatsQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SatellitesDashboardStatsQueryQuery = { __typename?: 'query_root', activeSatellitesAmount: { __typename?: 'satellite_aggregate', aggregate?: { __typename?: 'satellite_aggregate_fields', avg?: { __typename?: 'satellite_avg_fields', total_delegated_amount?: number | null, fee?: number | null } | null } | null } };
+export type SatellitesDashboardStatsQueryQuery = { __typename?: 'query_root', gql_satellite_summary: Array<{ __typename?: 'gql_satellite_summary', avg_delegated_smvn?: any | null, avg_delegation_fee?: any | null, avg_free_smvn_balance?: any | null, avg_mvn_staked?: any | null, avg_participation_rate?: any | null }> };
 
 export type TokensMetadataQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -72801,7 +74156,7 @@ export const SatelliteDataQueryDocument = {"kind":"Document","definitions":[{"ki
 export const GetSatellitesCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetSatellitesCount"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"whereBySatelliteTotal"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"satellite_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"whereBysatelliteAddress"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"satellite_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"whereByActiveSatellite"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"satellite_bool_exp"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"whereOracles"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"satellite_bool_exp"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"totalSatellites"},"name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"whereBySatelliteTotal"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"userSatellites"},"name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"whereBysatelliteAddress"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"activeSatellites"},"name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"whereByActiveSatellite"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"oracleSatellites"},"name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"whereOracles"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<GetSatellitesCountQuery, GetSatellitesCountQueryVariables>;
 export const DappDataForSatelliteMetricsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"dappDataForSatelliteMetrics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"governance_proposal_aggregate"},"name":{"kind":"Name","value":"governance_proposal_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"governance_satellite_action_aggregate"},"name":{"kind":"Name","value":"governance_satellite_action_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"governance_financial_request_aggregate"},"name":{"kind":"Name","value":"governance_financial_request_aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]}}]} as unknown as DocumentNode<DappDataForSatelliteMetricsQuery, DappDataForSatelliteMetricsQueryVariables>;
 export const SatellitesStatsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SatellitesStatsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"oraclesAmount"},"name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"aggregator_oracles_aggregate"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"count"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"predicate"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_gt"},"value":{"kind":"IntValue","value":"0"}}]}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"activeSatellitesAmount"},"name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"satellites"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"0","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"currently_registered"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"oraclesRewards"},"name":{"kind":"Name","value":"aggregator_oracle_reward_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"type"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"1","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"oracle"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"satellites"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"registration_timestamp"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_is_null"},"value":{"kind":"BooleanValue","value":false}}]}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"sum"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"reward"}}]}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"satellite_aggregate"},"name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"currently_registered"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"0","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"smvn_balance"}}]}},{"kind":"Field","name":{"kind":"Name","value":"delegations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"smvn_balance"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<SatellitesStatsQueryQuery, SatellitesStatsQueryQueryVariables>;
-export const SatellitesDashboardStatsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SatellitesDashboardStatsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"activeSatellitesAmount"},"name":{"kind":"Name","value":"satellite_aggregate"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"user"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"satellites"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"status"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"StringValue","value":"0","block":false}}]}},{"kind":"ObjectField","name":{"kind":"Name","value":"currently_registered"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"aggregate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"avg"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"total_delegated_amount"}},{"kind":"Field","name":{"kind":"Name","value":"fee"}}]}}]}}]}}]}}]} as unknown as DocumentNode<SatellitesDashboardStatsQueryQuery, SatellitesDashboardStatsQueryQueryVariables>;
+export const SatellitesDashboardStatsQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SatellitesDashboardStatsQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gql_satellite_summary"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"avg_delegated_smvn"}},{"kind":"Field","name":{"kind":"Name","value":"avg_delegation_fee"}},{"kind":"Field","name":{"kind":"Name","value":"avg_free_smvn_balance"}},{"kind":"Field","name":{"kind":"Name","value":"avg_mvn_staked"}},{"kind":"Field","name":{"kind":"Name","value":"avg_participation_rate"}}]}}]}}]} as unknown as DocumentNode<SatellitesDashboardStatsQueryQuery, SatellitesDashboardStatsQueryQueryVariables>;
 export const TokensMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"tokensMetadata"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"token"},"name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_id"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"token_standard"}},{"kind":"Field","name":{"kind":"Name","value":"lending_controller_collateral_tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_name"}},{"kind":"Field","name":{"kind":"Name","value":"paused"}},{"kind":"Field","name":{"kind":"Name","value":"is_scaled_token"}},{"kind":"Field","name":{"kind":"Name","value":"is_staked_token"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lending_controller_loan_tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"loan_token_name"}},{"kind":"Field","name":{"kind":"Name","value":"min_repayment_amount"}}]}},{"kind":"Field","name":{"kind":"Name","value":"m_tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mvn_tokens"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}}]}},{"kind":"Field","name":{"kind":"Name","value":"farms_lp_tokens"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"1"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}},{"kind":"Field","name":{"kind":"Name","value":"token0"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}}]}},{"kind":"Field","name":{"kind":"Name","value":"token1"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}},{"kind":"Field","name":{"kind":"Name","value":"metadata"}}]}}]}}]}}]}}]} as unknown as DocumentNode<TokensMetadataQuery, TokensMetadataQueryVariables>;
 export const GetTreasuryStorageDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTreasuryStorageData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"treasury"},"name":{"kind":"Name","value":"treasury"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"admin"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_neq"},"value":{"kind":"StringValue","value":"","block":false}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"admin"}},{"kind":"Field","name":{"kind":"Name","value":"creation_timestamp"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"balances"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"whitelisted"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_eq"},"value":{"kind":"BooleanValue","value":true}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"balance"}},{"kind":"Field","name":{"kind":"Name","value":"token"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"token_address"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetTreasuryStorageDataQuery, GetTreasuryStorageDataQueryVariables>;
 export const GetTreasurySmvnBalancesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTreasurySmvnBalances"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"addresses"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},"defaultValue":{"kind":"ListValue","values":[]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"maven_user"},"name":{"kind":"Name","value":"maven_user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"address"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"_in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"addresses"}}}]}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"smvn_balance"}},{"kind":"Field","name":{"kind":"Name","value":"address"}}]}}]}}]} as unknown as DocumentNode<GetTreasurySmvnBalancesQuery, GetTreasurySmvnBalancesQueryVariables>;
