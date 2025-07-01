@@ -3,7 +3,7 @@ import { SatelliteQueryFilterType } from '../satellites.provider.types'
 
 export const getSatelliteByAddressFilters = (userAddress: string): SatelliteQueryFilterType => {
   return {
-    where: { registration_timestamp: { _is_null: false }, user: { address: { _eq: userAddress } } },
+    where: { registration_timestamp: { _is_null: false }, user_address: { _eq: userAddress } },
     orderBy: { currently_registered: Order_By.Desc },
   }
 }
@@ -27,15 +27,8 @@ export const getSatelliteOracleFilters = (): SatelliteQueryFilterType => {
     where: {
       registration_timestamp: { _is_null: false },
       _and: {
-        // @ts-expect-error // This is a workaround for the GraphQL schema not recognizing the nested filter
-        user: {
-          aggregator_oracles_aggregate: {
-            count: {
-              predicate: { _gte: 1 },
-              filter: { observations_aggregate: { count: { predicate: { _gte: 1 } } } },
-            },
-          },
-        },
+        // @ts-expect-error // _and is not typed
+        last_observation_timestamp: { _is_null: false },
       },
     },
     orderBy: { currently_registered: Order_By.Desc },
@@ -54,15 +47,7 @@ export const getSatelliteOrderByQuery = (option: string): { orderBy?: Satellite_
     case 'Participation':
       return {
         orderBy: {
-          user: {
-            satellites_aggregate: {
-              avg: {
-                financial_request_counter: Order_By.Desc,
-                governance_proposal_counter: Order_By.Desc,
-                satellite_action_counter: Order_By.Desc,
-              },
-            },
-          },
+          participation_rate: Order_By.Desc,
         },
       }
     default:
