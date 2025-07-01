@@ -15,6 +15,7 @@ import { convertNumberForClient, formatAsPercent } from '../../../utils/calcFunc
 // const
 import { MVN_DECIMALS } from 'utils/constants'
 import { INACTIVE_SATELLITE_STATUS, satelliteStatusSchema, satelliteVoteSchema } from '../satellites.const'
+import { satelliteSchema } from '../schemas/satelliteGql.schema'
 
 type SatelliteVoteItemType = {
   id: number
@@ -23,8 +24,10 @@ type SatelliteVoteItemType = {
   voteName: string
 }
 
-export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['satellite'][number]) => {
+export const normalizeSatellite = (gqlSatelliteData: SatellitesIndexerDataType['satellite'][number]) => {
   try {
+    const satelliteRecord = satelliteSchema.parse(gqlSatelliteData)
+
     const satelliteAddress = satelliteRecord.user_address
     const lastVotedProposal =
       satelliteRecord.last_proposal_cycle && satelliteRecord.last_proposal_governance_cycle_id
@@ -54,7 +57,7 @@ export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['s
       // satellite metadata
       address: satelliteAddress,
       description: satelliteRecord.description,
-      website: satelliteRecord.website,
+      website: satelliteRecord.website ?? '',
       image: satelliteRecord.image,
       name: satelliteRecord.name,
       status: satelliteStatus,
