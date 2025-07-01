@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import {
   SatelliteDataQueryQuery,
+  Satellite_Bool_Exp,
   Satellite_Data_View_Bool_Exp,
   Satellite_Data_View_Order_By,
 } from './../../utils/__generated__/graphql'
@@ -112,6 +113,7 @@ export type SatelliteActionsType =
 // Pagination
 export type SatelliteQueryFilterType = {
   where: Satellite_Data_View_Bool_Exp
+  shadowWhere?: Satellite_Bool_Exp
   orderBy: Satellite_Data_View_Order_By
 }
 

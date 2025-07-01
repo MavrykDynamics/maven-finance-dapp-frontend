@@ -235,10 +235,10 @@ export const SatellitesProvider = ({ children }: Props) => {
   useQueryWithRefetch(SATELLITE_AGGREGATE_COUNT, {
     fetchPolicy: 'network-only',
     variables: {
-      whereBySatelliteTotal: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].where,
-      whereBysatelliteAddress: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].where,
-      whereByActiveSatellite: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].where,
-      whereOracles: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].where,
+      whereBySatelliteTotal: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].shadowWhere,
+      whereBysatelliteAddress: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].shadowWhere,
+      whereByActiveSatellite: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].shadowWhere,
+      whereOracles: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].shadowWhere,
     },
     onCompleted: (data) => {
       try {

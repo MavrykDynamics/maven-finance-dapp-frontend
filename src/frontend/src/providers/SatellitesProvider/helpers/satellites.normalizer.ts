@@ -26,16 +26,17 @@ type SatelliteVoteItemType = {
 export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['satellite'][number]) => {
   try {
     const satelliteAddress = satelliteRecord.user_address
-    const lastVotedProposal = {
-      id: satelliteRecord.last_proposal_id,
-      title: satelliteRecord.last_proposal_title,
-      cycle: satelliteRecord.last_proposal_cycle,
-      current_round_proposal: satelliteRecord.last_proposal_current_round,
-    }
+    const lastVotedProposal =
+      satelliteRecord.last_proposal_cycle && satelliteRecord.last_proposal_governance_cycle_id
+        ? {
+            proposalId: satelliteRecord.last_proposal_id,
+            proposalTitle: satelliteRecord.last_proposal_title,
+            vote: satelliteVoteSchema.parse(satelliteRecord.last_vote),
+          }
+        : null
 
     const totalVotingPower = satelliteRecord.total_voting_power
     const participatedFeeds = {
-      // HERE
       lastPredictedPrice: satelliteRecord.last_observation_data ?? null,
       predictionTime: satelliteRecord.last_observation_timestamp ?? null,
       predictionEpoch: satelliteRecord.last_observation_epoch ?? null,

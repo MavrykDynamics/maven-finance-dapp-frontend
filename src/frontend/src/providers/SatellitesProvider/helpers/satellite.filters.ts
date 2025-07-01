@@ -4,6 +4,7 @@ import { SatelliteQueryFilterType } from '../satellites.provider.types'
 export const getSatelliteByAddressFilters = (userAddress: string): SatelliteQueryFilterType => {
   return {
     where: { registration_timestamp: { _is_null: false }, user_address: { _eq: userAddress } },
+    shadowWhere: { registration_timestamp: { _is_null: false }, user: { address: { _eq: userAddress } } },
     orderBy: { currently_registered: Order_By.Desc },
   }
 }
@@ -11,6 +12,11 @@ export const getSatelliteByAddressFilters = (userAddress: string): SatelliteQuer
 export const getSatelliteActiveFilters = (): SatelliteQueryFilterType => {
   return {
     where: { registration_timestamp: { _is_null: false }, currently_registered: { _eq: true }, status: { _eq: '0' } },
+    shadowWhere: {
+      registration_timestamp: { _is_null: false },
+      currently_registered: { _eq: true },
+      status: { _eq: '0' },
+    },
     orderBy: { currently_registered: Order_By.Desc },
   }
 }
@@ -18,6 +24,7 @@ export const getSatelliteActiveFilters = (): SatelliteQueryFilterType => {
 export const getSatelliteAllFilters = (): SatelliteQueryFilterType => {
   return {
     where: { registration_timestamp: { _is_null: false } },
+    shadowWhere: { registration_timestamp: { _is_null: false } },
     orderBy: { currently_registered: Order_By.Desc },
   }
 }
@@ -29,6 +36,20 @@ export const getSatelliteOracleFilters = (): SatelliteQueryFilterType => {
       _and: {
         // @ts-expect-error // _and is not typed
         last_observation_timestamp: { _is_null: false },
+      },
+    },
+    shadowWhere: {
+      registration_timestamp: { _is_null: false },
+      _and: {
+        // @ts-expect-error // _and is not typed
+        user: {
+          aggregator_oracles_aggregate: {
+            count: {
+              predicate: { _gte: 1 },
+              filter: { observations_aggregate: { count: { predicate: { _gte: 1 } } } },
+            },
+          },
+        },
       },
     },
     orderBy: { currently_registered: Order_By.Desc },
@@ -57,10 +78,13 @@ export const getSatelliteOrderByQuery = (option: string): { orderBy?: Satellite_
 
 // search query
 export const getSatelliteSearchQueryForWhereFilter = (searchValue: string) => {
-  if (!searchValue) return { where: {} }
+  if (!searchValue) return { where: {}, shadowWhere: {} }
   return {
-    where: {
+    shadowWhere: {
       _or: [{ name: { _ilike: searchValue } }, { user: { address: { _eq: searchValue } } }],
+    },
+    where: {
+      _or: [{ name: { _ilike: searchValue } }, { user_address: { _eq: searchValue } }],
     },
   }
 }
