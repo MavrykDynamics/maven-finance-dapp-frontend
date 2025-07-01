@@ -1,4 +1,4 @@
-import { Order_By, Satellite_Order_By } from 'utils/__generated__/graphql'
+import { Order_By, Satellite_Data_View_Order_By } from 'utils/__generated__/graphql'
 import { SatelliteQueryFilterType } from '../satellites.provider.types'
 
 export const getSatelliteByAddressFilters = (userAddress: string): SatelliteQueryFilterType => {
@@ -43,7 +43,7 @@ export const getSatelliteOracleFilters = (): SatelliteQueryFilterType => {
 }
 
 // <order_by> (sort) --------------
-export const getSatelliteOrderByQuery = (option: string): { orderBy?: Satellite_Order_By } => {
+export const getSatelliteOrderByQuery = (option: string): { orderBy?: Satellite_Data_View_Order_By } => {
   switch (option) {
     case 'Lowest Fee':
       return { orderBy: { fee: Order_By.Asc } }
@@ -54,10 +54,15 @@ export const getSatelliteOrderByQuery = (option: string): { orderBy?: Satellite_
     case 'Participation':
       return {
         orderBy: {
-          // currently_registered: undefined,
-          satellite_action_counter: Order_By.Desc,
-          financial_request_counter: Order_By.Desc,
-          governance_proposal_counter: Order_By.Desc,
+          user: {
+            satellites_aggregate: {
+              avg: {
+                financial_request_counter: Order_By.Desc,
+                governance_proposal_counter: Order_By.Desc,
+                satellite_action_counter: Order_By.Desc,
+              },
+            },
+          },
         },
       }
     default:

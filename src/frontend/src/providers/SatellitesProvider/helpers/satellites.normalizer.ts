@@ -10,10 +10,10 @@ import {
 import { SatelliteVotesQueryQuery } from 'utils/__generated__/graphql'
 
 // helpers
-import { calcPercent, convertNumberForClient } from '../../../utils/calcFunctions'
+import { convertNumberForClient, formatAsPercent } from '../../../utils/calcFunctions'
 
 // const
-import { MVN_DECIMALS, MVRK_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS } from 'utils/constants'
 import { INACTIVE_SATELLITE_STATUS, satelliteStatusSchema, satelliteVoteSchema } from '../satellites.const'
 
 type SatelliteVoteItemType = {
@@ -23,105 +23,25 @@ type SatelliteVoteItemType = {
   voteName: string
 }
 
-/**
- *
- * @param satelliteOracleData – satellite predictions on feeds and rewards for this predictions
- * @returns@participatedFeeds – object where satellite participated and his latest prediction price, and his smvn & xtz rewards from this feed
- */
-const getSatelliteOracleRewards = (
-  satelliteOracleData: SatellitesIndexerDataType['satellite'][number]['user']['aggregator_oracles'],
-) => {
-  return satelliteOracleData.reduce<
-    Record<
-      string,
-      {
-        lastPredictedPrice: number | null
-        sMVNReward: number | null
-        XTZReward: number | null
-        predictionTime: string | null
-        predictionEpoch: number | null
-      }
-    >
-  >(
-    (
-      acc,
-      { smvnRewardsAmount, xtzRewardsAmount, aggregator: { address: feedAddress }, observations: [latestObservation] },
-    ) => {
-      acc[feedAddress] = {
-        lastPredictedPrice: latestObservation?.data ?? null,
-        predictionTime: latestObservation?.timestamp ?? null,
-        predictionEpoch: latestObservation?.epoch ?? null,
-        sMVNReward: convertNumberForClient({
-          number: smvnRewardsAmount.aggregate?.sum?.reward ?? 0,
-          grade: MVN_DECIMALS,
-        }),
-        XTZReward: convertNumberForClient({
-          number: xtzRewardsAmount.aggregate?.sum?.reward ?? 0,
-          grade: MVRK_DECIMALS,
-        }),
-      }
-      return acc
-    },
-    {},
-  )
-}
-
-/**
- *
- * @param satelliteUser – satellite we need to get efficiency for
- * @returns oracle efficiency – how often satellite predict feed price
- * TODO: @Sam-M-Israel should be reviewed by you
- */
-const getSatelliteOracleEfficiency = (satelliteUser: SatellitesIndexerDataType['satellite'][number]['user']) => {
-  const { aggregator_oracles, feedsObservationsAmount } = satelliteUser
-
-  const latestObservation = aggregator_oracles.reduce(
-    (acc, { init_epoch, init_round, observations: [lastFeedObservation] }) => {
-      const { timestamp, epoch, round } = lastFeedObservation ?? {}
-
-      if (dayjs(timestamp).valueOf() > acc.latestTimestamp) {
-        acc.init_epoch = init_epoch
-        acc.init_round = init_round
-        acc.epoch = epoch
-        acc.round = round
-        acc.latestTimestamp = timestamp
-      }
-      return acc
-    },
-    {
-      init_epoch: 0,
-      init_round: 0,
-      epoch: 0,
-      round: 0,
-      latestTimestamp: 0,
-    },
-  )
-
-  if (!latestObservation) return 0
-
-  const totalFeedsObservation = feedsObservationsAmount.nodes.reduce(
-    (acc, { observations_aggregate: { aggregate } }) => (acc += aggregate?.count ?? 0),
-    0,
-  )
-
-  const { epoch, round, init_epoch, init_round } = latestObservation
-  const predictionSuccessRatio = epoch / Math.max(round, 1) - init_epoch / Math.max(init_round, 1)
-
-  return calcPercent(predictionSuccessRatio, totalFeedsObservation)
-}
-
 export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['satellite'][number]) => {
   try {
-    const satelliteAddress = satelliteRecord.user.address
-    const satelliteUser = satelliteRecord.user
-    const lastVotedProposal = satelliteUser.lastVotedProposal[0]
+    const satelliteAddress = satelliteRecord.user_address
+    const lastVotedProposal = {
+      id: satelliteRecord.last_proposal_id,
+      title: satelliteRecord.last_proposal_title,
+      cycle: satelliteRecord.last_proposal_cycle,
+      current_round_proposal: satelliteRecord.last_proposal_current_round,
+    }
 
-    const totalVotingPower = convertNumberForClient({
-      number: satelliteUser.governance_satellite_snapshots?.[0]?.total_voting_power ?? 0,
-      grade: MVN_DECIMALS,
-    })
-
-    const participatedFeeds = getSatelliteOracleRewards(satelliteUser['aggregator_oracles'])
+    const totalVotingPower = satelliteRecord.total_voting_power
+    const participatedFeeds = {
+      // HERE
+      lastPredictedPrice: satelliteRecord.last_observation_data ?? null,
+      predictionTime: satelliteRecord.last_observation_timestamp ?? null,
+      predictionEpoch: satelliteRecord.last_observation_epoch ?? null,
+      sMVNReward: satelliteRecord.smvn_rewards_total,
+      XTZReward: satelliteRecord.mvrk_rewards_total,
+    }
 
     const satelliteStatus: SatelliteIndexerStatusType = satelliteRecord.currently_registered
       ? satelliteStatusSchema.parse(
@@ -147,8 +67,8 @@ export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['s
       currentlyRegistered: satelliteRecord.currently_registered,
 
       // delegation data
-      delegationRatio: satelliteRecord?.delegation?.delegation_ratio / 100 || 0,
-      delegatorCount: satelliteRecord.delegatorCount.aggregate?.count ?? 0,
+      delegationRatio: 0, // HERE
+      delegatorCount: satelliteRecord.delegator_count ?? 0,
       totalVotingPower,
       satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
       totalDelegatedAmount: convertNumberForClient({
@@ -157,35 +77,27 @@ export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['s
       }),
 
       mvnBalance: convertNumberForClient({
-        number: satelliteRecord?.user.mvn_balance,
+        number: satelliteRecord.mvn_balance,
         grade: MVN_DECIMALS,
       }),
       sMvnBalance: convertNumberForClient({
-        number: satelliteRecord?.user.smvn_balance,
+        number: satelliteRecord.smvn_balance,
         grade: MVN_DECIMALS,
       }),
       participatedFeeds,
-      oracleEfficiency: getSatelliteOracleEfficiency(satelliteUser),
+      oracleEfficiency: formatAsPercent(satelliteRecord.participated_feeds),
 
       // votes & voting metrics
-      lastVotedProposal:
-        lastVotedProposal &&
-        lastVotedProposal.governance_proposal.cycle === lastVotedProposal.governance_proposal.governance.cycle_id
-          ? {
-              vote: satelliteVoteSchema.parse(lastVotedProposal.vote),
-              proposalTitle: lastVotedProposal.governance_proposal.title,
-              proposalId: lastVotedProposal.governance_proposal.id,
-            }
-          : null,
-      proposalsVotesAmount: satelliteUser.govProposalsVotesAmount.aggregate?.count ?? 0,
-      financialRequestsVotesAmount: satelliteUser.finRequestsVotesAmount.aggregate?.count ?? 0,
-      satelliteActionVotesAmount: satelliteUser.satelliteGovActionsVotesAmount.aggregate?.count ?? 0,
+      lastVotedProposal,
+      proposalsVotesAmount: satelliteRecord.gov_proposals_votes_count ?? 0,
+      financialRequestsVotesAmount: satelliteRecord.fin_requests_votes_count ?? 0,
+      satelliteActionVotesAmount: satelliteRecord.satellite_gov_actions_votes_count ?? 0,
       satelliteActionVotingPeriods: satelliteRecord.satellite_action_counter ?? 0,
       governanceProposalsVotingPeriods: satelliteRecord.governance_proposal_counter ?? 0,
       financialRequestsVotingPeriods: satelliteRecord.financial_request_counter ?? 0,
-      createdGovProposalsAmount: satelliteUser.createdGovProposalsAmount.aggregate?.count ?? 0,
-      createdFinProposalsAmount: satelliteUser.createdFinRequestsAmount.aggregate?.count ?? 0,
-      createdSatelliteGovProposalsAmount: satelliteUser.createdSatelliteGovActionsAmount.aggregate?.count ?? 0,
+      createdGovProposalsAmount: satelliteRecord.created_gov_proposals_count ?? 0,
+      createdFinProposalsAmount: satelliteRecord.created_fin_requests_count ?? 0,
+      createdSatelliteGovProposalsAmount: satelliteRecord.created_satellite_gov_actions_count ?? 0,
     }
   } catch (e) {
     console.error('normalizeSatellite parsing error: ', { e })
@@ -201,7 +113,7 @@ export const normalizeSatellitesLedger = (store: SatellitesIndexerDataType) => {
     (acc, satelliteRecord) => {
       const normalizedSatellite = normalizeSatellite(satelliteRecord)
 
-      if (!normalizedSatellite) return acc
+      if (!normalizedSatellite || !normalizedSatellite.address) return acc
 
       acc.satelliteMapper[normalizedSatellite.address] = normalizedSatellite
       acc.satelliteIds.push(normalizedSatellite.address)

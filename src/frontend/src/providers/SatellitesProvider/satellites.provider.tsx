@@ -46,7 +46,7 @@ import {
 } from './helpers/satellite.filters'
 import { SatellitesCountsSchema } from './schemas/satellitesCount.schema'
 import { mergeFilters } from 'utils/merge'
-import { Satellite_Bool_Exp, Satellite_Order_By } from 'utils/__generated__/graphql'
+import { Satellite_Data_View_Bool_Exp, Satellite_Data_View_Order_By } from 'utils/__generated__/graphql'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -97,27 +97,27 @@ export const SatellitesProvider = ({ children }: Props) => {
   const defaultSatelliteFilters = useMemo(
     () =>
       ({
-        [SATELLITE_PAGINATION_ALL]: mergeFilters<Satellite_Bool_Exp, Satellite_Order_By, PaginationSatelliteType>(
-          getSatelliteAllFilters,
-          satelliteFilters,
-          SATELLITE_PAGINATION_ALL,
-        ),
+        [SATELLITE_PAGINATION_ALL]: mergeFilters<
+          Satellite_Data_View_Bool_Exp,
+          Satellite_Data_View_Order_By,
+          PaginationSatelliteType
+        >(getSatelliteAllFilters, satelliteFilters, SATELLITE_PAGINATION_ALL),
 
         [SATELLITE_PAGINATION_BY_ADDRESS]: {
           ...getSatelliteByAddressFilters(satelliteAddressToSubscribe ?? ''),
         },
 
-        [SATELLITE_PAGINATION_ACTIVE]: mergeFilters<Satellite_Bool_Exp, Satellite_Order_By, PaginationSatelliteType>(
-          getSatelliteActiveFilters,
-          satelliteFilters,
-          SATELLITE_PAGINATION_ACTIVE,
-        ),
+        [SATELLITE_PAGINATION_ACTIVE]: mergeFilters<
+          Satellite_Data_View_Bool_Exp,
+          Satellite_Data_View_Order_By,
+          PaginationSatelliteType
+        >(getSatelliteActiveFilters, satelliteFilters, SATELLITE_PAGINATION_ACTIVE),
 
-        [SATELLITE_PAGINATION_ORACLES]: mergeFilters<Satellite_Bool_Exp, Satellite_Order_By, PaginationSatelliteType>(
-          getSatelliteOracleFilters,
-          satelliteFilters,
-          SATELLITE_PAGINATION_ORACLES,
-        ),
+        [SATELLITE_PAGINATION_ORACLES]: mergeFilters<
+          Satellite_Data_View_Bool_Exp,
+          Satellite_Data_View_Order_By,
+          PaginationSatelliteType
+        >(getSatelliteOracleFilters, satelliteFilters, SATELLITE_PAGINATION_ORACLES),
       } as unknown as SatelliteFiltersType),
     [satelliteAddressToSubscribe, satelliteFilters],
   )

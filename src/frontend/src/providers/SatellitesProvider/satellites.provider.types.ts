@@ -1,6 +1,10 @@
 import { z } from 'zod'
 
-import { SatelliteDataQueryQuery, Satellite_Bool_Exp, Satellite_Order_By } from './../../utils/__generated__/graphql'
+import {
+  SatelliteDataQueryQuery,
+  Satellite_Data_View_Bool_Exp,
+  Satellite_Data_View_Order_By,
+} from './../../utils/__generated__/graphql'
 
 import { normalizeSatellite, normalizeSatelliteVotes } from './helpers/satellites.normalizer'
 
@@ -107,8 +111,8 @@ export type SatelliteActionsType =
 
 // Pagination
 export type SatelliteQueryFilterType = {
-  where: Satellite_Bool_Exp
-  orderBy: Satellite_Order_By
+  where: Satellite_Data_View_Bool_Exp
+  orderBy: Satellite_Data_View_Order_By
 }
 
 export type SatelliteFiltersType = {
