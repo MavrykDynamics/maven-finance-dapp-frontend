@@ -116,7 +116,7 @@ const DataFeedDetails = () => {
 
   useEffect(() => {
     if (feedOracleAddresses.length > 0) {
-      const oracleParamsByFeed = { where: { user: { address: { _in: feedOracleAddresses } } } }
+      const oracleParamsByFeed = { where: { user_address: { _in: feedOracleAddresses } } }
       updateSatelliteQueryFilters(oracleParamsByFeed, SATELLITE_PAGINATION_ORACLES)
     }
   }, [feedOracleAddresses])

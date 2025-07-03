@@ -39,13 +39,17 @@ export const normalizeSatellite = (gqlSatelliteData: SatellitesIndexerDataType['
         : null
 
     const totalVotingPower = satelliteRecord.total_voting_power
-    const participatedFeeds = {
-      lastPredictedPrice: satelliteRecord.last_observation_data ?? null,
-      predictionTime: satelliteRecord.last_observation_timestamp ?? null,
-      predictionEpoch: satelliteRecord.last_observation_epoch ?? null,
-      sMVNReward: satelliteRecord.smvn_rewards_total,
-      XTZReward: satelliteRecord.mvrk_rewards_total,
-    }
+    const participatedFeeds = satelliteRecord.last_observation_aggregator_address
+      ? {
+          [satelliteRecord.last_observation_aggregator_address]: {
+            lastPredictedPrice: satelliteRecord.last_observation_data ?? null,
+            predictionTime: satelliteRecord.last_observation_timestamp ?? null,
+            predictionEpoch: satelliteRecord.last_observation_epoch ?? null,
+            sMVNReward: satelliteRecord.smvn_rewards_total,
+            XTZReward: satelliteRecord.mvrk_rewards_total,
+          },
+        }
+      : {}
 
     const satelliteStatus: SatelliteIndexerStatusType = satelliteRecord.currently_registered
       ? satelliteStatusSchema.parse(
