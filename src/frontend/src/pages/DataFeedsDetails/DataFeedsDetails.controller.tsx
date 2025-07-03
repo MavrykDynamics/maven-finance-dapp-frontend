@@ -56,7 +56,7 @@ import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
 import { Page } from 'styles'
-import { ONE_HOUR } from 'consts/charts.const'
+import { ONE_HOUR, TWENTY_FOUR_HOURS } from 'consts/charts.const'
 
 // helpers
 import { getChartXAxisTicks } from 'utils/charts.utils'
@@ -64,6 +64,8 @@ import { parseDate } from 'utils/time'
 import { SMALL_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
 import { TEMP_MAX_ORACLE_DATA_PUSH_SECONDS } from '../../utils/constants'
+
+const forbiddenPeriods: ChartPeriodType[] = [ONE_HOUR]
 
 const tabsList = [
   {
@@ -93,7 +95,7 @@ const DataFeedDetails = () => {
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
   } = useSatellitesContext()
-  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(TWENTY_FOUR_HOURS)
   const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId, chartPeriod)
 
   useEffect(() => {
@@ -365,6 +367,7 @@ const DataFeedDetails = () => {
                   size={SMALL_SLIDING_TAB_BUTTONS}
                   space={15}
                   align={ALIGN_RIGHT}
+                  forbiddenPeriods={forbiddenPeriods}
                 />
                 {isFeedsChartsLoading ? (
                   <DataLoaderWrapper margin="0">
