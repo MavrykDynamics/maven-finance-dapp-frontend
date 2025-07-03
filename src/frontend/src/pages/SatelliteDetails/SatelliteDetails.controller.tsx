@@ -136,7 +136,12 @@ export const SatelliteDetails = () => {
                     <a className="satellite-website" href={currentSatellite.website} target="_blank" rel="noreferrer">
                       Website
                     </a>
-                  ) : null}
+                  ) : (
+                    <div className="satellite-website" aria-disabled="true">
+                      Website
+                      <span>&nbsp;(Invalid image link. Please update it)</span>
+                    </div>
+                  )}
                 </SatelliteDescrBlock>
 
                 <SatelliteMetrics>

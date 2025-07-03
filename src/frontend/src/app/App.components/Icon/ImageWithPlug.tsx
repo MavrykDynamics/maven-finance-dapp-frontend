@@ -50,6 +50,10 @@ export const ImageWithPlug = ({
     }
   }, [imageLink, plugSrc])
 
+  if (status === 'pending' && !plugSrc) {
+    return <Icon id={noImageIconId} className={classnames(className, 'img-plug')} />
+  }
+
   if (imageSrc) {
     if (useRounded) {
       return (
