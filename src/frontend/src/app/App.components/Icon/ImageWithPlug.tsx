@@ -26,7 +26,7 @@ export const ImageWithPlug = ({
   useRounded?: boolean
 }) => {
   const [status, setStatus] = useState<'pending' | 'loaded' | 'error'>('pending')
-  const [currentSrc, setCurrentSrc] = useState<string | null>(null)
+  const [imageSrc, setImageSrc] = useState<string | null>(imageLink)
 
   useEffect(() => {
     if (!imageLink) {
@@ -41,34 +41,30 @@ export const ImageWithPlug = ({
 
     img.onload = () => {
       setStatus('loaded')
-      setCurrentSrc(imageLink)
+      setImageSrc(imageLink)
     }
 
     img.onerror = () => {
       setStatus('error')
-      setCurrentSrc(null)
+      setImageSrc(plugSrc ?? null)
     }
-  }, [imageLink])
+  }, [imageLink, plugSrc])
 
-  const Wrapper = useRounded ? ImgWrapperRoundedStyled : 'div'
-  const wrapperClass = classnames('img-wrapper', className)
+  if (imageSrc) {
+    if (useRounded) {
+      return (
+        <ImgWrapperRoundedStyled className={`img-wrapper ${className}`}>
+          <img src={status === 'pending' && plugSrc ? plugSrc : imageSrc} alt={alt} loading="lazy" />
+        </ImgWrapperRoundedStyled>
+      )
+    }
 
-  if (status === 'pending' && plugSrc) {
     return (
-      <Wrapper className={wrapperClass}>
-        <img src={plugSrc} alt={`${alt} (placeholder)`} loading="lazy" />
-      </Wrapper>
+      <div className={`img-wrapper ${className}`}>
+        <img src={imageSrc} alt={alt} loading="lazy" />
+      </div>
     )
   }
 
-  if (status === 'loaded' && currentSrc) {
-    return (
-      <Wrapper className={wrapperClass}>
-        <img src={currentSrc} alt={alt} loading="lazy" />
-      </Wrapper>
-    )
-  }
-
-  // fallback icon (no image available)
   return <Icon id={noImageIconId} className={classnames(className, 'img-plug')} />
 }
