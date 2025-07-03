@@ -15,6 +15,7 @@ import { calcPercent, convertNumberForClient } from '../../../utils/calcFunction
 // const
 import { MVN_DECIMALS, MVRK_DECIMALS } from 'utils/constants'
 import { INACTIVE_SATELLITE_STATUS, satelliteStatusSchema, satelliteVoteSchema } from '../satellites.const'
+import { normalizeIpfsUrl } from 'utils/url.utils'
 
 type SatelliteVoteItemType = {
   id: number
@@ -134,7 +135,7 @@ export const normalizeSatellite = (satelliteRecord: SatellitesIndexerDataType['s
       address: satelliteAddress,
       description: satelliteRecord.description,
       website: satelliteRecord.website,
-      image: satelliteRecord.image,
+      image: normalizeIpfsUrl(satelliteRecord.image),
       name: satelliteRecord.name,
       status: satelliteStatus,
 
