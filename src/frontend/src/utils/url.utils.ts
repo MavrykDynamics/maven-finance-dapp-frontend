@@ -10,13 +10,12 @@ export const normalizeIpfsUrl = (url: string, preferredGateway = 'https://ipfs.i
 }
 
 export const isMavrykProductUrl = (url: string) => {
-  if (!url.startsWith('https://')) return true
+  if (!url || !url.startsWith('https://')) return true // invalid or incomplete = true
 
   try {
     const parsed = new URL(url)
     const hostname = parsed.hostname
 
-    // Allowed hostnames
     const allowedHosts = new Set([
       'atlasnet.mavenfinance.io',
       'ghostnet.mavenfinance.io',
@@ -24,13 +23,10 @@ export const isMavrykProductUrl = (url: string) => {
       'mavryk-finance-dapp-frontend.pages.dev',
     ])
 
-    // Allow exact host match or *.mavryk-finance-dapp-frontend.pages.dev
-    if (allowedHosts.has(hostname) || hostname.endsWith('.mavryk-finance-dapp-frontend.pages.dev')) {
-      return false // ✅ valid
-    }
+    const isMavryk = allowedHosts.has(hostname) || hostname.endsWith('.mavryk-finance-dapp-frontend.pages.dev')
 
-    return true
-  } catch (e) {
-    return true
+    return isMavryk || false
+  } catch {
+    return true // malformed URL = treat as "safe" (true)
   }
 }

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 import { SECONDARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { INFO_DEFAULT, INFO_ERROR } from 'app/App.components/Info/info.constants'
-import { INPUT_STATUS_SUCCESS } from 'app/App.components/Input/Input.constants'
+import { INPUT_STATUS_SUCCESS, INPUT_STATUS_ERROR } from 'app/App.components/Input/Input.constants'
 import {
   BecomeSatelliteFormStateType,
   DEFAULT_BECOME_SATELLITE_FORM,
@@ -48,6 +48,7 @@ import {
 } from '../BecomeSatellite.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { Outlet, useOutletContext } from 'react-router-dom'
+import { isMavrykProductUrl } from 'utils/url.utils'
 
 const connectWalletMessage = (
   <BecomeSatelliteFormBalanceCheck $balanceOk={false}>
@@ -140,10 +141,18 @@ export const BecomeSatelliteScreen = () => {
   // Set satellite data if user is satellite
   useEffect(() => {
     if (usersSatelliteProfile) {
+      console.log(
+        isMavrykProductUrl(usersSatelliteProfile.website),
+        usersSatelliteProfile.website,
+        'isMavrykProductUrl(usersSatelliteProfile.website)',
+      )
       setForm({
         name: { text: usersSatelliteProfile.name, status: INPUT_STATUS_SUCCESS },
         description: { text: usersSatelliteProfile.description, status: INPUT_STATUS_SUCCESS },
-        website: { text: usersSatelliteProfile.website, status: INPUT_STATUS_SUCCESS },
+        website: {
+          text: usersSatelliteProfile.website,
+          status: isMavrykProductUrl(usersSatelliteProfile.website) ? INPUT_STATUS_ERROR : INPUT_STATUS_SUCCESS,
+        },
         satelliteFee: { text: String(usersSatelliteProfile.satelliteFee + '%'), status: INPUT_STATUS_SUCCESS },
         image: { text: usersSatelliteProfile.image, status: INPUT_STATUS_SUCCESS },
         oraclePeerId: {

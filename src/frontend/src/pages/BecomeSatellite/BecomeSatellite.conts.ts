@@ -3,6 +3,7 @@ import { isNotAllWhitespace, isValidLength, validatePublicKey } from 'utils/vali
 import { defaultOraclePeerIdMaxLength } from 'app/App.components/Input/Input.constants'
 
 import { SatelliteDelegationMaxLength } from 'providers/DappConfigProvider/dappConfig.provider.types'
+import { isMavrykProductUrl } from 'utils/url.utils'
 
 export const getFormTextBasedOnUserRole = (isUserSatellite: boolean) => ({
   pageTitle: isUserSatellite ? 'Edit Satellite Profile' : 'Become a Satellite',
@@ -30,7 +31,9 @@ export const getInputValidationStatus = (
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
     case 'website':
-      return isNotAllWhitespace(value) && isValidLength(value, 1, satelliteConfig.satelliteWebsiteMaxLength)
+      return isNotAllWhitespace(value) &&
+        isValidLength(value, 1, satelliteConfig.satelliteWebsiteMaxLength) &&
+        !isMavrykProductUrl(value)
         ? INPUT_STATUS_SUCCESS
         : INPUT_STATUS_ERROR
     case 'satelliteFee':
