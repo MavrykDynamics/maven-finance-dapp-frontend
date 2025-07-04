@@ -89,5 +89,44 @@ export const SATELLITE_AGGREGATE_COUNT = gql(`
     }
   }
 }
+  `)
 
+export const SATELLITE_ADDITIONAL_DATA = gql(`
+  query satelliteAdditionalDataQuery($satelliteAdditionalWhere: satellite_bool_exp) {
+  satelliteAdditionalData: satellite(where: $satelliteAdditionalWhere) {
+    delegation {
+      delegation_ratio
+    }
+    user {
+      address
+      aggregator_oracles {
+        aggregator {
+          address
+        }
+        init_epoch
+        init_round
+        observations(order_by: {timestamp: desc}, limit: 1) {
+          epoch
+          round
+          timestamp
+          data
+        }
+        smvnRewardsAmount: rewards_aggregate(where: {type: {_eq: "1"}}) {
+          aggregate {
+            sum {
+              reward
+            }
+          }
+        }
+        xtzRewardsAmount: rewards_aggregate(where: {type: {_eq: "0"}}) {
+          aggregate {
+            sum {
+              reward
+            }
+          }
+        }
+      }
+    }
+  }
+}
   `)

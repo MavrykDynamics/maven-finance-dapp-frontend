@@ -7,15 +7,58 @@ import {
   SatellitesIndexerDataType,
   SatelliteVoteType,
 } from 'providers/SatellitesProvider/satellites.provider.types'
-import { SatelliteVotesQueryQuery } from 'utils/__generated__/graphql'
+import { SatelliteAdditionalDataQueryQuery, SatelliteVotesQueryQuery } from 'utils/__generated__/graphql'
 
 // helpers
 import { convertNumberForClient, formatAsPercent } from '../../../utils/calcFunctions'
 
 // const
-import { MVN_DECIMALS } from 'utils/constants'
+import { MVN_DECIMALS, MVRK_DECIMALS } from 'utils/constants'
 import { INACTIVE_SATELLITE_STATUS, satelliteStatusSchema, satelliteVoteSchema } from '../satellites.const'
 import { satelliteSchema } from '../schemas/satelliteGql.schema'
+
+/**
+ *
+ * @param satelliteOracleData – satellite predictions on feeds and rewards for this predictions
+ * @returns@participatedFeeds – object where satellite participated and his latest prediction price, and his smvn & xtz rewards from this feed
+ */
+const getSatelliteOracleRewards = (
+  satelliteOracleData: SatelliteAdditionalDataQueryQuery['satelliteAdditionalData'][number]['user']['aggregator_oracles'],
+) => {
+  return satelliteOracleData.reduce<
+    Record<
+      string,
+      {
+        lastPredictedPrice: number | null
+        sMVNReward: number | null
+        XTZReward: number | null
+        predictionTime: string | null
+        predictionEpoch: number | null
+      }
+    >
+  >(
+    (
+      acc,
+      { smvnRewardsAmount, xtzRewardsAmount, aggregator: { address: feedAddress }, observations: [latestObservation] },
+    ) => {
+      acc[feedAddress] = {
+        lastPredictedPrice: latestObservation?.data ?? null,
+        predictionTime: latestObservation?.timestamp ?? null,
+        predictionEpoch: latestObservation?.epoch ?? null,
+        sMVNReward: convertNumberForClient({
+          number: smvnRewardsAmount.aggregate?.sum?.reward ?? 0,
+          grade: MVN_DECIMALS,
+        }),
+        XTZReward: convertNumberForClient({
+          number: xtzRewardsAmount.aggregate?.sum?.reward ?? 0,
+          grade: MVRK_DECIMALS,
+        }),
+      }
+      return acc
+    },
+    {},
+  )
+}
 
 type SatelliteVoteItemType = {
   id: number
@@ -24,7 +67,10 @@ type SatelliteVoteItemType = {
   voteName: string
 }
 
-export const normalizeSatellite = (gqlSatelliteData: SatellitesIndexerDataType['satellite'][number]) => {
+export const normalizeSatellite = (
+  gqlSatelliteData: SatellitesIndexerDataType['satellite'][number],
+  additionalSatelliteData: SatelliteAdditionalDataQueryQuery['satelliteAdditionalData'][number] | undefined,
+) => {
   try {
     const satelliteRecord = satelliteSchema.parse(gqlSatelliteData)
 
@@ -39,16 +85,8 @@ export const normalizeSatellite = (gqlSatelliteData: SatellitesIndexerDataType['
         : null
 
     const totalVotingPower = satelliteRecord.total_voting_power
-    const participatedFeeds = satelliteRecord.last_observation_aggregator_address
-      ? {
-          [satelliteRecord.last_observation_aggregator_address]: {
-            lastPredictedPrice: satelliteRecord.last_observation_data ?? null,
-            predictionTime: satelliteRecord.last_observation_timestamp ?? null,
-            predictionEpoch: satelliteRecord.last_observation_epoch ?? null,
-            sMVNReward: satelliteRecord.smvn_rewards_total,
-            XTZReward: satelliteRecord.mvrk_rewards_total,
-          },
-        }
+    const participatedFeeds = additionalSatelliteData?.user.aggregator_oracles
+      ? getSatelliteOracleRewards(additionalSatelliteData?.user.aggregator_oracles)
       : {}
 
     const satelliteStatus: SatelliteIndexerStatusType = satelliteRecord.currently_registered
@@ -75,7 +113,7 @@ export const normalizeSatellite = (gqlSatelliteData: SatellitesIndexerDataType['
       currentlyRegistered: satelliteRecord.currently_registered,
 
       // delegation data
-      delegationRatio: 0, // HERE
+      delegationRatio: additionalSatelliteData?.delegation.delegation_ratio / 100 || 0,
       delegatorCount: satelliteRecord.delegator_count ?? 0,
       totalVotingPower,
       satelliteFee: (satelliteRecord?.fee ?? 0) / 100,
@@ -113,13 +151,19 @@ export const normalizeSatellite = (gqlSatelliteData: SatellitesIndexerDataType['
   }
 }
 
-export const normalizeSatellitesLedger = (store: SatellitesIndexerDataType) => {
+export const normalizeSatellitesLedger = (
+  store: SatellitesIndexerDataType,
+  additionalDataArr: SatelliteAdditionalDataQueryQuery['satelliteAdditionalData'] | null,
+) => {
   return store.satellite.reduce<{
     satelliteMapper: Record<string, SatelliteRecordType>
     satelliteIds: string[]
   }>(
     (acc, satelliteRecord) => {
-      const normalizedSatellite = normalizeSatellite(satelliteRecord)
+      const satelliteAddtionalData = additionalDataArr?.find(
+        (record) => record.user.address === satelliteRecord.user_address,
+      )
+      const normalizedSatellite = normalizeSatellite(satelliteRecord, satelliteAddtionalData)
 
       if (!normalizedSatellite || !normalizedSatellite.address) return acc
 

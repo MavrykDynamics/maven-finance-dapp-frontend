@@ -47,6 +47,7 @@ import {
 import { SatellitesCountsSchema } from './schemas/satellitesCount.schema'
 import { mergeFilters } from 'utils/merge'
 import { Satellite_Data_View_Bool_Exp, Satellite_Data_View_Order_By } from 'utils/__generated__/graphql'
+import { fetchAdditionalSatelliteData } from './helpers/satellite.fetcher'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -55,7 +56,7 @@ export type Props = {
 }
 
 export const SatellitesProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleApolloError, apolloClient } = useApolloContext()
 
   const [satellitesCtxState, setSatellitesCtxState] =
     useState<DeepNullable<SatellitesContextState>>(DEFAULT_SATELLITES_CONTEXT)
@@ -152,8 +153,16 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_BY_ADDRESS] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: (data) => {
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
+    onCompleted: async (data) => {
+      let additionalSatelliteData = null
+      try {
+        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+      } catch (e) {
+        console.log(e)
+      }
+
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
@@ -175,8 +184,16 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ALL] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: (data) => {
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
+    onCompleted: async (data) => {
+      let additionalSatelliteData = null
+      try {
+        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+      } catch (e) {
+        console.log(e)
+      }
+
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
@@ -197,8 +214,16 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ACTIVE] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: (data) => {
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data)
+    onCompleted: async (data) => {
+      let additionalSatelliteData = null
+      try {
+        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+      } catch (e) {
+        console.log(e)
+      }
+
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
@@ -219,8 +244,16 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ORACLES] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: (data) => {
-      const { satelliteMapper, satelliteIds } = normalizeSatellitesLedger(data)
+    onCompleted: async (data) => {
+      let additionalSatelliteData = null
+      try {
+        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+      } catch (e) {
+        console.log(e)
+      }
+
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
