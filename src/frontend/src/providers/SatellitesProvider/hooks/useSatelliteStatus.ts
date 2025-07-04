@@ -103,7 +103,7 @@ const checkWhetherAlloraclePredictionsActive = (
       heart_beat_seconds,
       last_completed_data_epoch: latestEpoch,
     } = feedsMapper[feedAddress]
-    const { predictionTime, predictionEpoch } = satellite.participatedFeeds[feedAddress]
+    const { predictionTime, predictionEpoch } = satellite.participatedFeeds[feedAddress] ?? {}
 
     // TODO: heart_beat_seconds update for new delay. Switch TEMP_MAX_ORACLE_DATA_PUSH_SECONDS back to heart_beat_seconds
 

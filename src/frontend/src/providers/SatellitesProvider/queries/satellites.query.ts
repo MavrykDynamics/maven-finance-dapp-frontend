@@ -11,8 +11,8 @@ export const CHECK_WHETHER_SATELLITE_EXISTS = gql(`
 `)
 
 export const SATELLITE_DATA_QUERY = gql(`
-  query satelliteDataQuery($limit: Int = 10, $offset: Int = 0) {
-  satellite: satellite_data_view(limit: $limit, offset: $offset, distinct_on: user_address, where: {}) {
+  query satelliteDataQuery($limit: Int = 10, $offset: Int = 0, $satelliteWhere: satellite_data_view_bool_exp, $satelliteOrderBy: [satellite_data_view_order_by!]) {
+  satellite: satellite_data_view(limit: $limit, offset: $offset, where: $satelliteWhere, order_by: $satelliteOrderBy) {
     description
     fee
     image

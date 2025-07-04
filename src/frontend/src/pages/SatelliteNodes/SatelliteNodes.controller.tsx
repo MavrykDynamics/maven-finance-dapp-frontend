@@ -44,7 +44,7 @@ import {
   getSatelliteOrderByQuery,
   getSatelliteSearchQueryForWhereFilter,
 } from 'providers/SatellitesProvider/helpers/satellite.filters'
-import { Satellite_Data_View_Bool_Exp } from 'utils/__generated__/graphql'
+import { Satellite_Bool_Exp, Satellite_Data_View_Bool_Exp } from 'utils/__generated__/graphql'
 import qs from 'qs'
 import { satelliteNodesPath } from './satelliteNodes.const'
 
@@ -93,7 +93,10 @@ const SatelliteNodes = () => {
 
   const applyServerFilters = useCallback(
     (searchValue: string) => {
-      let whereQuery: { where: Partial<Satellite_Data_View_Bool_Exp> } = { where: {} }
+      let whereQuery: { where: Partial<Satellite_Data_View_Bool_Exp>; shadowWhere: Partial<Satellite_Bool_Exp> } = {
+        where: {},
+        shadowWhere: {},
+      }
 
       const orderByQuery = getSatelliteOrderByQuery(chosenDdItem?.text ?? '')
 
@@ -103,6 +106,7 @@ const SatelliteNodes = () => {
         whereQuery = {
           ...whereQuery,
           where: { ...whereQuery.where, ...searchFilterQuery.where },
+          shadowWhere: { ...whereQuery.shadowWhere, ...searchFilterQuery.shadowWhere },
         }
       }
 
