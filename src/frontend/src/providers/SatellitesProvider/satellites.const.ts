@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { SatellitesContextState } from './satellites.provider.types'
+import { SatelliteQueryFilterType, SatellitesContextState } from './satellites.provider.types'
+import { Order_By } from 'utils/__generated__/graphql'
 
 // actions
 export const DELEGATE_ACTION = 'delegate'
@@ -64,12 +65,54 @@ export const SATELLITE_PARTICIPATION_DATA_SUB = 'SATELLITE_PARTICIPATION_DATA_SU
 
 export const DEFAULT_SATELLITES_ACTIVE_SUBS = {
   [SATELLITE_DATA_SUB]: null,
+  [SATELLITES_DATA_SINGLE_SUB]: false,
   [SATELLITE_PARTICIPATION_DATA_SUB]: false,
+}
+
+// Filters & pagination ----------
+export const SATELLITES_LIMIT = 5
+export const SATELLITE_PAGINATION_ALL = 'SATELLITE_PAGINATION_ALL'
+export const SATELLITE_PAGINATION_ACTIVE = 'SATELLITE_PAGINATION_ACTIVE'
+export const SATELLITE_PAGINATION_ORACLES = 'SATELLITE_PAGINATION_ORACLES'
+export const SATELLITE_PAGINATION_BY_ADDRESS = 'SATELLITE_PAGINATION_BY_ADDRESS'
+
+export type PaginationSatelliteType =
+  | typeof SATELLITE_PAGINATION_ALL
+  | typeof SATELLITE_PAGINATION_ACTIVE
+  | typeof SATELLITE_PAGINATION_ORACLES
+  | typeof SATELLITE_PAGINATION_BY_ADDRESS
+
+export const SATELLITE_DEFFAULT_FILTERS = {
+  [SATELLITE_PAGINATION_ALL]: {
+    where: {},
+    orderBy: { currently_registered: Order_By.Desc },
+  },
+  [SATELLITE_PAGINATION_ACTIVE]: {
+    where: {},
+    orderBy: { currently_registered: Order_By.Desc },
+  },
+  [SATELLITE_PAGINATION_ORACLES]: {
+    where: {},
+    orderBy: { currently_registered: Order_By.Desc },
+  },
+  [SATELLITE_PAGINATION_BY_ADDRESS]: {
+    where: {},
+    orderBy: { currently_registered: Order_By.Desc },
+  },
+}
+
+export const DEFAULT_SATELLITE_PAGINATION_DATA = {
+  [SATELLITE_PAGINATION_ALL]: 1,
+  [SATELLITE_PAGINATION_ACTIVE]: 1,
+  [SATELLITE_PAGINATION_ORACLES]: 1,
+  [SATELLITE_PAGINATION_BY_ADDRESS]: 1,
 }
 
 // context data
 export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = {
   satelliteMapper: null,
+  satelliteActiveMapper: null,
+  satelliteOraclesMapper: null,
   activeSatellitesIds: null,
   allSatellitesIds: null,
   oraclesIds: null,
@@ -78,10 +121,19 @@ export const DEFAULT_SATELLITES_CONTEXT: DeepNullable<SatellitesContextState> = 
   finRequestsAmount: null,
   changePage: () => {},
   totalSatellitesCount: null,
+  satelliteMapperByAddress: null,
+  staelliteIdsByAddress: null,
+  activeSatellitesCount: null,
+  userSatellitesCount: null,
+  oracleSatellitesCount: null,
+  paginationState: null,
+  updateSatelliteQueryFilters: null,
 }
 
 export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   satelliteMapper: {},
+  satelliteActiveMapper: {},
+  satelliteOraclesMapper: {},
   activeSatellitesIds: [],
   allSatellitesIds: [],
   oraclesIds: [],
@@ -89,7 +141,12 @@ export const EMPTY_SATELLITES_CONTEXT: SatellitesContextState = {
   satelliteGovActionsAmount: 0,
   finRequestsAmount: 0,
   changePage: () => {},
+  paginationState: DEFAULT_SATELLITE_PAGINATION_DATA,
   totalSatellitesCount: 0,
+  satelliteMapperByAddress: {},
+  staelliteIdsByAddress: [],
+  activeSatellitesCount: 0,
+  userSatellitesCount: 0,
+  oracleSatellitesCount: 0,
+  updateSatelliteQueryFilters: () => {},
 }
-
-export const SATELLITES_LIMIT = 5

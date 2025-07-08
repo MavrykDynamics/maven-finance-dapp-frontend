@@ -1,4 +1,4 @@
-import { gql } from 'utils/__generated__';
+import { gql } from 'utils/__generated__'
 
 // data for sidebar
 export const SATELLITES_STATS = gql(`
@@ -41,4 +41,17 @@ query SatellitesStatsQuery{
     }
   }
 }
-`);
+`)
+
+export const SATELLITES_DASHBOARD_STATS = gql(`
+query SatellitesDashboardStatsQuery {
+  gql_satellite_summary {
+    avg_delegated_smvn
+    avg_delegation_fee
+    avg_free_smvn_balance
+    avg_mvn_staked
+    avg_participation_rate
+  }
+}
+
+`)

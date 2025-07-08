@@ -22,6 +22,9 @@ const INDEXER_TABLES = {
   // SATELLITES
   satellite: true,
   satellite_aggregate: true,
+  gql_satellite_metrics: true,
+  gql_satellite_summary: true,
+  satellite_data_view: true,
 
   // SATELITE GOVERNANCE
   governance_satellite: true,
@@ -38,6 +41,8 @@ const INDEXER_TABLES = {
   // VAULTS
   vault: true,
   vault_factory: true,
+  vault_collateral_view_aggregate: true,
+  gql_vault_with_balances_aggregate: true,
 
   // MARKETS
   lending_controller: true,
@@ -72,10 +77,6 @@ const INDEXER_TABLES = {
 
   // TOKENS
   token: true,
-
-  // AGGREGATE
-  vault_collateral_view_aggregate: true,
-  gql_vault_with_balances_aggregate: true,
 }
 
 // environment prefixes

@@ -1,18 +1,20 @@
 import { z } from 'zod'
 
 import {
-  ActiveSatellitesDataQueryQuery,
-  AllSatellitesDataQueryQuery,
-  OraclesSatellitesDataQueryQuery,
   SatelliteDataQueryQuery,
+  Satellite_Bool_Exp,
+  Satellite_Data_View_Bool_Exp,
+  Satellite_Data_View_Order_By,
 } from './../../utils/__generated__/graphql'
 
 import { normalizeSatellite, normalizeSatelliteVotes } from './helpers/satellites.normalizer'
 
 import {
+  DEFAULT_SATELLITE_PAGINATION_DATA,
   DELEGATE_ACTION,
   DISTRIBUTE_PROPOSALS_REWARDS_ACTION,
   INACTIVE_SATELLITE_STATUS,
+  PaginationSatelliteType,
   REGISTER_SATELLITE_ACTION,
   SATELLITE_DATA_SUB,
   SATELLITE_ORACLE_STATUSES,
@@ -33,9 +35,13 @@ import {
 export type SatellitesContextState = {
   // data
   satelliteMapper: SatelliteMapper
+  satelliteActiveMapper: SatelliteMapper
+  satelliteOraclesMapper: SatelliteMapper
+  satelliteMapperByAddress: SatelliteMapper
   activeSatellitesIds: string[]
   allSatellitesIds: string[]
   oraclesIds: string[]
+  staelliteIdsByAddress: string[]
 
   // values to calc satellite metrics
   proposalsAmount: number
@@ -43,8 +49,17 @@ export type SatellitesContextState = {
   finRequestsAmount: number
 
   // pagination
-  changePage: (page: number) => void
+  changePage: (newPage: number, mapperType: PaginationSatelliteType) => void
+  updateSatelliteQueryFilters: (
+    queryFilters: Partial<SatelliteQueryFilterType>,
+    vaultType: PaginationSatelliteType,
+  ) => void
+
+  paginationState: typeof DEFAULT_SATELLITE_PAGINATION_DATA
   totalSatellitesCount: number
+  activeSatellitesCount: number
+  userSatellitesCount: number
+  oracleSatellitesCount: number
 }
 
 export type SatellitesContext = SatellitesContextState & {
@@ -55,11 +70,7 @@ export type SatellitesContext = SatellitesContextState & {
   changeSatellitesSubscriptionsList: (skips: Partial<SatellitesSubsRecordType>) => void
 }
 
-export type SatellitesIndexerDataType =
-  | SatelliteDataQueryQuery
-  | ActiveSatellitesDataQueryQuery
-  | AllSatellitesDataQueryQuery
-  | OraclesSatellitesDataQueryQuery
+export type SatellitesIndexerDataType = SatelliteDataQueryQuery
 
 // ------- subs types
 export type SatellitesDataSubsType =
@@ -70,6 +81,7 @@ export type SatellitesDataSubsType =
   | null
 export type SatellitesSubsRecordType = {
   [SATELLITE_DATA_SUB]: SatellitesDataSubsType
+  [SATELLITES_DATA_SINGLE_SUB]: boolean
   [SATELLITE_PARTICIPATION_DATA_SUB]: boolean
 }
 
@@ -97,3 +109,14 @@ export type SatelliteActionsType =
   | typeof REGISTER_SATELLITE_ACTION
   | typeof UNREGISTER_SATELLITE_ACTION
   | typeof UPDATE_SATELLITE_ACTION
+
+// Pagination
+export type SatelliteQueryFilterType = {
+  where: Satellite_Data_View_Bool_Exp
+  shadowWhere?: Satellite_Bool_Exp
+  orderBy: Satellite_Data_View_Order_By
+}
+
+export type SatelliteFiltersType = {
+  [key in PaginationSatelliteType]: SatelliteQueryFilterType
+}

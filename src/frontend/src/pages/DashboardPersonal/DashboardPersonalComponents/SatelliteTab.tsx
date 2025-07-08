@@ -49,7 +49,7 @@ const SatelliteTab = () => {
   const { distributeProposalRewards, availableProposalRewards }: SatelliteTabOutletProps = useOutletContext()
   const { userAddress } = useUserContext()
   const {
-    satelliteMapper,
+    satelliteMapperByAddress,
     proposalsAmount,
     satelliteGovActionsAmount,
     finRequestsAmount,
@@ -60,7 +60,7 @@ const SatelliteTab = () => {
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB,
+      [SATELLITES_DATA_SINGLE_SUB]: true,
       [SATELLITE_PARTICIPATION_DATA_SUB]: true,
     })
 
@@ -80,7 +80,7 @@ const SatelliteTab = () => {
     preferences: { themeSelected },
   } = useDappConfigContext()
 
-  const satelliteRecord = userAddress ? satelliteMapper[userAddress] : null
+  const satelliteRecord = userAddress ? satelliteMapperByAddress[userAddress] : null
 
   const { oracleStatus } = useSatelliteStatuses(satelliteRecord)
   const { proposalParticipation } = getSatelliteParticipation({
