@@ -100,7 +100,7 @@ export const normalizeSatellite = (
       // satellite metadata
       address: satelliteAddress,
       description: satelliteRecord.description,
-      website: isMavrykProductUrl(satelliteRecord.website ?? '') ? '' : satelliteRecord.website,
+      website: !satelliteRecord.website || isMavrykProductUrl(satelliteRecord.website) ? '' : satelliteRecord.website,
       image: normalizeIpfsUrl(satelliteRecord.image),
       name: satelliteRecord.name,
       status: satelliteStatus,
