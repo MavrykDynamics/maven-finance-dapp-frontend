@@ -81,6 +81,7 @@ export const useLoansGaugeChartData = ({ userVaultsData }: Props) => {
           const { lendValue } = userMTokens[loanMTokenAddress] ?? { lendValue: 0 }
 
           const { rate } = token
+
           const { principal, collateralBalance } = userMarketVaultsData
 
           //  calculating value risk data & how much borrowed per vault
@@ -90,6 +91,7 @@ export const useLoansGaugeChartData = ({ userVaultsData }: Props) => {
           // calculating net APY supplied & borrowed ratio's
           acc.sumOfRatioSuppliedToAPY += lendValue * rate * lendingAPY
           // TODO: check this calc
+
           acc.sumOfRatioBorrowedToAPR += principal * borrowAPR
           acc.totalSuppliedValue += lendValue * rate
           return acc
@@ -104,6 +106,7 @@ export const useLoansGaugeChartData = ({ userVaultsData }: Props) => {
       )
 
     const vaultRiskValue = !userAddress || !collateralAmount ? 0 : (borrowedAmount / collateralAmount) * 100
+
     const apyNet =
       !userAddress || !totalSuppliedValue ? 0 : (sumOfRatioSuppliedToAPY - sumOfRatioBorrowedToAPR) / totalSuppliedValue
 
@@ -125,7 +128,7 @@ export const useLoansGaugeChartData = ({ userVaultsData }: Props) => {
     if (gaugeData.isAPY) {
       setGaugeData(apyGaugeData)
     }
-  }, [apyGaugeData])
+  }, [apyGaugeData, gaugeData.isAPY])
 
   const setVaultsData = useCallback(() => setGaugeData(vaultRiskGaugeData), [vaultRiskGaugeData])
   const setApyData = useCallback(() => setGaugeData(apyGaugeData), [apyGaugeData])

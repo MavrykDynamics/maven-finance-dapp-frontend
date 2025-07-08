@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 // consts
 import {
-  calculateSlicePositions,
   getPageNumber,
   PAGINATION_SIDE_RIGHT,
   SATELITES_NODES_LIST_NAME,
@@ -11,7 +10,6 @@ import {
 import { INFO_ERROR } from 'app/App.components/Info/info.constants'
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { NOT_STAKING_MVN_TEXT } from 'app/App.components/Info/Banners/banners.texts'
-import { handleFilterSatellites, handleSortSatellites } from './SatelliteNodes.helpers'
 
 import { DropDown, DropdownItemType } from '../../app/App.components/DropDown/DropDown.controller'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
@@ -33,6 +31,7 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
+  SATELLITE_PAGINATION_ALL,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
@@ -40,6 +39,14 @@ import { Info } from 'app/App.components/Info/Info.view'
 import NewButton from 'app/App.components/Button/NewButton'
 import Icon from 'app/App.components/Icon/Icon.view'
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
+import { useDebouncedSearch } from 'app/App.hooks/useDebouncedSerach'
+import {
+  getSatelliteOrderByQuery,
+  getSatelliteSearchQueryForWhereFilter,
+} from 'providers/SatellitesProvider/helpers/satellite.filters'
+import { Satellite_Bool_Exp, Satellite_Data_View_Bool_Exp } from 'utils/__generated__/graphql'
+import qs from 'qs'
+import { satelliteNodesPath } from './satelliteNodes.const'
 
 const itemsForDropDown = [
   { text: 'Lowest Fee', value: 'satelliteFee' },
@@ -52,21 +59,63 @@ const ddItems = itemsForDropDown.map(({ text }) => text)
 
 const SatelliteNodes = () => {
   const { search } = useLocation()
+  const navigate = useNavigate()
 
   const { userTokensBalances, userAddress } = useUserContext()
   const { isSatellite } = useUserContext()
   const {
     allSatellitesIds,
     satelliteMapper,
-    proposalsAmount,
-    satelliteGovActionsAmount,
-    finRequestsAmount,
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
     changePage,
-
+    updateSatelliteQueryFilters,
     totalSatellitesCount,
   } = useSatellitesContext()
+
+  const { orderBy = undefined, ...restQP } = qs.parse(search, { ignoreQueryPrefix: true })
+
+  const [ddIsOpen, setDdIsOpen] = useState(false)
+  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>(() => {
+    if (orderBy && typeof orderBy === 'string') {
+      const chosenItem = itemsForDropDown.find((item) => item.text === orderBy)
+      return chosenItem
+    }
+
+    return undefined
+  })
+
+  // Search --------------
+  const { inputValue, debouncedValue, handleChange } = useDebouncedSearch()
+  const hasTouchedInput = useRef(false)
+
+  const currentPage = useMemo(() => getPageNumber(search, SATELITES_NODES_LIST_NAME), [search])
+
+  const applyServerFilters = useCallback(
+    (searchValue: string) => {
+      let whereQuery: { where: Partial<Satellite_Data_View_Bool_Exp>; shadowWhere: Partial<Satellite_Bool_Exp> } = {
+        where: {},
+        shadowWhere: {},
+      }
+
+      const orderByQuery = getSatelliteOrderByQuery(chosenDdItem?.text ?? '')
+
+      if (hasTouchedInput.current) {
+        const searchFilterQuery = getSatelliteSearchQueryForWhereFilter(searchValue)
+
+        whereQuery = {
+          ...whereQuery,
+          where: { ...whereQuery.where, ...searchFilterQuery.where },
+          shadowWhere: { ...whereQuery.shadowWhere, ...searchFilterQuery.shadowWhere },
+        }
+      }
+
+      const query = { ...whereQuery, ...orderByQuery }
+
+      updateSatelliteQueryFilters(query, SATELLITE_PAGINATION_ALL)
+    },
+    [chosenDdItem?.text, updateSatelliteQueryFilters],
+  )
 
   useEffect(() => {
     changeSatellitesSubscriptionsList({
@@ -79,48 +128,27 @@ const SatelliteNodes = () => {
     }
   }, [])
 
-  const [filteredSatelliteList, setFilteredSatelliteList] = useState(allSatellitesIds)
-  const [ddIsOpen, setDdIsOpen] = useState(false)
-  const [inputSearch, setInputSearch] = useState('')
-  const [chosenDdItem, setChosenDdItem] = useState<DropdownItemType | undefined>()
-
-  const currentPage = useMemo(() => getPageNumber(search, SATELITES_NODES_LIST_NAME), [search])
+  //  filters on initial load
+  useEffect(() => {
+    applyServerFilters(debouncedValue)
+  }, [debouncedValue])
 
   useEffect(() => {
-    changePage(currentPage)
-  }, [currentPage])
+    if (chosenDdItem?.text) {
+      applyServerFilters(debouncedValue)
+    }
+  }, [chosenDdItem?.text, debouncedValue])
 
   useEffect(() => {
-    if (isSatellitesLoading) return
-
-    const filteredSatellitesIds = [...allSatellitesIds]
-      .filter(handleFilterSatellites(inputSearch, satelliteMapper))
-      .sort(
-        handleSortSatellites({
-          sortType: chosenDdItem?.text ?? '',
-          satelliteMapper,
-          proposalsAmount,
-          satelliteGovActionsAmount,
-          finRequestsAmount,
-        }),
-      )
-
-    setFilteredSatelliteList(filteredSatellitesIds)
-  }, [
-    allSatellitesIds,
-    chosenDdItem?.text,
-    finRequestsAmount,
-    inputSearch,
-    isSatellitesLoading,
-    proposalsAmount,
-    satelliteGovActionsAmount,
-    satelliteMapper,
-  ])
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => setInputSearch(e.target.value)
+    changePage(currentPage, SATELLITE_PAGINATION_ALL)
+  }, [changePage, currentPage])
 
   const handleSelect = (e: string) => {
     const chosenItem = itemsForDropDown.find((item) => item.text === e)
+
+    const stringifiedQP = qs.stringify({ ...(chosenItem ? { orderBy: chosenItem?.text } : {}), ...restQP })
+
+    navigate(`${satelliteNodesPath}?${stringifiedQP}`, { replace: true })
     setChosenDdItem(chosenItem)
     setDdIsOpen(!ddIsOpen)
   }
@@ -147,55 +175,64 @@ const SatelliteNodes = () => {
       ) : null}
 
       <PageContent className="mt-30">
-        {isSatellitesLoading ? (
-          <DataLoaderWrapper>
-            <ClockLoader width={150} height={150} />
-            <div className="text">Loading satellites data</div>
-          </DataLoaderWrapper>
-        ) : (
-          <SatelliteNodesStyled>
-            <SatelliteSearchFilter>
-              <Input
-                type="text"
-                kind={'search'}
-                placeholder="Search by address or name..."
-                onChange={handleSearch}
-                value={inputSearch}
+        <SatelliteNodesStyled>
+          <SatelliteSearchFilter>
+            <Input
+              type="text"
+              kind={'search'}
+              placeholder="Search by address or name..."
+              onChange={(e) => {
+                hasTouchedInput.current = true
+                handleChange(e.target.value)
+              }}
+              value={inputValue}
+              disabled={isSatellitesLoading}
+            />
+            <DropdownContainer>
+              <h4>Order by:</h4>
+              <DropDown
+                placeholder="Choose option"
+                isOpen={ddIsOpen}
+                setIsOpen={setDdIsOpen}
+                itemSelected={chosenDdItem?.text}
+                items={ddItems}
+                clickOnItem={handleSelect}
+                disabled={isSatellitesLoading}
               />
-              <DropdownContainer>
-                <h4>Order by:</h4>
-                <DropDown
-                  placeholder="Choose option"
-                  isOpen={ddIsOpen}
-                  setIsOpen={setDdIsOpen}
-                  itemSelected={chosenDdItem?.text}
-                  items={ddItems}
-                  clickOnItem={handleSelect}
-                />
-              </DropdownContainer>
-            </SatelliteSearchFilter>
+            </DropdownContainer>
+          </SatelliteSearchFilter>
 
-            {filteredSatelliteList ? (
-              <div className={`list`}>
-                {filteredSatelliteList.map((satelliteAddress) => {
-                  if (!satelliteMapper[satelliteAddress]) return null
-                  return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
-                })}
+          {isSatellitesLoading ? (
+            <DataLoaderWrapper>
+              <ClockLoader width={150} height={150} />
+              <div className="text">Loading satellites data</div>
+            </DataLoaderWrapper>
+          ) : allSatellitesIds ? (
+            <div className={`list`}>
+              {allSatellitesIds.map((satelliteAddress) => {
+                if (!satelliteMapper[satelliteAddress]) return null
+                return (
+                  <SatelliteListItem
+                    satellite={satelliteMapper[satelliteAddress]}
+                    key={satelliteAddress}
+                    fromNodesPage
+                  />
+                )
+              })}
 
-                <Pagination
-                  itemsCount={totalSatellitesCount}
-                  side={PAGINATION_SIDE_RIGHT}
-                  listName={SATELITES_NODES_LIST_NAME}
-                />
-              </div>
-            ) : (
-              <EmptyContainer>
-                <img src="/images/not-found.svg" alt=" No satellites to show" />
-                <figcaption> No satellites to show</figcaption>
-              </EmptyContainer>
-            )}
-          </SatelliteNodesStyled>
-        )}
+              <Pagination
+                itemsCount={totalSatellitesCount}
+                side={PAGINATION_SIDE_RIGHT}
+                listName={SATELITES_NODES_LIST_NAME}
+              />
+            </div>
+          ) : (
+            <EmptyContainer>
+              <img src="/images/not-found.svg" alt=" No satellites to show" />
+              <figcaption> No satellites to show</figcaption>
+            </EmptyContainer>
+          )}
+        </SatelliteNodesStyled>
 
         <SatellitesSideBar />
       </PageContent>

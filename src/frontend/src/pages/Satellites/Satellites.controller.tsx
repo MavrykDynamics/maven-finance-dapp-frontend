@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // providers
@@ -34,38 +34,82 @@ import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.pr
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
+  SATELLITE_PAGINATION_ACTIVE,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
-  SATELLITES_DATA_ALL_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSatelliteBanners/BecomeSatelliteBanners.style'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
+import { sleep } from 'utils/api/sleep'
+
+type CanFetchStatus = 'initial' | 'default' | 'refetch' | 'fallback' | 'done'
 
 const Satellites = () => {
   const { feedsAddresses, feedsMapper } = useDataFeedsContext()
   const { totalDelegatedMVN } = useSatelliteStatistics()
   const {
     activeSatellitesIds,
-    satelliteMapper,
+    satelliteActiveMapper,
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
     totalSatellitesCount,
+    updateSatelliteQueryFilters,
   } = useSatellitesContext()
   const { userTokensBalances, isSatellite, userAddress } = useUserContext()
 
-  useLayoutEffect(() => {
-    console.log('run')
-    changeSatellitesSubscriptionsList({
-      [SATELLITE_DATA_SUB]: SATELLITES_DATA_ALL_SUB,
-      [SATELLITE_PARTICIPATION_DATA_SUB]: true,
-    })
+  const [canFetchSatellitesStatus, setCanFetchSatellitesStatus] = useState<CanFetchStatus>('initial')
 
-    return () => {
-      changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+  useEffect(() => {
+    if (canFetchSatellitesStatus === 'initial') {
+      ;(async function () {
+        const filtered = { where: { participated_feeds: { _neq: '0' } } }
+        updateSatelliteQueryFilters(filtered, SATELLITE_PAGINATION_ACTIVE)
+        await sleep(200)
+        setCanFetchSatellitesStatus('default')
+      })()
     }
-  }, [])
+
+    if (canFetchSatellitesStatus === 'refetch') {
+      ;(async function () {
+        const noFilter = { where: {} }
+        updateSatelliteQueryFilters(noFilter, SATELLITE_PAGINATION_ACTIVE)
+        await sleep(200)
+        setCanFetchSatellitesStatus('fallback')
+      })()
+    }
+  }, [canFetchSatellitesStatus])
+
+  useEffect(() => {
+    if (isSatellitesLoading === false && activeSatellitesIds.length === 0) {
+      if (canFetchSatellitesStatus === 'default') {
+        setCanFetchSatellitesStatus('refetch') // retry without filter
+      } else if (canFetchSatellitesStatus === 'fallback') {
+        setCanFetchSatellitesStatus('done') // stop retrying
+      }
+    }
+  }, [isSatellitesLoading, activeSatellitesIds, canFetchSatellitesStatus])
+
+  const canFetchSatellites = useMemo(
+    () => ['default', 'fallback', 'done'].includes(canFetchSatellitesStatus),
+    [canFetchSatellitesStatus],
+  )
+
+  useEffect(() => {
+    if (canFetchSatellites) {
+      changeSatellitesSubscriptionsList({
+        [SATELLITE_DATA_SUB]: SATELLITES_DATA_ACTIVE_SUB,
+        [SATELLITE_PARTICIPATION_DATA_SUB]: true,
+      })
+
+      return () => {
+        changeSatellitesSubscriptionsList(DEFAULT_SATELLITES_ACTIVE_SUBS)
+      }
+    }
+
+    return () => {}
+  }, [canFetchSatellites])
 
   const tabsInfo = useMemo(
     () => ({
@@ -144,8 +188,10 @@ const Satellites = () => {
 
                   <div className={`satellitesList`}>
                     {activeSatellitesIds.slice(0, 3).map((satelliteAddress) => {
-                      if (!satelliteMapper[satelliteAddress]) return null
-                      return <SatelliteListItem satellite={satelliteMapper[satelliteAddress]} key={satelliteAddress} />
+                      if (!satelliteActiveMapper[satelliteAddress]) return null
+                      return (
+                        <SatelliteListItem satellite={satelliteActiveMapper[satelliteAddress]} key={satelliteAddress} />
+                      )
                     })}
                   </div>
                 </>

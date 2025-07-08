@@ -57,7 +57,7 @@ export const Doorman = () => {
       [DAPP_MVN_SMVN_STATS_SUB]: true,
     })
 
-    changeSatellitesSubscriptionsList({ [SATELLITE_DATA_SUB]: SATELLITES_DATA_SINGLE_SUB })
+    changeSatellitesSubscriptionsList({ [SATELLITES_DATA_SINGLE_SUB]: true })
 
     return () => {
       changeStakingSubscriptionsList(DEFAULT_STAKING_ACTIVE_SUBS)

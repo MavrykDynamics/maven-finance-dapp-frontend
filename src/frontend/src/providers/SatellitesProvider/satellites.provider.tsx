@@ -1,21 +1,22 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // helpers
-import {
-  ACTIVE_SATELLITES_DATA_QUERY,
-  ALL_SATELLITES_DATA_QUERY,
-  ORACLES_SATELLITES_DATA_QUERY,
-  SATELLITE_AGGREGATE_COUNT,
-  SATELLITE_DATA_QUERY,
-} from './queries/satellites.query'
+import { SATELLITE_AGGREGATE_COUNT, SATELLITE_DATA_QUERY } from './queries/satellites.query'
 import { normalizeSatellitesLedger } from './helpers/satellites.normalizer'
 import { getSatellitesProviderReturnValue } from './helpers/satellites.utils'
 
 // consts
 import {
+  DEFAULT_SATELLITE_PAGINATION_DATA,
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   DEFAULT_SATELLITES_CONTEXT,
+  PaginationSatelliteType,
   SATELLITE_DATA_SUB,
+  SATELLITE_DEFFAULT_FILTERS,
+  SATELLITE_PAGINATION_ACTIVE,
+  SATELLITE_PAGINATION_ALL,
+  SATELLITE_PAGINATION_BY_ADDRESS,
+  SATELLITE_PAGINATION_ORACLES,
   SATELLITE_PARTICIPATION_DATA_SUB,
   SATELLITES_DATA_ACTIVE_SUB,
   SATELLITES_DATA_ALL_SUB,
@@ -26,11 +27,27 @@ import {
 import { SATELLITES_METRICS_DATA } from './queries/satellitesMetricsData.query'
 
 // types
-import { SatellitesContext, SatellitesContextState, SatellitesSubsRecordType } from './satellites.provider.types'
+import {
+  SatelliteFiltersType,
+  SatelliteQueryFilterType,
+  SatellitesContext,
+  SatellitesContextState,
+  SatellitesSubsRecordType,
+} from './satellites.provider.types'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import {
+  getSatelliteActiveFilters,
+  getSatelliteAllFilters,
+  getSatelliteByAddressFilters,
+  getSatelliteOracleFilters,
+} from './helpers/satellite.filters'
+import { SatellitesCountsSchema } from './schemas/satellitesCount.schema'
+import { mergeFilters } from 'utils/merge'
+import { Satellite_Data_View_Bool_Exp, Satellite_Data_View_Order_By } from 'utils/__generated__/graphql'
+import { fetchAdditionalSatelliteData } from './helpers/satellite.fetcher'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
 
@@ -38,16 +55,8 @@ export type Props = {
   children: React.ReactNode
 }
 
-/**
- * NOTES:
- *
- * Single satellite sub: need to use SATELLITES_DATA_SINGLE_SUB sub type along with providing satellite address
- * via setSatelliteAddressToSubscribe, if this address is from indexer (userAddress, when isSatelliteTrue, or satelliteDelegatedTo)
- * you don't need to check whether satellite exists, if address can be modified by user, or we not sure whether satellite exists, we need to check it first
- * with apolloClient and CHECK_WHETHER_SATELLITE_EXISTS query, otherwise if satellite is not exists it will show infinity loader
- */
 export const SatellitesProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleApolloError, apolloClient } = useApolloContext()
 
   const [satellitesCtxState, setSatellitesCtxState] =
     useState<DeepNullable<SatellitesContextState>>(DEFAULT_SATELLITES_CONTEXT)
@@ -56,8 +65,63 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
 
   // Pagination
-  const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+
+  // Satellite filters --------------------
+  const [paginationState, setPaginationState] = useState(() => DEFAULT_SATELLITE_PAGINATION_DATA)
+
+  // query filters
+  // @ts-ignore
+  const [satelliteFilters, setSatelliteFilters] = useState<SatelliteFiltersType>(SATELLITE_DEFFAULT_FILTERS)
+
+  const changeSatellitesSubscriptionsList = (newSkips: Partial<SatellitesSubsRecordType>) => {
+    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
+  }
+
+  const changePage = useCallback(
+    (newPage: number, mapperType: PaginationSatelliteType) => {
+      if (newPage === paginationState[mapperType]) return
+      setIsLoading(true)
+      setPaginationState((prev) => ({ ...prev, [mapperType]: newPage }))
+    },
+    [paginationState],
+  )
+
+  const updateSatelliteQueryFilters = useCallback(
+    (queryFilters: Partial<SatelliteQueryFilterType>, vaultType: PaginationSatelliteType) => {
+      setIsLoading(true)
+      setSatelliteFilters((prev) => ({ ...prev, [vaultType]: { ...prev[vaultType], ...queryFilters } }))
+    },
+    [],
+  )
+
+  const defaultSatelliteFilters = useMemo(
+    () =>
+      ({
+        [SATELLITE_PAGINATION_ALL]: mergeFilters<
+          Satellite_Data_View_Bool_Exp,
+          Satellite_Data_View_Order_By,
+          PaginationSatelliteType
+        >(getSatelliteAllFilters, satelliteFilters, SATELLITE_PAGINATION_ALL),
+
+        [SATELLITE_PAGINATION_BY_ADDRESS]: {
+          ...getSatelliteByAddressFilters(satelliteAddressToSubscribe ?? ''),
+        },
+
+        [SATELLITE_PAGINATION_ACTIVE]: mergeFilters<
+          Satellite_Data_View_Bool_Exp,
+          Satellite_Data_View_Order_By,
+          PaginationSatelliteType
+        >(getSatelliteActiveFilters, satelliteFilters, SATELLITE_PAGINATION_ACTIVE),
+
+        [SATELLITE_PAGINATION_ORACLES]: mergeFilters<
+          Satellite_Data_View_Bool_Exp,
+          Satellite_Data_View_Order_By,
+          PaginationSatelliteType
+        >(getSatelliteOracleFilters, satelliteFilters, SATELLITE_PAGINATION_ORACLES),
+      } as unknown as SatelliteFiltersType),
+    [satelliteAddressToSubscribe, satelliteFilters],
+  )
 
   /**
    * SATELLITES_METRICS_DATA -> load proposals, finReqs, satelliteGov actions amount to calcs satellites metrics
@@ -80,41 +144,61 @@ export const SatellitesProvider = ({ children }: Props) => {
   })
 
   useQueryWithRefetch(SATELLITE_DATA_QUERY, {
-    skip: !satelliteAddressToSubscribe || activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_SINGLE_SUB,
+    skip: !satelliteAddressToSubscribe || !activeSubs[SATELLITES_DATA_SINGLE_SUB],
+    fetchPolicy: 'network-only',
     variables: {
-      userAddress: satelliteAddressToSubscribe ?? '',
+      ...defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS],
+      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].where,
+      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].orderBy,
       limit: SATELLITES_LIMIT,
-      offset: (currentPage - 1) * SATELLITES_LIMIT,
+      offset: (paginationState[SATELLITE_PAGINATION_BY_ADDRESS] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: (data) => {
-      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+    onCompleted: async (data) => {
+      let additionalSatelliteData = null
+      try {
+        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+      } catch (e) {
+        console.log(e)
+      }
+
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper: satelliteAddressToSubscribe
-          ? { ...prev.satelliteMapper, ...satelliteMapper }
-          : satelliteMapper,
-        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
-        activeSatellitesIds: Array.from(new Set([...(prev.activeSatellitesIds ?? []), ...activeSatellitesIds])),
-        oraclesIds: Array.from(new Set([...(prev.oraclesIds ?? []), ...oraclesIds])),
+        staelliteIdsByAddress: satelliteIds,
+        satelliteMapperByAddress: satelliteMapper,
       }))
+
+      setIsLoading(false)
     },
-    onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY'),
+    onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY|SATELLITES_DATA_SINGLE_SUB'),
   })
 
-  useQueryWithRefetch(ALL_SATELLITES_DATA_QUERY, {
+  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
     fetchPolicy: 'network-only',
-    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
-    onCompleted: (data) => {
-      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+    variables: {
+      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].where,
+      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].orderBy,
+      limit: SATELLITES_LIMIT,
+      offset: (paginationState[SATELLITE_PAGINATION_ALL] - 1) * SATELLITES_LIMIT,
+    },
+    onCompleted: async (data) => {
+      let additionalSatelliteData = null
+      try {
+        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+      } catch (e) {
+        console.log(e)
+      }
+
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper,
-        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
-        activeSatellitesIds,
-        oraclesIds,
+        satelliteMapper: satelliteMapper,
+        allSatellitesIds: satelliteIds,
       }))
 
       setIsLoading(false)
@@ -122,70 +206,104 @@ export const SatellitesProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'ALL_SATELLITES_DATA_QUERY'),
   })
 
-  useQueryWithRefetch(ACTIVE_SATELLITES_DATA_QUERY, {
+  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ACTIVE_SUB,
-    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
-    onCompleted: (data) => {
-      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+    variables: {
+      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].where,
+      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].orderBy,
+      limit: SATELLITES_LIMIT,
+      offset: (paginationState[SATELLITE_PAGINATION_ACTIVE] - 1) * SATELLITES_LIMIT,
+    },
+    onCompleted: async (data) => {
+      let additionalSatelliteData = null
+      try {
+        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+      } catch (e) {
+        console.log(e)
+      }
+
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper: { ...prev.satelliteMapper, ...satelliteMapper },
-        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
-        activeSatellitesIds: activeSatellitesIds,
-        oraclesIds: Array.from(new Set([...(prev.oraclesIds ?? []), ...oraclesIds])),
+        satelliteActiveMapper: satelliteMapper,
+        activeSatellitesIds: satelliteIds,
       }))
+
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
   })
 
-  useQueryWithRefetch(ORACLES_SATELLITES_DATA_QUERY, {
+  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ORACLES_SUB,
-    variables: { limit: SATELLITES_LIMIT, offset: (currentPage - 1) * SATELLITES_LIMIT },
-    onCompleted: (data) => {
-      const { oraclesIds, activeSatellitesIds, satelliteMapper } = normalizeSatellitesLedger(data)
+    variables: {
+      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].where,
+      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].orderBy,
+      limit: SATELLITES_LIMIT,
+      offset: (paginationState[SATELLITE_PAGINATION_ORACLES] - 1) * SATELLITES_LIMIT,
+    },
+    onCompleted: async (data) => {
+      let additionalSatelliteData = null
+      try {
+        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+      } catch (e) {
+        console.log(e)
+      }
+
+      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        satelliteMapper: { ...prev.satelliteMapper, ...satelliteMapper },
-        allSatellitesIds: data.satelliteAddresses.nodes.map(({ user: { address } }) => address),
-        oraclesIds,
-        activeSatellitesIds: Array.from(new Set([...(prev.activeSatellitesIds ?? []), ...activeSatellitesIds])),
+        oraclesIds: satelliteIds,
+        satelliteOraclesMapper: satelliteMapper,
       }))
+      setIsLoading(false)
     },
     onError: (error) => handleApolloError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
   })
 
   useQueryWithRefetch(SATELLITE_AGGREGATE_COUNT, {
-    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
     fetchPolicy: 'network-only',
+    variables: {
+      whereBySatelliteTotal: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].shadowWhere,
+      whereBysatelliteAddress: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].shadowWhere,
+      whereByActiveSatellite: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].shadowWhere,
+      whereOracles: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].shadowWhere,
+    },
     onCompleted: (data) => {
-      const {
-        satellite_aggregate: {
-          // @ts-expect-error // for some reason TS doesn't see aggregate type
-          aggregate: { count },
-        },
-      } = data ?? {}
-      setSatellitesCtxState((prev) => ({
-        ...prev,
-        totalSatellitesCount: count ?? 0,
-      }))
+      try {
+        const parsedData = SatellitesCountsSchema.parse(data)
+        const {
+          totalSatellites: {
+            aggregate: { count: totalCount },
+          },
+          userSatellites: {
+            aggregate: { count: userSatellitesCount },
+          },
+          activeSatellites: {
+            aggregate: { count: activeSatellitesCount },
+          },
+          oracleSatellites: {
+            aggregate: { count: oracleSatellitesCount },
+          },
+        } = parsedData ?? {}
+
+        setSatellitesCtxState((prev) => ({
+          ...prev,
+          totalSatellitesCount: totalCount ?? 0,
+          activeSatellitesCount: activeSatellitesCount ?? 0,
+          userSatellitesCount: userSatellitesCount ?? 0,
+          oracleSatellitesCount: oracleSatellitesCount ?? 0,
+        }))
+      } catch (error) {
+        console.error(error, 'SATELLITE_AGGREGATE_COUNT')
+      }
     },
     onError: (error) => handleApolloError(error, 'SATELLITE_AGGREGATE_COUNT'),
   })
-
-  const changeSatellitesSubscriptionsList = (newSkips: Partial<SatellitesSubsRecordType>) => {
-    setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
-
-  const changePage = useCallback(
-    (newPage: number) => {
-      if (newPage === currentPage) return
-      setIsLoading(true)
-      setCurrentPage(newPage)
-    },
-    [currentPage],
-  )
 
   const providerValue = useMemo(
     () => ({
@@ -198,8 +316,18 @@ export const SatellitesProvider = ({ children }: Props) => {
         isPaginationLoading: isLoading,
       }),
       changePage,
+      updateSatelliteQueryFilters,
+      paginationState,
     }),
-    [satellitesCtxState, satelliteAddressToSubscribe, activeSubs, isLoading, changePage],
+    [
+      satellitesCtxState,
+      updateSatelliteQueryFilters,
+      satelliteAddressToSubscribe,
+      activeSubs,
+      isLoading,
+      changePage,
+      paginationState,
+    ],
   )
 
   return <satellitesContext.Provider value={providerValue}>{children}</satellitesContext.Provider>

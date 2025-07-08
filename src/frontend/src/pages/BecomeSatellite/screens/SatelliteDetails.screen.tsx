@@ -39,7 +39,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 
 // types
 import { SatelliteMapper } from 'providers/SatellitesProvider/satellites.provider.types'
-import { Outlet, useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
 
 type SatelliteDetailsScreenProps = {
   satelliteId: string

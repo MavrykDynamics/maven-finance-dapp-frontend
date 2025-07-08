@@ -74,6 +74,7 @@ type SatelliteListItemProps = {
   isDetailsPage?: boolean
   userHasSatelliteRewards?: boolean
   className?: string
+  fromNodesPage?: boolean
   children?: JSX.Element
 }
 
@@ -102,7 +103,12 @@ const SatelliteLastProposalVote = ({
   )
 }
 
-export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }: SatelliteListItemProps) => {
+export const SatelliteListItem = ({
+  satellite,
+  isDetailsPage = false,
+  fromNodesPage = false,
+  children,
+}: SatelliteListItemProps) => {
   const { userTokensBalances, isSatellite: isUserSatellite, satelliteMvnIsDelegatedTo, userAddress } = useUserContext()
   const { availableProposalRewards } = useUserRewards()
   const { proposalsAmount, satelliteGovActionsAmount, finRequestsAmount } = useSatellitesContext()
@@ -279,7 +285,7 @@ export const SatelliteListItem = ({ satellite, isDetailsPage = false, children }
           <div className="grid-item grid-item-replaceable">
             {!isDetailsPage ? (
               <SatelliteProfileDetails>
-                <Link to={`/satellites/satellite-details/${satellite.address}`}>
+                <Link to={`/satellites/satellite-details/${satellite.address}`} state={{ fromNodesPage }}>
                   <Button kind={BUTTON_SIMPLE}>
                     <Icon id="man" className="icon" />
                     <span>Profile Details</span>

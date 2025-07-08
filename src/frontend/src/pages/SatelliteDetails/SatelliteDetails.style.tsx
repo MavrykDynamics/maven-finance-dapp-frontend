@@ -91,4 +91,12 @@ export const SatelliteDescrBlock = styled.div<{ theme: MavenTheme }>`
     font-size: 14px;
     line-height: 14px;
   }
+
+  .satellite-website[aria-disabled='true'] {
+    color: ${({ theme }) => theme.warningColor};
+
+    span {
+      color: ${({ theme }) => theme.buttonDisabled};
+    }
+  }
 `

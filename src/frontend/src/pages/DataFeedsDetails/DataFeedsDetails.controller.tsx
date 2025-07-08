@@ -43,6 +43,7 @@ import { DataLoaderWrapper, SpinnerCircleLoaderStyled } from 'app/App.components
 import {
   DEFAULT_SATELLITES_ACTIVE_SUBS,
   SATELLITE_DATA_SUB,
+  SATELLITE_PAGINATION_ORACLES,
   SATELLITES_DATA_ORACLES_SUB,
 } from 'providers/SatellitesProvider/satellites.const'
 import { ACTION_PRIMARY, ACTION_SIMPLE } from 'app/App.components/Button/Button.constants'
@@ -56,7 +57,7 @@ import { SPINNER_LOADER_LARGE } from 'app/App.components/Loader/loader.const'
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import colors from 'styles/colors'
 import { Page } from 'styles'
-import { ONE_HOUR } from 'consts/charts.const'
+import { ONE_HOUR, TWENTY_FOUR_HOURS } from 'consts/charts.const'
 
 // helpers
 import { getChartXAxisTicks } from 'utils/charts.utils'
@@ -64,6 +65,8 @@ import { parseDate } from 'utils/time'
 import { SMALL_SLIDING_TAB_BUTTONS } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.conts'
 import { ALIGN_RIGHT } from 'app/App.components/ChartsSwitcher/chartSwitcher.consts'
 import { TEMP_MAX_ORACLE_DATA_PUSH_SECONDS } from '../../utils/constants'
+
+const forbiddenPeriods: ChartPeriodType[] = [ONE_HOUR]
 
 const tabsList = [
   {
@@ -89,11 +92,14 @@ const DataFeedDetails = () => {
 
   const {
     oraclesIds,
-    satelliteMapper,
+    satelliteOraclesMapper,
+    oracleSatellitesCount,
     isLoading: isSatellitesLoading,
     changeSatellitesSubscriptionsList,
+    updateSatelliteQueryFilters,
+    changePage,
   } = useSatellitesContext()
-  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(ONE_HOUR)
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriodType>(TWENTY_FOUR_HOURS)
   const { isLoading: isFeedsChartsLoading, dataFeedsHistory, dataFeedsVolatility } = useFeedCharts(feedId, chartPeriod)
 
   useEffect(() => {
@@ -107,6 +113,15 @@ const DataFeedDetails = () => {
   }, [])
 
   const feed = feedsMapper[feedId]
+
+  const feedOracleAddresses = useMemo(() => feed.oraclesAddresses.map((address) => address), [feed.oraclesAddresses])
+
+  useEffect(() => {
+    if (feedOracleAddresses.length > 0) {
+      const oracleParamsByFeed = { where: { user_address: { _in: feedOracleAddresses } } }
+      updateSatelliteQueryFilters(oracleParamsByFeed, SATELLITE_PAGINATION_ORACLES)
+    }
+  }, [feedOracleAddresses])
 
   // Before trusted wias checked like this feed && feed.oraclesResponces >= feed.pct_oracle_threshold
   const [isTrustedAnswer, setTrustedAnswer] = useState(true)
@@ -134,22 +149,12 @@ const DataFeedDetails = () => {
   })
 
   const chartPlots = (activeTab === 1 ? dataFeedsHistory : dataFeedsVolatility) ?? []
+  const currentPage = useMemo(() => getPageNumber(search, ORACLES_DATA_IN_FEED_LIST_NAME), [search])
 
-  const feedsSatellites = useMemo(
-    () =>
-      feedId
-        ? oraclesIds
-            .filter((address) => satelliteMapper[address].participatedFeeds[feedId])
-            .map((address) => satelliteMapper[address])
-        : [],
-    [feedId, oraclesIds, satelliteMapper],
-  )
-
-  const paginatedFeedsOracles = useMemo(() => {
-    const currentPage = getPageNumber(search, ORACLES_DATA_IN_FEED_LIST_NAME)
-    const [from, to] = calculateSlicePositions(currentPage, ORACLES_DATA_IN_FEED_LIST_NAME)
-    return feedsSatellites.slice(from, to)
-  }, [feedsSatellites, search])
+  console.log('render')
+  useEffect(() => {
+    changePage(currentPage, SATELLITE_PAGINATION_ORACLES)
+  }, [currentPage])
 
   const chartDataAverage = chartPlots.reduce((acc, { value }) => (acc += value), 0) / chartPlots.length
 
@@ -365,6 +370,7 @@ const DataFeedDetails = () => {
                   size={SMALL_SLIDING_TAB_BUTTONS}
                   space={15}
                   align={ALIGN_RIGHT}
+                  forbiddenPeriods={forbiddenPeriods}
                 />
                 {isFeedsChartsLoading ? (
                   <DataLoaderWrapper margin="0">
@@ -403,14 +409,14 @@ const DataFeedDetails = () => {
                 <SpinnerCircleLoaderStyled className={SPINNER_LOADER_LARGE} />
                 <div className="text">Loading oracles data</div>
               </DataLoaderWrapper>
-            ) : paginatedFeedsOracles.length ? (
+            ) : oraclesIds.length ? (
               <div className={`oracles-list`}>
-                {feedsSatellites.map((item) => (
-                  <OracleCard oracle={item} key={item.address} feed={feed} />
+                {oraclesIds.map((address) => (
+                  <OracleCard oracle={satelliteOraclesMapper[address]} key={address} feed={feed} />
                 ))}
 
                 <Pagination
-                  itemsCount={feedsSatellites.length}
+                  itemsCount={oracleSatellitesCount}
                   side={PAGINATION_SIDE_RIGHT}
                   listName={ORACLES_DATA_IN_FEED_LIST_NAME}
                 />

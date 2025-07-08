@@ -1,4 +1,4 @@
-import {DECIMALS_TO_SHOW, MVN_DECIMALS, PRECISION_NUMBER, SECONDS_PER_BLOCK} from './constants'
+import { DECIMALS_TO_SHOW, MVN_DECIMALS, PRECISION_NUMBER, SECONDS_PER_BLOCK } from './constants'
 
 /**
  * Calculates the MVN Loyalty Index (MLI) per the function in the litepaper
@@ -129,3 +129,12 @@ export const getNumberInBounds = (minBound: number, maxBound: number, numberToPu
 }
 
 export const generateUniqueId = () => Math.random().toString(36).substring(2) + Date.now().toString(36)
+
+/**
+ * Converts a raw value to a percentage (0–100), keeping 2 decimal places.
+ * If the value is already a percent-like number, just clamp it.
+ */
+export const formatAsPercent = (value: number) => {
+  const percent = value / 100
+  return Number(percent.toFixed(2))
+}

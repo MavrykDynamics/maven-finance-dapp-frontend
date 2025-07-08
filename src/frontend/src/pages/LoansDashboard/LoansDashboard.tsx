@@ -164,7 +164,6 @@ export const LoansDashboard = () => {
                           value={gaugeData.currentValue}
                           className="amount"
                           endingText={gaugeData.isAPY ? '%' : ''}
-                          showDecimal={false}
                         />
                         <div className="status">{gaugeData.text}</div>
                       </div>

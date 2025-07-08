@@ -6,6 +6,7 @@ import { convertNumberForClient, percentageDifference } from 'utils/calcFunction
 import { symbolsAfterDecimalPoint } from 'utils/symbolsAfterDecimalPoint'
 import { FullFeedsQueryType, SmallFeedsQueryType, feedMetadataSchema } from './feeds.schemas'
 import { getTokenSymbolAndName } from 'providers/TokensProvider/helpers/tokenNames'
+import { normalizeIpfsUrl } from 'utils/url.utils'
 
 export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
   try {
@@ -32,7 +33,7 @@ export const normalizeFeed = (feedGql: FullFeedsQueryType[number]) => {
       network,
       amount: convertNumberForClient({ number: feedGql.last_completed_data, grade: feedGql.decimals }),
       oraclesResponces: feedGql.last_completed_data_pct_oracle_resp / 100,
-      icon,
+      icon: normalizeIpfsUrl(icon),
     }
   } catch (e) {
     console.error('parsing feed metadata error: ', { e })

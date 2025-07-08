@@ -61,7 +61,7 @@ export const DropDownView = ({
               const isActive = itemSelected === value
               return (
                 <DropDownListItem onClick={() => clickItem(value)} key={`${idx}-${value}`}>
-                  {value} {isActive ? <Icon id="check-stroke" /> : null}
+                  {value} {isActive ? <Icon id="check-stroke" className="selectedIcon" /> : null}
                 </DropDownListItem>
               )
             })}
