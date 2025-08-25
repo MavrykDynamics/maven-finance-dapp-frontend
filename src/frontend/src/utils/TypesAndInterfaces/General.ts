@@ -1,4 +1,4 @@
-export type TokenType = 'mav' | 'fa12' | 'fa2'
+export type TokenType = 'mav' | 'fa12' | 'fa2' | 'unknown'
 
 // Check for token type
 export const ALL_TOKEN_TYPES: Array<TokenType> = ['mav', 'fa12', 'fa2']

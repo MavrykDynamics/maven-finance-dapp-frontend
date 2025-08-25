@@ -107,6 +107,8 @@ export const depositToFarm = async (
             amount: depositAmount,
           },
         ])
+
+      default: throw new Error('Unknown token type')
     }
   } catch (error) {
     const e = unknownToError(error)
