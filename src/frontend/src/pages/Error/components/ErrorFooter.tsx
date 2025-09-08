@@ -12,7 +12,7 @@ export const ErrorFooter = ({ handleRedirect, themeSelected }: ErrorFooterProps)
   return (
     <ErrorFooterWrapper>
       <span onClick={handleRedirect}>
-        <ImageWithPlug plugSrc={`/images/${themeSelected}/maven-logo-small.svg`} alt="logo-small" />
+        <ImageWithPlug imageLink={`/images/${themeSelected}/maven-logo-small.svg`} alt="logo-small" />
       </span>
       <ErrorFooterMiddle>
         Powered by&nbsp;
