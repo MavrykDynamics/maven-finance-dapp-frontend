@@ -173,19 +173,19 @@ export const Market = () => {
       const balancesData = {
         availableLiquidity: convertNumberForClient({
           number: total_remaining,
-          grade: MVRK_DECIMALS,
+          grade: loanToken?.decimals,
         }),
         userAccruedInterest: convertNumberForClient({
           number: loan_interest_total,
-          grade: MVRK_DECIMALS,
+          grade: loanToken?.decimals,
         }),
         userTotalBorrowed: convertNumberForClient({
           number: loan_outstanding_total,
-          grade: MVRK_DECIMALS,
+          grade: loanToken?.decimals,
         }),
         userTotalCollateral: convertNumberForClient({
           number: token_pool_total,
-          grade: MVRK_DECIMALS,
+          grade: loanToken?.decimals,
         }),
       }
 
