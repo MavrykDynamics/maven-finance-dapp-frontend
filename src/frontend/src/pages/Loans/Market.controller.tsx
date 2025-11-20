@@ -48,6 +48,7 @@ import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { USER_VAULT_BALANCES_QUERY } from './queries/userVaultBalances.query'
 import { useUserContext } from 'providers/UserProvider/user.provider'
+import { MVRK_DECIMALS } from 'utils/constants'
 
 type UserVaultBalances = {
   availableLiquidity: number
@@ -170,10 +171,22 @@ export const Market = () => {
         parsedData.data.gql_vault_with_balances_aggregate.aggregate.sum
 
       const balancesData = {
-        availableLiquidity: total_remaining,
-        userAccruedInterest: loan_interest_total,
-        userTotalBorrowed: loan_outstanding_total,
-        userTotalCollateral: token_pool_total,
+        availableLiquidity: convertNumberForClient({
+          number: total_remaining,
+          grade: loanToken?.decimals,
+        }),
+        userAccruedInterest: convertNumberForClient({
+          number: loan_interest_total,
+          grade: loanToken?.decimals,
+        }),
+        userTotalBorrowed: convertNumberForClient({
+          number: loan_outstanding_total,
+          grade: loanToken?.decimals,
+        }),
+        userTotalCollateral: convertNumberForClient({
+          number: token_pool_total,
+          grade: loanToken?.decimals,
+        }),
       }
 
       setRawUserTotalBalances(balancesData)
