@@ -1,4 +1,4 @@
-import { OpKind, TransferParams } from '@mavrykdynamics/taquito'
+import { OpKind, TransferParams } from '@mavrykdynamics/webmavryk'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { LoanVaultAllowanceType } from 'providers/LoansProvider/loans.provider.types'
 import { WalletOperationError, unknownToError } from 'errors/error'

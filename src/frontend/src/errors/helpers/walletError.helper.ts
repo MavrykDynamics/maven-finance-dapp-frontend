@@ -5,7 +5,7 @@ import {
   MavrykOperationError,
   TransferParams,
   Wallet,
-} from '@mavrykdynamics/taquito'
+} from '@mavrykdynamics/webmavryk'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { SPECIFIC_CONTRACT_ERROR_CODES } from 'errors/consts/customWalletErrorCodes'
 import { DEFAULT_WALLET_ERROR } from 'errors/consts/error.const'

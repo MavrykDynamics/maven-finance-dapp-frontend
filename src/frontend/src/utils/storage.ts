@@ -9,7 +9,16 @@ import { ZodType, z } from 'zod'
 export const getItemFromStorage = <T extends unknown>(item: string, schema: ZodType<T, any> = z.any()): T | null => {
   try {
     const itemFromStorage = localStorage.getItem(item)
-    return itemFromStorage ? schema.parse(JSON.parse(itemFromStorage)) : null
+    if (!itemFromStorage) return null
+
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(itemFromStorage)
+    } catch {
+      parsed = itemFromStorage
+    }
+
+    return schema.parse(parsed)
   } catch (e) {
     console.error(e)
     return null

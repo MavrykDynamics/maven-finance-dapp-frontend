@@ -1,5 +1,5 @@
 // consts
-import { OpKind } from '@mavrykdynamics/taquito'
+import { OpKind } from '@mavrykdynamics/webmavryk'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // helpers

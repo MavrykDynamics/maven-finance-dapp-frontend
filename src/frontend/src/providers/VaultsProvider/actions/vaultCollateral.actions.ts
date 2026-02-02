@@ -1,4 +1,4 @@
-import { OpKind, TransferParams } from '@mavrykdynamics/taquito'
+import { OpKind, TransferParams } from '@mavrykdynamics/webmavryk'
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'

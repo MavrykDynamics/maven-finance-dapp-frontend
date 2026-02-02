@@ -328,6 +328,13 @@ module.exports = function (webpackEnv) {
           test: /\.(js|mjs|jsx|ts|tsx|css)$/,
           loader: require.resolve('source-map-loader'),
         },
+        // Disable fullySpecified for ESM modules in node_modules (e.g. axios)
+        {
+          test: /\.m?js/,
+          resolve: {
+            fullySpecified: false,
+          },
+        },
         {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall

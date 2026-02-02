@@ -1,4 +1,4 @@
-import { NetworkType } from '@airgap/beacon-sdk'
+import { NetworkType } from '@mavrykdynamics/mavlet-dapp'
 import { z } from 'zod'
 
 const envVariablesSchema = z.object({
@@ -14,7 +14,7 @@ const envVariablesSchema = z.object({
   REACT_APP_GRAPHQL_WSS_API: z.literal('wss://api-v2.mavryk.finance/v1/graphql'),
 
   REACT_APP_NAME: z.string(),
-  REACT_APP_NETWORK: z.literal(NetworkType.MAINNET).or(z.literal(NetworkType.GHOSTNET)),
+  REACT_APP_NETWORK: z.literal(NetworkType.MAINNET).or(z.literal(NetworkType.ATLASNET)),
 
   REACT_APP_IPFS_API_KEY: z.string(),
   REACT_APP_IPFS_PROJECT_ID: z.string(),

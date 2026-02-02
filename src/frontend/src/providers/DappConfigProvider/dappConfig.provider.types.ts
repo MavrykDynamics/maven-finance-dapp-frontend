@@ -1,5 +1,5 @@
-import { TransactionWalletOperation } from '@mavrykdynamics/taquito'
-import { BatchWalletOperation } from '@mavrykdynamics/taquito/dist/types/wallet/batch-operation'
+import { TransactionWalletOperation } from '@mavrykdynamics/webmavryk'
+import { BatchWalletOperation } from '@mavrykdynamics/webmavryk/dist/types/wallet/batch-operation'
 import { StakeActionType } from 'providers/DoormanProvider/doorman.provider.types'
 import { XtzBakerType } from './bakers/getXtzBakers'
 import { normalizeContractAddresses } from './helpers/dappConfig.normalizers'

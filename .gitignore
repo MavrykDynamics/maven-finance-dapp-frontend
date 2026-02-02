@@ -25,3 +25,4 @@
 /src/frontend/.env
 /yarn.lock
 /.gtm/
+/.claude/

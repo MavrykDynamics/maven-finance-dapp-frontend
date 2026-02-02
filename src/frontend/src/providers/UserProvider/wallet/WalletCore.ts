@@ -1,7 +1,7 @@
-import { BeaconWallet } from '@mavrykdynamics/taquito-beacon-wallet'
-import { NetworkType } from '@mavrykdynamics/beacon-dapp'
-import { MavrykToolkit } from '@mavrykdynamics/taquito'
-import type { BeaconWallet as BeaconWalletType } from '@mavrykdynamics/taquito-beacon-wallet'
+import { MavletWallet } from '@mavrykdynamics/webmavryk-mavlet-wallet'
+import { NetworkType } from '@mavrykdynamics/mavlet-dapp'
+import { MavrykToolkit } from '@mavrykdynamics/webmavryk'
+import type { MavletWallet as MavletWalletType } from '@mavrykdynamics/webmavryk-mavlet-wallet'
 
 // MAINNET = "mainnet",
 // BASENET = "basenet",
@@ -29,10 +29,10 @@ const getRpcNode = (): RPCNodeType => {
 }
 
 export function dappClient() {
-  let instance: BeaconWalletType | undefined
+  let instance: MavletWalletType | undefined
 
   function init() {
-    return new BeaconWallet(DAPP_METADATA)
+    return new MavletWallet(DAPP_METADATA)
   }
 
   function loadWallet() {

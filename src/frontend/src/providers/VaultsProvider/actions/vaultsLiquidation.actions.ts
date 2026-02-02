@@ -1,4 +1,4 @@
-import { OpKind } from '@mavrykdynamics/taquito'
+import { OpKind } from '@mavrykdynamics/webmavryk'
 import { unknownToError, WalletOperationError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
