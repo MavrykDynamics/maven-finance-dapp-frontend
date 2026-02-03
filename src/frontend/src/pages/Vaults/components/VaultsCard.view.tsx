@@ -111,46 +111,6 @@ const findFooterText = ({
   const isLiquidationTimerFinished = liquidationTimestamp && dayjs().valueOf() >= dayjs(liquidationTimestamp).valueOf()
   const isGracePeriodTimerFinished = gracePeriodTimestamp && dayjs().valueOf() >= dayjs(gracePeriodTimestamp).valueOf()
 
-  // OLD VERSION, left for comparison reasons only
-  // switch (status) {
-  //   case vaultsStatuses.LIQUIDATABLE:
-  //     return isLiquidationTimerFinished || !liquidationTimestamp ? (
-  //       <p>
-  //         This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated
-  //       </p>
-  //     ) : (
-  //       <p>
-  //         This vault is <span className={statusColor}>armed for liquidation</span> and can be liquidated for the next{' '}
-  //         <div className="timer">
-  //           <Timer timestamp={liquidationTimestamp} options={timerOptions} />
-  //         </div>
-  //       </p>
-  //     )
-  //   case vaultsStatuses.GRACE_PERIOD:
-  //     return isGracePeriodTimerFinished || !gracePeriodTimestamp ? (
-  //       <p>
-  //         This vault is in a <span className={statusColor}>grace period</span>.
-  //       </p>
-  //     ) : (
-  //       <p>
-  //         This vault is in a <span className={statusColor}>grace period</span>. The vault owner has{' '}
-  //         <div className="timer">
-  //           <Timer timestamp={gracePeriodTimestamp} options={timerOptions} />
-  //         </div>{' '}
-  //         before liquidation is possible.
-  //       </p>
-  //     )
-  //   case vaultsStatuses.MARK:
-  //     return (
-  //       <p>
-  //         This vault is <span className={statusColor}>ready to arm</span> and can be marked for liquidation.
-  //       </p>
-  //     )
-
-  //   default:
-  //     return ''
-  // }
-
   switch (status) {
     case vaultsStatuses.LIQUIDATABLE:
       return (

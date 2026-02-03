@@ -23,7 +23,6 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // helpers
-// import { getSatelliteParticipation } from 'providers/SatellitesProvider/helpers/satellites.utils'
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
 import { SATELLITES_DASHBOARD_STATS } from 'providers/SatellitesProvider/queries/satellitesStats.query'
