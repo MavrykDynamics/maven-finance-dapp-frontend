@@ -53,7 +53,7 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <Router>{children}</Router>
+      <Router future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>{children}</Router>
     </GoogleReCaptchaProvider>
   )
 }
