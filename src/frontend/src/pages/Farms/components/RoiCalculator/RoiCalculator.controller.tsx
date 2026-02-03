@@ -1,4 +1,6 @@
-// @ts-nocheck
+// @ts-nocheck — DEAD FEATURE: This component uses legacy Redux (react-redux, reducers)
+// which has been fully removed from the app. The ROI popup is disabled in FarmsPopupsProvider.
+// To revive: migrate to useFarmsContext() and useUserContext(), remove Redux imports.
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { State } from 'reducers'
