@@ -15,7 +15,7 @@ import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.co
 import { PRIMARY_TZ_ADDRESS_COLOR } from 'app/App.components/TzAddress/TzAddress.constants'
 import { CHANGE_BAKER_ACTION } from 'providers/VaultsProvider/helpers/vaults.const' // hooks
 import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction' // providers
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
+import useMavrykValidatorsForDD from 'providers/DappConfigProvider/bakers/useDDMavrykValidators'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -37,11 +37,11 @@ export const ChangeValidator = ({
 }) => {
   const { bakerAddress = null, vaultAddress = '' } = data ?? {}
 
-  const { xtzBakers } = useDappConfigContext()
+  const { mavrykValidators } = useDappConfigContext()
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
-  const { otherBakers = [], dao, mavrykDynamics } = xtzBakers ?? {}
-  const { bakers, setChoosenBaker, bakersRecord } = useXtzBakersForDD(false)
+  const { otherBakers = [], dao, mavrykDynamics } = mavrykValidators ?? {}
+  const { bakers, setChoosenBaker, bakersRecord } = useMavrykValidatorsForDD(false)
 
   const [activeTab, setActiveSliding] = useState<BakersSlidingButtonTab>(OTHER_BAKERY)
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null)

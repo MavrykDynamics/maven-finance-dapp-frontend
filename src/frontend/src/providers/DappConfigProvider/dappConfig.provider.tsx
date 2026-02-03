@@ -16,7 +16,7 @@ import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 import { ipfsClient } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
 // utils
-import { getXTZBakers } from './bakers/getXtzBakers'
+import { getMavrykValidators } from './bakers/getMavrykValidators'
 import { dappConfigSchema } from './helpers/dappConfig.schemes'
 import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
 
@@ -96,19 +96,19 @@ const DappConfigProvider = ({ children }: Props) => {
     onError: (error) => handleQueryError(error, 'GET_DAPP_CONTRACT_ADDRESSES'),
   })
 
-  // TODO: move it to the custom hook for bakers
+  // TODO: move it to the custom hook for validators
   useEffect(() => {
-    if (!dappConfigCtxState.xtzBakers) {
-      updateXtzBakers()
+    if (!dappConfigCtxState.mavrykValidators) {
+      updateMavrykValidators()
     }
-  }, [dappConfigCtxState.xtzBakers])
+  }, [dappConfigCtxState.mavrykValidators])
 
-  const updateXtzBakers = async () => {
-    const xtzBakers = await getXTZBakers()
+  const updateMavrykValidators = async () => {
+    const mavrykValidators = await getMavrykValidators()
 
     setDappConfigCtxState((prev) => ({
       ...prev,
-      xtzBakers,
+      mavrykValidators,
     }))
   }
 
