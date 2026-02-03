@@ -30,19 +30,28 @@ export const useUserRewards = () => {
       limit: userActionsHistoryItemsPerPage,
     },
     onCompleted: (data) => {
-      // newly registered user, means no operations performed
-      if (!data.maven_user[0]) {
+      try {
+        // newly registered user, means no operations performed
+        if (!data.maven_user[0]) {
+          setUserRewards(DEFAULT_USER_REWARDS)
+          return
+        }
+
+        const rewardsIndexerData = data.maven_user[0]
+        const userProposalRewards = data.governance_proposal
+
+        const normalizedUserRewards = normalizeUserRewards({ rewardsIndexerData, userProposalRewards })
+        setUserRewards(normalizedUserRewards)
+      } catch (_) {
+        // Fall back to default rewards if normalization fails (unexpected indexer data structure)
         setUserRewards(DEFAULT_USER_REWARDS)
-        return
       }
-
-      const rewardsIndexerData = data.maven_user[0]
-      const userProposalRewards = data.governance_proposal
-
-      const normalizedUserRewards = normalizeUserRewards({ rewardsIndexerData, userProposalRewards })
-      setUserRewards(normalizedUserRewards)
     },
-    onError: (error) => handleQueryError(error, 'USER_REWARDS_DATA_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'USER_REWARDS_DATA_QUERY')
+      // Set default rewards on error so the page doesn't stay stuck on loading
+      setUserRewards(DEFAULT_USER_REWARDS)
+    },
   })
 
   return {

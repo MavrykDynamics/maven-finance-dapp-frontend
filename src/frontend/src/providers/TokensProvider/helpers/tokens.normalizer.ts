@@ -337,8 +337,8 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
         }
 
         acc.tokensMetadata[token_address] = { ...acc.tokensMetadata[token_address], ...tokenMetadata }
-      } catch (e) {
-        if (process.env.REACT_APP_ENV === 'prod') console.error('normalizeTokensMetadata error: ', { e })
+      } catch (_) {
+        // Expected for tokens with malformed metadata — the reduce continues processing valid tokens
       } finally {
         return acc
       }
