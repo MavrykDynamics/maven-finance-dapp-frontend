@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 
 // consts
 import { CONTRACT_STATUSES_CONFIG_QUERY } from './queries/contractStatusConfig.query'
@@ -37,13 +37,13 @@ type Props = {
 }
 
 const ContractStatusesProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [contractStatusesCtxState, setContractStatusesCtxState] =
     useState<NullableContractStatusesContextStateType>(DEFAULT_CONTRACT_STATUSES_CTX)
   const [activeSubs, setActiveSubs] = useState<ContractStatusesSubsRecordType>(DEFAULT_CONTRACT_STATUSES_ACTIVE_SUBS)
 
-  useQueryWithRefetch(CONTRACT_STATUSES_CONFIG_QUERY, {
+  useGraphQLQuery(CONTRACT_STATUSES_CONFIG_QUERY, {
     skip: !activeSubs[CONTRACT_STATUSES_CONFIG_SUB],
     onCompleted: (data) => {
       setContractStatusesCtxState((prev) => ({
@@ -51,10 +51,10 @@ const ContractStatusesProvider = ({ children }: Props) => {
         config: normalizeContractStatusesConfig(data),
       }))
     },
-    onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_CONFIG_QUERY'),
+    onError: (error) => handleQueryError(error, 'CONTRACT_STATUSES_CONFIG_QUERY'),
   })
 
-  useQueryWithRefetch(CONTRACT_STATUSES_ALL_DATA_QUERY, {
+  useGraphQLQuery(CONTRACT_STATUSES_ALL_DATA_QUERY, {
     skip: !activeSubs[CONTRACT_STATUSES_ALL_SUB],
     variables: {},
     onCompleted: (data) => {
@@ -70,7 +70,7 @@ const ContractStatusesProvider = ({ children }: Props) => {
         contractStatuses: normalizedContractStatuses,
       }))
     },
-    onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_ALL_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'CONTRACT_STATUSES_ALL_DATA_QUERY'),
   })
 
   const changeContractStatusesSubscriptionsList = useCallback((newSkips: Partial<ContractStatusesSubsRecordType>) => {

@@ -12,8 +12,8 @@ import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserApi } from './hooks/useUserApi'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // helpers
 import { normalizeUserIndexerTokensBalances, openTzktWebSocket } from './helpers/userBalances.helpers'
@@ -48,7 +48,7 @@ const hasUserInLocalStorage =
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
  */
 export const UserProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata } = useTokensContext()
   const {
     contractAddresses: { mvnTokenAddress },
@@ -117,13 +117,13 @@ export const UserProvider = ({ children }: Props) => {
   }, [canRestoreUser, connect])
 
   // subscribe to user's indexer data
-  useQueryWithRefetch(USER_DATA_QUERY, {
+  useGraphQLQuery(USER_DATA_QUERY, {
     skip: !userCtxState.userAddress,
     variables: {
       userAddress: userCtxState.userAddress ?? '',
     },
     onCompleted: (indexerData) => setUserIndexerData(indexerData),
-    onError: (error) => handleApolloError(error, 'USER_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'USER_DATA_QUERY'),
   })
 
   /**

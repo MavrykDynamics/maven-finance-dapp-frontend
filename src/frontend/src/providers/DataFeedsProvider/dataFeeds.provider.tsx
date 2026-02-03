@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useGraphQLQuery, useGraphQLQueryOnce } from 'providers/QueryProvider/useGraphQLQuery'
 
 // consts
 import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
@@ -25,8 +25,7 @@ import { normalizeDataFeedsHistory, normalizeFeeds, normalizeFeedsPrices } from 
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 
 // types
 import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
@@ -45,12 +44,12 @@ type Props = {
 
 export const DataFeedsProvider = ({ children }: Props) => {
   const { updateTokensPrices } = useTokensContext()
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [feedsCtxState, setFeedsCtxState] = useState<NullableDataFeedsContextStateType>(DEFAULT_DATA_FEEDS_CTX)
 
   // load initial feeds data
-  const { refetch: refetchDataFeeds } = useQuery(FEEDS_QUERY, {
+  const { refetch: refetchDataFeeds } = useGraphQLQueryOnce(FEEDS_QUERY, {
     onCompleted: (data) => {
       try {
         const parsedFeeds = fullFeedsQuerySchema.parse(data.aggregator)
@@ -61,11 +60,11 @@ export const DataFeedsProvider = ({ children }: Props) => {
         console.error('zod full feeds query parsing error:', { e })
       }
     },
-    onError: (error) => handleApolloError(error, 'FEEDS_QUERY'),
+    onError: (error) => handleQueryError(error, 'FEEDS_QUERY'),
   })
 
   // update feeds price and track whether need to load new feed
-  useQueryWithRefetch(FEEDS_UPDATE_QUERY, {
+  useGraphQLQuery(FEEDS_UPDATE_QUERY, {
     onCompleted: (data) => {
       try {
         const parsedSmallFeeds = smallFeedsQuerySchema.parse(data.aggregator)
@@ -82,7 +81,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
         console.error('zod small feeds query parsing error:', { e })
       }
     },
-    onError: (error) => handleApolloError(error, 'FEEDS_UPDATE_QUERY'),
+    onError: (error) => handleQueryError(error, 'FEEDS_UPDATE_QUERY'),
   })
 
   // normalize and update for full feeds query

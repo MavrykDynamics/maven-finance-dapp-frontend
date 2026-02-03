@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 
 // types
 import { NullableVestingContextStateType, VestingContext, VestingSubsRecordType } from './vesting.provider.types'
@@ -23,13 +23,13 @@ type Props = {
 }
 
 const VestingProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [vestingCtxState, setVestingCtxState] = useState<NullableVestingContextStateType>(DEFAULT_VESTING_CTX)
   const [activeSubs, setActiveSubs] = useState<VestingSubsRecordType>(DEFAULT_VESTING_SUBS)
 
   // subscribes
-  useQueryWithRefetch(GET_VESTING_STORAGE_QUERY, {
+  useGraphQLQuery(GET_VESTING_STORAGE_QUERY, {
     skip: !activeSubs[VESTING_STORAGE_DATA_SUB],
     onCompleted: (data) => {
       const { vesteesAddresses, vesteesMapper, totalClaimedAmount, totalVestedAmount, address } =
@@ -44,7 +44,7 @@ const VestingProvider = ({ children }: Props) => {
         address,
       }))
     },
-    onError: (error) => handleApolloError(error, 'GET_VESTING_STORAGE_QUERY'),
+    onError: (error) => handleQueryError(error, 'GET_VESTING_STORAGE_QUERY'),
   })
 
   const changeVestingSubscriptionsList = useCallback((newSkips: Partial<VestingSubsRecordType>) => {

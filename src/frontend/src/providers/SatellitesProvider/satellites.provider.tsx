@@ -36,8 +36,8 @@ import {
 } from './satellites.provider.types'
 
 // hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 import {
   getSatelliteActiveFilters,
   getSatelliteAllFilters,
@@ -46,7 +46,13 @@ import {
 } from './helpers/satellite.filters'
 import { SatellitesCountsSchema } from './schemas/satellitesCount.schema'
 import { mergeFilters } from 'utils/merge'
-import { Satellite_Data_View_Bool_Exp, Satellite_Data_View_Order_By } from 'utils/__generated__/graphql'
+import {
+  DappDataForSatelliteMetricsQuery,
+  GetSatellitesCountQuery,
+  Satellite_Data_View_Bool_Exp,
+  Satellite_Data_View_Order_By,
+  SatelliteDataQueryQuery,
+} from 'utils/__generated__/graphql'
 import { fetchAdditionalSatelliteData } from './helpers/satellite.fetcher'
 
 export const satellitesContext = React.createContext<SatellitesContext>(undefined!)
@@ -56,7 +62,7 @@ export type Props = {
 }
 
 export const SatellitesProvider = ({ children }: Props) => {
-  const { handleApolloError, apolloClient } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [satellitesCtxState, setSatellitesCtxState] =
     useState<DeepNullable<SatellitesContextState>>(DEFAULT_SATELLITES_CONTEXT)
@@ -130,9 +136,9 @@ export const SatellitesProvider = ({ children }: Props) => {
    * ACTIVE_SATELLITES_DATA_QUERY -> load all active satellites
    * ORACLES_SATELLITES_DATA_QUERY -> load all oracles satellites
    */
-  useQueryWithRefetch(SATELLITES_METRICS_DATA, {
+  useGraphQLQuery(SATELLITES_METRICS_DATA, {
     skip: !activeSubs[SATELLITE_PARTICIPATION_DATA_SUB],
-    onCompleted: (data) => {
+    onCompleted: (data: DappDataForSatelliteMetricsQuery) => {
       setSatellitesCtxState((prev) => ({
         ...prev,
         proposalsAmount: data.governance_proposal_aggregate.aggregate?.count ?? 0,
@@ -140,12 +146,11 @@ export const SatellitesProvider = ({ children }: Props) => {
         finRequestsAmount: data.governance_financial_request_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: (error) => handleApolloError(error, 'SATELLITES_METRICS_DATA'),
+    onError: (error) => handleQueryError(error, 'SATELLITES_METRICS_DATA'),
   })
 
-  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
+  useGraphQLQuery(SATELLITE_DATA_QUERY, {
     skip: !satelliteAddressToSubscribe || !activeSubs[SATELLITES_DATA_SINGLE_SUB],
-    fetchPolicy: 'network-only',
     variables: {
       ...defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS],
       satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].where,
@@ -153,11 +158,11 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_BY_ADDRESS] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: async (data) => {
+    onCompleted: async (data: SatelliteDataQueryQuery) => {
       let additionalSatelliteData = null
       try {
         const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
       } catch (e) {
         console.error('fetchAdditionalSatelliteData error:', e)
       }
@@ -172,23 +177,22 @@ export const SatellitesProvider = ({ children }: Props) => {
 
       setIsLoading(false)
     },
-    onError: (error) => handleApolloError(error, 'SATELLITE_DATA_QUERY|SATELLITES_DATA_SINGLE_SUB'),
+    onError: (error) => handleQueryError(error, 'SATELLITE_DATA_QUERY|SATELLITES_DATA_SINGLE_SUB'),
   })
 
-  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
+  useGraphQLQuery(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
-    fetchPolicy: 'network-only',
     variables: {
       satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].where,
       satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].orderBy,
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ALL] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: async (data) => {
+    onCompleted: async (data: SatelliteDataQueryQuery) => {
       let additionalSatelliteData = null
       try {
         const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
       } catch (e) {
         console.error('fetchAdditionalSatelliteData error:', e)
       }
@@ -203,10 +207,10 @@ export const SatellitesProvider = ({ children }: Props) => {
 
       setIsLoading(false)
     },
-    onError: (error) => handleApolloError(error, 'ALL_SATELLITES_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'ALL_SATELLITES_DATA_QUERY'),
   })
 
-  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
+  useGraphQLQuery(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ACTIVE_SUB,
     variables: {
       satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].where,
@@ -214,11 +218,11 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ACTIVE] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: async (data) => {
+    onCompleted: async (data: SatelliteDataQueryQuery) => {
       let additionalSatelliteData = null
       try {
         const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
       } catch (e) {
         console.error('fetchAdditionalSatelliteData error:', e)
       }
@@ -233,10 +237,10 @@ export const SatellitesProvider = ({ children }: Props) => {
 
       setIsLoading(false)
     },
-    onError: (error) => handleApolloError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
   })
 
-  useQueryWithRefetch(SATELLITE_DATA_QUERY, {
+  useGraphQLQuery(SATELLITE_DATA_QUERY, {
     skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ORACLES_SUB,
     variables: {
       satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].where,
@@ -244,11 +248,11 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ORACLES] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: async (data) => {
+    onCompleted: async (data: SatelliteDataQueryQuery) => {
       let additionalSatelliteData = null
       try {
         const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
+        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
       } catch (e) {
         console.error('fetchAdditionalSatelliteData error:', e)
       }
@@ -262,18 +266,17 @@ export const SatellitesProvider = ({ children }: Props) => {
       }))
       setIsLoading(false)
     },
-    onError: (error) => handleApolloError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
   })
 
-  useQueryWithRefetch(SATELLITE_AGGREGATE_COUNT, {
-    fetchPolicy: 'network-only',
+  useGraphQLQuery(SATELLITE_AGGREGATE_COUNT, {
     variables: {
       whereBySatelliteTotal: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].shadowWhere,
       whereBysatelliteAddress: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].shadowWhere,
       whereByActiveSatellite: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].shadowWhere,
       whereOracles: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].shadowWhere,
     },
-    onCompleted: (data) => {
+    onCompleted: (data: GetSatellitesCountQuery) => {
       try {
         const parsedData = SatellitesCountsSchema.parse(data)
         const {
@@ -302,7 +305,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         console.error(error, 'SATELLITE_AGGREGATE_COUNT')
       }
     },
-    onError: (error) => handleApolloError(error, 'SATELLITE_AGGREGATE_COUNT'),
+    onError: (error) => handleQueryError(error, 'SATELLITE_AGGREGATE_COUNT'),
   })
 
   const providerValue = useMemo(

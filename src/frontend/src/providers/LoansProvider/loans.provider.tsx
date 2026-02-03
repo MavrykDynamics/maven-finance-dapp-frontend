@@ -1,10 +1,9 @@
 // @ts-nocheck
-import { useQuery } from '@apollo/client'
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery, useGraphQLQueryOnce } from 'providers/QueryProvider/useGraphQLQuery'
 
 // types
 import { LoansChartsType, LoansContext, LoansSubsRecordType, NullableLoansContextState } from './loans.provider.types'
@@ -41,7 +40,7 @@ type Props = {
  *    with apolloClient and CHECK_WHETHER_SATELLITE_EXISTS query, othervise if satellite is not exists it will show infinity loader
  */
 export const LoansProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [activeSubs, setActiveSubs] = useState<LoansSubsRecordType>(DEFAULT_LOANS_ACTIVE_SUBS)
   const [marketAddressToSubscribe, setMarketAddressToSubscribe] = useState<null | TokenAddressType>(null)
@@ -52,7 +51,7 @@ export const LoansProvider = ({ children }: Props) => {
    * GET_MARKET_BY_ADDRESS_QUERY -> load market by address
    * GET_ALL_MARKETS_QUERY -> load all loans markets
    */
-  useQuery(GET_LOANS_CONFIG, {
+  useGraphQLQueryOnce(GET_LOANS_CONFIG, {
     skip: !activeSubs[LOANS_CONFIG],
     variables: {},
     onCompleted: (data) => {
@@ -61,10 +60,10 @@ export const LoansProvider = ({ children }: Props) => {
         config: normalizeLoansConfig({ indexerData: data }),
       }))
     },
-    onError: (error) => handleApolloError(error, 'GET_LOANS_CONFIG'),
+    onError: (error) => handleQueryError(error, 'GET_LOANS_CONFIG'),
   })
 
-  useQueryWithRefetch(GET_MARKET_BY_ADDRESS_QUERY, {
+  useGraphQLQuery(GET_MARKET_BY_ADDRESS_QUERY, {
     skip: !activeSubs[LOANS_MARKETS_DATA] || !marketAddressToSubscribe,
     variables: {
       marketTokenAddress: marketAddressToSubscribe ?? '',
@@ -81,11 +80,11 @@ export const LoansProvider = ({ children }: Props) => {
         marketsAddresses: Array.from(new Set([...(prev?.marketsAddresses ?? []), ...Object.keys(newMarkets)])),
       }))
     },
-    onError: (error) => handleApolloError(error, 'GET_MARKET_BY_ADDRESS_QUERY'),
+    onError: (error) => handleQueryError(error, 'GET_MARKET_BY_ADDRESS_QUERY'),
   })
 
   // andrew_here
-  useQueryWithRefetch(GET_ALL_MARKETS_QUERY, {
+  useGraphQLQuery(GET_ALL_MARKETS_QUERY, {
     skip: !activeSubs[LOANS_MARKETS_DATA],
     variables: { limit: 20, offset: 0 },
     onCompleted: (data) => {
@@ -99,7 +98,7 @@ export const LoansProvider = ({ children }: Props) => {
         marketsMapper: { ...newMarkets },
       }))
     },
-    onError: (error) => handleApolloError(error, 'GET_ALL_MARKETS_QUERY'),
+    onError: (error) => handleQueryError(error, 'GET_ALL_MARKETS_QUERY'),
   })
 
   const changeLoansSubscriptionsList = useCallback((newSkips: Partial<LoansSubsRecordType>) => {

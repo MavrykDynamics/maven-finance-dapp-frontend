@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
@@ -37,7 +37,7 @@ type Props = {
 
 const FarmsProvider = ({ children }: Props) => {
   const { userAddress } = useUserContext()
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [farmsCtxState, setFarmsCtxState] = useState<NullableFarmCtxStateType>(DEFAULT_FARMS_CTX)
   const [activeSubs, setActiveSubs] = useState<FarmsProviderSubsType>(DEFAULT_FARMS_ACTIVE_SUBS)
@@ -49,30 +49,30 @@ const FarmsProvider = ({ children }: Props) => {
    * 3. FARMS_FINISHED_STAKED- > all farms that are finished and user is depositor in it
    * 4. FARMS_LIVE_STAKED -> all farms that are live and user is depositor in it
    */
-  useQueryWithRefetch(FARMS_LIVE_ALL, {
+  useGraphQLQuery(FARMS_LIVE_ALL, {
     skip: activeSubs[FARMS_DATA_SUB] !== FARMS_ALL_LIVE_DATA_SUB,
     onCompleted: (data) => updateFarms(data),
-    onError: (error) => handleApolloError(error, 'FARMS_LIVE_ALL'),
+    onError: (error) => handleQueryError(error, 'FARMS_LIVE_ALL'),
   })
 
-  useQueryWithRefetch(FARMS_FINISHED_ALL, {
+  useGraphQLQuery(FARMS_FINISHED_ALL, {
     skip: activeSubs[FARMS_DATA_SUB] !== FARMS_ALL_FINISHED_DATA_SUB,
     onCompleted: (data) => updateFarms(data),
-    onError: (error) => handleApolloError(error, 'FARMS_FINISHED_ALL'),
+    onError: (error) => handleQueryError(error, 'FARMS_FINISHED_ALL'),
   })
 
-  useQueryWithRefetch(FARMS_FINISHED_STAKED, {
+  useGraphQLQuery(FARMS_FINISHED_STAKED, {
     skip: activeSubs[FARMS_DATA_SUB] !== FARMS_FINISHED_STAKED_DATA_SUB,
     variables: { userAddress: userAddress ?? '' },
     onCompleted: (data) => updateFarms(data),
-    onError: (error) => handleApolloError(error, 'FARMS_FINISHED_STAKED'),
+    onError: (error) => handleQueryError(error, 'FARMS_FINISHED_STAKED'),
   })
 
-  useQueryWithRefetch(FARMS_LIVE_STAKED, {
+  useGraphQLQuery(FARMS_LIVE_STAKED, {
     skip: activeSubs[FARMS_DATA_SUB] !== FARMS_LIVE_STAKED_DATA_SUB,
     variables: { userAddress: userAddress ?? '' },
     onCompleted: (data) => updateFarms(data),
-    onError: (error) => handleApolloError(error, 'FARMS_LIVE_STAKED'),
+    onError: (error) => handleQueryError(error, 'FARMS_LIVE_STAKED'),
   })
 
   const updateFarms = (indexerData: FarmsIndexerDataType) => {
