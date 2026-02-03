@@ -2,7 +2,7 @@ import * as ReactDOM from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { ThemeProvider } from 'styled-components'
-import { ApolloProvider } from 'providers/ApolloProvider/apollo.provider'
+import { QueryProvider } from 'providers/QueryProvider/query.provider'
 
 // utils
 import reportWebVitals from './reportWebVitals'
@@ -144,13 +144,13 @@ export const Root = () => {
   return (
     <DappLibsProviders>
       <ToasterProvider maintance={process.env.REACT_APP_MAINTANCE_MODE === 'on'}>
-        <ApolloProvider>
+        <QueryProvider>
           <InitialDataDappProviders>
             <DappSectionsDataProviders>
               <AppContainer />
             </DappSectionsDataProviders>
           </InitialDataDappProviders>
-        </ApolloProvider>
+        </QueryProvider>
       </ToasterProvider>
     </DappLibsProviders>
   )

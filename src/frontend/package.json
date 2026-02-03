@@ -17,7 +17,6 @@
     "cypress:test": "cypress run -s 'cypress/integration/**/*-spec.js'"
   },
   "dependencies": {
-    "@apollo/client": "3.10.1",
     "@babel/core": "^7.16.0",
     "@floating-ui/react": "^0.26.1",
     "@mavrykdynamics/mavlet-dapp": "^1.0.2",
@@ -30,6 +29,8 @@
     "@microsoft/signalr": "^7.0.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
+    "@tanstack/react-query": "^5.90.20",
+    "@tanstack/react-query-devtools": "^5.91.3",
     "@wert-io/widget-initializer": "^2.0.0",
     "babel-jest": "^27.4.2",
     "babel-loader": "^8.2.3",
@@ -55,7 +56,8 @@
     "file-loader": "^6.2.0",
     "fs-extra": "^10.0.0",
     "graphql": "16.5.0",
-    "graphql-ws": "^5.12.1",
+    "graphql-request": "^7.4.0",
+    "graphql-tag": "^2.12.6",
     "html-webpack-plugin": "^5.5.0",
     "identity-obj-proxy": "^3.0.0",
     "ipfs-http-client": "^54.0.1",
