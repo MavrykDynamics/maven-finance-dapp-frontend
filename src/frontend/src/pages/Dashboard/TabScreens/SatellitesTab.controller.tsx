@@ -23,14 +23,14 @@ import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 
 // helpers
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { SATELLITES_DASHBOARD_STATS } from 'providers/SatellitesProvider/queries/satellitesStats.query'
 import { convertNumberForClient } from 'utils/calcFunctions'
 import { SatelliteDashboardAvgMetrics, satelliteDashboardAvgSchema } from '../schemas/satelliteDashboard.schema'
 
 export const SatellitesTab = () => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const {
     activeSatellitesIds,
     changeSatellitesSubscriptionsList,
@@ -46,7 +46,7 @@ export const SatellitesTab = () => {
     participationRate: 0,
   })
 
-  const { loading } = useQueryWithRefetch(SATELLITES_DASHBOARD_STATS, {
+  const { isLoading: loading } = useGraphQLQuery(SATELLITES_DASHBOARD_STATS, {
     onCompleted: (data: { gql_satellite_summary: [SatelliteDashboardAvgMetrics] }) => {
       try {
         const parsedData = satelliteDashboardAvgSchema.parse(data.gql_satellite_summary[0])
@@ -70,7 +70,7 @@ export const SatellitesTab = () => {
         console.error('Error parsing satellite stats:', error)
       }
     },
-    onError: (error) => handleApolloError(error, 'SATELLITES_DASHBOARD_STATS'),
+    onError: (error) => handleQueryError(error, 'SATELLITES_DASHBOARD_STATS'),
   })
 
   useEffect(() => {

@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 // context
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { fetchGraphQLData } from 'providers/QueryProvider/useGraphQLQuery'
 
 // view
 import { SatellitesVotingHistory } from 'pages/SatelliteVotingHistory/SatelliteVotingHistory'
@@ -48,7 +49,7 @@ export const SatelliteDetails = () => {
 
   const isInitialRenderRef = useRef<boolean>(true)
 
-  const { apolloClient } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { bug, fatal } = useToasterContext()
   const {
     satelliteMapper,
@@ -103,14 +104,12 @@ export const SatelliteDetails = () => {
 
       setIsSatelliteExistanseLoading(true)
       try {
-        const satelliteFromGql = await apolloClient.query({
-          query: CHECK_WHETHER_SATELLITE_EXISTS,
-          variables: {
-            userAddress: satelliteId,
-          },
-        })
+        const satelliteFromGql = await fetchGraphQLData<{ satellite: Array<{ user: { address: string } }> }>(
+          CHECK_WHETHER_SATELLITE_EXISTS,
+          { userAddress: satelliteId },
+        )
 
-        const fetchedSatellite = satelliteFromGql?.data?.satellite?.[0]
+        const fetchedSatellite = satelliteFromGql?.satellite?.[0]
 
         if (fetchedSatellite?.user?.address === satelliteId) {
           setSatelliteAddressToSubscribe(satelliteId)
