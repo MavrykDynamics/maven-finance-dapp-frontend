@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 
 // context, hooks
@@ -103,7 +103,7 @@ const SatelliteLastProposalVote = ({
   )
 }
 
-export const SatelliteListItem = ({
+export const SatelliteListItem = memo(({
   satellite,
   isDetailsPage = false,
   fromNodesPage = false,
@@ -393,4 +393,5 @@ export const SatelliteListItem = ({
       {children ? children : <SatelliteLastProposalVote lastVotedProposal={satellite.lastVotedProposal} />}
     </SatelliteCard>
   )
-}
+})
+SatelliteListItem.displayName = 'SatelliteListItem'

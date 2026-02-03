@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
 import { useNavigate } from 'react-router-dom'
@@ -80,7 +80,7 @@ import {
 } from './helpers/proposalSubmissionValidation.utils'
 import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
 
-export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
+export const ProposalSubmissionView = memo(({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const navigate = useNavigate()
 
   const { bug } = useToasterContext()
@@ -610,4 +610,5 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       </ProposalSubmissionForm>
     </>
   )
-}
+})
+ProposalSubmissionView.displayName = 'ProposalSubmissionView'

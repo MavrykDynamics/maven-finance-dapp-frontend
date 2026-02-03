@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useCallback, useEffect, useMemo } from 'react'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 
 // context
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
@@ -73,7 +73,7 @@ type StakeUnstakeViewProps = {
   setInputData: (data: typeof DEFAULT_STAKE_UNSTAKE_INPUT) => void
 }
 
-export const StakeUnstakeView = ({
+export const StakeUnstakeView = memo(({
   openExitFeePopup,
   mvnExchangeRate,
   inputData,
@@ -104,10 +104,13 @@ export const StakeUnstakeView = ({
   const mySMvnBalanceIsZero = mySMvnTokenBalance === 0
   const exchangeValue = mvnExchangeRate && inputData.amount ? Number(inputData.amount) * mvnExchangeRate : 0
   // TODO: @Sam-M-Israel check whether include farms & satellite rewards, cuz compound btn claims only doorman rewards here
-  const rewardsToClaim =
-    availableDoormanRewards +
-    availableSatellitesRewards +
-    Object.values(availableFarmRewards).reduce((acc, farmReward) => (acc += farmReward), 0)
+  const rewardsToClaim = useMemo(
+    () =>
+      availableDoormanRewards +
+      availableSatellitesRewards +
+      Object.values(availableFarmRewards).reduce((acc, farmReward) => acc + farmReward, 0),
+    [availableDoormanRewards, availableSatellitesRewards, availableFarmRewards],
+  )
   const showDelegateBtn = !isSatellite && !satelliteMvnIsDelegatedTo
 
   const onUseMaxBalance = (balance: 'smvn' | 'mvn') => () => {
@@ -431,4 +434,5 @@ export const StakeUnstakeView = ({
       </StakeUnstakeActionCard>
     </StakeUnstakeStyled>
   )
-}
+})
+StakeUnstakeView.displayName = 'StakeUnstakeView'

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import qs from 'qs'
 
@@ -81,7 +81,7 @@ type Props = {
   hideTransactionHistory?: boolean
 }
 
-export const BorrowingExpandCardMenuSection = ({
+export const BorrowingExpandCardMenuSection = memo(({
   openAddNewCollateralPopup,
   openAddExistingCollateralPopup,
   openWithdrawCollateralPopup,
@@ -422,4 +422,5 @@ export const BorrowingExpandCardMenuSection = ({
       )}
     </>
   )
-}
+})
+BorrowingExpandCardMenuSection.displayName = 'BorrowingExpandCardMenuSection'

@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 // components
 import { EarnBorrowCard } from './Components/EarnBorrowCard.view'
 
@@ -16,7 +18,7 @@ type Props = {
   isDisabledButton?: boolean
 }
 
-export const LoansEarnBorrow = ({ title, markets, settings, handleClick, isDisabledButton }: Props) => {
+export const LoansEarnBorrow = memo(({ title, markets, settings, handleClick, isDisabledButton }: Props) => {
   return (
     <LoansEarnBorrowStyled>
       <H2Title>{title}</H2Title>
@@ -34,4 +36,5 @@ export const LoansEarnBorrow = ({ title, markets, settings, handleClick, isDisab
       </EarnBorrowCards>
     </LoansEarnBorrowStyled>
   )
-}
+})
+LoansEarnBorrow.displayName = 'LoansEarnBorrow'

@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import dayjs from 'dayjs'
 
 // components
@@ -152,7 +153,7 @@ type Props = {
   vaultTab: string
 }
 
-export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
+export const VaultsCard = memo(({ vault, isOwner, handleMarkForLiquidation, vaultTab }: Props) => {
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
   const { userAddress } = useUserContext()
@@ -421,4 +422,5 @@ export const VaultsCard = ({ vault, isOwner, handleMarkForLiquidation, vaultTab 
       </VaultsCardDropDown>
     </BorrowingExpandCard>
   )
-}
+})
+VaultsCard.displayName = 'VaultsCard'
