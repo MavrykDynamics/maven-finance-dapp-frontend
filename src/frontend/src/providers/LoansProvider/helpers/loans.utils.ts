@@ -2,13 +2,11 @@
 
 import {
   LoansContext,
-  LoansContextState,
   LoansSubsRecordType,
-  MarketsIndexerDataType,
   NullableLoansContextState,
 } from '../loans.provider.types'
 
-import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import {EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA} from './loans.const'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
@@ -126,21 +124,11 @@ export const getLoansProviderReturnValue = ({
     (activeSubs[LOANS_CONFIG] && config === null) ||
     (!activeSubs[LOANS_CONFIG] && config === null && !activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty)
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_LOANS_CONTEXT,
-      allMarketsAddresses: allMarketsAddresses ?? EMPTY_LOANS_CONTEXT['allMarketsAddresses'],
-      isLoading: true,
-    }
-  }
+  const result = buildProviderReturnValue(loansCtxState, EMPTY_LOANS_CONTEXT, commonToReturn, Boolean(isLoading))
 
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
+  // Override allMarketsAddresses even during loading to prevent UI blinking
   return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
+    ...result,
+    allMarketsAddresses: allMarketsAddresses ?? EMPTY_LOANS_CONTEXT['allMarketsAddresses'],
   }
 }

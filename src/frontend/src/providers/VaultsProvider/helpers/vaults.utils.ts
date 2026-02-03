@@ -9,7 +9,7 @@ import {
   getTimestampByLevelUrl,
 } from 'utils/api/api-helpers/getTimestampByLevel'
 import { getTokenDataByAddress } from 'providers/TokensProvider/helpers/tokens.utils'
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 
 // types
@@ -18,7 +18,6 @@ import {
   FullLoansVaultType,
   NullableVaultsCtxState,
   VaultsContext,
-  VaultsCtxState,
   VaultsSubsRecordType,
   VaultType,
 } from '../vaults.provider.types'
@@ -311,22 +310,8 @@ export const getVaultsProviderReturnValue = ({
     (userAddress && activeSubs[VAULTS_DATA] === 'userIsDepositor' && permissionedVaultsIds === null) ||
     (userAddress && activeSubs[VAULTS_DATA] === 'userIsOwner' && myVaultsIds === null)
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...EMPTY_VAULTS_CONTEXT,
-      ...commonToReturn,
-      isLoading: true,
-      setIsLoading,
-    }
-  }
-
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<VaultsCtxState>(vaultsCtxState, EMPTY_VAULTS_CONTEXT)
   return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
+    ...buildProviderReturnValue(vaultsCtxState, EMPTY_VAULTS_CONTEXT, commonToReturn, Boolean(isLoading)),
     setIsLoading,
-    isLoading: false,
   }
 }

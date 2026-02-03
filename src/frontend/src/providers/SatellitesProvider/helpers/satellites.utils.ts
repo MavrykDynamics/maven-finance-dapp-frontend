@@ -20,7 +20,7 @@ import {
   SatellitesContextState,
   SatellitesSubsRecordType,
 } from '../satellites.provider.types'
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import {
   STATUS_FLAG_DOWN,
   STATUS_FLAG_UP,
@@ -166,25 +166,11 @@ export const getSatellitesProviderReturnValue = ({
     isLoadingSatelliteParticipation ||
     isPaginationLoading
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_SATELLITES_CONTEXT,
-      // need to return allSatelliteIds from context to prevent pagination on satellite details page blinking
-      allSatellitesIds: allSatellitesIds ?? EMPTY_SATELLITES_CONTEXT['allSatellitesIds'],
-      isLoading: true,
-    }
-  }
+  const result = buildProviderReturnValue(satellitesCtxState, EMPTY_SATELLITES_CONTEXT, commonToReturn, Boolean(isLoading))
 
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<SatellitesContextState>(
-    satellitesCtxState,
-    EMPTY_SATELLITES_CONTEXT,
-  )
+  // Override allSatellitesIds even during loading to prevent pagination blinking on satellite details page
   return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
+    ...result,
+    allSatellitesIds: allSatellitesIds ?? EMPTY_SATELLITES_CONTEXT['allSatellitesIds'],
   }
 }
