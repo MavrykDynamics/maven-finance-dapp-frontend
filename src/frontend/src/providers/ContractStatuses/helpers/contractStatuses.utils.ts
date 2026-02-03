@@ -1,11 +1,10 @@
 // utils
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import { normalizeContractStatuses } from './normalizeContractStatuses'
 
 // types
 import {
   ContractStatusesContext,
-  ContractStatusesContextStateType,
   ContractStatusesSubsRecordType,
   NullableContractStatusesContextStateType,
 } from '../contractStatuses.provider.types'
@@ -30,10 +29,6 @@ export const getContractStatusesProviderReturnValue = ({
   changeContractStatusesSubscriptionsList,
   activeSubs,
 }: ContractStatusesContextReturnValueArgs) => {
-  const commonToReturn = {
-    changeContractStatusesSubscriptionsList,
-  }
-
   const { contractStatuses, config } = contractStatusesCtxState
 
   const isLoadingContractStatusesData = activeSubs[CONTRACT_STATUSES_ALL_SUB] && contractStatuses === null
@@ -47,25 +42,12 @@ export const getContractStatusesProviderReturnValue = ({
       !activeSubs[CONTRACT_STATUSES_ALL_SUB] &&
       contractStatuses === null)
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_CONTRACT_STATUSES_CTX,
-      isLoading: true,
-    }
-  }
-
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<ContractStatusesContextStateType>(
+  return buildProviderReturnValue(
     contractStatusesCtxState,
     EMPTY_CONTRACT_STATUSES_CTX,
+    { changeContractStatusesSubscriptionsList },
+    Boolean(isLoading),
   )
-  return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
-  }
 }
 
 export const normalizeContractStatusesConfig = (

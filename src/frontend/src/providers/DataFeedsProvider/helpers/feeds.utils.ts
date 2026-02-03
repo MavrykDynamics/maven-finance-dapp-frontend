@@ -1,7 +1,6 @@
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import {
   DataFeedsContext,
-  DataFeedsContextStateType,
   NullableDataFeedsContextStateType,
 } from '../dataFeeds.provider.types'
 import { EMPTY_DATA_FEEDS_CTX } from './feeds.consts'
@@ -19,33 +18,17 @@ export const getDataFeedsProviderReturnValue = ({
 }: DataFeedsContextReturnValueArgs) => {
   const { feedsMapper, feedsAddresses, feedsCategories, dataFeedsVolatility, dataFeedsHistory } = feedsCtxState
 
-  const commonToReturn = {
-    updateFeedsHistoryAndVolatility,
-    resetFeedsHistoryAndVolatility,
-    dataFeedsVolatility,
-    dataFeedsHistory,
-  }
-
   const isLoading = feedsMapper === null || feedsAddresses === null || feedsCategories === null
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...EMPTY_DATA_FEEDS_CTX,
-      ...commonToReturn,
-      isLoading: true,
-    }
-  }
-
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<DataFeedsContextStateType>(
+  return buildProviderReturnValue(
     feedsCtxState,
     EMPTY_DATA_FEEDS_CTX,
+    {
+      updateFeedsHistoryAndVolatility,
+      resetFeedsHistoryAndVolatility,
+      dataFeedsVolatility,
+      dataFeedsHistory,
+    },
+    isLoading,
   )
-
-  return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
-  }
 }
