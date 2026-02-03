@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useUserContext } from '../user.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // utils
 import { normalizeUserLoansData } from '../helpers/userLoansData.normalizer'
@@ -22,7 +22,7 @@ import { GetUserLoansDataQuery } from 'utils/__generated__/graphql'
  * @returns returns user's loans data, all values are converted to USD, this data is used to show his loans stats
  */
 const useUserLoansData = () => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userLoansData, setUserLoansData, userAddress } = useUserContext()
 
@@ -45,13 +45,13 @@ const useUserLoansData = () => {
     setUserLoansData({ userLendings, userBorrowings, userVaultsData, totalUserLended, totalUserBorrowed })
   }, [indexerData, tokensMetadata, tokensPrices])
 
-  useQueryWithRefetch(GET_USER_LOANS_DATA, {
+  useGraphQLQuery(GET_USER_LOANS_DATA, {
     skip: !userAddress,
     variables: {
       userAddress,
     },
     onCompleted: (data) => setIndexerData(data),
-    onError: (error) => handleApolloError(error, 'GET_USER_LOANS_DATA'),
+    onError: (error) => handleQueryError(error, 'GET_USER_LOANS_DATA'),
   })
 
   return {

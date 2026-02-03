@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
 // hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useVaultsContext } from '../vaults.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
@@ -17,18 +17,18 @@ import { GET_VAULTS_DASHBOARD_DATA } from '../queries/vaultsDashboardData.query'
 import { normalizeVaultsDashboardData } from '../helpers/vaultsDashboard.normalizer'
 
 export const useVaultsDashboardData = () => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { setVaultsDashboardData, vaultsDashboardData } = useVaultsContext()
 
   const [indexerData, setIndexerData] = useState<null | DashboardVaultsTabDataQuery>(null)
 
-  useQueryWithRefetch(GET_VAULTS_DASHBOARD_DATA, {
+  useGraphQLQuery(GET_VAULTS_DASHBOARD_DATA, {
     variables: {},
     onCompleted: (data) => {
       setIndexerData(data)
     },
-    onError: (error) => handleApolloError(error, 'GET_VAULTS_DASHBOARD_DATA'),
+    onError: (error) => handleQueryError(error, 'GET_VAULTS_DASHBOARD_DATA'),
   })
 
   useEffect(() => {

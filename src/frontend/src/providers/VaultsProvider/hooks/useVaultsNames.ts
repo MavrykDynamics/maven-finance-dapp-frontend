@@ -1,20 +1,20 @@
 import { useState } from 'react'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // hooks
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts
 import { CURRENT_USER_VAULTS_NAMES_QUERY } from '../queries/userVaultsNames.query'
 
 export const useUserVaultsNames = (skip = true) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { userAddress } = useUserContext()
 
   const [vaultNames, setVaultNames] = useState<string[]>([])
 
-  const { loading } = useQueryWithRefetch(CURRENT_USER_VAULTS_NAMES_QUERY, {
+  const { isLoading: loading } = useGraphQLQuery(CURRENT_USER_VAULTS_NAMES_QUERY, {
     skip,
     variables: {
       userAddress: userAddress ?? '',
@@ -28,7 +28,7 @@ export const useUserVaultsNames = (skip = true) => {
         }, []) ?? [],
       )
     },
-    onError: (error) => handleApolloError(error, 'CURRENT_USER_VAULTS_NAMES_QUERY'),
+    onError: (error) => handleQueryError(error, 'CURRENT_USER_VAULTS_NAMES_QUERY'),
   })
 
   return { vaultNames, isLoading: loading }

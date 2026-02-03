@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 // hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useDataFeedsContext } from '../dataFeeds.provider'
 
 // consts
@@ -18,7 +18,7 @@ import { getTimestampBasedOnPeriod } from 'utils/charts.utils'
 export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE_HOUR) => {
   const { updateFeedsHistoryAndVolatility, dataFeedsHistory, dataFeedsVolatility, resetFeedsHistoryAndVolatility } =
     useDataFeedsContext()
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [currentPeriod, setCurrentPeriod] = useState(() => getTimestampBasedOnPeriod(period))
   const aborterRef = useRef(new AbortController())
@@ -44,24 +44,19 @@ export const useFeedCharts = (feedAddress: string, period: ChartPeriodType = ONE
     resetFeedsHistoryAndVolatility()
   }, [feedAddress])
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     FEED_HISTORY_QUERY,
     {
       variables: {
         feedAddress,
         periodTimestamp: currentPeriod,
       },
-      context: {
-        fetchOptions: {
-          signal: aborterRef.current.signal,
-        },
-      },
       onCompleted: (data) => {
         const feedsHistory = data.aggregator[0].history_data
 
         updateFeedsHistoryAndVolatility(feedsHistory, period)
       },
-      onError: (error) => handleApolloError(error, 'FEED_HISTORY_QUERY'),
+      onError: (error) => handleQueryError(error, 'FEED_HISTORY_QUERY'),
     },
     {
       refetchQueryVariables,

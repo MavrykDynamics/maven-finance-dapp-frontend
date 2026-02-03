@@ -2,8 +2,8 @@ import { useLocation } from 'react-router-dom'
 
 // hooks
 import { useUserContext } from '../user.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // utils
 import { normalizeUserRewards } from '../helpers/userData.helpers'
@@ -16,13 +16,13 @@ import { DEFAULT_USER_REWARDS } from '../helpers/user.consts'
 const userActionsHistoryItemsPerPage = LIST_NAMES_MAPPER[USER_ACTIONS_HISTORY]
 
 export const useUserRewards = () => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { setUserRewards, userAddress, rewards } = useUserContext()
 
   const { search } = useLocation()
   const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
 
-  useQueryWithRefetch(USER_REWARDS_DATA_QUERY, {
+  useGraphQLQuery(USER_REWARDS_DATA_QUERY, {
     skip: !userAddress,
     variables: {
       userAddress: userAddress ?? '',
@@ -42,7 +42,7 @@ export const useUserRewards = () => {
       const normalizedUserRewards = normalizeUserRewards({ rewardsIndexerData, userProposalRewards })
       setUserRewards(normalizedUserRewards)
     },
-    onError: (error) => handleApolloError(error, 'USER_REWARDS_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'USER_REWARDS_DATA_QUERY'),
   })
 
   return {
