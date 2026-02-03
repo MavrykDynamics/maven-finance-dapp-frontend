@@ -4,6 +4,7 @@ import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 // utils
 import { unknownToError, WalletOperationError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
+import { buildTokenApprovalBatch } from 'providers/common/utils/tokenOperations'
 
 // types
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
@@ -42,72 +43,22 @@ export const depositToFarm = async (
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(farmAddress)
 
-    switch (type) {
-      case 'fa12':
-        const fa12AssetContract = await tezos.wallet.at(address)
-
-        return await getEstimationBatchResult(tezos, [
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...fa12AssetContract.methods.approve(farmAddress, 0).toTransferParams(),
-          },
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...fa12AssetContract.methods.approve(farmAddress, depositAmount).toTransferParams(),
-          },
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract?.methods.deposit(depositAmount).toTransferParams(),
-          },
-        ])
-      case 'fa2':
-        const fa2AssetContract = await tezos.wallet.at(address)
-
-        return await getEstimationBatchResult(tezos, [
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...fa2AssetContract.methods
-              .update_operators([
-                {
-                  add_operator: {
-                    owner: userAddress,
-                    operator: farmAddress,
-                    token_id: 0, // Should be a number, usually 0
-                  },
-                },
-              ])
-              .toTransferParams(),
-          },
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract?.methods.deposit(depositAmount).toTransferParams(),
-          },
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...fa2AssetContract.methods
-              .update_operators([
-                {
-                  remove_operator: {
-                    owner: userAddress,
-                    operator: farmAddress,
-                    token_id: 0, // Should be a number, usually 0
-                  },
-                },
-              ])
-              .toTransferParams(),
-          },
-        ])
-
-      case 'mav':
-        return await getEstimationBatchResult(tezos, [
-          {
-            kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-            ...contract?.methods.deposit(depositAmount).toTransferParams(),
-            mumav: true,
-            amount: depositAmount,
-          },
-        ])
+    const mainOp = {
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...contract?.methods.deposit(depositAmount).toTransferParams(),
     }
+
+    const batchOps = await buildTokenApprovalBatch({
+      tezos,
+      tokenType: type,
+      tokenAddress: address,
+      spender: farmAddress,
+      owner: userAddress,
+      amount: depositAmount,
+      mainOps: [mainOp],
+    })
+
+    return await getEstimationBatchResult(tezos, batchOps)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }
