@@ -30,7 +30,7 @@ type MenuTopBarProps = {
 export const PRODUCTS_LINKS = [
   {
     name: 'Dapp',
-    href: process.env.REACT_APP_IS_DEMO === 'true' ? PROD_MAVEN_URL : DEV_MAVEN_URL,
+    href: import.meta.env.VITE_IS_DEMO === 'true' ? PROD_MAVEN_URL : DEV_MAVEN_URL,
     disabled: false,
     path: '/',
   },

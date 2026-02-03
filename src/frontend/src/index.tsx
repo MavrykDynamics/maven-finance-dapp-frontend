@@ -49,7 +49,7 @@ import './styles/index.css'
 import React from 'react'
 
 const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
-  const reCaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY ?? ''
+  const reCaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY ?? ''
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
@@ -143,7 +143,7 @@ const AppContainer = () => {
 export const Root = () => {
   return (
     <DappLibsProviders>
-      <ToasterProvider maintance={process.env.REACT_APP_MAINTANCE_MODE === 'on'}>
+      <ToasterProvider maintance={import.meta.env.VITE_MAINTANCE_MODE === 'on'}>
         <QueryProvider>
           <InitialDataDappProviders>
             <DappSectionsDataProviders>

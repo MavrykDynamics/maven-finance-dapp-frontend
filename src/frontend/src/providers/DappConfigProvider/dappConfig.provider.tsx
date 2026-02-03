@@ -35,8 +35,8 @@ const DappConfigProvider = ({ children }: Props) => {
 
   // check whether keys for ipfs (image selection) are valid
   useEffect(() => {
-    const projectId = process.env.REACT_APP_IPFS_PROJECT_ID
-    const projectSecret = process.env.REACT_APP_IPFS_API_KEY
+    const projectId = import.meta.env.VITE_IPFS_PROJECT_ID
+    const projectSecret = import.meta.env.VITE_IPFS_API_KEY
 
     // Skip the network check if credentials are not configured
     if (!projectId || !projectSecret) return

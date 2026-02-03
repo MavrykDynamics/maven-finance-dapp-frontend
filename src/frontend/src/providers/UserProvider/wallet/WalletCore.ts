@@ -17,9 +17,9 @@ import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
 import { getItemFromStorage } from 'utils/storage'
 
 // Need to use as cuz NetworkType is enum and ts don't understand that all types are correct
-const WALLET_NETWORK = process.env.REACT_APP_NETWORK as NetworkType
+const WALLET_NETWORK = import.meta.env.VITE_NETWORK as NetworkType
 const DAPP_METADATA = {
-  name: process.env.REACT_APP_NAME,
+  name: import.meta.env.VITE_NAME,
   preferredNetwork: WALLET_NETWORK,
 }
 

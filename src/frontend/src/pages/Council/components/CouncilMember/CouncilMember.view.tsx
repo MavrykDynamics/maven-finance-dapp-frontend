@@ -58,6 +58,6 @@ export const CouncilMemberView = (props: Props) => {
       {memberContent}
     </CustomLink>
   ) : (
-    <CustomLink to={`${process.env.REACT_APP_TZKT_LINK}/${memberAddress}/operations/`}>{memberContent}</CustomLink>
+    <CustomLink to={`${import.meta.env.VITE_TZKT_LINK}/${memberAddress}/operations/`}>{memberContent}</CustomLink>
   )
 }

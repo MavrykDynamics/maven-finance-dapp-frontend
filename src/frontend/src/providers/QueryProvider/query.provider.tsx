@@ -61,7 +61,7 @@ export const QueryProvider = ({ children }: Props) => {
     <queryProviderContext.Provider value={context}>
       <QueryClientProvider client={queryClient}>
         {children}
-        {process.env.REACT_APP_ENV === 'dev' && <ReactQueryDevtools initialIsOpen={false} />}
+        {import.meta.env.VITE_ENV === 'dev' && <ReactQueryDevtools initialIsOpen={false} />}
       </QueryClientProvider>
     </queryProviderContext.Provider>
   )

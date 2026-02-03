@@ -70,7 +70,7 @@ export const CouncilAction = ({ councilAction, handleDropAction, isBreakGlassCou
           </div>
         </div>
         <div className="open-action">
-          <CustomLink to={`${process.env.REACT_APP_TZKT_LINK}/${councilAddress}/operations/`}>
+          <CustomLink to={`${import.meta.env.VITE_TZKT_LINK}/${councilAddress}/operations/`}>
             <Icon id="send" />
           </CustomLink>
         </div>

@@ -134,11 +134,11 @@ export const useLoansTransactionHistory = ({
   // 2 queries for dev and prod, cuz query is dynamic and codegen can't generate types for it
   // always load new txHistory on market | vault address change
   useGraphQLQuery(getLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
-    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || process.env.REACT_APP_DATA_ENV === 'dev',
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || import.meta.env.VITE_DATA_ENV === 'dev',
     ...queryData,
   })
   useGraphQLQuery(getDevLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
-    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || process.env.REACT_APP_DATA_ENV === 'prod',
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || import.meta.env.VITE_DATA_ENV === 'prod',
     ...queryData,
   })
 

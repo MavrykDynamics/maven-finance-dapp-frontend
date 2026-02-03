@@ -124,10 +124,10 @@ export const VerticalFarmCard = ({
 
       <ExpandSimple className="vertical-expand" onClick={expandCallback} isExpanded={isCardOpened}>
         <div className="links">
-          <a target="_blank" rel="noreferrer" href={`${process.env.REACT_APP_TZKT_LINK}/${farm.liquidityTokenAddress}`}>
+          <a target="_blank" rel="noreferrer" href={`${import.meta.env.VITE_TZKT_LINK}/${farm.liquidityTokenAddress}`}>
             Get {tokenName} <Icon id="send" />
           </a>
-          <a target="_blank" rel="noreferrer" href={`${process.env.REACT_APP_TZKT_LINK}/${farm.address}`}>
+          <a target="_blank" rel="noreferrer" href={`${import.meta.env.VITE_TZKT_LINK}/${farm.address}`}>
             View Contract <Icon id="send" />
           </a>
         </div>

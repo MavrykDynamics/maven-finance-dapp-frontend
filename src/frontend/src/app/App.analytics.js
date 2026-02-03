@@ -1,5 +1,5 @@
 export const loadGTag = () => {
-  if (process.env.NODE_ENV === 'production') {
+  if (import.meta.env.PROD) {
     const id = 'GTM-N2535QW'
 
     // Load script into <head>

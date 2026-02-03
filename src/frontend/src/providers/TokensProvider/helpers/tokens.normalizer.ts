@@ -59,7 +59,7 @@ const handleMvnToken = ({
   const collateralData = {
     indexerName: lending_controller_collateral_tokens?.[0]?.token_name,
     // sMVN collateral is disabled on demo, so we set isProtectedCollateral true when it's demo env
-    isPausedCollateral: process.env.REACT_APP_IS_DEMO === 'true',
+    isPausedCollateral: import.meta.env.VITE_IS_DEMO === 'true',
     isScaled: lending_controller_collateral_tokens?.[0]?.is_scaled_token,
     isStaked: lending_controller_collateral_tokens?.[0]?.is_staked_token,
     minDepositAmount: DEFAULT_MIN_COLLATERAL_AMOUNT,

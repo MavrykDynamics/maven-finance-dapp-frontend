@@ -37,7 +37,7 @@ export const getMavrykValidators = async (): Promise<{
 } | null> => {
   try {
     const mavrykApiBase =
-      process.env.REACT_APP_NETWORK === 'atlasnet'
+      import.meta.env.VITE_NETWORK === 'atlasnet'
         ? 'https://atlasnet.api.mavryk.network'
         : 'https://api.mavryk.network'
 
@@ -83,7 +83,7 @@ const DAO_BAKER_STATIC_DATA = {
 }
 
 const MAVRYK_DYNAMICS_BAKER_STATIC_DATA = {
-  isDisabled: process.env.REACT_APP_NETWORK !== 'atlasnet',
+  isDisabled: import.meta.env.VITE_NETWORK !== 'atlasnet',
   logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
   name: 'Mavryk Dynamics',
   address: 'mv1V4h45W3p4e1sjSBvRkK2uYbvkTnSuHg8g',
