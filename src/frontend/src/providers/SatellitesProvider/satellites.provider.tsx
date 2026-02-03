@@ -159,7 +159,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
         additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
       } catch (e) {
-        console.log(e)
+        console.error('fetchAdditionalSatelliteData error:', e)
       }
 
       const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
@@ -190,7 +190,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
         additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
       } catch (e) {
-        console.log(e)
+        console.error('fetchAdditionalSatelliteData error:', e)
       }
 
       const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
@@ -220,7 +220,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
         additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
       } catch (e) {
-        console.log(e)
+        console.error('fetchAdditionalSatelliteData error:', e)
       }
 
       const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
@@ -250,7 +250,7 @@ export const SatellitesProvider = ({ children }: Props) => {
         const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
         additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds, apolloClient)
       } catch (e) {
-        console.log(e)
+        console.error('fetchAdditionalSatelliteData error:', e)
       }
 
       const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)

@@ -58,7 +58,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
         updateFullDataFeeds(parsedFeeds)
         updateTokensPrices(parsedFeeds)
       } catch (e) {
-        console.log('zod full feeds query parsing error:', { e })
+        console.error('zod full feeds query parsing error:', { e })
       }
     },
     onError: (error) => handleApolloError(error, 'FEEDS_QUERY'),
@@ -79,7 +79,7 @@ export const DataFeedsProvider = ({ children }: Props) => {
         updateSmallDataFeeds(parsedSmallFeeds)
         updateTokensPrices(parsedSmallFeeds)
       } catch (e) {
-        console.log('zod small feeds query parsing error:', { e })
+        console.error('zod small feeds query parsing error:', { e })
       }
     },
     onError: (error) => handleApolloError(error, 'FEEDS_UPDATE_QUERY'),

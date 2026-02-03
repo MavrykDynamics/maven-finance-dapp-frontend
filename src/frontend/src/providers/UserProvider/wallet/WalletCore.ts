@@ -65,7 +65,7 @@ export function dappClient() {
 
       return account?.address
     } catch (error) {
-      console.log('connectAccount error:', error)
+      console.error('connectAccount error:', error)
       throw error
     }
   }
@@ -99,14 +99,14 @@ export function dappClient() {
         } catch (e) {
           // If no wallet choosen set back prev selected wallet to dapp instance
           await client.setActiveAccount(currentAccount)
-          console.log('choosing wallet error: ', e)
+          console.error('choosing wallet error: ', e)
         }
       }
 
       // Return new wallet address if it was selected or prev selected wallet address
       return newAccount?.address ?? currentAccount?.address
     } catch (error) {
-      console.log('swapAccount error:', error)
+      console.error('swapAccount error:', error)
       throw error
     }
   }
@@ -126,7 +126,7 @@ export function dappClient() {
       await wallet.disconnect()
       await wallet.clearActiveAccount()
     } catch (error) {
-      console.log('disconnectWallet error:', error)
+      console.error('disconnectWallet error:', error)
       throw error
     }
   }

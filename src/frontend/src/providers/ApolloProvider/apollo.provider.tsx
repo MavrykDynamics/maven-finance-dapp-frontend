@@ -38,12 +38,12 @@ export const ApolloProvider = ({ children }: Props) => {
 
         if (graphQLErrors) {
           for (const { message, locations, path } of graphQLErrors) {
-            console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+            console.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
           }
         }
 
         if (networkError) {
-          console.log(`[Network error]: ${networkError}`)
+          console.error(`[Network error]: ${networkError}`)
 
           if (typeof window !== 'undefined' && !window.navigator.onLine) {
             bug('Sorry, your browser is offline.')

@@ -68,7 +68,7 @@ export const getXTZBakers = async (): Promise<{
       },
     }
   } catch (e) {
-    console.log('getXTZBakers fething error', e)
+    console.error('getXTZBakers fetching error:', e)
     return null
   }
 }

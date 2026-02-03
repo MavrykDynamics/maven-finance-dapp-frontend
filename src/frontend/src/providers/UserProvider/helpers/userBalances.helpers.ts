@@ -198,7 +198,7 @@ export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
     // open connection
     await tzktSocket
       .start()
-      .then(() => console.log('Connected to WebSocket'))
+      .then(() => {})
       .catch((err) => console.error('WebSocket error:', err))
 
     return tzktSocket
@@ -224,8 +224,6 @@ export const attachTzktSocketsEventHandlers = ({
   handleOnReconnected: (userAddress: string) => void
 }) => {
   tzktSocket.on('token_balances', (msg) => {
-    console.log('%ctzktSocket on token_balances msg', 'color: aqua', { msg })
-
     if (!msg.data) return
 
     try {
@@ -238,8 +236,6 @@ export const attachTzktSocketsEventHandlers = ({
 
   // handle xtz token balance update message
   tzktSocket.on('accounts', (msg) => {
-    console.log('%ctzktSocket on accounts msg', 'color: aqua', { msg })
-
     if (!msg.data) return
 
     try {
