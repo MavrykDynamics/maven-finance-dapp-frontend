@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
@@ -47,9 +47,9 @@ const VestingProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_VESTING_STORAGE_QUERY'),
   })
 
-  const changeVestingSubscriptionsList = (newSkips: Partial<VestingSubsRecordType>) => {
+  const changeVestingSubscriptionsList = useCallback((newSkips: Partial<VestingSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

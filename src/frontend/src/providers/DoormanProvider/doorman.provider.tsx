@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // helpers
 import { getDoormanProviderReturnValue } from './helpers/doorman.utils'
@@ -46,7 +46,7 @@ const DoormanProvider = ({ children }: Props) => {
   })
 
   // methods to update context data
-  const updateStakeHistoryData = (historyData: SmvnMvnHistoryDataQuery, period: ChartPeriodType) => {
+  const updateStakeHistoryData = useCallback((historyData: SmvnMvnHistoryDataQuery, period: ChartPeriodType) => {
     const { smvnHistoryData, mvnHistoryData, noChartData } = normalizeDoormanChartsData(historyData, period)
 
     setStakingCtxState((prevState) => ({
@@ -55,7 +55,7 @@ const DoormanProvider = ({ children }: Props) => {
       mvnHistoryData: { ...prevState.mvnHistoryData, [period]: mvnHistoryData },
       noChartData,
     }))
-  }
+  }, [])
 
   const updateMvnSmvnStats = (storage: GetDappSmvnMvnStatsQuery) => {
     const {
@@ -76,9 +76,9 @@ const DoormanProvider = ({ children }: Props) => {
     }))
   }
 
-  const changeStakingSubscriptionsList = (newSkips: Partial<DoormanSubsRecordType>) => {
+  const changeStakingSubscriptionsList = useCallback((newSkips: Partial<DoormanSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

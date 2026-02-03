@@ -96,9 +96,9 @@ const FinancialRequestsProvider = ({ children }: Props) => {
     },
   )
 
-  const changeFinancialRequestsSubscriptionList = (newSkips: Partial<FinRequestsSubsRecordType>) => {
+  const changeFinancialRequestsSubscriptionList = useCallback((newSkips: Partial<FinRequestsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

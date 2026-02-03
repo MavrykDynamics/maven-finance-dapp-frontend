@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
@@ -102,9 +102,9 @@ const FarmsProvider = ({ children }: Props) => {
     }))
   }
 
-  const changeFarmsSubscriptionList = (newSkips: Partial<FarmsProviderSubsType>) => {
+  const changeFarmsSubscriptionList = useCallback((newSkips: Partial<FarmsProviderSubsType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

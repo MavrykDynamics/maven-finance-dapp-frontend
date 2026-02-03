@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { usePrevious } from 'react-use'
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 // utils
 import { normalizeCouncilActions, normalizeCouncilMembers } from './helpers/council.normalizer'
@@ -324,9 +324,9 @@ const CouncilProvider = ({ children }: Props) => {
     }))
   }
 
-  const changeCouncilSubscriptionList = (newSubs: Partial<CouncilSubsRecordType>) => {
+  const changeCouncilSubscriptionList = useCallback((newSubs: Partial<CouncilSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSubs }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

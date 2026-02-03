@@ -122,7 +122,7 @@ const DappConfigProvider = ({ children }: Props) => {
       toggleWertLoader,
       ...dappConfigCtxState,
     }
-  }, [dappConfigCtxState])
+  }, [dappConfigCtxState, initialConfigLoading, contractAddressesLoading])
 
   return <dappConfigContext.Provider value={contextProviderValue}>{children}</dappConfigContext.Provider>
 }

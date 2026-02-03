@@ -150,9 +150,9 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
   })
 
-  const changeSatelliteGovSubscriptionsList = (subs: Partial<SatelliteGovernanceSubsRecordType>) => {
+  const changeSatelliteGovSubscriptionsList = useCallback((subs: Partial<SatelliteGovernanceSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...subs }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

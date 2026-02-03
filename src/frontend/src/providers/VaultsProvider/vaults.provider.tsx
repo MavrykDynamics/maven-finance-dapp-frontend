@@ -300,16 +300,16 @@ export const VaultsProvider = ({ children }: Props) => {
     setMarketAddress(marketAddress)
   }, [])
 
-  const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
+  const setVaultsDashboardData = useCallback((newVaultsDashboardData: VaultsDashboardDataType) => {
     setVaultsCtxState((prev) => ({
       ...prev,
       vaultsDashboardData: newVaultsDashboardData,
     }))
-  }
+  }, [])
 
-  const changeVaultsSubscriptionsList = (newSkips: Partial<VaultsSubsRecordType>) => {
+  const changeVaultsSubscriptionsList = useCallback((newSkips: Partial<VaultsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const providerValue = useMemo(
     () => ({

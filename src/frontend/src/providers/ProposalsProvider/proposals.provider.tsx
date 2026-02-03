@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { usePrevious } from 'react-use'
 
 // hooks
@@ -152,9 +152,9 @@ const ProposalsProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'PROPOSALS_SUBMISSION_QUERY'),
   })
 
-  const changeProposalsSubscriptionsList = (newSkips: Partial<ProposalsSubsRecordType>) => {
+  const changeProposalsSubscriptionsList = useCallback((newSkips: Partial<ProposalsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

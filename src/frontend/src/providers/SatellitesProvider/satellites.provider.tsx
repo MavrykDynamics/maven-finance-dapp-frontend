@@ -74,9 +74,9 @@ export const SatellitesProvider = ({ children }: Props) => {
   // @ts-ignore
   const [satelliteFilters, setSatelliteFilters] = useState<SatelliteFiltersType>(SATELLITE_DEFFAULT_FILTERS)
 
-  const changeSatellitesSubscriptionsList = (newSkips: Partial<SatellitesSubsRecordType>) => {
+  const changeSatellitesSubscriptionsList = useCallback((newSkips: Partial<SatellitesSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const changePage = useCallback(
     (newPage: number, mapperType: PaginationSatelliteType) => {

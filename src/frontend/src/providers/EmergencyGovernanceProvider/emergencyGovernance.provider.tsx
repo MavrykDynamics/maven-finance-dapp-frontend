@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
@@ -81,9 +81,9 @@ const EGovProvider = ({ children }: Props) => {
   })
 
   //   set what data to subscribe
-  const changeEGovSubscriptionsList = (newSkips: Partial<EGovSubsRecordType>) => {
+  const changeEGovSubscriptionsList = useCallback((newSkips: Partial<EGovSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

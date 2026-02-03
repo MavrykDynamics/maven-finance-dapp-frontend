@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useQuery } from '@apollo/client'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
 import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
@@ -102,16 +102,16 @@ export const LoansProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_ALL_MARKETS_QUERY'),
   })
 
-  const changeLoansSubscriptionsList = (newSkips: Partial<LoansSubsRecordType>) => {
+  const changeLoansSubscriptionsList = useCallback((newSkips: Partial<LoansSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
-  const setLoansChartsData = (newchartsData: LoansChartsType) => {
+  const setLoansChartsData = useCallback((newchartsData: LoansChartsType) => {
     setLoansCtxState((prev) => ({
       ...prev,
       chartsData: newchartsData,
     }))
-  }
+  }, [])
 
   const providerValue = useMemo(
     () =>

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
 import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
@@ -73,9 +73,9 @@ const ContractStatusesProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'CONTRACT_STATUSES_ALL_DATA_QUERY'),
   })
 
-  const changeContractStatusesSubscriptionsList = (newSkips: Partial<ContractStatusesSubsRecordType>) => {
+  const changeContractStatusesSubscriptionsList = useCallback((newSkips: Partial<ContractStatusesSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

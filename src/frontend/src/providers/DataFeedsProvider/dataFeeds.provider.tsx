@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 // consts
@@ -106,26 +106,26 @@ export const DataFeedsProvider = ({ children }: Props) => {
   }
 
   // normalize feeds history and volatility
-  const updateFeedsHistoryAndVolatility = (
-    data: FeedHistoryQeuryQuery['aggregator'][number]['history_data'],
-    period: ChartPeriodType,
-  ) => {
-    const { dataFeedsHistory, dataFeedsVolatility } = normalizeDataFeedsHistory(data)
+  const updateFeedsHistoryAndVolatility = useCallback(
+    (data: FeedHistoryQeuryQuery['aggregator'][number]['history_data'], period: ChartPeriodType) => {
+      const { dataFeedsHistory, dataFeedsVolatility } = normalizeDataFeedsHistory(data)
 
-    setFeedsCtxState((prevState) => ({
-      ...prevState,
-      dataFeedsHistory: { ...prevState.dataFeedsHistory, [period]: dataFeedsHistory },
-      dataFeedsVolatility: { ...prevState.dataFeedsVolatility, [period]: dataFeedsVolatility },
-    }))
-  }
+      setFeedsCtxState((prevState) => ({
+        ...prevState,
+        dataFeedsHistory: { ...prevState.dataFeedsHistory, [period]: dataFeedsHistory },
+        dataFeedsVolatility: { ...prevState.dataFeedsVolatility, [period]: dataFeedsVolatility },
+      }))
+    },
+    [],
+  )
 
-  const resetFeedsHistoryAndVolatility = () => {
+  const resetFeedsHistoryAndVolatility = useCallback(() => {
     setFeedsCtxState((prevState) => ({
       ...prevState,
       dataFeedsHistory: DEFAULT_DATA_FEEDS_HISTORY,
       dataFeedsVolatility: DFEFAULT_DATA_FEEDS_VOLATILITY,
     }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

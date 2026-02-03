@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 
 // consts
 import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS } from 'utils/constants'
@@ -61,14 +61,14 @@ export const TokensProvider = ({ children }: Props) => {
   })
 
   // update token prices in ctx
-  const updateTokensPrices = (feedsLedger: FullFeedsQueryType | SmallFeedsQueryType) => {
+  const updateTokensPrices = useCallback((feedsLedger: FullFeedsQueryType | SmallFeedsQueryType) => {
     const normalizedTokenPrices = normalizeTokenPrices(feedsLedger)
 
     setTokensCtxState((prev) => ({
       ...prev,
       tokensPrices: { ...prev.tokensPrices, ...normalizedTokenPrices },
     }))
-  }
+  }, [])
 
   const providerValue = useMemo(() => {
     return {

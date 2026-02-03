@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 // hooks
@@ -87,9 +87,9 @@ const TreasuryProvider = ({ children }: Props) => {
     onError: (error) => handleApolloError(error, 'GET_TREASURY_SMVN_BALANCES'),
   })
 
-  const changeTreasurySubscriptionsList = (newSkips: Partial<TreasurySubsRecordType>) => {
+  const changeTreasurySubscriptionsList = useCallback((newSkips: Partial<TreasurySubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>
