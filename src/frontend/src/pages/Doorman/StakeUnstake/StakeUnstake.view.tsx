@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import { memo, useCallback, useEffect, useMemo } from 'react'
 
 // context

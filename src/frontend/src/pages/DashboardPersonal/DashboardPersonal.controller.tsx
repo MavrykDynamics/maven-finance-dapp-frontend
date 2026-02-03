@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { usePrevious } from 'react-use'
 import qs from 'qs'
-import { Link, Navigate, Outlet, Route, Routes as Switch, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, Outlet, Route, useLocation, useNavigate, useParams } from 'react-router'
 
 // components
 import Button from 'app/App.components/Button/NewButton'

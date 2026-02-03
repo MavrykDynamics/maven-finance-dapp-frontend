@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // components
 import Button from 'app/App.components/Button/NewButton'

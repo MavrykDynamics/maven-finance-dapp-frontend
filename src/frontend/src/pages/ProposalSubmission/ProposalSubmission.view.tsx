@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'

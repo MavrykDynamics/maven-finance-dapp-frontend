@@ -1,5 +1,5 @@
 import * as ReactDOM from 'react-dom/client'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router'
 import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3'
 import { ThemeProvider } from 'styled-components'
 import { QueryProvider } from 'providers/QueryProvider/query.provider'
@@ -53,7 +53,7 @@ const DappLibsProviders = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey} language="en">
-      <Router future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>{children}</Router>
+      <Router>{children}</Router>
     </GoogleReCaptchaProvider>
   )
 }

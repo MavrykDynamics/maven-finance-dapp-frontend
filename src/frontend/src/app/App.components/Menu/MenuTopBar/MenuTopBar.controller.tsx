@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import WertWidget from '@wert-io/widget-initializer'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // utils
 import { getWertOptions } from 'app/App.components/ConnectWallet/Wert/WertIO.const'

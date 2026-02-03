@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router'
 
 // utils
 import { propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'

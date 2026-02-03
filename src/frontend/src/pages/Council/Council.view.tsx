@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router'
 
 // consts
 import { BUTTON_SECONDARY } from '../../app/App.components/Button/Button.constants'

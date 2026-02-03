@@ -1,6 +1,6 @@
 import qs from 'qs'
 import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom' // hooks
+import { useNavigate, useLocation } from 'react-router' // hooks
 import { useUserContext } from '../user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useQueryProvider } from 'providers/QueryProvider/query.provider'

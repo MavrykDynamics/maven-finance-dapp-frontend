@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'

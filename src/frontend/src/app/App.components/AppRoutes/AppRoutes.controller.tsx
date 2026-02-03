@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
-import { Navigate, Route, Routes as Switch, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -131,7 +131,7 @@ export const AppRoutes = () => {
   return (
     <RouteErrorBoundary>
       <Suspense fallback={<RouteLoadingFallback />}>
-        <Switch>
+        <Routes>
           <Route path="/staking" element={<Doorman />} />
 
           {/* DASHBOARD */}
@@ -252,7 +252,7 @@ export const AppRoutes = () => {
           <Route path="/admin" element={<Admin />} />
 
           <Route path="*" element={<RenderErrorPage />} />
-        </Switch>
+        </Routes>
       </Suspense>
     </RouteErrorBoundary>
   )

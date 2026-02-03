@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { useClickAway } from 'react-use'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import classNames from 'classnames'
 
 import { assetDecimalsToShow, COLLATERAL_RATIO_GRADIENT, getCollateralRatioPercentColor } from '../../Loans.const'

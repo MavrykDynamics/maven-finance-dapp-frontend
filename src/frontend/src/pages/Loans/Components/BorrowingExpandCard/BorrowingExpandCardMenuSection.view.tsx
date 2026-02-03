@@ -1,5 +1,5 @@
 import { memo, useMemo, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router'
 import qs from 'qs'
 
 // styles

@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // context, hooks
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router'
 import dayjs from 'dayjs'
 
 // components

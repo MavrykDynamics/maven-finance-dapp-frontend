@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // providers
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'

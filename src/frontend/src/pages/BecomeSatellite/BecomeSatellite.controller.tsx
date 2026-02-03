@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router'
 
 // Consts
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'

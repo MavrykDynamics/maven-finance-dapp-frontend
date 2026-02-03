@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'

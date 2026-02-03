@@ -1,5 +1,5 @@
 import qs from 'qs'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router'
 import { useEffect, useMemo, useState } from 'react'
 
 // hooks

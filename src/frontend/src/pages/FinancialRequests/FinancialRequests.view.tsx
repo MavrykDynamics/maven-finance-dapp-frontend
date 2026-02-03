@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 
 // helpers
 import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'

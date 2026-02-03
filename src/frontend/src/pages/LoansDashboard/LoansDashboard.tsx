@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // consts
 import { BUTTON_LARGE, BUTTON_PRIMARY } from 'app/App.components/Button/Button.constants'
