@@ -273,6 +273,25 @@ module.exports = function (webpackEnv) {
         // This is only used in production mode
         new CssMinimizerPlugin(),
       ],
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          // Vendor chunk for large node_modules dependencies
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'all',
+            priority: 10,
+          },
+          // Separate chunk for blockchain/wallet libraries
+          blockchain: {
+            test: /[\\/]node_modules[\\/](@mavrykdynamics|@airgap|@microsoft[\\/]signalr)[\\/]/,
+            name: 'blockchain',
+            chunks: 'all',
+            priority: 20,
+          },
+        },
+      },
     },
     resolve: {
       fallback: { stream: require.resolve('stream-browserify'), buffer: require.resolve('buffer') },
