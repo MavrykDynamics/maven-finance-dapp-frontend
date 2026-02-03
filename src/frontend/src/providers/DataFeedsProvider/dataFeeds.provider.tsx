@@ -60,7 +60,16 @@ export const DataFeedsProvider = ({ children }: Props) => {
         console.error('zod full feeds query parsing error:', { e })
       }
     },
-    onError: (error) => handleQueryError(error, 'FEEDS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'FEEDS_QUERY')
+      // Set empty feeds state so isLoading transitions to false and the app doesn't stay stuck on the loading screen
+      setFeedsCtxState((prev) => ({
+        ...prev,
+        feedsMapper: prev.feedsMapper ?? {},
+        feedsAddresses: prev.feedsAddresses ?? [],
+        feedsCategories: prev.feedsCategories ?? [],
+      }))
+    },
   })
 
   // update feeds price and track whether need to load new feed

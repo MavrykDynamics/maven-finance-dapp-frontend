@@ -42,8 +42,6 @@ export const TokensProvider = ({ children }: Props) => {
       try {
         const parsedTokens = tokensGqlSchema.parse(data.token)
 
-        initialLoadingStatus.current = false
-
         const { tokensMetadata, mTokens, farmLpTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
 
         setTokensCtxState((prev) => ({
@@ -55,9 +53,14 @@ export const TokensProvider = ({ children }: Props) => {
         }))
       } catch (e) {
         console.error('zod parsing tokens error:', { e })
+      } finally {
+        initialLoadingStatus.current = false
       }
     },
-    onError: (error) => handleQueryError(error, 'QUERY_TOKENS_METADATA'),
+    onError: (error) => {
+      handleQueryError(error, 'QUERY_TOKENS_METADATA')
+      initialLoadingStatus.current = false
+    },
   })
 
   // update token prices in ctx

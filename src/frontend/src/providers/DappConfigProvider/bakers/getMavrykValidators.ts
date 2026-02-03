@@ -4,7 +4,7 @@ import {api} from 'utils/api/api'
 import {z} from 'zod'
 
 // types
-export type XtzBakerType = {
+export type MavrykValidatorType = {
   logo: string
   name: string
   address: string
@@ -31,21 +31,24 @@ const getFreeSpace = (data: BakeryDelegateDataType) => {
   return Number(convertNumberForClient({ number: freeSpace, grade: MVRK_DECIMALS }).toFixed(2))
 }
 
-// TODO: check why ghostnet tzkt not working for delegates endpoint
-export const getXTZBakers = async (): Promise<{
-  dao: XtzBakerType
-  mavrykDynamics: XtzBakerType
+export const getMavrykValidators = async (): Promise<{
+  dao: MavrykValidatorType
+  mavrykDynamics: MavrykValidatorType
 } | null> => {
   try {
-    // TODO: add dynamic fetching for bakers, cuz for now it fetches them from tezos, not mavryk
+    const mavrykApiBase =
+      process.env.REACT_APP_NETWORK === 'atlasnet'
+        ? 'https://atlasnet.api.mavryk.network'
+        : 'https://api.mavryk.network'
+
     const [{ data: daoBakerData }, { data: mavrykDynamicsBakerData }] = await Promise.all([
       api<BakeryDelegateDataType>(
-        `https://api.tzkt.io/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
+        `${mavrykApiBase}/v1/delegates/${DAO_BAKER_STATIC_DATA.address}`,
         {},
         bakeryDelegateDataSchema,
       ),
       api<BakeryDelegateDataType>(
-        `https://atlasnet.api.mavryk.network/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
+        `${mavrykApiBase}/v1/delegates/${MAVRYK_DYNAMICS_BAKER_STATIC_DATA.address}`,
         {},
         bakeryDelegateDataSchema,
       ),
@@ -64,7 +67,7 @@ export const getXTZBakers = async (): Promise<{
       },
     }
   } catch (e) {
-    console.error('getXTZBakers fetching error:', e)
+    console.error('getMavrykValidators fetching error:', e)
     return null
   }
 }
