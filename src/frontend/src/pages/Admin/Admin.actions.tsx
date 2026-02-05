@@ -3,7 +3,7 @@
 // import { ERROR, INFO, SUCCESS } from '../../providers/ToasterProvider/helpers/Toaster.constants'
 // import type { AppDispatch, GetState } from '../../app/App.controller'
 
-// import { OpKind } from '@mavrykdynamics/taquito'
+// import { OpKind } from '@mavrykdynamics/webmavryk'
 // import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 // import { toggleActionFullScreenLoader } from 'app/App.components/Loader/Loader.action'
 // import { TokensContext } from 'providers/TokensProvider/tokens.provider.types'

@@ -1,4 +1,4 @@
-import { ContractMethod, OpKind, SendParams, MavrykToolkit, TransferParams, Wallet } from '@mavrykdynamics/taquito'
+import { ContractMethod, OpKind, SendParams, MavrykToolkit, TransferParams, Wallet } from '@mavrykdynamics/webmavryk'
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { WalletOperationError, checkWhetherWalletAbortError } from 'errors/error'
 import { getContractErrorMessage } from './walletError.helper'

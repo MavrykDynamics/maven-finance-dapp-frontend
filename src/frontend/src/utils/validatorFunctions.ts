@@ -1,7 +1,7 @@
-import { validateAddress, validatePublicKey as taquitoValidatePublicKey } from '@mavrykdynamics/taquito-utils'
+import { validateAddress, validatePublicKey as taquitoValidatePublicKey } from '@mavrykdynamics/webmavryk-utils'
 import { AllValidFormTypes } from './TypesAndInterfaces/Forms'
 import { InputStatusType } from 'app/App.components/Input/Input.constants'
-import { RpcClient } from '@mavrykdynamics/taquito-rpc'
+import { RpcClient } from '@mavrykdynamics/webmavryk-rpc'
 import { PreferencesState } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
 const isIPFS = require('is-ipfs')
