@@ -44,6 +44,22 @@ const hasUserInLocalStorage =
   localStorage.getItem('beacon:active-account') && localStorage.getItem('beacon:active-account') !== 'undefined'
 
 /**
+ * Read the wallet address synchronously from localStorage so the UI
+ * can show it immediately on page load (no "Connect Wallet" flash).
+ * The full restoration (balances, sockets) still happens async via restore().
+ */
+const getStoredUserAddress = (): string | null => {
+  try {
+    const raw = localStorage.getItem('beacon:active-account')
+    if (!raw || raw === 'undefined') return null
+    const parsed = JSON.parse(raw)
+    return parsed?.address ?? null
+  } catch {
+    return null
+  }
+}
+
+/**
  * ADJUSTMENTS:
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
  */
@@ -60,7 +76,10 @@ export const UserProvider = ({ children }: Props) => {
   const tzktSocket = useRef<null | signalR.HubConnection>(null)
   const currentIndexedLvlListenerId = useRef<null | string>(null)
 
-  const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
+  const [userCtxState, setUserCtxState] = useState<UserContextStateType>(() => {
+    const storedAddress = getStoredUserAddress()
+    return storedAddress ? { ...DEFAULT_USER, userAddress: storedAddress } : DEFAULT_USER
+  })
   const [userTzktTokens, setUserTzktTokens] = useState<UserTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
 
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
