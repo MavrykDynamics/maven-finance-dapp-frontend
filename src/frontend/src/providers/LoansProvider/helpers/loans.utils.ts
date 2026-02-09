@@ -117,12 +117,19 @@ export const getLoansProviderReturnValue = ({
    * 4. if we subscribe to config and config context data is empty
    * 5. if we haven't subscribed to anything and don't have any data loaded, need this to fix time which component init its subscribes in useEffect as it's async operation
    */
+  /**
+   * isLoading cases:
+   * 1,2. switching between markets — subscribed to one market, it hasn't loaded yet
+   * 3. subscribed to markets but markets data is empty
+   * 4. subscribed to config but config data is empty
+   * NOTE: removed old condition #5 that made isLoading=true when NOTHING subscribed
+   * and no data loaded. If nothing is subscribed, isLoading should be false.
+   */
   const isLoading =
     isLoadingSingleMarket ||
     isLoadingAllMarkets ||
     (activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty) ||
-    (activeSubs[LOANS_CONFIG] && config === null) ||
-    (!activeSubs[LOANS_CONFIG] && config === null && !activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty)
+    (activeSubs[LOANS_CONFIG] && config === null)
 
   const result = buildProviderReturnValue(loansCtxState, EMPTY_LOANS_CONTEXT, commonToReturn, Boolean(isLoading))
 

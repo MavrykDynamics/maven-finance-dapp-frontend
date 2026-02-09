@@ -51,7 +51,7 @@ export const VaultsProvider = ({ children }: Props) => {
 
   const prevUserAddress = usePrevious(userAddress)
 
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [paginationState, setPaginationState] = useState(() => ({
     [PAGINATION_ALL]: 1,
     [PAGINATION_MY]: 1,
@@ -200,7 +200,11 @@ export const VaultsProvider = ({ children }: Props) => {
       setIsLoading(false)
       setIsPendingQueryWhenFilters(false)
     },
-    onError: (error) => handleQueryError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY')
+      setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
+    },
   })
 
   // QUERY FOR USER VAULTS (MY)
@@ -227,7 +231,11 @@ export const VaultsProvider = ({ children }: Props) => {
       setIsLoading(false)
       setIsPendingQueryWhenFilters(false)
     },
-    onError: (error) => handleQueryError(error, 'GET_USER_ALL_VAULTS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_USER_ALL_VAULTS_QUERY')
+      setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
+    },
   })
 
   // QUERY FOR ALL VAULTS
@@ -253,7 +261,11 @@ export const VaultsProvider = ({ children }: Props) => {
       setIsLoading(false)
       setIsPendingQueryWhenFilters(false)
     },
-    onError: (error) => handleQueryError(error, 'GET_ALL_VAULTS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_ALL_VAULTS_QUERY')
+      setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
+    },
   })
 
   useGraphQLQuery(GET_ALL_VAULTS_QUERY_COUNT, {
@@ -290,7 +302,6 @@ export const VaultsProvider = ({ children }: Props) => {
   const changePage = useCallback(
     (newPage: number, mapperType: PaginationVaultType) => {
       if (newPage === paginationState[mapperType]) return
-      setIsLoading(true)
       setPaginationState((prev) => ({ ...prev, [mapperType]: newPage }))
     },
     [paginationState],

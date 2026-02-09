@@ -60,7 +60,13 @@ export const LoansProvider = ({ children }: Props) => {
         config: normalizeLoansConfig({ indexerData: data }),
       }))
     },
-    onError: (error) => handleQueryError(error, 'GET_LOANS_CONFIG'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_LOANS_CONFIG')
+      setLoansCtxState((prev) => ({
+        ...prev,
+        config: prev.config ?? { daoFee: 0, collateralFactor: 0, liquidationFactor: 0 },
+      }))
+    },
   })
 
   useGraphQLQuery(GET_MARKET_BY_ADDRESS_QUERY, {
@@ -80,7 +86,9 @@ export const LoansProvider = ({ children }: Props) => {
         marketsAddresses: Array.from(new Set([...(prev?.marketsAddresses ?? []), ...Object.keys(newMarkets)])),
       }))
     },
-    onError: (error) => handleQueryError(error, 'GET_MARKET_BY_ADDRESS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_MARKET_BY_ADDRESS_QUERY')
+    },
   })
 
   // andrew_here
@@ -98,7 +106,15 @@ export const LoansProvider = ({ children }: Props) => {
         marketsMapper: { ...newMarkets },
       }))
     },
-    onError: (error) => handleQueryError(error, 'GET_ALL_MARKETS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_ALL_MARKETS_QUERY')
+      setLoansCtxState((prev) => ({
+        ...prev,
+        allMarketsAddresses: prev.allMarketsAddresses ?? [],
+        marketsAddresses: prev.marketsAddresses ?? [],
+        marketsMapper: prev.marketsMapper ?? {},
+      }))
+    },
   })
 
   const changeLoansSubscriptionsList = useCallback((newSkips: Partial<LoansSubsRecordType>) => {

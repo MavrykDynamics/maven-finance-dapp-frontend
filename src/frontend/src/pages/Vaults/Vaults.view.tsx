@@ -185,8 +185,6 @@ export const VaultsView = () => {
 
     if (!foundTab?.path || currentTabId === id) return
 
-    setIsLoading(true)
-
     navigate(`${pathname}/${foundTab.path}`)
   }
 

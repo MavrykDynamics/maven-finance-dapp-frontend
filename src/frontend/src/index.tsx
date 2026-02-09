@@ -12,7 +12,7 @@ import { isMobile } from './utils/device-info'
 // providers
 import ToasterProvider from 'providers/ToasterProvider/toaster.provider'
 import TokensProvider, { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import DataFeedsProvider, { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'
+import DataFeedsProvider from 'providers/DataFeedsProvider/dataFeeds.provider'
 import UserProvider, { useUserContext } from 'providers/UserProvider/user.provider'
 import DappConfigProvider, {
   dappConfigContext,
@@ -82,13 +82,13 @@ const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) =
 const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) => {
   const { isLoading: isDappGeneralLoading } = useDappConfigContext()
   const { isLoading: isTokensLoading } = useTokensContext()
-  const { isLoading: isFeedsLoading } = useDataFeedsContext()
   const { isLoading: isUserLoading, isUserRestored } = useUserContext()
 
   // use user loading status only on dapp init loading
   const isInitialUserLoading = !isUserRestored ? isUserLoading : false
 
-  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isFeedsLoading || isInitialUserLoading
+  // DataFeeds removed from gate — only needed on Satellites/DataFeeds pages, loads in background
+  const isInitialLoading = isDappGeneralLoading || isTokensLoading || isInitialUserLoading
 
   return (
     <>

@@ -42,7 +42,6 @@ import { NotStakingBannerStyled } from 'app/App.components/Info/Banners/BecomeSa
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { useSatelliteStatistics } from 'providers/SatellitesProvider/hooks/useSatelliteStatistics'
-import { sleep } from 'utils/api/sleep'
 
 type CanFetchStatus = 'initial' | 'default' | 'refetch' | 'fallback' | 'done'
 
@@ -63,21 +62,15 @@ const Satellites = () => {
 
   useEffect(() => {
     if (canFetchSatellitesStatus === 'initial') {
-      ;(async function () {
-        const filtered = { where: { participated_feeds: { _neq: '0' } } }
-        updateSatelliteQueryFilters(filtered, SATELLITE_PAGINATION_ACTIVE)
-        await sleep(200)
-        setCanFetchSatellitesStatus('default')
-      })()
+      const filtered = { where: { participated_feeds: { _neq: '0' } } }
+      updateSatelliteQueryFilters(filtered, SATELLITE_PAGINATION_ACTIVE)
+      setCanFetchSatellitesStatus('default')
     }
 
     if (canFetchSatellitesStatus === 'refetch') {
-      ;(async function () {
-        const noFilter = { where: {} }
-        updateSatelliteQueryFilters(noFilter, SATELLITE_PAGINATION_ACTIVE)
-        await sleep(200)
-        setCanFetchSatellitesStatus('fallback')
-      })()
+      const noFilter = { where: {} }
+      updateSatelliteQueryFilters(noFilter, SATELLITE_PAGINATION_ACTIVE)
+      setCanFetchSatellitesStatus('fallback')
     }
   }, [canFetchSatellitesStatus])
 
