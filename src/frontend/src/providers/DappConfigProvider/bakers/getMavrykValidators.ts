@@ -1,7 +1,7 @@
-import {convertNumberForClient} from 'utils/calcFunctions'
-import {MVRK_DECIMALS} from 'utils/constants'
-import {api} from 'utils/api/api'
-import {z} from 'zod'
+import { convertNumberForClient } from 'utils/calcFunctions'
+import { MVRK_DECIMALS } from 'utils/constants'
+import { api } from 'utils/api/api'
+import { z } from 'zod'
 
 // types
 export type MavrykValidatorType = {
@@ -37,9 +37,7 @@ export const getMavrykValidators = async (): Promise<{
 } | null> => {
   try {
     const mavrykApiBase =
-      import.meta.env.VITE_NETWORK === 'atlasnet'
-        ? 'https://atlasnet.api.mavryk.network'
-        : 'https://api.mavryk.network'
+      import.meta.env.VITE_NETWORK === 'atlasnet' ? 'https://atlasnet.api.mavryk.network' : 'https://api.mavryk.network'
 
     const [{ data: daoBakerData }, { data: mavrykDynamicsBakerData }] = await Promise.all([
       api<BakeryDelegateDataType>(
@@ -76,7 +74,7 @@ const DAO_BAKER_STATIC_DATA = {
   isDisabled: true,
   logo: 'https://tezos-nodes.com/storage/images/BBOZYYLQpLfTzbXzu0jvk4CublJzMgLM8GNz152M.png',
   name: 'The DAO',
-  address: 'tz1ZY5ug2KcAiaVfxhDKtKLx8U5zEgsxgdjV',
+  address: 'mv1V4h45W3p4e1sjSBvRkK2uYbvkTnSuHg8g',
   fee: 2,
   yield: 5.5,
   description: `The Maven DAO Validator belongs to the Maven Finance network. A small portion of the earnings are used to pay for the Decentralized Oracle’s transaction fees. The DAO Validator is operated by Mavryk Dynamics on behalf of the Maven Finance network.`,
@@ -91,4 +89,3 @@ const MAVRYK_DYNAMICS_BAKER_STATIC_DATA = {
   yield: 5.5,
   description: `The Mavryk Dynamics Validator belongs to one of the core teams contributing to Maven Finance. Delegating to this Validator contributes to the further development of Maven Finance.`,
 }
-
