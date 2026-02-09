@@ -67,6 +67,15 @@ export const useGraphQLQuery = <TData = unknown, TVariables extends Record<strin
   const { skip, variables, onCompleted, onError, staleTime } = queryOptions
   const { refetchQueryVariables } = refetchOptions ?? {}
 
+  // Store callbacks in refs so effects always call the latest version.
+  // Callbacks are inline arrows that change reference every render, but the
+  // effects only re-run when result.data/result.error change. Without refs,
+  // the effect captures a stale callback from the render where data first arrived.
+  const onCompletedRef = useRef(onCompleted)
+  const onErrorRef = useRef(onError)
+  onCompletedRef.current = onCompleted
+  onErrorRef.current = onError
+
   // Track whether onCompleted has been called for this data to avoid duplicate calls
   const lastProcessedDataRef = useRef<TData | null>(null)
   const lastProcessedErrorRef = useRef<Error | null>(null)
@@ -95,7 +104,7 @@ export const useGraphQLQuery = <TData = unknown, TVariables extends Record<strin
   useEffect(() => {
     if (result.data && result.data !== lastProcessedDataRef.current) {
       lastProcessedDataRef.current = result.data
-      onCompleted?.(result.data)
+      onCompletedRef.current?.(result.data)
     }
   }, [result.data])
 
@@ -103,7 +112,7 @@ export const useGraphQLQuery = <TData = unknown, TVariables extends Record<strin
   useEffect(() => {
     if (result.error && result.error !== lastProcessedErrorRef.current) {
       lastProcessedErrorRef.current = result.error
-      onError?.(result.error)
+      onErrorRef.current?.(result.error)
     }
   }, [result.error])
 
@@ -125,6 +134,11 @@ export const useGraphQLQueryOnce = <
   const queryName = getQueryName(document)
   const { skip, variables, onCompleted, onError, staleTime } = queryOptions
 
+  const onCompletedRef = useRef(onCompleted)
+  const onErrorRef = useRef(onError)
+  onCompletedRef.current = onCompleted
+  onErrorRef.current = onError
+
   const lastProcessedDataRef = useRef<TData | null>(null)
   const lastProcessedErrorRef = useRef<Error | null>(null)
 
@@ -142,14 +156,14 @@ export const useGraphQLQueryOnce = <
   useEffect(() => {
     if (result.data && result.data !== lastProcessedDataRef.current) {
       lastProcessedDataRef.current = result.data
-      onCompleted?.(result.data)
+      onCompletedRef.current?.(result.data)
     }
   }, [result.data])
 
   useEffect(() => {
     if (result.error && result.error !== lastProcessedErrorRef.current) {
       lastProcessedErrorRef.current = result.error
-      onError?.(result.error)
+      onErrorRef.current?.(result.error)
     }
   }, [result.error])
 

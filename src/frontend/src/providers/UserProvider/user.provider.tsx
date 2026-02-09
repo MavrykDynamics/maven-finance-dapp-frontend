@@ -99,7 +99,7 @@ export const UserProvider = ({ children }: Props) => {
     [],
   )
 
-  const { changeUser, connect, signOut } = useUserApi({
+  const { changeUser, connect, restore, signOut } = useUserApi({
     setUserLoading,
     setIsTzktBalancesLoading,
     setUserCtxState,
@@ -111,10 +111,10 @@ export const UserProvider = ({ children }: Props) => {
     userCtxState,
   })
 
-  // effect to perform restoring user from localStorage
+  // effect to perform restoring user from localStorage (silently, no modal)
   useEffect(() => {
-    if (canRestoreUser) connect()
-  }, [canRestoreUser, connect])
+    if (canRestoreUser) restore()
+  }, [canRestoreUser, restore])
 
   // subscribe to user's indexer data
   useGraphQLQuery(USER_DATA_QUERY, {

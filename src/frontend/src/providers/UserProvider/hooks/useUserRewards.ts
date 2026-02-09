@@ -1,5 +1,3 @@
-import { useLocation } from 'react-router'
-
 // hooks
 import { useUserContext } from '../user.provider'
 import { useQueryProvider } from 'providers/QueryProvider/query.provider'
@@ -10,24 +8,16 @@ import { normalizeUserRewards } from '../helpers/userData.helpers'
 
 // consts
 import { USER_REWARDS_DATA_QUERY } from '../queries/userData.query'
-import { getPageNumber, LIST_NAMES_MAPPER, USER_ACTIONS_HISTORY } from 'app/App.components/Pagination/pagination.consts'
 import { DEFAULT_USER_REWARDS } from '../helpers/user.consts'
-
-const userActionsHistoryItemsPerPage = LIST_NAMES_MAPPER[USER_ACTIONS_HISTORY]
 
 export const useUserRewards = () => {
   const { handleQueryError } = useQueryProvider()
   const { setUserRewards, userAddress, rewards } = useUserContext()
 
-  const { search } = useLocation()
-  const currentPage = getPageNumber(search, USER_ACTIONS_HISTORY)
-
   useGraphQLQuery(USER_REWARDS_DATA_QUERY, {
     skip: !userAddress,
     variables: {
       userAddress: userAddress ?? '',
-      offset: userActionsHistoryItemsPerPage * (currentPage - 1),
-      limit: userActionsHistoryItemsPerPage,
     },
     onCompleted: (data) => {
       try {

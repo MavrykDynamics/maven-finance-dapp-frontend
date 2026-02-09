@@ -70,6 +70,22 @@ export function dappClient() {
     }
   }
 
+  /**
+   * Restore an existing wallet session without showing a connection modal.
+   * Used on page refresh to silently check if the user was previously connected.
+   * Returns the address if an active account exists, undefined otherwise.
+   */
+  async function restoreAccount(): Promise<string | undefined> {
+    try {
+      const client = getDAppClient()
+      const account = await client.getActiveAccount()
+      return account?.address
+    } catch (error) {
+      console.error('restoreAccount error:', error)
+      return undefined
+    }
+  }
+
   async function swapAccount() {
     try {
       const client = getDAppClient()
@@ -135,6 +151,7 @@ export function dappClient() {
     loadWallet,
     getDAppClient,
     connectAccount,
+    restoreAccount,
     swapAccount,
     tezos,
     disconnectWallet,
