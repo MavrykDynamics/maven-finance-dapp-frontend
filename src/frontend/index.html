@@ -4,15 +4,43 @@
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="black" />
+    <meta name="theme-color" content="#080628" />
     <meta name="description" content="Decentralized Finance Ecosystem" />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
+    <link rel="preload" href="/src/styles/fonts/Metropolis-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
     <title>Maven Finance - Decentralized Finance Ecosystem</title>
+    <style>
+      /* Inline critical CSS — renders immediately before any JS loads */
+      body { margin: 0; }
+      #app-skeleton {
+        position: fixed;
+        inset: 0;
+        background: rgba(8, 6, 40, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 0;
+      }
+      #app-skeleton .loader {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 3px solid #503EAA;
+        border-top-color: #86D4C9;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
     <noscript id="gtag-body">You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Inline skeleton — painted instantly for fast FCP, replaced by React on mount -->
+      <div id="app-skeleton"><div class="loader"></div></div>
+    </div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
