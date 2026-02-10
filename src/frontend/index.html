@@ -20,6 +20,18 @@
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="preload" href="/src/styles/fonts/Metropolis-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preconnect to API origins to save ~630ms on first requests -->
+    <link rel="preconnect" href="https://atlasnet.api.mavryk.network" crossorigin />
+    <link rel="dns-prefetch" href="https://atlasnet.api.mavryk.network" />
+    <link rel="preconnect" href="https://api.mavenfinance.io" crossorigin />
+    <link rel="dns-prefetch" href="https://api.mavenfinance.io" />
+    <!-- Conditional LCP preload — desktop gets the rocket loader, mobile gets the background -->
+    <link rel="preload" href="/icons/lottie-rocket.webp" as="image" id="lcp-desktop" />
+    <link rel="preload" href="/mobile-plug-background.webp" as="image" id="lcp-mobile" />
+    <!-- Inline mobile detection + conditional preload — runs before module script to skip desktop JS on mobile -->
+    <script>
+      (function(){var m=/Android|iPhone|iPad/i.test(navigator.userAgent);window.__IS_MOBILE=m;if(m){document.documentElement.dataset.mobile='true';document.getElementById('lcp-desktop').remove()}else{document.getElementById('lcp-mobile').remove()}})();
+    </script>
     <title>Maven Finance - Decentralized Finance Ecosystem</title>
     <style>
       /* Inline critical CSS — renders immediately before any JS loads */

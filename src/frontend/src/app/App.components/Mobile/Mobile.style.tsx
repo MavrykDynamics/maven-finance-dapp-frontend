@@ -13,7 +13,7 @@ export const MobilePlugBackground = styled.div`
   width: 100vw;
   height: fit-content;
   min-height: 100vh;
-  background-image: url('./mobile-plug-background.png');
+  background-image: url('/mobile-plug-background.webp');
   background-size: cover;
   background-position: center center;
 `
