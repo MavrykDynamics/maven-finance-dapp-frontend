@@ -232,6 +232,23 @@ export const MenuView = ({ openChangeNodePopupHandler }: MenuViewProps) => {
             {/*  </NewButton>*/}
             {/*</CustomLink>*/}
 
+            {import.meta.env.VITE_PARTNER_SITE_URL ? (
+              <CustomLink
+                to={import.meta.env.VITE_PARTNER_SITE_URL}
+                kind={sidebarOpened ? LinkWide : LinkWrapper}
+              >
+                <NewButton kind={BUTTON_PRIMARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
+                  {sidebarOpened
+                    ? __APP_MODE__ === 'gov'
+                      ? 'Switch to Finance'
+                      : 'Switch to Governance'
+                    : __APP_MODE__ === 'gov'
+                      ? 'FIN'
+                      : 'GOV'}
+                </NewButton>
+              </CustomLink>
+            ) : null}
+
             <CustomLink to="https://forms.gle/bwmTfpoLKBhaf7yD" kind={sidebarOpened ? LinkWide : LinkWrapper}>
               <NewButton kind={BUTTON_SECONDARY} form={sidebarOpened ? BUTTON_WIDE : BUTTON_ROUND} isThin>
                 {sidebarOpened ? 'Submit Feedback' : 'SF'}

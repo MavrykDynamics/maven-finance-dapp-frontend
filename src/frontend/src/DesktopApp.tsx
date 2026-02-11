@@ -13,20 +13,10 @@ import DappConfigProvider, {
   dappConfigContext,
   useDappConfigContext,
 } from 'providers/DappConfigProvider/dappConfig.provider'
-import SatellitesProvider from 'providers/SatellitesProvider/satellites.provider'
-import LoansProvider from 'providers/LoansProvider/loans.provider'
-import DoormanProvider from 'providers/DoormanProvider/doorman.provider'
-import LoansPopupsProvider from 'providers/LoansProvider/LoansModals.provider'
-import ProposalsProvider from 'providers/ProposalsProvider/proposals.provider'
-import VaultsProvider from 'providers/VaultsProvider/vaults.provider'
-import ContractStatusesProvider from 'providers/ContractStatuses/ContractStatuses.provider'
-import FinancialRequestsProvider from 'providers/FinancialRequestsProvider/financialRequests.provider'
-import VestingProvider from 'providers/VestingProvider/vesting.provider'
-import FarmsProvider from 'providers/FarmsProvider/farms.provider'
-import TreasuryProvider from 'providers/TreasuryProvider/treasury.provider'
-import CouncilProvider from 'providers/CouncilProvider/council.provider'
-import SatelliteGovernanceProvider from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider'
-import EGovProvider from 'providers/EmergencyGovernanceProvider/emergencyGovernance.provider'
+
+// App-mode-specific provider trees
+import { UserSectionsProviders } from 'providers/DappSectionsProviders.user'
+import { GovSectionsProviders } from 'providers/DappSectionsProviders.gov'
 
 // components
 import { ToasterMessages } from 'providers/ToasterProvider/components/ToasterMessages'
@@ -72,6 +62,9 @@ const InitialDataDappProviders = ({ children }: { children: React.ReactNode }) =
   )
 }
 
+const isGovApp = __APP_MODE__ === 'gov'
+const SectionsProviders = isGovApp ? GovSectionsProviders : UserSectionsProviders
+
 const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) => {
   const { isLoading: isDappGeneralLoading } = useDappConfigContext()
   const { isLoading: isTokensLoading } = useTokensContext()
@@ -87,45 +80,17 @@ const DappSectionsDataProviders = ({ children }: { children: React.ReactNode }) 
     <>
       <LottieLoader isActive={isInitialLoading} backdropAlpha={1} />
 
-      {isInitialLoading ? (
-        <FullScreenLoadingApp />
-      ) : (
-        <ContractStatusesProvider>
-          <ProposalsProvider>
-            <DoormanProvider>
-              <SatellitesProvider>
-                <LoansProvider>
-                  <VaultsProvider>
-                    <EGovProvider>
-                      <CouncilProvider>
-                        <FarmsProvider>
-                          <SatelliteGovernanceProvider>
-                            <FinancialRequestsProvider>
-                              <TreasuryProvider>
-                                <VestingProvider>{children}</VestingProvider>
-                              </TreasuryProvider>
-                            </FinancialRequestsProvider>
-                          </SatelliteGovernanceProvider>
-                        </FarmsProvider>
-                      </CouncilProvider>
-                    </EGovProvider>
-                  </VaultsProvider>
-                </LoansProvider>
-              </SatellitesProvider>
-            </DoormanProvider>
-          </ProposalsProvider>
-        </ContractStatusesProvider>
-      )}
+      {isInitialLoading ? <FullScreenLoadingApp /> : <SectionsProviders>{children}</SectionsProviders>}
     </>
   )
 }
 
 const AppContainer = () => {
   return (
-    <LoansPopupsProvider>
+    <>
       <ToasterMessages />
       <App />
-    </LoansPopupsProvider>
+    </>
   )
 }
 

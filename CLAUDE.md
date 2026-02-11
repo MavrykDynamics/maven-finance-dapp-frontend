@@ -50,17 +50,17 @@ yarn prettier   # (from repo root)
 
 ### Component Pattern
 Pages follow a controller-view-style pattern:
-- `*.controller.tsx` — Redux-connected container with business logic
+- `*.controller.tsx` — Container with business logic, consumes Context providers
 - `*.view.tsx` / `*.component.tsx` — Presentational component
 - `*.style.tsx` — Styled Components definitions
 
 ### State Management
-Redux with Thunk middleware. The root `State` type and all reducers are combined in `src/reducers/index.ts`. There are 18 domain reducers (wallet, governance, delegation, farm, treasury, council, oracles, etc.). Action creators live in `src/reducers/actions/`.
+React Context providers + TanStack Query. Each domain (wallet, tokens, farms, loans, vaults, etc.) has a Context provider in `src/providers/` that manages its own state and exposes it via hooks (e.g., `useFarmsContext()`, `useLoansContext()`). Redux has been fully removed.
 
 ### Key Directories (under `src/frontend/src/`)
 - `app/App.components/` — Shared UI components (43+): buttons, modals, tables, menus, wallet connection
 - `pages/` — Feature pages (25+), each with controller/view/style files
-- `reducers/` — Redux reducers and `actions/` subdirectory
+- `providers/` — Domain-specific React Context providers (DappConfig, Tokens, User, Farms, Loans, Vaults, etc.)
 - `gql/queries/` — GraphQL query definitions; types auto-generated via codegen to `utils/generated/`
 - `utils/` — Helpers (API, calculations, validators, time, parsing)
 - `utils/TypesAndInterfaces/` — Shared TypeScript interfaces

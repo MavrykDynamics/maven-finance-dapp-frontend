@@ -43,13 +43,24 @@ import { useDappTvl } from 'providers/DappConfigProvider/hooks/useDappTvl'
 import { calcDiffBetweenTwoNumbersInPersentage } from 'utils/calcFunctions'
 import CustomLink from 'app/App.components/CustomLink/CustomLink'
 
+const isGovApp = __APP_MODE__ === 'gov'
+const DEFAULT_TAB = isGovApp ? STAKING_TAB_ID : LENDING_TAB_ID
+
+// Each app excludes tabs that depend on providers not in its provider tree
+const isValidTabForAppMode = (tab: string): tab is TabId => {
+  if (!isValidPersonalDashboardTabId(tab)) return false
+  if (isGovApp && (tab === LENDING_TAB_ID || tab === VAULTS_TAB_ID || tab === FARMS_TAB_ID)) return false
+  if (!isGovApp && tab === TREASURY_TAB_ID) return false
+  return true
+}
+
 // TODO: add farms when their data loading will be fixed and up
 export const Dashboard = () => {
   const { search } = useLocation()
 
   const parsedQp = QueryString.parse(search, { ignoreQueryPrefix: true }) as { tab: string }
   const activeTab = useMemo(
-    () => (isValidPersonalDashboardTabId(parsedQp.tab) ? parsedQp.tab : LENDING_TAB_ID),
+    () => (isValidTabForAppMode(parsedQp.tab) ? parsedQp.tab : DEFAULT_TAB),
     [parsedQp],
   )
 
@@ -88,25 +99,29 @@ export const Dashboard = () => {
             </div>
 
             <div className="dashboard-navigation">
-              <CustomLink
-                to={`/${LENDING_TAB_ID}`}
-                styling={{
-                  navigationLink: activeTab !== LENDING_TAB_ID,
-                  navigationActiveLink: activeTab === LENDING_TAB_ID,
-                }}
-              >
-                Earn/Borrow
-              </CustomLink>
-              <CustomLink
-                to={`/`}
-                queryParams={{ tab: VAULTS_TAB_ID }}
-                styling={{
-                  navigationLink: activeTab !== VAULTS_TAB_ID,
-                  navigationActiveLink: activeTab === VAULTS_TAB_ID,
-                }}
-              >
-                Vaults
-              </CustomLink>
+              {!isGovApp && (
+                <CustomLink
+                  to={`/${LENDING_TAB_ID}`}
+                  styling={{
+                    navigationLink: activeTab !== LENDING_TAB_ID,
+                    navigationActiveLink: activeTab === LENDING_TAB_ID,
+                  }}
+                >
+                  Earn/Borrow
+                </CustomLink>
+              )}
+              {!isGovApp && (
+                <CustomLink
+                  to={`/`}
+                  queryParams={{ tab: VAULTS_TAB_ID }}
+                  styling={{
+                    navigationLink: activeTab !== VAULTS_TAB_ID,
+                    navigationActiveLink: activeTab === VAULTS_TAB_ID,
+                  }}
+                >
+                  Vaults
+                </CustomLink>
+              )}
               <CustomLink
                 to={`/`}
                 queryParams={{ tab: STAKING_TAB_ID }}
@@ -127,26 +142,30 @@ export const Dashboard = () => {
               >
                 Satellites
               </CustomLink>
-              <CustomLink
-                to={`/`}
-                queryParams={{ tab: TREASURY_TAB_ID }}
-                styling={{
-                  navigationLink: activeTab !== TREASURY_TAB_ID,
-                  navigationActiveLink: activeTab === TREASURY_TAB_ID,
-                }}
-              >
-                Treasury
-              </CustomLink>
-              <CustomLink
-                to={`/`}
-                queryParams={{ tab: FARMS_TAB_ID }}
-                styling={{
-                  navigationLink: activeTab !== FARMS_TAB_ID,
-                  navigationActiveLink: activeTab === FARMS_TAB_ID,
-                }}
-              >
-                Farms
-              </CustomLink>
+              {isGovApp && (
+                <CustomLink
+                  to={`/`}
+                  queryParams={{ tab: TREASURY_TAB_ID }}
+                  styling={{
+                    navigationLink: activeTab !== TREASURY_TAB_ID,
+                    navigationActiveLink: activeTab === TREASURY_TAB_ID,
+                  }}
+                >
+                  Treasury
+                </CustomLink>
+              )}
+              {!isGovApp && (
+                <CustomLink
+                  to={`/`}
+                  queryParams={{ tab: FARMS_TAB_ID }}
+                  styling={{
+                    navigationLink: activeTab !== FARMS_TAB_ID,
+                    navigationActiveLink: activeTab === FARMS_TAB_ID,
+                  }}
+                >
+                  Farms
+                </CustomLink>
+              )}
               <CustomLink
                 to={`/`}
                 queryParams={{ tab: ORACLES_TAB_ID }}
@@ -170,21 +189,21 @@ export const Dashboard = () => {
 const TabById = ({ activeTab }: { activeTab: TabId }) => {
   switch (activeTab) {
     case LENDING_TAB_ID:
-      return <LendingTab />
+      return isGovApp ? <Navigate to={`/?tab=${DEFAULT_TAB}`} /> : <LendingTab />
     case VAULTS_TAB_ID:
-      return <VaultsTab />
+      return isGovApp ? <Navigate to={`/?tab=${DEFAULT_TAB}`} /> : <VaultsTab />
     case FARMS_TAB_ID:
-      return <FarmsTab />
+      return isGovApp ? <Navigate to={`/?tab=${DEFAULT_TAB}`} /> : <FarmsTab />
     case SATELLITES_TAB_ID:
       return <SatellitesTab />
     case ORACLES_TAB_ID:
       return <OraclesTab />
     case TREASURY_TAB_ID:
-      return <TreasuryTab />
+      return isGovApp ? <TreasuryTab /> : <Navigate to={`/?tab=${DEFAULT_TAB}`} />
     case STAKING_TAB_ID:
       return <StakingTab />
     default:
-      return <Navigate to={`/${LENDING_TAB_ID}`} />
+      return <Navigate to={`/?tab=${DEFAULT_TAB}`} />
   }
 }
 
