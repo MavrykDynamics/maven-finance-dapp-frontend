@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -184,8 +184,6 @@ export const VaultsView = () => {
     const currentTabId = tabsList.find((item) => item.path === tabId)?.id
 
     if (!foundTab?.path || currentTabId === id) return
-
-    setIsLoading(true)
 
     navigate(`${pathname}/${foundTab.path}`)
   }

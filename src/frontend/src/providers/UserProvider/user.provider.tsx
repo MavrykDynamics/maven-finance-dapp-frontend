@@ -12,8 +12,8 @@ import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserApi } from './hooks/useUserApi'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // helpers
 import { normalizeUserIndexerTokensBalances, openTzktWebSocket } from './helpers/userBalances.helpers'
@@ -44,11 +44,27 @@ const hasUserInLocalStorage =
   localStorage.getItem('beacon:active-account') && localStorage.getItem('beacon:active-account') !== 'undefined'
 
 /**
+ * Read the wallet address synchronously from localStorage so the UI
+ * can show it immediately on page load (no "Connect Wallet" flash).
+ * The full restoration (balances, sockets) still happens async via restore().
+ */
+const getStoredUserAddress = (): string | null => {
+  try {
+    const raw = localStorage.getItem('beacon:active-account')
+    if (!raw || raw === 'undefined') return null
+    const parsed = JSON.parse(raw)
+    return parsed?.address ?? null
+  } catch {
+    return null
+  }
+}
+
+/**
  * ADJUSTMENTS:
  * 1. on changing user do not reopen socket, just update filter (invoke), currently hadn't found any example of it
  */
 export const UserProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata } = useTokensContext()
   const {
     contractAddresses: { mvnTokenAddress },
@@ -60,7 +76,10 @@ export const UserProvider = ({ children }: Props) => {
   const tzktSocket = useRef<null | signalR.HubConnection>(null)
   const currentIndexedLvlListenerId = useRef<null | string>(null)
 
-  const [userCtxState, setUserCtxState] = useState<UserContextStateType>(DEFAULT_USER)
+  const [userCtxState, setUserCtxState] = useState<UserContextStateType>(() => {
+    const storedAddress = getStoredUserAddress()
+    return storedAddress ? { ...DEFAULT_USER, userAddress: storedAddress } : DEFAULT_USER
+  })
   const [userTzktTokens, setUserTzktTokens] = useState<UserTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
 
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
@@ -99,7 +118,7 @@ export const UserProvider = ({ children }: Props) => {
     [],
   )
 
-  const { changeUser, connect, signOut } = useUserApi({
+  const { changeUser, connect, restore, signOut } = useUserApi({
     setUserLoading,
     setIsTzktBalancesLoading,
     setUserCtxState,
@@ -111,19 +130,19 @@ export const UserProvider = ({ children }: Props) => {
     userCtxState,
   })
 
-  // effect to perform restoring user from localStorage
+  // effect to perform restoring user from localStorage (silently, no modal)
   useEffect(() => {
-    if (canRestoreUser) connect()
-  }, [canRestoreUser, connect])
+    if (canRestoreUser) restore()
+  }, [canRestoreUser, restore])
 
   // subscribe to user's indexer data
-  useQueryWithRefetch(USER_DATA_QUERY, {
+  useGraphQLQuery(USER_DATA_QUERY, {
     skip: !userCtxState.userAddress,
     variables: {
       userAddress: userCtxState.userAddress ?? '',
     },
     onCompleted: (indexerData) => setUserIndexerData(indexerData),
-    onError: (error) => handleApolloError(error, 'USER_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'USER_DATA_QUERY'),
   })
 
   /**

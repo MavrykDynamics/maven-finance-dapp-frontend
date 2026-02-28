@@ -1,28 +1,29 @@
 export {}
 
+interface ImportMetaEnv {
+  readonly VITE_DATA_ENV: 'dev' | 'prod'
+  readonly VITE_ENV: 'dev' | 'prod'
+  readonly VITE_TZKT_API: string
+  readonly VITE_TZKT_LINK: string
+  readonly VITE_TZKT_SERVICE_API: string
+  readonly VITE_WERT_API: string
+  readonly VITE_GRAPHQL_API: string
+  readonly VITE_GRAPHQL_WSS_API: string
+  readonly VITE_NAME: string
+  readonly VITE_NETWORK: 'atlasnet'
+  readonly VITE_IPFS_API_KEY: string
+  readonly VITE_IPFS_PROJECT_ID: string
+  readonly VITE_RECAPTCHA_SITE_KEY?: string
+  readonly VITE_MAINTANCE_MODE?: string
+  readonly VITE_IS_DEMO?: string
+  readonly VITE_EXPLORER_LINK?: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+
 declare global {
-  namespace NodeJS {
-    // Need to specify types manually, cuz extends ProcessEnvType not working, so keed it updated due to envVariablesSchema
-    interface ProcessEnv extends ProcessEnvType {
-      REACT_APP_DATA_ENV: 'dev' | 'prod'
-      REACT_APP_ENV: 'dev' | 'prod'
-      REACT_APP_TZKT_API: 'https://atlasnet.api.mavryk.network'
-      REACT_APP_TZKT_LINK: 'https://ghostnet.tzkt.io' | 'https://tzkt.io'
-      REACT_APP_TZKT_SERVICE_API: 'https://services.tzkt.io'
-      REACT_APP_WERT_API: 'https://sandbox.wert.io'
-      REACT_APP_GRAPHQL_API: 'https://api.mavenfinance.io/v1/graphql'
-      REACT_APP_GRAPHQL_WSS_API: 'wss://api.mavenfinance.io/v1/graphql'
-
-      REACT_APP_NAME: string
-      // TODO NETWORK
-      REACT_APP_NETWORK: 'atlasnet'
-
-      IPFS_API_KEY: string
-      IPFS_PROJECT_ID: string
-      NODE_VERSION: string
-    }
-  }
-
   type DeepNullable<T> = T extends object
     ? {
         [P in keyof T]: T extends Array<any> ? T[P] : DeepNullable<T[P]> | null

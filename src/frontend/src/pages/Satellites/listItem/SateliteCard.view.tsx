@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { memo, useCallback, useMemo } from 'react'
+import { Link } from 'react-router'
 
 // context, hooks
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
@@ -103,7 +103,7 @@ const SatelliteLastProposalVote = ({
   )
 }
 
-export const SatelliteListItem = ({
+export const SatelliteListItem = memo(({
   satellite,
   isDetailsPage = false,
   fromNodesPage = false,
@@ -393,4 +393,5 @@ export const SatelliteListItem = ({
       {children ? children : <SatelliteLastProposalVote lastVotedProposal={satellite.lastVotedProposal} />}
     </SatelliteCard>
   )
-}
+})
+SatelliteListItem.displayName = 'SatelliteListItem'

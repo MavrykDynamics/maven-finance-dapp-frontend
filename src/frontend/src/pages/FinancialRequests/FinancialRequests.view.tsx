@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { memo, useCallback, useMemo, useState } from 'react'
+import { useLocation } from 'react-router'
 
 // helpers
 import { getRequestStatus } from 'providers/FinancialRequestsProvider/helpers/financialRequests.utils'
@@ -49,7 +49,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 
-export const FinancialRequestsView = ({
+export const FinancialRequestsView = memo(({
   ongoingFinancialRequestsIds: ongoing,
   pastFinancialRequestsIds: past,
   financialRequestsMapper,
@@ -316,4 +316,5 @@ export const FinancialRequestsView = ({
       <RightSideBlock />
     </FinancialRequestsStyled>
   )
-}
+})
+FinancialRequestsView.displayName = 'FinancialRequestsView'

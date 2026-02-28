@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router'
 
 // consts
 import { BUTTON_SECONDARY } from '../../app/App.components/Button/Button.constants'
@@ -81,7 +81,7 @@ type ActionsDDItemType = {
   disabled?: boolean
 }
 
-export function CouncilView({
+export const CouncilView = memo(({
   selectedTab,
   isBreakGlassCouncil = false,
 
@@ -92,7 +92,7 @@ export function CouncilView({
   myPastActions,
   actionsMapper,
   members,
-}: Props) {
+}: Props) => {
   const navigate = useNavigate()
   const { search } = useLocation()
 
@@ -352,4 +352,5 @@ export function CouncilView({
       />
     </CouncilPageWrapper>
   )
-}
+})
+CouncilView.displayName = 'CouncilView'

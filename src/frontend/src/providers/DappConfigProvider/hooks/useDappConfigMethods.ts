@@ -30,7 +30,7 @@ export const useDappConfigMethods = ({ setDappConfigCtxState }: Props): DappConf
     } catch (e) {
       console.error('copy to clipboard error: ', e)
     }
-  }, [])
+  }, [success])
 
   // preferences actions
   const toggleTheme = useCallback((theme: ThemeType) => {
@@ -41,7 +41,7 @@ export const useDappConfigMethods = ({ setDappConfigCtxState }: Props): DappConf
       const err = unknownToError(e)
       bug(err)
     }
-  }, [])
+  }, [bug])
 
   const toggleRPCNodePopup = useCallback((isOpened: boolean) => {
     setDappConfigCtxState((prev) => ({ ...prev, preferences: { ...prev.preferences, changeNodePopupOpen: isOpened } }))

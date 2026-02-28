@@ -1,4 +1,4 @@
-import { matchPath } from 'react-router-dom'
+import { matchPath } from 'react-router'
 import { SubNavigationRoute } from 'utils/TypesAndInterfaces/Navigation'
 
 export const PRIMARY = 'primary'

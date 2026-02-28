@@ -1,4 +1,4 @@
-import { Link, To, useLocation, useNavigate } from 'react-router-dom'
+import { Link, To, useLocation, useNavigate } from 'react-router'
 
 import { BUTTON_SECONDARY } from 'app/App.components/Button/Button.constants'
 

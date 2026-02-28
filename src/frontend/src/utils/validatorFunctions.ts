@@ -4,7 +4,7 @@ import { InputStatusType } from 'app/App.components/Input/Input.constants'
 import { RpcClient } from '@mavrykdynamics/webmavryk-rpc'
 import { PreferencesState } from 'providers/DappConfigProvider/dappConfig.provider.types'
 
-const isIPFS = require('is-ipfs')
+import isIPFS from 'is-ipfs'
 
 /**
  * File contains different functions used to validate input throughout the dapp

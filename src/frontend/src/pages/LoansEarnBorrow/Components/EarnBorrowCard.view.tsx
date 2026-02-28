@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // components
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'

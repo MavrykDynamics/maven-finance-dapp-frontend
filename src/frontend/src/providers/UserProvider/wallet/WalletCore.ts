@@ -17,9 +17,9 @@ import { RPC_NODE } from 'providers/DappConfigProvider/helpers/dappConfig.const'
 import { getItemFromStorage } from 'utils/storage'
 
 // Need to use as cuz NetworkType is enum and ts don't understand that all types are correct
-const WALLET_NETWORK = process.env.REACT_APP_NETWORK as NetworkType
+const WALLET_NETWORK = import.meta.env.VITE_NETWORK as NetworkType
 const DAPP_METADATA = {
-  name: process.env.REACT_APP_NAME,
+  name: import.meta.env.VITE_NAME,
   preferredNetwork: WALLET_NETWORK,
 }
 
@@ -65,8 +65,24 @@ export function dappClient() {
 
       return account?.address
     } catch (error) {
-      console.log('connectAccount error:', error)
+      console.error('connectAccount error:', error)
       throw error
+    }
+  }
+
+  /**
+   * Restore an existing wallet session without showing a connection modal.
+   * Used on page refresh to silently check if the user was previously connected.
+   * Returns the address if an active account exists, undefined otherwise.
+   */
+  async function restoreAccount(): Promise<string | undefined> {
+    try {
+      const client = getDAppClient()
+      const account = await client.getActiveAccount()
+      return account?.address
+    } catch (error) {
+      console.error('restoreAccount error:', error)
+      return undefined
     }
   }
 
@@ -99,14 +115,14 @@ export function dappClient() {
         } catch (e) {
           // If no wallet choosen set back prev selected wallet to dapp instance
           await client.setActiveAccount(currentAccount)
-          console.log('choosing wallet error: ', e)
+          console.error('choosing wallet error: ', e)
         }
       }
 
       // Return new wallet address if it was selected or prev selected wallet address
       return newAccount?.address ?? currentAccount?.address
     } catch (error) {
-      console.log('swapAccount error:', error)
+      console.error('swapAccount error:', error)
       throw error
     }
   }
@@ -126,7 +142,7 @@ export function dappClient() {
       await wallet.disconnect()
       await wallet.clearActiveAccount()
     } catch (error) {
-      console.log('disconnectWallet error:', error)
+      console.error('disconnectWallet error:', error)
       throw error
     }
   }
@@ -135,6 +151,7 @@ export function dappClient() {
     loadWallet,
     getDAppClient,
     connectAccount,
+    restoreAccount,
     swapAccount,
     tezos,
     disconnectWallet,

@@ -47,7 +47,7 @@ import {
   BecomeSatelliteRegisterAsOracle,
 } from '../BecomeSatellite.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router'
 import { isMavrykProductUrl } from 'utils/url.utils'
 
 const connectWalletMessage = (

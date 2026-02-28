@@ -34,9 +34,8 @@ import {
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useQuery } from '@apollo/client'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery, useGraphQLQueryOnce } from 'providers/QueryProvider/useGraphQLQuery'
 
 // context
 export const satelliteGovernanceContext = React.createContext<SatelliteGovernanceContext>(undefined!)
@@ -46,7 +45,7 @@ type Props = {
 }
 
 const SatelliteGovernanceProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { userAddress } = useUserContext()
 
   const [satelliteGovCtxState, setSatelliteGovCtxState] =
@@ -73,7 +72,7 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
    * PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY -> load all past satellite governance actions
    * USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY -> load all satellite governance actions created by user
    */
-  useQuery(SATELLITE_GOVERNANCE_CONFIG_QUERY, {
+  useGraphQLQueryOnce(SATELLITE_GOVERNANCE_CONFIG_QUERY, {
     skip: !activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB],
     onCompleted: (data) => {
       setSatelliteGovCtxState((prev) => ({
@@ -81,10 +80,10 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
         config: normalizeSatelliteGovernanceConfig(data),
       }))
     },
-    onError: (error) => handleApolloError(error, 'SATELLITE_GOVERNANCE_CONFIG_QUERY'),
+    onError: (error) => handleQueryError(error, 'SATELLITE_GOVERNANCE_CONFIG_QUERY'),
   })
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY,
     {
       skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] !== SATELLITES_GOVERNANCE_ONGOING_ACTIONS_SUB,
@@ -103,14 +102,14 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
-      onError: (error) => handleApolloError(error, 'ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
+      onError: (error) => handleQueryError(error, 'ONGOING_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
     },
     {
       refetchQueryVariables,
     },
   )
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY,
     {
       skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] !== SATELLITES_GOVERNANCE_PAST_ACTIONS_SUB,
@@ -126,14 +125,14 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
-      onError: (error) => handleApolloError(error, 'PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
+      onError: (error) => handleQueryError(error, 'PAST_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
     },
     {
       refetchQueryVariables,
     },
   )
 
-  useQueryWithRefetch(USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY, {
+  useGraphQLQuery(USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY, {
     skip: activeSubs[SATELLITE_GOV_ACTIONS_DATA] !== SATELLITES_GOVERNANCE_CURRENT_USER_ACTIONS_SUB || !userAddress,
     onCompleted: (data) => {
       const { satelliteGovIdsMapper, mySatelliteGovIds } = normalizerSatelliteGovernanceActions(data, userAddress)
@@ -147,12 +146,12 @@ const SatelliteGovernanceProvider = ({ children }: Props) => {
     variables: {
       userAddress,
     },
-    onError: (error) => handleApolloError(error, 'USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
+    onError: (error) => handleQueryError(error, 'USER_SATELLITES_GOVERNANCE_ACTIONS_QUERY'),
   })
 
-  const changeSatelliteGovSubscriptionsList = (subs: Partial<SatelliteGovernanceSubsRecordType>) => {
+  const changeSatelliteGovSubscriptionsList = useCallback((subs: Partial<SatelliteGovernanceSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...subs }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

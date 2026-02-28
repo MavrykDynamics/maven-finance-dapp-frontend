@@ -168,6 +168,44 @@ export const useUserApi = ({
   ])
 
   /**
+   * Restore user's wallet session silently (no modal).
+   * Used on page refresh when we have wallet data in localStorage.
+   * If no active account is found, clears loading state without showing a modal.
+   */
+  const restore = useCallback(async () => {
+    try {
+      const userAddress = await DAPP_INSTANCE.restoreAccount()
+
+      if (userAddress) {
+        setUserLoading(true)
+        loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
+
+        if (tzktSocket) {
+          attachTzktSocketsEventHandlers({
+            userAddress,
+            handleTokens: updateUserTzktTokenBalances(userAddress),
+            tzktSocket,
+            handleDisconnect,
+            handleOnReconnected,
+          })
+        }
+      } else {
+        // No active account found — wallet can't be restored silently
+        setUserLoading(false)
+      }
+    } catch (e) {
+      console.error('Failed to restore wallet:', e)
+      setUserLoading(false)
+    }
+  }, [
+    updateUserTzktTokenBalances,
+    loadInitialTzktTokensForNewlyConnectedUser,
+    handleDisconnect,
+    handleOnReconnected,
+    tzktSocket,
+  ])
+
+  /**
    * disconnect user's wallet to DAPP & set context to no user state
    */
   const signOut = useCallback(async () => {
@@ -224,7 +262,7 @@ export const useUserApi = ({
     handleOnReconnected,
   ])
 
-  const returnValue = useMemo(() => ({ connect, changeUser, signOut }), [connect, changeUser, signOut])
+  const returnValue = useMemo(() => ({ connect, restore, changeUser, signOut }), [connect, restore, changeUser, signOut])
 
   return returnValue
 }

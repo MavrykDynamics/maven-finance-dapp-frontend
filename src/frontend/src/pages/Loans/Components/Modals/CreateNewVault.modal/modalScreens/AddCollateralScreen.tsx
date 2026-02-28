@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 // providers
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
+import useMavrykValidatorsForDD from 'providers/DappConfigProvider/bakers/useDDMavrykValidators'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -60,7 +60,7 @@ export const AddCollateralScreen = () => {
   const { tokensMetadata, tokensPrices, collateralTokens } = useTokensContext()
   const { userTokensBalances } = useUserContext()
 
-  const { bakersRecord, bakers } = useXtzBakersForDD()
+  const { bakersRecord, bakers } = useMavrykValidatorsForDD()
   const {
     selectedCollateralsAddresses,
     selectedCollaterals,

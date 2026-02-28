@@ -1,5 +1,5 @@
 import { useState, useMemo, useLayoutEffect } from 'react'
-import { useNavigate, Navigate, useLocation } from 'react-router-dom'
+import { useNavigate, Navigate, useLocation } from 'react-router'
 import QueryString from 'qs'
 
 // types

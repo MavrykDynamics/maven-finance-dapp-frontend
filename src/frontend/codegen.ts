@@ -86,7 +86,7 @@ const INDEXER_ENV_PREFIXES = {
 }
 
 const config: CodegenConfig = {
-  schema: process.env.REACT_APP_GRAPHQL_API,
+  schema: import.meta.env.VITE_GRAPHQL_API,
   documents: ['src/**/*.{ts,tsx}'],
   generates: {
     'src/utils/__generated__/': {
@@ -111,7 +111,7 @@ const config: CodegenConfig = {
                   if (node.alias && node?.name?.value && INDEXER_TABLES[node.name.value]) {
                     // update table tabe to use prefix based on env
                     // @ts-expect-error
-                    node.name.value = `${INDEXER_ENV_PREFIXES[process.env.REACT_APP_DATA_ENV]}${node.name.value}`
+                    node.name.value = `${INDEXER_ENV_PREFIXES[import.meta.env.VITE_DATA_ENV]}${node.name.value}`
                   }
                   return node
                 },

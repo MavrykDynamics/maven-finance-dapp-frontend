@@ -1,5 +1,5 @@
 import { useLayoutEffect } from 'react'
-import { useLocation, Navigate } from 'react-router-dom'
+import { useLocation, Navigate } from 'react-router'
 import QueryString from 'qs'
 
 // view

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 
 // view
 import { PageHeader } from '../../app/App.components/PageHeader/PageHeader.controller'
