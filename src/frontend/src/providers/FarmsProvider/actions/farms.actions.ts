@@ -9,7 +9,7 @@ import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/es
 import { ActionErrorReturnType, ActionSuccessReturnType } from 'providers/DappConfigProvider/dappConfig.provider.types'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { FarmsTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
-import { OpKind } from '@mavrykdynamics/taquito'
+import { OpKind } from '@mavrykdynamics/webmavryk'
 
 export const harvestRewards = async (
   farmAddress: string,

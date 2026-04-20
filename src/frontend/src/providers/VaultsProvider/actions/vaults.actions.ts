@@ -4,7 +4,7 @@ import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/es
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 
 // consts
-import { OpKind, MavrykToolkit, TransferParams } from '@mavrykdynamics/taquito'
+import { OpKind, MavrykToolkit, TransferParams } from '@mavrykdynamics/webmavryk'
 import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 
 // types

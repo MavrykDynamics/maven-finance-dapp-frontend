@@ -6,7 +6,7 @@ import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 // types
 import { SatelliteGovernanceTransfer } from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider.types'
 import { UserContext } from 'providers/UserProvider/user.provider.types'
-import { OpKind, TransferParams } from '@mavrykdynamics/taquito'
+import { OpKind, TransferParams } from '@mavrykdynamics/webmavryk'
 
 // Suspend Satellite
 export const suspendSatellite = async (
