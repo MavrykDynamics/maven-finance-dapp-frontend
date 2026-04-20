@@ -132,11 +132,12 @@ const handleFarmLpToken = (tokenFromGql: TokensGqlSchemaType[number]): TokenMeta
     const farmLpToken = farms_lp_tokens[0]
     if (!farmLpToken) return null
 
+    const tokenType = isValidTokenType(token_standard) ? token_standard : 'unknown'
+
     // Validating token type, it should be one of tez | fa2 | fa12
-    const tokenType = isValidTokenType(token_standard) ? token_standard : null
-    if (!tokenType) {
-      throw new Error('Token is invalid token type, not in range mav | fa2 | fa12')
-    }
+    // if (!tokenType) {
+    //   throw new Error('Token is invalid token type, not in range mav | fa2 | fa12')
+    // }
 
     // parsing token metadata schema, to have icon and decimals for token
     const parsedMetadata = tokenMetadataSchema.parse(metadata)
@@ -227,11 +228,12 @@ export const normalizeTokensMetadata = (tokensFromGql: TokensGqlSchemaType) => {
           mvn_tokens,
         } = tokenFromGql
 
+        const tokenType = isValidTokenType(token_standard) ? token_standard : 'unknown'
+
         // Validating token type, it should be one of tez | fa2 | fa12
-        const tokenType = isValidTokenType(token_standard) ? token_standard : null
-        if (!tokenType) {
-          throw new Error('Token is invalid token type, not in range mav | fa2 | fa12')
-        }
+        // if (!tokenType) {
+        //   throw new Error('Token is invalid token type, not in range mav | fa2 | fa12')
+        // }
 
         // parsing metadata schema, to have icon and decimals for token
         const parsedMetadata = tokenMetadataSchema.parse(metadata)

@@ -141,6 +141,7 @@ export const repayPartOfVaultAction = async (
             amount: convertedAssetAmount,
           },
         ])
+      default: throw new Error('Unknown token type')
     }
   } catch (error) {
     const e = unknownToError(error)
