@@ -48,6 +48,16 @@ export function dappClient() {
     return loadWallet()
   }
 
+  async function getActiveAccountAddress() {
+    try {
+      const client = getDAppClient()
+      return (await client.getActiveAccount())?.address ?? null
+    } catch (error) {
+      console.log('getActiveAccountAddress error:', error)
+      throw error
+    }
+  }
+
   async function connectAccount() {
     try {
       const client = getDAppClient()
@@ -134,6 +144,7 @@ export function dappClient() {
   return {
     loadWallet,
     getDAppClient,
+    getActiveAccountAddress,
     connectAccount,
     swapAccount,
     tezos,

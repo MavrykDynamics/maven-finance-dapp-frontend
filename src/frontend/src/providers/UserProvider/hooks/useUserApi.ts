@@ -131,6 +131,48 @@ export const useUserApi = ({
     [loadInitialTzktTokensForNewlyConnectedUser],
   )
 
+  const handleConnectedUser = useCallback(
+    (userAddress: string) => {
+      setUserLoading(true)
+      void loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
+
+      if (!tzktSocket) return
+
+      attachTzktSocketsEventHandlers({
+        userAddress,
+        handleTokens: updateUserTzktTokenBalances(userAddress),
+        tzktSocket,
+        handleDisconnect,
+        handleOnReconnected,
+      })
+    },
+    [
+      updateUserTzktTokenBalances,
+      loadInitialTzktTokensForNewlyConnectedUser,
+      handleDisconnect,
+      handleOnReconnected,
+      tzktSocket,
+    ],
+  )
+
+  const restoreUser = useCallback(async () => {
+    try {
+      const userAddress = await DAPP_INSTANCE.getActiveAccountAddress()
+
+      if (!userAddress) {
+        setUserLoading(false)
+        return false
+      }
+
+      handleConnectedUser(userAddress)
+      return true
+    } catch (e) {
+      console.error(`Failed to restore wallet:`, e)
+      setUserLoading(false)
+      return false
+    }
+  }, [handleConnectedUser])
+
   /**
    * connect user's wallet to DAPP:
    * load tzkt balances and set user's address to ctx (inside loadInitialTzktTokensForNewlyConnectedUser) to make QueryWithRefetch work
@@ -140,18 +182,7 @@ export const useUserApi = ({
       const userAddress = await DAPP_INSTANCE.connectAccount()
 
       if (userAddress) {
-        setUserLoading(true)
-        loadInitialTzktTokensForNewlyConnectedUser({ userAddress })
-
-        if (tzktSocket) {
-          attachTzktSocketsEventHandlers({
-            userAddress,
-            handleTokens: updateUserTzktTokenBalances(userAddress),
-            tzktSocket,
-            handleDisconnect,
-            handleOnReconnected,
-          })
-        }
+        handleConnectedUser(userAddress)
       } else {
         info('No account chosen', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
       }
@@ -159,13 +190,7 @@ export const useUserApi = ({
       console.error(`Failed to connect wallet:`, e)
       bug('Failed to connect wallet', TOASTER_TEXTS[TOASTER_SUBSCRIPTION_ERROR]['title'])
     }
-  }, [
-    updateUserTzktTokenBalances,
-    loadInitialTzktTokensForNewlyConnectedUser,
-    handleDisconnect,
-    handleOnReconnected,
-    tzktSocket,
-  ])
+  }, [handleConnectedUser])
 
   /**
    * disconnect user's wallet to DAPP & set context to no user state
@@ -224,7 +249,10 @@ export const useUserApi = ({
     handleOnReconnected,
   ])
 
-  const returnValue = useMemo(() => ({ connect, changeUser, signOut }), [connect, changeUser, signOut])
+  const returnValue = useMemo(
+    () => ({ restoreUser, connect, changeUser, signOut }),
+    [restoreUser, connect, changeUser, signOut],
+  )
 
   return returnValue
 }
