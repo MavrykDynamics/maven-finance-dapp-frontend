@@ -40,9 +40,6 @@ type Props = {
 
 // Instance of Dapp wallet
 export const DAPP_INSTANCE = dappClient()
-const hasStoredActiveAccount = Boolean(
-  localStorage.getItem('beacon:active-account') && localStorage.getItem('beacon:active-account') !== 'undefined',
-)
 
 /**
  * ADJUSTMENTS:
@@ -56,7 +53,7 @@ export const UserProvider = ({ children }: Props) => {
   } = useDappConfigContext()
 
   // track whether startup restoration has finished
-  const [isUserRestored, setIsUserRestored] = useState(!hasStoredActiveAccount)
+  const [isUserRestored, setIsUserRestored] = useState(false)
 
   const tzktSocket = useRef<null | signalR.HubConnection>(null)
   const currentIndexedLvlListenerId = useRef<null | string>(null)
@@ -65,17 +62,15 @@ export const UserProvider = ({ children }: Props) => {
   const [userTzktTokens, setUserTzktTokens] = useState<UserTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
 
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
-  const [isUserLoading, setUserLoading] = useState(hasStoredActiveAccount)
+  const [isUserLoading, setUserLoading] = useState(true)
 
   /**
-   * we can start restoring user from localStorage if:
-   *    1. we have his data in localStorage
-   *    2. we have tokensAddresses we need to load balances for
-   *    3. we have mvnToken address, so set its balance
-   *    4. we haven't loaded user data previously in this app mount
+   * we can start restoring user if:
+   *    1. we have tokensAddresses we need to load balances for
+   *    2. we have mvnToken address, so set its balance
+   *    3. we haven't loaded user data previously in this app mount
    */
-  const canRestoreUser =
-    hasStoredActiveAccount && Object.keys(tokensMetadata).length !== 0 && mvnTokenAddress !== null && !isUserRestored
+  const canRestoreUser = Object.keys(tokensMetadata).length !== 0 && mvnTokenAddress !== null && !isUserRestored
 
   // open socket for tzkt without listeners, cuz don't have user address to subscribe
   useEffect(() => {
@@ -107,7 +102,7 @@ export const UserProvider = ({ children }: Props) => {
     userCtxState,
   })
 
-  // effect to perform restoring user from localStorage
+  // effect to perform restoring user from wallet client state
   useEffect(() => {
     if (!canRestoreUser) return
 
