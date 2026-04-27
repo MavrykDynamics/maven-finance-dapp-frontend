@@ -35,6 +35,10 @@ export function dappClient() {
     return new MavletWallet(DAPP_METADATA)
   }
 
+  function resetWallet() {
+    instance = undefined
+  }
+
   function loadWallet() {
     if (!instance) instance = init()
     return instance
@@ -133,11 +137,13 @@ export function dappClient() {
   async function disconnectWallet() {
     try {
       const wallet = getDAppClientWallet()
-      await wallet.disconnect()
       await wallet.clearActiveAccount()
+      await wallet.disconnect()
     } catch (error) {
       console.log('disconnectWallet error:', error)
       throw error
+    } finally {
+      resetWallet()
     }
   }
 
