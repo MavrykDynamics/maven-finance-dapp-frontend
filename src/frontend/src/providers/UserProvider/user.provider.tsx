@@ -40,8 +40,6 @@ type Props = {
 
 // Instance of Dapp wallet
 export const DAPP_INSTANCE = dappClient()
-const hasUserInLocalStorage =
-  localStorage.getItem('beacon:active-account') && localStorage.getItem('beacon:active-account') !== 'undefined'
 
 /**
  * ADJUSTMENTS:
@@ -54,8 +52,8 @@ export const UserProvider = ({ children }: Props) => {
     contractAddresses: { mvnTokenAddress },
   } = useDappConfigContext()
 
-  // track whether we've loaded user on init, if we have his wallet data in local storage
-  const isUserRestored = useRef<boolean>(false)
+  // track whether startup restoration has finished
+  const [isUserRestored, setIsUserRestored] = useState(false)
 
   const tzktSocket = useRef<null | signalR.HubConnection>(null)
   const currentIndexedLvlListenerId = useRef<null | string>(null)
@@ -64,21 +62,15 @@ export const UserProvider = ({ children }: Props) => {
   const [userTzktTokens, setUserTzktTokens] = useState<UserTzKtTokenBalances>(DEFAULT_USER_TZKT_TOKENS)
 
   const [isTzktBalancesLoading, setIsTzktBalancesLoading] = useState(false)
-  const [isUserLoading, setUserLoading] = useState(hasUserInLocalStorage && !isUserRestored.current)
+  const [isUserLoading, setUserLoading] = useState(true)
 
   /**
-   * we can start restoring user from localStorage if:
-   *    1. we have his data in localStorage
-   *    2. we have tokensAddresses we need to load balances for
-   *    3. we have mvnToken address, so set its balance
-   *    4. we haven't loaded user data previously in this app mount
-   *    5. we have tzktSocket started to attach listeners to it
+   * we can start restoring user if:
+   *    1. we have tokensAddresses we need to load balances for
+   *    2. we have mvnToken address, so set its balance
+   *    3. we haven't loaded user data previously in this app mount
    */
-  const canRestoreUser =
-    hasUserInLocalStorage &&
-    Object.keys(tokensMetadata).length !== 0 &&
-    mvnTokenAddress !== null &&
-    !isUserRestored.current
+  const canRestoreUser = Object.keys(tokensMetadata).length !== 0 && mvnTokenAddress !== null && !isUserRestored
 
   // open socket for tzkt without listeners, cuz don't have user address to subscribe
   useEffect(() => {
@@ -88,7 +80,6 @@ export const UserProvider = ({ children }: Props) => {
 
     return () => {
       tzktSocket?.current?.stop()
-      isUserRestored.current = false
     }
   }, [])
 
@@ -99,7 +90,7 @@ export const UserProvider = ({ children }: Props) => {
     [],
   )
 
-  const { changeUser, connect, signOut } = useUserApi({
+  const { restoreUser, changeUser, connect, signOut } = useUserApi({
     setUserLoading,
     setIsTzktBalancesLoading,
     setUserCtxState,
@@ -111,10 +102,14 @@ export const UserProvider = ({ children }: Props) => {
     userCtxState,
   })
 
-  // effect to perform restoring user from localStorage
+  // effect to perform restoring user from wallet client state
   useEffect(() => {
-    if (canRestoreUser) connect()
-  }, [canRestoreUser, connect])
+    if (!canRestoreUser) return
+
+    void restoreUser().then((isUserLoaded) => {
+      if (!isUserLoaded) setIsUserRestored(true)
+    })
+  }, [canRestoreUser, restoreUser])
 
   // subscribe to user's indexer data
   useQueryWithRefetch(USER_DATA_QUERY, {
@@ -221,19 +216,14 @@ export const UserProvider = ({ children }: Props) => {
     [mvnTokenAddress, tokensMetadata],
   )
 
+  useEffect(() => {
+    if (!isUserRestored && userCtxState.userAddress && !isUserLoading && !isTzktBalancesLoading) {
+      setIsUserRestored(true)
+    }
+  }, [isUserRestored, userCtxState.userAddress, isUserLoading, isTzktBalancesLoading])
+
   const providerValue = useMemo(() => {
     const isLoading = isUserLoading || isTzktBalancesLoading
-
-    /**
-     * set isUserRestored to true, when:
-     *    1. we haven't restored user
-     *    2. we have user address set in context (user data loading started)
-     *    3. loading are false, means, that user has been loaded
-     *    or 4. we don't have user's wallet in localStorage, and we can't restore him
-     */
-    if ((!isUserRestored.current && userCtxState.userAddress && !isLoading) || !hasUserInLocalStorage) {
-      isUserRestored.current = true
-    }
 
     // need to remove m[MVN] token from userTzktTokens, cuz value is always outdated
     // and for that tokens values are used from our indexer, not tzkt socket
@@ -249,7 +239,7 @@ export const UserProvider = ({ children }: Props) => {
         ...userCtxState.userTokensBalances,
         ...(userCtxState.userAddress === userTzktTokens.userAddress ? tzktTokensWithoutMVNToken : {}),
       },
-      isUserRestored: isUserRestored.current,
+      isUserRestored,
       isLoading,
       connect,
       signOut,
@@ -262,6 +252,7 @@ export const UserProvider = ({ children }: Props) => {
   }, [
     userCtxState,
     userTzktTokens,
+    isUserRestored,
     isUserLoading,
     isTzktBalancesLoading,
     mvnTokenAddress,

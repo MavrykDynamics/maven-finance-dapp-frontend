@@ -35,6 +35,10 @@ export function dappClient() {
     return new MavletWallet(DAPP_METADATA)
   }
 
+  function resetWallet() {
+    instance = undefined
+  }
+
   function loadWallet() {
     if (!instance) instance = init()
     return instance
@@ -46,6 +50,16 @@ export function dappClient() {
 
   function getDAppClientWallet() {
     return loadWallet()
+  }
+
+  async function getActiveAccountAddress() {
+    try {
+      const client = getDAppClient()
+      return (await client.getActiveAccount())?.address ?? null
+    } catch (error) {
+      console.log('getActiveAccountAddress error:', error)
+      throw error
+    }
   }
 
   async function connectAccount() {
@@ -123,17 +137,20 @@ export function dappClient() {
   async function disconnectWallet() {
     try {
       const wallet = getDAppClientWallet()
-      await wallet.disconnect()
       await wallet.clearActiveAccount()
+      await wallet.disconnect()
     } catch (error) {
       console.log('disconnectWallet error:', error)
       throw error
+    } finally {
+      resetWallet()
     }
   }
 
   return {
     loadWallet,
     getDAppClient,
+    getActiveAccountAddress,
     connectAccount,
     swapAccount,
     tezos,
