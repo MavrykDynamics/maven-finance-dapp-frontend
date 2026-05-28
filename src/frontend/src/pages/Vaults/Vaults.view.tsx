@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -47,7 +47,7 @@ import {
   VAULTS_USER_ALL,
   VAULTS_USER_DEPOSITOR,
 } from 'providers/VaultsProvider/vaults.provider.consts'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { MARK_FOR_LIQUIDATION_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { markForLiquidation } from 'providers/VaultsProvider/actions/vaultsLiquidation.actions'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -184,8 +184,6 @@ export const VaultsView = () => {
     const currentTabId = tabsList.find((item) => item.path === tabId)?.id
 
     if (!foundTab?.path || currentTabId === id) return
-
-    setIsLoading(true)
 
     navigate(`${pathname}/${foundTab.path}`)
   }

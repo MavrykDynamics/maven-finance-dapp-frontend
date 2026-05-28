@@ -23,7 +23,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { addOracleToAggregator } from 'providers/SatelliteGovernanceProvider/actions/satellitesGov.actions'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 // queries
 import { useDataFeedsContext } from 'providers/DataFeedsProvider/dataFeeds.provider'

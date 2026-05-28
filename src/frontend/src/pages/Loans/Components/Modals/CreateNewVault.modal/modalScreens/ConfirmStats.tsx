@@ -12,7 +12,7 @@ import {
 import { convertNumberForContractCall } from 'utils/calcFunctions' // types
 import { LoansCollateralTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types' // actions
 import { createVault } from 'providers/VaultsProvider/actions/vaults.actions' // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction' // consts
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction' // consts
 import { CREATE_VAULT_ACTION } from 'providers/VaultsProvider/helpers/vaults.const'
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
 import { ADD_COLLATERAL_SCREEN_ID, BORROW_SCREEN_ID } from '../helpers/createNewVault.consts'

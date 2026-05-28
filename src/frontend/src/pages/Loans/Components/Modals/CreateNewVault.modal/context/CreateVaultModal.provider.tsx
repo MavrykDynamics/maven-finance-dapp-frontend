@@ -15,7 +15,7 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { getVaultBorrowCapacity } from 'providers/VaultsProvider/helpers/vaults.utils'
 import { convertNumberForClient } from 'utils/calcFunctions'
-import { DropDownXTZBakerType } from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
+import { DropDownMavrykValidatorType } from 'providers/DappConfigProvider/bakers/useDDMavrykValidators'
 
 type Props = CreateNewModalProps & {
   children: React.ReactNode
@@ -77,7 +77,7 @@ export const CreateVaultModalProvider = ({ closePopup, show, data, children }: P
     }))
   }, [])
 
-  const updateSelectedBaker = useCallback((selectedBaker: DropDownXTZBakerType | null) => {
+  const updateSelectedBaker = useCallback((selectedBaker: DropDownMavrykValidatorType | null) => {
     setModalState((prev) => ({
       ...prev,
       selectedBaker,

@@ -14,7 +14,7 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useVestingContext } from 'providers/VestingProvider/vesting.provider'

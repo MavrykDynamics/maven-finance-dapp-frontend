@@ -89,9 +89,6 @@ export const normalizeVaultsNew = ({
       } = item
 
       const tokenBorrowIndex = vaultBorrowIndex //TODO add tokenBorrowIndex from api
-      // const {
-      //   borrow_index: tokenBorrowIndex, //?????
-      // } = loan_token
 
       const apr =
         convertNumberForClient({

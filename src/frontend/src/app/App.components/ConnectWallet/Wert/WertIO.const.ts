@@ -6,7 +6,7 @@ export const getWertOptions = (
 ) => ({
   partner_id: '01G0MCBQFJE47YZ0SECRKM81CD',
   commodity,
-  origin: process.env.REACT_APP_WERT_API,
+  origin: import.meta.env.VITE_WERT_API,
   container_id: 'wert-io-popup-wrapper',
   color_background: 'transparent',
   color_buttons: '#86D4C9',

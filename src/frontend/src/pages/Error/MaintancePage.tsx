@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router'
 
 // components
 import { ErrorFooter } from './components/ErrorFooter'

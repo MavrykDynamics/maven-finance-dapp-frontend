@@ -20,7 +20,7 @@ import {
 // providers
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { forcedUpdateProxy } from 'providers/common/utils/observeForcedUpdate'
+import { useInvalidateAllQueries } from 'providers/QueryProvider/useGraphQLQuery'
 
 type ActionReturnPayload = Promise<ActionErrorReturnType | ActionSuccessReturnType | null>
 
@@ -51,6 +51,7 @@ export const useContractAction = <G>({
 }: HookContractActionArgs<G>): { action: () => Promise<void>; actionWithArgs: (args: G) => Promise<void> } => {
   const { bug, info, loading, setSharedError, hideToasterMessage, success } = useToasterContext()
   const { toggleActionCompletion, toggleActionFullScreenLoader } = useDappConfigContext()
+  const invalidateAllQueries = useInvalidateAllQueries()
 
   const turnOffAction = useCallback(
     async (action: UserActionType) => {
@@ -68,9 +69,9 @@ export const useContractAction = <G>({
       await callback?.()
 
       // force queries refetch when some action is done to get up-to-date data from indexer
-      forcedUpdateProxy.hasForcedUpdate = true
+      invalidateAllQueries()
     },
-    [hideToasterMessage, success, toggleActionCompletion],
+    [hideToasterMessage, success, toggleActionCompletion, invalidateAllQueries],
   )
 
   async function invokeAction(actionResult: ActionErrorReturnType | ActionSuccessReturnType | null) {

@@ -1,9 +1,7 @@
-import React, { useContext, useMemo, useRef, useState } from 'react'
-import { useQuery } from '@apollo/client'
-
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 // hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery, useGraphQLQueryOnce } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 
 // types
 import { NullableTreasuryContextStateType, TreasuryContext, TreasurySubsRecordType } from './treasury.provider.types'
@@ -25,7 +23,7 @@ type Props = {
 }
 
 const TreasuryProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [treasuryCtxState, setTreasuryCtxState] = useState<NullableTreasuryContextStateType>(DEFAULT_TREASURY_CTX)
   const [activeSubs, setActiveSubs] = useState<TreasurySubsRecordType>(DEFAULT_TREASURY_SUBS)
@@ -53,7 +51,7 @@ const TreasuryProvider = ({ children }: Props) => {
   const treasuryNormalizerDataUpdaterRef = useRef(curry(updateTreasuryStorage))
 
   // subscribes
-  useQueryWithRefetch(GET_TREASURY_STORAGE_QUERY, {
+  useGraphQLQuery(GET_TREASURY_STORAGE_QUERY, {
     skip: !activeSubs[TREASURY_STORAGE_DATA_SUB],
     onCompleted: (data) => {
       updateTreasuryAddresses(data)
@@ -63,10 +61,10 @@ const TreasuryProvider = ({ children }: Props) => {
         treasuryNormalizerDataUpdaterRef.current<GetTreasuryStorageDataQuery>(data)
       setAllowTreasurySMVNBalances(true)
     },
-    onError: (error) => handleApolloError(error, 'GET_TREASURY_STORAGE_QUERY'),
+    onError: (error) => handleQueryError(error, 'GET_TREASURY_STORAGE_QUERY'),
   })
 
-  useQuery(GET_TREASURY_SMVN_BALANCES, {
+  useGraphQLQueryOnce(GET_TREASURY_SMVN_BALANCES, {
     skip: !allowTreasurySMVNBalances || treasuryCtxState.treasuryAddresses === null,
     variables: {
       addresses: treasuryCtxState.treasuryAddresses,
@@ -84,12 +82,12 @@ const TreasuryProvider = ({ children }: Props) => {
       // disallow this query until new data for treasury is received
       setAllowTreasurySMVNBalances(false)
     },
-    onError: (error) => handleApolloError(error, 'GET_TREASURY_SMVN_BALANCES'),
+    onError: (error) => handleQueryError(error, 'GET_TREASURY_SMVN_BALANCES'),
   })
 
-  const changeTreasurySubscriptionsList = (newSkips: Partial<TreasurySubsRecordType>) => {
+  const changeTreasurySubscriptionsList = useCallback((newSkips: Partial<TreasurySubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

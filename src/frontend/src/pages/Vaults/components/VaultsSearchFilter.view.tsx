@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
 import qs from 'qs'
-import { useNavigate, useLocation, useParams } from 'react-router-dom'
+import { useNavigate, useLocation, useParams } from 'react-router'
 
 // components
 import { Input } from 'app/App.components/Input/Input.controller'

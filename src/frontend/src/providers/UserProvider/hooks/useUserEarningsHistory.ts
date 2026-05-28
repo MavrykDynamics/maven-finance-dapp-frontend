@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 // hooks
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useUserContext } from '../user.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // consts
 import { USER_ACTIONS_EARNING_HISTORY_DATA_QUERY } from '../queries/userData.query'
@@ -12,12 +12,12 @@ import { USER_ACTIONS_EARNING_HISTORY_DATA_QUERY } from '../queries/userData.que
 import { normalizeUserEarningHistory } from '../helpers/userEarningHistory.normalizer'
 
 export const useUserEarningsHistory = () => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { userAddress, earningHistory, setUserEarningHistory } = useUserContext()
 
   const [isNewUser, setIsNewUser] = useState(false)
 
-  useQueryWithRefetch(USER_ACTIONS_EARNING_HISTORY_DATA_QUERY, {
+  useGraphQLQuery(USER_ACTIONS_EARNING_HISTORY_DATA_QUERY, {
     skip: !userAddress,
     variables: {
       userAddress: userAddress ?? '',
@@ -32,7 +32,7 @@ export const useUserEarningsHistory = () => {
       const normalizedEarningHistory = normalizeUserEarningHistory(data)
       setUserEarningHistory(normalizedEarningHistory)
     },
-    onError: (error) => handleApolloError(error, 'USER_ACTIONS_EARNING_HISTORY_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'USER_ACTIONS_EARNING_HISTORY_DATA_QUERY'),
   })
 
   return {

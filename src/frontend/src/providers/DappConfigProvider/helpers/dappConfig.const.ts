@@ -111,7 +111,7 @@ export const DEFAULT_DAPP_CONFIG_CONTEXT: DappConfigContextStateType = {
   canUseIpfs: false,
   minimumStakedMvnBalance: 0,
   dappTotalValueLocked: null,
-  xtzBakers: null,
+  mavrykValidators: null,
   contractAddresses: DAPP_DEFAULT_CONTRACT_ADDRESSES,
   // TODO: set default address to null, when contracts are updated
   mvnFaucetAddress: 'KT1A6EJRMuz8TZWeSxaqvU2UsqxRjopvo8Nh',

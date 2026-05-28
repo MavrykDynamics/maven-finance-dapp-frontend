@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router'
 
 // utils
 import { propagateBreakGlass } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
@@ -7,7 +7,7 @@ import { parseCouncilTab } from './helpers/commonCouncil.utils'
 
 // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'

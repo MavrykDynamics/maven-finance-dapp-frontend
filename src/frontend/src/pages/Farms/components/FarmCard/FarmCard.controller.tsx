@@ -11,7 +11,7 @@ import { harvestRewards } from 'providers/FarmsProvider/actions/farms.actions'
 // hooks
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // consts

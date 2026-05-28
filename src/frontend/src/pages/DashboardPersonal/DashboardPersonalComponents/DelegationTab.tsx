@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useOutletContext } from 'react-router-dom'
+import { Link, useOutletContext } from 'react-router'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'

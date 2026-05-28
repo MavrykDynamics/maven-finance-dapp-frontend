@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -51,8 +51,8 @@ import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
 import { EARN_APY } from 'texts/tooltips/loan.text'
 import { APR } from 'texts/tooltips/vault.text'
 import { buildCollateralQuery } from './utils'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { gql } from '@apollo/client'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import gql from 'graphql-tag'
 
 export const Loans = () => {
   const {
@@ -75,7 +75,7 @@ export const Loans = () => {
 
   const collateralsTotalQuery = useMemo(() => buildCollateralQuery(marketsAddresses), [marketsAddresses])
 
-  useQueryWithRefetch(gql(collateralsTotalQuery), {
+  useGraphQLQuery(gql(collateralsTotalQuery), {
     skip: marketsAddresses.length === 0,
     onCompleted: (data: CollateralResponse) => {
       const parsedData = tokenCollateralSchema.safeParse(data)

@@ -20,7 +20,7 @@ import {
 } from 'providers/TokensProvider/helpers/tokens.utils'
 import { checkNan } from 'utils/checkNan'
 import { getCollateralRatioByPercentage } from 'pages/Loans/Loans.helpers'
-import useXtzBakersForDD from 'providers/DappConfigProvider/bakers/useDDXtzBakers'
+import useMavrykValidatorsForDD from 'providers/DappConfigProvider/bakers/useDDMavrykValidators'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
 import { getUserTokenBalanceByAddress } from 'providers/UserProvider/helpers/userBalances.helpers'
 import { validateInputLength } from 'app/App.utils/input/validateInput'
@@ -63,7 +63,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useCollateralInputData } from './hooks/Market/useCollateralInputData'
 import { operationAddCollateral, useVaultFutureStats } from 'providers/VaultsProvider/hooks/useVaultFutureStats'
 
@@ -85,7 +85,7 @@ export const AddNewCollateral = ({
   } = useDappConfigContext()
   const { bug } = useToasterContext()
 
-  const { bakers, choosenBaker, setChoosenBaker } = useXtzBakersForDD()
+  const { bakers, choosenBaker, setChoosenBaker } = useMavrykValidatorsForDD()
 
   useLockBodyScroll(show)
 

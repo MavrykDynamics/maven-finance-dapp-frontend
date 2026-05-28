@@ -27,7 +27,7 @@ import {
   VAULT_CARD_REPAY_SLIDING_BUTTONS,
 } from 'pages/Loans/Loans.const'
 import ExpandSimple from 'app/App.components/Expand/ExpandSimple.view'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router'
 import { useLoansPopupsContext } from 'providers/LoansProvider/LoansModals.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { VaultType } from 'providers/VaultsProvider/vaults.provider.types'

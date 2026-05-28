@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router'
 
 // Consts
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
@@ -13,7 +13,8 @@ import { CHECK_WHETHER_SATELLITE_EXISTS } from 'providers/SatellitesProvider/que
 import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT, SatelliteTabType } from './BecomeSatellite.conts'
 
 // providers
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { fetchGraphQLData } from 'providers/QueryProvider/useGraphQLQuery'
 import { useSatellitesContext } from 'providers/SatellitesProvider/satellites.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
@@ -58,7 +59,7 @@ export const BecomeSatellite = () => {
     isLoading: isUserLoading,
     userTokensBalances,
   } = useUserContext()
-  const { apolloClient } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const { tabId = 'details' } = useParams<{ tabId: SatelliteTabType }>()
 
@@ -97,14 +98,12 @@ export const BecomeSatellite = () => {
 
     const checkWhetherSatelliteExists = async () => {
       try {
-        const satelliteFromGql = await apolloClient.query({
-          query: CHECK_WHETHER_SATELLITE_EXISTS,
-          variables: {
-            userAddress: userAddress ?? '',
-          },
-        })
+        const satelliteFromGql = await fetchGraphQLData<{ satellite: Array<{ user: { address: string } }> }>(
+          CHECK_WHETHER_SATELLITE_EXISTS,
+          { userAddress: userAddress ?? '' },
+        )
 
-        if (satelliteFromGql.data.satellite[0]?.user.address === userAddress) {
+        if (satelliteFromGql.satellite[0]?.user.address === userAddress) {
           setSatelliteAddressToSubscribe(userAddress)
           return
         }

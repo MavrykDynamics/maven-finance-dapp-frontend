@@ -28,7 +28,7 @@ import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.styl
 import type { InputProps } from 'app/App.components/Input/newInput.type'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'

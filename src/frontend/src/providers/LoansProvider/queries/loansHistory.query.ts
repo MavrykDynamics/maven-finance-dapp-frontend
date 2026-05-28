@@ -1,5 +1,6 @@
-import { gql as apolloGql, OperationVariables, TypedDocumentNode } from '@apollo/client'
+import gqlTag from 'graphql-tag'
 import { DocumentNode } from 'graphql'
+import { TypedDocumentNode } from '@graphql-typed-document-node/core'
 import { gql } from 'utils/__generated__'
 import { GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
 
@@ -69,14 +70,14 @@ export function getLoansTransactionsHistory({
   userAddress?: string
   vaultAddress?: string
   typeFilter?: Array<number>
-}): DocumentNode | TypedDocumentNode<GetLoansTransactionsHistoryQuery, OperationVariables> {
+}): DocumentNode | TypedDocumentNode<GetLoansTransactionsHistoryQuery, Record<string, unknown>> {
   const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
   const filterVaultCondition = vaultAddress ? `vault: { vault: {address: {_eq: $vaultAddress}}}` : ''
   const filterTypeCondition = typeFilter
     ? `type: {_in: $typeFilter}`
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
-  return apolloGql(`
+  return gqlTag(`
     query getLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
       lending_controller: lending_controller {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {
@@ -126,14 +127,14 @@ export function getDevLoansTransactionsHistory({
   userAddress?: string
   vaultAddress?: string
   typeFilter?: Array<number>
-}): DocumentNode | TypedDocumentNode<GetDevLoansTransactionsHistoryQuery, OperationVariables> {
+}): DocumentNode | TypedDocumentNode<GetDevLoansTransactionsHistoryQuery, Record<string, unknown>> {
   const filterUserCondition = userAddress ? `sender: {address: {_eq: $userAddress}}` : `sender: {address: {_neq: ""}}`
   const filterVaultCondition = vaultAddress ? `vault: { vault: {address: {_eq: $vaultAddress}}}` : ''
   const filterTypeCondition = typeFilter
     ? `type: {_in: $typeFilter}`
     : `type: {_in: ["0", "1", "2", "3", "4", "5", "6", "7"]}`
 
-  return apolloGql(`
+  return gqlTag(`
     query getDevLoansTransactionsHistory($marketTokenAddress: String, $userAddress: String = "", $vaultAddress: String = "", $typeFilter: [smallint] = [], $offset: Int = 0, $limit: Int = 8) {
       lending_controller: lending_controller {
         history_data(where: {${filterTypeCondition}, loan_token: {token: {token_address: {_eq: $marketTokenAddress}}}, ${filterUserCondition}, ${filterVaultCondition}}, order_by: {timestamp: desc}, offset: $offset, limit: $limit) {

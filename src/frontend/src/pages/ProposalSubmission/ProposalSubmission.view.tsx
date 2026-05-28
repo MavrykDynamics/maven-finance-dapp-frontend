@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 import QueryString from 'qs'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 // context
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -9,8 +9,9 @@ import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { fetchGraphQLData } from 'providers/QueryProvider/useGraphQLQuery'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 // view
 import { PropSubmissionTopBar } from './PropSubmissionTopBar/PropSubmissionTopBar.controller'
@@ -79,11 +80,11 @@ import {
 } from './helpers/proposalSubmissionValidation.utils'
 import { mergeRemoteProposalsWithClient, normalizeProposalsForSubmitProposal } from './helpers/normalizeRemoteProposals'
 
-export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
+export const ProposalSubmissionView = memo(({ selectedUserProposalId }: { selectedUserProposalId: number }) => {
   const navigate = useNavigate()
 
   const { bug } = useToasterContext()
-  const { apolloClient } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata } = useTokensContext()
   const { userAddress, isNewlyRegisteredSatellite } = useUserContext()
   const {
@@ -269,21 +270,14 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
   // submission callback to update data
   const getNewProposalId = useCallback(async () => {
     try {
-      const newProposalData = await apolloClient.query({
-        query: GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
-        variables: {
-          userAddress,
-        },
-      })
-
-      if (newProposalData.error && !isAbortError(newProposalData.error)) {
-        console.error('loading new proposal error', newProposalData.error)
-        throw new Error(newProposalData.error.message)
-      }
+      const newProposalData = await fetchGraphQLData<{ governance_proposal: Array<{ id: number }> }>(
+        GOVERNANCE_LATEST_USER_PROPOSAL_QUERY,
+        { userAddress },
+      )
 
       // changeActiveProposal
-      if (newProposalData.data.governance_proposal.length) {
-        const { id } = newProposalData.data.governance_proposal[0]
+      if (newProposalData.governance_proposal.length) {
+        const { id } = newProposalData.governance_proposal[0]
         changeActiveProposal(id ?? DEFAULT_PROPOSAL.id)
 
         if (proposalState[DEFAULT_PROPOSAL.id]) {
@@ -296,7 +290,7 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
     } catch (e) {
       bug('Fetch Error', 'Error occured while loading latest proposal id, please reload the page')
     }
-  }, [apolloClient, changeActiveProposal, proposalState, userAddress])
+  }, [changeActiveProposal, proposalState, userAddress])
 
   const submitActionFn = useCallback(async () => {
     if (!userAddress) {
@@ -616,4 +610,5 @@ export const ProposalSubmissionView = ({ selectedUserProposalId }: { selectedUse
       </ProposalSubmissionForm>
     </>
   )
-}
+})
+ProposalSubmissionView.displayName = 'ProposalSubmissionView'

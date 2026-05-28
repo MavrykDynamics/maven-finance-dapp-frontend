@@ -1,10 +1,9 @@
 // utils
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 
 // types
 import {
   CouncilContext,
-  CouncilStateType,
   CouncilSubsRecordType,
   NullableCouncilContextStateType,
 } from '../council.provider.types'
@@ -91,22 +90,7 @@ export const getCouncilProviderReturnValue = ({
     isMavCouncilMyPastActionsLoading ||
     isMavCouncilMyOngoingActionsLoading
 
-  if (isLoading) {
-    return {
-      isLoading: true,
-      ...commonToReturn,
-      ...EMPTY_COUNCIL_CTX,
-    }
-  }
-
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<CouncilStateType>(councilCtxState, EMPTY_COUNCIL_CTX)
-
-  return {
-    isLoading: false,
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-  }
+  return buildProviderReturnValue(councilCtxState, EMPTY_COUNCIL_CTX, commonToReturn, Boolean(isLoading))
 }
 
 /**

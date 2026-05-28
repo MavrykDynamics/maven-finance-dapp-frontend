@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // components
 import Button from 'app/App.components/Button/NewButton'
@@ -37,7 +37,7 @@ import { BUTTON_SECONDARY, BUTTON_WIDE } from 'app/App.components/Button/Button.
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 // types
 import { SatelliteGovNormalizerReturnType } from 'providers/SatelliteGovernanceProvider/satelliteGovernance.provider.types'

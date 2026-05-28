@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router'
 
 // view
 import Icon from '../Icon/Icon.view'
@@ -28,7 +28,7 @@ import { getMVNTokensFromFaucet, getUSDtTokensFromFaucet } from 'providers/UserP
 import { GET_MVN_FROM_FAUCET_ACTION, GET_USDT_FROM_FAUCET_ACTION } from 'providers/UserProvider/helpers/user.consts'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 type MenuViewProps = {
   openChangeNodePopupHandler: () => void

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 // hooks
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'

@@ -1,21 +1,18 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { fetchGraphQLData } from 'providers/QueryProvider/useGraphQLQuery'
 import { SATELLITE_ADDITIONAL_DATA } from '../queries/satellites.query'
+import { SatelliteAdditionalDataQueryQuery } from 'utils/__generated__/graphql'
 
-export async function fetchAdditionalSatelliteData(addresses: string[], client: ApolloClient<NormalizedCacheObject>) {
+export async function fetchAdditionalSatelliteData(addresses: string[]) {
   if (!addresses.length) return []
 
-  const { data } = await client.query({
-    query: SATELLITE_ADDITIONAL_DATA,
-    variables: {
-      satelliteAdditionalWhere: {
-        user: {
-          address: {
-            _in: addresses,
-          },
+  const data = await fetchGraphQLData<SatelliteAdditionalDataQueryQuery>(SATELLITE_ADDITIONAL_DATA, {
+    satelliteAdditionalWhere: {
+      user: {
+        address: {
+          _in: addresses,
         },
       },
     },
-    fetchPolicy: 'network-only',
   })
 
   return data.satelliteAdditionalData

@@ -14,7 +14,7 @@ import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.contr
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 // types

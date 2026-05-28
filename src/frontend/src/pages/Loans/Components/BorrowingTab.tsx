@@ -19,7 +19,7 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 import { useVaultsContext } from 'providers/VaultsProvider/vaults.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import {
   DEFAULT_VAULTS_ACTIVE_SUBS,
   PAGINATION_MY,

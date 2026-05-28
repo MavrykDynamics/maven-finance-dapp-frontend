@@ -6,7 +6,9 @@ export const MIN_TREASURY_PERCENT_TO_DISPLAY = 0.1
 
 export const normalizeTreasuryStorage = (data: TreasuryGQLData) => {
   const { maven_user: sMVNAmounts, treasury } = data
-  const treasuryAssetsColors: Record<string, string> = sMVNAmounts?.length ? { smvn: getDiagramSectionColor(0) } : {}
+  const treasuryAssetsColors: Record<string, string> = sMVNAmounts?.length
+    ? { [SMVN_TOKEN_ADDRESS]: getDiagramSectionColor(0) }
+    : {}
 
   // Parse sMVN amount for each treasury, to make this structure usable
   const sMVNBalancesMapper = sMVNAmounts?.reduce<Record<string, TreasuryBalanceType>>(

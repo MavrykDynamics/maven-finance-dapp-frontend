@@ -44,7 +44,7 @@ import {useToasterContext} from 'providers/ToasterProvider/toaster.provider'
 import {useDappConfigContext} from 'providers/DappConfigProvider/dappConfig.provider'
 
 // hooks
-import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction'
+import {HookContractActionArgs, useContractAction} from 'app/App.hooks/useContractAction/useContractAction'
 import {useCollateralInputData} from './hooks/Market/useCollateralInputData'
 import {validateInputLength} from 'app/App.utils/input/validateInput'
 

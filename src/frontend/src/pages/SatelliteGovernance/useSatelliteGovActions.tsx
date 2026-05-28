@@ -11,7 +11,7 @@ import { SatelliteGovernanceTransfer } from 'providers/SatelliteGovernanceProvid
 import { UserContext } from 'providers/UserProvider/user.provider.types'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 // consts
