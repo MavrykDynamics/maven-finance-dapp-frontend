@@ -26,7 +26,8 @@
     "experimentalDecorators": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "types": ["vite/client"]
   },
   "include": ["src", "**/*.spec.ts"],
   "exclude": ["node_modules", "./node_modules", "./node_modules/*", "./node_modules/@types/node/index.d.ts"]

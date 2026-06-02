@@ -85,8 +85,15 @@ const INDEXER_ENV_PREFIXES = {
   prod: '',
 }
 
+const GRAPHQL_SCHEMA = process.env.VITE_GRAPHQL_API ?? process.env.REACT_APP_GRAPHQL_API
+const INDEXER_DATA_ENV = process.env.VITE_DATA_ENV === 'dev' || process.env.REACT_APP_DATA_ENV === 'dev' ? 'dev' : 'prod'
+
+if (!GRAPHQL_SCHEMA) {
+  throw new Error('VITE_GRAPHQL_API environment variable is not set')
+}
+
 const config: CodegenConfig = {
-  schema: process.env.REACT_APP_GRAPHQL_API,
+  schema: GRAPHQL_SCHEMA,
   documents: ['src/**/*.{ts,tsx}'],
   generates: {
     'src/utils/__generated__/': {
@@ -111,7 +118,7 @@ const config: CodegenConfig = {
                   if (node.alias && node?.name?.value && INDEXER_TABLES[node.name.value]) {
                     // update table tabe to use prefix based on env
                     // @ts-expect-error
-                    node.name.value = `${INDEXER_ENV_PREFIXES[process.env.REACT_APP_DATA_ENV]}${node.name.value}`
+                    node.name.value = `${INDEXER_ENV_PREFIXES[INDEXER_DATA_ENV]}${node.name.value}`
                   }
                   return node
                 },

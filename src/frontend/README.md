@@ -19,9 +19,3 @@ Macos/Linux/Windows
 ```
 yarn start
 ```
-
-If you are getting evenlope error run command with sufix ":evenlope"
-
-```
-yarn start:evenlop
-```

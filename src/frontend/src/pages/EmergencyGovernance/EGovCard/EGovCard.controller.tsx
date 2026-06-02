@@ -28,7 +28,7 @@ import { EGovActiveCardStyled, EGovPastCardBodyStyled, EGovPastCardTopColumnStyl
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useDoormanContext } from 'providers/DoormanProvider/doorman.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
 type Props = {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router'
 
 // types
 import { ChartPeriodType } from 'types/charts.type'
@@ -151,7 +151,6 @@ const DataFeedDetails = () => {
   const chartPlots = (activeTab === 1 ? dataFeedsHistory : dataFeedsVolatility) ?? []
   const currentPage = useMemo(() => getPageNumber(search, ORACLES_DATA_IN_FEED_LIST_NAME), [search])
 
-  console.log('render')
   useEffect(() => {
     changePage(currentPage, SATELLITE_PAGINATION_ORACLES)
   }, [currentPage])
@@ -342,7 +341,7 @@ const DataFeedDetails = () => {
                     text="Register"
                     kind={ACTION_PRIMARY}
                     disabled={isActionActive || true}
-                    onClick={() => console.log('implement')}
+                    onClick={() => {}}
                   />
                 </div>
               </ContractDetails>

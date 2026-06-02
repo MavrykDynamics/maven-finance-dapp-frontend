@@ -9,7 +9,7 @@ import {
   TreasurySubsRecordType,
 } from '../treasury.provider.types'
 import {EMPTY_TREASURY_CTX, TREASURY_STORAGE_DATA_SUB} from './treasury.consts'
-import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 
 /**
  * @param treasuryAddresses array of treasuries addresses
@@ -78,23 +78,5 @@ export const getTreasuryProviderReturnValue = ({
     (activeSubs[TREASURY_STORAGE_DATA_SUB] && isTreasuryDataEmpty) ||
     (!activeSubs[TREASURY_STORAGE_DATA_SUB] && isTreasuryDataEmpty)
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_TREASURY_CTX,
-      isLoading: true,
-    }
-  }
-
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<TreasuryContextStateType>(
-    treasuryCtxState,
-    EMPTY_TREASURY_CTX,
-  )
-  return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
-  }
+  return buildProviderReturnValue(treasuryCtxState, EMPTY_TREASURY_CTX, commonToReturn, Boolean(isLoading))
 }

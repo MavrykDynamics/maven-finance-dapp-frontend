@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router'
 import { useEffect, useMemo } from 'react' // hooks
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider' // utils

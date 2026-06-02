@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { usePrevious } from 'react-use'
 
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // helpers
 import { normalizeGovernanceConfig, normalizeSmallGovernanceConfig } from './helpers/governanceConfig.normalizer'
@@ -38,7 +38,7 @@ type Props = {
 }
 
 const ProposalsProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { userAddress } = useUserContext()
 
   const prevUserAddress = usePrevious(userAddress)
@@ -62,7 +62,7 @@ const ProposalsProvider = ({ children }: Props) => {
    * PAST_PROPOSALS_QUERY -> proposals that are dropped, executed, or failed voting
    * PROPOSALS_SUBMISSION_QUERY -> created proposals by user that are alive in current round
    */
-  useQueryWithRefetch(GOVERNANCE_CONFIG_QUERY, {
+  useGraphQLQuery(GOVERNANCE_CONFIG_QUERY, {
     skip: !activeSubs[GOVERNANCE_CONFIG_SUB] || (!activeSubs[GOVERNANCE_CONFIG_SUB] && !activeSubs[PROPOSALS_DATA_SUB]),
     onCompleted: (data) => {
       setProposalsCtxState((prev) => ({
@@ -70,10 +70,10 @@ const ProposalsProvider = ({ children }: Props) => {
         config: normalizeGovernanceConfig(data),
       }))
     },
-    onError: (error) => handleApolloError(error, 'GOVERNANCE_CONFIG_QUERY'),
+    onError: (error) => handleQueryError(error, 'GOVERNANCE_CONFIG_QUERY'),
   })
 
-  useQueryWithRefetch(CURRENT_PROPOSALS_QUERY, {
+  useGraphQLQuery(CURRENT_PROPOSALS_QUERY, {
     skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_CURRENT_DATA,
     variables: {
       timelockProposalId: proposalsCtxState.config?.timelockProposalId ?? -1,
@@ -102,10 +102,10 @@ const ProposalsProvider = ({ children }: Props) => {
         proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
       }))
     },
-    onError: (error) => handleApolloError(error, 'CURRENT_PROPOSALS_QUERY'),
+    onError: (error) => handleQueryError(error, 'CURRENT_PROPOSALS_QUERY'),
   })
 
-  useQueryWithRefetch(PAST_PROPOSALS_QUERY, {
+  useGraphQLQuery(PAST_PROPOSALS_QUERY, {
     skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_PAST_DATA,
     onCompleted: (data) => {
       const govConfigForProposalsNormalization = normalizeSmallGovernanceConfig(data.governance?.[0])
@@ -123,10 +123,10 @@ const ProposalsProvider = ({ children }: Props) => {
         proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
       }))
     },
-    onError: (error) => handleApolloError(error, 'PAST_PROPOSALS_QUERY'),
+    onError: (error) => handleQueryError(error, 'PAST_PROPOSALS_QUERY'),
   })
 
-  useQueryWithRefetch(PROPOSALS_SUBMISSION_QUERY, {
+  useGraphQLQuery(PROPOSALS_SUBMISSION_QUERY, {
     skip: activeSubs[PROPOSALS_DATA_SUB] !== PROPOSALS_SUBMISSION_DATA || !userAddress,
     variables: {
       userAddress: userAddress ?? '',
@@ -149,12 +149,12 @@ const ProposalsProvider = ({ children }: Props) => {
         proposalsMapper: { ...(prev.proposalsMapper ?? {}), ...proposalsMapper },
       }))
     },
-    onError: (error) => handleApolloError(error, 'PROPOSALS_SUBMISSION_QUERY'),
+    onError: (error) => handleQueryError(error, 'PROPOSALS_SUBMISSION_QUERY'),
   })
 
-  const changeProposalsSubscriptionsList = (newSkips: Partial<ProposalsSubsRecordType>) => {
+  const changeProposalsSubscriptionsList = useCallback((newSkips: Partial<ProposalsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

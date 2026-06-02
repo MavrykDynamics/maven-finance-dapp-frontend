@@ -157,7 +157,7 @@ export const useUserApi = ({
 
   const restoreUser = useCallback(async () => {
     try {
-      const userAddress = await DAPP_INSTANCE.getActiveAccountAddress()
+      const userAddress = await DAPP_INSTANCE.restoreAccount()
 
       if (!userAddress) {
         setUserLoading(false)

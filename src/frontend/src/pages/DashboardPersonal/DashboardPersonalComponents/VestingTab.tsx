@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router'
 import dayjs from 'dayjs'
 
 // components
@@ -29,7 +29,7 @@ import { useVestingContext } from 'providers/VestingProvider/vesting.provider'
 import { claimVestingReward } from 'providers/UserProvider/actions/user.actions'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/VestingProvider/helpers/vesting.consts'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'

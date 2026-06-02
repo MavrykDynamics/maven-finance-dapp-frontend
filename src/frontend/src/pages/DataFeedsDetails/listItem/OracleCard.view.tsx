@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'

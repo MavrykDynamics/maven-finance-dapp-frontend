@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#080628" />
+    <meta name="description" content="Maven Finance — Lending, borrowing, staking, and governance on the Mavryk blockchain." />
+    <link rel="canonical" href="https://atlasnet.mavenfinance.io/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Maven Finance" />
+    <meta property="og:title" content="Maven Finance - Decentralized Finance Ecosystem" />
+    <meta property="og:description" content="Maven Finance — Lending, borrowing, staking, and governance on the Mavryk blockchain." />
+    <meta property="og:image" content="/ogimage.png" />
+    <meta property="og:url" content="https://atlasnet.mavenfinance.io" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Maven Finance - Decentralized Finance Ecosystem" />
+    <meta name="twitter:description" content="Maven Finance — Lending, borrowing, staking, and governance on the Mavryk blockchain." />
+    <meta name="twitter:image" content="/ogimage.png" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preload" href="/src/styles/fonts/Metropolis-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preconnect to API origins to save ~630ms on first requests -->
+    <link rel="preconnect" href="https://atlasnet.api.mavryk.network" crossorigin />
+    <link rel="dns-prefetch" href="https://atlasnet.api.mavryk.network" />
+    <link rel="preconnect" href="https://api.mavenfinance.io" crossorigin />
+    <link rel="dns-prefetch" href="https://api.mavenfinance.io" />
+    <!-- Conditional LCP preload — desktop gets the rocket loader, mobile gets the background -->
+    <link rel="preload" href="/icons/lottie-rocket.webp" as="image" id="lcp-desktop" />
+    <link rel="preload" href="/mobile-plug-background.webp" as="image" id="lcp-mobile" />
+    <!-- Inline mobile detection + conditional preload — runs before module script to skip desktop JS on mobile -->
+    <script>
+      (function(){var m=/Android|iPhone|iPad/i.test(navigator.userAgent);window.__IS_MOBILE=m;if(m){document.documentElement.dataset.mobile='true';document.getElementById('lcp-desktop').remove()}else{document.getElementById('lcp-mobile').remove()}})();
+    </script>
+    <title>Maven Finance - Decentralized Finance Ecosystem</title>
+    <style>
+      /* Inline critical CSS — renders immediately before any JS loads */
+      body { margin: 0; }
+      #app-skeleton {
+        position: fixed;
+        inset: 0;
+        background: rgba(8, 6, 40, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 0;
+      }
+      #app-skeleton .brand {
+        font-family: sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: #86D4C9;
+        letter-spacing: 2px;
+        margin-bottom: 24px;
+      }
+      #app-skeleton .loader {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 3px solid #503EAA;
+        border-top-color: #86D4C9;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Maven Finance",
+            "url": "https://atlasnet.mavenfinance.io",
+            "description": "Maven Finance — Lending, borrowing, staking, and governance on the Mavryk blockchain.",
+            "applicationCategory": "DeFi",
+            "operatingSystem": "Web"
+          },
+          {
+            "@type": "Organization",
+            "name": "Maven Finance",
+            "url": "https://atlasnet.mavenfinance.io",
+            "logo": "https://atlasnet.mavenfinance.io/logo512.png",
+            "sameAs": [
+              "https://docs.mavenfinance.io/"
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <noscript id="gtag-body">You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+      <!-- Inline skeleton — painted instantly for fast FCP, replaced by React on mount -->
+      <div id="app-skeleton"><span class="brand">MAVEN FINANCE</span><div class="loader"></div></div>
+    </div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>

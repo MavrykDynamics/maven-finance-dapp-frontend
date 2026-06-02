@@ -1,66 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://atlasnet.mavenfinance.io/</loc>
+    <loc>http://localhost:3000/</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/become-satellite/edit</loc>
+    <loc>http://localhost:3000/become-satellite/edit</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/break-glass-council</loc>
+    <loc>http://localhost:3000/break-glass-council</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/contract-status</loc>
+    <loc>http://localhost:3000/contract-status</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/data-feeds</loc>
+    <loc>http://localhost:3000/data-feeds</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/emergency-governance</loc>
+    <loc>http://localhost:3000/emergency-governance</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/financial-requests</loc>
+    <loc>http://localhost:3000/financial-requests</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/governance</loc>
+    <loc>http://localhost:3000/governance</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/loans</loc>
+    <loc>http://localhost:3000/loans</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/loans/borrow</loc>
+    <loc>http://localhost:3000/loans/borrow</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/loans/dashboard</loc>
+    <loc>http://localhost:3000/loans/dashboard</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/loans/earn</loc>
+    <loc>http://localhost:3000/loans/earn</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/maven-council</loc>
+    <loc>http://localhost:3000/maven-council</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/proposal-history</loc>
+    <loc>http://localhost:3000/proposal-history</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/satellite-governance</loc>
+    <loc>http://localhost:3000/satellite-governance</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/satellite-nodes</loc>
+    <loc>http://localhost:3000/satellite-nodes</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/satellites</loc>
+    <loc>http://localhost:3000/satellites</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/staking</loc>
+    <loc>http://localhost:3000/staking</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/treasury</loc>
+    <loc>http://localhost:3000/treasury</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/vaults/all</loc>
+    <loc>http://localhost:3000/vaults/all</loc>
   </url>
   <url>
-    <loc>https://atlasnet.mavenfinance.io/yield-farms</loc>
+    <loc>http://localhost:3000/yield-farms</loc>
   </url>
 </urlset>

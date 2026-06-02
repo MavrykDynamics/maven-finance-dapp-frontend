@@ -19,8 +19,8 @@ import {
 } from './helpers/financialRequests.consts'
 
 // providers
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // utils
 import { getFinRequestsProviderReturnValue, normalizeFinancialRequests } from './helpers/financialRequests.utils'
@@ -32,7 +32,7 @@ type Props = {
 }
 
 const FinancialRequestsProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [finRequestsCtxState, setFinRequestsCtxState] =
     useState<NullableFinancialRequestsContextStateType>(DEFAULT_FINANCIAL_REQUESTS_CTX)
@@ -56,7 +56,7 @@ const FinancialRequestsProvider = ({ children }: Props) => {
    * ALL_FINANCIAL_REQUESTS_QUERY -> load all financial requests
    * ACTIVE_FINANCIAL_REQUESTS_QUERY -> load all active financial requests
    */
-  useQueryWithRefetch(ALL_FINANCIAL_REQUESTS_QUERY, {
+  useGraphQLQuery(ALL_FINANCIAL_REQUESTS_QUERY, {
     skip: activeSubs[FIN_REQUESTS_DATA] !== ALL_FIN_REQUESTS_SUB,
     onCompleted: (data) => {
       const { financialRequestsIds, financialRequestMapper, ongoingFrIds, pastFrIds } = normalizeFinancialRequests(data)
@@ -69,10 +69,10 @@ const FinancialRequestsProvider = ({ children }: Props) => {
         pastFinRequestsIds: pastFrIds,
       }))
     },
-    onError: (error) => handleApolloError(error, 'ALL_FINANCIAL_REQUESTS_QUERY'),
+    onError: (error) => handleQueryError(error, 'ALL_FINANCIAL_REQUESTS_QUERY'),
   })
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     ACTIVE_FINANCIAL_REQUESTS_QUERY,
     {
       skip: activeSubs[FIN_REQUESTS_DATA] !== ONGOING_FIN_REQUESTS_SUB,
@@ -89,16 +89,16 @@ const FinancialRequestsProvider = ({ children }: Props) => {
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
-      onError: (error) => handleApolloError(error, 'ACTIVE_FINANCIAL_REQUESTS_QUERY'),
+      onError: (error) => handleQueryError(error, 'ACTIVE_FINANCIAL_REQUESTS_QUERY'),
     },
     {
       refetchQueryVariables,
     },
   )
 
-  const changeFinancialRequestsSubscriptionList = (newSkips: Partial<FinRequestsSubsRecordType>) => {
+  const changeFinancialRequestsSubscriptionList = useCallback((newSkips: Partial<FinRequestsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

@@ -26,7 +26,7 @@ import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { SpinnerCircleLoaderStyled } from 'app/App.components/Loader/Loader.style'
 import { useContractStatusesContext } from 'providers/ContractStatuses/ContractStatuses.provider'
 import {

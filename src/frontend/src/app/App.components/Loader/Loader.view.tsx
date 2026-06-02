@@ -89,7 +89,7 @@ export const LottieLoader = ({ isActive, backdropAlpha }: { isActive: boolean; b
     <LoaderStyledWithBackdrop $isActive={isActive} $backdropAlpha={backdropAlpha}>
       <figure>
         <div>
-          <img src={`/icons/lottie-rocket.gif?v=0`} alt={`Loader Image`} />
+          <img src={`/icons/lottie-rocket.webp`} alt={`Loader Image`} />
         </div>
       </figure>
     </LoaderStyledWithBackdrop>

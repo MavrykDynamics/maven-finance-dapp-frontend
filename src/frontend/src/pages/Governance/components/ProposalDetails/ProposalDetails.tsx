@@ -6,7 +6,7 @@ import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provi
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_SECONDARY, BUTTON_SIMPLE_SMALL } from 'app/App.components/Button/Button.constants'

@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router'
 
 // consts
 import {AREA_CHART_TYPE} from 'app/App.components/Chart/helpers/Chart.const'

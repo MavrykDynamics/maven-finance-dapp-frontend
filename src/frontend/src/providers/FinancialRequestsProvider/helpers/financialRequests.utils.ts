@@ -1,8 +1,8 @@
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 import { convertNumberForClient } from 'utils/calcFunctions'
 
-import { FinancialRequestsContext, FinancialRequestsIndexerType, FinancialRequestsStateType, FinRequestsSubsRecordType, NullableFinancialRequestsContextStateType } from '../financialRequests.provider.types'
+import { FinancialRequestsContext, FinancialRequestsIndexerType, FinRequestsSubsRecordType, NullableFinancialRequestsContextStateType } from '../financialRequests.provider.types'
 import { ALL_FIN_REQUESTS_SUB, EMPTY_FINANCIAL_REQUESTS_CTX, FIN_REQUESTS_DATA, ONGOING_FIN_REQUESTS_SUB } from './financialRequests.consts'
 import { finRequestVote } from './financialRequests.schema'
 import { FinancialRequestRecord, FinRequestVoteType } from './financialRequests.types'
@@ -142,29 +142,16 @@ export const getFinRequestsProviderReturnValue = ({
    * 2. if query type === "all" and no data
    * 3. if query type === "ongoing" and no data
    */
-  let isLoading =
+  const isLoading =
     (!activeSubs[FIN_REQUESTS_DATA] && financialRequestsMapper === null) ||
     (activeSubs[FIN_REQUESTS_DATA] === ALL_FIN_REQUESTS_SUB &&
       (allFinRequestsIds === null || pastFinRequestsIds === null || ongoingFinRequestsIds === null)) ||
     (activeSubs[FIN_REQUESTS_DATA] === ONGOING_FIN_REQUESTS_SUB && ongoingFinRequestsIds === null)
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_FINANCIAL_REQUESTS_CTX,
-      isLoading: true,
-    }
-  }
-
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<FinancialRequestsStateType>(
+  return buildProviderReturnValue(
     finRequestsCtxState,
     EMPTY_FINANCIAL_REQUESTS_CTX,
+    commonToReturn,
+    Boolean(isLoading),
   )
-  return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
-  }
 }

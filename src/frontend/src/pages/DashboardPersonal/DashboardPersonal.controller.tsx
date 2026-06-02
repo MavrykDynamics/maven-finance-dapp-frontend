@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { usePrevious } from 'react-use'
 import qs from 'qs'
-import { Link, Navigate, Outlet, Route, Routes as Switch, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, Outlet, Route, useLocation, useNavigate, useParams } from 'react-router'
 
 // components
 import Button from 'app/App.components/Button/NewButton'
@@ -36,7 +36,7 @@ import { claimAllRewardsAction, distributeProposalRewards } from 'providers/User
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 

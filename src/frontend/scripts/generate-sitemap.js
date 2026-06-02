@@ -338,7 +338,7 @@ function getRoutePaths() {
 
   traverse(ast, {
     JSXElement(routePath) {
-      if (routeRoot || getJsxElementName(routePath.node) !== 'Switch') {
+      if (routeRoot || !['Routes', 'Switch'].includes(getJsxElementName(routePath.node))) {
         return;
       }
 

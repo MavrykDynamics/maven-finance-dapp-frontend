@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link, Outlet, useLocation, useOutletContext } from 'react-router-dom'
+import { Link, Outlet, useLocation, useOutletContext } from 'react-router'
 
 // consts
 import { AREA_CHART_TYPE } from 'app/App.components/Chart/helpers/Chart.const'

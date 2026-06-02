@@ -23,7 +23,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useProposalsContext } from 'providers/ProposalsProvider/proposals.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 // actions, helpers
 import {

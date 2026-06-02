@@ -6,6 +6,7 @@ import { DAPP_INSTANCE } from 'providers/UserProvider/user.provider'
 import { WalletOperationError, unknownToError } from 'errors/error'
 import { getEstimationBatchResult, getEstimationResult } from 'errors/helpers/estimateAction.helper'
 import { convertNumberForContractCall } from 'utils/calcFunctions'
+import { buildTokenApprovalBatch } from 'providers/common/utils/tokenOperations'
 
 // types
 import { LoansTokenMetadataType } from 'providers/TokensProvider/tokens.provider.types'
@@ -37,62 +38,27 @@ export const depositLendingAssetAction = async (
         params: { amount: convertedAssetAmount, mumav: true },
         callback,
       })
-    } else if (type === 'fa12') {
-      const assetContract = await tezos.wallet.at(address)
-
-      const batchArr = [
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...assetContract.methods.approve(lendingControllerAddress, 0).toTransferParams(),
-        },
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...assetContract.methods.approve(lendingControllerAddress, convertedAssetAmount).toTransferParams(),
-        },
-        {
-          kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-          ...contract?.methods.addLiquidity(convertedAssetAmount, indexerName).toTransferParams(),
-        },
-      ]
-      return await getEstimationBatchResult(tezos, batchArr, callback)
     }
 
-    const assetContract = await tezos.wallet.at(address)
-    const batchArr = await [
-      {
-        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-        ...assetContract.methods
-          .update_operators([
-            {
-              add_operator: {
-                owner: userAddress,
-                operator: lendingControllerAddress,
-                token_id: 0, // Should be a number, usually 0
-              },
-            },
-          ])
-          .toTransferParams(),
-      },
-      {
-        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-        ...contract.methods.addLiquidity(indexerName, convertedAssetAmount).toTransferParams(),
-      },
-      {
-        kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
-        ...assetContract.methods
-          .update_operators([
-            {
-              remove_operator: {
-                owner: userAddress,
-                operator: lendingControllerAddress,
-                token_id: 0, // Should be a number, usually 0
-              },
-            },
-          ])
-          .toTransferParams(),
-      },
-    ]
-    return await getEstimationBatchResult(tezos, batchArr, callback)
+    // fa12 uses (amount, indexerName) param order; fa2 uses (indexerName, amount)
+    const mainOp = {
+      kind: OpKind.TRANSACTION as OpKind.TRANSACTION,
+      ...(type === 'fa12'
+        ? contract?.methods.addLiquidity(convertedAssetAmount, indexerName).toTransferParams()
+        : contract.methods.addLiquidity(indexerName, convertedAssetAmount).toTransferParams()),
+    }
+
+    const batchOps = await buildTokenApprovalBatch({
+      tezos,
+      tokenType: type,
+      tokenAddress: address,
+      spender: lendingControllerAddress,
+      owner: userAddress,
+      amount: convertedAssetAmount,
+      mainOps: [mainOp],
+    })
+
+    return await getEstimationBatchResult(tezos, batchOps, callback)
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

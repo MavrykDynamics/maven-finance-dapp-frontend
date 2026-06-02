@@ -30,7 +30,7 @@ import { dropFinancialRequest } from 'providers/CouncilProvider/actions/mavenCou
 // hooks
 import { useFinancialRequestsContext } from 'providers/FinancialRequestsProvider/financialRequests.provider'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useCouncilContext } from 'providers/CouncilProvider/council.provider'

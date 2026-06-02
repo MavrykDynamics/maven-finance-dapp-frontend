@@ -21,7 +21,7 @@ import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style
 import { IPFSUploader } from '../../../../app/App.components/IPFSUploader/IPFSUploader.controller'
 import { DDItemId, DropDown, DropdownTruncateOption } from 'app/App.components/DropDown/NewDropdown' // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 

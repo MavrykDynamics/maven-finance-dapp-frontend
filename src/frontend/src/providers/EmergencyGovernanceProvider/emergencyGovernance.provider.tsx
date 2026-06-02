@@ -1,8 +1,8 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 // hooks
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 
 // types
 import { EGovContext, EGovSubsRecordType, NullableEGovContextState } from './emergencyGovernance.provider.types'
@@ -31,7 +31,7 @@ type Props = {
 }
 
 const EGovProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [eGovCtxState, setEGovCtxState] = useState<NullableEGovContextState>(DEFAULT_EGOV_CTX)
   const [activeSubs, setActiveSubs] = useState<EGovSubsRecordType>(DEFAULT_EGOV_SUBS)
@@ -40,7 +40,7 @@ const EGovProvider = ({ children }: Props) => {
    * EGOV_CONFIG_QUERY -> eGov config
    * EGOV_ALL_PROPOSALS -> eGov proposals, query for all only, cuz they are used on eGov page only, and it shows them all at once
    */
-  useQueryWithRefetch(EGOV_CONFIG_QUERY, {
+  useGraphQLQuery(EGOV_CONFIG_QUERY, {
     skip: !activeSubs[EGOV_CONFIG_SUB],
     onCompleted: (data) => {
       if (!data.emergency_governance[0]) return
@@ -61,10 +61,10 @@ const EGovProvider = ({ children }: Props) => {
         },
       }))
     },
-    onError: (error) => handleApolloError(error, 'EGOV_CONFIG_QUERY'),
+    onError: (error) => handleQueryError(error, 'EGOV_CONFIG_QUERY'),
   })
 
-  useQueryWithRefetch(EGOV_ALL_PROPOSALS, {
+  useGraphQLQuery(EGOV_ALL_PROPOSALS, {
     skip: activeSubs[EGOV_PROPOSALS_SUB] !== EGOV_PROPOSALS_ALL_SUB,
     onCompleted: (data) => {
       const { pastProposals, proposalsMapper, ongoingProposals, allProposals } = normalizeEGovProposals(data)
@@ -77,13 +77,13 @@ const EGovProvider = ({ children }: Props) => {
         pastProposals,
       }))
     },
-    onError: (error) => handleApolloError(error, 'EGOV_ALL_PROPOSALS'),
+    onError: (error) => handleQueryError(error, 'EGOV_ALL_PROPOSALS'),
   })
 
   //   set what data to subscribe
-  const changeEGovSubscriptionsList = (newSkips: Partial<EGovSubsRecordType>) => {
+  const changeEGovSubscriptionsList = useCallback((newSkips: Partial<EGovSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router'
 
 // const
 import { TRANSPARENT_WITH_BORDER } from 'app/App.components/Button/Button.constants'
@@ -42,10 +42,11 @@ import { useLoansContext } from 'providers/LoansProvider/loans.provider'
 // providers
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { fetchGraphQLData } from 'providers/QueryProvider/useGraphQLQuery'
 import { CHECK_WHETHER_MARKET_EXISTS } from 'providers/LoansProvider/queries/loansMarkets.query'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 import { USER_VAULT_BALANCES_QUERY } from './queries/userVaultBalances.query'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { MVRK_DECIMALS } from 'utils/constants'
@@ -67,7 +68,7 @@ export const Market = () => {
     tabId: string
   }>()
 
-  const { apolloClient } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { userAddress } = useUserContext()
   const { fatal } = useToasterContext()
@@ -112,14 +113,11 @@ export const Market = () => {
 
     const checkWhetherMarketExists = async () => {
       try {
-        const marketFromGql = await apolloClient.query({
-          query: CHECK_WHETHER_MARKET_EXISTS,
-          variables: {
-            marketAddress: currentMarketAddress ?? '',
-          },
-        })
+        const marketFromGql = await fetchGraphQLData<{
+          lending_controller: Array<{ loan_tokens: Array<{ token: { token_address: string } }> }>
+        }>(CHECK_WHETHER_MARKET_EXISTS, { marketAddress: currentMarketAddress ?? '' })
 
-        if (marketFromGql.data.lending_controller[0]?.loan_tokens?.[0]?.token?.token_address === currentMarketAddress) {
+        if (marketFromGql.lending_controller[0]?.loan_tokens?.[0]?.token?.token_address === currentMarketAddress) {
           setMarketAddressToSubscribe(currentMarketAddress)
           return
         }
@@ -153,7 +151,7 @@ export const Market = () => {
 
   const loanToken = getTokenDataByAddress({ tokenAddress: currentMarketAddress, tokensMetadata, tokensPrices })
 
-  useQueryWithRefetch(USER_VAULT_BALANCES_QUERY, {
+  useGraphQLQuery(USER_VAULT_BALANCES_QUERY, {
     skip: !userAddress || !loanToken,
     variables: {
       userAddress: userAddress,

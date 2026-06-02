@@ -1,15 +1,15 @@
 import dayjs from 'dayjs'
 import { usePrevious } from 'react-use'
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 // utils
 import { normalizeCouncilActions, normalizeCouncilMembers } from './helpers/council.normalizer'
 import { getCouncilProviderReturnValue } from './helpers/council.utils'
 
 // hooks
-import { useApolloContext } from '../ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // types
 import {
@@ -60,7 +60,7 @@ const refetchQueryVariables = () => ({
 })
 
 const CouncilProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { userAddress } = useUserContext()
 
   const currentTimeRef = useRef(dayjs().toISOString())
@@ -134,16 +134,16 @@ const CouncilProvider = ({ children }: Props) => {
    * COUNCIL_MEMBERS_QUERY -> members of maven council
    * BREAK_GLASS_COUNCIL_MEMBERS_QUERY -> members of break glass council
    */
-  useQueryWithRefetch(COUNCIL_MEMBERS_QUERY, {
+  useGraphQLQuery(COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[COUNCIL_MEMBERS_SUB],
     onCompleted: (data) => updateCouncilMembers(data),
-    onError: (error) => handleApolloError(error, 'COUNCIL_MEMBERS_QUERY'),
+    onError: (error) => handleQueryError(error, 'COUNCIL_MEMBERS_QUERY'),
   })
 
-  useQueryWithRefetch(BREAK_GLASS_COUNCIL_MEMBERS_QUERY, {
+  useGraphQLQuery(BREAK_GLASS_COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[BG_COUNCIL_MEMBERS_SUB],
     onCompleted: (data) => updateBreakGlassCouncilMembers(data),
-    onError: (error) => handleApolloError(error, 'BREAK_GLASS_COUNCIL_MEMBERS_QUERY'),
+    onError: (error) => handleQueryError(error, 'BREAK_GLASS_COUNCIL_MEMBERS_QUERY'),
   })
 
   /**
@@ -153,7 +153,7 @@ const CouncilProvider = ({ children }: Props) => {
    *    where user is not initiator (actions to sign carousel)
    * ALL_ONGOING_COUNCILS_QUERY -> all actions that are not executed nor expired
    */
-  useQueryWithRefetch(
+  useGraphQLQuery(
     ALL_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_PAST_COUNCIL_ACTIONS_SUB,
@@ -161,12 +161,12 @@ const CouncilProvider = ({ children }: Props) => {
         currentTimestamp: currentTimeRef.current,
       },
       onCompleted: (data) => updateCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'ALL_PAST_COUNSILS_QUERY'),
+      onError: (error) => handleQueryError(error, 'ALL_PAST_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     MY_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== MY_PAST_COUNCIL_ACTIONS_SUB,
@@ -175,12 +175,12 @@ const CouncilProvider = ({ children }: Props) => {
         userAddress: userAddress ?? '',
       },
       onCompleted: (data) => updateCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'MY_PAST_COUNSILS_QUERY'),
+      onError: (error) => handleQueryError(error, 'MY_PAST_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     ALL_ONGOING_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_ONGOING_COUNCIL_ACTIONS_SUB,
@@ -188,7 +188,7 @@ const CouncilProvider = ({ children }: Props) => {
         currentTimestamp: currentTimeRef.current,
       },
       onCompleted: (data) => updateCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'ALL_ONGOING_COUNSILS_QUERY'),
+      onError: (error) => handleQueryError(error, 'ALL_ONGOING_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
@@ -200,7 +200,7 @@ const CouncilProvider = ({ children }: Props) => {
    *    where user is not initiator (actions to sign carousel)
    * ALL_BG_ONGOING_COUNSILS_QUERY -> all actions that are not executed nor expired
    */
-  useQueryWithRefetch(
+  useGraphQLQuery(
     ALL_BG_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
@@ -208,12 +208,12 @@ const CouncilProvider = ({ children }: Props) => {
         currentTimestamp: currentTimeRef.current,
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'ALL_BG_PAST_COUNSILS_QUERY'),
+      onError: (error) => handleQueryError(error, 'ALL_BG_PAST_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     MY_BG_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== MY_BG_PAST_COUNCIL_ACTIONS_SUB,
@@ -222,12 +222,12 @@ const CouncilProvider = ({ children }: Props) => {
         userAddress: userAddress ?? '',
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'MY_BG_PAST_COUNSILS_QUERY'),
+      onError: (error) => handleQueryError(error, 'MY_BG_PAST_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     ALL_BG_ONGOING_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
@@ -235,7 +235,7 @@ const CouncilProvider = ({ children }: Props) => {
         currentTimestamp: currentTimeRef.current,
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleApolloError(error, 'ALL_BG_ONGOING_COUNSILS_QUERY'),
+      onError: (error) => handleQueryError(error, 'ALL_BG_ONGOING_COUNSILS_QUERY'),
     },
     { refetchQueryVariables },
   )
@@ -324,9 +324,9 @@ const CouncilProvider = ({ children }: Props) => {
     }))
   }
 
-  const changeCouncilSubscriptionList = (newSubs: Partial<CouncilSubsRecordType>) => {
+  const changeCouncilSubscriptionList = useCallback((newSubs: Partial<CouncilSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSubs }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

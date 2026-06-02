@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 
 // hooks
 import { useDappConfigContext } from '../dappConfig.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 
 // utils
@@ -19,7 +19,7 @@ import { GET_DAPP_TVL } from '../queries/dappTvl.query'
 import { SMVN_TOKEN_ADDRESS } from 'utils/constants'
 
 export const useDappTvl = () => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const {
     setDappTotalValueLocked,
@@ -29,7 +29,7 @@ export const useDappTvl = () => {
 
   const [indexerData, setIndexerData] = useState<null | DashboardTvlQuery>(null)
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     GET_DAPP_TVL,
     {
       skip: !doormanAddress,
@@ -37,10 +37,7 @@ export const useDappTvl = () => {
         doormanContractAddress: doormanAddress ?? '',
       },
       onCompleted: (data) => setIndexerData(data),
-      onError: (error) => handleApolloError(error, 'GET_DAPP_TVL'),
-    },
-    {
-      blocksDiff: 2000,
+      onError: (error) => handleQueryError(error, 'GET_DAPP_TVL'),
     },
   )
 

@@ -2,13 +2,11 @@
 
 import {
   LoansContext,
-  LoansContextState,
   LoansSubsRecordType,
-  MarketsIndexerDataType,
   NullableLoansContextState,
 } from '../loans.provider.types'
 
-import {replaceNullValuesWithDefault} from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import {EMPTY_LOANS_CONTEXT, LOANS_CONFIG, LOANS_MARKETS_DATA} from './loans.const'
 
 // HELPER TO GET OPERATION NAME BY ITS TYPE
@@ -119,28 +117,25 @@ export const getLoansProviderReturnValue = ({
    * 4. if we subscribe to config and config context data is empty
    * 5. if we haven't subscribed to anything and don't have any data loaded, need this to fix time which component init its subscribes in useEffect as it's async operation
    */
+  /**
+   * isLoading cases:
+   * 1,2. switching between markets — subscribed to one market, it hasn't loaded yet
+   * 3. subscribed to markets but markets data is empty
+   * 4. subscribed to config but config data is empty
+   * NOTE: removed old condition #5 that made isLoading=true when NOTHING subscribed
+   * and no data loaded. If nothing is subscribed, isLoading should be false.
+   */
   const isLoading =
     isLoadingSingleMarket ||
     isLoadingAllMarkets ||
     (activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty) ||
-    (activeSubs[LOANS_CONFIG] && config === null) ||
-    (!activeSubs[LOANS_CONFIG] && config === null && !activeSubs[LOANS_MARKETS_DATA] && isMarketsConfigEmpty)
+    (activeSubs[LOANS_CONFIG] && config === null)
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_LOANS_CONTEXT,
-      allMarketsAddresses: allMarketsAddresses ?? EMPTY_LOANS_CONTEXT['allMarketsAddresses'],
-      isLoading: true,
-    }
-  }
+  const result = buildProviderReturnValue(loansCtxState, EMPTY_LOANS_CONTEXT, commonToReturn, Boolean(isLoading))
 
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<LoansContextState>(loansCtxState, EMPTY_LOANS_CONTEXT)
+  // Override allMarketsAddresses even during loading to prevent UI blinking
   return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
+    ...result,
+    allMarketsAddresses: allMarketsAddresses ?? EMPTY_LOANS_CONTEXT['allMarketsAddresses'],
   }
 }
