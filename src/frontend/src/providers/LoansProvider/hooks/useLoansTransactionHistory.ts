@@ -1,12 +1,12 @@
 import qs from 'qs'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router'
 import { useEffect, useMemo, useState } from 'react'
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // types
 import { GetDevLoansTransactionsHistoryQuery, GetLoansTransactionsHistoryQuery } from 'utils/__generated__/graphql'
@@ -32,7 +32,6 @@ import {
   TRANSACTION_HISTORY_TABLE_NAME,
   updatePageInUrl,
 } from 'app/App.components/Pagination/pagination.consts'
-import { ApolloError } from '@apollo/client'
 
 type LoansMarketTransactionHistoryArgs = {
   marketTokenAddress: TokenAddressType
@@ -61,7 +60,7 @@ export const useLoansTransactionHistory = ({
   vaultAddress,
   typeFilter,
 }: LoansMarketTransactionHistoryArgs) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { bug } = useToasterContext()
 
@@ -123,8 +122,8 @@ export const useLoansTransactionHistory = ({
           }))
         }
       },
-      onError: (error: ApolloError) =>
-        handleApolloError(
+      onError: (error: Error) =>
+        handleQueryError(
           error,
           'GET_LOANS_HISTORY_DATA',
           'Loading transactions history error, please reload the page',
@@ -134,12 +133,12 @@ export const useLoansTransactionHistory = ({
 
   // 2 queries for dev and prod, cuz query is dynamic and codegen can't generate types for it
   // always load new txHistory on market | vault address change
-  useQueryWithRefetch(getLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
-    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || process.env.REACT_APP_DATA_ENV === 'dev',
+  useGraphQLQuery(getLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || import.meta.env.VITE_DATA_ENV === 'dev',
     ...queryData,
   })
-  useQueryWithRefetch(getDevLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
-    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || process.env.REACT_APP_DATA_ENV === 'prod',
+  useGraphQLQuery(getDevLoansTransactionsHistory({ userAddress, vaultAddress, typeFilter }), {
+    skip: (!userAddress && !vaultAddress) || !marketTokenAddress || import.meta.env.VITE_DATA_ENV === 'prod',
     ...queryData,
   })
 

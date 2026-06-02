@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 import { convertNumberForClient } from 'utils/calcFunctions'
 
@@ -32,7 +32,7 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
     oracleRewardsTotal: null,
   })
 
-  useQueryWithRefetch(
+  useGraphQLQuery(
     SATELLITES_STATS,
     {
       onCompleted: (data) => {
@@ -62,9 +62,6 @@ export const useSatelliteStatistics = (): SatelliteStatsStateType & { isLoading:
           }),
         })
       },
-    },
-    {
-      blocksDiff: 25,
     },
   )
 

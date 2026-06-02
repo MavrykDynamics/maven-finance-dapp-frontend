@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { LinkProps, generatePath } from 'react-router-dom'
+import { LinkProps, generatePath } from 'react-router'
 import classNames from 'classnames'
 import qs from 'qs'
 

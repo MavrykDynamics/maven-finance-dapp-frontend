@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 import { Button } from 'app/App.components/Button/Button.controller'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
@@ -106,7 +106,7 @@ export const TransactionHistory = ({
                       </TableCell>
                       <TableCell $width={`30%`}>{date}</TableCell>
                       <TableCell $contentPosition="right">
-                        <Link to={`${process.env.REACT_APP_EXPLORER_LINK}/operation/${operationHash}`} target="_blank">
+                        <Link to={`${import.meta.env.VITE_EXPLORER_LINK}/operation/${operationHash}`} target="_blank">
                           <Button text="View TX" kind={TRANSPARENT} className="link" />
                         </Link>
                       </TableCell>

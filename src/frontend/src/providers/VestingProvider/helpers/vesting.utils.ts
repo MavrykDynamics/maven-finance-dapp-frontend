@@ -1,8 +1,7 @@
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import {
   NullableVestingContextStateType,
   VestingContext,
-  VestingContextStateType,
   VestingSubsRecordType,
 } from '../vesting.provider.types'
 import { EMPTY_VESTING_CTX, VESTING_STORAGE_DATA_SUB } from './vesting.consts'
@@ -17,31 +16,16 @@ export const getVestingProviderReturnValue = ({
   activeSubs: VestingSubsRecordType
 }) => {
   const { address, vesteesMapper, vesteesAddresses } = vestingCtxState
-  const commonToReturn = {
-    changeVestingSubscriptionsList,
-  }
 
   const isVestingEmpty = vesteesMapper === null || vesteesAddresses === null || address === null
   const isLoading =
     (activeSubs[VESTING_STORAGE_DATA_SUB] && isVestingEmpty) ||
     (!activeSubs[VESTING_STORAGE_DATA_SUB] && isVestingEmpty)
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_VESTING_CTX,
-      isLoading: true,
-    }
-  }
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<VestingContextStateType>(
+  return buildProviderReturnValue(
     vestingCtxState,
     EMPTY_VESTING_CTX,
+    { changeVestingSubscriptionsList },
+    Boolean(isLoading),
   )
-  return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
-  }
 }

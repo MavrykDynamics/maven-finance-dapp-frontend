@@ -1,5 +1,5 @@
-import React, { useContext, useMemo, useState } from 'react'
-import { useQuery } from '@apollo/client'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
+import { useGraphQLQuery, useGraphQLQueryOnce } from 'providers/QueryProvider/useGraphQLQuery'
 
 // consts
 import { FEEDS_QUERY, FEEDS_UPDATE_QUERY } from './queries/feeds.query'
@@ -25,8 +25,7 @@ import { normalizeDataFeedsHistory, normalizeFeeds, normalizeFeedsPrices } from 
 
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 
 // types
 import { FeedHistoryQeuryQuery } from 'utils/__generated__/graphql'
@@ -45,12 +44,12 @@ type Props = {
 
 export const DataFeedsProvider = ({ children }: Props) => {
   const { updateTokensPrices } = useTokensContext()
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [feedsCtxState, setFeedsCtxState] = useState<NullableDataFeedsContextStateType>(DEFAULT_DATA_FEEDS_CTX)
 
   // load initial feeds data
-  const { refetch: refetchDataFeeds } = useQuery(FEEDS_QUERY, {
+  const { refetch: refetchDataFeeds } = useGraphQLQueryOnce(FEEDS_QUERY, {
     onCompleted: (data) => {
       try {
         const parsedFeeds = fullFeedsQuerySchema.parse(data.aggregator)
@@ -58,14 +57,23 @@ export const DataFeedsProvider = ({ children }: Props) => {
         updateFullDataFeeds(parsedFeeds)
         updateTokensPrices(parsedFeeds)
       } catch (e) {
-        console.log('zod full feeds query parsing error:', { e })
+        console.error('zod full feeds query parsing error:', { e })
       }
     },
-    onError: (error) => handleApolloError(error, 'FEEDS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'FEEDS_QUERY')
+      // Set empty feeds state so isLoading transitions to false and the app doesn't stay stuck on the loading screen
+      setFeedsCtxState((prev) => ({
+        ...prev,
+        feedsMapper: prev.feedsMapper ?? {},
+        feedsAddresses: prev.feedsAddresses ?? [],
+        feedsCategories: prev.feedsCategories ?? [],
+      }))
+    },
   })
 
   // update feeds price and track whether need to load new feed
-  useQueryWithRefetch(FEEDS_UPDATE_QUERY, {
+  useGraphQLQuery(FEEDS_UPDATE_QUERY, {
     onCompleted: (data) => {
       try {
         const parsedSmallFeeds = smallFeedsQuerySchema.parse(data.aggregator)
@@ -79,10 +87,10 @@ export const DataFeedsProvider = ({ children }: Props) => {
         updateSmallDataFeeds(parsedSmallFeeds)
         updateTokensPrices(parsedSmallFeeds)
       } catch (e) {
-        console.log('zod small feeds query parsing error:', { e })
+        console.error('zod small feeds query parsing error:', { e })
       }
     },
-    onError: (error) => handleApolloError(error, 'FEEDS_UPDATE_QUERY'),
+    onError: (error) => handleQueryError(error, 'FEEDS_UPDATE_QUERY'),
   })
 
   // normalize and update for full feeds query
@@ -106,26 +114,26 @@ export const DataFeedsProvider = ({ children }: Props) => {
   }
 
   // normalize feeds history and volatility
-  const updateFeedsHistoryAndVolatility = (
-    data: FeedHistoryQeuryQuery['aggregator'][number]['history_data'],
-    period: ChartPeriodType,
-  ) => {
-    const { dataFeedsHistory, dataFeedsVolatility } = normalizeDataFeedsHistory(data)
+  const updateFeedsHistoryAndVolatility = useCallback(
+    (data: FeedHistoryQeuryQuery['aggregator'][number]['history_data'], period: ChartPeriodType) => {
+      const { dataFeedsHistory, dataFeedsVolatility } = normalizeDataFeedsHistory(data)
 
-    setFeedsCtxState((prevState) => ({
-      ...prevState,
-      dataFeedsHistory: { ...prevState.dataFeedsHistory, [period]: dataFeedsHistory },
-      dataFeedsVolatility: { ...prevState.dataFeedsVolatility, [period]: dataFeedsVolatility },
-    }))
-  }
+      setFeedsCtxState((prevState) => ({
+        ...prevState,
+        dataFeedsHistory: { ...prevState.dataFeedsHistory, [period]: dataFeedsHistory },
+        dataFeedsVolatility: { ...prevState.dataFeedsVolatility, [period]: dataFeedsVolatility },
+      }))
+    },
+    [],
+  )
 
-  const resetFeedsHistoryAndVolatility = () => {
+  const resetFeedsHistoryAndVolatility = useCallback(() => {
     setFeedsCtxState((prevState) => ({
       ...prevState,
       dataFeedsHistory: DEFAULT_DATA_FEEDS_HISTORY,
       dataFeedsVolatility: DFEFAULT_DATA_FEEDS_VOLATILITY,
     }))
-  }
+  }, [])
 
   const contextProviderValue = useMemo(
     () =>

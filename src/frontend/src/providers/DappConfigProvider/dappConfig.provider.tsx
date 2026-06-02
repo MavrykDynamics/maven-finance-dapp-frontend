@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { useQuery } from '@apollo/client'
 
 // hooks
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQueryOnce } from 'providers/QueryProvider/useGraphQLQuery'
 import { useDappConfigMethods } from './hooks/useDappConfigMethods'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
@@ -16,7 +16,7 @@ import { GET_DAPP_CONTRACT_ADDRESSES } from './queries/contractAddresses.query'
 import { ipfsClient } from 'app/App.components/IPFSUploader/IPFSUploader.controller'
 
 // utils
-import { getXTZBakers } from './bakers/getXtzBakers'
+import { getMavrykValidators } from './bakers/getMavrykValidators'
 import { dappConfigSchema } from './helpers/dappConfig.schemes'
 import { normalizeContractAddresses, normalizeInitialConfigData } from './helpers/dappConfig.normalizers'
 
@@ -28,16 +28,21 @@ type Props = {
 
 // TODO: handle initial loading with null values
 const DappConfigProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { bug } = useToasterContext()
 
   const [dappConfigCtxState, setDappConfigCtxState] = useState<DappConfigContextStateType>(DEFAULT_DAPP_CONFIG_CONTEXT)
 
   // check whether keys for ipfs (image selection) are valid
   useEffect(() => {
+    const projectId = import.meta.env.VITE_IPFS_PROJECT_ID
+    const projectSecret = import.meta.env.VITE_IPFS_API_KEY
+
+    // Skip the network check if credentials are not configured
+    if (!projectId || !projectSecret) return
+
     const checkIPFS = async () => {
       try {
-        // if keys are invalid it will return error
         await ipfsClient.version()
         setDappConfigCtxState((prev) => ({ ...prev, canUseIpfs: true }))
       } catch (e) {
@@ -61,7 +66,7 @@ const DappConfigProvider = ({ children }: Props) => {
   } = useDappConfigMethods({ setDappConfigCtxState })
 
   // Load initial data for dapp (max lengths, mvnFaucet, minSmvnAmount)
-  const { loading: initialConfigLoading } = useQuery(DAPP_INITIAL_CONFIG_QUERY, {
+  const { isLoading: initialConfigLoading } = useGraphQLQueryOnce(DAPP_INITIAL_CONFIG_QUERY, {
     onCompleted: (data) => {
       try {
         const parsedConfig = dappConfigSchema.parse(data)
@@ -76,11 +81,11 @@ const DappConfigProvider = ({ children }: Props) => {
         console.error('zod parsing DAPP_INITIAL_CONFIG_QUERY error:', { e })
       }
     },
-    onError: (error) => handleApolloError(error, 'DAPP_INITIAL_CONFIG_QUERY'),
+    onError: (error) => handleQueryError(error, 'DAPP_INITIAL_CONFIG_QUERY'),
   })
 
   // TODO: addresses that are general, not page specific load in DAPP_INITIAL_CONFIG_QUERY other addresses load only on pages that requires them
-  const { loading: contractAddressesLoading } = useQuery(GET_DAPP_CONTRACT_ADDRESSES, {
+  const { isLoading: contractAddressesLoading } = useGraphQLQueryOnce(GET_DAPP_CONTRACT_ADDRESSES, {
     variables: {},
     onCompleted: (data) => {
       setDappConfigCtxState((prev) => ({
@@ -88,22 +93,22 @@ const DappConfigProvider = ({ children }: Props) => {
         contractAddresses: normalizeContractAddresses(data),
       }))
     },
-    onError: (error) => handleApolloError(error, 'GET_DAPP_CONTRACT_ADDRESSES'),
+    onError: (error) => handleQueryError(error, 'GET_DAPP_CONTRACT_ADDRESSES'),
   })
 
-  // TODO: move it to the custom hook for bakers
+  // TODO: move it to the custom hook for validators
   useEffect(() => {
-    if (!dappConfigCtxState.xtzBakers) {
-      updateXtzBakers()
+    if (!dappConfigCtxState.mavrykValidators) {
+      updateMavrykValidators()
     }
-  }, [dappConfigCtxState.xtzBakers])
+  }, [dappConfigCtxState.mavrykValidators])
 
-  const updateXtzBakers = async () => {
-    const xtzBakers = await getXTZBakers()
+  const updateMavrykValidators = async () => {
+    const mavrykValidators = await getMavrykValidators()
 
     setDappConfigCtxState((prev) => ({
       ...prev,
-      xtzBakers,
+      mavrykValidators,
     }))
   }
 
@@ -122,7 +127,7 @@ const DappConfigProvider = ({ children }: Props) => {
       toggleWertLoader,
       ...dappConfigCtxState,
     }
-  }, [dappConfigCtxState])
+  }, [dappConfigCtxState, initialConfigLoading, contractAddressesLoading])
 
   return <dappConfigContext.Provider value={contextProviderValue}>{children}</dappConfigContext.Provider>
 }

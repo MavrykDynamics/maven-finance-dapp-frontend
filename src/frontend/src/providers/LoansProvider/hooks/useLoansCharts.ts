@@ -1,8 +1,8 @@
 // hooks
 import { useTokensContext } from 'providers/TokensProvider/tokens.provider'
 import { useLoansContext } from './../loans.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // consts & helpers
 import { GET_LOANS_HISTORY_DATA } from 'providers/LoansProvider/queries/loansHistory.query'
@@ -18,11 +18,11 @@ export type LoansChartsToCalcType = {
 }
 
 const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { tokensMetadata, tokensPrices } = useTokensContext()
   const { chartsData, setLoansChartsData, marketsAddresses } = useLoansContext()
 
-  useQueryWithRefetch(GET_LOANS_HISTORY_DATA, {
+  useGraphQLQuery(GET_LOANS_HISTORY_DATA, {
     skip: !marketsAddresses.length,
     variables: {},
     onCompleted: (data) => {
@@ -35,7 +35,7 @@ const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
       })
       setLoansChartsData(newChartsData)
     },
-    onError: (error) => handleApolloError(error, 'GET_LOANS_HISTORY_DATA'),
+    onError: (error) => handleQueryError(error, 'GET_LOANS_HISTORY_DATA'),
   })
 
   const {

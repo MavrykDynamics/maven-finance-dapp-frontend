@@ -1,10 +1,10 @@
 import qs from 'qs'
 import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom' // hooks
+import { useNavigate, useLocation } from 'react-router' // hooks
 import { useUserContext } from '../user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch' // utils
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery' // utils
 import { normalizeUserHistoryData } from '../helpers/userData.helpers' // consts
 import { USER_ACTIONS_HISTORY_DATA_QUERY } from '../queries/userData.query'
 import {
@@ -17,7 +17,7 @@ import {
 const userActionsHistoryItemsPerPage = LIST_NAMES_MAPPER[USER_ACTIONS_HISTORY]
 
 export const useUserHistoryData = () => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { setUserHistoryData, userAddress, actionsHistory } = useUserContext()
   const { bug } = useToasterContext()
 
@@ -29,7 +29,7 @@ export const useUserHistoryData = () => {
 
   const [iseNewUser, setIsNewUser] = useState(false)
 
-  useQueryWithRefetch(USER_ACTIONS_HISTORY_DATA_QUERY, {
+  useGraphQLQuery(USER_ACTIONS_HISTORY_DATA_QUERY, {
     skip: !userAddress || Boolean(actionsHistory.paginatedList[currentPage]),
     variables: {
       userAddress: userAddress ?? '',
@@ -62,7 +62,7 @@ export const useUserHistoryData = () => {
         setUserHistoryData(currentPage, normalizedUserHistoryData, itemsAmount)
       }
     },
-    onError: (error) => handleApolloError(error, 'USER_ACTIONS_HISTORY_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'USER_ACTIONS_HISTORY_DATA_QUERY'),
   })
 
   return {

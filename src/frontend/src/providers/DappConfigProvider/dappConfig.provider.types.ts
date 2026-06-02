@@ -1,7 +1,7 @@
 import { TransactionWalletOperation } from '@mavrykdynamics/webmavryk'
 import { BatchWalletOperation } from '@mavrykdynamics/webmavryk/dist/types/wallet/batch-operation'
 import { StakeActionType } from 'providers/DoormanProvider/doorman.provider.types'
-import { XtzBakerType } from './bakers/getXtzBakers'
+import { MavrykValidatorType } from './bakers/getMavrykValidators'
 import { normalizeContractAddresses } from './helpers/dappConfig.normalizers'
 import { UserActionsType } from 'providers/UserProvider/user.provider.types'
 import { SatelliteActionsType } from 'providers/SatellitesProvider/satellites.provider.types'
@@ -26,10 +26,10 @@ export type DappConfigContextStateType = {
   minimumStakedMvnBalance: number
   dappTotalValueLocked: number | null
   contractAddresses: Record<DappContractAddressesKeysType, string | null>
-  xtzBakers: {
-    dao?: XtzBakerType
-    mavrykDynamics: XtzBakerType
-    otherBakers?: Array<XtzBakerType>
+  mavrykValidators: {
+    dao?: MavrykValidatorType
+    mavrykDynamics: MavrykValidatorType
+    otherBakers?: Array<MavrykValidatorType>
   } | null
   preferences: PreferencesState
   globalLoadingState: LoadingState

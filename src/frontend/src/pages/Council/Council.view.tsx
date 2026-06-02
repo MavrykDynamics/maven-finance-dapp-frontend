@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router'
 
 // consts
 import { BUTTON_SECONDARY } from '../../app/App.components/Button/Button.constants'
@@ -40,7 +40,7 @@ import {
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 // utils
 import { dropBreakGlassCouncilAction } from 'providers/CouncilProvider/actions/breakGlassCouncil.actions'
@@ -81,7 +81,7 @@ type ActionsDDItemType = {
   disabled?: boolean
 }
 
-export function CouncilView({
+export const CouncilView = memo(({
   selectedTab,
   isBreakGlassCouncil = false,
 
@@ -92,7 +92,7 @@ export function CouncilView({
   myPastActions,
   actionsMapper,
   members,
-}: Props) {
+}: Props) => {
   const navigate = useNavigate()
   const { search } = useLocation()
 
@@ -352,4 +352,5 @@ export function CouncilView({
       />
     </CouncilPageWrapper>
   )
-}
+})
+CouncilView.displayName = 'CouncilView'

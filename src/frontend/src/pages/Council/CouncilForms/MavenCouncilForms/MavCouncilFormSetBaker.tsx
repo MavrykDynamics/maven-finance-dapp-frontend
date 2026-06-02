@@ -22,7 +22,7 @@ import Icon from '../../../../app/App.components/Icon/Icon.view'
 import { CouncilFormHeaderStyled, CouncilFormStyled } from '../CouncilForm.style'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'

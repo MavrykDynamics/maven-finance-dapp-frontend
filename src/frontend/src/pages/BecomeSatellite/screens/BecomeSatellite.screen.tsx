@@ -18,7 +18,7 @@ import { IS_GHOSTNET } from 'consts/global.const'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 // Actions
 import { registerSatellite, updateSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
@@ -47,7 +47,7 @@ import {
   BecomeSatelliteRegisterAsOracle,
 } from '../BecomeSatellite.style'
 import { Tooltip } from 'app/App.components/Tooltip/Tooltip'
-import { useOutletContext } from 'react-router-dom'
+import { useOutletContext } from 'react-router'
 import { isMavrykProductUrl } from 'utils/url.utils'
 
 const connectWalletMessage = (

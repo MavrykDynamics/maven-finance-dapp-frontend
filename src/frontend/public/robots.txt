@@ -1,4 +1,6 @@
-# Block web archive 
+User-agent: *
+Allow: /
+Sitemap: https://atlasnet.mavenfinance.io/sitemap.xml
+
 User-agent: ia_archiver
 Disallow: /
-

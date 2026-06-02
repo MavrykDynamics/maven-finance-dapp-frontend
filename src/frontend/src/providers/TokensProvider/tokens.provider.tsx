@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 
 // consts
 import { MVN_TOKEN_SYMBOL, SMVN_TOKEN_ADDRESS } from 'utils/constants'
@@ -6,7 +6,8 @@ import { QUERY_TOKENS_METADATA } from './queries/tokens.query'
 import { tokensGqlSchema } from './helpers/tokens.schemes'
 
 // hooks
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQueryOnce } from 'providers/QueryProvider/useGraphQLQuery'
 
 // helpers
 import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.normalizer'
@@ -14,7 +15,6 @@ import { normalizeTokenPrices, normalizeTokensMetadata } from './helpers/tokens.
 // types
 import { TokensContext, TokensContextStateType } from './tokens.provider.types'
 import { FullFeedsQueryType, SmallFeedsQueryType } from 'providers/DataFeedsProvider/helpers/feeds.schemas'
-import { useQuery } from '@apollo/client'
 
 export const tokensContext = React.createContext<TokensContext>(undefined!)
 
@@ -24,7 +24,7 @@ type Props = {
 
 // TODO: handle itial loading with null init values
 export const TokensProvider = ({ children }: Props) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const initialLoadingStatus = useRef(true)
 
@@ -37,12 +37,10 @@ export const TokensProvider = ({ children }: Props) => {
   })
 
   // Load tokens metadata
-  useQuery(QUERY_TOKENS_METADATA, {
+  useGraphQLQueryOnce(QUERY_TOKENS_METADATA, {
     onCompleted: (data) => {
       try {
         const parsedTokens = tokensGqlSchema.parse(data.token)
-
-        initialLoadingStatus.current = false
 
         const { tokensMetadata, mTokens, farmLpTokens, collateralTokens } = normalizeTokensMetadata(parsedTokens)
 
@@ -55,20 +53,25 @@ export const TokensProvider = ({ children }: Props) => {
         }))
       } catch (e) {
         console.error('zod parsing tokens error:', { e })
+      } finally {
+        initialLoadingStatus.current = false
       }
     },
-    onError: (error) => handleApolloError(error, 'QUERY_TOKENS_METADATA'),
+    onError: (error) => {
+      handleQueryError(error, 'QUERY_TOKENS_METADATA')
+      initialLoadingStatus.current = false
+    },
   })
 
   // update token prices in ctx
-  const updateTokensPrices = (feedsLedger: FullFeedsQueryType | SmallFeedsQueryType) => {
+  const updateTokensPrices = useCallback((feedsLedger: FullFeedsQueryType | SmallFeedsQueryType) => {
     const normalizedTokenPrices = normalizeTokenPrices(feedsLedger)
 
     setTokensCtxState((prev) => ({
       ...prev,
       tokensPrices: { ...prev.tokensPrices, ...normalizedTokenPrices },
     }))
-  }
+  }, [])
 
   const providerValue = useMemo(() => {
     return {

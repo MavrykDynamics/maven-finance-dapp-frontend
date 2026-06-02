@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 
 // components
@@ -81,7 +81,7 @@ type InputDataType = {
   validationStatus: InputStatusType
 }
 
-export const BorrowingExpandCardRepaySection = (props: Props) => {
+export const BorrowingExpandCardRepaySection = memo((props: Props) => {
   const { userTokensBalances } = useUserContext()
   const {
     globalLoadingState: { isActionActive },
@@ -357,7 +357,8 @@ export const BorrowingExpandCardRepaySection = (props: Props) => {
       </div>
     </>
   )
-}
+})
+BorrowingExpandCardRepaySection.displayName = 'BorrowingExpandCardRepaySection'
 
 const RepayTableStats = ({
   futureBorrowedAmount,

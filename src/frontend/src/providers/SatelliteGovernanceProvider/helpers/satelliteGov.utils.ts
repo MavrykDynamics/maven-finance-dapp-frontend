@@ -1,8 +1,7 @@
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import {
   NullableSatelliteGovernanceContextStateType,
   SatelliteGovernanceContext,
-  SatelliteGovernanceContextStateType,
   SatelliteGovernanceSubsRecordType,
 } from '../satelliteGovernance.provider.types'
 import {
@@ -73,23 +72,5 @@ export const getSatelliteGovernanceProviderReturnValue = ({
     (!activeSubs[SATELLITES_GOVERNANCE_CONFIG_SUB] && config === null) || // 6
     (activeSubs[SATELLITE_GOV_ACTIONS_DATA] === null && isSatelliteGovActionsDataEmpty) // 7
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_SATELLITE_GOV_CTX,
-      isLoading: true,
-    }
-  }
-
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<SatelliteGovernanceContextStateType>(
-    satelliteGovCtxState,
-    EMPTY_SATELLITE_GOV_CTX,
-  )
-  return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
-  }
+  return buildProviderReturnValue(satelliteGovCtxState, EMPTY_SATELLITE_GOV_CTX, commonToReturn, Boolean(isLoading))
 }

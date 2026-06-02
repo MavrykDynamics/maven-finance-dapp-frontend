@@ -38,7 +38,7 @@ import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { managePermissionsAction } from 'providers/VaultsProvider/actions/vaultPermissions.actions'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 
 // providers
 import { useUserContext } from 'providers/UserProvider/user.provider'

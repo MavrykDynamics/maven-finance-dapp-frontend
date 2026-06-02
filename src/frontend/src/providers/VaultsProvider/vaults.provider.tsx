@@ -3,8 +3,8 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // types
 import {
@@ -47,11 +47,11 @@ type Props = {
 // TODO: if will need implement query that will take vaults where owner === current user and market token === vault loan token
 export const VaultsProvider = ({ children }: Props) => {
   const { userAddress } = useUserContext()
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const prevUserAddress = usePrevious(userAddress)
 
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [paginationState, setPaginationState] = useState(() => ({
     [PAGINATION_ALL]: 1,
     [PAGINATION_MY]: 1,
@@ -178,7 +178,7 @@ export const VaultsProvider = ({ children }: Props) => {
   }, [userAddress, prevUserAddress])
 
   // QUERY FOR PERMISSION VAULTS ( get vaults where user allowed to deposit)
-  useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
+  useGraphQLQuery(GET_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     variables: {
       limit: VAULTS_LIMIT,
@@ -200,11 +200,15 @@ export const VaultsProvider = ({ children }: Props) => {
       setIsLoading(false)
       setIsPendingQueryWhenFilters(false)
     },
-    onError: (error) => handleApolloError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_USER_DEPOSITOR_ALL_VAULTS_QUERY')
+      setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
+    },
   })
 
   // QUERY FOR USER VAULTS (MY)
-  useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
+  useGraphQLQuery(GET_ALL_VAULTS_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     variables: {
       vaultsWhere: defaultVaultFilters[PAGINATION_MY].where,
@@ -227,11 +231,15 @@ export const VaultsProvider = ({ children }: Props) => {
       setIsLoading(false)
       setIsPendingQueryWhenFilters(false)
     },
-    onError: (error) => handleApolloError(error, 'GET_USER_ALL_VAULTS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_USER_ALL_VAULTS_QUERY')
+      setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
+    },
   })
 
   // QUERY FOR ALL VAULTS
-  useQueryWithRefetch(GET_ALL_VAULTS_QUERY, {
+  useGraphQLQuery(GET_ALL_VAULTS_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
     variables: {
       vaultsWhere: defaultVaultFilters[PAGINATION_ALL].where,
@@ -253,10 +261,14 @@ export const VaultsProvider = ({ children }: Props) => {
       setIsLoading(false)
       setIsPendingQueryWhenFilters(false)
     },
-    onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_ALL_VAULTS_QUERY')
+      setIsLoading(false)
+      setIsPendingQueryWhenFilters(false)
+    },
   })
 
-  useQueryWithRefetch(GET_ALL_VAULTS_QUERY_COUNT, {
+  useGraphQLQuery(GET_ALL_VAULTS_QUERY_COUNT, {
     skip: activeSubs[VAULTS_DATA] === null,
     variables: {
       totalCountWhere: defaultVaultFilters[PAGINATION_ALL].shadowWhere,
@@ -284,13 +296,12 @@ export const VaultsProvider = ({ children }: Props) => {
         },
       }))
     },
-    onError: (error) => handleApolloError(error, 'GET_ALL_VAULTS_QUERY_COUNT'),
+    onError: (error) => handleQueryError(error, 'GET_ALL_VAULTS_QUERY_COUNT'),
   })
 
   const changePage = useCallback(
     (newPage: number, mapperType: PaginationVaultType) => {
       if (newPage === paginationState[mapperType]) return
-      setIsLoading(true)
       setPaginationState((prev) => ({ ...prev, [mapperType]: newPage }))
     },
     [paginationState],
@@ -300,16 +311,16 @@ export const VaultsProvider = ({ children }: Props) => {
     setMarketAddress(marketAddress)
   }, [])
 
-  const setVaultsDashboardData = (newVaultsDashboardData: VaultsDashboardDataType) => {
+  const setVaultsDashboardData = useCallback((newVaultsDashboardData: VaultsDashboardDataType) => {
     setVaultsCtxState((prev) => ({
       ...prev,
       vaultsDashboardData: newVaultsDashboardData,
     }))
-  }
+  }, [])
 
-  const changeVaultsSubscriptionsList = (newSkips: Partial<VaultsSubsRecordType>) => {
+  const changeVaultsSubscriptionsList = useCallback((newSkips: Partial<VaultsSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
-  }
+  }, [])
 
   const providerValue = useMemo(
     () => ({

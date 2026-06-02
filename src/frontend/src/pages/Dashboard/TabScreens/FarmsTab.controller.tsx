@@ -1,6 +1,6 @@
 import qs from 'qs'
 import { useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // consts
 import {

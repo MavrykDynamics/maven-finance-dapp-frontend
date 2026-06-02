@@ -1,5 +1,5 @@
-import { useCallback, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { memo, useCallback, useMemo } from 'react'
+import { Link } from 'react-router'
 
 // context, hooks
 import { useSatelliteStatuses } from 'providers/SatellitesProvider/hooks/useSatelliteStatus'
@@ -66,7 +66,7 @@ import {
 // hooks
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 type SatelliteListItemProps = {
@@ -103,7 +103,7 @@ const SatelliteLastProposalVote = ({
   )
 }
 
-export const SatelliteListItem = ({
+export const SatelliteListItem = memo(({
   satellite,
   isDetailsPage = false,
   fromNodesPage = false,
@@ -393,4 +393,5 @@ export const SatelliteListItem = ({
       {children ? children : <SatelliteLastProposalVote lastVotedProposal={satellite.lastVotedProposal} />}
     </SatelliteCard>
   )
-}
+})
+SatelliteListItem.displayName = 'SatelliteListItem'

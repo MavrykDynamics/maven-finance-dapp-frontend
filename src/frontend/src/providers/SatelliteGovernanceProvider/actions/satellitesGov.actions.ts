@@ -43,25 +43,6 @@ export const suspendSatellite = async (
   }
 }
 
-// commented due to https://www.notion.so/unbanSatellite-a5337dc17bdb452ba4d58851f51b282a?pvs=4
-// Unsuspend Satellite
-// export const unsuspendSatellite = async (
-//   governanceSatelliteAddress: string,
-//   satelliteAddress: string,
-//   purpose: string,
-// ) => {
-//   try {
-//     const tezos = await DAPP_INSTANCE.tezos()
-//     const contract = await tezos.wallet.at(governanceSatelliteAddress)
-//     const unsuspendSatelliteMetaData = contract?.methods.restoreSatellite(satelliteAddress, purpose)
-
-//     return await getEstimationResult(unsuspendSatelliteMetaData)
-//   } catch (error) {
-//     const e = unknownToError(error)
-//     return { actionSuccess: false, error: new WalletOperationError(e) }
-//   }
-// }
-
 // Ban Satellite
 export const banSatellite = async (
   governanceSatelliteAddress: string,
@@ -96,21 +77,6 @@ export const banSatellite = async (
     return { actionSuccess: false, error: new WalletOperationError(e) }
   }
 }
-
-// commented due to https://www.notion.so/unbanSatellite-a5337dc17bdb452ba4d58851f51b282a?pvs=4
-// Unban Satellite
-// export const unbanSatellite = async (governanceSatelliteAddress: string, satelliteAddress: string, purpose: string) => {
-//   try {
-//     const tezos = await DAPP_INSTANCE.tezos()
-//     const contract = await tezos.wallet.at(governanceSatelliteAddress)
-//     const unbanSatelliteMetaData = contract?.methods.unbanSatellite(satelliteAddress, purpose)
-
-//     return await getEstimationResult(unbanSatelliteMetaData)
-//   } catch (error) {
-//     const e = unknownToError(error)
-//     return { actionSuccess: false, error: new WalletOperationError(e) }
-//   }
-// }
 
 // Remove all Oracles from Satellite
 export const removeOracleFromSatellite = async (

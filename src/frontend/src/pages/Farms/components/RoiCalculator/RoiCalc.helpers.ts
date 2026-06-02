@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { FarmStorage } from 'utils/TypesAndInterfaces/Farm'
 import { InputStatusesType, InputValuesType } from './RoiCalc.types'
 import { calculateFarmAPR } from 'providers/FarmsProvider/helpers/farms.utils'
@@ -54,49 +53,26 @@ export const calcRoi = ({
   compoundFrequency?: number
   farm: FarmStorage[number]
 }) => {
-  console.log(
-    'startUSDAmount: ',
-    startUSDAmount,
-    'stakedDays: ',
-    stakedDays,
-    'useCompound: ',
-    useCompound,
-    'compoundFrequency: ',
-    compoundFrequency,
-  )
-
   // amount of block for staked period
   const blocksAmount = 2 * 60 * 24 * stakedDays
   // get profit% of farm via apr
   const apr = calculateFarmAPR(farm.currentRewardPerBlock, blocksAmount, farm.lpBalance)
-  // get revenue if invest inputted amount
-  const revenue = (startUSDAmount / 100) * apr - startUSDAmount
+  // get revenue if invest inputted amount: (amount * apr%) / 100
+  const revenue = (startUSDAmount * apr) / 100
   // get annual ROI%
   const annualizedROI = (revenue / startUSDAmount) * 100
   // get ROI% for staked time
-  const roiPerStakedPeriod = Math.pow(1 + annualizedROI, stakedDays / 365) - 1
+  const roiPerStakedPeriod = Math.pow(1 + annualizedROI / 100, stakedDays / 365) - 1
 
-  console.log(
-    'revenue: ',
-    revenue,
-    'annualizedROI: ',
-    `${annualizedROI}%`,
-    'roiPerStakedPeriod: ',
-    `${roiPerStakedPeriod}%`,
-  )
-
-  // If we using compouding periods
+  // If we using compouding periods: A = P(1 + r/n)^(nt)
   if (useCompound && compoundFrequency) {
     const amountWithCompound =
-      startUSDAmount * (1 + Math.pow(roiPerStakedPeriod / compoundFrequency, compoundFrequency * (stakedDays / 365)))
+      startUSDAmount * Math.pow(1 + roiPerStakedPeriod / compoundFrequency, compoundFrequency * (stakedDays / 365))
     const persentWithCompound = (amountWithCompound * 100) / startUSDAmount
 
-    console.log('amountWithCompound: ', `${amountWithCompound}$`, 'persentWithCompound: ', `${persentWithCompound}%`)
-    console.log('------------------')
     return persentWithCompound
   }
 
-  console.log('------------------')
   return roiPerStakedPeriod
 }
 

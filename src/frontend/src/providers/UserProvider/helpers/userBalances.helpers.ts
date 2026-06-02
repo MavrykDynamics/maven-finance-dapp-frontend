@@ -111,7 +111,7 @@ export const normalizeUserIndexerTokensBalances = ({
         }
         acc.availableLoansRewards += mTokenInterestEarned
       } catch (e) {
-        if (process.env.REACT_APP_ENV === 'prod') console.error('normalize user mTokens error: ', { e })
+        if (import.meta.env.VITE_ENV === 'prod') console.error('normalize user mTokens error: ', { e })
       } finally {
         return acc
       }
@@ -149,8 +149,8 @@ export const fetchTzktUserBalances = async ({
 }) => {
   try {
     const [{ data: tokensData }, { data: accountData }] = await Promise.all([
-      api(`${process.env.REACT_APP_TZKT_API}/v1/tokens/balances?account.eq=${userAddress}`),
-      api(`${process.env.REACT_APP_TZKT_API}/v1/accounts/${userAddress}`),
+      api(`${import.meta.env.VITE_TZKT_API}/v1/tokens/balances?account.eq=${userAddress}`),
+      api(`${import.meta.env.VITE_TZKT_API}/v1/accounts/${userAddress}`),
     ])
 
     const isUserEmptyOnTzkt = emptyUserTzktAccountSchema.safeParse(accountData)
@@ -189,7 +189,7 @@ export const fetchTzktUserBalances = async ({
 export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
   try {
     const tzktSocket = new signalR.HubConnectionBuilder()
-      .withUrl(`${process.env.REACT_APP_TZKT_API}/v1/ws`, {
+      .withUrl(`${import.meta.env.VITE_TZKT_API}/v1/ws`, {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
       })
@@ -198,7 +198,7 @@ export const openTzktWebSocket = async (): Promise<signalR.HubConnection> => {
     // open connection
     await tzktSocket
       .start()
-      .then(() => console.log('Connected to WebSocket'))
+      .then(() => {})
       .catch((err) => console.error('WebSocket error:', err))
 
     return tzktSocket
@@ -224,22 +224,18 @@ export const attachTzktSocketsEventHandlers = ({
   handleOnReconnected: (userAddress: string) => void
 }) => {
   tzktSocket.on('token_balances', (msg) => {
-    console.log('%ctzktSocket on token_balances msg', 'color: aqua', { msg })
-
     if (!msg.data) return
 
     try {
       const tokensBalances = userTzktTokenBalancesSchema.parse(msg.data)
       handleTokens(tokensBalances)
     } catch (e) {
-      if (process.env.REACT_APP_ENV === 'prod') console.error('tzkt tokens balance parse error: ', { e, msg })
+      if (import.meta.env.VITE_ENV === 'prod') console.error('tzkt tokens balance parse error: ', { e, msg })
     }
   })
 
   // handle xtz token balance update message
   tzktSocket.on('accounts', (msg) => {
-    console.log('%ctzktSocket on accounts msg', 'color: aqua', { msg })
-
     if (!msg.data) return
 
     try {
@@ -252,7 +248,7 @@ export const attachTzktSocketsEventHandlers = ({
         },
       ])
     } catch (e) {
-      if (process.env.REACT_APP_ENV === 'prod') console.error('tzkt xtz token balance parse error: ', { e, msg })
+      if (import.meta.env.VITE_ENV === 'prod') console.error('tzkt xtz token balance parse error: ', { e, msg })
     }
   })
 

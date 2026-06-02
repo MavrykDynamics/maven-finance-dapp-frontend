@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 // hooks
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
-import { useQueryWithRefetch } from 'providers/common/hooks/useQueryWithRefetch'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
 
 // consts
 import { SATELLITE_VOTES_QUERY } from '../queries/satelliteVotes.query'
@@ -12,7 +12,7 @@ import { normalizeSatelliteVotes } from '../helpers/satellites.normalizer'
 import { SatelliteVotesType } from '../satellites.provider.types'
 
 export const useSatelliteVotes = (userAddress: string) => {
-  const { handleApolloError } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
 
   const [satelliteVotes, setSatelliteVotes] = useState<SatelliteVotesType>({
     satelliteActionVotes: [],
@@ -20,7 +20,7 @@ export const useSatelliteVotes = (userAddress: string) => {
     proposalsVotes: [],
   })
 
-  const { loading: isSatelliteVotesLoading } = useQueryWithRefetch(SATELLITE_VOTES_QUERY, {
+  const { isLoading: isSatelliteVotesLoading } = useGraphQLQuery(SATELLITE_VOTES_QUERY, {
     variables: { userAddress },
     onCompleted: (data) => {
       if (!data.satellite[0]) return
@@ -28,7 +28,7 @@ export const useSatelliteVotes = (userAddress: string) => {
       const normalizedVotes = normalizeSatelliteVotes(data.satellite[0].user)
       setSatelliteVotes(normalizedVotes)
     },
-    onError: (error) => handleApolloError(error, 'SATELLITE_VOTES_QUERY'),
+    onError: (error) => handleQueryError(error, 'SATELLITE_VOTES_QUERY'),
   })
 
   return {

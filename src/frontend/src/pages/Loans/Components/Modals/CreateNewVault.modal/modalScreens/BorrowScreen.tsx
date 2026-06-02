@@ -20,7 +20,8 @@ import { ThreeLevelListItem } from 'pages/Loans/Loans.style'
 import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.provider'
 import { useCreateVaultContext } from '../context/createVaultModalContext'
 import { useLoansContext } from 'providers/LoansProvider/loans.provider'
-import { useApolloContext } from 'providers/ApolloProvider/apollo.provider'
+import { useQueryProvider } from 'providers/QueryProvider/query.provider'
+import { fetchGraphQLData } from 'providers/QueryProvider/useGraphQLQuery'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 
@@ -57,7 +58,7 @@ const currentTotalOutstanding = 0
 const collateralRatio = 0
 
 export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
-  const { apolloClient } = useApolloContext()
+  const { handleQueryError } = useQueryProvider()
   const { userAddress } = useUserContext()
   const { info, bug } = useToasterContext()
   const {
@@ -106,22 +107,13 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
   const getNewVaultData = useCallback(
     async (retries = 1) => {
       try {
-        const newVaultData = await apolloClient.query({
-          query: GET_NEW_VAULT,
-          fetchPolicy: 'no-cache',
-          variables: {
-            userAddress: userAddress,
-            vaultName: vaultInputState.name,
-          },
-        })
+        const newVaultData = await fetchGraphQLData<{ vault: Array<{ address: string; id: number }> }>(
+          GET_NEW_VAULT,
+          { userAddress: userAddress, vaultName: vaultInputState.name },
+        )
 
-        if (newVaultData.error) {
-          console.error('loading new vault error', newVaultData.error)
-          throw new Error(newVaultData.error.message)
-        }
-
-        if (newVaultData.data.vault.length) {
-          const { address, id } = newVaultData.data.vault[0]
+        if (newVaultData.vault.length) {
+          const { address, id } = newVaultData.vault[0]
           setCreatedVaultAddress?.(address)
           updateNewVault({
             address,
@@ -147,7 +139,7 @@ export const BorrowScreen = ({ setCurrentSymbol }: BorrowScreenProps) => {
         bug('Fetch Error', 'Error occured while loading latest created vault, please reload the page')
       }
     },
-    [apolloClient, bug, info, setCreatedVaultAddress, updateNewVault, userAddress, vaultInputState.name],
+    [bug, info, setCreatedVaultAddress, updateNewVault, userAddress, vaultInputState.name],
   )
 
   useEffect(() => {

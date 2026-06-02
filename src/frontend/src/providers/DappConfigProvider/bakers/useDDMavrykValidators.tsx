@@ -8,28 +8,28 @@ import { DropDownJsxChild } from 'app/App.components/DropDown/DropDown.style'
 import { ImageWithPlug } from 'app/App.components/Icon/ImageWithPlug'
 import { CommaNumber } from 'app/App.components/CommaNumber/CommaNumber.controller'
 
-export type DropDownXTZBakerType = DropDownItemType & {
+export type DropDownMavrykValidatorType = DropDownItemType & {
   bakerName: string
   bakerAddress: string
   bakerYield: number
   bakerFreeSpace: number
 }
 
-const useXtzBakersForDD = (useMavrykBakers = true) => {
-  const { xtzBakers } = useDappConfigContext()
+const useMavrykValidatorsForDD = (useMavrykBakers = true) => {
+  const { mavrykValidators } = useDappConfigContext()
 
   const [choosenBakerAddress, setChoosenBakerAddress] = useState<string | undefined>()
 
-  // select baker for an xtz collateral, used only when we selected one collateral XTZ
+  // select validator for a MVRK collateral, used only when we selected one collateral MVRK
   const bakers = useMemo(() => {
-    if (!xtzBakers) return {}
+    if (!mavrykValidators) return {}
 
-    const { otherBakers = [], dao, mavrykDynamics } = xtzBakers
+    const { otherBakers = [], dao, mavrykDynamics } = mavrykValidators
 
     let firstNonDisabledBakerAddress: null | string = null
 
     const allBakers = [...otherBakers, ...(useMavrykBakers ? [dao, mavrykDynamics] : [])].reduce<
-      Record<string, DropDownXTZBakerType>
+      Record<string, DropDownMavrykValidatorType>
     >((acc, baker) => {
       // temporary check, cuz only mavryk Dynamics baker exists
       if (baker === undefined) return acc
@@ -64,7 +64,7 @@ const useXtzBakersForDD = (useMavrykBakers = true) => {
     }
 
     return allBakers
-  }, [choosenBakerAddress, xtzBakers, useMavrykBakers])
+  }, [choosenBakerAddress, mavrykValidators, useMavrykBakers])
 
   return {
     choosenBakerAddress,
@@ -75,4 +75,4 @@ const useXtzBakersForDD = (useMavrykBakers = true) => {
   }
 }
 
-export default useXtzBakersForDD
+export default useMavrykValidatorsForDD

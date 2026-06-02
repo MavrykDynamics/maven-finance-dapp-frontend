@@ -1,4 +1,4 @@
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import {
   EMPTY_PROPOSALS_CTX,
   GOVERNANCE_CONFIG_SUB,
@@ -13,7 +13,6 @@ import {
 import {
   NullableProposalsContextState,
   ProposalsContext,
-  ProposalsContextStateType,
   ProposalsSubsRecordType,
 } from '../proposals.provider.types'
 import { ProposalsDataQueryQuery } from 'utils/__generated__/graphql'
@@ -100,24 +99,5 @@ export const getProposalsProviderReturnValue = ({
     isGovernancePastProposalsLoading ||
     (activeSubs[PROPOSALS_DATA_SUB] !== null && proposalsMapper === null)
 
-  // if provider is loading smth return loading true and default empty context (nonNullable)
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_PROPOSALS_CTX,
-      isLoading: true,
-    }
-  }
-
-  // if subscribed data loaded return loading false and contextState where all null values replaced with nonNullable value
-  const nonNullableProviderValue = replaceNullValuesWithDefault<ProposalsContextStateType>(
-    proposalsCtxState,
-    EMPTY_PROPOSALS_CTX,
-  )
-
-  return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
-  }
+  return buildProviderReturnValue(proposalsCtxState, EMPTY_PROPOSALS_CTX, commonToReturn, Boolean(isLoading))
 }

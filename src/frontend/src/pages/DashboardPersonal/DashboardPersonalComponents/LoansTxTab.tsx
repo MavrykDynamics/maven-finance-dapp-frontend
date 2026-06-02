@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 // consts
 import { BUTTON_PRIMARY, BUTTON_WIDE } from 'app/App.components/Button/Button.constants'
@@ -92,7 +92,7 @@ export const LoansTxTab = ({ txVariant }: { txVariant: 'lending' | 'borrowing' }
                     <TableCell $width="10%" $contentPosition="right">
                       <div style={{ width: 'fit-content' }}>
                         <Link
-                          to={`${process.env.REACT_APP_EXPLORER_LINK}/operation/${operationHash}`}
+                          to={`${import.meta.env.VITE_EXPLORER_LINK}/operation/${operationHash}`}
                           target="_blank"
                           className="isCyan"
                         >

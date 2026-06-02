@@ -26,7 +26,7 @@ import { useDappConfigContext } from 'providers/DappConfigProvider/dappConfig.pr
 import { unregisterSatellite } from 'providers/SatellitesProvider/actions/satellites.actions'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { useUserRewards } from 'providers/UserProvider/hooks/useUserRewards'
 
 export const UnregisterPopup = ({

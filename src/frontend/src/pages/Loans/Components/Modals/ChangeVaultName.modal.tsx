@@ -40,7 +40,7 @@ import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
 
 // hooks
-import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction'
+import { HookContractActionArgs, useContractAction } from 'app/App.hooks/useContractAction/useContractAction'
 import { validateEmptyInput, validateInputLength } from 'app/App.utils/input/validateInput'
 
 const VAULT_NAME_INPUT: {

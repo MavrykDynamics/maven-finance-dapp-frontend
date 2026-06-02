@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react'
 import { create } from 'ipfs-http-client'
-import { Buffer } from 'buffer'
 
 // view
 import { IPFSUploaderView } from './IPFSUploader.view'
@@ -25,9 +24,9 @@ type IPFSUploaderProps = {
   setFormInputStatus?: (obj: Record<string, unknown>) => void
 }
 
-const projectId = process.env.REACT_APP_IPFS_PROJECT_ID
-const projectSecret = process.env.REACT_APP_IPFS_API_KEY
-const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+const projectId = import.meta.env.VITE_IPFS_PROJECT_ID
+const projectSecret = import.meta.env.VITE_IPFS_API_KEY
+const auth = 'Basic ' + btoa(projectId + ':' + projectSecret)
 
 export const ipfsClient = create({
   host: 'ipfs.infura.io',
@@ -66,7 +65,7 @@ export const IPFSUploader = ({
       setIsUploading(false)
     } catch (error) {
       if (error instanceof Error) {
-        if (process.env.REACT_APP_ENV === 'dev') console.error(error)
+        if (import.meta.env.VITE_ENV === 'dev') console.error(error)
         bug(error.message)
         setIsUploading(false)
       }

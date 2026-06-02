@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useMemo } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router'
 
 import { BORROW_TAB_ID, LEND_TAB_ID } from 'pages/Loans/Loans.const'
 import {

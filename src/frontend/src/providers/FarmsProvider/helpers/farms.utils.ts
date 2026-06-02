@@ -1,5 +1,5 @@
 // utils
-import { replaceNullValuesWithDefault } from 'providers/common/utils/repalceNullValuesWithDefault'
+import { buildProviderReturnValue } from 'providers/common/utils/buildProviderReturnValue'
 import { convertNumberForClient, getNumberInBounds } from 'utils/calcFunctions'
 import { checkWhetherTokenIsFarmToken } from 'providers/TokensProvider/helpers/tokens.utils'
 
@@ -34,10 +34,6 @@ export const getFarmsReturnValue = ({
 }) => {
   const { farmsMapper, allLiveFarms, liveStakedFarms, allFinishedFarms, finishedStakedFarms } = farmsCtxState
 
-  const commonToReturn = {
-    changeFarmsSubscriptionList,
-  }
-
   const isLiveFarmsLoading = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_LIVE_DATA_SUB && allLiveFarms === null
   const isLiveStakedFarmsLoading = activeSubs[FARMS_DATA_SUB] === FARMS_LIVE_STAKED_DATA_SUB && liveStakedFarms === null
   const isFinishedFarmsLoading = activeSubs[FARMS_DATA_SUB] === FARMS_ALL_FINISHED_DATA_SUB && allFinishedFarms === null
@@ -51,21 +47,12 @@ export const getFarmsReturnValue = ({
     isFinishedFarmsLoading ||
     isFinishedStakedFarmsLoading
 
-  if (isLoading) {
-    return {
-      ...commonToReturn,
-      ...EMPTY_FARMS_CTX,
-      isLoading: true,
-    }
-  }
-
-  const nonNullableProviderValue = replaceNullValuesWithDefault<FarmCtxStateType>(farmsCtxState, EMPTY_FARMS_CTX)
-
-  return {
-    ...commonToReturn,
-    ...nonNullableProviderValue,
-    isLoading: false,
-  }
+  return buildProviderReturnValue(
+    farmsCtxState,
+    EMPTY_FARMS_CTX,
+    { changeFarmsSubscriptionList },
+    isLoading,
+  )
 }
 
 /**
