@@ -193,3 +193,172 @@ const normalizeCollaterals = (
     return acc
   }, [])
 }
+
+// ============================================================
+// New normalizer for base-table query (vaultsList.query.ts)
+// ============================================================
+// Builds the same VaultType shape from `lending_controller_vault` rows
+// (with relationships) instead of the broken gql_vault_with_balances view.
+// `collateralData` is initially empty; mergeCollateral populates it after
+// the bulk collateral query returns.
+
+export const normalizeBaseList = ({
+  indexerData,
+  depositorsByVaultId,
+}: {
+  indexerData: any
+  depositorsByVaultId: Record<number, string[]>
+}) => {
+  const {
+    lending_controller: {
+      max_vault_liquidation_pct,
+      decimals,
+      liquidation_fee_pct,
+      liquidation_ratio,
+      interest_rate_decimals,
+      admin_liquidation_fee_pct,
+      liquidation_delay_in_minutes,
+    },
+    vaults,
+  } = indexerData
+
+  const intIdByAddress: Record<string, number> = {}
+  const result = vaults.reduce(
+    (acc: { vaultsMapper: Record<string, VaultType>; vaultsIds: string[]; vaultIntIds: number[] }, item: any) => {
+      const {
+        id: vaultIntId,
+        internal_id,
+        loan_outstanding_total: vaultTotalOutstanding,
+        loan_principal_total: borrowedAmount,
+        loan_interest_total: vaultAccuredInterest,
+        borrow_index: vaultBorrowIndex,
+        marked_for_liquidation_level,
+        liquidation_end_level,
+        vault,
+        owner,
+        loan_token,
+      } = item
+
+      const vault_address = vault.address as string
+      const vault_name = vault.name as string
+      const creation_timestamp = vault.creation_timestamp as string
+      const baker_address = vault.baker?.address ?? null
+      const allowance = Number(vault.allowance ?? 0)
+      const ownerAddress = owner?.address as string
+      const borrowedTokenAddress = loan_token?.token?.token_address as string
+
+      const tokenBorrowIndex = vaultBorrowIndex // TODO add tokenBorrowIndex from api
+      const apr =
+        convertNumberForClient({
+          number: loan_token?.current_interest_rate ?? 0,
+          grade: interest_rate_decimals,
+        }) * 100
+
+      const { availableLiquidity } = calcMarketAvailableLiquidity({
+        total_remaining: loan_token?.total_remaining,
+        token_pool_total: loan_token?.token_pool_total,
+        reserve_ratio: loan_token?.reserve_ratio,
+      })
+
+      const depositors = depositorsByVaultId[vaultIntId] ?? []
+      const deporsitorsFlag: DepositorsFlagType =
+        allowance === 0 ? ANY_USER : allowance === 1 && depositors.length !== 0 ? WHITELIST_USERS : NONE_USER
+
+      const accruedInterest =
+        vaultBorrowIndex > 0 && vaultTotalOutstanding > 0
+          ? Math.max(0, Math.floor((vaultTotalOutstanding * tokenBorrowIndex) / vaultBorrowIndex) - borrowedAmount)
+          : 0
+      const totalOutstanding = borrowedAmount + accruedInterest
+
+      const normalized: VaultType = {
+        borrowedTokenAddress,
+        name: vault_name,
+        address: vault_address,
+        ownerAddress,
+        vaultId: internal_id,
+        apr,
+        creationTimestamp: new Date(creation_timestamp).getTime(),
+        borrowedAmount,
+        totalOutstanding,
+        collateralData: [],
+        availableLiquidity,
+        minimumRepay: loan_token?.min_repayment_amount,
+        accruedInterest,
+        liquidationMax: calculateVaultMaxLiquidationAmount(totalOutstanding, max_vault_liquidation_pct),
+        liquidationRewardCoefficient: convertNumberForClient({
+          number: liquidation_fee_pct,
+          grade: decimals,
+        }),
+        adminLiquidateFeeCoefficient: convertNumberForClient({
+          number: admin_liquidation_fee_pct,
+          grade: decimals,
+        }),
+        liquidationRatio: liquidation_ratio,
+        gracePeriodEndLevel:
+          marked_for_liquidation_level === 0
+            ? null
+            : marked_for_liquidation_level + Number(liquidation_delay_in_minutes) * BLOCKS_PER_MINUTE,
+        liquidationEndLevel: liquidation_end_level === 0 ? null : liquidation_end_level,
+        sMVNDelegatedTo: '',
+        xtzDelegatedTo: baker_address,
+        depositors,
+        depositorsFlag: deporsitorsFlag,
+      }
+
+      acc.vaultsMapper[vault_address] = normalized
+      acc.vaultsIds.push(vault_address)
+      acc.vaultIntIds.push(vaultIntId)
+      intIdByAddress[vault_address] = vaultIntId
+
+      return acc
+    },
+    { vaultsIds: [], vaultsMapper: {}, vaultIntIds: [] },
+  )
+
+  return { ...result, intIdByAddress }
+}
+
+export const mergeCollateral = (
+  vaultsMapper: Record<string, VaultType>,
+  collateralRows: any[],
+  intIdByAddress: Record<string, number>,
+) => {
+  // Group collateral rows by their integer vault id
+  const byVaultId: Record<number, Array<CollateralType>> = {}
+  for (const row of collateralRows) {
+    const vid = row.lending_controller_vault_id
+    if (!byVaultId[vid]) byVaultId[vid] = []
+    if (!row.collateral_token?.token) continue
+    if (row.collateral_token.token_name === 'smvn') {
+      byVaultId[vid].push({ tokenAddress: SMVN_TOKEN_ADDRESS, amount: row.balance })
+    } else {
+      byVaultId[vid].push({
+        tokenAddress: row.collateral_token.token.token_address,
+        amount: row.balance,
+      })
+    }
+  }
+
+  const merged: Record<string, VaultType> = {}
+  for (const [address, vault] of Object.entries(vaultsMapper)) {
+    const intId = intIdByAddress[address]
+    merged[address] = {
+      ...vault,
+      collateralData: byVaultId[intId] ?? [],
+    }
+  }
+
+  return merged
+}
+
+export const buildDepositorsByVaultId = (depositorRows: any[]): Record<number, string[]> => {
+  const result: Record<number, string[]> = {}
+  for (const row of depositorRows) {
+    const vid = row.vault_id
+    const addr = row.depositor?.address
+    if (!vid || !addr) continue
+    if (!result[vid]) result[vid] = []
+    result[vid].push(addr)
+  }
+  return result
+}
