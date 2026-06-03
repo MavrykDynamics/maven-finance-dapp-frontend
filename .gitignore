@@ -23,6 +23,8 @@
 ./.idea
 **/.idea/**
 /src/frontend/.env
+**/.env.local
+**/.env.*.local
 /yarn.lock
 /.gtm/
 
