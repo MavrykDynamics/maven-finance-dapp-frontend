@@ -8,12 +8,8 @@ import Button from 'app/App.components/Button/NewButton'
 import { PageHeader } from 'app/App.components/PageHeader/PageHeader.controller'
 import DashboardPersonalEarningsHistory from './DashboardPersonalComponents/DashboardPersonalEarningsHistory'
 import DashboardPersonalMyRewards from './DashboardPersonalComponents/DashboardPersonalMyRewards'
-import DelegationTab from './DashboardPersonalComponents/DelegationTab'
-import SatelliteTab from './DashboardPersonalComponents/SatelliteTab'
-import PortfolioTab from './DashboardPersonalComponents/PortfolioTab'
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
-import VestingTab from './DashboardPersonalComponents/VestingTab'
 import { Page } from 'styles/components'
 import { DashboardPersonalTabStyled } from './DashboardPersonalComponents/DashboardPersonalComponents.style'
 import { DashboardPersonalStyled } from './DashboardPersonal.style'
@@ -68,10 +64,15 @@ const DashboardPersonal = () => {
 
   const prevUserAddress = usePrevious(userAddress)
 
+  const isGovApp = __APP_MODE__ === 'gov'
+  const defaultTabPath = isGovApp
+    ? `/dashboard-personal/${DELEGATION_TAB_ID}`
+    : `/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`
+
   // if we change user, redirect him to main screen on dashboard, as he might not have permission to some screens
   useEffect(() => {
     if (prevUserAddress && prevUserAddress !== userAddress) {
-      navigate(`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`, { replace: true })
+      navigate(defaultTabPath, { replace: true })
     }
   }, [userAddress])
 
@@ -194,11 +195,13 @@ const DashboardPersonal = () => {
             </div>
 
             <div className="tabs-switchers">
-              <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
-                <Button selected={activeTab === PORTFOLIO_TAB_ID} kind={BUTTON_NAVIGATION}>
-                  Portfolio
-                </Button>
-              </Link>
+              {!isGovApp ? (
+                <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+                  <Button selected={activeTab === PORTFOLIO_TAB_ID} kind={BUTTON_NAVIGATION}>
+                    Portfolio
+                  </Button>
+                </Link>
+              ) : null}
               {userAddress ? (
                 <Link
                   to={
@@ -219,7 +222,7 @@ const DashboardPersonal = () => {
                   </Button>
                 </Link>
               ) : null}
-              {isVestee ? (
+              {isVestee && isGovApp ? (
                 <Link to={`/dashboard-personal/${VESTING_TAB_ID}`}>
                   <Button selected={activeTab === VESTING_TAB_ID} kind={BUTTON_NAVIGATION}>
                     Vesting

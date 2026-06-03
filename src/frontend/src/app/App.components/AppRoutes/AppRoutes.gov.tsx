@@ -9,9 +9,6 @@ import { useUserContext } from 'providers/UserProvider/user.provider'
 import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts'
 import {
   DELEGATION_TAB_ID,
-  PORTFOLIO_BORROWING_TAB_ID,
-  PORTFOLIO_LENDING_TAB_ID,
-  PORTFOLIO_TAB_ID,
   SATELLITE_TAB_ID,
   VESTING_TAB_ID,
 } from 'pages/DashboardPersonal/DashboardPersonal.utils'
@@ -72,16 +69,11 @@ const RenderErrorPage = lazy(() =>
 
 // --- Dashboard Personal + sub-routes ---
 const DashboardPersonal = lazy(() => import('pages/DashboardPersonal/DashboardPersonal.controller'))
-const PortfolioTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/PortfolioTab'))
 const SatelliteTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/SatelliteTab'))
 const DelegationTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/DelegationTab'))
 const VestingTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/VestingTab'))
-const LoansTxTab = lazy(() =>
-  import('pages/DashboardPersonal/DashboardPersonalComponents/LoansTxTab').then((m) => ({
-    default: m.LoansTxTab,
-  })),
-)
-// LendBorrowPosition excluded from gov app — it depends on LoansProvider
+// Portfolio + loan-related tabs (PortfolioTab, LoansTxTab, LendBorrowPosition) excluded from gov app —
+// gov-only users don't have lending positions; loan tx history belongs in the user app.
 
 // --- Become Satellite sub-routes ---
 const SatelliteDetailsScreen = lazy(() =>
@@ -107,22 +99,7 @@ export const GovRoutes = () => {
         <Route path={`${DELEGATION_TAB_ID}`} element={<DelegationTab />} />
         <Route path={`${SATELLITE_TAB_ID}`} element={<SatelliteTab />} />
         <Route path={`${VESTING_TAB_ID}`} element={<VestingTab />} />
-        <Route path={`${PORTFOLIO_TAB_ID}/`} element={<PortfolioTab />}>
-          <Route path={`${PORTFOLIO_LENDING_TAB_ID}`} element={<LoansTxTab txVariant="lending" />} />
-          <Route path={`${PORTFOLIO_BORROWING_TAB_ID}`} element={<LoansTxTab txVariant="borrowing" />} />
-          <Route
-            path="*"
-            element={
-              <Navigate replace to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`} />
-            }
-          />
-        </Route>
-        <Route
-          path="*"
-          element={
-            <Navigate replace to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`} />
-          }
-        />
+        <Route path="*" element={<Navigate replace to={`/dashboard-personal/${DELEGATION_TAB_ID}`} />} />
       </Route>
 
       {/* GOVERNANCE */}

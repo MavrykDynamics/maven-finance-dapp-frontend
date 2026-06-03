@@ -1,7 +1,7 @@
 // consts
 import { LENDING_TAB_ID } from 'pages/Dashboard/Dashboard.utils'
 import { SATELLITE_TAB_DETAILS, SATELLITE_TAB_EDIT } from 'pages/BecomeSatellite/BecomeSatellite.conts'
-import { PORTFOLIO_POSITION_TAB_ID, PORTFOLIO_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
+import { DELEGATION_TAB_ID } from 'pages/DashboardPersonal/DashboardPersonal.utils'
 
 // types
 import { MainNavigationRoute } from '../../../../utils/TypesAndInterfaces/Navigation'
@@ -23,8 +23,8 @@ export const govNavigationLinks: MainNavigationRoute[] = [
       {
         id: 84425,
         subTitle: 'Personal',
-        subPath: `dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`,
-        routeSubPath: '/dashboard-personal/:tabId/:secondaryTabId?',
+        subPath: `dashboard-personal/${DELEGATION_TAB_ID}`,
+        routeSubPath: '/dashboard-personal/:tabId',
       },
     ],
   },

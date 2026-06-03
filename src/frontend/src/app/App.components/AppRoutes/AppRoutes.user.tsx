@@ -14,7 +14,6 @@ import {
   PORTFOLIO_POSITION_TAB_ID,
   PORTFOLIO_TAB_ID,
   SATELLITE_TAB_ID,
-  VESTING_TAB_ID,
 } from 'pages/DashboardPersonal/DashboardPersonal.utils'
 
 // --- User app pages ---
@@ -67,7 +66,7 @@ const DashboardPersonal = lazy(() => import('pages/DashboardPersonal/DashboardPe
 const PortfolioTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/PortfolioTab'))
 const SatelliteTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/SatelliteTab'))
 const DelegationTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/DelegationTab'))
-const VestingTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/VestingTab'))
+// VestingTab excluded from user app — depends on VestingProvider (gov-only)
 const LoansTxTab = lazy(() =>
   import('pages/DashboardPersonal/DashboardPersonalComponents/LoansTxTab').then((m) => ({
     default: m.LoansTxTab,
@@ -102,7 +101,6 @@ export const UserRoutes = () => {
       <Route path="/dashboard-personal/" element={<DashboardPersonal />}>
         <Route path={`${DELEGATION_TAB_ID}`} element={<DelegationTab />} />
         <Route path={`${SATELLITE_TAB_ID}`} element={<SatelliteTab />} />
-        <Route path={`${VESTING_TAB_ID}`} element={<VestingTab />} />
         <Route path={`${PORTFOLIO_TAB_ID}/`} element={<PortfolioTab />}>
           <Route path={`${PORTFOLIO_POSITION_TAB_ID}`} element={<LendBorrowPosition />} />
           <Route path={`${PORTFOLIO_LENDING_TAB_ID}`} element={<LoansTxTab txVariant="lending" />} />
