@@ -1,5 +1,5 @@
 import { usePrevious } from 'react-use'
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
@@ -87,9 +87,14 @@ export const VaultsProvider = ({ children }: Props) => {
   // Bulk collateral query is chained off whichever list query is active.
   // Only one tab's list is in flight at a time (per `activeSubs[VAULTS_DATA]`),
   // so a single set of activeVaultIntIds + intIdByAddress is enough.
+  // activeMapperKey is state (not ref) so the merge useEffect re-runs when
+  // switching tabs — important because the collateral query often returns a
+  // cache hit (same vault IDs across tabs for the same user), in which case
+  // its onCompleted wouldn't fire and the new tab's mapper would stay
+  // collateral-less.
   const [activeVaultIntIds, setActiveVaultIntIds] = useState<number[]>([])
   const [activeIntIdByAddress, setActiveIntIdByAddress] = useState<Record<string, number>>({})
-  const activeMapperKeyRef = useRef<ActiveMapperKey | null>(null)
+  const [activeMapperKey, setActiveMapperKey] = useState<ActiveMapperKey | null>(null)
 
   // used for the user active vaults based on the market address
   const [marketAddress, setMarketAddress] = useState<string | null>(null)
@@ -217,7 +222,7 @@ export const VaultsProvider = ({ children }: Props) => {
         depositorsByVaultId,
       })
 
-      activeMapperKeyRef.current = mapperKey
+      setActiveMapperKey(mapperKey)
       setActiveIntIdByAddress(intIdByAddress)
       setActiveVaultIntIds(vaultIntIds)
 
@@ -237,7 +242,7 @@ export const VaultsProvider = ({ children }: Props) => {
   )
 
   // QUERY FOR PERMISSION VAULTS (where user is allowed to deposit)
-  useGraphQLQuery(GET_VAULTS_LIST_QUERY, {
+  const permissionedQuery = useGraphQLQuery(GET_VAULTS_LIST_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_DEPOSITOR,
     staleTime: 60_000,
     variables: {
@@ -255,7 +260,7 @@ export const VaultsProvider = ({ children }: Props) => {
   })
 
   // QUERY FOR USER VAULTS (MY)
-  useGraphQLQuery(GET_VAULTS_LIST_QUERY, {
+  const myQuery = useGraphQLQuery(GET_VAULTS_LIST_QUERY, {
     skip: !userAddress || activeSubs[VAULTS_DATA] !== VAULTS_USER_ALL,
     staleTime: 60_000,
     variables: {
@@ -273,7 +278,7 @@ export const VaultsProvider = ({ children }: Props) => {
   })
 
   // QUERY FOR ALL VAULTS
-  useGraphQLQuery(GET_VAULTS_LIST_QUERY, {
+  const allQuery = useGraphQLQuery(GET_VAULTS_LIST_QUERY, {
     skip: activeSubs[VAULTS_DATA] !== VAULTS_ALL,
     staleTime: 60_000,
     variables: {
@@ -290,32 +295,52 @@ export const VaultsProvider = ({ children }: Props) => {
     },
   })
 
+  // Reset isPendingQueryWhenFilters whenever the active tab's query is settled.
+  // The filter component sets isPendingQueryWhenFilters=true on initial auto-apply
+  // and on every filter change. The onCompleted handler resets it when new data
+  // arrives — but if the filter change produces a query-key identical to the cached
+  // one (e.g., default filters), TanStack returns cached data without re-fetching
+  // and onCompleted does not fire. Without this reset, the page is stuck on
+  // "Loading vaults" forever even though data is loaded. The dep array includes
+  // both flags so the reset runs even when the filter component flips the flag
+  // true *after* the query already settled.
+  const isAnyFetching = allQuery.isFetching || myQuery.isFetching || permissionedQuery.isFetching
+  useEffect(() => {
+    if (!isAnyFetching && isPendingQueryWhenFilters) setIsPendingQueryWhenFilters(false)
+  }, [isAnyFetching, isPendingQueryWhenFilters])
+
   // ---- Bulk collateral lookup chained off whichever list query just returned ----
   // Fires automatically when activeVaultIntIds changes. ~310ms in production vs
   // 26s for nested-relationship collateral through the broken view.
-  useGraphQLQuery(GET_VAULTS_COLLATERAL_BULK_QUERY, {
+  // NOTE: We do NOT use onCompleted to drive the merge. When switching tabs,
+  // the same vault IDs are common (a user's permissioned set often overlaps
+  // with allVaults), so TanStack Query returns a cache hit — same data
+  // reference, onCompleted skips. The useEffect below merges on every change
+  // of `collateralData` / `activeMapperKey` / `activeIntIdByAddress`, which
+  // correctly handles both fresh fetches and cache hits.
+  const { data: collateralData } = useGraphQLQuery(GET_VAULTS_COLLATERAL_BULK_QUERY, {
     skip: activeVaultIntIds.length === 0,
     staleTime: 60_000,
     variables: { vaultIds: activeVaultIntIds },
-    onCompleted: (data: any) => {
-      const rows = data?.lending_controller_vault_collateral_balance ?? []
-      const mapperKey = activeMapperKeyRef.current
-      if (!mapperKey) return
-      setVaultsCtxState((prev) => {
-        const currentMapper = prev[mapperKey]
-        if (!currentMapper) return prev
-        return {
-          ...prev,
-          [mapperKey]: mergeCollateral(
-            currentMapper as Record<string, VaultType>,
-            rows,
-            activeIntIdByAddress,
-          ),
-        }
-      })
-    },
     onError: (error) => handleQueryError(error, 'GET_VAULTS_COLLATERAL_BULK'),
   })
+
+  useEffect(() => {
+    if (!collateralData || !activeMapperKey) return
+    const rows = (collateralData as any)?.lending_controller_vault_collateral_balance ?? []
+    setVaultsCtxState((prev) => {
+      const currentMapper = prev[activeMapperKey]
+      if (!currentMapper) return prev
+      return {
+        ...prev,
+        [activeMapperKey]: mergeCollateral(
+          currentMapper as Record<string, VaultType>,
+          rows,
+          activeIntIdByAddress,
+        ),
+      }
+    })
+  }, [collateralData, activeMapperKey, activeIntIdByAddress])
 
   useGraphQLQuery(GET_ALL_VAULTS_QUERY_COUNT, {
     skip: activeSubs[VAULTS_DATA] === null,
