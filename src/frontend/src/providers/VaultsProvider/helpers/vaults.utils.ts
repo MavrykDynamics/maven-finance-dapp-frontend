@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import dayjs from 'dayjs'
 
 // helpers
@@ -252,7 +253,11 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
  * @returns ???
  */
 export const calculateVaultMaxLiquidationAmount = (loanOutstandingTotal: number, maxVaultLiquidationPercent: number) =>
-  Math.trunc((loanOutstandingTotal * maxVaultLiquidationPercent) / 10000)
+  new BigNumber(loanOutstandingTotal)
+    .times(maxVaultLiquidationPercent)
+    .dividedBy(10000)
+    .integerValue(BigNumber.ROUND_FLOOR)
+    .toNumber()
 
 /**
  * @param adminLiquidationFeePercent – ??? TODO: add description
@@ -260,7 +265,11 @@ export const calculateVaultMaxLiquidationAmount = (loanOutstandingTotal: number,
  * @returns ???
  */
 export const calculateAdminLiquidationFee = (adminLiquidationFeePercent: number, liquidationAmount: number) =>
-  Math.trunc((adminLiquidationFeePercent * liquidationAmount) / 10000)
+  new BigNumber(adminLiquidationFeePercent)
+    .times(liquidationAmount)
+    .dividedBy(10000)
+    .integerValue(BigNumber.ROUND_FLOOR)
+    .toNumber()
 
 /**
  * @param collateralAmount – amount of 1 of the collateral tokens in USD

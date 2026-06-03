@@ -18,8 +18,8 @@ export function getUserDoormanRewards({
   const currentFeesPerShare = accumulated_fees_per_share - participation_fees_per_share
   const usersRewardsForStaking = (userSmvnBalance * currentFeesPerShare) / FIXED_POINT_ACCURACY
 
-  // return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking + unclaimed_rewards), grade: MVN_DECIMALS })
-  return convertNumberForClient({ number: Math.trunc(usersRewardsForStaking), grade: MVN_DECIMALS })
+  // return convertNumberForClient({ number: usersRewardsForStaking + unclaimed_rewards, grade: MVN_DECIMALS })
+  return convertNumberForClient({ number: usersRewardsForStaking, grade: MVN_DECIMALS })
 }
 
 export function getUserSatelliteRewards({
@@ -35,7 +35,7 @@ export function getUserSatelliteRewards({
   const satelliteRewardRatio = satellite_accumulated_reward_per_share - participation_rewards_per_share
   const usersAvailableSatelliteRewards = (unpaid + satelliteRewardRatio * userSmvnBalance) / FIXED_POINT_ACCURACY
 
-  return convertNumberForClient({ number: Math.trunc(usersAvailableSatelliteRewards), grade: MVN_DECIMALS })
+  return convertNumberForClient({ number: usersAvailableSatelliteRewards, grade: MVN_DECIMALS })
 }
 
 export function getUsersFarmRewards({

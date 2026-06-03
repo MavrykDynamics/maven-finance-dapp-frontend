@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import { DECIMALS_TO_SHOW, MVN_DECIMALS, PRECISION_NUMBER, SECONDS_PER_BLOCK } from './constants'
 
 /**
@@ -19,24 +20,49 @@ export function calcExitFee(totalMvnSupply: number | undefined, totalStakedMVN: 
 }
 
 /**
+ * Convert a display-form number to its on-chain (smallest-unit) representation
+ * using BigNumber to avoid IEEE-754 drift.
+ *
+ * Example: 1.1 MVN with 6 decimals → 1100000 mumvn (not 1099999 like the
+ * floating-point version produced).
+ */
+export const toContractUnits = ({
+  number,
+  grade = MVN_DECIMALS,
+}: {
+  number: number | string
+  grade?: number
+}): number => {
+  return new BigNumber(number).shiftedBy(grade).integerValue(BigNumber.ROUND_FLOOR).toNumber()
+}
+
+/**
+ * Convert an on-chain (smallest-unit) number to its display form using
+ * BigNumber to avoid IEEE-754 drift. Truncates any sub-unit fraction first
+ * (matching the previous floating-point implementation's intent).
+ */
+export const fromContractUnits = ({
+  number,
+  grade = MVN_DECIMALS,
+}: {
+  number: number | string
+  grade?: number
+}): number => {
+  return new BigNumber(number).integerValue(BigNumber.ROUND_FLOOR).shiftedBy(-grade).toNumber()
+}
+
+/**
  * @param amount: number we want to remove over decimals
  * @param decimals: decimals amount need to left
  * @returns number with specified amount of decimals
  */
 export const removeUnnecessaryDecimals = (amount: number = 0, decimals: number) => {
   if (!amount) return 0
-
-  const blockchainNumberWithoutDecimals = Math.trunc(convertNumberForContractCall({ number: amount, grade: decimals }))
-
-  return convertNumberForClient({ number: blockchainNumberWithoutDecimals, grade: decimals })
+  return new BigNumber(amount).decimalPlaces(decimals, BigNumber.ROUND_FLOOR).toNumber()
 }
 
 /**
- * @param number -> number in regular form that we want to convert for usage in contract call
- * @param grade -> grade for 10, that we'll need to multiply number to convert it for usage in contract call
- *
- * By default fn will use MVN decimals amount
- * Math.trunc is used to remove decimals that are more that allowed amount for token
+ * @deprecated Use `toContractUnits` — same signature, BigNumber-safe math.
  */
 export const convertNumberForContractCall = ({
   number,
@@ -44,17 +70,10 @@ export const convertNumberForContractCall = ({
 }: {
   number: number
   grade?: number
-}): number => {
-  return Math.trunc(number * Math.pow(10, grade))
-}
+}): number => toContractUnits({ number, grade })
 
 /**
- * @param number -> number in contract form that we wan't to convert for usage on client output
- * @param grade -> grade for 10, that we'll need to divide number to convert it for usage on client
- *
- * contract number form is number without decimals, this form is reached by multiplying reqular number by 10^(decimals amount different between different types of tokens)
- *
- * By default fn will use MVN decimals amount
+ * @deprecated Use `fromContractUnits` — same signature, BigNumber-safe math.
  */
 export const convertNumberForClient = ({
   number,
@@ -62,9 +81,7 @@ export const convertNumberForClient = ({
 }: {
   number: number
   grade?: number
-}): number => {
-  return Math.trunc(number) / Math.pow(10, grade)
-}
+}): number => fromContractUnits({ number, grade })
 
 /**
  *
