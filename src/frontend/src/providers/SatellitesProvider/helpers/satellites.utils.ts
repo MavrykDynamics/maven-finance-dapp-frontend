@@ -148,6 +148,7 @@ export const getSatellitesProviderReturnValue = ({
   // check if we loading single satellite NOTE: checking whether satellite exists should be on component, not in provider
   const isLoadingSingleSatellite =
     activeSubs[SATELLITES_DATA_SINGLE_SUB] && satelliteAddressToSubscribe && isPaginationLoading
+  const isLoadingPaginatedSatellites = Boolean(activeSubs[SATELLITE_DATA_SUB]) && isPaginationLoading
 
   /**
    * isLoading indicates whether provider is loading smth, so we need to show loader, not load in background, cases:
@@ -164,9 +165,14 @@ export const getSatellitesProviderReturnValue = ({
     isLoadingSingleSatellite ||
     isLoadingAllSatellites ||
     isLoadingSatelliteParticipation ||
-    isPaginationLoading
+    isLoadingPaginatedSatellites
 
-  const result = buildProviderReturnValue(satellitesCtxState, EMPTY_SATELLITES_CONTEXT, commonToReturn, Boolean(isLoading))
+  const result = buildProviderReturnValue(
+    satellitesCtxState,
+    EMPTY_SATELLITES_CONTEXT,
+    commonToReturn,
+    Boolean(isLoading),
+  )
 
   // Override allSatellitesIds even during loading to prevent pagination blinking on satellite details page
   return {

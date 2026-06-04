@@ -73,6 +73,8 @@ const DelegationTab = () => {
   }, [satelliteMvnIsDelegatedTo])
 
   const satelliteRecord = satelliteMvnIsDelegatedTo ? satelliteMapperByAddress[satelliteMvnIsDelegatedTo] : null
+  const isDelegationDataLoading = Boolean(satelliteMvnIsDelegatedTo && !satelliteRecord && isSatellitesLoading)
+
   const { proposalParticipation } = getSatelliteParticipation({
     satellite: satelliteRecord,
     proposalsAmount,
@@ -96,7 +98,7 @@ const DelegationTab = () => {
             Distribute Gov. Rewards
           </NewButton>
         </DashboardCardHeader>
-        {satelliteMvnIsDelegatedTo && isSatellitesLoading ? (
+        {isDelegationDataLoading ? (
           <DataLoaderWrapper margin="20px 0 0 0">
             <ClockLoader width={75} height={75} />
             <div className="text">Loading your delegation data</div>

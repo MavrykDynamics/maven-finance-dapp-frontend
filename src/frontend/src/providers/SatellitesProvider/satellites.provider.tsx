@@ -67,7 +67,7 @@ export const SatellitesProvider = ({ children }: Props) => {
   const [satellitesCtxState, setSatellitesCtxState] =
     useState<DeepNullable<SatellitesContextState>>(DEFAULT_SATELLITES_CONTEXT)
 
-  const [satelliteAddressToSubscribe, setSatelliteAddressToSubscribe] = useState<string | null>(null)
+  const [satelliteAddressToSubscribe, setSatelliteAddressToSubscribeState] = useState<string | null>(null)
   const [activeSubs, setActiveSubs] = useState<SatellitesSubsRecordType>(DEFAULT_SATELLITES_ACTIVE_SUBS)
 
   // Pagination
@@ -80,9 +80,65 @@ export const SatellitesProvider = ({ children }: Props) => {
   // @ts-ignore
   const [satelliteFilters, setSatelliteFilters] = useState<SatelliteFiltersType>(SATELLITE_DEFFAULT_FILTERS)
 
+  const setSatelliteAddressToSubscribe = useCallback((satelliteAddress: string | null) => {
+    setSatelliteAddressToSubscribeState(satelliteAddress)
+
+    if (satelliteAddress) {
+      setIsLoading(true)
+    }
+  }, [])
+
   const changeSatellitesSubscriptionsList = useCallback((newSkips: Partial<SatellitesSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
+
+    if (
+      newSkips[SATELLITE_DATA_SUB] ||
+      newSkips[SATELLITES_DATA_SINGLE_SUB] ||
+      newSkips[SATELLITE_PARTICIPATION_DATA_SUB]
+    ) {
+      setIsLoading(true)
+    }
   }, [])
+
+  const handleSatelliteQueryError = useCallback(
+    (error: Error, queryName: string) => {
+      handleQueryError(error, queryName)
+      setIsLoading(false)
+    },
+    [handleQueryError],
+  )
+
+  const handleSatelliteDataCompleted = useCallback(
+    async (
+      data: SatelliteDataQueryQuery,
+      getStateUpdate: (
+        normalizedSatellites: ReturnType<typeof normalizeSatellitesLedger>,
+      ) => Partial<DeepNullable<SatellitesContextState>>,
+    ) => {
+      let additionalSatelliteData = null
+
+      try {
+        try {
+          const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
+          additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
+        } catch (e) {
+          console.error('fetchAdditionalSatelliteData error:', e)
+        }
+
+        const normalizedSatellites = normalizeSatellitesLedger(data, additionalSatelliteData)
+
+        setSatellitesCtxState((prev) => ({
+          ...prev,
+          ...getStateUpdate(normalizedSatellites),
+        }))
+      } catch (e) {
+        console.error('normalizeSatellitesLedger error:', e)
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [],
+  )
 
   const changePage = useCallback(
     (newPage: number, mapperType: PaginationSatelliteType) => {
@@ -146,7 +202,15 @@ export const SatellitesProvider = ({ children }: Props) => {
         finRequestsAmount: data.governance_financial_request_aggregate.aggregate?.count ?? 0,
       }))
     },
-    onError: (error) => handleQueryError(error, 'SATELLITES_METRICS_DATA'),
+    onError: (error) => {
+      handleQueryError(error, 'SATELLITES_METRICS_DATA')
+      setSatellitesCtxState((prev) => ({
+        ...prev,
+        proposalsAmount: prev.proposalsAmount ?? 0,
+        satelliteGovActionsAmount: prev.satelliteGovActionsAmount ?? 0,
+        finRequestsAmount: prev.finRequestsAmount ?? 0,
+      }))
+    },
   })
 
   useGraphQLQuery(SATELLITE_DATA_QUERY, {
@@ -158,26 +222,12 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_BY_ADDRESS] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: async (data: SatelliteDataQueryQuery) => {
-      let additionalSatelliteData = null
-      try {
-        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
-      } catch (e) {
-        console.error('fetchAdditionalSatelliteData error:', e)
-      }
-
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
-
-      setSatellitesCtxState((prev) => ({
-        ...prev,
+    onCompleted: (data: SatelliteDataQueryQuery) =>
+      handleSatelliteDataCompleted(data, ({ satelliteIds, satelliteMapper }) => ({
         staelliteIdsByAddress: satelliteIds,
         satelliteMapperByAddress: satelliteMapper,
-      }))
-
-      setIsLoading(false)
-    },
-    onError: (error) => handleQueryError(error, 'SATELLITE_DATA_QUERY|SATELLITES_DATA_SINGLE_SUB'),
+      })),
+    onError: (error) => handleSatelliteQueryError(error, 'SATELLITE_DATA_QUERY|SATELLITES_DATA_SINGLE_SUB'),
   })
 
   useGraphQLQuery(SATELLITE_DATA_QUERY, {
@@ -188,26 +238,12 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ALL] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: async (data: SatelliteDataQueryQuery) => {
-      let additionalSatelliteData = null
-      try {
-        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
-      } catch (e) {
-        console.error('fetchAdditionalSatelliteData error:', e)
-      }
-
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
-
-      setSatellitesCtxState((prev) => ({
-        ...prev,
-        satelliteMapper: satelliteMapper,
+    onCompleted: (data: SatelliteDataQueryQuery) =>
+      handleSatelliteDataCompleted(data, ({ satelliteIds, satelliteMapper }) => ({
+        satelliteMapper,
         allSatellitesIds: satelliteIds,
-      }))
-
-      setIsLoading(false)
-    },
-    onError: (error) => handleQueryError(error, 'ALL_SATELLITES_DATA_QUERY'),
+      })),
+    onError: (error) => handleSatelliteQueryError(error, 'ALL_SATELLITES_DATA_QUERY'),
   })
 
   useGraphQLQuery(SATELLITE_DATA_QUERY, {
@@ -218,26 +254,12 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ACTIVE] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: async (data: SatelliteDataQueryQuery) => {
-      let additionalSatelliteData = null
-      try {
-        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
-      } catch (e) {
-        console.error('fetchAdditionalSatelliteData error:', e)
-      }
-
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
-
-      setSatellitesCtxState((prev) => ({
-        ...prev,
+    onCompleted: (data: SatelliteDataQueryQuery) =>
+      handleSatelliteDataCompleted(data, ({ satelliteIds, satelliteMapper }) => ({
         satelliteActiveMapper: satelliteMapper,
         activeSatellitesIds: satelliteIds,
-      }))
-
-      setIsLoading(false)
-    },
-    onError: (error) => handleQueryError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
+      })),
+    onError: (error) => handleSatelliteQueryError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
   })
 
   useGraphQLQuery(SATELLITE_DATA_QUERY, {
@@ -248,25 +270,12 @@ export const SatellitesProvider = ({ children }: Props) => {
       limit: SATELLITES_LIMIT,
       offset: (paginationState[SATELLITE_PAGINATION_ORACLES] - 1) * SATELLITES_LIMIT,
     },
-    onCompleted: async (data: SatelliteDataQueryQuery) => {
-      let additionalSatelliteData = null
-      try {
-        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
-      } catch (e) {
-        console.error('fetchAdditionalSatelliteData error:', e)
-      }
-
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
-
-      setSatellitesCtxState((prev) => ({
-        ...prev,
+    onCompleted: (data: SatelliteDataQueryQuery) =>
+      handleSatelliteDataCompleted(data, ({ satelliteIds, satelliteMapper }) => ({
         oraclesIds: satelliteIds,
         satelliteOraclesMapper: satelliteMapper,
-      }))
-      setIsLoading(false)
-    },
-    onError: (error) => handleQueryError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
+      })),
+    onError: (error) => handleSatelliteQueryError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
   })
 
   useGraphQLQuery(SATELLITE_AGGREGATE_COUNT, {
