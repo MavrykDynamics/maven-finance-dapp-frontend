@@ -164,17 +164,17 @@ const PortfolioTab = () => {
       </PortfolioWalletStyled>
 
       <div className="tabs-switchers">
-        <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+        <Link to={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
           <Button selected={portfolioActiveTab === PORTFOLIO_POSITION_TAB_ID} kind={BUTTON_NAVIGATION}>
             Earn/Borrow Position
           </Button>
         </Link>
-        <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
+        <Link to={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}>
           <Button selected={portfolioActiveTab === PORTFOLIO_LENDING_TAB_ID} kind={BUTTON_NAVIGATION}>
             Earn TXs
           </Button>
         </Link>
-        <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
+        <Link to={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}>
           <Button selected={portfolioActiveTab === PORTFOLIO_BORROWING_TAB_ID} kind={BUTTON_NAVIGATION}>
             Borrow TXs
           </Button>
@@ -183,7 +183,7 @@ const PortfolioTab = () => {
 
       {/* <Switch>
         <Route
-          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}
+          path={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}
           element={
             <LendBorrowPosition
               totalUserBorrowed={totalUserBorrowed}
@@ -196,20 +196,20 @@ const PortfolioTab = () => {
         />
 
         <Route
-          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}
+          path={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_LENDING_TAB_ID}`}
           element={
             <LoansTxTab txVariant="lending" userLoansData={userLendings} isUserLoansLoading={isUserLoansLoading} />
           }
         />
 
         <Route
-          path={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}
+          path={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_BORROWING_TAB_ID}`}
           element={
             <LoansTxTab txVariant="borrowing" userLoansData={userBorrowings} isUserLoansLoading={isUserLoansLoading} />
           }
         />
 
-        <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+        <Navigate to={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
       </Switch> */}
       <Outlet />
     </>

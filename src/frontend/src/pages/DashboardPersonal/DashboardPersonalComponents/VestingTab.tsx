@@ -84,8 +84,8 @@ export const VestingTab = () => {
       <Navigate
         to={
           __APP_MODE__ === 'gov'
-            ? `/dashboard-personal/${DELEGATION_TAB_ID}`
-            : `/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`
+            ? `/explore-personal/${DELEGATION_TAB_ID}`
+            : `/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`
         }
       />
     )

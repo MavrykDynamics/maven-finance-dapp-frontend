@@ -357,7 +357,7 @@ export const StakeUnstakeView = memo(({
             {/*>*/}
             {/*  <Icon id="compound" /> Compound*/}
             {/*</NewButton>*/}
-            <Link to={`/dashboard-personal/portfolio/`}>Personal Dashboard</Link>
+            <Link to={`/explore-personal/portfolio/`}>Personal Dashboard</Link>
             {/*<Tooltip>*/}
             {/*  <Tooltip.Trigger className="tooltip-trigger">*/}
             {/*    <Icon id="info" />*/}

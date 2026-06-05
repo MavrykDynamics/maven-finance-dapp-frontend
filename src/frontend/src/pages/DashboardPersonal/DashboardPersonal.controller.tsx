@@ -66,8 +66,8 @@ const DashboardPersonal = () => {
 
   const isGovApp = __APP_MODE__ === 'gov'
   const defaultTabPath = isGovApp
-    ? `/dashboard-personal/${DELEGATION_TAB_ID}`
-    : `/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`
+    ? `/explore-personal/${DELEGATION_TAB_ID}`
+    : `/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`
 
   // if we change user, redirect him to main screen on dashboard, as he might not have permission to some screens
   useEffect(() => {
@@ -196,7 +196,7 @@ const DashboardPersonal = () => {
 
             <div className="tabs-switchers">
               {!isGovApp ? (
-                <Link to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
+                <Link to={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`}>
                   <Button selected={activeTab === PORTFOLIO_TAB_ID} kind={BUTTON_NAVIGATION}>
                     Portfolio
                   </Button>
@@ -206,7 +206,7 @@ const DashboardPersonal = () => {
                 <Link
                   to={
                     userAddress
-                      ? `/dashboard-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}${qs.stringify(
+                      ? `/explore-personal/${isSatellite ? SATELLITE_TAB_ID : DELEGATION_TAB_ID}${qs.stringify(
                           { page: { [USER_ACTIONS_HISTORY]: 1 } },
                           { addQueryPrefix: true },
                         )}`
@@ -223,7 +223,7 @@ const DashboardPersonal = () => {
                 </Link>
               ) : null}
               {isVestee && isGovApp ? (
-                <Link to={`/dashboard-personal/${VESTING_TAB_ID}`}>
+                <Link to={`/explore-personal/${VESTING_TAB_ID}`}>
                   <Button selected={activeTab === VESTING_TAB_ID} kind={BUTTON_NAVIGATION}>
                     Vesting
                   </Button>

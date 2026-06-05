@@ -97,11 +97,11 @@ export const GovRoutes = () => {
       {/* DASHBOARD */}
       <Route path="/" element={<Dashboard />} />
 
-      <Route path="/dashboard-personal/" element={<DashboardPersonal />}>
+      <Route path="/explore-personal/" element={<DashboardPersonal />}>
         <Route path={`${DELEGATION_TAB_ID}`} element={<DelegationTab />} />
         <Route path={`${SATELLITE_TAB_ID}`} element={<SatelliteTab />} />
         <Route path={`${VESTING_TAB_ID}`} element={<VestingTab />} />
-        <Route path="*" element={<Navigate replace to={`/dashboard-personal/${DELEGATION_TAB_ID}`} />} />
+        <Route path="*" element={<Navigate replace to={`/explore-personal/${DELEGATION_TAB_ID}`} />} />
       </Route>
 
       {/* GOVERNANCE */}

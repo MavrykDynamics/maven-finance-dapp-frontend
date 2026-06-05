@@ -98,7 +98,7 @@ export const UserRoutes = () => {
       {/* DASHBOARD */}
       <Route path="/" element={<Dashboard />} />
 
-      <Route path="/dashboard-personal/" element={<DashboardPersonal />}>
+      <Route path="/explore-personal/" element={<DashboardPersonal />}>
         <Route path={`${DELEGATION_TAB_ID}`} element={<DelegationTab />} />
         <Route path={`${SATELLITE_TAB_ID}`} element={<SatelliteTab />} />
         <Route path={`${PORTFOLIO_TAB_ID}/`} element={<PortfolioTab />}>
@@ -108,14 +108,14 @@ export const UserRoutes = () => {
           <Route
             path="*"
             element={
-              <Navigate replace to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+              <Navigate replace to={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
             }
           />
         </Route>
         <Route
           path="*"
           element={
-            <Navigate replace to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+            <Navigate replace to={`/explore-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
           }
         />
       </Route>

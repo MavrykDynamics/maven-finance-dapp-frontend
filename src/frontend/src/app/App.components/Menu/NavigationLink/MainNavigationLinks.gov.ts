@@ -23,8 +23,8 @@ export const govNavigationLinks: MainNavigationRoute[] = [
       {
         id: 84425,
         subTitle: 'Personal',
-        subPath: `dashboard-personal/${DELEGATION_TAB_ID}`,
-        routeSubPath: '/dashboard-personal/:tabId',
+        subPath: `explore-personal/${DELEGATION_TAB_ID}`,
+        routeSubPath: '/explore-personal/:tabId',
       },
     ],
   },
