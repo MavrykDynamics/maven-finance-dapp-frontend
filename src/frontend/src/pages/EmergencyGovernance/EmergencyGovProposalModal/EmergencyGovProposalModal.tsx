@@ -18,7 +18,7 @@ import { BUTTON_PRIMARY, BUTTON_SECONDARY } from 'app/App.components/Button/Butt
 import { SUBMIT_EGOV_PROPOSAL_ACTION } from 'providers/EmergencyGovernanceProvider/helpers/eGov.consts'
 
 // utils
-import { isValidLength } from '../../../utils/validatorFunctions'
+import { isValidLength, containsCode } from '../../../utils/validatorFunctions'
 
 // view
 import { PopupContainer, PopupContainerWrapper } from 'app/App.components/popup/PopupMain.style'
@@ -65,9 +65,11 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
     isActionActive || Object.values(proposalData).some(({ validation }) => validation !== INPUT_STATUS_SUCCESS)
 
   const handleOnChange = ({ target: { name, value } }: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const validationStatus = isValidLength(value, 1, name === 'title' ? proposalTitleMaxLength : proposalDescMaxLength)
-      ? INPUT_STATUS_SUCCESS
-      : INPUT_STATUS_ERROR
+    const validationStatus =
+      isValidLength(value, 1, name === 'title' ? proposalTitleMaxLength : proposalDescMaxLength) &&
+      !containsCode(value)
+        ? INPUT_STATUS_SUCCESS
+        : INPUT_STATUS_ERROR
 
     setProposalData({ ...proposalData, [name]: { text: value, validation: validationStatus } })
   }

@@ -95,36 +95,45 @@ React Router v7 (SPA mode) in `app/App.components/AppRoutes/`. Some routes use `
 - **graphql-tag** for dynamic GraphQL query strings (used alongside codegen's typed `gql`)
 - Types auto-generated via `graphql-codegen` to `utils/__generated__/`
 - Key files:
-  - `src/providers/QueryProvider/queryClient.ts` — QueryClient config (30s default staleTime)
+  - `src/providers/QueryProvider/queryClient.ts` — QueryClient config (60s default refetch, 30s staleTime)
   - `src/providers/QueryProvider/graphqlClient.ts` — graphql-request client
-  - `src/providers/QueryProvider/useGraphQLQuery.ts` — hooks: `useGraphQLQuery`, `useGraphQLQueryOnce`, `fetchGraphQLData`, `useInvalidateAllQueries`
+  - `src/providers/QueryProvider/useGraphQLQuery.ts` — hooks: `useGraphQLQuery` (60s poll), `useGraphQLQueryOnce` (no poll, 5min cache), `fetchGraphQLData`, `useInvalidateAllQueries`; cache presets: `CACHE_STATIC` (5min), `CACHE_SEMI_STATIC` (60s), `CACHE_DYNAMIC` (30s), `CACHE_NONE`
   - `src/providers/QueryProvider/query.provider.tsx` — QueryProvider with error handling
 
 ## Completed Work
 
 ### Frontend Optimization (`feat/frontend-optimization`)
-**Plan:** `.claude/plans/frontend-optimization.md`
-
-Phases 1-7 completed: route-based code splitting, provider memoization, Apollo→TanStack Query migration, dead code removal, React.memo on view components, shared token approval utilities, package cleanup. Vite migration and React Router v7 SPA mode completed on `feat/vite-migration-and-router-v7`.
+Phases 1-7 completed: route-based code splitting, provider memoization, Apollo→TanStack Query migration, dead code removal, React.memo on view components, shared token approval utilities, package cleanup.
 
 ### Vite Migration & Router v7 (`feat/vite-migration-and-router-v7`)
-CRA→Vite migration (commit `48283d259`) and React Router v6→v7 upgrade (commit `c73d374db`). This is the current active branch. All `REACT_APP_*` env vars migrated to `VITE_*` prefix with `import.meta.env`. CRA/webpack infrastructure deleted. Build tooling is now Vite 6.x.
+CRA→Vite migration (commit `48283d259`) and React Router v6→v7 upgrade (commit `c73d374db`). All `REACT_APP_*` env vars migrated to `VITE_*`. Build tooling is Vite 6.x.
 
-## Upcoming Work
+### App Split — User App + Governance App (`feat/app-split`) ✅ IN PROGRESS
+**Plan:** `.claude/plans/app-split-user-governance.md`
 
-### App Split: User App + Governance App
-**Plan:** `.claude/plans/app-split-user-governance.md` — **PLANNING COMPLETE, NOT STARTED**
+**Completed on this branch:**
+- Dual Vite configs (`vite.user.config.mts`, `vite.gov.config.mts`) — User App port 3000, Gov App port 3001
+- Separate dep caches (`.vite/` vs `.vite-gov/`) so both dev servers run simultaneously without cache conflicts
+- GraphQL CORS proxy in gov dev server (Hasura only allows localhost:3000)
+- Dual route trees (`AppRoutes.user.tsx`, `AppRoutes.gov.tsx`), dual provider trees (`DappSectionsProviders.user.tsx`, `.gov.tsx`)
+- `__APP_MODE__` Vite define global for tree-shaking
+- Dashboard renamed to **Explore** (sidebar, page header, route `/explore-personal/...`, 404 copy)
+- Header reduced 80→70px, nav font 20→16px, page banners 160→120px, sidebar 232→210px
+- 6 bug fixes (vault $NaN, council gating, eGov fee, Staking CTA, VestingTab redirect, DOM nesting)
+- Vault badge grid fix (status inline in single row)
+- GraphQL poll traffic reduced ~50%: REFRESH_INTERVAL 30→60s, config queries → CACHE_STATIC, member queries → once, satellite ID memoization, listener fix
+- Comprehensive README with dual-app setup, Cloudflare Pages deployment guide
+- Feature documentation with full route map, button inventory, contract call names, test checklist
+- Loading performance analysis plan (`.claude/plans/loading-performance-analysis.md`)
 
-**Goal:** Split the single dApp into two separately deployed websites from the same codebase:
-- **Maven Finance (User App)** — lending, borrowing, staking, farming, vaults
-- **Maven Governance (Gov App)** — governance proposals, satellite management, treasury, council
-
-**Approach:** Two Vite configs (`vite.user.config.mts`, `vite.gov.config.mts`), two route trees, two provider subsets. Deployed via two Cloudflare Pages projects connected to the same GitHub repo.
-
-**Shared pages (both sites):** Satellites list, satellite details, data feeds, feed details, emergency governance, contract status.
+**Still in progress on this branch:**
+- DOMPurify/XSS on proposal free-text fields
+- Satellite provider 4-hook → 1 dynamic query structural refactor
+- Council provider 6-hook → 2 dynamic query structural refactor
+- Typography & Style Consistency (see below)
 
 ### Typography & Style Consistency (`feat/typography-consistency`)
-**Plan:** `.claude/plans/typography-and-style-consistency.md` — **NOT YET STARTED**
+**Plan:** `.claude/plans/typography-and-style-consistency.md` — **NOT YET STARTED** (will be done on `feat/app-split`)
 
 **Problem:** 66% of all font-weight declarations use SemiBold (600), 16+ ad-hoc font sizes, no typography scale, inconsistent heading hierarchy, hardcoded colors bypassing themes, dead font loaded.
 

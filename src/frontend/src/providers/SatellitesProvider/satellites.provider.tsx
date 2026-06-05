@@ -156,22 +156,54 @@ export const SatellitesProvider = ({ children }: Props) => {
     onError: (error) => handleQueryError(error, 'SATELLITES_METRICS_DATA'),
   })
 
+  // Derive which pagination view is active — only one fires at a time.
+  // Replacing 4 separate SATELLITE_DATA_QUERY hooks with a single dynamic hook.
+  const activeSatellitePagination = useMemo((): PaginationSatelliteType | null => {
+    if (satelliteAddressToSubscribe && activeSubs[SATELLITES_DATA_SINGLE_SUB]) return SATELLITE_PAGINATION_BY_ADDRESS
+    const sub = activeSubs[SATELLITE_DATA_SUB]
+    if (sub === SATELLITES_DATA_ALL_SUB) return SATELLITE_PAGINATION_ALL
+    if (sub === SATELLITES_DATA_ACTIVE_SUB) return SATELLITE_PAGINATION_ACTIVE
+    if (sub === SATELLITES_DATA_ORACLES_SUB) return SATELLITE_PAGINATION_ORACLES
+    return null
+  }, [activeSubs, satelliteAddressToSubscribe])
+
+  // Keep a ref so onCompleted always knows which view was active when data arrived.
+  const activeSatellitePaginationRef = useRef(activeSatellitePagination)
+  activeSatellitePaginationRef.current = activeSatellitePagination
+
+  // Map each pagination type to its memoized ID key ref for fetchAdditionalSatelliteData dedup.
+  const idKeyRefs = useMemo(
+    () => ({
+      [SATELLITE_PAGINATION_BY_ADDRESS]: prevAddrKeyRef,
+      [SATELLITE_PAGINATION_ALL]: prevAllKeyRef,
+      [SATELLITE_PAGINATION_ACTIVE]: prevActiveKeyRef,
+      [SATELLITE_PAGINATION_ORACLES]: prevOraclesKeyRef,
+    }),
+    [],
+  )
+
   useGraphQLQuery(SATELLITE_DATA_QUERY, {
-    skip: !satelliteAddressToSubscribe || !activeSubs[SATELLITES_DATA_SINGLE_SUB],
-    variables: {
-      ...defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS],
-      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].where,
-      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_BY_ADDRESS].orderBy,
-      limit: SATELLITES_LIMIT,
-      offset: (paginationState[SATELLITE_PAGINATION_BY_ADDRESS] - 1) * SATELLITES_LIMIT,
-    },
+    skip: !activeSatellitePagination,
+    variables: activeSatellitePagination
+      ? {
+          ...defaultSatelliteFilters[activeSatellitePagination],
+          satelliteWhere: defaultSatelliteFilters[activeSatellitePagination].where,
+          satelliteOrderBy: defaultSatelliteFilters[activeSatellitePagination].orderBy,
+          limit: SATELLITES_LIMIT,
+          offset: (paginationState[activeSatellitePagination] - 1) * SATELLITES_LIMIT,
+        }
+      : undefined,
     onCompleted: async (data: SatelliteDataQueryQuery) => {
+      const paginationType = activeSatellitePaginationRef.current
+      if (!paginationType) return
+
       const ids = data.satellite.map((entry) => entry.user_address as string)
       const key = ids.join(',')
       let additionalSatelliteData = null
       try {
-        if (key !== prevAddrKeyRef.current) {
-          prevAddrKeyRef.current = key
+        const keyRef = idKeyRefs[paginationType]
+        if (key !== keyRef.current) {
+          keyRef.current = key
           additionalSatelliteData = await fetchAdditionalSatelliteData(ids)
         }
       } catch (e) {
@@ -182,114 +214,27 @@ export const SatellitesProvider = ({ children }: Props) => {
 
       setSatellitesCtxState((prev) => ({
         ...prev,
-        staelliteIdsByAddress: satelliteIds,
-        satelliteMapperByAddress: satelliteMapper,
+        ...(paginationType === SATELLITE_PAGINATION_BY_ADDRESS && {
+          staelliteIdsByAddress: satelliteIds,
+          satelliteMapperByAddress: satelliteMapper,
+        }),
+        ...(paginationType === SATELLITE_PAGINATION_ALL && {
+          allSatellitesIds: satelliteIds,
+          satelliteMapper: satelliteMapper,
+        }),
+        ...(paginationType === SATELLITE_PAGINATION_ACTIVE && {
+          activeSatellitesIds: satelliteIds,
+          satelliteActiveMapper: satelliteMapper,
+        }),
+        ...(paginationType === SATELLITE_PAGINATION_ORACLES && {
+          oraclesIds: satelliteIds,
+          satelliteOraclesMapper: satelliteMapper,
+        }),
       }))
 
       setIsLoading(false)
     },
-    onError: (error) => handleQueryError(error, 'SATELLITE_DATA_QUERY|SATELLITES_DATA_SINGLE_SUB'),
-  })
-
-  useGraphQLQuery(SATELLITE_DATA_QUERY, {
-    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ALL_SUB,
-    variables: {
-      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].where,
-      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ALL].orderBy,
-      limit: SATELLITES_LIMIT,
-      offset: (paginationState[SATELLITE_PAGINATION_ALL] - 1) * SATELLITES_LIMIT,
-    },
-    onCompleted: async (data: SatelliteDataQueryQuery) => {
-      const ids = data.satellite.map((entry) => entry.user_address as string)
-      const key = ids.join(',')
-      let additionalSatelliteData = null
-      try {
-        if (key !== prevAllKeyRef.current) {
-          prevAllKeyRef.current = key
-          additionalSatelliteData = await fetchAdditionalSatelliteData(ids)
-        }
-      } catch (e) {
-        console.error('fetchAdditionalSatelliteData error:', e)
-      }
-
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
-
-      setSatellitesCtxState((prev) => ({
-        ...prev,
-        satelliteMapper: satelliteMapper,
-        allSatellitesIds: satelliteIds,
-      }))
-
-      setIsLoading(false)
-    },
-    onError: (error) => handleQueryError(error, 'ALL_SATELLITES_DATA_QUERY'),
-  })
-
-  useGraphQLQuery(SATELLITE_DATA_QUERY, {
-    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ACTIVE_SUB,
-    variables: {
-      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].where,
-      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ACTIVE].orderBy,
-      limit: SATELLITES_LIMIT,
-      offset: (paginationState[SATELLITE_PAGINATION_ACTIVE] - 1) * SATELLITES_LIMIT,
-    },
-    onCompleted: async (data: SatelliteDataQueryQuery) => {
-      const ids = data.satellite.map((entry) => entry.user_address as string)
-      const key = ids.join(',')
-      let additionalSatelliteData = null
-      try {
-        if (key !== prevActiveKeyRef.current) {
-          prevActiveKeyRef.current = key
-          additionalSatelliteData = await fetchAdditionalSatelliteData(ids)
-        }
-      } catch (e) {
-        console.error('fetchAdditionalSatelliteData error:', e)
-      }
-
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
-
-      setSatellitesCtxState((prev) => ({
-        ...prev,
-        satelliteActiveMapper: satelliteMapper,
-        activeSatellitesIds: satelliteIds,
-      }))
-
-      setIsLoading(false)
-    },
-    onError: (error) => handleQueryError(error, 'ACTIVE_SATELLITES_DATA_QUERY'),
-  })
-
-  useGraphQLQuery(SATELLITE_DATA_QUERY, {
-    skip: activeSubs[SATELLITE_DATA_SUB] !== SATELLITES_DATA_ORACLES_SUB,
-    variables: {
-      satelliteWhere: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].where,
-      satelliteOrderBy: defaultSatelliteFilters[SATELLITE_PAGINATION_ORACLES].orderBy,
-      limit: SATELLITES_LIMIT,
-      offset: (paginationState[SATELLITE_PAGINATION_ORACLES] - 1) * SATELLITES_LIMIT,
-    },
-    onCompleted: async (data: SatelliteDataQueryQuery) => {
-      const ids = data.satellite.map((entry) => entry.user_address as string)
-      const key = ids.join(',')
-      let additionalSatelliteData = null
-      try {
-        if (key !== prevOraclesKeyRef.current) {
-          prevOraclesKeyRef.current = key
-          additionalSatelliteData = await fetchAdditionalSatelliteData(ids)
-        }
-      } catch (e) {
-        console.error('fetchAdditionalSatelliteData error:', e)
-      }
-
-      const { satelliteIds, satelliteMapper } = normalizeSatellitesLedger(data, additionalSatelliteData)
-
-      setSatellitesCtxState((prev) => ({
-        ...prev,
-        oraclesIds: satelliteIds,
-        satelliteOraclesMapper: satelliteMapper,
-      }))
-      setIsLoading(false)
-    },
-    onError: (error) => handleQueryError(error, 'ORACLES_SATELLITES_DATA_QUERY'),
+    onError: (error) => handleQueryError(error, 'SATELLITE_DATA_QUERY'),
   })
 
   useGraphQLQuery(SATELLITE_AGGREGATE_COUNT, {

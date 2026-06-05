@@ -17,7 +17,7 @@ import { IPFSUploader } from 'app/App.components/IPFSUploader/IPFSUploader.contr
 import { StageOneFormProps } from '../ProposalSubmission.types'
 
 // helpers
-import { isValidHttpUrl, isValidLength } from '../../../utils/validatorFunctions'
+import { isValidHttpUrl, isValidLength, containsCode } from '../../../utils/validatorFunctions'
 import { containSpaces } from 'app/App.utils/input'
 
 // consts
@@ -68,7 +68,10 @@ export const StageOneForm = ({
       case 'title':
         updateLocalProposalValidation(
           {
-            title: isValidLength(value, 1, proposalTitleMaxLength) ? INPUT_STATUS_SUCCESS : INPUT_STATUS_ERROR,
+            title:
+              isValidLength(value, 1, proposalTitleMaxLength) && !containsCode(value)
+                ? INPUT_STATUS_SUCCESS
+                : INPUT_STATUS_ERROR,
           },
           proposalId,
         )
@@ -76,9 +79,10 @@ export const StageOneForm = ({
       case 'description':
         updateLocalProposalValidation(
           {
-            description: isValidLength(value, 1, proposalDescriptionMaxLength)
-              ? INPUT_STATUS_SUCCESS
-              : INPUT_STATUS_ERROR,
+            description:
+              isValidLength(value, 1, proposalDescriptionMaxLength) && !containsCode(value)
+                ? INPUT_STATUS_SUCCESS
+                : INPUT_STATUS_ERROR,
           },
           proposalId,
         )

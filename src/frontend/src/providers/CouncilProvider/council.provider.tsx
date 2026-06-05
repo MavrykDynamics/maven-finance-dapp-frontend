@@ -149,102 +149,53 @@ const CouncilProvider = ({ children }: Props) => {
     onError: (error) => handleQueryError(error, 'BREAK_GLASS_COUNCIL_MEMBERS_QUERY'),
   })
 
-  /**
-   * maven council actions:
-   * ALL_PAST_COUNCILS_QUERY -> expired or executed actions
-   * MY_PAST_COUNCILS_QUERY -> expired or executed actions where user is initiator and all ongoing actions,
-   *    where user is not initiator (actions to sign carousel)
-   * ALL_ONGOING_COUNCILS_QUERY -> all actions that are not executed nor expired
-   */
-  useGraphQLQuery(
-    ALL_PAST_COUNCILS_QUERY,
-    {
-      skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_PAST_COUNCIL_ACTIONS_SUB,
-      staleTime: CACHE_SEMI_STATIC,
-      variables: {
-        currentTimestamp: currentTimeRef.current,
-      },
-      onCompleted: (data) => updateCouncilActionsData(data),
-      onError: (error) => handleQueryError(error, 'ALL_PAST_COUNSILS_QUERY'),
-    },
-    { refetchQueryVariables },
-  )
+  // Maven Council: 3 hooks (all-past, my-past, all-ongoing) → 1 dynamic hook.
+  // All three queries return identical shapes — only the where clause differs.
+  const mavCouncilDoc = useMemo(() => {
+    switch (activeSubs[COUNCIL_ACTIONS_DATA]) {
+      case ALL_PAST_COUNCIL_ACTIONS_SUB: return ALL_PAST_COUNCILS_QUERY
+      case MY_PAST_COUNCIL_ACTIONS_SUB: return MY_PAST_COUNCILS_QUERY
+      case ALL_ONGOING_COUNCIL_ACTIONS_SUB: return ALL_ONGOING_COUNCILS_QUERY
+      default: return null
+    }
+  }, [activeSubs])
 
   useGraphQLQuery(
-    MY_PAST_COUNCILS_QUERY,
+    mavCouncilDoc ?? ALL_PAST_COUNCILS_QUERY,
     {
-      skip: activeSubs[COUNCIL_ACTIONS_DATA] !== MY_PAST_COUNCIL_ACTIONS_SUB,
+      skip: !mavCouncilDoc,
       staleTime: CACHE_SEMI_STATIC,
       variables: {
         currentTimestamp: currentTimeRef.current,
         userAddress: userAddress ?? '',
       },
       onCompleted: (data) => updateCouncilActionsData(data),
-      onError: (error) => handleQueryError(error, 'MY_PAST_COUNSILS_QUERY'),
+      onError: (error) => handleQueryError(error, 'COUNCIL_ACTIONS_QUERY'),
     },
     { refetchQueryVariables },
   )
 
-  useGraphQLQuery(
-    ALL_ONGOING_COUNCILS_QUERY,
-    {
-      skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_ONGOING_COUNCIL_ACTIONS_SUB,
-      staleTime: CACHE_SEMI_STATIC,
-      variables: {
-        currentTimestamp: currentTimeRef.current,
-      },
-      onCompleted: (data) => updateCouncilActionsData(data),
-      onError: (error) => handleQueryError(error, 'ALL_ONGOING_COUNSILS_QUERY'),
-    },
-    { refetchQueryVariables },
-  )
-
-  /**
-   * break glass council actions:
-   * ALL_BG_PAST_COUNSILS_QUERY -> expired or executed actions
-   * MY_BG_PAST_COUNSILS_QUERY -> expired or executed actions where user is initiator and all ongoing actions,
-   *    where user is not initiator (actions to sign carousel)
-   * ALL_BG_ONGOING_COUNSILS_QUERY -> all actions that are not executed nor expired
-   */
-  useGraphQLQuery(
-    ALL_BG_PAST_COUNCILS_QUERY,
-    {
-      skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
-      staleTime: CACHE_SEMI_STATIC,
-      variables: {
-        currentTimestamp: currentTimeRef.current,
-      },
-      onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleQueryError(error, 'ALL_BG_PAST_COUNSILS_QUERY'),
-    },
-    { refetchQueryVariables },
-  )
+  // Break Glass Council: same pattern → 1 dynamic hook.
+  const bgCouncilDoc = useMemo(() => {
+    switch (activeSubs[BG_COUNCIL_ACTIONS_DATA]) {
+      case ALL_BG_PAST_COUNCIL_ACTIONS_SUB: return ALL_BG_PAST_COUNCILS_QUERY
+      case MY_BG_PAST_COUNCIL_ACTIONS_SUB: return MY_BG_PAST_COUNCILS_QUERY
+      case ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB: return ALL_BG_ONGOING_COUNCILS_QUERY
+      default: return null
+    }
+  }, [activeSubs])
 
   useGraphQLQuery(
-    MY_BG_PAST_COUNCILS_QUERY,
+    bgCouncilDoc ?? ALL_BG_PAST_COUNCILS_QUERY,
     {
-      skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== MY_BG_PAST_COUNCIL_ACTIONS_SUB,
+      skip: !bgCouncilDoc,
       staleTime: CACHE_SEMI_STATIC,
       variables: {
         currentTimestamp: currentTimeRef.current,
         userAddress: userAddress ?? '',
       },
       onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleQueryError(error, 'MY_BG_PAST_COUNSILS_QUERY'),
-    },
-    { refetchQueryVariables },
-  )
-
-  useGraphQLQuery(
-    ALL_BG_ONGOING_COUNCILS_QUERY,
-    {
-      skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
-      staleTime: CACHE_SEMI_STATIC,
-      variables: {
-        currentTimestamp: currentTimeRef.current,
-      },
-      onCompleted: (data) => updateBreakGlassCouncilActionsData(data),
-      onError: (error) => handleQueryError(error, 'ALL_BG_ONGOING_COUNSILS_QUERY'),
+      onError: (error) => handleQueryError(error, 'BG_COUNCIL_ACTIONS_QUERY'),
     },
     { refetchQueryVariables },
   )
