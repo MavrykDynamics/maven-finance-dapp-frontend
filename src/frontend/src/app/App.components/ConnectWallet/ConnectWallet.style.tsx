@@ -18,7 +18,7 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavenTheme; $isShown:
   width: 375px;
 
   position: absolute;
-  top: 80px;
+  top: 60px;
   right: 15px;
 
   background: ${({ theme }) => theme.cards};

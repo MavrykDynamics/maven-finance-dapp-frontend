@@ -13,7 +13,7 @@ export const TopBarLinksStyled = styled.div<{ $useClickOpening?: boolean; $selec
   }
 
   .group-name {
-    font-size: 20px;
+    font-size: 16px;
     line-height: 0;
     transition: 0.35s all;
     cursor: pointer;
@@ -93,7 +93,7 @@ export const TopBarLinksStyled = styled.div<{ $useClickOpening?: boolean; $selec
       text-transform: capitalize;
       position: relative;
       white-space: nowrap;
-      font-size: 20px;
+      font-size: 16px;
       transition: 0.35s all;
       width: 120%;
       padding: 6px 0;
@@ -196,7 +196,7 @@ export const TopBarLinksStyled = styled.div<{ $useClickOpening?: boolean; $selec
       : css`
           .group-links {
             position: absolute;
-            top: 85px;
+            top: 65px;
             opacity: 0;
             visibility: hidden;
             width: 250px;

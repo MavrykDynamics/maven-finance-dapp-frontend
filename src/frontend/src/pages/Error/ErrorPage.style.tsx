@@ -10,7 +10,7 @@ export const ErrorPageWrapper = styled.div<{ theme: MavenTheme; $themeSelected: 
   width: 100vw;
   position: relative;
   height: 100vh;
-  padding-top: 80px;
+  padding-top: 60px;
   background: ${({ $themeSelected }) => `url(/images/${$themeSelected}/error-bg.svg)`};
   background-position: center;
   background-repeat: no-repeat;
