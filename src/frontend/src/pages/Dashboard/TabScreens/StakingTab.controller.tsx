@@ -41,12 +41,14 @@ export const StakingTab = () => {
     <TabWrapperStyled $backgroundImage="dashboard_stakingTab_bg.png">
       <div className="top">
         <H2Title>Staking</H2Title>
-        <Link to="/staking" className="dashboard-sectionLink">
-          <NewButton kind={PRIMARY} form={BUTTON_WIDE}>
-            <Icon id="staking" />
-            Staking
-          </NewButton>
-        </Link>
+        {__APP_MODE__ !== 'gov' && (
+          <Link to="/staking" className="dashboard-sectionLink">
+            <NewButton kind={PRIMARY} form={BUTTON_WIDE}>
+              <Icon id="staking" />
+              Staking
+            </NewButton>
+          </Link>
+        )}
       </div>
 
       {isStakingLoading ? (

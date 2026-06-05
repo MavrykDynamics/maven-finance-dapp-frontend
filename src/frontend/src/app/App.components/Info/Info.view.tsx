@@ -39,7 +39,7 @@ export const Info = memo(({ children, text, type, showIcon = true, size = 'mediu
   return (
     <InfoBlock className={bannerClasses}>
       {showIcon ? <Icon id={iconToUse} className="info-icon" /> : null}
-      <p>{text}</p>
+      <div>{text}</div>
       {children ? <div className="child">{children}</div> : null}
     </InfoBlock>
   )

@@ -252,12 +252,14 @@ export const getVaultCollateralRatio = (collateralAmount: number, totalOutstandi
  * @param maxVaultLiquidationPercent – ??? TODO: add description
  * @returns ???
  */
-export const calculateVaultMaxLiquidationAmount = (loanOutstandingTotal: number, maxVaultLiquidationPercent: number) =>
-  new BigNumber(loanOutstandingTotal)
+export const calculateVaultMaxLiquidationAmount = (loanOutstandingTotal: number, maxVaultLiquidationPercent: number) => {
+  if (loanOutstandingTotal == null || maxVaultLiquidationPercent == null) return 0
+  return new BigNumber(loanOutstandingTotal)
     .times(maxVaultLiquidationPercent)
     .dividedBy(10000)
     .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber()
+}
 
 /**
  * @param adminLiquidationFeePercent – ??? TODO: add description

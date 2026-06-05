@@ -91,15 +91,13 @@ export const EmergencyGovProposalModal = ({ show, closeHandler }: { show: boolea
             emergencyGovernanceAddress,
             proposalData.title.text,
             proposalData.description.text,
-            requiredFeeMutez,
           )
         } catch (e) {
-          console.error('voteForEGovProposal', e)
           return null
         }
       },
     }),
-    [emergencyGovernanceAddress, proposalData.description.text, proposalData.title.text, requiredFeeMutez, userAddress],
+    [emergencyGovernanceAddress, proposalData.description.text, proposalData.title.text, userAddress],
   )
 
   const { action: handleSubmitEGovProposal } = useContractAction(submitEGovProposalProps)

@@ -274,7 +274,7 @@ export const CouncilView = memo(({
             </>
           ) : null}
 
-          {isMyActionsTabs ? (
+          {isMyActionsTabs && isUserCouncil ? (
             <>
               <AvailableActions>
                 <div className="top-bar">

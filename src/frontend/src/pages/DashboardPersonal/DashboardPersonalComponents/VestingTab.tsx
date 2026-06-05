@@ -17,7 +17,7 @@ import { UserActionHistory } from './UserOperationsHistory'
 
 // utils
 import { parseDate } from 'utils/time'
-import { PORTFOLIO_POSITION_TAB_ID, PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
+import { DELEGATION_TAB_ID, PORTFOLIO_POSITION_TAB_ID, PORTFOLIO_TAB_ID } from '../DashboardPersonal.utils'
 
 // providers
 import { useToasterContext } from 'providers/ToasterProvider/toaster.provider'
@@ -34,7 +34,7 @@ import { DEFAULT_VESTING_SUBS, VESTING_STORAGE_DATA_SUB } from 'providers/Vestin
 import { DataLoaderWrapper } from 'app/App.components/Loader/Loader.style'
 import { ClockLoader } from 'app/App.components/Loader/Loader.view'
 
-const VestingTab = () => {
+export const VestingTab = () => {
   const { vesteesMapper, changeVestingSubscriptionsList, isLoading: isVestingLoading } = useVestingContext()
   const { userAddress } = useUserContext()
   const { bug } = useToasterContext()
@@ -80,7 +80,15 @@ const VestingTab = () => {
   const { action: handleClaimVestingReward } = useContractAction(contractActionProps)
 
   if (!isVestingLoading && !vesteeRecord)
-    return <Navigate to={`/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`} />
+    return (
+      <Navigate
+        to={
+          __APP_MODE__ === 'gov'
+            ? `/dashboard-personal/${DELEGATION_TAB_ID}`
+            : `/dashboard-personal/${PORTFOLIO_TAB_ID}/${PORTFOLIO_POSITION_TAB_ID}`
+        }
+      />
+    )
 
   const {
     vestingMonth = 0,
@@ -171,4 +179,3 @@ const VestingTab = () => {
   )
 }
 
-export default VestingTab

@@ -7,15 +7,19 @@ export const submitEGovProposal = async (
   eGovAddress: string,
   title: string,
   descr: string,
-  feeAmount: number,
 ): Promise<ActionErrorReturnType | ActionSuccessReturnType> => {
   try {
     // prepare and send transaction
     const tezos = await DAPP_INSTANCE.tezos()
     const contract = await tezos.wallet.at(eGovAddress)
+
+    // Read the anti-spam fee directly from contract storage — cannot be bypassed by the caller
+    const storage = await contract.storage<{ required_fee_mumav: { toNumber: () => number } }>()
+    const feeMutez = storage.required_fee_mumav.toNumber()
+
     const delegateMetaData = await contract?.methods.triggerEmergencyControl(title, descr)
 
-    return await getEstimationResult(delegateMetaData, { params: { amount: feeAmount } })
+    return await getEstimationResult(delegateMetaData, { params: { amount: feeMutez } })
   } catch (error) {
     const e = unknownToError(error)
     return { actionSuccess: false, error: new WalletOperationError(e) }

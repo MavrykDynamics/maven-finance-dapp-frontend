@@ -71,7 +71,9 @@ const RenderErrorPage = lazy(() =>
 const DashboardPersonal = lazy(() => import('pages/DashboardPersonal/DashboardPersonal.controller'))
 const SatelliteTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/SatelliteTab'))
 const DelegationTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/DelegationTab'))
-const VestingTab = lazy(() => import('pages/DashboardPersonal/DashboardPersonalComponents/VestingTab'))
+const VestingTab = lazy(() =>
+  import('pages/DashboardPersonal/DashboardPersonalComponents/VestingTab').then((m) => ({ default: m.VestingTab })),
+)
 // Portfolio + loan-related tabs (PortfolioTab, LoansTxTab, LendBorrowPosition) excluded from gov app —
 // gov-only users don't have lending positions; loan tx history belongs in the user app.
 
