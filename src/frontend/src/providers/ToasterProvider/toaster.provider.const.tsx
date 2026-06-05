@@ -68,7 +68,7 @@ export const errorHeaderDefaultText = 'This page is outside the universe'
 export const errorDescDefaultText = (
   <>
     The page you are trying to access doesn’t exist or has been moved.
-    <br /> Try going back to your Dashboard page
+    <br /> Try going back to your Explore page
   </>
 )
 

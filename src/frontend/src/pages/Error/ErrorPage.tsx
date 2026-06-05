@@ -62,7 +62,7 @@ export const ErrorPage = ({
           {type === ERROR_TYPE_ROUTER && (
             <NewButton kind={BUTTON_PRIMARY} onClick={handleRedirect}>
               <Icon id="menu-compass" />
-              Go To Dashboard
+              Go To Explore
             </NewButton>
           )}
         </ErrorPageInner>
