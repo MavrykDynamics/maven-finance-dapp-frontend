@@ -161,27 +161,32 @@ export const MenuFooter = styled.div<{ theme: MavenTheme }>`
 
   .social-wrapper {
     display: flex;
-    column-gap: 5px;
+    column-gap: 12px;
+    align-items: center;
 
     a {
-      width: 30px;
-      height: 30px;
+      width: 20px;
+      height: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 1px solid ${({ theme }) => theme.linksAndButtons};
-      border-radius: 10px;
+      opacity: 0.7;
+      transition: opacity 0.15s ease-in-out;
+
+      &:hover {
+        opacity: 1;
+      }
 
       svg {
-        width: 30px;
-        height: 30px;
+        width: 18px;
+        height: 18px;
         fill: ${({ theme }) => theme.linksAndButtons};
       }
     }
 
     a:first-of-type svg {
-      width: 22px;
-      height: 23px;
+      width: 16px;
+      height: 16px;
     }
   }
 
