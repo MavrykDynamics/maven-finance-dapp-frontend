@@ -18,6 +18,7 @@ body {
   background-color: ${({ theme }) => theme.backgroundColor};
   color: ${({ theme }) => theme.regularText};
   font-size: ${FontSize.base};
+  font-weight: ${FontWeight.regular};
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-width: 1460px;
