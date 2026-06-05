@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const PageHeaderStyled = styled.div<{ $backgroundImageSrc: string }>`
@@ -53,7 +54,7 @@ export const PageHeaderTextArea = styled.div<{ theme: MavenTheme }>`
 
   h1 {
     color: ${({ theme }) => theme.pageHeaderColor};
-    font-size: 20px;
+    font-size: ${FontSize.xl2};
     margin: 0;
     position: relative;
 
@@ -98,8 +99,8 @@ export const PageHeaderTextArea = styled.div<{ theme: MavenTheme }>`
 
   p {
     color: ${({ theme }) => theme.pageHeaderColor};
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
     margin: 0;
     white-space: nowrap;

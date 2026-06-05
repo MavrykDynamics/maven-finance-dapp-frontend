@@ -104,7 +104,7 @@ export const StakeUnstakeInputWithCoin = styled.div`
     height: 100%;
 
     font-weight: ${FontWeight.semibold};
-    font-size: 20px;
+    font-size: ${FontSize.xl2};
     line-height: 20px;
 
     color: ${({ theme }) => theme.placeholders};

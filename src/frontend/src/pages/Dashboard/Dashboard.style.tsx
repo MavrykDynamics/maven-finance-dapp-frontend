@@ -29,7 +29,7 @@ export const DashboardStyled = styled.div<{ theme: MavenTheme }>`
 
       > div {
         font-weight: ${FontWeight.semibold};
-        font-size: 32px;
+        font-size: ${FontSize['2xl']};
         color: ${({ theme }) => theme.primaryText};
         margin-top: 30px;
       }
@@ -147,10 +147,10 @@ export const StatBlock = styled.div`
 
     .value {
       font-weight: ${FontWeight.bold};
-      font-size: 24px;
+      font-size: ${FontSize.xl3};
 
       .impact {
-        font-size: 20px;
+        font-size: ${FontSize.xl2};
       }
     }
   }

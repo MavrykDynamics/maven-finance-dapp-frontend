@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { FontWeight } from 'styles/typography'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const GradientDiagramStyled = styled.div<{ theme: MavenTheme; $gradient: string; $gradientWidth: number }>`
@@ -47,7 +47,7 @@ export const GradientBreakpoint = styled.div<{ theme: MavenTheme; $background: s
 
   .text {
     font-weight: ${FontWeight.semibold};
-    font-size: 10px;
+    font-size: ${FontSize.xxs};
     line-height: 10px;
     position: absolute;
     left: 50%;

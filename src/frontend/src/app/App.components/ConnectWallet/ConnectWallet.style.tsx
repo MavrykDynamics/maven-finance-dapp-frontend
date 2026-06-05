@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const ConnectWalletBtnWrap = styled.div`
@@ -73,8 +74,8 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavenTheme; $isShown:
     }
 
     .tzAddressToClick {
-      font-size: 22px;
-      font-weight: 600;
+      font-size: ${FontSize.xl};
+      font-weight: ${FontWeight.semibold};
 
       svg {
         width: 20px;
@@ -131,15 +132,15 @@ export const WalletDetailsHiddenPart = styled.div<{ theme: MavenTheme; $isShown:
       }
 
       .asset-amount {
-        font-weight: 600;
-        font-size: 18px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.lg};
         line-height: 27px;
         color: ${({ theme }) => theme.primaryText};
       }
 
       .converted-amount {
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.base};
         line-height: 21px;
         color: ${({ theme }) => theme.regularText};
       }
@@ -191,8 +192,8 @@ export const WalletDetailsVisiblePart = styled.div<{ theme: MavenTheme; $isShown
   align-items: center;
 
   > div {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     color: ${({ theme }) => theme.linksAndButtons};
   }
 
@@ -308,5 +309,5 @@ export const MobileWalletDetailsHiddenPart = styled(WalletDetailsHiddenPart)<{ t
 
 export const ConnectWalletBannerText = styled.div`
   display: inline;
-  font-weight: 500;
+  font-weight: ${FontWeight.medium};
 `

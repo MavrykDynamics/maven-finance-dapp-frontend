@@ -507,7 +507,7 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavenTheme }>`
   padding: 0 15px;
   height: 100%;
   font-weight: ${FontWeight.semibold};
-  font-size: 20px;
+  font-size: ${FontSize.xl2};
   line-height: 20px;
   color: ${({ theme }) => theme.subHeadingText};
 
@@ -533,7 +533,7 @@ export const InputPinnedDropDown = styled.div<{ theme: MavenTheme }>`
   padding: 0 7px;
   height: 100%;
   font-weight: ${FontWeight.semibold};
-  font-size: 20px;
+  font-size: ${FontSize.xl2};
   line-height: 20px;
   color: ${({ theme }) => theme.placeholders};
 `

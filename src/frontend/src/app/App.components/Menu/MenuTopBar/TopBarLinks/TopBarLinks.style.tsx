@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const TopBarLinksStyled = styled.div<{ $useClickOpening?: boolean; $selected?: boolean; theme: MavenTheme }>`
@@ -13,12 +14,12 @@ export const TopBarLinksStyled = styled.div<{ $useClickOpening?: boolean; $selec
   }
 
   .group-name {
-    font-size: 16px;
+    font-size: ${FontSize.md};
     line-height: 0;
     transition: 0.35s all;
     cursor: pointer;
     color: ${({ theme }) => theme.menuButtonText};
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
     display: flex;
     align-items: center;
 
@@ -93,11 +94,11 @@ export const TopBarLinksStyled = styled.div<{ $useClickOpening?: boolean; $selec
       text-transform: capitalize;
       position: relative;
       white-space: nowrap;
-      font-size: 16px;
+      font-size: ${FontSize.md};
       transition: 0.35s all;
       width: 120%;
       padding: 6px 0;
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
       padding-left: 10px;
       border-radius: 5px;
       color: ${({ theme }) => theme.linksAndButtons};

@@ -120,7 +120,7 @@ export const UploadIconContainer = styled.div<{
     small {
       font-weight: ${FontWeight.regular};
       padding-top: 4px;
-      font-size: 10px;
+      font-size: ${FontSize.xxs};
       line-height: 10px;
       color: ${({ theme }) => theme.mainHeadingText};
     }

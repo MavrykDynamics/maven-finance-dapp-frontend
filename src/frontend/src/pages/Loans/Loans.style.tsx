@@ -47,7 +47,7 @@ export const MarketChartsContainer = styled.div<{ theme: MavenTheme }>`
         margin: 0;
         color: ${({ theme }) => theme.primaryText};
         font-weight: ${FontWeight.bold};
-        font-size: 25px;
+        font-size: ${FontSize.xl3};
       }
     }
 
@@ -56,10 +56,7 @@ export const MarketChartsContainer = styled.div<{ theme: MavenTheme }>`
       top: 15px;
       left: 15px;
       font-weight: ${FontWeight.semibold};
-      font-size: 10px;
-      line-height: 18px;
-      font-weight: ${FontWeight.semibold};
-      font-size: 10px;
+      font-size: ${FontSize.xxs};
       line-height: 18px;
       color: ${({ theme }) => theme.regularText};
     }
@@ -212,7 +209,7 @@ export const MarketPagination = styled.div<{ theme: MavenTheme }>`
       }
 
       &::first-letter {
-        font-size: 25px;
+        font-size: ${FontSize.xl3};
       }
     }
   }
@@ -231,7 +228,7 @@ export const MarketStyled = styled.div<{ theme: MavenTheme }>`
 
     .value {
       font-weight: ${FontWeight.bold};
-      font-size: 25px;
+      font-size: ${FontSize.xl3};
       line-height: 30px;
       justify-content: center;
     }
@@ -285,7 +282,7 @@ export const MarketStyled = styled.div<{ theme: MavenTheme }>`
 
         .full-name {
           font-weight: ${FontWeight.bold};
-          font-size: 25px;
+          font-size: ${FontSize.xl3};
           line-height: 30px;
           text-transform: capitalize;
           color: ${({ theme }) => theme.primaryText};

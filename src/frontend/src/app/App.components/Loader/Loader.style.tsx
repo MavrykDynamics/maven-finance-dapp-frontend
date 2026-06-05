@@ -60,14 +60,14 @@ export const LoaderShineTextAnimation = styled.div<{ theme: MavenTheme }>`
   -webkit-text-fill-color: transparent;
   animation: ${shine} 2s linear infinite;
   font-weight: ${FontWeight.semibold};
-  font-size: 26px;
+  font-size: ${FontSize.xl3};
   text-decoration: none;
   white-space: nowrap;
 `
 
 export const SpinnerCircleLoaderStyled = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
-  font-size: 20px;
+  font-size: ${FontSize.xl2};
   width: 1em;
   height: 1em;
   border-radius: 50%;
@@ -81,7 +81,7 @@ export const SpinnerCircleLoaderStyled = styled.div<{ theme: MavenTheme }>`
   transform: scale(0.1);
 
   &.${SPINNER_LOADER_SMALL} {
-    font-size: 20px;
+    font-size: ${FontSize.xl2};
   }
 
   &.${SPINNER_LOADER_MEDIUM} {

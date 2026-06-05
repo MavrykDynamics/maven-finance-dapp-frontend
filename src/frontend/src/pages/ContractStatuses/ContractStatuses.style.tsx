@@ -155,6 +155,6 @@ export const BGPrimaryTitle = styled.h1<{ theme: MavenTheme }>`
   margin: 0;
 
   font-weight: ${FontWeight.bold};
-  font-size: 25px;
+  font-size: ${FontSize.xl3};
   line-height: 30px;
 `

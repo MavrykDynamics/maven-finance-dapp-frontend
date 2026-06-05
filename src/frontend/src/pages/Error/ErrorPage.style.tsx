@@ -45,7 +45,7 @@ export const ErrorPageInner = styled.div<{ theme: MavenTheme }>`
   & a {
     text-decoration: none;
     color: ${({ theme }) => theme.regularText};
-    font-weight: 900;
+    font-weight: ${FontWeight.bold};
   }
 `
 
@@ -60,7 +60,7 @@ export const ErrorTopHeader = styled.div<{ theme: MavenTheme }>`
 
 export const ErrorMidHeader = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
-  font-size: 25px;
+  font-size: ${FontSize.xl3};
   font-style: normal;
   font-weight: ${FontWeight.bold};
   line-height: 30px;

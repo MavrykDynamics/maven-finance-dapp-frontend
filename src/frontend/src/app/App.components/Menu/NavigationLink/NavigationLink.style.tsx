@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 
 import { MavenTheme } from '../../../../styles/interfaces'
 
@@ -73,9 +74,9 @@ export const NavigationLinkItem = styled.div<{
     margin-left: 16px;
 
     .navLinkTitle {
-      font-size: 16px;
+      font-size: ${FontSize.md};
       line-height: 31px;
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
       color: ${({ theme }) => theme.menuButtonText};
       display: flex;
       align-items: center;
@@ -155,9 +156,9 @@ export const SubNavLink = styled.div<{ theme: MavenTheme; $disabled?: boolean }>
 `
 
 export const SubLinkText = styled.p<{ $selected: boolean; theme: MavenTheme }>`
-  font-size: 14px;
+  font-size: ${FontSize.base};
   line-height: 17px;
-  font-weight: 500;
+  font-weight: ${FontWeight.medium};
   text-align: left;
   position: relative;
   transition: 0.3s all;

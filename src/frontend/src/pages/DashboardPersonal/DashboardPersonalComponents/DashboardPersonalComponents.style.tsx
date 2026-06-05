@@ -136,7 +136,7 @@ export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavenTheme }>`
 
     .value {
       font-weight: ${FontWeight.bold};
-      font-size: 25px;
+      font-size: ${FontSize.xl3};
       color: ${({ theme }) => theme.primaryText};
       display: flex;
       align-items: flex-end;
@@ -214,7 +214,7 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavenTheme }>`
       .value {
         margin-top: 7px;
         font-weight: ${FontWeight.bold};
-        font-size: 25px;
+        font-size: ${FontSize.xl3};
       }
     }
 

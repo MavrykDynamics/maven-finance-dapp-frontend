@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MENU_Z_INDEX, Z_INDEX_DEFAULT } from 'styles/constants'
 
 import { MavenTheme } from '../../../styles/interfaces'
@@ -138,14 +139,14 @@ export const MenuFooter = styled.div<{ theme: MavenTheme }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: ${FontSize.xs};
+  font-weight: ${FontWeight.semibold};
   padding: 0 14px;
   row-gap: 20px;
 
   span {
-    font-weight: 500;
-    font-size: 12px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.sm};
 
     margin-bottom: 20px;
     color: ${({ theme }) => theme.linksAndButtons};
@@ -192,7 +193,7 @@ export const MenuFooter = styled.div<{ theme: MavenTheme }>`
 
   @media screen and (max-width: 1460px) {
     padding: 0 10px;
-    font-size: 10px;
+    font-size: ${FontSize.xxs};
   }
 
   &.menu-collapsed {

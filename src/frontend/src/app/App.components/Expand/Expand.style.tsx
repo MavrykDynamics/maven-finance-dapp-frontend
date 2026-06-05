@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
-import { CardHover } from 'styles'
+import {CardHover, FontSize, FontWeight} from 'styles'
 
 export const ExpandStyled = styled(CardHover)`
   margin: 0;
@@ -20,8 +20,8 @@ export const ExpandStyled = styled(CardHover)`
     height: 100%;
 
     span {
-      font-weight: 400;
-      font-size: 14px;
+      font-weight: ${FontWeight.regular};
+      font-size: ${FontSize.base};
       line-height: 21px;
       color: ${({ theme }) => theme.linksAndButtons};
       margin-right: 8px;

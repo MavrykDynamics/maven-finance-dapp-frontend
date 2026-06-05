@@ -80,7 +80,7 @@ export const ValueWrapper = styled.div<{ theme: MavenTheme }>`
 
     .status {
       font-weight: ${FontWeight.semibold};
-      font-size: 10px;
+      font-size: ${FontSize.xxs};
     }
 
     &.low {

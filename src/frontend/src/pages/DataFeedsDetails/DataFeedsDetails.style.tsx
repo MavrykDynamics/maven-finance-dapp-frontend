@@ -84,7 +84,7 @@ export const FeedInfo = styled.div<{ theme: MavenTheme }>`
 
       .name {
         font-weight: ${FontWeight.bold};
-        font-size: 25px;
+        font-size: ${FontSize.xl3};
         color: ${({ theme }) => theme.mainHeadingText};
         padding: 2px 0 3px 0;
       }

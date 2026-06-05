@@ -5,7 +5,7 @@ import { MavenTheme } from 'styles/interfaces'
 export const SettingsPopupBase = styled.div<{ theme: MavenTheme }>`
   .title {
     font-weight: ${FontWeight.bold};
-    font-size: 25px;
+    font-size: ${FontSize.xl3};
     line-height: 25px;
     color: ${({ theme }) => theme.mainHeadingText};
     text-align: center;
