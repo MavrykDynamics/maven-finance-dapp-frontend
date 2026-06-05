@@ -8,7 +8,7 @@ import { MainNavigationRoute } from '../../../../utils/TypesAndInterfaces/Naviga
 
 export const userNavigationLinks: MainNavigationRoute[] = [
   {
-    title: 'Dashboard',
+    title: 'Explore',
     id: 1,
     path: `${LENDING_TAB_ID}`,
     routePath: `/${LENDING_TAB_ID}`,

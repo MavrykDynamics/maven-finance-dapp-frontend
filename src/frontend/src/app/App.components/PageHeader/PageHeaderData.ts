@@ -49,7 +49,7 @@ export const PAGE_HEADER_DATA = new Map<string, PageHeaderContent>([
   [
     'dashboard',
     {
-      title: 'Dashboard',
+      title: 'Explore',
       subText: 'Take control of your financial future.',
       foregroundImageSrc: '/images/dash-main-header-fg.svg',
       backgroundImageSrc: '/images/dapp-header-bg.svg',
