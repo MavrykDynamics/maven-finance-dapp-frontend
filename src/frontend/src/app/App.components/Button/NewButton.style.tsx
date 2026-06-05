@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { BUTTON_RADIUS } from 'styles/constants'
 import { MavenTheme } from 'styles/interfaces'
 import {
@@ -190,8 +191,8 @@ const BUTTONS_ANIMATIONS_STYLES = css`
 
 // TODO: refactor colors with theme implementation
 export const ButtonStyled = styled.button<{ theme: MavenTheme }>`
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.md};
   line-height: 16px;
 
   cursor: pointer;

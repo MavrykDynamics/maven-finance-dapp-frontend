@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 // TODO: extract all classname styles to it's own bases af for farms
@@ -31,7 +32,7 @@ export const PopupContainerWrapper = styled.div<{ theme: MavenTheme; $widthSize?
 
     &:before {
       content: '✕';
-      font-size: 30px;
+      font-size: ${FontSize['2xl']};
       color: ${({ theme }) => theme.linksAndButtons};
     }
 
@@ -123,14 +124,14 @@ export const PopupContainerWrapper = styled.div<{ theme: MavenTheme; $widthSize?
     p,
     h3,
     li {
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
     }
 
     li,
     div {
-      font-weight: 500;
+      font-weight: ${FontWeight.medium};
       line-height: 24px;
     }
 
@@ -215,7 +216,7 @@ export const PopupContentWrapperBase = styled.div<{ theme: MavenTheme }>`
 
     &:before {
       content: '✕';
-      font-size: 30px;
+      font-size: ${FontSize['2xl']};
       color: ${({ theme }) => theme.linksAndButtons};
     }
 

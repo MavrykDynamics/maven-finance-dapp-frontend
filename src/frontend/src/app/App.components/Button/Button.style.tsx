@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { clickWave, turn } from 'styles/animations'
 import { BUTTON_RADIUS } from '../../../styles/constants'
 import { MavenTheme } from '../../../styles/interfaces'
@@ -7,8 +8,8 @@ export const ButtonStyled = styled.button<{ theme: MavenTheme }>`
   padding: 0;
   height: 50px;
   border: none;
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.md};
   line-height: 16px;
   cursor: pointer;
   border-radius: ${BUTTON_RADIUS};
@@ -73,9 +74,9 @@ export const ButtonStyled = styled.button<{ theme: MavenTheme }>`
   &.actionSimple {
     width: fit-content;
     height: fit-content;
-    font-size: 16px;
+    font-size: ${FontSize.md};
     line-height: 22px;
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
     padding: 3px 7px;
     position: relative;
     transition: 0.3s all;
@@ -154,8 +155,8 @@ export const ButtonStyled = styled.button<{ theme: MavenTheme }>`
     background: transparent;
     border: 1px solid ${({ theme }) => theme.linksAndButtons};
     color: ${({ theme }) => theme.linksAndButtons};
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 const TABLE_CELL_DEFAULT_TAGS_STYLES = css`
@@ -142,7 +143,7 @@ const CELL_CONTENT_STYLES = css`
     }
 
     &.asset-name {
-      font-size: 16px;
+      font-size: ${FontSize.md};
       column-gap: 7px;
     }
 
@@ -162,8 +163,8 @@ const CELL_CONTENT_STYLES = css`
     }
 
     .rate {
-      font-weight: 400;
-      font-size: 12px;
+      font-weight: ${FontWeight.regular};
+      font-size: ${FontSize.sm};
       line-height: 14px;
       color: ${({ theme }) => theme.primaryText};
     }
@@ -177,8 +178,8 @@ type TableCellStyledProps = {
 }
 export const TableCell = styled.td<TableCellStyledProps>`
   color: ${({ theme }) => theme.primaryText};
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.md};
   line-height: 20px;
   transition: color 0.4s;
 

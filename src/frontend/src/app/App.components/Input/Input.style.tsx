@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavenTheme } from '../../../styles/interfaces'
 import {
@@ -23,8 +24,8 @@ export const InputComponentContainer = styled.div<{ theme: MavenTheme }>`
     width: 100%;
     height: 40px;
     background-color: ${({ theme }) => theme.backgroundColor};
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
     border: 1px solid ${({ theme }) => theme.strokeForForms};
     margin: 0;
@@ -108,8 +109,8 @@ export const InputLabel = styled.div<{ theme: MavenTheme }>`
   right: 16px;
   top: 18px;
   color: ${({ theme }) => theme.placeholders};
-  font-size: 18px;
-  font-weight: 600;
+  font-size: ${FontSize.lg};
+  font-weight: ${FontWeight.semibold};
 
   &.error {
     color: ${({ theme }) => theme.downColor};
@@ -160,7 +161,7 @@ export const InputIcon = styled.svg<{ theme: MavenTheme }>`
   width: 20px;
   height: 20px;
   margin-top: -10px;
-  font-size: 14px;
+  font-size: ${FontSize.base};
   line-height: 20px;
   text-align: center;
   visibility: visible;
@@ -171,8 +172,8 @@ export const InputIcon = styled.svg<{ theme: MavenTheme }>`
 export const InputErrorMessage = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.downColor};
   line-height: 12px;
-  font-size: 12px;
-  font-weight: 400;
+  font-size: ${FontSize.sm};
+  font-weight: ${FontWeight.regular};
   will-change: transform, opacity;
   animation: ${slideDown} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
   white-space: nowrap;
@@ -262,13 +263,13 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
     height: 50px;
 
     input {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
     }
 
     input::placeholder {
-      font-weight: 400;
-      font-size: 12px;
+      font-weight: ${FontWeight.regular};
+      font-size: ${FontSize.sm};
     }
   }
 
@@ -276,13 +277,13 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
     height: 56px;
 
     input {
-      font-weight: 600;
-      font-size: 22px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.xl};
     }
 
     input::placeholder {
-      font-weight: 400;
-      font-size: 16px;
+      font-weight: ${FontWeight.regular};
+      font-size: ${FontSize.md};
     }
   }
 
@@ -290,13 +291,13 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
     height: 60px;
 
     input {
-      font-weight: 600;
-      font-size: 22px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.xl};
     }
 
     input::placeholder {
-      font-weight: 400;
-      font-size: 16px;
+      font-weight: ${FontWeight.regular};
+      font-size: ${FontSize.md};
     }
   }
 
@@ -304,13 +305,13 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
     height: 40px;
 
     input {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
     }
 
     input::placeholder {
-      font-weight: 400;
-      font-size: 12px;
+      font-weight: ${FontWeight.regular};
+      font-size: ${FontSize.sm};
     }
   }
 
@@ -411,8 +412,8 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
     position: absolute;
     bottom: -35px;
     right: 15px;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.primaryText};
   }
@@ -421,8 +422,8 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
     position: absolute;
     bottom: -2px;
     left: 25px;
-    font-weight: 600;
-    font-size: 12px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.sm};
     line-height: 12px;
     color: ${({ theme }) => theme.placeholders};
   }
@@ -431,7 +432,7 @@ export const InputWrapper = styled.div<{ theme: MavenTheme }>`
     position: absolute;
     top: -20px;
     right: 15px;
-    font-size: 14px;
+    font-size: ${FontSize.base};
 
     &::before {
       position: absolute;
@@ -455,8 +456,8 @@ export const NewInputLabel = styled.label<{ $disabled?: boolean; theme: MavenThe
   opacity: ${({ $disabled }) => ($disabled ? '0.6' : '1')};
   display: block;
   white-space: nowrap;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: ${FontWeight.bold};
+  font-size: ${FontSize.base};
   position: absolute;
   top: -20px;
   left: 12px;
@@ -505,7 +506,7 @@ export const InputPinnedTokenInfo = styled.div<{ theme: MavenTheme }>`
   align-items: center;
   padding: 0 15px;
   height: 100%;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   font-size: 20px;
   line-height: 20px;
   color: ${({ theme }) => theme.subHeadingText};
@@ -531,7 +532,7 @@ export const InputPinnedDropDown = styled.div<{ theme: MavenTheme }>`
   align-items: center;
   padding: 0 7px;
   height: 100%;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   font-size: 20px;
   line-height: 20px;
   color: ${({ theme }) => theme.placeholders};
