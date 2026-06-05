@@ -116,7 +116,7 @@ export const NavigationLinkIcon = styled.div<{ $selected: boolean; theme: MavenT
   > svg {
     display: inline-block;
     width: 27px;
-    height: 50px;
+    height: 44px;
     fill: ${({ theme }) => theme.menuButtonText};
     vertical-align: top;
   }
@@ -135,7 +135,7 @@ export const NavigationSubLinks = styled.div<{ theme: MavenTheme }>`
 `
 export const SubNavLink = styled.div<{ theme: MavenTheme; $disabled?: boolean }>`
   width: 100%;
-  height: 50px;
+  height: 44px;
   display: flex;
   align-items: center;
 

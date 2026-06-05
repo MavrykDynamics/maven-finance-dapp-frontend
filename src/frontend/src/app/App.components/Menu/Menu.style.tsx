@@ -4,7 +4,7 @@ import { MENU_Z_INDEX, Z_INDEX_DEFAULT } from 'styles/constants'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const MenuSidebarStyled = styled.div<{ theme: MavenTheme }>`
-  max-width: 232px;
+  max-width: 210px;
   width: 100vw;
   transition: 0.6s all;
   position: fixed;
@@ -26,7 +26,7 @@ export const MenuSidebarStyled = styled.div<{ theme: MavenTheme }>`
   > div {
     transition: 0.6s all;
     width: 100%;
-    max-width: 232px;
+    max-width: 210px;
     height: fit-content;
   }
 
@@ -86,7 +86,7 @@ export const MenuSidebarContent = styled.div`
   align-items: center;
   text-align: center;
   width: 100%;
-  max-width: 232px;
+  max-width: 210px;
   height: 100%;
   background-color: ${({ theme }) => theme.cards};
   padding-top: 110px;

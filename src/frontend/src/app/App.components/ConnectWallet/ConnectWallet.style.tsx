@@ -2,7 +2,11 @@ import styled, { css } from 'styled-components'
 import { MavenTheme } from 'styles/interfaces'
 
 export const ConnectWalletBtnWrap = styled.div`
-  min-width: 220px;
+  min-width: 180px;
+
+  > button {
+    height: 42px;
+  }
 
   &.isWide {
     width: 100%;

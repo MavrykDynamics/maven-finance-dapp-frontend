@@ -3,7 +3,7 @@ import { MavenTheme } from 'styles/interfaces'
 
 export const PageHeaderStyled = styled.div<{ $backgroundImageSrc: string }>`
   width: 100%;
-  height: 160px;
+  height: 120px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -33,7 +33,7 @@ export const PageHeaderStyled = styled.div<{ $backgroundImageSrc: string }>`
     content: '';
     position: absolute;
     width: 100%;
-    height: 150px;
+    height: 110px;
     z-index: -1;
     bottom: 0;
     left: 0;
@@ -53,7 +53,7 @@ export const PageHeaderTextArea = styled.div<{ theme: MavenTheme }>`
 
   h1 {
     color: ${({ theme }) => theme.pageHeaderColor};
-    font-size: 25px;
+    font-size: 20px;
     margin: 0;
     position: relative;
 
@@ -148,26 +148,26 @@ export const PageHeaderForegroundImage = styled.img<{ $page: string; src?: strin
   height: ${({ $page }) => {
     switch ($page) {
       case 'dashboard':
-        return '172px'
+        return '130px'
       case 'break glass':
       case 'emergency governance':
-        return '130px'
+        return '100px'
       case 'governance':
       case 'council':
       case 'financial requests':
       case 'proposal submission':
-        return '158px'
+        return '120px'
       case 'satellite-governance':
-        return '192px'
+        return '145px'
       case 'data-feeds':
-        return '190px'
+        return '145px'
       case 'farms':
       case 'break glass council':
       case 'loansEarn':
       case 'loansBorrow':
-        return '150px'
+        return '115px'
       default:
-        return '172px'
+        return '130px'
     }
   }};
   bottom: ${({ $page }) => {
