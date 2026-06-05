@@ -151,8 +151,15 @@ export const UserProvider = ({ children }: Props) => {
    *
    * skip when user don't participated any farms
    */
+  // Keep the latest farmAccounts in a ref so the block-level listener always
+  // reads the current value without needing to re-register on every reward update.
+  const userFarmsRef = useRef(userCtxState.rewards?.farmAccounts ?? [])
+
+  // Recompute initial rewards whenever farmAccounts data changes (30s refetch).
+  // Deliberately does NOT touch the listener — avoids the un/re-register gap.
   useEffect(() => {
     const userFarms = userCtxState.rewards?.farmAccounts ?? []
+    userFarmsRef.current = userFarms
     if (Object.keys(userFarms).length !== 0) {
       setUserCtxState((prev) => ({
         ...prev,
@@ -161,22 +168,30 @@ export const UserProvider = ({ children }: Props) => {
           currentLvl: currentIndexerLevelProxy.currentIndexedLevel,
         }),
       }))
-      currentIndexedLvlListenerId.current = currentIndexerLevelProxy.registerListener((newIndexerLvl: number) => {
+    }
+  }, [userCtxState.rewards?.farmAccounts])
+
+  // Register the block-level listener once on mount. The callback reads
+  // userFarmsRef.current so it always uses the latest farm data without
+  // needing to re-register. Cleanup removes it on unmount.
+  useEffect(() => {
+    currentIndexedLvlListenerId.current = currentIndexerLevelProxy.registerListener((newIndexerLvl: number) => {
+      const farms = userFarmsRef.current
+      if (Object.keys(farms).length !== 0) {
         setUserCtxState((prev) => ({
           ...prev,
           availableFarmRewards: getUsersFarmRewards({
-            userFarmsRewardsDataFromIndexer: userFarms,
+            userFarmsRewardsDataFromIndexer: farms,
             currentLvl: newIndexerLvl,
           }),
         }))
-      })
-    }
-
+      }
+    })
     return () => {
       if (currentIndexedLvlListenerId.current)
         currentIndexerLevelProxy.removeListener(currentIndexedLvlListenerId.current)
     }
-  }, [userCtxState.rewards?.farmAccounts])
+  }, []) // register once — ref provides latest value
 
   const setUserLoansData = useCallback((userLoansData: UserLoansData | null) => {
     setUserCtxState((prev) => ({

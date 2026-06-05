@@ -4,7 +4,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 // context
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useQueryProvider } from 'providers/QueryProvider/query.provider'
-import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useGraphQLQuery, CACHE_STATIC } from 'providers/QueryProvider/useGraphQLQuery'
 
 // types
 import {
@@ -320,7 +320,7 @@ export const VaultsProvider = ({ children }: Props) => {
   // correctly handles both fresh fetches and cache hits.
   const { data: collateralData } = useGraphQLQuery(GET_VAULTS_COLLATERAL_BULK_QUERY, {
     skip: activeVaultIntIds.length === 0,
-    staleTime: 60_000,
+    staleTime: CACHE_STATIC, // collateral params set at vault creation, don't change between page loads
     variables: { vaultIds: activeVaultIntIds },
     onError: (error) => handleQueryError(error, 'GET_VAULTS_COLLATERAL_BULK'),
   })

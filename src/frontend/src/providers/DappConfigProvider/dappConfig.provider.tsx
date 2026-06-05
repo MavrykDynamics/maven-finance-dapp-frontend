@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 // hooks
 import { useQueryProvider } from 'providers/QueryProvider/query.provider'
@@ -96,9 +96,12 @@ const DappConfigProvider = ({ children }: Props) => {
     onError: (error) => handleQueryError(error, 'GET_DAPP_CONTRACT_ADDRESSES'),
   })
 
-  // TODO: move it to the custom hook for validators
+  // Validators change at epoch boundaries (hours). Fetch once per session —
+  // guard against repeated calls if the state is reset.
+  const validatorsFetchedRef = useRef(false)
   useEffect(() => {
-    if (!dappConfigCtxState.mavrykValidators) {
+    if (!dappConfigCtxState.mavrykValidators && !validatorsFetchedRef.current) {
+      validatorsFetchedRef.current = true
       updateMavrykValidators()
     }
   }, [dappConfigCtxState.mavrykValidators])

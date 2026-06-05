@@ -9,7 +9,7 @@ import { getCouncilProviderReturnValue } from './helpers/council.utils'
 // hooks
 import { useQueryProvider } from 'providers/QueryProvider/query.provider'
 import { useUserContext } from 'providers/UserProvider/user.provider'
-import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useGraphQLQuery, useGraphQLQueryOnce, CACHE_STATIC, CACHE_SEMI_STATIC } from 'providers/QueryProvider/useGraphQLQuery'
 
 // types
 import {
@@ -134,14 +134,17 @@ const CouncilProvider = ({ children }: Props) => {
    * COUNCIL_MEMBERS_QUERY -> members of maven council
    * BREAK_GLASS_COUNCIL_MEMBERS_QUERY -> members of break glass council
    */
-  useGraphQLQuery(COUNCIL_MEMBERS_QUERY, {
+  // Council membership only changes via completed council votes — load once per session.
+  useGraphQLQueryOnce(COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[COUNCIL_MEMBERS_SUB],
+    staleTime: CACHE_STATIC,
     onCompleted: (data) => updateCouncilMembers(data),
     onError: (error) => handleQueryError(error, 'COUNCIL_MEMBERS_QUERY'),
   })
 
-  useGraphQLQuery(BREAK_GLASS_COUNCIL_MEMBERS_QUERY, {
+  useGraphQLQueryOnce(BREAK_GLASS_COUNCIL_MEMBERS_QUERY, {
     skip: !activeSubs[BG_COUNCIL_MEMBERS_SUB],
+    staleTime: CACHE_STATIC,
     onCompleted: (data) => updateBreakGlassCouncilMembers(data),
     onError: (error) => handleQueryError(error, 'BREAK_GLASS_COUNCIL_MEMBERS_QUERY'),
   })
@@ -157,6 +160,7 @@ const CouncilProvider = ({ children }: Props) => {
     ALL_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_PAST_COUNCIL_ACTIONS_SUB,
+      staleTime: CACHE_SEMI_STATIC,
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
@@ -170,6 +174,7 @@ const CouncilProvider = ({ children }: Props) => {
     MY_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== MY_PAST_COUNCIL_ACTIONS_SUB,
+      staleTime: CACHE_SEMI_STATIC,
       variables: {
         currentTimestamp: currentTimeRef.current,
         userAddress: userAddress ?? '',
@@ -184,6 +189,7 @@ const CouncilProvider = ({ children }: Props) => {
     ALL_ONGOING_COUNCILS_QUERY,
     {
       skip: activeSubs[COUNCIL_ACTIONS_DATA] !== ALL_ONGOING_COUNCIL_ACTIONS_SUB,
+      staleTime: CACHE_SEMI_STATIC,
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
@@ -204,6 +210,7 @@ const CouncilProvider = ({ children }: Props) => {
     ALL_BG_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_PAST_COUNCIL_ACTIONS_SUB,
+      staleTime: CACHE_SEMI_STATIC,
       variables: {
         currentTimestamp: currentTimeRef.current,
       },
@@ -217,6 +224,7 @@ const CouncilProvider = ({ children }: Props) => {
     MY_BG_PAST_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== MY_BG_PAST_COUNCIL_ACTIONS_SUB,
+      staleTime: CACHE_SEMI_STATIC,
       variables: {
         currentTimestamp: currentTimeRef.current,
         userAddress: userAddress ?? '',
@@ -231,6 +239,7 @@ const CouncilProvider = ({ children }: Props) => {
     ALL_BG_ONGOING_COUNCILS_QUERY,
     {
       skip: activeSubs[BG_COUNCIL_ACTIONS_DATA] !== ALL_BG_ONGOING_COUNCIL_ACTIONS_SUB,
+      staleTime: CACHE_SEMI_STATIC,
       variables: {
         currentTimestamp: currentTimeRef.current,
       },

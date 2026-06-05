@@ -4,7 +4,7 @@ import { usePrevious } from 'react-use'
 // hooks
 import { useUserContext } from 'providers/UserProvider/user.provider'
 import { useQueryProvider } from 'providers/QueryProvider/query.provider'
-import { useGraphQLQuery } from 'providers/QueryProvider/useGraphQLQuery'
+import { useGraphQLQuery, useGraphQLQueryOnce, CACHE_STATIC } from 'providers/QueryProvider/useGraphQLQuery'
 
 // helpers
 import { normalizeGovernanceConfig, normalizeSmallGovernanceConfig } from './helpers/governanceConfig.normalizer'
@@ -62,8 +62,11 @@ const ProposalsProvider = ({ children }: Props) => {
    * PAST_PROPOSALS_QUERY -> proposals that are dropped, executed, or failed voting
    * PROPOSALS_SUBMISSION_QUERY -> created proposals by user that are alive in current round
    */
-  useGraphQLQuery(GOVERNANCE_CONFIG_QUERY, {
-    skip: !activeSubs[GOVERNANCE_CONFIG_SUB] || (!activeSubs[GOVERNANCE_CONFIG_SUB] && !activeSubs[PROPOSALS_DATA_SUB]),
+  // Governance config changes only via completed governance votes (weeks-long cycles).
+  // Load once with a 5-min cache — no need to poll it every 60s.
+  useGraphQLQueryOnce(GOVERNANCE_CONFIG_QUERY, {
+    skip: !activeSubs[GOVERNANCE_CONFIG_SUB] && !activeSubs[PROPOSALS_DATA_SUB],
+    staleTime: CACHE_STATIC,
     onCompleted: (data) => {
       setProposalsCtxState((prev) => ({
         ...prev,

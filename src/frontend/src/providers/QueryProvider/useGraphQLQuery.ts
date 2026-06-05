@@ -6,7 +6,7 @@ import { TypedDocumentNode } from '@graphql-typed-document-node/core'
 import { graphqlClient } from './graphqlClient'
 import { DEFAULT_STALE_TIME } from './queryClient'
 
-const REFRESH_INTERVAL = 30_000 // 30 seconds
+const REFRESH_INTERVAL = 60_000 // 60 seconds — halves poll traffic vs original 30s
 
 /**
  * Cache duration presets for different data types.

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 // helpers
 import { SATELLITE_AGGREGATE_COUNT, SATELLITE_DATA_QUERY } from './queries/satellites.query'
@@ -80,6 +80,13 @@ export const SatellitesProvider = ({ children }: Props) => {
   // @ts-ignore
   const [satelliteFilters, setSatelliteFilters] = useState<SatelliteFiltersType>(SATELLITE_DEFFAULT_FILTERS)
 
+  // Per-query refs tracking the last satellite ID set fetched via the secondary
+  // REST call. If IDs haven't changed on a 60s refetch, skip fetchAdditionalSatelliteData.
+  const prevAddrKeyRef = useRef('')
+  const prevAllKeyRef = useRef('')
+  const prevActiveKeyRef = useRef('')
+  const prevOraclesKeyRef = useRef('')
+
   const changeSatellitesSubscriptionsList = useCallback((newSkips: Partial<SatellitesSubsRecordType>) => {
     setActiveSubs((prev) => ({ ...prev, ...newSkips }))
   }, [])
@@ -159,10 +166,14 @@ export const SatellitesProvider = ({ children }: Props) => {
       offset: (paginationState[SATELLITE_PAGINATION_BY_ADDRESS] - 1) * SATELLITES_LIMIT,
     },
     onCompleted: async (data: SatelliteDataQueryQuery) => {
+      const ids = data.satellite.map((entry) => entry.user_address as string)
+      const key = ids.join(',')
       let additionalSatelliteData = null
       try {
-        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
+        if (key !== prevAddrKeyRef.current) {
+          prevAddrKeyRef.current = key
+          additionalSatelliteData = await fetchAdditionalSatelliteData(ids)
+        }
       } catch (e) {
         console.error('fetchAdditionalSatelliteData error:', e)
       }
@@ -189,10 +200,14 @@ export const SatellitesProvider = ({ children }: Props) => {
       offset: (paginationState[SATELLITE_PAGINATION_ALL] - 1) * SATELLITES_LIMIT,
     },
     onCompleted: async (data: SatelliteDataQueryQuery) => {
+      const ids = data.satellite.map((entry) => entry.user_address as string)
+      const key = ids.join(',')
       let additionalSatelliteData = null
       try {
-        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
+        if (key !== prevAllKeyRef.current) {
+          prevAllKeyRef.current = key
+          additionalSatelliteData = await fetchAdditionalSatelliteData(ids)
+        }
       } catch (e) {
         console.error('fetchAdditionalSatelliteData error:', e)
       }
@@ -219,10 +234,14 @@ export const SatellitesProvider = ({ children }: Props) => {
       offset: (paginationState[SATELLITE_PAGINATION_ACTIVE] - 1) * SATELLITES_LIMIT,
     },
     onCompleted: async (data: SatelliteDataQueryQuery) => {
+      const ids = data.satellite.map((entry) => entry.user_address as string)
+      const key = ids.join(',')
       let additionalSatelliteData = null
       try {
-        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
+        if (key !== prevActiveKeyRef.current) {
+          prevActiveKeyRef.current = key
+          additionalSatelliteData = await fetchAdditionalSatelliteData(ids)
+        }
       } catch (e) {
         console.error('fetchAdditionalSatelliteData error:', e)
       }
@@ -249,10 +268,14 @@ export const SatellitesProvider = ({ children }: Props) => {
       offset: (paginationState[SATELLITE_PAGINATION_ORACLES] - 1) * SATELLITES_LIMIT,
     },
     onCompleted: async (data: SatelliteDataQueryQuery) => {
+      const ids = data.satellite.map((entry) => entry.user_address as string)
+      const key = ids.join(',')
       let additionalSatelliteData = null
       try {
-        const satellitedIds = data.satellite.map((entry) => entry.user_address as string) || []
-        additionalSatelliteData = await fetchAdditionalSatelliteData(satellitedIds)
+        if (key !== prevOraclesKeyRef.current) {
+          prevOraclesKeyRef.current = key
+          additionalSatelliteData = await fetchAdditionalSatelliteData(ids)
+        }
       } catch (e) {
         console.error('fetchAdditionalSatelliteData error:', e)
       }
