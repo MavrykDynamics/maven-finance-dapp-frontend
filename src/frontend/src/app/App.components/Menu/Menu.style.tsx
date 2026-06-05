@@ -101,15 +101,16 @@ export const MenuSidebarContent = styled.div`
 `
 export const MenuLogo = styled.img`
   z-index: ${Z_INDEX_DEFAULT};
-  width: 218px;
-  height: 43px;
+  width: 180px;
+  height: 36px;
 
   &.mobile-logo {
     display: none;
   }
 
   @media screen and (max-width: 1400px) {
-    width: 160px;
+    width: 140px;
+    height: 28px;
   }
 
   @media screen and (max-width: 940px) {

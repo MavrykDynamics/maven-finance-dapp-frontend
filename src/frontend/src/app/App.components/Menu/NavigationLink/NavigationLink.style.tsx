@@ -70,7 +70,7 @@ export const NavigationLinkItem = styled.div<{
 
   > a {
     display: flex;
-    margin-left: 20px;
+    margin-left: 16px;
 
     .navLinkTitle {
       font-size: 16px;
@@ -142,7 +142,8 @@ export const SubNavLink = styled.div<{ theme: MavenTheme; $disabled?: boolean }>
   > a {
     display: flex;
     align-items: center;
-    margin-left: 75px;
+    /* aligns sub-link text with parent's title text: 16 (parent margin) + 35 (icon container) + 10 (icon margin-right) = 61 */
+    margin-left: 61px;
   }
 
   ${({ $disabled }) =>
