@@ -69,7 +69,7 @@ export const TypePresets = {
     line-height: ${LineHeight.normal};
   `,
   h1: css`
-    font-size: ${FontSize['3xl']};
+    font-size: ${FontSize['2xl']};
     font-weight: ${FontWeight.bold};
     line-height: ${LineHeight.tight};
   `,

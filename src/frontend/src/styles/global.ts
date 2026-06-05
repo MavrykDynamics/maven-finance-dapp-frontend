@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 import { css } from 'styled-components'
 import { MavenTheme } from './interfaces'
+import { FontSize, FontWeight, TypePresets } from './typography'
 
 // TODO: remove link styles from here, when all link will be using CustomLink component
 
@@ -16,7 +17,7 @@ body {
   padding: 0;
   background-color: ${({ theme }) => theme.backgroundColor};
   color: ${({ theme }) => theme.regularText};
-  font-size: 14px;
+  font-size: ${FontSize.base};
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-width: 1460px;
@@ -27,25 +28,17 @@ body {
   }
 }
 
+/* Shared heading defaults: color from theme. Weight comes from TypePresets per-tag. */
 h1, h2, h3, h4 {
   color: ${({ theme }) => theme.mainHeadingText};
-  font-weight: normal;
 }
 
-h1, h2 {
-  font-weight: bold;
+h1 {
+  ${TypePresets.h1};
   display: inline-block;
   margin: 30px auto;
 
-  font-size: 22px;
-  font-weight: 700;
-
-  @media (max-width: 700px) {   
-    font-size: 30px;
-    margin: 20px auto;
-  }
-
-  &::after{
+  &::after {
     content: '';
     display: block;
     width: 80px;
@@ -56,23 +49,31 @@ h1, h2 {
 }
 
 h2 {
+  ${TypePresets.h2};
   display: block;
   margin: 0;
 
-  font-size: 22px;
-  font-weight: 600;
+  /* underline bar preserved for bare <h2> usages (modal titles, section headers).
+     Styled <H2Title> defines its own ::after; <H2SimpleTitle> sets display: none. */
+  &::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: ${({ theme }) => theme.mainHeadingText};
+    margin: 7px 0 10px 1px;
+  }
 }
 
 h3 {
+  ${TypePresets.h3};
   display: block;
   margin: 0;
-
-  font-size: 30px;
 }
 
 h4 {
+  ${TypePresets.h4};
   margin: 0;
-  font-size: 14px;
 }
 
 fieldset {
@@ -98,7 +99,7 @@ var {
 
 input {
   color: ${({ theme }) => theme.placeholders};
-  font-size: 14px;
+  font-size: ${FontSize.base};
 }
 
 input[type='number']::-webkit-inner-spin-button,
@@ -112,7 +113,7 @@ input[type='number'] {
 
 ::placeholder {
   color:  ${({ theme }) => theme.placeholders};
-  font-size: 14px;
+  font-size: ${FontSize.base};
 }
 
 *:focus {
