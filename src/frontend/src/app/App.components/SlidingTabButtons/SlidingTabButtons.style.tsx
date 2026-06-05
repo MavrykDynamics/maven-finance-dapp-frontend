@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { BUTTON_RADIUS } from '../../../styles/constants'
 import {
   MEDIUM_SLIDING_TAB_BUTTONS,
@@ -59,7 +60,7 @@ export const SlidingTabBtn = styled.button<{ theme: MavenTheme }>`
   cursor: pointer;
   white-space: nowrap;
 
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   line-height: 21px;
 
   &.disabled {
@@ -76,12 +77,12 @@ export const SlidingTabBtn = styled.button<{ theme: MavenTheme }>`
     color: ${({ theme }) => theme.regularText};
 
     &.${SMALL_SLIDING_TAB_BUTTONS} {
-      font-size: 12px;
+      font-size: ${FontSize.sm};
       padding: 0 14px;
     }
 
     &.${MEDIUM_SLIDING_TAB_BUTTONS} {
-      font-size: 14px;
+      font-size: ${FontSize.base};
       padding: 0 22px;
     }
 
@@ -97,13 +98,13 @@ export const SlidingTabBtn = styled.button<{ theme: MavenTheme }>`
     color: ${({ theme }) => theme.menuButtonText};
 
     &.${SMALL_SLIDING_TAB_BUTTONS} {
-      font-size: 14px;
+      font-size: ${FontSize.base};
       padding-bottom: 4px;
     }
 
     &.${MEDIUM_SLIDING_TAB_BUTTONS} {
       padding-bottom: 6px;
-      font-size: 16px;
+      font-size: ${FontSize.md};
     }
 
     &.selected {

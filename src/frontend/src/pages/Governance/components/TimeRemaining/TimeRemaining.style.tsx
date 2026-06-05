@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const TimeLeftAreaWrap = styled.div<{ $showBorder: boolean }>`
@@ -22,7 +23,7 @@ export const TimeLeftAreaWrap = styled.div<{ $showBorder: boolean }>`
       : ''}
 
   > div {
-    font-size: 18px;
+    font-size: ${FontSize.lg};
   }
 `
 
@@ -32,8 +33,8 @@ export const MoveNextRoundModalBase = styled.div<{ theme: MavenTheme }>`
   row-gap: 20px;
 
   .descr {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 27px;
     text-align: center;
     padding: 0 30px;
@@ -56,14 +57,14 @@ export const MoveNextRoundModalBase = styled.div<{ theme: MavenTheme }>`
       }
 
       .name {
-        font-weight: 500;
-        font-size: 14px;
+        font-weight: ${FontWeight.medium};
+        font-size: ${FontSize.base};
         color: ${({ theme }) => theme.regularText};
       }
 
       .value {
-        font-weight: 600;
-        font-size: 16px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.md};
         color: ${({ theme }) => theme.primaryText};
       }
     }

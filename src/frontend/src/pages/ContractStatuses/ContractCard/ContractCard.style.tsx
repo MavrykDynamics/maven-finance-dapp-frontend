@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const ContractCardWrapper = styled.div<{ theme: MavenTheme }>`
@@ -36,8 +37,8 @@ export const ContractCardTopSection = styled.div<{ theme: MavenTheme }>`
   }
 
   .card-title {
-    font-weight: 600;
-    font-size: 22px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.xl};
     line-height: 100%;
     width: 180px;
     height: 60px;
@@ -52,12 +53,12 @@ export const ContractCardTopSection = styled.div<{ theme: MavenTheme }>`
     display: flex;
     color: ${({ theme }) => theme.regularText};
     column-gap: 15px;
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
 
     > div {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: ${FontSize.md};
+      font-weight: ${FontWeight.semibold};
       color: ${({ theme }) => theme.primaryText};
     }
 

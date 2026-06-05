@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../../../styles/interfaces'
 
 export const GovernanceTopBarStyled = styled(Card)`
@@ -27,6 +27,6 @@ export const GovernanceTopBarStyled = styled(Card)`
 
 export const GovTopBarPhaseText = styled.div<{ isActivePhase?: boolean; theme: MavenTheme }>`
   color: ${({ isActivePhase, theme }) => (isActivePhase ? theme.selectedColor : theme.regularText)};
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.lg};
 `

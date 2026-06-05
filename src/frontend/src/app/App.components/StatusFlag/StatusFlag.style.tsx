@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 import { ProposalStatus } from 'providers/ProposalsProvider/helpers/proposals.const'
 
@@ -15,10 +16,10 @@ export const StatusFlagStyled = styled.div<{ theme: MavenTheme; $kind: StatusFla
   border-radius: 10px;
   border: 1px solid;
   text-align: center;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   width: 110px;
   padding: 0;
-  font-size: 12px;
+  font-size: ${FontSize.sm};
   height: 28px;
   display: flex;
   align-items: center;

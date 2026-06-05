@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
-import { CardHover } from 'styles'
+import {CardHover, FontSize, FontWeight} from 'styles'
 
 export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavenTheme }>`
   width: 100%;
@@ -16,8 +16,8 @@ export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavenTheme }>`
     align-items: center;
     column-gap: 3px;
     margin: 10px 0 20px 0;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
   }
 
   .main-info {
@@ -45,8 +45,8 @@ export const EGovActiveCardStyled = styled(CardHover)<{ theme: MavenTheme }>`
     }
 
     .descr {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
       line-height: 24px;
       color: ${({ theme }) => theme.regularText};
     }
@@ -73,8 +73,8 @@ export const EGovPastCardTopColumnStyled = styled.div<{ theme: MavenTheme }>`
   row-gap: 5px;
 
   .name {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.subHeadingText};
   }
 
@@ -82,8 +82,8 @@ export const EGovPastCardTopColumnStyled = styled.div<{ theme: MavenTheme }>`
     margin-bottom: 0;
     margin-top: 0;
     color: ${({ theme }) => theme.primaryText};
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
 
     &.proposal-name {
       overflow: hidden;
@@ -116,8 +116,8 @@ export const EGovPastCardBodyStyled = styled.div<{ theme: MavenTheme }>`
 
   h3 {
     margin: 0;
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     color: ${({ theme }) => theme.mainHeadingText};
   }
 

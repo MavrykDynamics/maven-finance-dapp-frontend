@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../styles/interfaces'
 
 export const BecomeSatelliteStyled = styled.div<{ theme: MavenTheme }>`
@@ -12,14 +12,14 @@ export const BecomeSatelliteForm = styled(Card)`
 
   > h2 {
     margin: 0;
-    font-weight: 600;
-    font-size: 22px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.xl};
     padding-bottom: 20px;
   }
 
   .label {
     color: ${({ theme }) => theme.mainHeadingText};
-    font-weight: 700;
+    font-weight: ${FontWeight.bold};
   }
 
   .row {
@@ -37,7 +37,7 @@ export const BecomeSatelliteForm = styled(Card)`
     margin: 42px 0;
 
     textarea {
-      font-size: 14px;
+      font-size: ${FontSize.base};
     }
 
     label {
@@ -52,8 +52,8 @@ export const BecomeSatelliteForm = styled(Card)`
 
   #inputStyled {
     input {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: ${FontSize.base};
+      font-weight: ${FontWeight.medium};
     }
     label {
       top: -26px;
@@ -90,7 +90,7 @@ export const BecomeSatelliteFormBalanceCheck = styled.div<{ $balanceOk: boolean;
 
   p {
     margin: 0;
-    font-size: 16px;
+    font-size: ${FontSize.md};
   }
 
   svg {
@@ -102,15 +102,15 @@ export const BecomeSatelliteFormBalanceCheck = styled.div<{ $balanceOk: boolean;
 `
 
 export const BecomeSatelliteOracleText = styled.h3<{ theme: MavenTheme }>`
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: ${FontWeight.medium};
+  font-size: ${FontSize.base};
   color: ${({ theme }) => theme.regularText};
   padding-bottom: 15px;
   line-height: 22px;
 
   span {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: ${FontSize.md};
+    font-weight: ${FontWeight.semibold};
   }
 `
 export const BecomeSatelliteRegisterAsOracle = styled.div<{ theme: MavenTheme }>`
@@ -192,23 +192,23 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavenTheme }>`
     }
 
     .name {
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
       color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
-      font-weight: 600;
-      font-size: 22px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.xl};
       line-height: 22px;
       color: ${({ theme }) => theme.primaryText};
     }
   }
 
   .descr {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
   }
 
@@ -221,8 +221,8 @@ export const UnregisterSatelliteModalBase = styled.div<{ theme: MavenTheme }>`
   }
 
   .descr-big {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 27px;
   }
 `
@@ -240,15 +240,15 @@ export const SatelliteDetailsContainer = styled.div<{ theme: MavenTheme }>`
     }
 
     .value {
-      font-size: 22px;
-      font-weight: 600;
+      font-size: ${FontSize.xl};
+      font-weight: ${FontWeight.semibold};
     }
   }
 `
 
 export const SatelliteUpperTextBlock = styled.div`
-  font-size: 14px;
-  font-weight: 600;
+  font-size: ${FontSize.base};
+  font-weight: ${FontWeight.semibold};
 
   margin-left: 11px;
   margin-bottom: 8px;

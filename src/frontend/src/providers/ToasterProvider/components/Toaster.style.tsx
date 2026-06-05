@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { decreaseBar } from 'styles/animations'
 import { MavenTheme } from '../../../styles/interfaces'
 import { TOASTER_LOADING, TOASTER_REVEAL, getColorByToasterStatus } from '../toaster.provider.const'
@@ -97,14 +98,14 @@ export const ToasterContent = styled.div<{ $status?: ToasterTypes; theme: MavenT
 
   .title {
     color: ${({ $status, theme }) => getColorByToasterStatus({ toasterStatus: $status, theme })};
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     margin-bottom: 8px;
   }
 
   .message {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.textColor};
     display: -webkit-box;
     -webkit-line-clamp: 2;

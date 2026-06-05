@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../styles/interfaces'
 
 export const SatellitesOverviewStyled = styled.div<{ theme: MavenTheme }>`
@@ -10,8 +10,8 @@ export const SatellitesOverviewStyled = styled.div<{ theme: MavenTheme }>`
     margin: 30px 0 10px 0;
 
     .see-all {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
       line-height: 21px;
     }
   }
@@ -68,8 +68,8 @@ export const NotStakinkBannerStyled = styled.div`
 
   &.become-satellite {
     p {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
       line-height: 24px;
       margin: 0;
     }

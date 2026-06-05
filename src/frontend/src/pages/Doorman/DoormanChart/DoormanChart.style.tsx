@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 
 export const Wrapper = styled.div`
   display: flex;
@@ -27,14 +27,14 @@ export const DoormanExitFeeCurrentValues = styled.div<{ theme: MavenTheme }>`
     }
 
     .name {
-      font-weight: 600;
-      font-size: 12px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.sm};
       color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
-      font-weight: 600;
-      font-size: 12px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.sm};
       color: ${({ theme }) => theme.primaryText};
     }
   }
@@ -51,8 +51,8 @@ export const DoormanChartCard = styled(Card)<{ theme: MavenTheme; $isExitFeeChar
 
   > div {
     color: ${({ theme }) => theme.subHeadingText};
-    font-weight: 500;
-    font-size: 12px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.sm};
   }
 
   .chart-legend {
@@ -87,7 +87,7 @@ export const DoormanChartCard = styled(Card)<{ theme: MavenTheme; $isExitFeeChar
       display: flex;
       align-items: center;
       column-gap: 7px;
-      font-size: 12px;
+      font-size: ${FontSize.sm};
       color: ${({ theme }) => theme.subHeadingText};
 
       &.mvn {

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../styles/interfaces'
 
 export const EmergencyGovernanceCard = styled(Card)<{ theme: MavenTheme }>`
@@ -7,8 +7,8 @@ export const EmergencyGovernanceCard = styled(Card)<{ theme: MavenTheme }>`
   position: relative;
 
   > div {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
     color: ${({ theme }) => theme.regularText};
     margin: 0;
@@ -17,7 +17,7 @@ export const EmergencyGovernanceCard = styled(Card)<{ theme: MavenTheme }>`
   a {
     color: ${({ theme }) => theme.linksAndButtons};
     margin-top: 10px;
-    font-size: 14px;
+    font-size: ${FontSize.base};
     text-decoration: none;
     display: block;
   }
@@ -25,7 +25,7 @@ export const EmergencyGovernanceCard = styled(Card)<{ theme: MavenTheme }>`
   h2 {
     margin-top: 0;
     margin-bottom: 0;
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
   }
 `
 

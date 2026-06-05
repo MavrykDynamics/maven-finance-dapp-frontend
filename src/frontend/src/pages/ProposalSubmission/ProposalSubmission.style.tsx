@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { Card, CardHover } from '../../styles'
 import { MavenTheme } from '../../styles/interfaces'
 
@@ -9,8 +10,8 @@ export const ProposalSubmissionForm = styled(Card)<{ theme: MavenTheme }>`
   padding-top: 28px;
 
   .stage-descr {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
     color: ${({ theme }) => theme.regularText};
     margin-bottom: 30px;
@@ -63,8 +64,8 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavenTheme; $i
     }
 
     a {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: ${FontSize.md};
+      font-weight: ${FontWeight.semibold};
     }
 
     .invoice-content {
@@ -99,8 +100,8 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavenTheme; $i
     }
 
     .value {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: ${FontSize.md};
+      font-weight: ${FontWeight.semibold};
       color: ${({ theme }) => theme.regularText};
     }
   }
@@ -110,8 +111,8 @@ export const ProposalSubmittionStageOneBody = styled.div<{ theme: MavenTheme; $i
     position: absolute;
     top: -20px;
     left: 0;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.semibold};
   }
 
   .description {
@@ -187,14 +188,14 @@ export const SubmitProposalBytesPair = styled(CardHover)<{ theme: MavenTheme }>`
     left: -20px;
     top: 50%;
     transform: translateY(-50%);
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.regularText};
   }
 
   label {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.semibold};
   }
 
   .remove-byte {

@@ -1,9 +1,10 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const SettingsPopupBase = styled.div<{ theme: MavenTheme }>`
   .title {
-    font-weight: 700;
+    font-weight: ${FontWeight.bold};
     font-size: 25px;
     line-height: 25px;
     color: ${({ theme }) => theme.mainHeadingText};
@@ -16,15 +17,15 @@ export const SettingsPopupBase = styled.div<{ theme: MavenTheme }>`
     padding: 0 10px;
     color: ${({ theme }) => theme.mainHeadingText};
     text-align: center;
-    font-size: 14px;
+    font-size: ${FontSize.base};
     line-height: 21px;
   }
 
   .error-msg {
     max-width: 620px;
     padding: 0 10px;
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: ${FontWeight.bold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     margin: 15px 0 -5px 0;
     text-align: center;
@@ -58,8 +59,8 @@ export const ChangeNodeNodesListItem = styled.div<{ $isSelected?: boolean; theme
   display: flex;
   align-items: center;
 
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.lg};
   line-height: 18px;
 
   border-radius: 10px;
@@ -84,11 +85,11 @@ export const ChangeNodeNodesListItem = styled.div<{ $isSelected?: boolean; theme
     overflow: hidden;
     white-space: nowrap;
     color: ${({ theme }) => theme.regularText};
-    font-size: 18px;
+    font-size: ${FontSize.lg};
     line-height: 18px;
 
     &.user-node {
-      font-size: 16px;
+      font-size: ${FontSize.md};
       line-height: 16px;
     }
   }
@@ -99,8 +100,8 @@ export const ChangeNodeNodesListItem = styled.div<{ $isSelected?: boolean; theme
 
     .add-new-node-title {
       width: 100%;
-      font-weight: 600;
-      font-size: 18px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.lg};
       line-height: 18px;
       color: ${({ theme }) => theme.regularText};
       white-space: nowrap;

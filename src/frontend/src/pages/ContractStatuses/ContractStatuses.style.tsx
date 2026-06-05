@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../styles/interfaces'
 
 export const BGStyled = styled.div<{ theme: MavenTheme }>`
@@ -42,8 +43,8 @@ export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavenTheme }
     width: 100%;
     display: flex;
     justify-content: space-between;
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
 
     color: ${({ theme }) => theme.mainHeadingText};
@@ -51,8 +52,8 @@ export const BGStatusIndicator = styled(BGBlockBaseStyles)<{ theme: MavenTheme }
 
   .color-red,
   .color-green {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
     text-transform: uppercase;
   }
@@ -92,20 +93,20 @@ export const BGInfo = styled(BGBlockBaseStyles)<{ theme: MavenTheme }>`
   border: 1px solid ${({ theme }) => theme.strokeCards};
   border-radius: 10px;
 
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: ${FontWeight.medium};
+  font-size: ${FontSize.base};
   line-height: 24px;
 
   color: ${({ theme }) => theme.regularText};
 
   p {
     margin: 0;
-    font-weight: 500;
+    font-weight: ${FontWeight.medium};
   }
 
   a {
     color: ${({ theme }) => theme.linksAndButtons};
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
   }
 
   .line {
@@ -137,8 +138,8 @@ export const BGWhitelist = styled(BGBlockBaseStyles)<{ theme: MavenTheme }>`
   margin-top: 20px;
   border-top: 1px solid ${({ theme }) => theme.divider};
   color: ${({ theme }) => theme.mainHeadingText};
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.md};
   line-height: 22px;
 
   .adress-list {
@@ -153,7 +154,7 @@ export const BGWhitelist = styled(BGBlockBaseStyles)<{ theme: MavenTheme }>`
 export const BGPrimaryTitle = styled.h1<{ theme: MavenTheme }>`
   margin: 0;
 
-  font-weight: 700;
+  font-weight: ${FontWeight.bold};
   font-size: 25px;
   line-height: 30px;
 `

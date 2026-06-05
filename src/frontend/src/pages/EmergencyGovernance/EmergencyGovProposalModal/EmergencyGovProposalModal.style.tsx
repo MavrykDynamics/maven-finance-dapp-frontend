@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const EmergencyGovProposalModalContent = styled.div<{ theme: MavenTheme }>`
@@ -17,7 +18,7 @@ export const EmergencyGovProposalModalContent = styled.div<{ theme: MavenTheme }
 
     #inputStyled {
       max-width: 75%;
-      font-size: 14px;
+      font-size: ${FontSize.base};
     }
 
     .exit-fee {

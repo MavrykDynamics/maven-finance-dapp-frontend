@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const SatelliteCardBottomRow = styled.div<{ theme: MavenTheme }>`
@@ -6,22 +7,22 @@ export const SatelliteCardBottomRow = styled.div<{ theme: MavenTheme }>`
   flex-direction: column;
   padding: 38px 25px;
   justify-content: center;
-  font-weight: 400;
-  font-size: 14px;
+  font-weight: ${FontWeight.regular};
+  font-size: ${FontSize.base};
   line-height: 21px;
   row-gap: 40px;
   border-top: 1px solid ${({ theme }) => theme.divider};
 
   p {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 18px;
   }
 `
 
 export const BlockName = styled.div<{ theme: MavenTheme }>`
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.lg};
   margin-bottom: 20px;
 
   color: ${({ theme }) => theme.mainHeadingText};
@@ -39,8 +40,8 @@ export const SatelliteMetricsBlock = styled.div<{ theme: MavenTheme }>`
     text-align: right;
     color: ${({ theme }) => theme.primaryText};
 
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
   }
 
@@ -48,8 +49,8 @@ export const SatelliteMetricsBlock = styled.div<{ theme: MavenTheme }>`
     margin: 0;
     color: ${({ theme }) => theme.subHeadingText};
 
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
   }
 `
@@ -87,8 +88,8 @@ export const SatelliteDescrBlock = styled.div<{ theme: MavenTheme }>`
 
   .satellite-website {
     color: ${({ theme }) => theme.linksAndButtons};
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: ${FontWeight.bold};
+    font-size: ${FontSize.base};
     line-height: 14px;
   }
 

@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontWeight } from 'styles/typography'
 
 export const DashboardPersonalStyled = styled.div`
   margin-top: 30px;
@@ -26,7 +27,7 @@ export const DashboardCardHeader = styled.div`
 
   h2 {
     margin: 0;
-    font-weight: 700;
+    font-weight: ${FontWeight.bold};
 
     &::after {
       margin-bottom: 7px;

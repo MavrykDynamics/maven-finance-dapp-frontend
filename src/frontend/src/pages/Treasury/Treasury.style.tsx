@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 
 export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
@@ -21,8 +21,8 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
       p {
         margin: 0;
         margin-top: 15px;
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.base};
       }
     }
   }
@@ -48,8 +48,8 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
       white-space: nowrap;
       text-transform: capitalize;
 
-      font-weight: 600;
-      font-size: 22px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.xl};
       line-height: 22px;
     }
   }
@@ -75,8 +75,8 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
     }
 
     .tzAddressToClick {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: ${FontSize.md};
+      font-weight: ${FontWeight.semibold};
     }
 
     .value {
@@ -86,8 +86,8 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
 
     > .text,
     .value {
-      font-weight: 600;
-      font-size: 22px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.xl};
       line-height: 22px;
     }
   }
@@ -103,16 +103,16 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
     .text {
       margin-right: 10px;
 
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
 
       color: ${({ theme }) => theme.mainHeadingText};
     }
 
     .value {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       line-height: 22px;
     }
   }
@@ -133,8 +133,8 @@ export const TreasuryViewStyle = styled(Card)<{ theme: MavenTheme }>`
   }
 
   .asset-lable-text {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 18px;
     color: ${({ theme }) => theme.regularText};
     background-color: ${({ theme }) => theme.cards};
@@ -171,8 +171,8 @@ export const TreasurySelectStyle = styled(Card)<{ $isSelectedTreasury?: boolean 
   }
 
   h2 {
-    font-weight: 600;
-    font-size: 22px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.xl};
     line-height: 22px;
     color: ${({ theme }) => theme.mainHeadingText};
 

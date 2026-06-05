@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 import { vaultsStatuses } from 'pages/Vaults/Vaults.consts'
 import { STATUS_FLAG_INFO } from 'app/App.components/StatusFlag/StatusFlag.constants'
@@ -12,8 +13,8 @@ export const NoItemsInTabStyled = styled.div<{ theme: MavenTheme }>`
   align-items: center;
 
   span {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     color: ${({ theme }) => theme.regularText};
   }
 
@@ -108,8 +109,8 @@ export const BorrowingExpandedCard = styled.div<{ theme: MavenTheme }>`
 
   // styles below useing only in OldBorrowingExpandComponent
   .block-name {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     color: ${({ theme }) => theme.subHeadingText};
     margin-bottom: 10px;
 
@@ -171,15 +172,15 @@ export const LoansActionsSection = styled.div`
 
   .useMax-btn {
     button {
-      font-size: 14px;
+      font-size: ${FontSize.base};
     }
   }
 
   .coming-soon {
     text-align: center;
 
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
 
     color: ${({ theme }) => theme.regularText};
@@ -195,8 +196,8 @@ export const LoansActionsSection = styled.div`
   .tab-text {
     margin: 0 15px;
 
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 22px;
 
     color: ${({ theme }) => theme.regularText};
@@ -271,16 +272,16 @@ export const LoansValuesSectionInfo = styled.div<{
   }
 
   .name {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 27px;
 
     color: ${({ theme }) => theme.subHeadingText};
   }
 
   .value {
-    font-weight: 700;
-    font-size: 30px;
+    font-weight: ${FontWeight.bold};
+    font-size: ${FontSize['2xl']};
     line-height: 40px;
     word-break: break-all;
 
@@ -288,8 +289,8 @@ export const LoansValuesSectionInfo = styled.div<{
   }
 
   .rate {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 18px;
 
     visibility: ${({ theme }) => (theme.hasRate ? 'hidden' : 'visible')};
@@ -301,8 +302,8 @@ export const LoansValuesSectionInfo = styled.div<{
   }
 
   &.learn-more {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
 
     a {
@@ -315,8 +316,8 @@ export const LoansValuesSectionInfo = styled.div<{
       width: 100%;
       display: flex;
       justify-content: space-between;
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
       margin-bottom: 7px;
       color: ${({ theme, customColor }) => customColor ?? theme.subHeadingText};
@@ -327,7 +328,7 @@ export const LoansValuesSectionInfo = styled.div<{
     }
 
     .copyIcon {
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
     }
   }
 `
@@ -353,8 +354,8 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavenTheme }>`
   }
 
   .useful-info-title {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 27px;
 
     color: ${({ theme }) => theme.subHeadingText};
@@ -369,8 +370,8 @@ export const BorrowingTabListItemTabInfo = styled.div<{ theme: MavenTheme }>`
     button,
     .name,
     .value {
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
     }
 
@@ -440,7 +441,7 @@ export const VaultOverview = styled.div<{ theme: MavenTheme }>`
     }
 
     .copyIcon {
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
     }
   }
 `
@@ -451,8 +452,8 @@ export const StatusMessageStyled = styled.div<{ theme: MavenTheme }>`
   column-gap: 20px;
   padding: 15px 25px;
   background-color: ${({ theme }) => theme.messagesBackground};
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.base};
   line-height: 21px;
   border-radius: 10px;
 

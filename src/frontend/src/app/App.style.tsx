@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 
 import { MavenTheme } from '../styles/interfaces'
 
@@ -30,8 +31,8 @@ export const EmptyContainer = styled.figure<{ theme: MavenTheme }>`
   align-items: center;
   margin: 0;
   color: ${({ theme }) => theme.regularText};
-  font-size: 18px;
-  font-weight: 600;
+  font-size: ${FontSize.lg};
+  font-weight: ${FontWeight.semibold};
   flex-direction: column;
   padding-top: 80px;
 

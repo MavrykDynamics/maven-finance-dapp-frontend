@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const MultiselectStyled = styled.div<{ theme: MavenTheme }>`
@@ -53,14 +54,14 @@ export const MultiselectOptionsControlStyled = styled.div<{ theme: MavenTheme }>
     border: none;
     outline: none;
 
-    font-size: 14px;
-    font-weight: 500;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.medium};
     line-height: 24px;
     color: ${({ theme }) => theme.primaryText};
 
     &::placeholder {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: ${FontSize.base};
+      font-weight: ${FontWeight.medium};
       line-height: 24px;
       color: ${({ theme }) => theme.placeholders};
     }
@@ -125,9 +126,9 @@ export const MultiselectMenuOptionStyled = styled.div<{ theme: MavenTheme }>`
   align-items: center;
 
   .option-text {
-    font-size: 14px;
+    font-size: ${FontSize.base};
     line-height: 24px;
-    font-weight: 500;
+    font-weight: ${FontWeight.medium};
 
     color: ${({ theme }) => theme.placeholders};
   }
@@ -177,8 +178,8 @@ export const MultiselectHeaderOptionStyled = styled.div<{ theme: MavenTheme }>`
   }
 
   .option-text {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.medium};
     line-height: 24px;
 
     color: ${({ theme }) => theme.backgroundColor};
@@ -252,8 +253,8 @@ export const MultiselectHeaderStyled = styled.div<{ theme: MavenTheme }>`
   }
 
   .placeholder {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.medium};
     color: ${({ theme }) => theme.placeholders};
   }
 

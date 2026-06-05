@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 
 export const SatelliteGovernanceStyled = styled.div<{ theme: MavenTheme }>`
@@ -24,8 +24,8 @@ export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavenTheme }>`
   border-radius: 10px;
 
   h3 {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
 
     color: ${({ theme }) => theme.subHeadingText};
@@ -34,8 +34,8 @@ export const SatelliteGovernanceStatsInfo = styled.div<{ theme: MavenTheme }>`
   .value {
     display: flex;
 
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
 
     color: ${({ theme }) => theme.primaryText};
@@ -72,8 +72,8 @@ export const SatelliteGovernanceAvailableActions = styled(Card)`
     padding: 17px 30px;
 
     span {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
       line-height: 24px;
 
       color: ${({ theme }) => theme.regularText};
@@ -93,8 +93,8 @@ export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavenThem
   p {
     margin: 0;
 
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
 
     color: ${({ theme }) => theme.subHeadingText};
@@ -109,8 +109,8 @@ export const SatelliteGovernanceAvailableAction = styled.form<{ theme: MavenThem
   label {
     margin-bottom: 5px;
 
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
 
     color: ${({ theme }) => theme.mainHeadingText};

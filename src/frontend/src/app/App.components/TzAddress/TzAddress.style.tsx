@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 import { SECONDARY_TZ_ADDRESS_COLOR, PRIMARY_TZ_ADDRESS_COLOR } from './TzAddress.constants'
 
@@ -26,7 +27,7 @@ export const TzAddressStyled = styled.div<{ theme: MavenTheme }>`
   }
 
   &.bold {
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
   }
 `
 

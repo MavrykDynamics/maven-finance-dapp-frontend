@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 import { PaginationPlacementVariants, PAGINATION_SIDE_CENTER, PAGINATION_SIDE_RIGHT } from './pagination.consts'
 
@@ -10,8 +11,8 @@ export const PaginationWrapper = styled.div<{
   display: flex;
   max-height: 36px;
   align-items: center;
-  font-weight: 400;
-  font-size: 14px;
+  font-weight: ${FontWeight.regular};
+  font-size: ${FontSize.base};
   line-height: 21px;
   color: ${({ theme }) => theme.regularText};
   width: fit-content;

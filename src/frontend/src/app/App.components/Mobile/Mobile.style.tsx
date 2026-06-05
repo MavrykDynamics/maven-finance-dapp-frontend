@@ -1,4 +1,5 @@
 import styled, { createGlobalStyle } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const GlobalStyle = createGlobalStyle`
@@ -31,8 +32,8 @@ export const MobilePlugWrapper = styled.div<{ theme: MavenTheme }>`
   margin: 0 auto;
 
   .plug-message {
-    font-weight: 600;
-    font-size: 22px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.xl};
     line-height: 22px;
     text-align: center;
     color: #ffffff;
@@ -102,8 +103,8 @@ export const MobilePlugFooter = styled.div<{ theme: MavenTheme }>`
   }
 
   .dapp-descr {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 27px;
     color: #38237c;
     text-align: center;
@@ -111,8 +112,8 @@ export const MobilePlugFooter = styled.div<{ theme: MavenTheme }>`
   }
 
   .copyright {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 27px;
     color: #38237c;
     text-align: center;

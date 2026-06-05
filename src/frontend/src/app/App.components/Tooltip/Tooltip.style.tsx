@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const TooltipTextStyled = styled.div<{ $defaultStrokeColor?: string; theme: MavenTheme }>`
@@ -8,8 +9,8 @@ export const TooltipTextStyled = styled.div<{ $defaultStrokeColor?: string; them
   padding: 3px 5px;
   border-radius: 3px;
 
-  font-size: 12px;
-  font-weight: 600;
+  font-size: ${FontSize.sm};
+  font-weight: ${FontWeight.semibold};
   line-height: 15px;
   text-align: center;
   hyphens: auto;

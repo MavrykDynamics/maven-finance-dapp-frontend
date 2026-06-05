@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { MavenTheme } from '../../../styles/interfaces'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { BUTTON_RADIUS } from 'styles/constants'
 
 export const SatelliteSideBarStyled = styled(Card)`
@@ -9,8 +9,8 @@ export const SatelliteSideBarStyled = styled(Card)`
   max-width: 310px;
 
   h2 {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     margin-bottom: 25px;
 
     &::after {
@@ -44,7 +44,7 @@ export const SideBarSection = styled.aside<{ theme: MavenTheme }>`
 `
 
 export const FAQLink = styled.div<{ theme: MavenTheme }>`
-  font-size: 14px;
+  font-size: ${FontSize.base};
   margin: 14px 0;
   padding-left: 20px;
   position: relative;
@@ -70,8 +70,8 @@ export const FAQLink = styled.div<{ theme: MavenTheme }>`
   }
 
   > a {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.linksAndButtons};
     text-decoration: underline;
@@ -81,15 +81,15 @@ export const FAQLink = styled.div<{ theme: MavenTheme }>`
 export const SideBarItem = styled.div<{ theme: MavenTheme }>`
   display: flex;
   justify-content: space-between;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   align-items: center;
   margin-top: 10px;
   margin-bottom: 9px;
   height: 14px;
 
   h3 {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
 
     color: ${({ theme }) => theme.regularText};
   }
@@ -100,8 +100,8 @@ export const SideBarItem = styled.div<{ theme: MavenTheme }>`
 
     * {
       font-style: normal;
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       color: ${({ theme }) => theme.primaryText};
       white-space: nowrap;
       max-width: 100%;
@@ -157,8 +157,8 @@ export const SidebarUserButton = styled.div<{ theme: MavenTheme }>`
 
   .name,
   .link {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.semibold};
     line-height: 16px;
   }
 

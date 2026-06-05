@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const DropDownStyled = styled.div<{ theme: MavenTheme }>`
@@ -7,8 +7,8 @@ export const DropDownStyled = styled.div<{ theme: MavenTheme }>`
   min-width: 226px;
   margin: 0 auto;
   position: relative;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: ${FontWeight.medium};
+  font-size: ${FontSize.base};
   line-height: 24px;
   color: ${({ theme }) => theme.placeholders};
   background: ${({ theme }) => theme.backgroundColor};
@@ -222,8 +222,8 @@ export const DropdownContainer = styled.div<{ theme: MavenTheme }>`
   flex-shrink: 0;
 
   > h4 {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.regularText};
     flex-shrink: 0;
@@ -270,8 +270,8 @@ export const DropDownJsxChild = styled.div`
     display: flex;
     align-items: center;
     column-gap: 10px;
-    font-weight: 500;
-    font-size: 16px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.md};
     color: ${({ theme }) => theme.regularText};
 
     &.with-image {
@@ -291,8 +291,8 @@ export const DropDownJsxChild = styled.div`
   }
 
   .baker-fee {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.primaryText};
   }

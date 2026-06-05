@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 import {
   INFO_DEFAULT,
@@ -26,8 +27,8 @@ export const InfoBlock = styled.blockquote<{ theme: MavenTheme }>`
   }
 
   p {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 20px;
     color: ${({ theme }) => theme.regularText};
 

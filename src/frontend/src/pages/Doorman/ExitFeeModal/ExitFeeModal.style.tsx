@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const ExitFeeModalContent = styled.div<{ theme: MavenTheme }>`
@@ -6,8 +7,8 @@ export const ExitFeeModalContent = styled.div<{ theme: MavenTheme }>`
 
   label {
     color: ${({ theme }) => theme.mainHeadingText};
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
     display: block;
     margin-left: 6px;
@@ -26,16 +27,16 @@ export const ExitFeeModalStats = styled.div`
   p {
     margin: 0;
 
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
 
     color: ${({ theme }) => theme.primaryText};
   }
 
   h4 {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
 
     color: ${({ theme }) => theme.subHeadingText};

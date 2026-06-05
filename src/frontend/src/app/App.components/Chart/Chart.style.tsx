@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const ChartWrapper = styled.div`
@@ -45,8 +46,8 @@ export const Plug = styled.div`
 
   p {
     margin: 0;
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
 
     text-align: center;
@@ -80,8 +81,8 @@ const BaseTooltipStyles = styled.div<{ theme: MavenTheme }>`
 
 export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
   .value {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     color: ${({ theme }) => theme.primaryText};
     white-space: pre;
     p {
@@ -90,8 +91,8 @@ export const AmountDateTooltipStyled = styled(BaseTooltipStyles)`
   }
 
   .date {
-    font-weight: 600;
-    font-size: 12px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.sm};
     color: ${({ theme }) => theme.regularText};
     white-space: pre;
   }
@@ -120,8 +121,8 @@ export const MliFeeTooltipStyled = styled(BaseTooltipStyles)`
     }
 
     > * {
-      font-weight: 600;
-      font-size: 18px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.lg};
     }
 
     .name {

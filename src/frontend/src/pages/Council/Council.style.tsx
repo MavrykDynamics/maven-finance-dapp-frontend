@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 
 // types
 import { MavenTheme } from '../../styles/interfaces'
@@ -56,8 +56,8 @@ export const PropagateBreakGlassCouncilCard = styled(Card)<{ theme: MavenTheme }
     margin: 10px 0 0 0;
     max-width: 630px;
 
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
 
     color: ${({ theme }) => theme.regularText};

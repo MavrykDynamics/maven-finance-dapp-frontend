@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const VotingAreaStyled = styled.article<{ theme: MavenTheme }>`
@@ -6,7 +7,7 @@ export const VotingAreaStyled = styled.article<{ theme: MavenTheme }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   flex-direction: column;
 
   .banner-area {
@@ -25,8 +26,8 @@ export const VotingAreaStyled = styled.article<{ theme: MavenTheme }>`
 
   .voted-label {
     color: ${({ theme }) => theme.primaryText};
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
   }
 
   .voted-bar {

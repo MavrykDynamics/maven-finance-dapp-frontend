@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { CardHover } from 'styles'
+import {CardHover, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../../../styles/interfaces'
 
 export const ProposalListContainer = styled.div<{ theme: MavenTheme }>`
@@ -29,7 +29,7 @@ export const ProposalListItem = styled(CardHover)<{ $selected: boolean; theme: M
   justify-content: space-between;
   padding: 0 18px;
   border-radius: 10px;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   padding: 8px 28px;
   cursor: pointer;
 
@@ -40,8 +40,8 @@ export const ProposalListItem = styled(CardHover)<{ $selected: boolean; theme: M
       box-shadow: ${({ theme }) => theme.cardHoverColor};
     `}
   .proposal-voted-mvn {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.primaryText};
     margin-right: 10px;
   }
@@ -54,7 +54,7 @@ export const VoterListItem = styled(CardHover)<{ theme: MavenTheme }>`
   justify-content: space-between;
   margin: 10px auto;
   border-radius: 10px;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   padding: 14px 24px;
 
   .left {
@@ -86,7 +86,7 @@ export const VoterListItem = styled(CardHover)<{ theme: MavenTheme }>`
       }
 
       div {
-        font-size: 16px;
+        font-size: ${FontSize.md};
         align-items: flex-start;
       }
     }
@@ -95,18 +95,18 @@ export const VoterListItem = styled(CardHover)<{ theme: MavenTheme }>`
 
 export const ProposalItemLeftSide = styled.div<{ theme: MavenTheme }>`
   display: flex;
-  font-size: 14px;
+  font-size: ${FontSize.base};
   align-items: center;
   margin-right: auto;
   color: ${({ theme }) => theme.textColor};
 
   > span {
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
     width: 25px;
   }
 
   > h4 {
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
     padding-right: 8px;
 
     max-width: 200px;

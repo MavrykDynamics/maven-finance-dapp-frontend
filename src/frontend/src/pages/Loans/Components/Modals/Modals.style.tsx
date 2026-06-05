@@ -1,21 +1,22 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const LoansModalBase = styled.div<{ theme: MavenTheme }>`
   h2 {
-    font-size: 22px;
+    font-size: ${FontSize.xl};
   }
 
   .useMax-btn {
     button {
-      font-size: 14px;
+      font-size: ${FontSize.base};
     }
   }
 
   .modalDescr {
     margin-top: 7px;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.subHeadingText};
     margin-bottom: 30px;
@@ -26,8 +27,8 @@ export const LoansModalBase = styled.div<{ theme: MavenTheme }>`
   }
 
   .block-name {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.mainHeadingText};
     padding-left: 7px;
@@ -150,8 +151,8 @@ export const LoansModalBase = styled.div<{ theme: MavenTheme }>`
     display: flex;
     justify-content: center;
     column-gap: 15px;
-    font-weight: 500;
-    font-size: 12px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.sm};
     line-height: 21px;
     color: ${({ theme }) => theme.regularText};
   }
@@ -172,8 +173,8 @@ export const LoansModalBase = styled.div<{ theme: MavenTheme }>`
 
   .add-collateral-inline {
     margin-top: 20px;
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 20px;
   }
 
@@ -198,7 +199,7 @@ export const VaultModalOverview = styled.div<{ theme: MavenTheme }>`
     }
 
     .copyIcon {
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
     }
   }
 `

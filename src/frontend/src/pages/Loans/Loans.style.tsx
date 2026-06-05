@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../styles/interfaces'
 import { PRIMARY_TRANSACTION_HISTORY_STYLE, SECONDARY_TRANSACTION_HISTORY_STYLE } from './Loans.const'
 
@@ -39,13 +40,13 @@ export const MarketChartsContainer = styled.div<{ theme: MavenTheme }>`
       row-gap: 10px;
       align-items: center;
       color: ${({ theme }) => theme.mainHeadingText};
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
 
       p {
         margin: 0;
         color: ${({ theme }) => theme.primaryText};
-        font-weight: 700;
+        font-weight: ${FontWeight.bold};
         font-size: 25px;
       }
     }
@@ -54,10 +55,10 @@ export const MarketChartsContainer = styled.div<{ theme: MavenTheme }>`
       position: absolute;
       top: 15px;
       left: 15px;
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
       font-size: 10px;
       line-height: 18px;
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
       font-size: 10px;
       line-height: 18px;
       color: ${({ theme }) => theme.regularText};
@@ -105,8 +106,8 @@ export const MarketOverview = styled.div<{ theme: MavenTheme }>`
 
     > div,
     p {
-      font-weight: 600;
-      font-size: 18px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.lg};
       color: ${({ theme }) => theme.primaryText};
     }
 
@@ -147,15 +148,15 @@ export const MarketOverview = styled.div<{ theme: MavenTheme }>`
         }
 
         .name {
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: ${FontWeight.semibold};
+          font-size: ${FontSize.base};
           line-height: 20px;
           color: ${({ theme }) => theme.subHeadingText};
         }
 
         .value {
-          font-weight: 600;
-          font-size: 16px;
+          font-weight: ${FontWeight.semibold};
+          font-size: ${FontSize.md};
           line-height: 20px;
           color: ${({ theme }) => theme.primaryText};
 
@@ -169,8 +170,8 @@ export const MarketOverview = styled.div<{ theme: MavenTheme }>`
         }
 
         .rate {
-          font-weight: 400;
-          font-size: 12px;
+          font-weight: ${FontWeight.regular};
+          font-size: ${FontSize.sm};
           line-height: 14px;
           color: ${({ theme }) => theme.primaryText};
         }
@@ -190,8 +191,8 @@ export const MarketPagination = styled.div<{ theme: MavenTheme }>`
     column-gap: 30px;
 
     span {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       line-height: 22px;
       display: flex;
       align-items: center;
@@ -229,7 +230,7 @@ export const MarketStyled = styled.div<{ theme: MavenTheme }>`
     align-items: center;
 
     .value {
-      font-weight: 700;
+      font-weight: ${FontWeight.bold};
       font-size: 25px;
       line-height: 30px;
       justify-content: center;
@@ -276,14 +277,14 @@ export const MarketStyled = styled.div<{ theme: MavenTheme }>`
         justify-content: space-between;
 
         .symbol {
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: ${FontWeight.semibold};
+          font-size: ${FontSize.base};
           line-height: 23px;
           color: ${({ theme }) => theme.subHeadingText};
         }
 
         .full-name {
-          font-weight: 700;
+          font-weight: ${FontWeight.bold};
           font-size: 25px;
           line-height: 30px;
           text-transform: capitalize;
@@ -340,11 +341,11 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?:
       justify-content: space-between;
 
       > .value {
-        font-weight: 600;
-        font-size: 18px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.lg};
 
         .tzAddressToClick {
-          font-size: 16px;
+          font-size: ${FontSize.md};
         }
 
         p {
@@ -361,8 +362,8 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?:
   }
 
   .name {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.subHeadingText};
 
@@ -371,8 +372,8 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?:
   }
 
   .value {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 22px;
     color: ${({ theme }) => theme.primaryText};
     display: flex;
@@ -414,8 +415,8 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?:
 
   .rate {
     font-style: normal;
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 18px;
     color: ${({ theme }) => theme.primaryText};
   }
@@ -431,8 +432,8 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?:
       width: 100%;
       display: flex;
       justify-content: space-between;
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
       margin-bottom: 7px;
       color: ${({ theme, $customColor }) => $customColor ?? theme.subHeadingText};
@@ -443,7 +444,7 @@ export const ThreeLevelListItem = styled.div<{ theme: MavenTheme; $customColor?:
     }
 
     .copyIcon {
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
     }
   }
 `
@@ -454,15 +455,15 @@ export const TransactionHistoryStyled = styled.div<{ theme: MavenTheme }>`
     column-gap: 5px;
     margin-top: 20px;
 
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
 
     color: ${({ theme }) => theme.regularText};
 
     div {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       line-height: 21px;
     }
   }

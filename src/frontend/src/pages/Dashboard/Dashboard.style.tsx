@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../styles/interfaces'
 import { BGPrimaryTitle } from 'pages/ContractStatuses/ContractStatuses.style'
 import { H2SimpleTitle } from 'styles/generalStyledComponents/Titles.style'
@@ -27,7 +28,7 @@ export const DashboardStyled = styled.div<{ theme: MavenTheme }>`
       background-repeat: no-repeat;
 
       > div {
-        font-weight: 600;
+        font-weight: ${FontWeight.semibold};
         font-size: 32px;
         color: ${({ theme }) => theme.primaryText};
         margin-top: 30px;
@@ -53,7 +54,7 @@ export const DashboardStyled = styled.div<{ theme: MavenTheme }>`
         }
 
         .value {
-          font-size: 16px;
+          font-size: ${FontSize.md};
         }
       }
     }
@@ -97,8 +98,8 @@ export const StatBlock = styled.div`
   }
 
   .name {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.subHeadingText};
   }
 
@@ -106,8 +107,8 @@ export const StatBlock = styled.div`
     display: flex;
     color: ${({ theme }) => theme.primaryText};
     width: fit-content;
-    font-weight: 600;
-    font-size: 22px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.xl};
     column-gap: 4px;
     height: 36px;
     align-items: center;
@@ -130,8 +131,8 @@ export const StatBlock = styled.div`
   }
 
   .converted {
-    font-weight: 500;
-    font-size: 12px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.sm};
     display: flex;
     color: ${({ theme }) => theme.primaryText};
     column-gap: 4px;
@@ -141,11 +142,11 @@ export const StatBlock = styled.div`
 
   &.large {
     .name {
-      font-size: 18px;
+      font-size: ${FontSize.lg};
     }
 
     .value {
-      font-weight: 700;
+      font-weight: ${FontWeight.bold};
       font-size: 24px;
 
       .impact {
@@ -156,13 +157,13 @@ export const StatBlock = styled.div`
 `
 
 export const BlockName = styled(H2SimpleTitle)`
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.lg};
   line-height: 18px;
 
   display: flex;
   align-items: center;
 `
 export const BGPrimaryTitleStyled = styled(BGPrimaryTitle)`
-  font-size: 22px;
+  font-size: ${FontSize.xl};
 `

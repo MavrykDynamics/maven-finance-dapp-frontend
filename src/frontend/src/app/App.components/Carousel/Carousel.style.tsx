@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const CarouselStyle = styled.div<{ theme: MavenTheme }>`
@@ -8,8 +9,8 @@ export const CarouselStyle = styled.div<{ theme: MavenTheme }>`
 
   .selected {
     position: absolute;
-    font-weight: 400;
-    font-size: 14px;
+    font-weight: ${FontWeight.regular};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.primaryText};
     right: 16px;

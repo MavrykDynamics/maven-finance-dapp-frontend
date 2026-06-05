@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 
 export const CheckboxStyled = styled.div`
   position: relative;
@@ -10,8 +11,8 @@ export const CheckboxStyled = styled.div`
   column-gap: 10px;
 
   .checkbox-text {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.mainHeadingText};
     transition: 0.15s ease-in-out;
   }

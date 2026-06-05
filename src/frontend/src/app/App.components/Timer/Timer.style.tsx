@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 import { LETTER_VIEW, COLON_VIEW } from './Timer.view'
 
@@ -11,7 +12,7 @@ export const TimerStyled = styled.div<{
   color: ${({ $defaultColor }) => $defaultColor};
 
   * {
-    font-size: 16px;
+    font-size: ${FontSize.md};
   }
 
   ul {
@@ -56,8 +57,8 @@ export const TimerStyled = styled.div<{
 `
 
 export const ShortTimer = styled.div<{ theme: MavenTheme }>`
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.md};
   line-height: 25px;
   color: ${({ theme }) => theme.downColor};
 `

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { dropShadow } from 'styles/animations'
 import { MavenTheme } from 'styles/interfaces'
 import { getNumberInBounds } from 'utils/calcFunctions'
@@ -23,8 +24,8 @@ export const QuorumBar = styled.div<{ $width: number; theme: MavenTheme }>`
   .text {
     color: ${({ theme }) => theme.mainHeadingText};
     top: -27px;
-    font-weight: 400;
-    font-size: 12px;
+    font-weight: ${FontWeight.regular};
+    font-size: ${FontSize.sm};
     width: fit-content;
     position: absolute;
     left: ${({ $width }) => getNumberInBounds(0, 100, $width)}%;
@@ -60,7 +61,7 @@ export const VotingBarStyled = styled.div<{ theme: MavenTheme }>`
     position: relative;
 
     > div:not(.voting-tooltip-trigger) {
-      font-size: 12px;
+      font-size: ${FontSize.sm};
       margin-top: 14px;
       position: absolute;
       left: 0;

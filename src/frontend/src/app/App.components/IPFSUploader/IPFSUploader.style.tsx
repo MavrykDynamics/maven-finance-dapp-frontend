@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavenTheme } from '../../../styles/interfaces'
 import { INPUT_STATUS_ERROR, INPUT_STATUS_SUCCESS } from '../Input/Input.constants'
@@ -13,7 +14,7 @@ export const IPFSUploaderStyled = styled.div<{ theme: MavenTheme }>`
     left: 10px;
 
     color: ${({ theme }) => theme.mainHeadingText};
-    font-weight: 700;
+    font-weight: ${FontWeight.bold};
   }
 `
 
@@ -107,8 +108,8 @@ export const UploadIconContainer = styled.div<{
   align-items: center;
 
   .upload-figure {
-    font-size: 12px;
-    font-weight: 400;
+    font-size: ${FontSize.sm};
+    font-weight: ${FontWeight.regular};
     color: ${({ theme }) => theme.mainHeadingText};
     white-space: nowrap;
     display: flex;
@@ -117,7 +118,7 @@ export const UploadIconContainer = styled.div<{
     margin: 0;
 
     small {
-      font-weight: 400;
+      font-weight: ${FontWeight.regular};
       padding-top: 4px;
       font-size: 10px;
       line-height: 10px;
@@ -125,8 +126,8 @@ export const UploadIconContainer = styled.div<{
     }
 
     figcaption {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       line-height: 22px;
     }
 

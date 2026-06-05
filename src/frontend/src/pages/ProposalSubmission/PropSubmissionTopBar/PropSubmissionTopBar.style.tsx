@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 
 import { MavenTheme } from '../../../styles/interfaces'
 
@@ -15,7 +15,7 @@ export const PropSubmissionTopBarStyled = styled(Card)<{ theme: MavenTheme }>`
   margin-bottom: 0px;
   padding: 0 35px;
 
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
 
   > div {
     display: flex;
@@ -33,7 +33,7 @@ export const PropSubmissionTopBarStyled = styled(Card)<{ theme: MavenTheme }>`
 
   .title {
     color: ${({ theme }) => theme.mainHeadingText};
-    font-size: 18px;
+    font-size: ${FontSize.lg};
   }
 `
 
@@ -43,7 +43,7 @@ export const CurrentPhaseContainer = styled.div<{ theme: MavenTheme }>`
   align-items: center;
 
   .phase {
-    font-size: 16px;
+    font-size: ${FontSize.md};
     color: ${({ theme }) => theme.linksAndButtons};
     text-transform: capitalize;
   }

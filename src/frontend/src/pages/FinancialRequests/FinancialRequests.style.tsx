@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { Card, CardHover } from 'styles'
+import {Card, CardHover, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../styles/interfaces'
 
 export const FinancialRequestsStyled = styled.div<{ theme: MavenTheme }>`
@@ -46,8 +46,8 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavenTheme 
 
   .voting_ending {
     margin-top: 10px;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.primaryText};
   }
 
@@ -106,23 +106,23 @@ export const FinancialRequestsRightContainer = styled(Card)<{ theme: MavenTheme 
 `
 
 export const InfoBlockTitle = styled.div<{ theme: MavenTheme }>`
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.lg};
   line-height: 18px;
   color: ${({ theme }) => theme.mainHeadingText};
 `
 
 export const InfoBlockName = styled.div<{ theme: MavenTheme }>`
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: ${FontWeight.medium};
+  font-size: ${FontSize.base};
   line-height: 24px;
   margin-top: 5px;
   color: ${({ theme }) => theme.regularText};
 `
 
 export const InfoBlockValue = styled(InfoBlockName)`
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.md};
   color: ${({ theme }) => theme.primaryText};
 `
 
@@ -135,7 +135,7 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavenThe
   margin: 10px auto;
   padding: 0 18px;
   border-radius: 10px;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   padding: 8px 28px;
   cursor: pointer;
 
@@ -146,8 +146,8 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavenThe
       box-shadow: 0px 4px 4px ${({ theme }) => theme.cardHoverColor};
     `}
   .proposal-voted-mvn {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.primaryText};
     margin-right: 10px;
     white-space: nowrap;
@@ -155,18 +155,18 @@ export const FRListItem = styled(CardHover)<{ selected: boolean; theme: MavenThe
 
   .id-and-title {
     display: flex;
-    font-size: 14px;
+    font-size: ${FontSize.base};
     align-items: center;
     margin-right: auto;
 
     > span {
-      font-weight: 500;
+      font-weight: ${FontWeight.medium};
       margin-right: 20px;
       color: ${({ theme }) => theme.regularText};
     }
 
     > h4 {
-      font-weight: 500;
+      font-weight: ${FontWeight.medium};
       padding-right: 8px;
       max-width: 220px;
       overflow: hidden;

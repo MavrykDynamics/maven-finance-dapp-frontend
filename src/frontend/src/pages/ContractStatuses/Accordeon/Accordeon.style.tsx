@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const AccordionWrapper = styled.div<{ theme: MavenTheme }>`
@@ -13,8 +14,8 @@ export const AccordionToggler = styled.div<{ theme: MavenTheme }>`
   padding-top: 20px;
   padding-bottom: 4vpx;
   cursor: pointer;
-  font-weight: 400;
-  font-size: 14px;
+  font-weight: ${FontWeight.regular};
+  font-size: ${FontSize.base};
   color: ${({ theme }) => theme.linksAndButtons};
 
   svg {
@@ -57,8 +58,8 @@ export const AccordionContent = styled.div<{ theme: MavenTheme }>`
 `
 
 export const AccordionItem = styled.div<{ $status: boolean; theme: MavenTheme }>`
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: ${FontWeight.medium};
+  font-size: ${FontSize.base};
   margin: 5px 0;
   color: ${({ $status, theme }) => ($status ? theme.downColor : theme.upColor)};
 

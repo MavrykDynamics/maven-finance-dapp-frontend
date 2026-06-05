@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 const HOVERABLE_TABLE_ROW_STYLES = css`
@@ -54,8 +55,8 @@ const EDITABLE_TABLE_ROW_STYLES = css`
 const PROPOSAL_DETAILS_PAYMENTS_ROW_STYLES = css`
   &.proposal-details-payments {
     td {
-      font-size: 14px;
-      font-weight: 400;
+      font-size: ${FontSize.base};
+      font-weight: ${FontWeight.regular};
 
       > div {
         margin: 0 auto;
@@ -81,8 +82,8 @@ export const TableRow = styled.tr<{ theme: MavenTheme; $borderColor?: string; $r
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       color: ${({ theme }) => theme.mainHeadingText};
     }
   }

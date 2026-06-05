@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { PopupContentWrapperBase } from '../PopupMain.style'
 
 export const FarmActionsPopupsContent = styled(PopupContentWrapperBase)`
@@ -27,8 +28,8 @@ export const FarmActionsPopupsContent = styled(PopupContentWrapperBase)`
       overflow: hidden;
     }
 
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     color: ${({ theme }) => theme.mainHeadingText};
   }
 

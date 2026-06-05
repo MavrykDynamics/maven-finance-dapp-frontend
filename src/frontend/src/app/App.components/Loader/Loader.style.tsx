@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { shine, ellipsis, loadingDotsAnimation } from 'styles/animations'
 import { MavenTheme } from 'styles/interfaces'
 import { SPINNER_LOADER_LARGE, SPINNER_LOADER_MEDIUM, SPINNER_LOADER_SMALL } from './loader.const'
@@ -13,8 +14,8 @@ export const LoaderStyledWithBackdrop = styled.div<{ theme: MavenTheme; $backdro
   align-items: center;
   text-align: center;
 
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.lg};
 
   color: ${({ theme }) => theme.linksAndButtons};
 
@@ -58,7 +59,7 @@ export const LoaderShineTextAnimation = styled.div<{ theme: MavenTheme }>`
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: ${shine} 2s linear infinite;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   font-size: 26px;
   text-decoration: none;
   white-space: nowrap;
@@ -131,8 +132,8 @@ export const DataLoaderWrapper = styled.div<{ theme: MavenTheme; margin?: string
   margin: ${({ margin = '150px 0 0 0' }) => margin};
 
   .text {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: ${FontSize.lg};
+    font-weight: ${FontWeight.medium};
 
     &::after {
       overflow: hidden;

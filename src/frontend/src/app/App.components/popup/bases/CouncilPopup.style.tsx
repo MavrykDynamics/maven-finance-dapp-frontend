@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { PopupContentWrapperBase } from '../PopupMain.style'
 
 export const CouncilUpdateMemberPopupContent = styled(PopupContentWrapperBase)`
@@ -35,8 +36,8 @@ export const CouncilActionReadMorePopupContent = styled(PopupContentWrapperBase)
 
   p {
     margin: 0;
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 27px;
 
     overflow-wrap: break-word;
@@ -51,8 +52,8 @@ export const CouncilActionReadMorePopupContent = styled(PopupContentWrapperBase)
     grid-template-rows: auto;
     row-gap: 3px;
 
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     line-height: 24px;
 
     color: ${({ theme }) => theme.subHeadingText};

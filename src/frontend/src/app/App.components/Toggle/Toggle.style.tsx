@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { PRIMARY_TOGGLE, SECONDARY_TOGGLE } from './Toggle.consts'
 import { MavenTheme } from 'styles/interfaces'
 
@@ -7,8 +8,8 @@ export const ToggleStyle = styled.div<{ theme: MavenTheme }>`
   align-items: center;
 
   span {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
   }
 

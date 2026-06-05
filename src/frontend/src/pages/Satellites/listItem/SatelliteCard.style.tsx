@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 
 export const SatelliteOracleStatusComponent = styled.div`
@@ -57,14 +57,14 @@ export const SatelliteCardRow = styled.div<{ theme: MavenTheme }>`
   display: flex;
   padding: 15px;
   justify-content: center;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.base};
   color: ${({ theme }) => theme.mainHeadingText};
   border-top: 1px solid ${({ theme }) => theme.divider};
 
   span {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
 
     &.voting-yes {
       color: ${({ theme }) => theme.upColor};
@@ -131,8 +131,8 @@ export const SatelliteTextGroup = styled.div<{ theme: MavenTheme }>`
 
 export const SatelliteMainText = styled.div<{ theme: MavenTheme; $hasEmptyRightSection?: boolean }>`
   color: ${({ theme }) => theme.subHeadingText};
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.base};
   max-width: ${({ $hasEmptyRightSection }) => ($hasEmptyRightSection ? '200px' : '138px')};
   width: 100%;
   overflow: hidden;
@@ -149,8 +149,8 @@ export const SatelliteMainText = styled.div<{ theme: MavenTheme; $hasEmptyRightS
 
 export const SatelliteSubText = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.primaryText};
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.md};
   white-space: nowrap;
 
   &.toClick {

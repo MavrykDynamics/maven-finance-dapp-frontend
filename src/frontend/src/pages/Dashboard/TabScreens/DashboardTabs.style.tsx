@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { CardHover, Card } from 'styles'
+import {CardHover, Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 import { EmptyContainer as EmptyContainerBase } from 'app/App.style'
 
@@ -34,8 +34,8 @@ export const TabWrapperStyled = styled.div<{ theme: MavenTheme; $backgroundImage
     }
 
     h1 {
-      font-weight: 600;
-      font-size: 22px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.xl};
       line-height: 22px;
     }
   }
@@ -48,15 +48,15 @@ export const TabWrapperStyled = styled.div<{ theme: MavenTheme; $backgroundImage
     max-width: 600px;
 
     .title {
-      font-weight: 700;
-      font-size: 18px;
+      font-weight: ${FontWeight.bold};
+      font-size: ${FontSize.lg};
       line-height: 27px;
       color: ${({ theme }) => theme.mainHeadingText};
     }
 
     .text {
-      font-weight: 500;
-      font-size: 16px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.md};
       line-height: 24px;
 
       color: ${({ theme }) => theme.regularText};
@@ -143,8 +143,8 @@ export const StakingContentStyled = styled.div<{ theme: MavenTheme }>`
     left: 40px;
     top: 20px;
 
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 18px;
     color: ${({ theme }) => theme.mainHeadingText};
   }
@@ -222,8 +222,8 @@ export const OraclesContentStyled = styled.div<{ theme: MavenTheme }>`
 
   .block-name {
     margin-top: 30px;
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 18px;
     color: ${({ theme }) => theme.mainHeadingText};
   }
@@ -300,8 +300,8 @@ export const TreasuryVesting = styled.div<{
 
     .name {
       color: ${({ theme }) => theme.subHeadingText};
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
       display: flex;
       column-gap: 10px;
@@ -323,8 +323,8 @@ export const TreasuryVesting = styled.div<{
 
     .value {
       color: ${({ theme }) => theme.primaryText};
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
 
       p {
@@ -351,7 +351,7 @@ export const TreasuryVesting = styled.div<{
     }
 
     .hoverValue {
-      font-size: 12px;
+      font-size: ${FontSize.sm};
       position: absolute;
       bottom: 13px;
       left: 50%;
@@ -455,8 +455,8 @@ export const VaultsContentStyled = styled.div<{ theme: MavenTheme }>`
       }
 
       .asset-lable-text {
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.base};
         line-height: 16px;
         color: ${({ theme }) => theme.regularText};
         margin: 0;
@@ -475,14 +475,14 @@ export const VaultsContentStyled = styled.div<{ theme: MavenTheme }>`
       margin-top: 13px;
 
       .name {
-        font-weight: 600;
-        font-size: 16px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.md};
         line-height: 22px;
       }
 
       .value {
-        font-weight: 600;
-        font-size: 22px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.xl};
         line-height: 22px;
         color: ${({ theme }) => theme.primaryText};
         p {
@@ -512,8 +512,8 @@ export const FarmsContentStyled = styled.div<{ theme: MavenTheme }>`
 
       .name {
         color: ${({ theme }) => theme.subHeadingText};
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.base};
         line-height: 21px;
       }
 
@@ -523,8 +523,8 @@ export const FarmsContentStyled = styled.div<{ theme: MavenTheme }>`
         align-items: center;
         column-gap: 5px;
         color: ${({ theme }) => theme.primaryText};
-        font-weight: 600;
-        font-size: 22px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.xl};
       }
     }
   }
@@ -590,8 +590,8 @@ export const FarmsContentStyled = styled.div<{ theme: MavenTheme }>`
           color: ${({ theme }) => theme.mainHeadingText};
 
           .large {
-            font-weight: 600;
-            font-size: 18px;
+            font-weight: ${FontWeight.semibold};
+            font-size: ${FontSize.lg};
             width: 100%;
 
             overflow-y: clip;
@@ -601,8 +601,8 @@ export const FarmsContentStyled = styled.div<{ theme: MavenTheme }>`
           }
 
           .creator {
-            font-weight: 500;
-            font-size: 12px;
+            font-weight: ${FontWeight.medium};
+            font-size: ${FontSize.sm};
 
             // TODO: remove when address will be in indexer
             visibility: hidden;
@@ -622,15 +622,15 @@ export const FarmsContentStyled = styled.div<{ theme: MavenTheme }>`
 
         .name {
           color: ${({ theme }) => theme.subHeadingText};
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: ${FontWeight.semibold};
+          font-size: ${FontSize.base};
           line-height: 21px;
         }
 
         .value {
           color: ${({ theme }) => theme.primaryText};
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: ${FontWeight.semibold};
+          font-size: ${FontSize.base};
           line-height: 21px;
         }
       }
@@ -649,7 +649,7 @@ export const PopularFeed = styled(CardHover)`
   }
 
   .value {
-    font-size: 16px;
+    font-size: ${FontSize.md};
   }
 `
 

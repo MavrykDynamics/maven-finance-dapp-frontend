@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const SatellitePaginationStyled = styled.div<{ theme: MavenTheme }>`
@@ -19,8 +20,8 @@ export const SatellitePaginationStyled = styled.div<{ theme: MavenTheme }>`
     color: ${({ theme }) => theme.linksAndButtons};
     align-items: center;
     min-height: 23px;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
 
     svg {
       width: 16px;

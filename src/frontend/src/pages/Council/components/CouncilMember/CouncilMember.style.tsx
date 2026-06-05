@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { CardHover } from 'styles'
+import {CardHover, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 
 export const CouncilMemberStyled = styled(CardHover)<{ theme: MavenTheme }>`
@@ -16,15 +16,15 @@ export const CouncilMemberStyled = styled(CardHover)<{ theme: MavenTheme }>`
 
     h4 {
       max-width: 180px;
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
       color: ${({ theme }) => theme.subHeadingText};
     }
 
     div {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       line-height: 22px;
       color: ${({ theme }) => theme.primaryText};
     }

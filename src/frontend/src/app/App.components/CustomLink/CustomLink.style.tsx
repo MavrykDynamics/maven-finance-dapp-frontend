@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 
 import { MavenTheme } from 'styles/interfaces'
 import { LinkWide } from './CustomLink.const'
@@ -23,8 +24,8 @@ const getNavLinkStyles = ($isActive: boolean) => css`
   position: relative;
   transition: 0.3s all;
 
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.md};
   line-height: 22px;
 
   color: ${({ theme }) => ($isActive ? theme.selectedColor : theme.navTitleColor)};

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 
 export const ProposalDetailsStyled = styled(Card)<{ $isAuthorized?: boolean; theme: MavenTheme }>`
@@ -38,8 +38,8 @@ export const ProposalDetailsStyled = styled(Card)<{ $isAuthorized?: boolean; the
 
   .voting-ends {
     color: ${({ theme }) => theme.primaryText};
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     margin-bottom: 30px;
   }
@@ -66,14 +66,14 @@ export const ProposalDetailsStyled = styled(Card)<{ $isAuthorized?: boolean; the
 
   .proposal-data-block-name {
     color: ${({ theme }) => theme.mainHeadingText};
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
   }
 
   .proposal-data-block-value {
     color: ${({ theme }) => theme.primaryText};
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
 
     * {
       word-break: break-all;
@@ -89,7 +89,7 @@ export const ProposalDetailsStyled = styled(Card)<{ $isAuthorized?: boolean; the
   }
 
   .proposal-data-block-address {
-    font-size: 16px;
+    font-size: ${FontSize.md};
   }
 
   .drop-proposal {
@@ -102,8 +102,8 @@ export const ProposalDetailsStyled = styled(Card)<{ $isAuthorized?: boolean; the
     justify-content: space-between;
 
     .proposal-data-block-name {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
       color: ${({ theme }) => theme.regularText};
     }
   }
@@ -128,14 +128,14 @@ export const ProposalDetailsStyled = styled(Card)<{ $isAuthorized?: boolean; the
 
       .title {
         color: ${({ theme }) => theme.regularText};
-        font-size: 16px;
+        font-size: ${FontSize.md};
         white-space: nowrap;
         align-self: flex-start;
       }
 
       .title-main {
-        font-weight: 600;
-        font-size: 16px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.md};
       }
 
       .byte-text-wrapper {
@@ -174,8 +174,8 @@ export const ProposalDetailsStyled = styled(Card)<{ $isAuthorized?: boolean; the
           max-width: 335px;
           text-overflow: ellipsis;
           overflow: hidden;
-          font-size: 14px;
-          font-weight: 500;
+          font-size: ${FontSize.base};
+          font-weight: ${FontWeight.medium};
           color: ${({ theme }) => theme.primaryText};
           transition: 0.5s opacity;
 

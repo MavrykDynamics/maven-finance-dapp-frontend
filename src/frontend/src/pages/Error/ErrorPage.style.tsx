@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../styles/interfaces'
 import { hangInSpace } from 'styles/animations'
 import { Z_INDEX_DEFAULT } from 'styles/constants'
@@ -50,9 +51,9 @@ export const ErrorPageInner = styled.div<{ theme: MavenTheme }>`
 
 export const ErrorTopHeader = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
-  font-size: 18px;
+  font-size: ${FontSize.lg};
   font-style: normal;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   line-height: 27px;
   text-transform: uppercase;
 `
@@ -61,16 +62,16 @@ export const ErrorMidHeader = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
   font-size: 25px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: ${FontWeight.bold};
   line-height: 30px;
 `
 
 export const ErrorParagraph = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.mainHeadingText};
   text-align: center;
-  font-size: 14px;
+  font-size: ${FontSize.base};
   font-style: normal;
-  font-weight: 600;
+  font-weight: ${FontWeight.semibold};
   margin: 20px 0;
   line-height: 21px;
 `
@@ -118,9 +119,9 @@ export const ErrorFooterWrapper = styled.div<{ theme: MavenTheme }>`
 
 export const ErrorFooterMiddle = styled.div<{ theme: MavenTheme }>`
   text-align: center;
-  font-size: 12px;
+  font-size: ${FontSize.sm};
   font-style: normal;
-  font-weight: 400;
+  font-weight: ${FontWeight.regular};
   line-height: 10px;
 
   /* to make block center under the button */
@@ -140,9 +141,9 @@ export const ErrorFooterRight = styled.div<{ theme: MavenTheme }>`
   a {
     text-decoration: none;
     text-align: right;
-    font-size: 12px;
+    font-size: ${FontSize.sm};
     font-style: normal;
-    font-weight: 400;
+    font-weight: ${FontWeight.regular};
     color: inherit;
     line-height: normal;
     color: ${({ theme }) => theme.linksAndButtons};

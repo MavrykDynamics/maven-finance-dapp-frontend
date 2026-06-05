@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const NotStakingBannerStyled = styled.div<{ theme: MavenTheme }>`
@@ -19,7 +20,7 @@ export const NotStakingBannerStyled = styled.div<{ theme: MavenTheme }>`
 
   .value > * {
     color: ${({ theme }) => theme.primaryText};
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
     display: inline;
   }
 `

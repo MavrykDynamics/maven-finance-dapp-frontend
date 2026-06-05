@@ -1,6 +1,6 @@
 import { SlidingTabButtons } from 'app/App.components/SlidingTabButtons/SlidingTabButtons.controller'
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../styles/interfaces'
 
 export const DataFeedsStyled = styled.div<{ theme: MavenTheme }>`
@@ -34,8 +34,8 @@ export const DataFeedsStyled = styled.div<{ theme: MavenTheme }>`
     }
 
     h4 {
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
       color: ${({ theme }) => theme.regularText};
       padding: 3px 0 4px 0;
       display: flex;
@@ -83,15 +83,15 @@ export const FeedInfo = styled.div<{ theme: MavenTheme }>`
       }
 
       .name {
-        font-weight: 700;
+        font-weight: ${FontWeight.bold};
         font-size: 25px;
         color: ${({ theme }) => theme.mainHeadingText};
         padding: 2px 0 3px 0;
       }
 
       a {
-        font-weight: 600;
-        font-size: 12px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.sm};
         line-height: 100%;
         color: ${({ theme }) => theme.mainHeadingText};
         display: flex;
@@ -111,7 +111,7 @@ export const FeedInfo = styled.div<{ theme: MavenTheme }>`
         position: absolute;
         max-width: 45px;
         left: 0;
-        font-size: 14px;
+        font-size: ${FontSize.base};
         fill: ${({ theme }) => theme.mainHeadingText};
 
         img {
@@ -167,8 +167,8 @@ export const ContractDetails = styled.div<{ theme: MavenTheme }>`
   }
 
   .block-name {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     color: ${({ theme }) => theme.mainHeadingText};
     margin-bottom: 20px;
   }
@@ -262,8 +262,8 @@ export const ChartSlidingTabButtons = styled(SlidingTabButtons)`
   }
 
   div {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     line-height: 14px;
   }
 

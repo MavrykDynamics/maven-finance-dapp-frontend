@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const GaugeChartStyled = styled.div<{ theme: MavenTheme }>`
@@ -73,12 +74,12 @@ export const ValueWrapper = styled.div<{ theme: MavenTheme }>`
     row-gap: 3px;
 
     .amount {
-      font-weight: 600;
-      font-size: 22px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.xl};
     }
 
     .status {
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
       font-size: 10px;
     }
 

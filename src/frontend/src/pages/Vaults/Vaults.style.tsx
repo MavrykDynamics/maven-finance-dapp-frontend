@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 // components
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 
 // helpers
 import {
@@ -69,8 +69,8 @@ export const VaultsFilters = styled.div`
     h4 {
       margin: 0 10px 0 0;
 
-      font-weight: 700;
-      font-size: 14px;
+      font-weight: ${FontWeight.bold};
+      font-size: ${FontSize.base};
       line-height: 14px;
 
       white-space: nowrap;
@@ -121,8 +121,8 @@ export const VaultsCardDropDown = styled.div<{ theme: MavenTheme }>`
   padding: 30px;
   padding-bottom: 0;
 
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.base};
   line-height: 21px;
 
   .body {
@@ -189,8 +189,8 @@ export const VaultsCardDropDown = styled.div<{ theme: MavenTheme }>`
     }
 
     .value {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       line-height: 22px;
 
       color: ${({ theme }) => theme.primaryText};

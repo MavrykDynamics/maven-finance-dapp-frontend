@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavenTheme }>`
@@ -9,8 +10,8 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavenTh
   row-gap: 5px;
 
   .name {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.subHeadingText};
   }
 
@@ -18,8 +19,8 @@ export const SatelliteGovernanceCardTitleTextGroup = styled.div<{ theme: MavenTh
     margin-bottom: 0;
     margin-top: 0;
     color: ${({ theme }) => theme.primaryText};
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
 
     &.capitallize {
       &::first-letter {
@@ -54,8 +55,8 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavenTheme }>
 
   h3 {
     margin: 0;
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     color: ${({ theme }) => theme.mainHeadingText};
   }
 
@@ -65,8 +66,8 @@ export const SatelliteGovernanceCardDropDown = styled.div<{ theme: MavenTheme }>
 
   p,
   li {
-    font-weight: 400;
-    font-size: 14px;
+    font-weight: ${FontWeight.regular};
+    font-size: ${FontSize.base};
     line-height: 21px;
     color: ${({ theme }) => theme.regularText};
     list-style: none;
@@ -80,13 +81,13 @@ export const SatelliteGovernanceCardPurposeBlock = styled.div`
 
   .purpose {
     color: ${({ theme }) => theme.subHeadingText};
-    font-weight: 500;
+    font-weight: ${FontWeight.medium};
     max-width: 520px;
   }
 
   .profile-details {
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     text-decoration: underline;
     color: ${({ theme }) => theme.linksAndButtons};
   }
@@ -108,8 +109,8 @@ export const SatelliteGovernanceCardVotingBlock = styled.div`
 
   .voting-ends {
     color: ${({ theme }) => theme.primaryText};
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: ${FontWeight.bold};
+    font-size: ${FontSize.base};
     line-height: 21px;
     margin-top: 10px;
     display: block;

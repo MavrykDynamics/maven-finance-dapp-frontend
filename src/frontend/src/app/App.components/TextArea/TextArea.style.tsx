@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { zoomIn, slideDown } from 'styles/animations'
 import { MavenTheme } from '../../../styles/interfaces'
 
@@ -122,7 +123,7 @@ export const TextAreaIcon = styled.svg<{ theme: MavenTheme }>`
   width: 20px;
   height: 20px;
   margin-top: -10px;
-  font-size: 14px;
+  font-size: ${FontSize.base};
   line-height: 20px;
   text-align: center;
   visibility: visible;
@@ -132,8 +133,8 @@ export const TextAreaIcon = styled.svg<{ theme: MavenTheme }>`
 
 export const TextAreaErrorMessage = styled.div<{ theme: MavenTheme }>`
   color: ${({ theme }) => theme.downColor};
-  font-size: 14px;
-  font-weight: 600;
+  font-size: ${FontSize.base};
+  font-weight: ${FontWeight.semibold};
   animation: ${slideDown} 0.3s cubic-bezier(0.12, 0.4, 0.29, 1.46);
   white-space: nowrap;
   overflow: hidden;
@@ -158,8 +159,8 @@ export const TextareaStyled = styled.textarea`
   min-height: 85px;
   /* hyphens: auto; */
   font-family: 'Metropolis', Helvetica, Arial, sans-serif;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: ${FontWeight.medium};
+  font-size: ${FontSize.base};
   line-height: 14px;
   margin: 0;
   display: block;
@@ -168,8 +169,8 @@ export const TextareaStyled = styled.textarea`
 
   &::placeholder {
     color: ${({ theme }) => theme.placeholders};
-    font-weight: 400;
-    font-size: 12px;
+    font-weight: ${FontWeight.regular};
+    font-size: ${FontSize.sm};
   }
 
   &:disabled {

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card } from 'styles'
+import {Card, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../../styles/interfaces'
 
 export const StakeUnstakeStyled = styled.div`
@@ -19,8 +19,8 @@ export const StakeUnstakeCard = styled.div<{ theme: MavenTheme }>`
   justify-content: space-between;
   min-width: 130px;
 
-  font-size: 14px;
-  font-weight: 600;
+  font-size: ${FontSize.base};
+  font-weight: ${FontWeight.semibold};
 `
 
 export const StakeUnstakeCards = styled(Card)<{ theme: MavenTheme }>`
@@ -31,8 +31,8 @@ export const StakeUnstakeCards = styled(Card)<{ theme: MavenTheme }>`
   padding: 30px;
   margin: 0;
 
-  font-size: 14px;
-  font-weight: 600;
+  font-size: ${FontSize.base};
+  font-weight: ${FontWeight.semibold};
 
   border-radius: 10px;
 `
@@ -41,8 +41,8 @@ export const StakeUnstakeActionCard = styled(Card)<{ theme: MavenTheme }>`
   border-radius: 10px;
 
   text-align: center;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: ${FontSize.base};
+  font-weight: ${FontWeight.semibold};
 
   margin: 0;
   padding: 18px 30px;
@@ -71,12 +71,12 @@ export const StakeUnstakeInputLabels = styled.h3`
     margin-top: 5px;
   }
 
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.base};
   line-height: 21px;
 
   .minAmount {
-    font-size: 14px;
+    font-size: ${FontSize.base};
   }
 `
 export const StakeUnstakeInputWithCoin = styled.div`
@@ -103,7 +103,7 @@ export const StakeUnstakeInputWithCoin = styled.div`
     min-width: max-content;
     height: 100%;
 
-    font-weight: 600;
+    font-weight: ${FontWeight.semibold};
     font-size: 20px;
     line-height: 20px;
 
@@ -136,16 +136,16 @@ export const StakeUnstakeRate = styled(StakeUnstakeAmount)`
 
 export const StakeUnstakeErrorMessage = styled.div<{ $inputOk: boolean; $accountPkh?: string; theme: MavenTheme }>`
   color: ${({ $inputOk, theme }) => ($inputOk ? theme.upColor : theme.downColor)};
-  font-size: 12px;
-  font-weight: 600;
+  font-size: ${FontSize.sm};
+  font-weight: ${FontWeight.semibold};
 `
 
 export const StakeUnstakeInputLabel = styled.div<{ theme: MavenTheme }>`
   position: absolute;
   right: 17px;
   color: ${({ theme }) => theme.subTextColor};
-  font-size: 22px;
-  font-weight: 600;
+  font-size: ${FontSize.xl};
+  font-weight: ${FontWeight.semibold};
 `
 
 export const StakeUnstakeButtonGrid = styled.div`
@@ -163,8 +163,8 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavenTheme }>`
   height: 100%;
 
   h3 {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.semibold};
     line-height: 21px;
     margin-bottom: 2px;
     color: ${({ theme }) => theme.subHeadingText};
@@ -180,7 +180,7 @@ export const StakeUnstakeBalance = styled.div<{ theme: MavenTheme }>`
   }
 
   .amount {
-    font-size: 16px;
+    font-size: ${FontSize.md};
     margin: 0;
     color: ${({ theme }) => theme.primaryText};
   }
@@ -217,8 +217,8 @@ export const StakeLabel = styled.blockquote`
   margin: 0;
   padding: 4px 12px;
 
-  font-weight: 600;
-  font-size: 12px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.sm};
   line-height: 18px;
   text-transform: uppercase;
 
@@ -253,8 +253,8 @@ export const StakeDelegatedUser = styled.div`
 
   h3,
   span {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.semibold};
     line-height: 21px;
     color: ${({ theme }) => theme.subHeadingText};
   }

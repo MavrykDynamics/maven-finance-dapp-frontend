@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from '../../../../styles/interfaces'
 
 export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
@@ -11,8 +12,8 @@ export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
     margin-bottom: 21px;
 
     h2 {
-      font-weight: 600;
-      font-size: 18px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.lg};
       line-height: 18px;
       padding-left: 18px;
     }
@@ -32,8 +33,8 @@ export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
   }
 
   .label-roi {
-    font-weight: 600;
-    font-size: 12px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.sm};
     line-height: 18px;
     color: ${({ theme }) => theme.regularText};
     padding-left: 8px;
@@ -43,8 +44,8 @@ export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
   .exchange-roi {
     display: flex;
     justify-content: space-between;
-    font-weight: 600;
-    font-size: 12px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.sm};
     line-height: 18px;
     color: ${({ theme }) => theme.placeholders};
     padding: 0 20px;
@@ -62,16 +63,16 @@ export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
     margin-top: 40px;
     padding: 20px 30px;
     color: ${({ theme }) => theme.regularText};
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: ${FontWeight.bold};
+    font-size: ${FontSize.base};
     line-height: 14px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     h3 {
-      font-size: 14px;
-      font-weight: 700;
+      font-size: ${FontSize.base};
+      font-weight: ${FontWeight.bold};
       margin-bottom: 10px;
 
       color: ${({ theme }) => theme.regularText};
@@ -79,7 +80,7 @@ export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
 
     p {
       margin: 0;
-      font-weight: 400;
+      font-weight: ${FontWeight.regular};
       margin-top: 35кpx;
       display: flex;
       column-gap: 10px;
@@ -110,7 +111,7 @@ export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
         }
 
         .pinned-text {
-          font-size: 16px;
+          font-size: ${FontSize.md};
           top: 12px;
         }
 
@@ -131,8 +132,8 @@ export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
 
           div {
             p {
-              font-weight: 600;
-              font-size: 12px;
+              font-weight: ${FontWeight.semibold};
+              font-size: ${FontSize.sm};
               line-height: 18px;
               color: ${({ theme }) => theme.placeholders};
             }
@@ -146,8 +147,8 @@ export const RoiCalculatorStyled = styled.section<{ theme: MavenTheme }>`
     margin-bottom: 30px;
 
     h4 {
-      font-weight: 700;
-      font-size: 14px;
+      font-weight: ${FontWeight.bold};
+      font-size: ${FontSize.base};
       line-height: 14px;
       padding-left: 4px;
       margin-bottom: 12px;
@@ -228,13 +229,13 @@ export const RoiExpandStyled = styled.div`
 
         h4 {
           margin: 0;
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: ${FontWeight.semibold};
+          font-size: ${FontSize.base};
         }
 
         var {
-          font-weight: 600;
-          font-size: 14px;
+          font-weight: ${FontWeight.semibold};
+          font-size: ${FontSize.base};
           color: ${({ theme }) => theme.primaryText};
 
           p {

@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 import { MavenTheme } from 'styles/interfaces'
 
@@ -140,8 +141,8 @@ export const TableBody = styled.tbody<{ theme: MavenTheme }>`
   &.treasury {
     th,
     td {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: ${FontSize.md};
+      font-weight: ${FontWeight.semibold};
     }
   }
 
@@ -153,22 +154,22 @@ export const TableBody = styled.tbody<{ theme: MavenTheme }>`
 
     th,
     td {
-      font-size: 14px;
-      font-weight: 600;
+      font-size: ${FontSize.base};
+      font-weight: ${FontWeight.semibold};
     }
 
     td:first-child {
-      font-size: 18px;
+      font-size: ${FontSize.lg};
     }
   }
 
   &.transaction-history {
     * {
-      font-size: 14px;
+      font-size: ${FontSize.base};
     }
 
     .descr {
-      font-size: 16px;
+      font-size: ${FontSize.md};
     }
   }
 `

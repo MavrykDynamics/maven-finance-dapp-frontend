@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { CardHover } from 'styles'
+import {CardHover, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from 'styles/interfaces'
 import { getCouncilActionsBodiesGridSettings } from './CouncilAction.consts'
 import { CouncilsActionsIds } from 'providers/CouncilProvider/helpers/council.types'
@@ -13,16 +13,16 @@ export const COUNCIL_COLUMN_STYLES = css`
     flex-direction: column;
 
     .name {
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       line-height: 21px;
 
       color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       line-height: 22px;
 
       color: ${({ theme }) => theme.primaryText};
@@ -34,8 +34,8 @@ export const COUNCIL_COLUMN_STYLES = css`
       width: 100%;
 
       &.open-readmore {
-        font-weight: 500;
-        font-size: 14px;
+        font-weight: ${FontWeight.medium};
+        font-size: ${FontSize.base};
         line-height: 24px;
 
         color: ${({ theme }) => theme.linksAndButtons};
@@ -53,8 +53,8 @@ export const COUNCIL_COLUMN_STYLES = css`
       }
 
       a {
-        font-weight: 500;
-        font-size: 14px;
+        font-weight: ${FontWeight.medium};
+        font-size: ${FontSize.base};
         line-height: 24px;
 
         color: ${({ theme }) => theme.linksAndButtons};

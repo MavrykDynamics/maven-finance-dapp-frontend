@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { CardHover } from 'styles'
+import {CardHover, FontSize, FontWeight} from 'styles'
 import { MavenTheme } from '../../../../styles/interfaces'
 
 export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavenTheme }>`
@@ -29,8 +29,8 @@ export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavenTheme }>`
   }
 
   .name {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: ${FontSize.base};
+    font-weight: ${FontWeight.semibold};
 
     color: ${({ theme }) => theme.regularText};
   }
@@ -41,8 +41,8 @@ export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavenTheme }>`
 
     column-gap: 6px;
 
-    font-size: 16px;
-    font-weight: 600;
+    font-size: ${FontSize.md};
+    font-weight: ${FontWeight.semibold};
 
     color: ${({ theme }) => theme.primaryText};
 
@@ -60,7 +60,7 @@ export const FarmCardCommonStyles = styled(CardHover)<{ theme: MavenTheme }>`
       display: flex;
       align-items: center;
       column-gap: 6px;
-      font-size: 14px;
+      font-size: ${FontSize.base};
 
       svg {
         height: 16px;
@@ -112,7 +112,7 @@ export const HorizontalFarmCardStyled = styled(FarmCardCommonStyles)<{ theme: Ma
       width: calc(100% - 48px - 15px);
 
       .name {
-        font-size: 18px;
+        font-size: ${FontSize.lg};
         line-height: 24px;
       }
     }

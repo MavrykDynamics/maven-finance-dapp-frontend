@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 
 export const SmallBlockBase = styled.div<{ theme: MavenTheme }>`
@@ -10,18 +11,18 @@ export const SmallBlockBase = styled.div<{ theme: MavenTheme }>`
   padding: 30px;
 
   h2 {
-    font-size: 22px;
+    font-size: ${FontSize.xl};
   }
 
   .name {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.base};
     color: ${({ theme }) => theme.subHeadingText};
   }
 
   .value {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: ${FontSize.md};
+    font-weight: ${FontWeight.semibold};
     color: ${({ theme }) => theme.primaryText};
   }
 `
@@ -44,8 +45,8 @@ export const MediumBlockBase = styled(SmallBlockBase)<{ theme: MavenTheme }>`
     }
 
     > span {
-      font-weight: 600;
-      font-size: 18px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.lg};
       color: ${({ theme }) => theme.regularText};
     }
   }
@@ -64,8 +65,8 @@ export const PortfolioChartStyled = styled(MediumBlockBase)<{ theme: MavenTheme 
     height: calc(100% - 45px);
 
     .no-data {
-      font-size: 18px;
-      font-weight: 500;
+      font-size: ${FontSize.lg};
+      font-weight: ${FontWeight.medium};
     }
   }
 `
@@ -85,14 +86,14 @@ export const PortfolioWalletStyled = styled(MediumBlockBase)<{ theme: MavenTheme
     margin-top: 20px;
 
     .name {
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       color: ${({ theme }) => theme.primaryText};
       display: flex;
       column-gap: 10px;
@@ -128,20 +129,20 @@ export const MyRewardsStyled = styled(SmallBlockBase)<{ theme: MavenTheme }>`
     align-items: flex-start;
 
     .name {
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.base};
       color: ${({ theme }) => theme.subHeadingText};
     }
 
     .value {
-      font-weight: 700;
+      font-weight: ${FontWeight.bold};
       font-size: 25px;
       color: ${({ theme }) => theme.primaryText};
       display: flex;
       align-items: flex-end;
       .suffix {
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.base};
         color: ${({ theme }) => theme.subHeadingText};
       }
     }
@@ -167,7 +168,7 @@ export const EarnHistoryStyled = styled(SmallBlockBase)<{ theme: MavenTheme }>`
     align-items: flex-start;
 
     > div {
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
     }
   }
 `
@@ -206,13 +207,13 @@ export const LBHInfoBlock = styled(MediumBlockBase)<{ theme: MavenTheme }>`
       column-gap: 110px;
 
       .name {
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.base};
       }
 
       .value {
         margin-top: 7px;
-        font-weight: 700;
+        font-weight: ${FontWeight.bold};
         font-size: 25px;
       }
     }
@@ -325,8 +326,8 @@ export const SatelliteStatusBlock = styled(MediumBlockBase)<{ theme: MavenTheme 
       display: block;
       width: 100%;
       word-wrap: break-word;
-      font-weight: 500;
-      font-size: 16px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.md};
       color: ${({ theme }) => theme.linksAndButtons};
     }
 
@@ -384,8 +385,8 @@ export const DelegationStatusBlock = styled(SatelliteStatusBlock)<{ theme: Maven
   }
 
   .delegated-to {
-    font-weight: 600;
-    font-size: 18px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.lg};
     line-height: 27px;
     color: ${({ theme }) => theme.mainHeadingText};
     margin-top: 25px;
@@ -407,8 +408,8 @@ export const DashboardPersonalSatellitesBottomLinks = styled.div<{ theme: MavenT
   justify-content: center;
   align-items: center;
   a {
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: ${FontWeight.semibold};
+    font-size: ${FontSize.md};
     color: ${({ theme }) => theme.linksAndButtons};
   }
 

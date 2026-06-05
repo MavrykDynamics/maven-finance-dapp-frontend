@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Card, CardHeader } from 'styles'
+import {Card, CardHeader, FontSize, FontWeight} from 'styles'
 
 import { MavenTheme } from '../../../styles/interfaces'
 
@@ -31,8 +31,8 @@ export const DoormanStatsHeader = styled(CardHeader)<{ theme: MavenTheme }>`
   text-align: center;
   margin-bottom: 10px;
 
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${FontWeight.semibold};
+  font-size: ${FontSize.lg};
 
   &::after {
     height: 0;
@@ -49,8 +49,8 @@ export const DoormanList = styled.aside<{ theme: MavenTheme }>`
     h4 {
       width: max-content;
       color: ${({ theme }) => theme.regularText};
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: ${FontWeight.medium};
+      font-size: ${FontSize.base};
       line-height: 24px;
       display: flex;
       align-items: center;
@@ -68,20 +68,20 @@ export const DoormanList = styled.aside<{ theme: MavenTheme }>`
       overflow: hidden;
       text-overflow: ellipsis;
       font-style: normal;
-      font-weight: 600;
-      font-size: 16px;
+      font-weight: ${FontWeight.semibold};
+      font-size: ${FontSize.md};
       line-height: 22px;
       text-align: right;
       color: ${({ theme }) => theme.primaryText};
 
       p {
         margin: 0;
-        font-weight: 600;
-        font-size: 16px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.md};
         line-height: 22px;
         text-align: right;
         width: 100%;
-        font-weight: 600;
+        font-weight: ${FontWeight.semibold};
         white-space: nowrap;
       }
     }

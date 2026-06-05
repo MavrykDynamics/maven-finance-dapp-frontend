@@ -1,5 +1,6 @@
 import { CouncilsFormsIds } from 'providers/CouncilProvider/helpers/council.types'
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { MavenTheme } from 'styles/interfaces'
 import { CouncilFormsGridMapper } from './CouncilForms.consts'
 
@@ -131,8 +132,8 @@ export const CouncilFormStyled = styled.div<{ theme: MavenTheme; $formName: Coun
         top: -25px;
         left: 10px;
 
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.base};
         line-height: 21px;
 
         color: ${({ theme }) => theme.mainHeadingText};
@@ -148,8 +149,8 @@ export const CouncilFormStyled = styled.div<{ theme: MavenTheme; $formName: Coun
         display: flex;
         align-items: center;
         padding: 0px 8px;
-        font-weight: 600;
-        font-size: 14px;
+        font-weight: ${FontWeight.semibold};
+        font-size: ${FontSize.base};
         line-height: 14px;
       }
     }
@@ -169,8 +170,8 @@ export const CouncilFormHeaderStyled = styled.div<{ theme: MavenTheme }>`
 
   .descr {
     color: ${({ theme }) => theme.regularText};
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
 
     display: flex;

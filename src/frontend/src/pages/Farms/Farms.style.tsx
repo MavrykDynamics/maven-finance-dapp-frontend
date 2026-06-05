@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { MavenTheme } from '../../styles/interfaces'
-import { Card } from 'styles'
+import {Card, FontSize} from 'styles'
 
 export const FarmsStyled = styled.div<{ theme: MavenTheme }>`
   section {
@@ -56,7 +56,7 @@ export const FarmTopBarStyled = styled(Card)<{ theme: MavenTheme }>`
     svg {
       width: 16px;
       height: 16px;
-      font-size: 16px;
+      font-size: ${FontSize.md};
       fill: ${({ theme }) => theme.menuButtonText};
     }
 

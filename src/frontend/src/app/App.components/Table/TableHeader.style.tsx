@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 import { DEFAULT_Z_INDEX_FOR_OVERLAP } from 'styles/constants'
 import { MavenTheme } from 'styles/interfaces'
 
@@ -10,7 +11,7 @@ const EDITABLE_TABLE_HEADER_STYLES = css`
     th {
       vertical-align: middle;
       text-align: center;
-      font-size: 16px;
+      font-size: ${FontSize.md};
       border-right: 1px solid ${({ theme }) => theme.strokeColor};
 
       &:last-child {
@@ -23,7 +24,7 @@ const EDITABLE_TABLE_HEADER_STYLES = css`
 const PROPOSAL_PAYMENTS_DETAILS_HEADER_STYLES = css`
   &.proposal-details-payments {
     th {
-      font-size: 12px;
+      font-size: ${FontSize.sm};
     }
   }
 `
@@ -36,7 +37,7 @@ export const TableHeader = styled.thead<{ theme: MavenTheme }>`
     border: none;
 
     th {
-      font-weight: 600;
+      font-weight: ${FontWeight.semibold};
     }
   }
 

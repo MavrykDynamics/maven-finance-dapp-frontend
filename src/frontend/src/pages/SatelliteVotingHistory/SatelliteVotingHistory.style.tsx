@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { FontSize, FontWeight } from 'styles/typography'
 
 export const SatelliteVotingHistoryListItem = styled.div`
   align-items: center;
@@ -8,8 +9,8 @@ export const SatelliteVotingHistoryListItem = styled.div`
 
   p {
     color: ${({ theme }) => theme.regularText};
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: ${FontWeight.medium};
+    font-size: ${FontSize.base};
     line-height: 24px;
   }
 
@@ -21,13 +22,13 @@ export const SatelliteVotingHistoryListItem = styled.div`
     flex-shrink: 0;
     padding-left: 16px;
     color: ${({ theme }) => theme.regularText};
-    font-weight: 400;
-    font-size: 14px;
+    font-weight: ${FontWeight.regular};
+    font-size: ${FontSize.base};
   }
 
   b {
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: ${FontWeight.bold};
+    font-size: ${FontSize.base};
 
     &.voting-yes {
       color: ${({ theme }) => theme.upColor};
