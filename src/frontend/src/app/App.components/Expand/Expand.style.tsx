@@ -64,7 +64,7 @@ export const ExpandStyled = styled(CardHover)`
     .expand-header {
       padding: 20px 25px;
       align-items: flex-start;
-      grid-template-columns: 0.6fr 0.8fr 0.5fr 0.45fr 0.4fr;
+      grid-template-columns: 0.6fr 0.8fr 0.5fr 0.45fr 0.4fr auto;
     }
 
     article,

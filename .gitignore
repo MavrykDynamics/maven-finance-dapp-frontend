@@ -1,4 +1,9 @@
 **/*.log
+*.png
+*.jpg
+*.jpeg
+*.gif
+Screenshot*
 **/node_modules
 **/dist
 **/downloads
