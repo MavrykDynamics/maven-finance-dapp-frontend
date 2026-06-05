@@ -196,7 +196,7 @@ export const TopBarLinksStyled = styled.div<{ $useClickOpening?: boolean; $selec
       : css`
           .group-links {
             position: absolute;
-            top: 65px;
+            top: 75px;
             opacity: 0;
             visibility: hidden;
             width: 250px;

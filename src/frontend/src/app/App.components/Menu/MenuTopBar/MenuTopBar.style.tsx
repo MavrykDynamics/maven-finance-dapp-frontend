@@ -8,7 +8,7 @@ export const MenuTopStyled = styled.div<{ theme: MavenTheme }>`
   left: 0;
   width: 100%;
   max-width: 100vw;
-  height: 60px;
+  height: 70px;
   z-index: 11;
   background: ${({ theme }) => theme.cards};
   display: flex;
@@ -136,10 +136,10 @@ export const MenuMobileBurger = styled.div<{ theme: MavenTheme }>`
 export const MobileTopBarStyled = styled.div<{ $show: boolean }>`
   position: absolute;
   width: 100vw;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 70px);
   max-height: 0;
   left: 0;
-  top: 60px;
+  top: 70px;
   background: ${({ theme }) => theme.cards};
   z-index: ${MENU_Z_INDEX};
   transition: 0.5s all;
@@ -187,7 +187,7 @@ export const MobileTopBarStyled = styled.div<{ $show: boolean }>`
   ${({ $show }) =>
     $show
       ? css`
-          max-height: calc(100vh - 60px);
+          max-height: calc(100vh - 70px);
         `
       : 'padding: 0;'}
 `

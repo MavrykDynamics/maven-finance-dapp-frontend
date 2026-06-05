@@ -385,7 +385,7 @@ export const Loans = () => {
       ) : (
         <EmptyContainer
           style={{
-            paddingTop: '60px',
+            paddingTop: '70px',
           }}
         >
           <img src="/images/not-found.svg" alt=" No active markets to show" />

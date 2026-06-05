@@ -181,7 +181,7 @@ export const EmergencyGovernance = () => {
             ) : (
               <EmptyContainer
                 style={{
-                  paddingTop: '60px',
+                  paddingTop: '70px',
                 }}
               >
                 <img src="/images/not-found.svg" alt=" No emergency history to show" />
