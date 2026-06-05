@@ -47,6 +47,9 @@ export default defineConfig(({ command }) => {
         __APP_MODE__: JSON.stringify('gov'),
       },
       plugins: command === 'serve' ? [govDevEndpointPlugin(proxyPath)] : [],
+      // Separate dep cache so gov and user servers don't race each other
+      // when both are running simultaneously.
+      cacheDir: 'node_modules/.vite-gov',
       server: {
         port: 3001,
         proxy: {

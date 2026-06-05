@@ -8,6 +8,16 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
  * App-specific configs (vite.user.config.mts, vite.gov.config.mts) extend this.
  */
 export const baseConfig = defineConfig({
+  // Pre-declare polyfill shims so Vite bundles them in the initial dep
+  // optimization pass rather than discovering them mid-load and triggering
+  // a re-optimization that invalidates in-flight chunk requests.
+  optimizeDeps: {
+    include: [
+      'vite-plugin-node-polyfills/shims/buffer',
+      'vite-plugin-node-polyfills/shims/global',
+      'vite-plugin-node-polyfills/shims/process',
+    ],
+  },
   plugins: [
     react({
       babel: {
