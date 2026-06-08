@@ -27,8 +27,8 @@ export const MaintancePage = () => {
     <ThemeProvider theme={themeColors[themeSelected]}>
       <ErrorPageWrapper $themeSelected={themeSelected}>
         <ErrorPageInner>
-          <ErrorMidHeader>Site is currently undergoing maintenance</ErrorMidHeader>
-          <ErrorParagraph>The site is currently undergoing maintenance, we will be back shortly.</ErrorParagraph>
+          <ErrorMidHeader>We're busy updating Maven Finance for you</ErrorMidHeader>
+          <ErrorParagraph>Please check back soon</ErrorParagraph>
         </ErrorPageInner>
         <ErrorFooter themeSelected={themeSelected} handleRedirect={handleRedirect} />
       </ErrorPageWrapper>
