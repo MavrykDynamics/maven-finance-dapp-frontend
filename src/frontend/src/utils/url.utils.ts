@@ -17,7 +17,7 @@ export const isMavrykProductUrl = (url: string) => {
     const hostname = parsed.hostname
 
     const allowedHosts = new Set([
-      'atlasnet.mavenfinance.io',
+      'basenet.mavenfinance.io',
       'ghostnet.mavenfinance.io',
       'ghostnet.mavryk.finance',
       'mavryk-finance-dapp-frontend.pages.dev',
