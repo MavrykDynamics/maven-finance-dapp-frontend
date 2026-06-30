@@ -370,7 +370,7 @@ function getSiteUrl() {
   const packageJson = readJson(packageJsonPath);
   const metadata = readJson(metadataFilePath);
   const network = process.env.REACT_APP_NETWORK || process.env.VITE_NETWORK;
-  const networkFallbackUrl = network === 'ghostnet' ? 'https://ghostnet.mavryk.finance' : 'https://atlasnet.mavenfinance.io';
+  const networkFallbackUrl = network === 'ghostnet' ? 'https://ghostnet.mavryk.finance' : 'https://basenet.mavenfinance.io';
   const defaultDevelopmentUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : null;
   const candidates = [
     process.env.SITEMAP_SITE_URL,
