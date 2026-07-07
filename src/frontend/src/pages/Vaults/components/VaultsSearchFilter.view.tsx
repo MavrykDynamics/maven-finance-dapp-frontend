@@ -100,6 +100,10 @@ export const VaultsSearchFilter = memo(() => {
 
   const filterDdItems = useMemo(() => preparedAssets.map((item) => getDdItem(item)), [preparedAssets])
   const sortDdItems = useMemo(() => sortingList.map((item) => getDdItem(item)), [])
+  const hasInitialFilterParams = useMemo(
+    () => sort !== sortVaultItems.MOST_RECENT || assets !== ALL_VAULTS_FILTER || zero === 'checked',
+    [assets, sort, zero],
+  )
 
   const [filterStatuses, setFilterStatuses] = useState<{ [key: string]: boolean }>({})
   const [chosenDdItem, setChosenDdItem] = useState<Filters>({
@@ -219,10 +223,12 @@ export const VaultsSearchFilter = memo(() => {
     const isAssetsReady = Object.keys(preparedCollateralAssets).length > 0 || Object.keys(preparedLoanAssets).length > 0
 
     if (!hasAutoAppliedRef.current && isAssetsReady) {
-      applyServerFilters()
+      if (hasInitialFilterParams) {
+        applyServerFilters()
+      }
       hasAutoAppliedRef.current = true
     }
-  }, [preparedCollateralAssets, preparedLoanAssets])
+  }, [applyServerFilters, hasInitialFilterParams, preparedCollateralAssets, preparedLoanAssets])
 
   const hasSelectedFilters = useMemo(() => Object.keys(filterStatuses).length !== 0, [filterStatuses])
 
