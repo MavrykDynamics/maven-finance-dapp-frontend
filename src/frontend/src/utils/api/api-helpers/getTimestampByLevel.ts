@@ -8,6 +8,5 @@ export const getTimestampByLevelUrl = (level: number) =>
   `${import.meta.env.VITE_TZKT_API}/v1/blocks/${level}/timestamp`
 
 export const getTimestampByLevelHeaders = {
-  'Content-type': 'application/json',
   Accept: 'application/json',
 }
