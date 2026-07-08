@@ -14,7 +14,7 @@ const envVariablesSchema = z.object({
   VITE_GRAPHQL_WSS_API: z.string().url(),
 
   VITE_NAME: z.string(),
-  VITE_NETWORK: z.literal(NetworkType.MAINNET).or(z.literal(NetworkType.ATLASNET)),
+  VITE_NETWORK: z.literal(NetworkType.MAINNET).or(z.literal(NetworkType.BASENET)),
 
   VITE_IPFS_API_KEY: z.string(),
   VITE_IPFS_PROJECT_ID: z.string(),

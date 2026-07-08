@@ -49,14 +49,17 @@ const useLoansCharts = (chartsToCalc: LoansChartsToCalcType) => {
   const { totalLendingChart, totalBorrowingChart, totalCollateralChart, marketBorrowChart, marketLendingChart } =
     chartsData ?? {}
 
+  const hasMarkets = marketsAddresses.length > 0
+
   const isLoading = Boolean(
-    (calcTotalLendingChart && !totalLendingChart) ||
-      (calcTotalBorrowingChart && !totalBorrowingChart) ||
-      (calcTotalCollateralChart && !totalCollateralChart) ||
-      (calcMarketBorrowChart &&
-        (!marketBorrowChart || marketsAddresses.some((marketAddress) => !marketBorrowChart[marketAddress]))) ||
-      (calcMarketLendingChart &&
-        (!marketLendingChart || marketsAddresses.some((marketAddress) => !marketLendingChart[marketAddress]))),
+    hasMarkets &&
+      ((calcTotalLendingChart && !totalLendingChart) ||
+        (calcTotalBorrowingChart && !totalBorrowingChart) ||
+        (calcTotalCollateralChart && !totalCollateralChart) ||
+        (calcMarketBorrowChart &&
+          (!marketBorrowChart || marketsAddresses.some((marketAddress) => !marketBorrowChart[marketAddress]))) ||
+        (calcMarketLendingChart &&
+          (!marketLendingChart || marketsAddresses.some((marketAddress) => !marketLendingChart[marketAddress])))),
   )
 
   return { isLoading, chartsData: chartsData ?? EMPTY_LOANS_CHARTS }
