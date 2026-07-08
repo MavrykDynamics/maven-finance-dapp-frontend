@@ -2,6 +2,8 @@ import { ColorBreakpoint } from 'app/App.components/GriadientFillDiagram/Gradien
 import { MavenTheme } from 'styles/interfaces'
 import { z } from 'zod'
 
+const nullableNumberToZero = z.number().nullable().transform((value) => value ?? 0)
+
 export const LEND_TAB_ID = 'lendingTab'
 export const BORROW_TAB_ID = 'borrowTab'
 export const ASSETS_WE_HAVE_BG_TO = ['EURL', 'USDT']
@@ -186,8 +188,8 @@ export const tokenCollateralSchema = z.record(
   z.object({
     aggregate: z.object({
       sum: z.object({
-        balance: z.number(),
-        loan_outstanding_total: z.number(),
+        balance: nullableNumberToZero,
+        loan_outstanding_total: nullableNumberToZero,
       }),
     }),
   }),
@@ -206,10 +208,10 @@ export const gqlVaultWithBalancesAggregateSchema = z.object({
   gql_vault_with_balances_aggregate: z.object({
     aggregate: z.object({
       sum: z.object({
-        token_pool_total: z.number(),
-        loan_interest_total: z.number(),
-        loan_outstanding_total: z.number(),
-        total_remaining: z.number(),
+        token_pool_total: nullableNumberToZero,
+        loan_interest_total: nullableNumberToZero,
+        loan_outstanding_total: nullableNumberToZero,
+        total_remaining: nullableNumberToZero,
       }),
     }),
   }),

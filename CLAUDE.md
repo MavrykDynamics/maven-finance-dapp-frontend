@@ -71,11 +71,11 @@ Redux with Thunk middleware. The root `State` type and all reducers are combined
 - **WebMavryk** (`@mavrykdynamics/webmavryk`) for Mavryk smart contract interactions
 - **Mavlet** (`@mavrykdynamics/mavlet-dapp`) for wallet connections
 - Contract addresses loaded from `src/deployments/*.json`
-- Network configured via `VITE_NETWORK` env var (default: atlasnet)
+- Network configured via `VITE_NETWORK` env var (default: basenet)
 
 ### Mavryk Network API
 - **Mainnet:** `https://api.mavryk.network/v1/` (Swagger: `https://api.mavryk.network/v1/swagger.json`)
-- **Atlasnet (testnet):** `https://atlasnet.api.mavryk.network/v1/`
+- **Basenet (testnet):** `https://basenet.api.mavryk.network/v1/`
 - Use the Mavryk API for all blockchain data (delegates, balances, accounts, etc.)
 - **Do NOT use TzKT** (`api.tzkt.io`) — that is for Tezos, not Mavryk
 - **Terminology:** On Mavryk, block producers are called "validators" in the public-facing UI (the API/docs may still call them "bakers" or "delegates")
@@ -153,7 +153,7 @@ CRA→Vite migration (commit `48283d259`) and React Router v6→v7 upgrade (comm
 All env vars use the `VITE_` prefix (accessed via `import.meta.env.VITE_*`). Copy `src/frontend/.env.example` to `.env.local`.
 
 Key variables:
-- `VITE_NETWORK` — Mavryk network (`atlasnet` | `mainnet`)
+- `VITE_NETWORK` — Mavryk network (`basenet` | `mainnet`)
 - `VITE_ENV` — Working environment (`dev` | `prod`)
 - `VITE_DATA_ENV` — Data loading environment (`dev` | `prod`)
 - `VITE_GRAPHQL_API` — Hasura GraphQL endpoint

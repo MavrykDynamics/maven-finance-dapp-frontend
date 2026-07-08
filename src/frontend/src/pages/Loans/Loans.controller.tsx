@@ -75,6 +75,14 @@ export const Loans = () => {
 
   const collateralsTotalQuery = useMemo(() => buildCollateralQuery(marketsAddresses), [marketsAddresses])
 
+  useEffect(() => {
+    if (marketsAddresses.length === 0) {
+      setRawTotalCollateralBalances({})
+      setIsTotalBalancesLoading(false)
+      return
+    }
+  }, [marketsAddresses])
+
   useGraphQLQuery(gql(collateralsTotalQuery), {
     skip: marketsAddresses.length === 0,
     onCompleted: (data: CollateralResponse) => {
@@ -97,7 +105,11 @@ export const Loans = () => {
       setRawTotalCollateralBalances(rawTotalCollateral)
       setIsTotalBalancesLoading(false)
     },
-    onError: (error) => console.error(error, 'collateralsTotalQuery'),
+    onError: (error) => {
+      console.error(error, 'collateralsTotalQuery')
+      setRawTotalCollateralBalances({})
+      setIsTotalBalancesLoading(false)
+    },
   })
 
   useEffect(() => {

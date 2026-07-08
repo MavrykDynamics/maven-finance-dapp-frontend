@@ -51,7 +51,10 @@ const useUserLoansData = () => {
       userAddress,
     },
     onCompleted: (data) => setIndexerData(data),
-    onError: (error) => handleQueryError(error, 'GET_USER_LOANS_DATA'),
+    onError: (error) => {
+      handleQueryError(error, 'GET_USER_LOANS_DATA')
+      setUserLoansData(DEFAULT_USER_LOANS_DATA)
+    },
   })
 
   return {

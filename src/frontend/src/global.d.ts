@@ -10,7 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_GRAPHQL_API: string
   readonly VITE_GRAPHQL_WSS_API: string
   readonly VITE_NAME: string
-  readonly VITE_NETWORK: 'atlasnet' | 'mainnet'
+  readonly VITE_NETWORK: 'mainnet' | 'basenet'
   readonly VITE_IPFS_API_KEY: string
   readonly VITE_IPFS_PROJECT_ID: string
   readonly VITE_RECAPTCHA_SITE_KEY?: string
